@@ -9,9 +9,9 @@
   "issues_url": "https://github.com/puppetlabs/cisco-ciscopuppet/issues",
   "operatingsystem_support": [
     {
-      "operatingsystem":"nexus",
+      "operatingsystem":"NX-OS",
       "operatingsystemrelease": [
-        "7.0"
+        "7.0(3)I2"
       ]
     }
   ],
