@@ -128,66 +128,100 @@ This provider allows raw configurations to be managed by Puppet. It serves as a 
 * If a CLI command is rejected during configuration, the resource will abort at that point and will not issue any remaining CLI. For this reason, we recommend limiting the scope of each instance of this resource.
 
 ### Type: cisco_bgp
-Manages configuration of an bgp instance.
+
+Manages configuration of an BGP instance.
 
 #### Parameters
+
 ##### `ensure`
 Determines whether the config should be present or not on the device. Valid 
 values are 'present' and 'absent'.
+
 ##### `asn`
 BGP autonomous system number.  Valid values are String, Integer in ASPLAIN or
 ASDOT notation.
+
 ##### `vrf`
 Name of the resource instance. Valid values are string. The name 'default' is 
 a valid VRF representing the global bgp.
+
 ##### `router_id`
 Router Identifier (ID) of the BGP router VRF instance. 
 Valid values are string, and keyword 'default'.
+
+##### `cluster_id`
+Route Reflector Cluster-ID. Valid values are String, keyword 'default'.
+
+##### `confederation_id`
+Routing domain confederation AS. Valid values are String, keyword 'default'.
+
+##### `confederation_peers`
+AS confederation parameters. Valid values are String, keyword 'default'.
+
 ##### `shutdown`
 Administratively shutdown the BGP protocol. Valid values are 'true', 'false',
 and 'default'.
+
 ##### `supress_fib_pending`
 Enable/Disable advertise only routes that are programmed in hardware to peers.
 Valid values are 'true', 'false', and 'default'
+
+##### `log_neighbor_changes`
+Enable/Disable message logging for neighbor up/down event.
+Valid values are 'true', 'false', and 'default'
+
 ##### `bestpath_always_compare_med`
 Enable/Disable MED comparison on paths from different autonomous systems.
 Valid values are 'true', 'false', and 'default'.
+
 ##### `bestpath_aspath_multipath_relax`
 Enable/Disable load sharing across the providers with different
 (but equal-length) AS paths. Valid values are 'true', 'false', and 'default'
+
 ##### `bestpath_compare_routerid`
 Enable/Disable comparison of router IDs for identical eBGP paths.
 Valid values are 'true', 'false', and 'default'
+
 ##### `bestpath_cost_community_ignore`
 Enable/Disable Ignores the cost community for BGP best-path calculations.
 Valid values are 'true', 'false', and 'default'
+
 ##### `bestpath_med_confed`
 Enable/Disable enforcement of bestpath to do a MED comparison only between
 paths originated within a confederation. Valid values are 'true', 'false',
 and 'default'
+
 ##### `bestpath_med_non_deterministic`
 Enable/Disable deterministic selection of the best MED path from among
 the paths from the same autonomous system. Valid values are 'true', 'false',
 and 'default'
+
 ##### `timer_bestpath_limit`
 Specify timeout for the first best path after a restart, in seconds.
 Valid values are Integer, keyword 'default'.
+
 ##### `timer_bestpath_limit_always`
 Enable/Disable update-delay-always option. Valid values are 'true', 'false',
 and 'default'
+
 ##### `graceful_restart`
 Enable/Disable graceful restart. Valid values are 'true', 'false', and 'default'
+
 ##### `graceful_restart_helper`
 Enable/Disable graceful restart helper mode. Valid values are 'true', 'false',
 and 'default'
+
 ##### `graceful_restart_timers_restart`
 Set maximum time for a restart sent to the BGP peer. Valid values are Integer,
 keyword 'default'.
+
 ##### `graceful_restart_timers_stalepath_time`
 Set maximum time that BGP keeps the stale routes from the restarting BGP peer.
 Valid values are Integer, keyword 'default'.
+
 ##### `timer_bgp_keepalive`
 Set bgp keepalive timer. Valid values are Integer, keyword 'default'.
+
 ##### `timer_bgp_hold`
 Set bgp hold timer. Valid values are Integer, keyword 'default'.
 
