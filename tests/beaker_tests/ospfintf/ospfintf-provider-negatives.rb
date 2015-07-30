@@ -76,7 +76,7 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd("show running-config section ospf")
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [/feature ospf/], \
+      UtilityLib.search_pattern_in_output(stdout, [/feature ospf/],
         true, self, logger)
     end
 
@@ -89,7 +89,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, OspfIntfLib.create_ospfintf_manifest_cost_negative())
 
     # Expected exit_code is 6 since this is a puppet agent cmd with failure.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH + \
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "agent -t", options)
     on(agent, cmd_str, {:acceptable_exit_codes => [6]}) 
 
@@ -100,11 +100,11 @@ test_name "TestCase :: #{testheader}" do
   step "TestStep :: Check cisco_intf_ospf resource absence on agent" do 
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH + \
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_interface_ospf 'ethernet1/4 test'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, \
-        {"cost" => OspfIntfLib::COST_NEGATIVE}, \
+      UtilityLib.search_pattern_in_output(stdout,
+        {"cost" => OspfIntfLib::COST_NEGATIVE},
         true, self, logger)
     end
 
@@ -117,11 +117,11 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd("show running-config ospf")
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, \
-        [/interface Ethernet1\/4/, \
-        /ip ospf cost 1/, \
-        /ip ospf dead-interval 40/, \
-        /ip router ospf test area 0.0.0.1/], \
+      UtilityLib.search_pattern_in_output(stdout,
+        [/interface Ethernet1\/4/,
+        /ip ospf cost 1/,
+        /ip ospf dead-interval 40/,
+        /ip router ospf test area 0.0.0.1/],
         true, self, logger)
     end
 
@@ -134,7 +134,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, OspfIntfLib.create_ospfintf_manifest_hellointerval_negative())
 
     # Expected exit_code is 6 since this is a puppet agent cmd with failure.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH + \
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "agent -t", options)
     on(agent, cmd_str, {:acceptable_exit_codes => [6]}) 
 
@@ -145,11 +145,11 @@ test_name "TestCase :: #{testheader}" do
   step "TestStep :: Check cisco_intf_ospf resource absence on agent" do 
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH + \
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_interface_ospf 'ethernet1/4 test'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, \
-        {"hello_interval" => OspfIntfLib::HELLOINTERVAL_NEGATIVE}, \
+      UtilityLib.search_pattern_in_output(stdout,
+        {"hello_interval" => OspfIntfLib::HELLOINTERVAL_NEGATIVE},
         true, self, logger)
     end
 
@@ -162,11 +162,11 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd("show running-config ospf")
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, \
-        [/interface Ethernet1\/4/, \
-        /ip ospf cost 1/, \
-        /ip ospf dead-interval 40/, \
-        /ip router ospf test area 0.0.0.1/], \
+      UtilityLib.search_pattern_in_output(stdout,
+        [/interface Ethernet1\/4/,
+        /ip ospf cost 1/,
+        /ip ospf dead-interval 40/,
+        /ip router ospf test area 0.0.0.1/],
         true, self, logger)
     end
 
@@ -179,7 +179,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, OspfIntfLib.create_ospfintf_manifest_deadinterval_negative())
 
     # Expected exit_code is 6 since this is a puppet agent cmd with failure.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH + \
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "agent -t", options)
     on(agent, cmd_str, {:acceptable_exit_codes => [6]}) 
 
@@ -190,11 +190,11 @@ test_name "TestCase :: #{testheader}" do
   step "TestStep :: Check cisco_intf_ospf resource absence on agent" do 
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH + \
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_interface_ospf 'ethernet1/4 test'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, \
-        {"dead_interval" => OspfIntfLib::DEADINTERVAL_NEGATIVE}, \
+      UtilityLib.search_pattern_in_output(stdout,
+        {"dead_interval" => OspfIntfLib::DEADINTERVAL_NEGATIVE},
         true, self, logger)
     end
 
@@ -207,11 +207,11 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd("show running-config ospf")
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, \
-        [/interface Ethernet1\/4/, \
-        /ip ospf cost 1/, \
-        /ip ospf dead-interval 40/, \
-        /ip router ospf test area 0.0.0.1/], \
+      UtilityLib.search_pattern_in_output(stdout,
+        [/interface Ethernet1\/4/,
+        /ip ospf cost 1/,
+        /ip ospf dead-interval 40/,
+        /ip router ospf test area 0.0.0.1/],
         true, self, logger)
     end
 
@@ -224,7 +224,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, OspfIntfLib.create_ospfintf_manifest_passiveintf_negative())
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH + \
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "agent -t", options)
     on(agent, cmd_str, {:acceptable_exit_codes => [1]}) 
 
@@ -235,11 +235,11 @@ test_name "TestCase :: #{testheader}" do
   step "TestStep :: Check cisco_intf_ospf resource absence on agent" do 
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH + \
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_interface_ospf 'ethernet1/4 test'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, \
-        {"passive_interface" => OspfIntfLib::PASSIVEINTF_NEGATIVE}, \
+      UtilityLib.search_pattern_in_output(stdout,
+        {"passive_interface" => OspfIntfLib::PASSIVEINTF_NEGATIVE},
         true, self, logger)
     end
 
@@ -252,11 +252,11 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd("show running-config ospf")
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, \
-        [/interface Ethernet1\/4/, \
-        /ip ospf cost 1/, \
-        /ip ospf dead-interval 40/, \
-        /ip router ospf test area 0.0.0.1/], \
+      UtilityLib.search_pattern_in_output(stdout,
+        [/interface Ethernet1\/4/,
+        /ip ospf cost 1/,
+        /ip ospf dead-interval 40/,
+        /ip router ospf test area 0.0.0.1/],
         true, self, logger)
     end
 

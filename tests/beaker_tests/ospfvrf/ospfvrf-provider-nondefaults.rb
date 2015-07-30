@@ -79,7 +79,7 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd("show running-config section ospf")
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [/feature ospf/], \
+      UtilityLib.search_pattern_in_output(stdout, [/feature ospf/],
         true, self, logger)
     end
 
@@ -92,7 +92,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, OspfVrfLib.create_ospfvrf_manifest_nondefaults())
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH + \
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "agent -t", options)
     on(agent, cmd_str, {:acceptable_exit_codes => [2]}) 
 
@@ -103,35 +103,39 @@ test_name "TestCase :: #{testheader}" do
   step "TestStep :: Check cisco_ospf_vrf resource presence on agent" do 
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH + \
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_ospf_vrf 'test default'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, \
-        {"ensure" => "present", \
-        "auto_cost" => "40000", \
-        "default_metric" => "0", \
-        "log_adjacency" => "none", \
-        "timer_throttle_lsa" => "{'hold' => '5000', 'max' => '5000', 'start' => '0'}", \
-        "timer_throttle_spf_hold" => "1000", \
-        "timer_throttle_spf_max" => "5000", \
-        "timer_throttle_spf_start"=> "200"}, \
+      UtilityLib.search_pattern_in_output(stdout,
+        {'ensure'                  => 'present',
+        'auto_cost'                => '40000',
+        'default_metric'           => '0',
+        'log_adjacency'            => 'none',
+        'timer_throttle_lsa_hold'  => '5000',
+        'timer_throttle_lsa_max'   => '5000',
+        'timer_throttle_lsa_start' => '0',
+        'timer_throttle_spf_hold'  => '1000',
+        'timer_throttle_spf_max'   => '5000',
+        'timer_throttle_spf_start' => '200'},
         false, self, logger)
     end
 
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH + \
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_ospf_vrf 'test green'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, \
-        {"ensure" => "present", \
-        "auto_cost" => "80000", \
-        "default_metric" => "1", \
-        "log_adjacency" => "log", \
-        "timer_throttle_lsa" => "{'hold' => '1000', 'max' => '10000', 'start' => '1'}", \
-        "timer_throttle_spf_hold" => "2000", \
-        "timer_throttle_spf_max" => "10000", \
-        "timer_throttle_spf_start"=> "400"}, \
+      UtilityLib.search_pattern_in_output(stdout,
+        {'ensure'                  => 'present',
+        'auto_cost'                => '80000',
+        'default_metric'           => '1',
+        'log_adjacency'            => 'log',
+        'timer_throttle_lsa_hold'  => '2000',
+        'timer_throttle_lsa_max'   => '10000',
+        'timer_throttle_lsa_start' => '1',
+        'timer_throttle_spf_hold'  => '2000',
+        'timer_throttle_spf_max'   => '10000',
+        'timer_throttle_spf_start' => '400'},
         false, self, logger)
     end
 
@@ -144,8 +148,8 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd("show running-config section ospf")
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [/router ospf test/, \
-        /vrf green/], \
+      UtilityLib.search_pattern_in_output(stdout, [/router ospf test/,
+        /vrf green/],
         false, self, logger)
     end
 
@@ -158,7 +162,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, OspfVrfLib.create_ospfvrf_manifest_absent())
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH + \
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "agent -t", options)
     on(agent, cmd_str, {:acceptable_exit_codes => [2]}) 
 
@@ -169,35 +173,39 @@ test_name "TestCase :: #{testheader}" do
   step "TestStep :: Check cisco_ospf_vrf resource absence on agent" do 
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH + \
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_ospf_vrf 'test default'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, \
-        {"ensure" => "present", \
-        "auto_cost" => "40000", \
-        "default_metric" => "0", \
-        "log_adjacency" => "none", \
-        "timer_throttle_lsa" => "{'hold' => '5000', 'max' => '5000', 'start' => '0'}", \
-        "timer_throttle_spf_hold" => "1000", \
-        "timer_throttle_spf_max" => "5000", \
-        "timer_throttle_spf_start"=> "200"}, \
+      UtilityLib.search_pattern_in_output(stdout,
+        {'ensure'                  => 'present',
+        'auto_cost'                => '40000',
+        'default_metric'           => '0',
+        'log_adjacency'            => 'none',
+        'timer_throttle_lsa_hold'  => '5000',
+        'timer_throttle_lsa_max'   => '5000',
+        'timer_throttle_lsa_start' => '0',
+        'timer_throttle_spf_hold'  => '1000',
+        'timer_throttle_spf_max'   => '5000',
+        'timer_throttle_spf_start' => '200'},
         true, self, logger)
     end
 
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH + \
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_ospf_vrf 'test green'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, \
-        {"ensure" => "present", \
-        "auto_cost" => "80000", \
-        "default_metric" => "1", \
-        "log_adjacency" => "log", \
-        "timer_throttle_lsa" => "{'hold' => '1000', 'max' => '10000', 'start' => '1'}", \
-        "timer_throttle_spf_hold" => "2000", \
-        "timer_throttle_spf_max" => "10000", \
-        "timer_throttle_spf_start"=> "400"}, \
+      UtilityLib.search_pattern_in_output(stdout,
+        {'ensure'                  => 'present',
+        'auto_cost'                => '80000',
+        'default_metric'           => '1',
+        'log_adjacency'            => 'log',
+        'timer_throttle_lsa_hold'  => '2000',
+        'timer_throttle_lsa_max'   => '10000',
+        'timer_throttle_lsa_start' => '1',
+        'timer_throttle_spf_hold'  => '2000',
+        'timer_throttle_spf_max'   => '10000',
+        'timer_throttle_spf_start' => '400'},
         true, self, logger)
     end
 
@@ -210,8 +218,8 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd("show running-config section ospf")
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [/router ospf test/, \
-        /vrf green/], \
+      UtilityLib.search_pattern_in_output(stdout, [/router ospf test/,
+        /vrf green/],
         true, self, logger)
     end
 
