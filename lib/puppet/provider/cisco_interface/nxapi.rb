@@ -151,6 +151,7 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
   def flush
     if @property_flush[:ensure] == :absent
       @interface.destroy
+      @interface = nil
     else
       # Create/Update
       if @interface.nil?

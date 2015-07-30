@@ -205,6 +205,7 @@ Puppet::Type.type(:cisco_ospf_vrf).provide(:nxapi) do
     if @property_flush[:ensure] == :absent
       begin
         @vrf.destroy
+        @vrf = nil
       rescue RuntimeError
         warning "Failed: Use cisco_ospf provider to remove #{vrf_name}"
       end

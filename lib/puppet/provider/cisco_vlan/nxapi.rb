@@ -117,6 +117,7 @@ Puppet::Type.type(:cisco_vlan).provide(:nxapi) do
   def flush
     if @property_flush[:ensure] == :absent
       @vlan.destroy
+      @vlan = nil
     else
       # Create/Update
       if @vlan.nil?
