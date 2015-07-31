@@ -9,7 +9,7 @@ Cisco Network Elements support a rich set of features to make networks robust, e
 ## Making Changes
 
 * Fork the repository
-# Pull a branch under the "develop" branch for your changes.
+* Pull a branch under the "develop" branch for your changes.
 * Follow all guidelines documented in [README-creating-types-providers](#README-creating-types-providers.md)
 * Make changes in your branch.
 * Testing
