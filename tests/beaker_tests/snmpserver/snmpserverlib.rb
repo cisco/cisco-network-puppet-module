@@ -158,19 +158,5 @@ EOF"
     return manifest_str
   end
 
-  # Method to create a manifest for SNMPGROUP attribute 'ensure'.
-  # @param none [None] No input parameters exist. 
-  # @result none [None] Returns no object.
-  def SnmpServerLib.create_snmpgroup_manifest_present()
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
-node default {
-    cisco_snmp_group { 'netadmin-test':
-      ensure                 => 'present',
-  }
-}
-EOF"
-    return manifest_str
-  end
-
 end
 
