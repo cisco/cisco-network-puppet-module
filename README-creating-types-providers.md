@@ -93,19 +93,19 @@ Puppet::Type.newtype(:bash_shell) do
 
   @doc = "Manages configuration of feature bash-shell
 
-  ```
+    ```
   cisco_bash_shell {'<title>':
     ..attributes..
   }
-  ```
+    ```
 
   Example:
 
-  ```
+     ```
     cisco_bash_shell {'xxxxx' :
       ensure => present,
     }
-  ```
+     ```
   "
 
   ensurable
@@ -371,23 +371,23 @@ Puppet::Type.newtype(:cisco_router_eigrp) do
 
   @doc = "Manages configuration of a router_eigrp instance
 
-  ```
+    ```
   cisco_router_eigrp {'<string>':
     ..attributes..
   }
-  ```
+    ```
 
   `<string>` is the name of the router_eigrp instance.
 
   Example:
 
-  ```
+    ```
     cisco_router_eigrp { 'green' :
       ensure        => present,
       maximum_paths => 5,
       shutdown      => true,
     }
-  ```
+    ```
   "
 
   ensurable
@@ -607,7 +607,7 @@ Puppet::Type.type(:cisco_router_eigrp).provide(:nxapi) do
 end
 ~~~
 
-## <a name="comp-testing">Step 3. Testing: router eigrp</a>
+## <a name="comp_testing">Step 3. Testing: router eigrp</a>
 
 * Create a manifest for the new resource:
 
