@@ -40,7 +40,7 @@ Puppet::Type.type(:cisco_interface_ospf).provide(:nxapi) do
   # Setter properties
   SETTER_NON_BOOL_PROPS = [
     :cost, :hello_interval, :dead_interval, :message_digest_key_id,
-    :message_digest_password,
+    :message_digest_password, :area,
   ]
 
   SETTER_BOOL_PROPS = [

@@ -71,6 +71,10 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
 
   newparam(:interface, :namevar => :true) do
     desc "Name of this cisco_interface resource. Valid values are string."
+
+    munge { |value|
+      value.downcase
+    }
   end
 
   newparam(:ospf, :namevar => :true) do
@@ -208,7 +212,7 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
     end
   end
 
-  newparam(:area) do
+  newproperty(:area) do
     desc "Ospf area associated with this cisco_interface_ospf
           instance. Valid values are string, formatted as an IP address
           i.e. \"0.0.0.0\" or as an integer. Mandatory parameter."
