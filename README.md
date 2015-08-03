@@ -103,6 +103,7 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 * [`cisco_tacacs_server`](#type-cisco_tacacs_server)
 * [`cisco_tacacs_server_host`](#type-cisco_tacacs_server_host)
 * [`cisco_vlan`](#type-cisco_vlan)
+* [`cisco_vrf`](#type-cisco_vrf)
 * [`cisco_vtp`](#type-cisco_vtp)
 
 ### Type: cisco_command_config
@@ -612,6 +613,27 @@ State of the VLAN. Valid values are 'active', 'suspend', and keyword 'default'.
 ##### `shutdown`
 Whether or not the vlan is shutdown. Valid values are 'true', 'false' and 
 keyword 'default'.
+
+### Type: cisco_vrf
+
+Manages Cisco Virtual Routing and Forwarding (VRF) configuration of a Cisco
+device. 
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid 
+values are 'present' and 'absent'. Default value is 'present'.
+
+##### `name`
+Name of the VRF. Valid value is a string of non-whitespace characters. It is 
+not case-sensitive and overrides the title of the type.
+
+##### `description`
+Description of the VRF. Valid value is string.
+
+##### `shutdown`
+Shutdown state of the VRF. Valid values are 'true' and 'false'.
 
 ### Type: cisco_vtp
 
