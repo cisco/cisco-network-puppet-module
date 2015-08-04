@@ -204,6 +204,10 @@ nameserver 10.0.0.202
 domain mycompany.com
 search mycompany.com
 EOF
+
+# Optionally configure a proxy
+export http_proxy=http://proxy.yourdomain.com:<port>
+export https_proxy=https://proxy.yourdomain.com:<port>
 ```
 
 ## <a name="agent-config">Puppet Agent Installation, Configuration and Usage</a>
