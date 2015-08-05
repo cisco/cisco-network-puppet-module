@@ -14,10 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# To apply this demo_patching manifest first you must setup your own local
+# repository and replace the '<>' markers with your local repo information.
+
 class ciscopuppet::demo_patching {
-  $repo = 'http://example.domain.com/repo'
-  yumrepo { 'reponame' :
-    name     => 'reponame',
+  $repo = '<http://example.domain.com/repo>'
+  yumrepo { '<reponame>' :
+    name     => '<reponame>',
     baseurl  => $repo,
     enabled  => 1,
     gpgcheck => 0,
@@ -26,9 +29,6 @@ class ciscopuppet::demo_patching {
   # Handle differences between Native and Guestshell#
 
   case $::osfamily  {
-    # TODO: 'RedHat' is no longer a value returned in the GS
-    # by facter.  This needs to be updated to another value
-    # once we identify one.
     'RedHat': {    # GuestShell
     $rpmMibSource = $repo
 
@@ -37,7 +37,7 @@ class ciscopuppet::demo_patching {
     $svcDemoSource = 'puppet:///modules/ciscopuppet/demo-one.service'
     }
 
-    'wrLinux':  {    # Native
+    'cisco-wrlinux':  {    # Native
     $rpmMibSource = $repo
 
     # Native/WRL: init.d services
@@ -50,7 +50,7 @@ class ciscopuppet::demo_patching {
 
   #Use Case 1: install cisco package
 
-  $rpmMib = "${rpmMibSource}/n9000_sample-1.0.0-7.0.3.x86_64.rpm"
+  $rpmMib = "${rpmMibSource}/<n9000_sample-1.0.0-7.0.3.x86_64.rpm>"
   $settings = {'target' => 'host'}
   package { 'n9000_sample':
     ensure           => present,
@@ -61,7 +61,7 @@ class ciscopuppet::demo_patching {
 
   #Use Case 2: install third party package:
 
-  $rpmDemo = "${repo}/demo-one-1.0-1.x86_64.rpm"
+  $rpmDemo = "${repo}/<demo-one-1.0-1.x86_64.rpm>"
   package { 'demo-one':
     ensure => present,
     source => $rpmDemo,

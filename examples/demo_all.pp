@@ -26,7 +26,11 @@ class ciscopuppet::demo_all {
   #   proxy => 'http://proxy.domain.com:8080',
   # }
 
-  include ciscopuppet::demo_patching
+  # To apply the demo_patching manifest, uncomment the
+  # following line and modify the demo_all.pp as instructed
+  # in the header. 
+  #include ciscopuppet::demo_patching
+
   include ciscopuppet::demo_command_config
   include ciscopuppet::demo_interface
   include ciscopuppet::demo_vlan
