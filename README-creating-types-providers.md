@@ -5,15 +5,15 @@
 * [Overview](#overview)
 * [Start here: Clone the Repo](#clone)
 * [Basic Example: feature bash-shell](#example)
- * [Step 1. Type: feature bash-shell](#type)
- * [Step 2. Provider: feature bash-shell](#prov)
- * [Step 3. Testing: feature bash-shell](#testing)
- * [Static Analysis](#lint)
+   * [Step 1. Type: feature bash-shell](#type)
+   * [Step 2. Provider: feature bash-shell](#prov)
+   * [Step 3. Testing: feature bash-shell](#testing)
+   * [Static Analysis](#lint)
 * [Complex Example: router eigrp](#comp_example)
- * [Step 1. Type: router eigrp](#comp_type)
- * [Step 2. Provider: router eigrp](#comp_prov)
- * [Step 3. Testing: router eigrp](#comp_testing)
- * [Static Analysis](#comp_lint)
+   * [Step 1. Type: router eigrp](#comp_type)
+   * [Step 2. Provider: router eigrp](#comp_prov)
+   * [Step 3. Testing: router eigrp](#comp_testing)
+   * [Static Analysis](#comp_lint)
 * [Conclusion](#conclusion)
 
 ## <a name="overview">Overview</a>
@@ -26,21 +26,21 @@ There are multiple components involved when creating new resources. This documen
 
 * Every resource is associated with a [resource type](https://docs.puppetlabs.com/puppet/latest/reference/lang_resources.html), which determines the kind of configuration it manages.
 
-* [Resource providers](https://docs.puppetlabs.com/guides/provider_development.html) are essentially back-ends that implement support for a specific implementation of a given resource type.
+* [Resource providers](https://docs.puppetlabs.com/guides/provider_development.html) are essentially backends that implement support for a specific implementation of a given resource type.
 
-* The types and providers work in conjunction with a node\_utils API, which is the interface between puppet agent and the NX-OS CLI. Please see the [README-creating-node_utils-APIs.md](#README-creating-node_utils-APIs.md) guide for more information on writing node_utils APIs.
+* The types and providers work in conjunction with a node\_utils API, which is the interface between Puppet agent and the NX-OS CLI. Please see the [README-creating-node_utils-APIs.md](#README-creating-node_utils-APIs.md) guide for more information on writing node_utils APIs.
 
-This document relies heavily on example code. The examples in this document can be written independently but they are intended to work in conjuction with the example node_utils APIs created in the [README-creating-node_utils-APIs.md](#README-creating-node_utils-APIs.md) guide. The examples in that guide are based on code templates for the `feature bash-shell` CLI and the `router eigrp` CLI. Note that some prefer to write the node_utils API before the resource types and providers while others may prefer the opposite workflow.
+This document relies heavily on example code. The examples in this document can be written independently, but they are intended to work in conjuction with the example node_utils APIs created in the [README-creating-node_utils-APIs.md](#README-creating-node_utils-APIs.md) guide. The examples in that guide are based on code templates for the `feature bash-shell` CLI and the `router eigrp` CLI. Note that some people prefer to write the node_utils API before the resource types and providers, while others might prefer the opposite workflow.
 
 ## <a name="clone">Start here: Clone the Repo</a>
 
-Please see the [CONTRIBUTING](#CONTRIBUTING) document for workflow instructions. In general, you will need to fork the ciscopuppet repository for your changes and submit a pull request when it is ready for commit.
+Please see the [CONTRIBUTING](#CONTRIBUTING) document for workflow instructions. In general, fork the ciscopuppet repository for your changes and submit a pull request when it is ready for commit.
 
 First install the code base. Clone the ciscopuppet repo into a workspace:
 
-```bash
+~~~bash
 git clone https://github.com/puppetlabs/cisco-ciscopuppet
-```
+~~~
 
 ## <a name="simple">Basic Example: feature bash-shell</a>
 
@@ -50,22 +50,22 @@ The NX-OS CLI for `feature bash-shell` is a simple on / off style configuration:
 
 This resource has no other properties.
 
-*Note. This example disables the bash-shell so you will need to use the guestshell environment when testing.*
+*Note. This example disables the bash-shell, so use the guestshell environment when testing.*
 
 ## <a name="type">Step 1. Type: feature bash-shell</a>
 
-* There are template files in /docs that may help when writing new types and providers. These templates provide most of the necessary code with just a few customizations required for a new resource. Copy the `template-type-feature.rb` file to use as the basis for our new `cisco_bash_shell.rb` type file:
+* There are template files in `/docs` that might help when you write new types and providers. These templates provide most of the necessary code with a few customizations required for a new resource. Copy the `template-type-feature.rb` file to use as the basis for our new `cisco_bash_shell.rb` type file:
 
-```bash
+~~~bash
 cp  cisco-ciscopuppet/docs/template-type-feature.rb \
     cisco-ciscopuppet/lib/puppet/type/cisco_bash_shell.rb
-```
+~~~
 
 * Edit `cisco_bash_shell.rb` and substitute the placeholder text as shown here:
 
-```bash
+~~~bash
 /__RESOURCE_NAME__/bash_shell/
-```
+~~~
 
 #### Example: cisco_bash_shell.rb type file
 
@@ -93,19 +93,19 @@ Puppet::Type.newtype(:bash_shell) do
 
   @doc = "Manages configuration of feature bash-shell
 
-    ```
+    ~~~
   cisco_bash_shell {'<title>':
     ..attributes..
   }
-    ```
+    ~~~
 
   Example:
 
-     ```
+     ~~~
     cisco_bash_shell {'xxxxx' :
       ensure => present,
     }
-     ```
+     ~~~
   "
 
   ensurable
@@ -122,20 +122,20 @@ end
 
 * The provider files for Cisco NX-OS are named nxapi.rb and are each stored in a unique provider directory. Create a new directory for the bash_shell provider and use `template-provider-feature.rb` to populate the new provider file:
 
-```bash
+~~~bash
 mkdir  cisco-ciscopuppet/lib/puppet/provider/cisco_bash_shell
 
 cp  cisco-ciscopuppet/docs/template-provider-feature.rb \
        cisco-ciscopuppet/lib/puppet/provider/cisco_bash_shell/nxapi.rb
-```
+~~~
 
 * Edit `nxapi.rb` and substitute the placeholder text as shown here:
 
-```bash
+~~~bash
 /__RESOURCE_NAME__/bash_shell/
 
 /__CLASS_NAME__/BashShell/
-```
+~~~
 
 #### Example: cisco_bash_shell.rb provider file
 
@@ -192,7 +192,7 @@ end
 
 ## <a name="testing">Step 3. Testing: feature bash-shell</a>
 
-Test the new resource using the guestshell environment. See [README-AGENT-INSTALL](#README-AGENT-INSTALL.md) for using puppet agent in guestshell.
+Test the new resource using the guestshell environment. See [README-AGENT-INSTALL](#README-AGENT-INSTALL.md) for using Puppet agent in guestshell.
 
 * Create a manifest for the new resource:
 
@@ -204,16 +204,16 @@ cisco_bash_shell { 'bash_on' :
 
 * Manually check that the state of the resource is disabled on the switch. In this case the NX-OS CLI config is not present when feature bash-shell is disabled.
 
-```
+~~~
 n3k# sh run | i 'feature bash'
 n3k#
-```
+~~~
 
-* Run the puppet agent:
+* Run the Puppet agent:
 
 *Note. The --trace option is helpful when troubleshooting agent failures*
 
-```
+~~~
 [root@guestshell guestshell]# puppet agent -t --trace
 Info: Retrieving pluginfacts
 Info: Retrieving plugin
@@ -222,23 +222,23 @@ Info: Caching catalog for n3k.cisco.com
 Info: Applying configuration version '1438270388'
 Notice: /Stage[main]/Main/Node[n3k]/Cisco_bash_shell[bash_on]/ensure: created
 Notice: Applied catalog in 0.26 seconds
-```
+~~~
 
 * Check state on the switch again:
 
-```
+~~~
 n3k# sh run | i 'feature bash'
 feature bash-shell
-```
+~~~
 
-* We now have the expected state. Next, test the puppet resource command while the feature is still enabled:
+* We now have the expected state. Next, test the Puppet resource command while the feature is still enabled:
 
-```
+~~~
 [root@guestshell guestshell]# puppet resource cisco_bash_shell
 cisco_bash_shell { 'default':
   ensure => 'present',
 }
-```
+~~~
 *Note. This test manifest should be added to examples/demo_install.rb*
 
 * Change the manifest to ensure => absent to disable the state, then repeat the tests:
@@ -249,11 +249,11 @@ cisco_bash_shell { 'bash_off' :
 }
 ~~~
 
-```
+~~~
 n3k# sh run | i 'feature bash'
 feature bash-shell
-```
-```
+~~~
+~~~
 [root@guestshell guestshell]# puppet agent -t
 Info: Retrieving pluginfacts
 Info: Retrieving plugin
@@ -262,16 +262,16 @@ Info: Caching catalog for n3k.cisco.com
 Info: Applying configuration version '1438270530'
 Notice: /Stage[main]/Main/Node[n3k]/Cisco_bash_shell[bash_off]/ensure: removed
 Notice: Applied catalog in 0.35 seconds
-```
-```
+~~~
+~~~
 n3k# sh run | i 'feature bash'
 n3k#
-```
-```
+~~~
+~~~
 [root@guestshell guestshell]# puppet resource cisco_bash_shell
 
  (a blank response is correct here)
-```
+~~~
 
 * `puppet resource` can also be used for testing changes to provider states. This method is often easier and doesn't require a manifest:
 
@@ -286,7 +286,7 @@ puppet resource cisco_bash_shell 'test_off' ensure=absent
 
 * rubocop is a Ruby static analysis tool. Run [rubocop](https://rubygems.org/gems/rubocop) with the --lint option to validate the new code:
 
-```bash
+~~~bash
 % rubocop --lint type/cisco_bash_feature.rb  provider/cisco_bash_feature/nxapi.rb
 warning: parser/current is loading parser/ruby21, which recognizes
 warning: 2.1.7-compliant syntax, but you are running 2.1.1.
@@ -294,7 +294,7 @@ Inspecting 2 files
 ..
 
 2 files inspected, no offenses detected
-```
+~~~
 
 * TBD: Run [puppet-lint](https://rubygems.org/gems/puppet-lint) against changed files.
 
@@ -305,12 +305,12 @@ This resource type and provider exercise will build on the router_eigrp API exam
 
 The router_eigrp node_utils example created a new API for the cli below:
 
-```
+~~~
 [no] feature eigrp
 [no] router eigrp [name]    (string)
        maximum-paths [n]    (integer)
   [no] shutdown             (boolean)
-```
+~~~
 
 This example needs to support:
 
@@ -320,20 +320,20 @@ This example needs to support:
 
 Router eigrp also supports `vrf` and `address-family` sub-modes, which further complicate the configuration but are not included in this exercise.
 
-The puppet type and provider code doesn't need any knowledge of `feature eigrp` because that configuration is controlled automatically by the router_eigrp node_utils API; therefore, we only need to implement the router commands themselves.
+The Puppet type and provider code doesn't need any knowledge of `feature eigrp` because that configuration is controlled automatically by the router_eigrp node_utils API; therefore, we need to implement only the router commands themselves.
 
 ## <a name="comp_type">Step 1. Type: router eigrp</a>
 
 * Copy the `template-type-router.rb` file to use as the basis for the `cisco_router_eigrp.rb` type file:
 
-```bash
+~~~bash
 cp  cisco-ciscopuppet/docs/template-type-router.rb \
     cisco-ciscopuppet/lib/puppet/type/cisco_router_eigrp.rb
-```
+~~~
 
 * Edit `cisco_router_eigrp.rb` and substitute the placeholder text as shown here:
 
-```bash
+~~~bash
 /__CLASS_NAME__/RouterEigrp/
 
 /__RESOURCE_NAME__/router_eigrp/
@@ -341,9 +341,9 @@ cp  cisco-ciscopuppet/docs/template-type-router.rb \
 /__PROPERTY_INT__/maximum_paths/
 
 /__PROPERTY_BOOL__/shutdown/
-```
+~~~
 
-There may be additional steps to follow in the template.
+There might be additional steps to follow in the template.
 
 #### Example: cisco_router_eigrp.rb type file
 
@@ -371,23 +371,23 @@ Puppet::Type.newtype(:cisco_router_eigrp) do
 
   @doc = "Manages configuration of a router_eigrp instance
 
-    ```
+    ~~~
   cisco_router_eigrp {'<string>':
     ..attributes..
   }
-    ```
+    ~~~
 
   `<string>` is the name of the router_eigrp instance.
 
   Example:
 
-    ```
+    ~~~
     cisco_router_eigrp { 'green' :
       ensure        => present,
       maximum_paths => 5,
       shutdown      => true,
     }
-    ```
+    ~~~
   "
 
   ensurable
@@ -397,7 +397,7 @@ Puppet::Type.newtype(:cisco_router_eigrp) do
   ###################
 
   # Parse the title to populate the attributes in these patterns.
-  # These attributes may be overwritten later.
+  # These attributes might be overwritten later.
   def self.title_patterns
     identity = lambda { |x| x }
     patterns = []
@@ -444,17 +444,17 @@ end
 
 * Create a new directory for the router_eigrp provider and use `template-provider-router.rb` to populate the new provider file:
 
-```bash
+~~~bash
 mkdir  cisco-ciscopuppet/lib/puppet/provider/cisco_router_eigrp
 
 cp  cisco-ciscopuppet/docs/template-provider-router.rb \
        cisco-ciscopuppet/lib/puppet/provider/cisco_router_eigrp/nxapi.rb
-```
+~~~
 
 * Edit `nxapi.rb` and substitute the placeholder text as shown here:
 
 
-```bash
+~~~bash
 /__CLASS_NAME__/RouterEigrp/
 
 /__RESOURCE_NAME__/router_eigrp/
@@ -464,9 +464,9 @@ cp  cisco-ciscopuppet/docs/template-provider-router.rb \
 /__PROPERTY_INT__/maximum_paths/
 
 /__PROPERTY_BOOL__/shutdown/
-```
+~~~
 
-There may be additional steps to follow in the template.
+There might be additional steps to follow in the template.
 
 #### Example: cisco_router_eigrp.rb provider file
 
@@ -621,19 +621,19 @@ cisco_router_eigrp { 'test' :
 
 * Manually check that the state of the resource is disabled on the switch.
 
-```
+~~~
 n3k# sh run eigrp
                           ^
 % Invalid command at '^' marker.
 
  (feature eigrp is disabled so this error is expected)
-```
+~~~
 
-* Run the puppet agent:
+* Run the Puppet agent:
 
 *Note. The --trace option is helpful when troubleshooting agent failures*
 
-```
+~~~
 [root@guestshell guestshell]# puppet agent -t
 [root@guestshell guestshell]# puppet agent -t
 Info: Retrieving pluginfacts
@@ -643,22 +643,22 @@ Info: Caching catalog for n3k.cisco.com
 Info: Applying configuration version '1438344401'
 Notice: /Stage[main]/Main/Node[n3k]/Cisco_router_eigrp[test]/ensure: created
 Notice: Applied catalog in 4.65 seconds
-```
+~~~
 
 * Check state on the switch again:
 
-```
+~~~
 n3k# sh run eigrp
 feature eigrp
 
 router eigrp test
   maximum-paths 5
   shutdown
-```
+~~~
 
-* Run puppet agent again to test for idempotency. You should NOT see `Cisco_router_eigrp[test]/ensure: created` in the log, indicating that the state has not changed:
+* Run Puppet agent again to test for idempotency. You should NOT see `Cisco_router_eigrp[test]/ensure: created` in the log, indicating that the state has not changed:
 
-```
+~~~
 [root@guestshell guestshell]# puppet agent -t
 Info: Retrieving pluginfacts
 Info: Retrieving plugin
@@ -666,11 +666,11 @@ Info: Loading facts
 Info: Caching catalog for n3k.cisco.com
 Info: Applying configuration version '1438344623'
 Notice: Applied catalog in 0.16 seconds
-```
+~~~
 
 * Test the `puppet resource` command while the feature is enabled:
 
-```
+~~~
 [root@guestshell guestshell]# puppet resource cisco_router_eigrp
 cisco_router_eigrp { 'test':
   ensure        => 'present',
@@ -678,7 +678,7 @@ cisco_router_eigrp { 'test':
   shutdown      => 'true',
 }
 
-```
+~~~
 *Note. This test manifest should be added to examples/demo_install.rb*
 
 * Alternative tests with `puppet resource`:
@@ -695,13 +695,13 @@ puppet resource cisco_router_eigrp "xyz" ensure=absent
 
 * Run [rubocop](https://rubygems.org/gems/rubocop) with the --lint option to validate the new code:
 
-```bash
+~~~bash
 % rubocop --lint type/cisco_router_eigrp.rb provider/cisco_router_eigrp/nxapi.rb
 Inspecting 2 files
 ..
 
 2 files inspected, no offenses detected
-```
+~~~
 
 * TBD: Run [puppet-lint](https://rubygems.org/gems/puppet-lint) against changed files.
 
