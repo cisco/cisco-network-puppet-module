@@ -146,7 +146,7 @@ Puppet agent is currently supported on:
 
  * Cisco NX-OS software release 7.0(3)I2(1) and later.
  * Cisco Nexus switch platform models: N95xx, N93xx, N30xx, N31xx.
- * Puppet version 4.0 and later.
+ * Open source Puppet version 4.0 or greater, or Puppet Enterprise 2015.2 or greater.
 
 Please ensure that the platform is running a supported version of NX-OS software.
 

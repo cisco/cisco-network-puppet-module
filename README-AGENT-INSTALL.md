@@ -15,7 +15,6 @@
 7. [Optional: Puppet Agent Persistence](#persistence)
 8. [Optional: Automated Installation Options](#auto-install)
 9. [References](#references)
-10. [Known Issues](#issues)
 
 ## <a name="overview">Overview</a>
 
@@ -121,6 +120,13 @@ nameserver 10.0.0.202
 domain mycompany.com
 search mycompany.com
 EOF
+~~~
+
+Optionally, configure a proxy server:
+
+~~~
+export http_proxy=http://proxy.yourdomain.com:<port>
+export https_proxy=https://proxy.yourdomain.com:<port>
 ~~~
 
 ## <a name="env-gs">Puppet Agent Environment: guestshell</a>
@@ -447,7 +453,7 @@ systemctl start my_puppet
 
 
 ----
-~~~bash
+~~~
 Copyright (c) 2014-2015 Cisco and/or its affiliates.
 
 Licensed under the Apache License, Version 2.0 (the "License");
