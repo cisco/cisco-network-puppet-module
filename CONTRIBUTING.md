@@ -4,7 +4,7 @@ Cisco Network Elements support a rich set of features to make networks robust, e
 ## Getting Started
 
 * Create a [GitHub account](https://github.com/signup/free)
-* Make sure you have a [cisco.com](cisco.com) account, if you need access to a Network Simulator to test your code.
+* Make sure you have a [cisco.com](http://cisco.com) account, if you need access to a Network Simulator to test your code.
 
 ## Making Changes
 
