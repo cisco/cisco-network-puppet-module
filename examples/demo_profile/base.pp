@@ -15,8 +15,5 @@
 class ciscopuppet::demo_profile::base {
   include ciscopuppet::install
   include ciscopuppet::demo_repo
-  # To apply the demo_cisco_patch_rpm manifest, uncomment the
-  # following line and modify the demo_cisco_patch_rpm.pp
-  # as instructed in the header. 
-  #include ciscopuppet::demo_cisco_patch_rpm
+  include ciscopuppet::demo_cisco_patch_rpm
 }

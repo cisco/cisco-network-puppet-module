@@ -14,18 +14,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# To apply this demo_cisco_patch_rpm manifest first you must setup your own
-# local repository and replace the '<>' markers with local repo information.
-
 class ciscopuppet::demo_cisco_patch_rpm {
 
-  $repo = '<http://example_repo.domain.com/repo>'
-  #Install a Patch file
-  $target = { 'target' => 'host' }
-  package { "${repo}/<n9000_sample-1.0.0-7.0.3.x86_64.rpm>":
+  $ciscoPatchName = 'n9000_sample-1.0.0-7.0.3.x86_64.rpm'
+  $ciscoPatchSource = "puppet:///modules/ciscopuppet/${ciscoPatchName}"
+  $ciscoPatchFile = "/bootflash/${ciscoPatchName}"
+
+  file { $ciscoPatchFile :
+    ensure => file,
+    source => $ciscoPatchSource,
+    owner  => 'root',
+    group  => 'root',
+    mode   => 'ug+rwx',
+  }
+
+  $settings = {'target' => 'host'}
+  package { 'n9000_sample':
     ensure           => present,
     provider         => 'nxapi',
-    source           => $::repo,
-    package_settings => $::target,
+    source           => $ciscoPatchFile,
+    package_settings => $settings,
   }
 }
