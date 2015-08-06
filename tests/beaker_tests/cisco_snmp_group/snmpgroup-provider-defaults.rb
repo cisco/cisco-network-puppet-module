@@ -74,18 +74,13 @@ test_name "TestCase :: #{testheader}" do
     # and an unexpected non-default group/role is absent
 
     # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd('show snmp group | i Role')
     on(agent, cmd_str) do
+      # Flag is set to false to check for presence of RegExp pattern in stdout.
       UtilityLib.search_pattern_in_output(stdout,
                                           [/Role: *network-admin/],
                                           false, self, logger)
-    end
-
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show snmp group | i Role')
-    on(agent, cmd_str) do
+      # Flag is set to true to check for absence of RegExp pattern in stdout.
       UtilityLib.search_pattern_in_output(stdout,
                                           [/Role: *foobar/],
                                           true, self, logger)
@@ -134,18 +129,13 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Checks snmpgroup instance on agent using switch show cli cmds.
   step 'TestStep :: Check snmpgroup instance state in CLI' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd('show snmp group | i Role')
     on(agent, cmd_str) do
+      # Flag is set to false to check for presence of RegExp pattern in stdout.
       UtilityLib.search_pattern_in_output(stdout,
                                           [/Role: *network-admin/],
                                           false, self, logger)
-    end
-
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show snmp group | i Role')
-    on(agent, cmd_str) do
+      # Flag is set to true to check for absence of RegExp pattern in stdout.
       UtilityLib.search_pattern_in_output(stdout,
                                           [/Role: *foobar/],
                                           true, self, logger)
