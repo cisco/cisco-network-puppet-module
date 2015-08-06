@@ -124,7 +124,7 @@ EOF
 
 Optionally, configure a proxy server:
 
-~~~
+~~~bash
 export http_proxy=http://proxy.yourdomain.com:<port>
 export https_proxy=https://proxy.yourdomain.com:<port>
 ~~~
