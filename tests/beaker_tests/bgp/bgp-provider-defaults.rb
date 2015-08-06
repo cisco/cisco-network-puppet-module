@@ -113,9 +113,9 @@ test_name "TestCase :: #{testheader}" do
   stepinfo = "Setup switch for cisco_bgp provider test"
   step "TestStep :: #{stepinfo}" do
 
-    # TODO: This currently hangs and never complete - file bug
-    #cmd_str = UtilityLib.get_vshell_cmd("conf t ; no feature bgp")
-    #on(agent, cmd_str)
+    # Remove feature bgp to put testbed into a clean starting state. 
+    cmd_str = UtilityLib.get_vshell_cmd("config t ; no feature bgp")
+    on(agent, cmd_str, {:acceptable_exit_codes => [0,2]})
 
     on(agent, show_run_bgp) do
       UtilityLib.search_pattern_in_output(stdout, [/feature bgp/],
