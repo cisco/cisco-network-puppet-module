@@ -15,6 +15,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added missing methods in cisco_ospf_vrf provider.
 - Style cleanup of many Beaker test scripts.
 - Fixed title pattern error in 'puppet resource cisco_snmp_group'.
+- Avoid inadvertently suppressing relevant exceptions.
 
 ## [0.9.0] - 2015-07-24
 ### Added

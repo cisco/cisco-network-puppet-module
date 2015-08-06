@@ -102,6 +102,7 @@ Puppet::Type.type(:cisco_ospf_vrf).provide(:nxapi) do
   end
 
   def destroy
+    fail "VRF default cannot be removed by cisco_ospf_vrf." if @resource[:vrf] == 'default'
     @property_flush[:ensure] = :absent
   end
 
@@ -201,14 +202,9 @@ Puppet::Type.type(:cisco_ospf_vrf).provide(:nxapi) do
   end
 
   def flush
-    vrf_name = "ospf: #{@resource[:ospf]} vrf: #{@resource[:vrf]}"
     if @property_flush[:ensure] == :absent
-      begin
-        @vrf.destroy
-        @vrf = nil
-      rescue RuntimeError
-        warning "Failed: Use cisco_ospf provider to remove #{vrf_name}"
-      end
+      @vrf.destroy
+      @vrf = nil
     else
       if @vrf.nil?
         new_vrf = true

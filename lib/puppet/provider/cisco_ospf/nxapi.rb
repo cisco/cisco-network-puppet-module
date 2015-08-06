@@ -28,20 +28,14 @@ Puppet::Type.type(:cisco_ospf).provide(:nxapi) do
   def self.instances
     ospf_instances = []
     Cisco::RouterOspf.routers.each { |name, ospf_instance|
-      begin
-        debug "Checking resource OSPF #{name}"
-        ospf_instances << new(
-          :name => name,
-          :ospf => ospf_instance,
-          :ensure => :present)
-      rescue RuntimeError => e
-        warning "Failed to retrieve resource OSPF \"#{name}\: #{e.message}"
-      end
+      debug "Checking resource OSPF #{name}"
+      ospf_instances << new(
+        :name => name,
+        :ospf => ospf_instance,
+        :ensure => :present)
     }
 
     return ospf_instances
-  rescue RuntimeError => e
-    fail(e.message)
   end # self.instances
 
   def self.prefetch(resources)

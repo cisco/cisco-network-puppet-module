@@ -67,9 +67,6 @@ Puppet::Type.type(:cisco_command_config).provide(:nxapi) do
       debug "Minimum changeset to satisfy manifest:\n>#{@resource[:command]}<"
     end
     return @property_hash[:command]
-
-  rescue Cisco::CliError => e
-    fail e.message
   end # command
 
   def command=(cmds)
@@ -78,8 +75,9 @@ Puppet::Type.type(:cisco_command_config).provide(:nxapi) do
     debug "Output from node:\n#{output}" unless output.nil?
 
   rescue Cisco::CliError => e
-    info "Successfully updated:\n#{e.previous}" unless e.previous.empty?
-    error e.message
+    # Tell the user what succeeded, then fail with the actual failure.
+    info "Successfully updated:\n#{e.previous.join("\n")}" unless e.previous.empty?
+    raise
   end # command=
 
 end # Puppet::Type

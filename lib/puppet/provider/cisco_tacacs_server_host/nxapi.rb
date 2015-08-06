@@ -37,19 +37,14 @@ Puppet::Type.type(:cisco_tacacs_server_host).provide(:nxapi) do
   def self.instances
     tacacs_server_hosts = []
     Cisco::TacacsServerHost.hosts.each { | host_name, tacacs_server_host |
-      begin
-        tacacs_server_hosts << new(
-          :host    => host_name,
-          :name    => host_name,
-          :ensure  => :present,
-          :port    => tacacs_server_host.port,
-          :timeout => tacacs_server_host.timeout,
-          :encryption_type => tacacs_server_host.encryption_type,
-          :encryption_password  => tacacs_server_host.encryption_password)
-
-      rescue RuntimeError => e
-        warning "Failed to retrieve resource for #{host_name}: #{e.message}"
-      end
+      tacacs_server_hosts << new(
+        :host    => host_name,
+        :name    => host_name,
+        :ensure  => :present,
+        :port    => tacacs_server_host.port,
+        :timeout => tacacs_server_host.timeout,
+        :encryption_type => tacacs_server_host.encryption_type,
+        :encryption_password  => tacacs_server_host.encryption_password)
     }
     return tacacs_server_hosts
   end
@@ -147,8 +142,6 @@ Puppet::Type.type(:cisco_tacacs_server_host).provide(:nxapi) do
       @tacacs_server_host.encryption_key_set(encryption_type_value,
                                              encryption_pw_value)
     end
-  rescue RuntimeError => e
-    fail e.message
   end
 
   def update_port_or_timeout_attribute(attribute)

@@ -59,8 +59,6 @@ Puppet::Type.type(:cisco_snmp_group).provide(:nxapi) do
     @property_hash[:ensure]  = :present
     @property_hash[:group] = @resource[:group]
     return true
-  rescue RuntimeError => e
-    fail(e.message)
   end
 
   def create

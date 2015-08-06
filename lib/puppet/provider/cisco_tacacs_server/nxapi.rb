@@ -79,8 +79,6 @@ Puppet::Type.type(:cisco_tacacs_server).provide(:nxapi) do
        :source_interface      => src_intf)
     debug "Found a tacacs server on the device."
     return tacacs_servers
-  rescue RuntimeError => e
-    fail e.message
   end # self.instances
 
   def self.prefetch(resources)
@@ -96,8 +94,6 @@ Puppet::Type.type(:cisco_tacacs_server).provide(:nxapi) do
 
     @tacacs_server = Cisco::TacacsServer.new
 
-    fail("Could not create a tacacs server.") if @tacacs_server.nil?
-
     debug "Created a tacacs server on #{@resource[:name]}"
 
     # Call all property setters
@@ -111,16 +107,12 @@ Puppet::Type.type(:cisco_tacacs_server).provide(:nxapi) do
       @resource[:source_interface].nil?
 
     tacacs_server_encryption_key_set 
-  rescue RuntimeError => e
-    fail e.message
   end # create
 
   def destroy
     debug "Removing a tacacs server."
     @tacacs_server.destroy
     @tacacs_server = nil
-  rescue RuntimeError => e
-    fail e.message
   end # destroy
 
   def timeout
@@ -142,14 +134,10 @@ Puppet::Type.type(:cisco_tacacs_server).provide(:nxapi) do
     end
 
     @tacacs_server.timeout = timeout_value
-  rescue RuntimeError => e
-    fail e.message
   end # timeout=
 
   def directed_request=(should_value)
     @tacacs_server.directed_request = (should_value == :true)
-  rescue RuntimeError => e
-    fail e.message
   end # directed_request=
 
   def deadtime
@@ -173,8 +161,6 @@ Puppet::Type.type(:cisco_tacacs_server).provide(:nxapi) do
     end
 
     @tacacs_server.deadtime = deadtime_value
-  rescue RuntimeError => e
-    fail e.message
   end # deadtime=
 
   def source_interface=(should_value)
@@ -185,8 +171,6 @@ Puppet::Type.type(:cisco_tacacs_server).provide(:nxapi) do
     end
     
     @tacacs_server.source_interface = source_interface_value
-  rescue RuntimeError => e
-    fail e.message
   end # source_interface=
 
   def encryption_password=(should_value)
@@ -230,8 +214,6 @@ Puppet::Type.type(:cisco_tacacs_server).provide(:nxapi) do
 
   def flush
     tacacs_server_encryption_key_set if @property_flush[:encryption_password]
-  rescue RuntimeError => e
-    fail e.message
   end
 
 end # provider

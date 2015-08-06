@@ -177,7 +177,5 @@ Puppet::Type.type(:cisco_interface_ospf).provide(:nxapi) do
     else
       set_properties
     end 
-  rescue RuntimeError => e
-    fail e.message
   end
 end
