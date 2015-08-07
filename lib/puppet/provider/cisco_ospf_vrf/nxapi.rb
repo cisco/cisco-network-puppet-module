@@ -102,7 +102,7 @@ Puppet::Type.type(:cisco_ospf_vrf).provide(:nxapi) do
   end
 
   def destroy
-    fail "VRF default cannot be removed by cisco_ospf_vrf." if @resource[:vrf] == 'default'
+    fail "VRF default cannot be removed by cisco_ospf_vrf. Use cisco_ospf to remove the entire OSPF process including the default VRF." if @resource[:vrf] == 'default'
     @property_flush[:ensure] = :absent
   end
 
