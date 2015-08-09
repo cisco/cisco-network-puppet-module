@@ -1,0 +1,16 @@
+[Unit]
+Description=demo-one daemon
+After=syslog.target network.target auditd.service
+ 
+[Service]
+Environment=
+ExecStartPre=
+# *** The next line is the important one ***
+ExecStart=/usr/bin/demo-one 
+ExecReload=/bin/kill -HUP
+KillMode=process
+Restart=on-failure
+RestartSec=42s
+ 
+[Install]
+WantedBy=multi-user.target
