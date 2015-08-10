@@ -35,7 +35,11 @@ Before the module can be run properly on the agent, enable pluginsync in the pup
 
 You must also install the following gems on the agent: net_http_unix, cisco_nxapi,
 and cisco_node_utils. Since these have dependencies on each other, when you 
-install cisco_node_utils, the other two gems will be automatically installed. You can include the package provider in the manifest to automate installing these gems as shown in the following example.
+install cisco_node_utils, the other two gems will be automatically installed.
+Gems installed under Puppet are not persistent across system reload on Nexus
+switches. To avoid issues after reload, you should include the package
+provider in the manifest to automate installing these gems, as shown in
+the following example.
 
 ~~~Puppet
 package { 'cisco_node_utils' :
