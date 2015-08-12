@@ -191,6 +191,45 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check ospfintf instance absence on agent :: #{result}")
   end
 
+  # @step [Step] Verify ability to configure and update ospf area
+  step "TestStep :: Check ospfintf area change on agent" do
+    area1 = "0.0.0.5"
+    area2 = "0.0.0.6"
+    on(master, OspfIntfLib.create_ospfintf_area_manifest(area1))
+    # Expected exit_code is 2 since this is a puppet agent cmd with change.
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+      "agent -t", options)
+    on(agent, cmd_str, {:acceptable_exit_codes => [2]})
+    # check for successfull configured area
+    cmd_str = UtilityLib.get_vshell_cmd("show running-config ospf")
+    on(agent, cmd_str, {:acceptable_exit_codes => [0]}) do
+      UtilityLib.search_pattern_in_output(stdout, [/router ospf test/,
+        /interface Ethernet1\/4/,
+        /ip router ospf test area #{area1}/],
+        false, self, logger)
+    end
+    # update area to area2
+    on(master, OspfIntfLib.create_ospfintf_area_manifest(area2))
+    # Expected exit_code is 2 since this is a puppet agent cmd with change.
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+      "agent -t", options)
+    on(agent, cmd_str, {:acceptable_exit_codes => [2]})
+    # check for successfull configured area
+    cmd_str = UtilityLib.get_vshell_cmd("show running-config ospf")
+    on(agent, cmd_str, {:acceptable_exit_codes => [0]}) do
+      UtilityLib.search_pattern_in_output(stdout, [/router ospf test/,
+        /interface Ethernet1\/4/,
+        /ip router ospf test area #{area2}/],
+        false, self, logger)
+    end
+    # cleanup
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+      "resource cisco_interface_ospf 'ethernet1/4 test' ensure=absent", options)
+    on(agent, cmd_str)
+
+    logger.info("Check ospfintf area change on agent :: #{result}")
+  end
+
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   UtilityLib.raise_passfail_exception(result, testheader, self, logger)
 

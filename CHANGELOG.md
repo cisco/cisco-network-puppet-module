@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Style cleanup of many Beaker test scripts.
 - Fixed title pattern error in 'puppet resource cisco_snmp_group'.
 - Avoid inadvertently suppressing relevant exceptions.
+- Added dotted-decimal munging for area in cisco_interface_ospf
 
 ## [0.9.0] - 2015-07-24
 ### Added

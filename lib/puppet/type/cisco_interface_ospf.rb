@@ -223,20 +223,26 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
 
       Integer(value)     rescue valid_integer = false
       IPAddr.new(value)  rescue valid_ipaddr  = false
-      fail "area parameter - #{@resource[:area]} must be either a valid integer or a valid ip address" if valid_integer == false and valid_ipaddr == false
+      fail "area [#{value}] must be a valid ip address or integer" if
+        valid_integer == false and valid_ipaddr == false
     }
 
     munge { |value|
+      # Coerce numeric area to the expected dot-decimal format.
+      value = IPAddr.new(value, Socket::AF_INET) unless value.to_s[/\./]
       value.to_s
     }
 
   end
 
-  # validation for message_digest_key_id,
+  # validation for area, message_digest_key_id,
   # message_digest_encryption_type, message_digest_encryption_password
   # and message_digest_password combination
 
   validate do
+    fail("area must be supplied when ensure=present") if
+      self[:ensure] == :present and self[:area].nil?
+
     if (self[:message_digest_key_id].nil?) and
          (!self[:message_digest_algorithm_type].nil? or
           !self[:message_digest_encryption_type].nil? or

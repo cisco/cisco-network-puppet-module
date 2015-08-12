@@ -107,6 +107,10 @@ test_name "TestCase :: #{testheader}" do
         {"cost" => OspfIntfLib::COST_NEGATIVE},
         true, self, logger)
     end
+    # cleanup partially configured resource
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+      "resource cisco_interface_ospf 'ethernet1/4 test' ensure=absent", options)
+    on(agent, cmd_str)
 
     logger.info("Check cisco_intf_ospf resource absence on agent :: #{result}")
   end

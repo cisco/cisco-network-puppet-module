@@ -98,6 +98,16 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Get resource present manifest from master :: #{result}")
   end
 
+  # @step [Step] Test idempotence by running the same manifest
+  step "TestStep :: Test idempotence by running the same manifest" do
+    # Expected exit_code is 0 since there should not be any changes this time
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+      "agent -t", options)
+    on(agent, cmd_str, {:acceptable_exit_codes => [0]})
+
+    logger.info("Test idempotence by running the same manifest :: #{result}")
+  end
+
   # @step [Step] Checks cisco_intf_ospf resource on agent using resource cmd.
   step "TestStep :: Check cisco_intf_ospf resource presence on agent" do 
     # Expected exit_code is 0 since this is a puppet resource cmd.
