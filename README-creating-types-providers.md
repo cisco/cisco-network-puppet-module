@@ -4,17 +4,17 @@
 
 * [Overview](#overview)
 * [Start here: Clone the Repo](#clone)
-* [Basic Example: feature bash-shell](#example)
-   * [Step 1. Type: feature bash-shell](#type)
-   * [Step 2. Provider: feature bash-shell](#prov)
-   * [Step 3. Testing: feature bash-shell](#testing)
-   * [Static Analysis](#lint)
+* [Basic Example: feature bash-shell](#simp_example)
+   * [Step 1. Type: feature bash-shell](#simp_type)
+   * [Step 2. Provider: feature bash-shell](#simp_prov)
+   * [Step 3. Testing: feature bash-shell](#simp_test)
+   * [Static Analysis](#simp_sa)
 * [Complex Example: router eigrp](#comp_example)
    * [Step 1. Type: router eigrp](#comp_type)
    * [Step 2. Provider: router eigrp](#comp_prov)
-   * [Step 3. Testing: router eigrp](#comp_testing)
-   * [Static Analysis](#comp_lint)
-* [Conclusion](#conclusion)
+   * [Step 3. Testing: router eigrp](#comp_test)
+   * [Static Analysis](#comp_sa)
+* [Next Steps](#next)
 
 ## <a name="overview">Overview</a>
 
@@ -42,7 +42,7 @@ First install the code base. Clone the ciscopuppet repo into a workspace:
 git clone https://github.com/puppetlabs/cisco-ciscopuppet
 ~~~
 
-## <a name="simple">Basic Example: feature bash-shell</a>
+## <a name="simp_example">Basic Example: feature bash-shell</a>
 
 The NX-OS CLI for `feature bash-shell` is a simple on / off style configuration:
 
@@ -52,7 +52,7 @@ This resource has no other properties.
 
 *Note. This example disables the bash-shell, so use the guestshell environment when testing.*
 
-## <a name="type">Step 1. Type: feature bash-shell</a>
+## <a name="simp_type">Step 1. Type: feature bash-shell</a>
 
 * There are template files in `/docs` that might help when you write new types and providers. These templates provide most of the necessary code with a few customizations required for a new resource. Copy the `template-type-feature.rb` file to use as the basis for our new `cisco_bash_shell.rb` type file:
 
@@ -118,7 +118,7 @@ Puppet::Type.newtype(:bash_shell) do
 end
 ~~~
 
-## <a name="prov">Step 2. Provider: feature bash-shell</a>
+## <a name="simp_prov">Step 2. Provider: feature bash-shell</a>
 
 * The provider files for Cisco NX-OS are named nxapi.rb and are each stored in a unique provider directory. Create a new directory for the bash_shell provider and use `template-provider-feature.rb` to populate the new provider file:
 
@@ -190,7 +190,7 @@ This is the completed bash_shell provider based on `template-provider-feature.rb
 end
 ~~~
 
-## <a name="testing">Step 3. Testing: feature bash-shell</a>
+## <a name="simp_test">Step 3. Testing: feature bash-shell</a>
 
 Test the new resource using the guestshell environment. See [README-AGENT-INSTALL](#README-AGENT-INSTALL.md) for using Puppet agent in guestshell.
 
@@ -282,7 +282,7 @@ puppet resource cisco_bash_shell 'test_off' ensure=absent
 ~~~
 
 
-## <a name="lint">Static Analysis</a>
+## <a name="simp_sa">Static Analysis</a>
 
 * rubocop is a Ruby static analysis tool. Run [rubocop](https://rubygems.org/gems/rubocop) with the --lint option to validate the new code:
 
@@ -299,7 +299,7 @@ Inspecting 2 files
 * TBD: Run [puppet-lint](https://rubygems.org/gems/puppet-lint) against changed files.
 
 
-## <a name="simple">Complex Example: router eigrp</a>
+## <a name="comp_example">Complex Example: router eigrp</a>
 
 This resource type and provider exercise will build on the router_eigrp API example shown in the cisco node_utils [README-creating-node_utils-APIs](#README-creating-node_utils-APIs.md) document.
 
@@ -607,7 +607,7 @@ Puppet::Type.type(:cisco_router_eigrp).provide(:nxapi) do
 end
 ~~~
 
-## <a name="comp_testing">Step 3. Testing: router eigrp</a>
+## <a name="comp_test">Step 3. Testing: router eigrp</a>
 
 * Create a manifest for the new resource:
 
@@ -691,7 +691,7 @@ puppet resource cisco_router_eigrp "xyz" shutdown='default'
 puppet resource cisco_router_eigrp "xyz" ensure=absent
 ~~~
 
-## <a name="comp_lint">Static Analysis</a>
+## <a name="comp_sa">Static Analysis</a>
 
 * Run [rubocop](https://rubygems.org/gems/rubocop) with the --lint option to validate the new code:
 
