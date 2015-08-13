@@ -1,5 +1,5 @@
 #
-# The NXAPI provider for cisco___RESOURCE_NAME__.
+# The NXAPI provider for cisco_X__RESOURCE_NAME__X.
 #
 # Copyright (c) 2015 Cisco and/or its affiliates.
 #
@@ -24,8 +24,8 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
-Puppet::Type.type(:cisco___RESOURCE_NAME__).provide(:nxapi) do
-  desc "The NXAPI provider for cisco___RESOURCE_NAME__."
+Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:nxapi) do
+  desc "The NXAPI provider for cisco_X__RESOURCE_NAME__X."
 
   confine :feature => :cisco_node_utils
 
@@ -40,24 +40,24 @@ Puppet::Type.type(:cisco___RESOURCE_NAME__).provide(:nxapi) do
   # -----------------------------------------------------------------------
   # Property symbol arrays for method auto-generation. There are separate arrays
   # because the boolean-based methods are processed slightly different.
-  __CONSTANT_NAME___NON_BOOL_PROPS = [
-    :__PROPERTY_INT__,
+  X__CONSTANT_NAME__X_NON_BOOL_PROPS = [
+    :X__PROPERTY_INT__X,
   ]
-  __CONSTANT_NAME___BOOL_PROPS = [
-    :__PROPERTY_BOOL__,
+  X__CONSTANT_NAME__X_BOOL_PROPS = [
+    :X__PROPERTY_BOOL__X,
   ]
-  __CONSTANT_NAME___ALL_PROPS =
-    __CONSTANT_NAME___NON_BOOL_PROPS + __CONSTANT_NAME___BOOL_PROPS
+  X__CONSTANT_NAME__X_ALL_PROPS =
+    X__CONSTANT_NAME__X_NON_BOOL_PROPS + __CONSTANT_NAME___BOOL_PROPS
 
   # Dynamic method generation for getters & setters
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, "@__RESOURCE_NAME__",
-                                            __CONSTANT_NAME___NON_BOOL_PROPS)
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, "@__RESOURCE_NAME__",
-                                            __CONSTANT_NAME___BOOL_PROPS)
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, "@X__RESOURCE_NAME__X",
+                                            X__CONSTANT_NAME__X_NON_BOOL_PROPS)
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, "@X__RESOURCE_NAME__X",
+                                            X__CONSTANT_NAME__X_BOOL_PROPS)
 
   def initialize(value={})
     super(value)
-    @__RESOURCE_NAME__ = Cisco::__CLASS_NAME__.routers[@property_hash[:name]]
+    @X__RESOURCE_NAME__X = Cisco::X__CLASS_NAME__X.routers[@property_hash[:name]]
     @property_flush = {}
   end
 
@@ -68,10 +68,10 @@ Puppet::Type.type(:cisco___RESOURCE_NAME__).provide(:nxapi) do
       :ensure => :present,
     }
     # Call node_utils getter for each property
-    __CONSTANT_NAME___NON_BOOL_PROPS.each { |prop|
+    X__CONSTANT_NAME__X_NON_BOOL_PROPS.each { |prop|
       current_state[prop] = inst.send(prop)
     }
-    __CONSTANT_NAME___BOOL_PROPS.each { |prop|
+    X__CONSTANT_NAME__X_BOOL_PROPS.each { |prop|
       val = inst.send(prop)
       current_state[prop] = val.nil? ? nil : (val ? :true : :false)
     }
@@ -80,7 +80,7 @@ Puppet::Type.type(:cisco___RESOURCE_NAME__).provide(:nxapi) do
 
   def self.instances
     instance_array = []
-    Cisco::__CLASS_NAME__.routers.each { | instance_name, inst |
+    Cisco::X__CLASS_NAME__X.routers.each { | instance_name, inst |
       begin
         instance_array << get_properties(instance_name, inst)
       end
@@ -109,7 +109,7 @@ Puppet::Type.type(:cisco___RESOURCE_NAME__).provide(:nxapi) do
   end
 
   def set_properties(new_instance=false)
-    __CONSTANT_NAME___ALL_PROPS.each { |prop|
+    X__CONSTANT_NAME__X_ALL_PROPS.each { |prop|
       if @resource[prop]
         if new_instance
           # Call puppet setter to set @property_flush[prop]
@@ -117,8 +117,8 @@ Puppet::Type.type(:cisco___RESOURCE_NAME__).provide(:nxapi) do
         end
         unless @property_flush[prop].nil?
           # Call node_utils setter to update node
-          @__RESOURCE_NAME__.send("#{prop}=", @property_flush[prop]) if
-            @__RESOURCE_NAME__.respond_to?("#{prop}=")
+          @X__RESOURCE_NAME__X.send("#{prop}=", @property_flush[prop]) if
+            @X__RESOURCE_NAME__X.respond_to?("#{prop}=")
         end
       end
     }
@@ -126,13 +126,13 @@ Puppet::Type.type(:cisco___RESOURCE_NAME__).provide(:nxapi) do
 
   def flush
     if @property_flush[:ensure] == :absent
-      @__RESOURCE_NAME__.destroy
-      @__RESOURCE_NAME__ = nil
+      @X__RESOURCE_NAME__X.destroy
+      @X__RESOURCE_NAME__X = nil
     else
       # Create/Update
-      if @__RESOURCE_NAME__.nil?
+      if @X__RESOURCE_NAME__X.nil?
         new_instance = true
-        @__RESOURCE_NAME__ = Cisco::__CLASS_NAME__.new(@resource[:name])
+        @X__RESOURCE_NAME__X = Cisco::X__CLASS_NAME__X.new(@resource[:name])
       end
       set_properties(new_instance)
     end

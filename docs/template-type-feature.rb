@@ -1,5 +1,5 @@
 #
-# Puppet resource type for feature __RESOURCE_NAME__
+# Puppet resource type for feature X__RESOURCE_NAME__X
 #
 # Copyright (c) 2014-2015 Cisco and/or its affiliates.
 #
@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Puppet::Type.newtype(:__RESOURCE_NAME__) do
+Puppet::Type.newtype(:X__RESOURCE_NAME__X) do
 
   @doc = "Manages configuration of feature bash-shell
 
@@ -27,7 +27,7 @@ Puppet::Type.newtype(:__RESOURCE_NAME__) do
 
   Example:
   ```
-    cisco___RESOURCE_NAME__ {'xxxxx' :
+    cisco_X__RESOURCE_NAME__X {'xxxxx' :
       ensure => present,
     }
   ```

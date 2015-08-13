@@ -64,7 +64,7 @@ cp  cisco-ciscopuppet/docs/template-type-feature.rb \
 * Edit `cisco_bash_shell.rb` and substitute the placeholder text as shown here:
 
 ~~~bash
-/__RESOURCE_NAME__/bash_shell/
+/X__RESOURCE_NAME__X/bash_shell/
 ~~~
 
 #### Example: cisco_bash_shell.rb type file
@@ -132,9 +132,9 @@ cp  cisco-ciscopuppet/docs/template-provider-feature.rb \
 * Edit `nxapi.rb` and substitute the placeholder text as shown here:
 
 ~~~bash
-/__RESOURCE_NAME__/bash_shell/
+/X__RESOURCE_NAME__X/bash_shell/
 
-/__CLASS_NAME__/BashShell/
+/X__CLASS_NAME__X/BashShell/
 ~~~
 
 #### Example: cisco_bash_shell.rb provider file
@@ -334,13 +334,13 @@ cp  cisco-ciscopuppet/docs/template-type-router.rb \
 * Edit `cisco_router_eigrp.rb` and substitute the placeholder text as shown here:
 
 ~~~bash
-/__CLASS_NAME__/RouterEigrp/
+/X__CLASS_NAME__X/RouterEigrp/
 
-/__RESOURCE_NAME__/router_eigrp/
+/X__RESOURCE_NAME__X/router_eigrp/
 
-/__PROPERTY_INT__/maximum_paths/
+/X__PROPERTY_INT__X/maximum_paths/
 
-/__PROPERTY_BOOL__/shutdown/
+/X__PROPERTY_BOOL__X/shutdown/
 ~~~
 
 There might be additional steps to follow in the template.
@@ -455,15 +455,15 @@ cp  cisco-ciscopuppet/docs/template-provider-router.rb \
 
 
 ~~~bash
-/__CLASS_NAME__/RouterEigrp/
+/X__CLASS_NAME__X/RouterEigrp/
 
-/__RESOURCE_NAME__/router_eigrp/
+/X__RESOURCE_NAME__X/router_eigrp/
 
-/__CONSTANT_NAME__/ROUTER_EIGRP/
+/X__CONSTANT_NAME__X/ROUTER_EIGRP/
 
-/__PROPERTY_INT__/maximum_paths/
+/X__PROPERTY_INT__X/maximum_paths/
 
-/__PROPERTY_BOOL__/shutdown/
+/X__PROPERTY_BOOL__X/shutdown/
 ~~~
 
 There might be additional steps to follow in the template.

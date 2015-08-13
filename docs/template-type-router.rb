@@ -1,5 +1,5 @@
 #
-# Puppet resource type for __RESOURCE_NAME__
+# Puppet resource type for X__RESOURCE_NAME__X
 #
 # Copyright (c) 2014-2015 Cisco and/or its affiliates.
 #
@@ -15,25 +15,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Puppet::Type.newtype(:cisco___RESOURCE_NAME__) do
+Puppet::Type.newtype(:cisco_X__RESOURCE_NAME__X) do
 
   # ---------------------------------------------------------------
   # STEP 1. Create a @doc entry to describe the resource and usage
   # ---------------------------------------------------------------
-  @doc = "Manages configuration of a __RESOURCE_NAME__ instance
+  @doc = "Manages configuration of a X__RESOURCE_NAME__X instance
 
   ```
-  cisco___RESOURCE_NAME__ {'<string>':
+  cisco_X__RESOURCE_NAME__X {'<string>':
     ..attributes..
   }
   ```
 
-  `<string>` is the name of the __RESOURCE_NAME__ instance.
+  `<string>` is the name of the X__RESOURCE_NAME__X instance.
 
   Example:
 
   ```
-    cisco___RESOURCE_NAME__ { 'green' :
+    cisco_X__RESOURCE_NAME__X { 'green' :
       ensure => present,
       # ---------------------------------------------------------------
       # STEP 2. Include an example of each property this resource will
@@ -66,7 +66,7 @@ Puppet::Type.newtype(:cisco___RESOURCE_NAME__) do
   end
 
   newparam(:name, :namevar => true) do
-    desc "Name of the __RESOURCE_NAME__ instance. Valid values are string."
+    desc "Name of the X__RESOURCE_NAME__X instance. Valid values are string."
   end
 
   # ---------------------------------------------------------------
@@ -76,7 +76,7 @@ Puppet::Type.newtype(:cisco___RESOURCE_NAME__) do
   # -------------------------
   # EXAMPLE. INTEGER PROPERTY
   # -------------------------
-  newproperty(:__PROPERTY_INT__) do
+  newproperty(:X__PROPERTY_INT__X) do
     desc " xxxxxxxxx.  Valid values are integer, keyword 'default'."
 
     munge { |value|
@@ -84,7 +84,7 @@ Puppet::Type.newtype(:cisco___RESOURCE_NAME__) do
       begin
         value = Integer(value) unless value == :default
       rescue
-        fail "__PROPERTY_INT__ must be a valid integer, or default."
+        fail "X__PROPERTY_INT__X must be a valid integer, or default."
       end
       value
     }
@@ -93,8 +93,8 @@ Puppet::Type.newtype(:cisco___RESOURCE_NAME__) do
   # -------------------------
   # EXAMPLE. BOOLEAN PROPERTY
   # -------------------------
-  newproperty(:__PROPERTY_BOOL__) do
-    desc "__PROPERTY_BOOL__ state of the interface."
+  newproperty(:X__PROPERTY_BOOL__X) do
+    desc "X__PROPERTY_BOOL__X state of the interface."
 
     newvalues(:true, :false, :default)
   end

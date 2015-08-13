@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed title pattern error in 'puppet resource cisco_snmp_group'.
 - Avoid inadvertently suppressing relevant exceptions.
 - Added dotted-decimal munging for area in cisco_interface_ospf
+- Modified template placeholder names to meet lint reqs
 
 ## [0.9.0] - 2015-07-24
 ### Added

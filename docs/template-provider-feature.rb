@@ -1,5 +1,5 @@
 #
-# Puppet provider for feature __RESOURCE_NAME__
+# Puppet provider for feature X__RESOURCE_NAME__X
 #
 # Copyright (c) 2014-2015 Cisco and/or its affiliates.
 #
@@ -17,7 +17,7 @@
 
 require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
 
-Puppet::Type.type(:cisco___RESOURCE_NAME__).provide(:nxapi) do
+Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:nxapi) do
 
   confine :feature => :cisco_node_utils
 
@@ -30,7 +30,7 @@ Puppet::Type.type(:cisco___RESOURCE_NAME__).provide(:nxapi) do
 
   def self.instances
     inst = []
-    return inst unless Cisco::__CLASS_NAME__.feature_enabled
+    return inst unless Cisco::X__CLASS_NAME__X.feature_enabled
     current_state = { :name => 'default', :ensure => :present}
     inst << new(current_state)
     return inst
@@ -56,9 +56,9 @@ Puppet::Type.type(:cisco___RESOURCE_NAME__).provide(:nxapi) do
   def flush
     case @property_flush[:ensure]
     when :present
-      Cisco::__CLASS_NAME__.new.feature_enable
+      Cisco::X__CLASS_NAME__X.new.feature_enable
     when :absent
-      Cisco::__CLASS_NAME__.new.feature_disable
+      Cisco::X__CLASS_NAME__X.new.feature_disable
     end
   end
 
