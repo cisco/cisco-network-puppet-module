@@ -1,4 +1,5 @@
-# Sample site.pp manifest used to demo ipv6 bgp 
+#
+# Puppet resource type for feature X__RESOURCE_NAME__X
 #
 # Copyright (c) 2014-2015 Cisco and/or its affiliates.
 #
@@ -14,6 +15,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-node 'cisco_bgpv6_device_name' {
-  include ciscopuppet::demo_bgp_ipv6
-}
+Puppet::Type.newtype(:X__RESOURCE_NAME__X) do
+
+  @doc = "Manages configuration of feature bash-shell
+
+  ```
+  cisco_bash_shell {'<title>':
+    ..attributes..
+  }
+  ```
+
+  Example:
+  ```
+    cisco_X__RESOURCE_NAME__X {'xxxxx' :
+      ensure => present,
+    }
+  ```
+  "
+
+  ensurable
+
+  newparam(:name, :namevar => true) do
+    desc "Resource title. Valid values are string."
+  end
+
+  # There are no additional properties for this command.
+end

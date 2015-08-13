@@ -71,6 +71,30 @@ EOF"
     return manifest_str
   end
 
+  # Method to configure the given area inside a manifest for ensure present
+  # @param area is used to set the area for the manifest
+  # @param intf is used to optionally specify the interface to use
+  # @result manifest_str is the newly constructed manifest
+  def OspfIntfLib.create_ospfintf_area_manifest(area, intf='ethernet1/4')
+    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+node default {
+  cisco_ospf { 'test':
+    ensure                   => present,
+  }
+
+  cisco_interface { '#{intf}':
+    switchport_mode          => disabled,
+  }
+
+  cisco_interface_ospf { '#{intf} test':
+    ensure                   => present,
+    area                     => '#{area}',
+  }
+}
+EOF"
+    return manifest_str
+  end
+
   # Method to create a manifest for OSPFINTF resource attribute 'ensure' where
   # 'ensure' is set to absent.
   # @param none [None] No input parameters exist. 
@@ -134,6 +158,7 @@ node default {
 
   cisco_interface_ospf { 'ethernet1/4 test':
     ensure                   => present,
+    area                     => 1,
     cost                     => #{OspfIntfLib::COST_NEGATIVE},
   }
 }

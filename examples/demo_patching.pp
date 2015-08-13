@@ -14,33 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# To apply this demo_patching manifest first you must setup your own local
+# repository and replace the '<>' markers with your local repo information.
+
 class ciscopuppet::demo_patching {
-  $repo = 'http://example.domain.com/repo'
-  yumrepo { 'reponame' :
-    name     => 'reponame',
-    baseurl  => $repo,
-    enabled  => 1,
-    gpgcheck => 0,
-  }
 
   # Handle differences between Native and Guestshell#
 
   case $::osfamily  {
-    # TODO: 'RedHat' is no longer a value returned in the GS
-    # by facter.  This needs to be updated to another value
-    # once we identify one.
     'RedHat': {    # GuestShell
-    $rpmMibSource = $repo
-
-    # GS/Centos: systemd services
-    $svcDemoTarget = '/usr/lib/systemd/system/demo-one.service'
-    $svcDemoSource = 'puppet:///modules/ciscopuppet/demo-one.service'
+      # GS/Centos: systemd services
+      $svcDemoTarget = '/usr/lib/systemd/system/demo-one.service'
+      $svcDemoSource = 'puppet:///modules/ciscopuppet/demo-one.service'
     }
-
-    'wrLinux':  {    # Native
-    $rpmMibSource = $repo
-
-    # Native/WRL: init.d services
+    'cisco-wrlinux':  {    # Native
+      # Native/WRL: init.d services
       $svcDemoTarget = '/etc/init.d/demo-one'
       $svcDemoSource = 'puppet:///modules/ciscopuppet/demo-one.initd'
     }
@@ -50,34 +38,56 @@ class ciscopuppet::demo_patching {
 
   #Use Case 1: install cisco package
 
-  $rpmMib = "${rpmMibSource}/n9000_sample-1.0.0-7.0.3.x86_64.rpm"
+  $ciscoPatchName = 'n9000_sample-1.0.0-7.0.3.x86_64.rpm'
+  $ciscoPatchSource = "puppet:///modules/ciscopuppet/${ciscoPatchName}"
+  $ciscoPatchFile = "/bootflash/${ciscoPatchName}"
+
+  file { $ciscoPatchFile :
+    ensure => file,
+    source => $ciscoPatchSource,
+    owner  => 'root',
+    group  => 'root',
+    mode   => 'ug+rwx',
+  }
+
   $settings = {'target' => 'host'}
   package { 'n9000_sample':
     ensure           => present,
     provider         => 'nxapi',
-    source           => $rpmMib,
+    source           => $ciscoPatchFile,
     package_settings => $settings,
   }
 
-  #Use Case 2: install third party package:
+  #Use Case 2: install third party package and
+  #  start the service:
 
-  $rpmDemo = "${repo}/demo-one-1.0-1.x86_64.rpm"
-  package { 'demo-one':
-    ensure => present,
-    source => $rpmDemo,
-  }
+  #To install third party packages uncomment the
+  #following and replace the '<>' markers with
+  #your information.
 
-  #Use Case 3: install and start a service locally
-
-  file { $svcDemoTarget :
-    ensure => file,
-    source => $svcDemoSource,
-    owner  => 'root',
-    group  => root,
-    mode   => 'ug+rwx',
-  }
-
-  service { 'demo-one':
-    ensure => running,
-  }
+  # $repo = '<>'
+  # yumrepo { '<>' :
+  #   name     => '<>',
+  #   baseurl  => $repo,
+  #   enabled  => 1,
+  #   gpgcheck => 0,
+  # }
+  #
+  # $rpmDemo = "${repo}/<thirdParty.rpm>"
+  # package { 'thirdParty':
+  #   ensure => present,
+  #   source => $rpmDemo,
+  # }
+  #
+  # file { $svcDemoTarget :
+  #   ensure => file,
+  #   source => $svcDemoSource,
+  #   owner  => 'root',
+  #   group  => root,
+  #   mode   => 'ug+rwx',
+  # }
+  #
+  # service { 'thirdParty':
+  #   ensure => running,
+  #}
 }

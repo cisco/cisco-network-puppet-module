@@ -14,6 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-node 'cisco_device_name' {
+node 'cisco_bgpv4_device_name' {
   include ciscopuppet::demo_bgp_ipv4
 }

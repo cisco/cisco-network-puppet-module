@@ -45,7 +45,7 @@ Puppet::Type.type(:cisco_vtp).provide(:nxapi) do
 
   def self.get_properties(vtp)
     current_state = {
-      :name   => name,
+      :name   => 'default',
       :ensure => :present,
     }
 
@@ -108,7 +108,7 @@ Puppet::Type.type(:cisco_vtp).provide(:nxapi) do
       # Create/Update
       if @vtp.nil?
         new_vtp = true
-        @vtp = Cisco::Vtp.new(@resource[:domain])
+        @vtp = Cisco::Vtp.new
       end
       set_properties(new_vtp)
     end

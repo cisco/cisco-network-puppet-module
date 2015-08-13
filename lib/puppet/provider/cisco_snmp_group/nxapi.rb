@@ -27,12 +27,10 @@ Puppet::Type.type(:cisco_snmp_group).provide(:nxapi) do
 
   def self.instances
     group_instances = []
-    Cisco::SnmpGroup.groups.each { |id|
-      begin
-        group_instances << new(
-          :name => id,
-          :ensure => :present)
-      end
+    Cisco::SnmpGroup.groups.each_key { |id|
+      group_instances << new(
+        :name => id,
+        :ensure => :present)
     }
     return group_instances
   end
@@ -61,18 +59,16 @@ Puppet::Type.type(:cisco_snmp_group).provide(:nxapi) do
     @property_hash[:ensure]  = :present
     @property_hash[:group] = @resource[:group]
     return true
-  rescue RuntimeError => e
-    fail(e.message)
   end
 
   def create
-    error "Snmp group creation not supported. " +
-          "Group #{@resource[:group]} not created."
+    fail "Snmp group creation not supported. " +
+         "Group #{@resource[:group]} not created."
   end
 
   def destroy
-    error "Snmp group deletion not supported. " +
-          "Group #{@resource[:group]} not deleted."
+    fail "Snmp group deletion not supported. " +
+         "Group #{@resource[:group]} not deleted."
   end
 
 end

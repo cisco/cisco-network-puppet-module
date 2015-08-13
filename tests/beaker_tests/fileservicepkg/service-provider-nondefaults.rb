@@ -14,12 +14,12 @@
 # limitations under the License.
 ###############################################################################
 # TestCase Name: 
-# -------------
-# SnmpGroup-Provider-Defaults.rb
+# --------------
+# Service-Provider-NonDefaults.rb
 #
 # TestCase Prerequisites:
 # -----------------------
-# This is a Puppet SNMPGROUP resource testcase for Puppet Agent on Nexus devices.
+# This is a Puppet SERVICE resource testcase for Puppet Agent on Nexus devices.
 # The test case assumes the following prerequisites are already satisfied:
 # A. Populating the HOSTS configuration file with the agent and master 
 # information.
@@ -29,13 +29,15 @@
 #
 # TestCase:
 # ---------
-# This is a SNMPGROUP resource test that tests for default value for 
-# 'ensure' attribute of a 
-# cisco_snmp_group resource.
+# This is a SERVICE resource test that tests for nondefault values for 
+# name, ensure and enable attributes of a 
+# service resource when ran with 'ensure' => 'running'.
 #
 # There are 2 sections to the testcase: Setup, group of teststeps.
 # The 1st step is the Setup teststep that cleans up the switch state.
-# Steps 2-4 deal with cisco_snmp_group_resource and its
+# Steps 2-3 deal with service resource running and its
+# verification using Puppet Agent and the switch running-config.
+# Steps 4-5 deal with service resource stopping and its
 # verification using Puppet Agent and the switch running-config.
 #
 # The testcode checks for exit_codes from Puppet Agent, Vegas shell and
@@ -52,14 +54,14 @@
 #
 ###############################################################################
 
-# Require UtilityLib.rb and SnmpServerLib.rb paths.
+# Require UtilityLib.rb and FileSvcPkgLib.rb paths.
 require File.expand_path("../../lib/utilitylib.rb", __FILE__)
-require File.expand_path("../snmpserverlib.rb", __FILE__)
+require File.expand_path("../filesvcpkglib.rb", __FILE__)
 
 result = 'PASS'
-testheader = "SNMPGROUP Resource :: All Attributes Defaults"
+testheader = "SERVICE Resource :: All Attributes NonDefaults"
 
-# @test_name [TestCase] Executes defaults testcase for SNMPGROUP Resource.
+# @test_name [TestCase] Executes nondefaults testcase for SERVICE Resource.
 test_name "TestCase :: #{testheader}" do
 
   # @step [Step] Sets up switch for provider test.
@@ -67,63 +69,77 @@ test_name "TestCase :: #{testheader}" do
     # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
     UtilityLib.set_manifest_path(master, self)
 
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd("show running-config snmp")
-    on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-        [/snmp-server user admin network-admin auth md5/],
-        false, self, logger)
-    end
+    # Expected exit_code is 0 since this is a bash shell cmd.
+    on(master, FileSvcPkgLib.create_service_manifest_stopped())
+
+    # Expected exit_code is 2 since this is a puppet agent cmd with change.
+    # Or expected exit_code is 0 since this is a puppet agent cmd with no change.
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+      "agent -t", options)
+    on(agent, cmd_str, {:acceptable_exit_codes => [0, 2]}) 
 
     logger.info("Setup switch for provider test :: #{result}")
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
-  step "TestStep :: Get resource present manifest from master" do 
+  step "TestStep :: Get resource nondefaults manifest from master" do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, SnmpServerLib.create_snmpgroup_manifest_present())
+    on(master, FileSvcPkgLib.create_service_manifest_nondefaults())
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "agent -t", options)
     on(agent, cmd_str, {:acceptable_exit_codes => [2]}) 
 
-    logger.info("Get resource present manifest from master :: #{result}")
+    logger.info("Get resource nondefaults manifest from master :: #{result}")
   end
 
-  # @step [Step] Checks cisco_snmp_group resource on agent using resource cmd.
-  step "TestStep :: Check cisco_snmp_group resource absence on agent" do 
+  # @step [Step] Checks service resource on agent using resource cmd.
+  step "TestStep :: Check service resource presence on agent" do 
+    # Expected exit_code is 0 since this is a puppet resource cmd.
+    # Flag is set to false to check for presence of RegExp pattern in stdout.
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+      "resource service 'syslog'", options)
+    on(agent, cmd_str) do
+      UtilityLib.search_pattern_in_output(stdout, 
+        {'ensure'         => 'running'},
+        false, self, logger)
+    end
+
+    logger.info("Check service resource presence on agent :: #{result}")
+  end
+
+  # @step [Step] Requests manifest from the master server to the agent.
+  step "TestStep :: Get resource stopped manifest from master" do
+    # Expected exit_code is 0 since this is a bash shell cmd.
+    on(master, FileSvcPkgLib.create_service_manifest_stopped())
+
+    # Expected exit_code is 2 since this is a puppet agent cmd with change.
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+      "agent -t", options)
+    on(agent, cmd_str, {:acceptable_exit_codes => [2]}) 
+
+    logger.info("Get resource stopped manifest from master :: #{result}")
+  end
+
+  # @step [Step] Checks service resource on agent using resource cmd.
+  step "TestStep :: Check service resource absence on agent" do 
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
-      "resource cisco_snmp_group 'netadmin-test'", options)
+      "resource service 'syslog'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-        {'ensure' => 'present'},
+      UtilityLib.search_pattern_in_output(stdout, 
+        {'ensure'         => 'running'},
         true, self, logger)
     end
 
-    logger.info("Check cisco_snmp_group resource absence on agent :: #{result}")
-  end
-
-  # @step [Step] Checks snmpgroup instance on agent using switch show cli cmds.
-  step "TestStep :: Check snmpgroup instance absence on agent" do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd("show running-config snmp")
-    on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-        [/netadmin-test/],
-        true, self, logger)
-    end
-
-    logger.info("Check snmpgroup instance absence on agent :: #{result}")
+    logger.info("Check service resource absence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   UtilityLib.raise_passfail_exception(result, testheader, self, logger)
- 
+
 end
 
 logger.info("TestCase :: #{testheader} :: End")

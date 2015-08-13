@@ -71,6 +71,10 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
 
   newparam(:interface, :namevar => :true) do
     desc "Name of this cisco_interface resource. Valid values are string."
+
+    munge { |value|
+      value.downcase
+    }
   end
 
   newparam(:ospf, :namevar => :true) do
@@ -208,7 +212,7 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
     end
   end
 
-  newparam(:area) do
+  newproperty(:area) do
     desc "Ospf area associated with this cisco_interface_ospf
           instance. Valid values are string, formatted as an IP address
           i.e. \"0.0.0.0\" or as an integer. Mandatory parameter."
@@ -219,20 +223,26 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
 
       Integer(value)     rescue valid_integer = false
       IPAddr.new(value)  rescue valid_ipaddr  = false
-      fail "area parameter - #{@resource[:area]} must be either a valid integer or a valid ip address" if valid_integer == false and valid_ipaddr == false
+      fail "area [#{value}] must be a valid ip address or integer" if
+        valid_integer == false and valid_ipaddr == false
     }
 
     munge { |value|
+      # Coerce numeric area to the expected dot-decimal format.
+      value = IPAddr.new(value, Socket::AF_INET) unless value.to_s[/\./]
       value.to_s
     }
 
   end
 
-  # validation for message_digest_key_id,
+  # validation for area, message_digest_key_id,
   # message_digest_encryption_type, message_digest_encryption_password
   # and message_digest_password combination
 
   validate do
+    fail("area must be supplied when ensure=present") if
+      self[:ensure] == :present and self[:area].nil?
+
     if (self[:message_digest_key_id].nil?) and
          (!self[:message_digest_algorithm_type].nil? or
           !self[:message_digest_encryption_type].nil? or

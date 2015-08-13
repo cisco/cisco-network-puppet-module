@@ -36,12 +36,14 @@ require File.expand_path("../../lib/utilitylib.rb", __FILE__)
 module OspfVrfLib
 
   # Group of Constants used in negative tests for OSPFVRF provider.
-  AUTOCOST_NEGATIVE      = '100000000'
-  DEFAULTMETRIC_NEGATIVE = '-1'
-  THROTTLELSA_NEGATIVE   = {'hold' => '-1', 'max' => '-1', 'start' => '-1'}
-  SPFHOLD_NEGATIVE       = '-1'
-  SPFMAX_NEGATIVE        = '-1'
-  SPFSTART_NEGATIVE      = '-1'
+  AUTOCOST_NEGATIVE          = '100000000'
+  DEFAULTMETRIC_NEGATIVE     = '-1'
+  LSAHOLD_NEGATIVE           = '-1'
+  LSAMAX_NEGATIVE            = '-1'
+  LSASTART_NEGATIVE          = '-1'
+  SPFHOLD_NEGATIVE           = '-1'
+  SPFMAX_NEGATIVE            = '-1'
+  SPFSTART_NEGATIVE          = '-1'
 
   # A. Methods to create manifests for cisco_ospf_vrf Puppet provider test cases.
 
@@ -57,7 +59,9 @@ node default {
     auto_cost                => 'default',
     default_metric           => 'default',
     log_adjacency            => 'default',
-    timer_throttle_lsa       => {'hold' => 'default', 'max' => 'default', 'start' => 'default'},
+    timer_throttle_lsa_hold  => 'default',
+    timer_throttle_lsa_max   => 'default',
+    timer_throttle_lsa_start => 'default',
     timer_throttle_spf_hold  => 'default',
     timer_throttle_spf_max   => 'default',
     timer_throttle_spf_start => 'default',
@@ -99,7 +103,9 @@ node default {
     auto_cost                => '80000',
     default_metric           => '1',
     log_adjacency            => 'log',
-    timer_throttle_lsa       => {'hold' => '1000', 'max' => '10000', 'start' => '1'},
+    timer_throttle_lsa_hold  => '2000',
+    timer_throttle_lsa_max   => '10000',
+    timer_throttle_lsa_start => '1',
     timer_throttle_spf_hold  => '2000', 
     timer_throttle_spf_max   => '10000',
     timer_throttle_spf_start => '400',
@@ -139,15 +145,45 @@ EOF"
     return manifest_str
   end
 
-  # Method to create a manifest for OSPFVRF resource attribute 'throttlelsa'.
+  # Method to create a manifest for OSPFVRF resource attribute 'lsahold'.
   # @param none [None] No input parameters exist. 
   # @result none [None] Returns no object.
-  def OspfVrfLib.create_ospfvrf_manifest_throttlelsa_negative()
+  def OspfVrfLib.create_ospfvrf_manifest_lsahold_negative()
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf_vrf { 'test green':
     ensure                   => present,
-    timer_throttle_lsa       => #{OspfVrfLib::THROTTLELSA_NEGATIVE},
+    timer_throttle_lsa_hold  => #{OspfVrfLib::LSAHOLD_NEGATIVE},
+  }
+}
+EOF"
+    return manifest_str
+  end
+
+  # Method to create a manifest for OSPFVRF resource attribute 'lsamax'.
+  # @param none [None] No input parameters exist. 
+  # @result none [None] Returns no object.
+  def OspfVrfLib.create_ospfvrf_manifest_lsamax_negative()
+    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+node default {
+  cisco_ospf_vrf { 'test green':
+    ensure                   => present,
+    timer_throttle_lsa_max   => #{OspfVrfLib::LSAMAX_NEGATIVE},
+  }
+}
+EOF"
+    return manifest_str
+  end
+
+  # Method to create a manifest for OSPFVRF resource attribute 'lsastart'.
+  # @param none [None] No input parameters exist. 
+  # @result none [None] Returns no object.
+  def OspfVrfLib.create_ospfvrf_manifest_lsastart_negative()
+    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+node default {
+  cisco_ospf_vrf { 'test green':
+    ensure                   => present,
+    timer_throttle_lsa_start => #{OspfVrfLib::LSASTART_NEGATIVE},
   }
 }
 EOF"

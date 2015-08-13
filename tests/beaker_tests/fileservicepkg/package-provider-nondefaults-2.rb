@@ -14,12 +14,12 @@
 # limitations under the License.
 ###############################################################################
 # TestCase Name: 
-# -------------
-# Ospf-Provider-Negative.rb
+# --------------
+# Package-Provider-NonDefaults-2.rb
 #
 # TestCase Prerequisites:
 # -----------------------
-# This is a Puppet OSPF resource testcase for Puppet Agent on Nexus devices.
+# This is a Puppet PACKAGE resource testcase for Puppet Agent on Nexus devices.
 # The test case assumes the following prerequisites are already satisfied:
 # A. Populating the HOSTS configuration file with the agent and master 
 # information.
@@ -29,12 +29,13 @@
 #
 # TestCase:
 # ---------
-# This is a OSPF resource negative test that tests for 'ensure' attribute with 
-# value set to 'unknown'.
+# This is a PACKAGE resource test that tests for nondefault values for 
+# name, ensure, provider and source attributes of a 
+# package resource when installed with 'ensure' => 'present'.
 #
 # There are 2 sections to the testcase: Setup, group of teststeps.
 # The 1st step is the Setup teststep that cleans up the switch state.
-# The next set of teststeps deal with attribute negative test and its
+# Steps 2-3 deal with package resource installation and its
 # verification using Puppet Agent and the switch running-config.
 #
 # The testcode checks for exit_codes from Puppet Agent, Vegas shell and
@@ -51,14 +52,14 @@
 #
 ###############################################################################
 
-# Require UtilityLib.rb and OspfLib.rb paths.
+# Require UtilityLib.rb and FileSvcPkgLib.rb paths.
 require File.expand_path("../../lib/utilitylib.rb", __FILE__)
-require File.expand_path("../ospflib.rb", __FILE__)
+require File.expand_path("../filesvcpkglib.rb", __FILE__)
 
 result = 'PASS'
-testheader = "OSPF Resource :: Negative"
+testheader = "PACKAGE Resource :: All Attributes NonDefaults"
 
-# @test_name [TestCase] Executes negative testcase for OSPF Resource.
+# @test_name [TestCase] Executes nondefaults testcase for PACKAGE Resource.
 test_name "TestCase :: #{testheader}" do
 
   # @step [Step] Sets up switch for provider test.
@@ -66,59 +67,48 @@ test_name "TestCase :: #{testheader}" do
     # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
     UtilityLib.set_manifest_path(master, self)
 
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    cmd_str = UtilityLib.get_vshell_cmd("conf t ; no feature ospf")
-    on(agent, cmd_str)
+    # Expected exit_code is 0 since this is a puppet agent cmd with no change.
+    cmd_str = 
+      UtilityLib.get_vshell_cmd("dir bootflash:n9000_sample-1.0.0-7.0.3.x86_64.rpm")
+    on(agent, cmd_str, {:acceptable_exit_codes => [0]}) 
 
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd("show running-config section ospf")
-    on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [/feature ospf/],
-        true, self, logger)
-    end
+    # Expected exit_code is 0 since this is a bash shell cmd.
+    on(master, FileSvcPkgLib.create_package_sample_manifest_absent())
+
+    # Expected exit_code is 0 since this is a puppet agent cmd with no change.
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+      "agent -t", options)
+    on(agent, cmd_str, {:acceptable_exit_codes => [0]}) 
 
     logger.info("Setup switch for provider test :: #{result}")
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
-  step "TestStep :: Get negative test resource manifest from master" do 
+  step "TestStep :: Get resource present manifest from master" do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, OspfLib.create_ospf_manifest_negative())
+    on(master, FileSvcPkgLib.create_package_sample_manifest_present())
 
-    # Expected exit_code is 1 since this is a puppet agent cmd with error.
+    # Expected exit_code is 0 since this is a puppet agent cmd with no change.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "agent -t", options)
-    on(agent, cmd_str, {:acceptable_exit_codes => [1]}) 
+    on(agent, cmd_str, {:acceptable_exit_codes => [0]}) 
 
-    logger.info("Get negative test resource manifest from master :: #{result}")
+    logger.info("Get resource present manifest from master :: #{result}")
   end
 
-  # @step [Step] Checks cisco_ospf resource on agent using resource cmd.
-  step "TestStep :: Check cisco_ospf resource absence on agent" do 
+  # @step [Step] Checks package resource on agent using resource cmd.
+  step "TestStep :: Check package resource presence on agent" do 
     # Expected exit_code is 0 since this is a puppet resource cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
+    # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
-      "resource cisco_ospf green", options)
+      "resource package 'n9000_sample.x86_64'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-        {'ensure' => OspfLib::ENSURE_NEGATIVE}, true, self, logger)
+      UtilityLib.search_pattern_in_output(stdout, 
+        {'ensure'         => 'present'},
+        false, self, logger)
     end
 
-    logger.info("Check cisco_ospf resource absence on agent :: #{result}")
-  end
-
-  # @step [Step] Checks ospf instance on agent using switch show cli cmds.
-  step "TestStep :: Check ospf instance absence on agent" do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd("show running-config section ospf")
-    on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [/router ospf green/],
-        true, self, logger)
-    end
-
-    logger.info("Check ospf instance absence on agent :: #{result}")
+    logger.info("Check package resource presence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.

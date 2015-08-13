@@ -28,23 +28,18 @@ Puppet::Type.type(:cisco_snmp_user).provide(:nxapi) do
   def self.instances
     snmp_users = []
 
-    Cisco::SnmpUser.users.each { |index, snmp_user|
-      begin
-        snmp_users << new(
-          :user           => snmp_user.name,
-          :name           => "#{snmp_user.name} #{snmp_user.engine_id}".strip,
-          :ensure         => :present,
-          :engine_id      => snmp_user.engine_id,
-          :groups         => snmp_user.groups,
-          :priv_protocol  => snmp_user.priv_protocol,
-          :priv_password  => snmp_user.priv_password,
-          :auth_protocol  => snmp_user.auth_protocol,
-          :auth_password  => snmp_user.auth_password,
-          :localized_key  => :true)
-
-      rescue RuntimeError => e
-        warning "Failed to retrieve resources for #{index}: #{e.message}"
-      end
+    Cisco::SnmpUser.users.each_value { |snmp_user|
+      snmp_users << new(
+        :user           => snmp_user.name,
+        :name           => "#{snmp_user.name} #{snmp_user.engine_id}".strip,
+        :ensure         => :present,
+        :engine_id      => snmp_user.engine_id,
+        :groups         => snmp_user.groups,
+        :priv_protocol  => snmp_user.priv_protocol,
+        :priv_password  => snmp_user.priv_password,
+        :auth_protocol  => snmp_user.auth_protocol,
+        :auth_password  => snmp_user.auth_password,
+        :localized_key  => :true)
     } 
     return snmp_users
   end
@@ -223,8 +218,6 @@ Puppet::Type.type(:cisco_snmp_user).provide(:nxapi) do
     @snmp_user.destroy()
     @snmp_user = nil
     @property_hash[:ensure] = :absent
-  rescue RuntimeError => e
-    fail e.message
   end
 
   def flush

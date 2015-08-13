@@ -1,7 +1,7 @@
 # Puppet Agent Installation & Setup: Cisco Nexus
 
 ----
-### _EARLY FIELD TRIAL:_ This is a puppet agent EFT for use with Cisco NX-OS release 7.0(3)I2(1). Please see the [Limitations](#limitations) section for more information.
+### _EARLY FIELD TRIAL:_ This is a Puppet agent EFT for use with Cisco NX-OS release 7.0(3)I2(1). Please see the [Limitations](#limitations) section for more information.
 ----
 
 #### Table of Contents
@@ -11,23 +11,23 @@
 3. [Puppet Agent Environment: bash-shell](#env-bs)
 4. [Puppet Agent Environment: guestshell](#env-gs)
 5. [Puppet Agent Installation, Configuration and Usage](#agent-config)
-6. [(optional) guestshell & High Availability (HA) Platforms](#ha)
-7. [(optional) Puppet Agent Persistence](#persistence)
-8. [(optional) Automated Installation Options](#auto-install)
+6. [Optional: Guestshell & High Availability (HA) Platforms](#ha)
+7. [Optional: Puppet Agent Persistence](#persistence)
+8. [Optional: Automated Installation Options](#auto-install)
 9. [References](#references)
-10. [Known Issues](#issues)
 
 ## <a name="overview">Overview</a>
 
-This document describes Puppet agent installation and setup on Cisco Nexus switches. These instructions focus on manual setup. See [Automated Installation](#auto-install) section for documentation regarding alternative installation methods.
+This document describes Puppet agent installation and setup on Cisco Nexus switches. These instructions focus on manual setup. See the [Automated Installation](#auto-install) section for documentation regarding alternative installation methods.
 
-The Cisco NX-OS puppet implementation requires Puppet version 4.0 or newer.
+The Cisco NX-OS Puppet implementation requires open source Puppet version 4.0 or newer, or Puppet Enterprise 2015.2 or greater.
 
 ![1](puppet_outline.png)
 
 ## <a name="pre-install">Pre-Install Tasks</a>
 
 #### Platform and Software Requirements
+
 * Puppet 4.0 or higher
 * Cisco NX-OS release 7.0(3)I2(1) or later
 * Supported Platforms: Cisco Nexus 95xx, Nexus 93xx, Nexus 30xx, Nexus 31xx
@@ -35,26 +35,29 @@ The Cisco NX-OS puppet implementation requires Puppet version 4.0 or newer.
 #### Disk space
 
 400MB of free disk space on bootflash is recommended before installing the
-puppet agent software.
+Puppet agent software.
 
 #### Environment
-NX-OS supports two possible environments for running 3rd party software:
+
+NX-OS supports two possible environments for running third party software:
 `bash-shell` and `guestshell`. Choose one environment for running the
-puppet agent software. You may run puppet from either environment but not both
+Puppet agent software. You may run Puppet from either environment but not from both
 at the same time.
 
 * `bash-shell`
-  * This is the native WRL linux environment underlying NX-OS. It is disabled by default.
+  * This is the native WRL Linux environment underlying NX-OS. It is disabled by default.
 * `guestshell`
-  * This is a secure linux container environment running CentOS. It is enabled by default in most platforms.
+  * This is a secure Linux container environment running CentOS. It is enabled by default in most platforms.
 
-#### Network Setup
+#### Set Up the Network
 
-Ensure that network connectivity exists prior to puppet install. Some basic NX-OS cli configuration may be necessary.
+Ensure that you have network connectivity prior to Puppet installation. Some basic NX-OS cli configuration may be necessary.
 
-**Example:** Connectivity via Management interface. _Note: The management interface exists in a separate VRF context and requires additional configuration as shown._
+**Example:** Connectivity via management interface
 
-```
+_Note: The management interface exists in a separate VRF context and requires additional configuration as shown._
+
+~~~
 config term
   ntp server 10.0.0.201 use-vrf management
 
@@ -67,71 +70,83 @@ config term
     vrf member management
     ip address 10.0.0.99/24
 end
-```
+~~~
 
-#### NXAPI (EFT-only)
-NXAPI is a NX-OS feature that is required for ciscopuppet. NX-OS EFT images may have this feature disabled, while release images will have this feature enabled by default. Manually enable NXAPI with this syntax:
+#### Enable NXAPI (EFT-only)
 
-```
+NXAPI is a NX-OS feature that is required for ciscopuppet. NX-OS EFT images might have this feature disabled, while release images have this feature enabled by default. Manually enable NXAPI with this syntax:
+
+~~~
 config term
   feature nxapi
 end
-```
+~~~
 
 ## <a name="env-bs">Puppet Agent Environment: bash-shell</a>
 
-This section is only necessary if puppet will run from the `bash-shell`.
+This section is only necessary if Puppet will run from the `bash-shell`.
 
-#### NX-OS Setup
+#### Set Up NX-OS
 
 The `bash-shell` is disabled by default. Enable it with the feature configuration command.
 
-```
+~~~
 config term
   feature bash-shell
 end
-```
+~~~
 
-#### Puppet Agent Install in bash-shell
+#### Install Puppet Agent in bash-shell
 
-Enter the `bash-shell` environment and become root.
+Enter the `bash-shell` environment and become root:
 
-```bash
+~~~bash
 n3k# run bash
 bash-4.2$
 bash-4.2$  sudo su -
-```
+~~~
 
-If using the management interface you must next switch to the management namespace
-```bash
+If you're using the management interface, you must next switch to the management namespace:
+
+~~~bash
 ip netns exec management bash
-```
+~~~
 
-Set up DNS configuration
-```
+Then set up DNS configuration:
+
+~~~
 cat >> /etc/resolv.conf << EOF
 nameserver 10.0.0.202
 domain mycompany.com
 search mycompany.com
 EOF
-```
+~~~
+
+Optionally, configure a proxy server:
+
+~~~bash
+export http_proxy=http://proxy.yourdomain.com:<port>
+export https_proxy=https://proxy.yourdomain.com:<port>
+~~~
+
 ## <a name="env-gs">Puppet Agent Environment: guestshell</a>
 
-This section is only necessary if puppet will run from the `guestshell`.
+This section is only necessary if Puppet will run from the `guestshell`.
 
-#### NX-OS Setup
+#### Set Up NX-OS
 
-The `guestshell` container environment is enabled by default on most platforms; however, the default disk and memory resources allocated to the guestshell container may be too small to support puppet agent requirements. These resource limits may be increased with the NX-OS CLI `guestshell resize` commands as shown below.
+The `guestshell` container environment is enabled by default on most platforms; however, the default disk and memory resources allocated to the guestshell container might be too small to support Puppet agent requirements. These resource limits can be increased with the NX-OS CLI `guestshell resize` commands as shown below.
 
 The recommended minimum values are currently:
-```bash
+
+~~~bash
   Disk   : 400MB
   Memory : 300MB
-```
+~~~
   
 Use the `show guestshell detail` command to display the current state of the guestshell:
 
-```
+~~~
 n3k# show guestshell detail
 Virtual service guestshell+ detail
   State                 : Activated
@@ -140,13 +155,13 @@ Virtual service guestshell+ detail
     Disk                : 150 MB
     Memory              : 128 MB
 
-```
+~~~
 
-Use the `guestshell resize rootfs` command to resize the guestshell filesystem. Use the `guestshell resize memory` command to resize the guestshell memory allocation. These commands may be executed even when the guestshell is not yet enabled. Note that the resize command does not take effect until after the guestshell container is (re)started with the `guestshell reboot` or `guestshell enable` command.
+To resize the guestshell filesystem, use the `guestshell resize rootfs` command. To resize the guestshell memory allocation, use the `guestshell resize memory` command. These commands can be executed even when the guestshell is not yet enabled. Note that the resize command does not take effect until after the guestshell container is (re)started with the `guestshell reboot` or `guestshell enable` command.
 
-**Example.** Guestshell is currently enabled. Resize guestshell filesystem to 400MB and memory to 300MB
+**Example.** Guestshell is currently enabled. Resize guestshell filesystem to 400MB and memory to 300MB:
 
-```
+~~~
 n3k# guestshell resize rootfs ?
   <158-600>  New root filesystem size (in MB)
 
@@ -159,11 +174,11 @@ Note: Please disable/enable or reboot the Guest shell for system memory to be re
 n3k# guestshell reboot
 Access to the guest shell will be temporarily disabled while it reboots.
 Are you sure you want to reboot the guest shell? (y/n) [n] y
-```
+~~~
 
-**Example.** Guestshell is currently disabled. Resize guestshell filesystem to 400MB and memory to 300MB
+**Example.** Guestshell is currently disabled. Resize guestshell filesystem to 400MB and memory to 300MB:
 
-```
+~~~
 n3k# guestshell resize rootfs 400
 Note: Root filesystem will be resized on Guest shell enable
 
@@ -171,19 +186,19 @@ n3k# guestshell resize memory 300
 Note: System memory will be resized on Guest shell enable
 
 n3k# guestshell enable
-```
+~~~
 
 See [References](#references) for more guestshell documentation.
 
-#### guestshell network setup
+#### Set Up Guestshell Network
 
-The `guestshell` is an independent CentOS container which doesn't inherit settings from NX-OS; thus it requires additional network configuration.
+The `guestshell` is an independent CentOS container that doesn't inherit settings from NX-OS; thus it requires additional network configuration.
 
-```bash
+~~~bash
 # Enter the guestshell environment using the 'guestshell' command
 guestshell
 
-# If using the management interface you must enter the management namespace
+# If using the management interface, you must enter the management namespace
 sudo su -
 chvrf management
 
@@ -197,51 +212,55 @@ nameserver 10.0.0.202
 domain mycompany.com
 search mycompany.com
 EOF
-```
+~~~
 
-## <a name="agent-config">Puppet Agent Installation, Configuration and Usage</a>
+## <a name="agent-config">Puppet Agent Installation, Configuration, and Usage</a>
 
 This section is common to both `bash-shell` and `guestshell`.
 
-#### Puppet Agent Install
+#### Install Puppet Agent
 
 ##### Special instructions for EFT customers
-EFT images may not have the updated platform family definitions needed for yum to differentiate between `bash-shell` and `guestshell` environments. Therefore the puppet-agent RPM will need to be specified explicitly during the installation:
+
+EFT images may not have the updated platform family definitions needed for yum to differentiate between `bash-shell` and `guestshell` environments. Therefore, the puppet-agent RPM needs to be specified explicitly during the installation:
 
 * For `bash-shell` use:
-```bash
-yum install http://yum.puppetlabs.com/nxos/5/PC1/x86_64/puppetlabs-release-pc1-<VERSION>.nxos5.noarch.rpm
-yum install puppet
-```
+
+  ~~~bash
+  yum install http://yum.puppetlabs.com/nxos/5/PC1/x86_64/puppetlabs-release-pc1-<VERSION>.nxos5.noarch.rpm
+  yum install puppet
+  ~~~
 
 * For `guestshell` use:
-```bash
-yum install http://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm
-yum install puppet
-```
+  
+  ~~~bash
+  yum install http://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm
+  yum install puppet
+  ~~~
 
-Update PATH var
-```bash
+Update PATH var:
+
+~~~bash
 export PATH=$PATH:/opt/puppetlabs/puppet/bin:/opt/puppetlabs/puppet/lib
-```
+~~~
 
-Edit the puppet config file:
+####Edit the Puppet config file:
 
 **/etc/puppetlabs/puppet/puppet.conf**
 
-```bash
-# This file can be used to override the default puppet settings.
-# The following settings should be used at a minimum:
+This file can be used to override the default Puppet settings. At a minimum, the following settings should be used:
 
+~~~bash
 [main]
   server = mypuppetmaster.mycompany.com
 
 [agent]
   pluginsync  = true
   ignorecache = true
-```
+~~~
 
 See the following references for more puppet.conf settings:
+
 <https://docs.puppetlabs.com/puppet/latest/reference/config_important_settings.html>
 <https://docs.puppetlabs.com/puppet/latest/reference/config_about_settings.html>
 <https://docs.puppetlabs.com/puppet/latest/reference/config_file_main.html>
@@ -249,39 +268,38 @@ See the following references for more puppet.conf settings:
 
 #### Run the Puppet Agent
 
-```bash
+~~~bash
 puppet agent -t
-```
+~~~
 
+## <a name="ha">Guestshell & High Availability (HA) Platforms</a>
 
-## <a name="ha">guestshell & High Availability (HA) Platforms</a>
+Optional. This section discusses `guestshell` usage on HA platforms. This section does not apply to the bash-shell environment or to single-sup platforms.
 
-(Optional) This section discusses `guestshell` usage on HA platforms. This section does not apply to the bash-shell environment or to single-sup platforms.
+The `guestshell` container does not automatically sync filesystem changes from the active processor to the standby processor. This means that Puppet installation files and related file changes performed in the earlier steps will not be present on the standby until they are manually synced with the following NX-OS exec command:
 
-The `guestshell` container does not automatically sync filesystem changes from the active processor to the standby processor. This means that puppet installation files and related file changes performed in the earlier steps will not be present on the standby until they are manually synced with the following NX-OS exec command:
-
-```
+~~~
 guestshell sync
-```
+~~~
 
 ## <a name="persistence">Puppet Agent Persistence</a>
 
-(Optional) This section discusses puppet agent persistence after system restarts.
+Optional. This section discusses Puppet agent persistence after system restarts.
 
 1. [Service Management in bash-shell using init.d](#svc-mgmt-bs)
 2. [Service Management in guestshell using systemd](#svc-mgmt-gs)
 
 #### Service Management
 
-It may be desirable to set up automatic restart of the puppet agent in the event of a system reset. The bash and guestshell environments use different methods to achieve this.
+It may be desirable to set up automatic restart of the Puppet agent in the event of a system reset. The bash and guestshell environments use different methods to achieve this.
 
-#### <a name="svc-mgmt-bs">(optional) bash-shell / init.d</a>
+#### <a name="svc-mgmt-bs">Optional: bash-shell / init.d</a>
 
 The `bash-shell` environment uses **init.d** for service management.
 
 **Example:** Create an initd script file as `/etc/init.d/puppet`
 
-```bash
+~~~bash
 #!/bin/bash
 #
 # puppet Startup script 
@@ -371,24 +389,24 @@ echo $"Usage: $0 {start|stop|status|restart|condrestart|try-restart|reload|force
 exit 2
 esac
 exit $?
-```
+~~~
 
 Next, add your service to initd management and optionally start it:
 
-```bash
+~~~bash
 chkconfig --add puppet
 chkconfig --level 345 puppet on
 
 service puppet start
-```
+~~~
 
-#### <a name="svc-mgmt-gs">(optional) guestshell / systemd</a>
+#### <a name="svc-mgmt-gs">Optional: guestshell / systemd</a>
 
 The `guestshell` environment uses **systemd** for service management.
 
-**Example:** Cut&paste the following to create a service file in `/usr/lib/systemd/system/`
+**Example:** Cut and paste the following to create a service file in `/usr/lib/systemd/system/`:
 
-```bash
+~~~bash
 
 cat >> /usr/lib/systemd/system/my_puppet.service << EOF
 
@@ -412,19 +430,20 @@ RestartSec=42s
 [Install]
 WantedBy=multi-user.target
 EOF
-```
-Now enable your puppet systemd service (the enable command adds it to systemd for autostarting the next time you boot) and optionally start it now.
+~~~
 
-```bash
+Now enable your Puppet systemd service (the `enable` command adds it to systemd for autostarting the next time you boot) and optionally start it.
+
+~~~bash
 
 systemctl enable my_puppet
 systemctl start my_puppet
 
-```
+~~~
 
 ## <a name="auto-install">Automated Installation Options</a>
 
-[Beaker](README-BEAKER.md) - Installing & Configuring puppet agent using the Beaker tool
+[Beaker](README-BEAKER.md) - Installing and Configuring Puppet Agent Using the Beaker Tool
 
 ## <a name="references">References</a>
 
@@ -433,12 +452,8 @@ systemctl start my_puppet
 [Cisco Nexus Programmability Guide](http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/6-x/programmability/guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_chapter_01010.html) - Guestshell Documentation
 
 
-## <a name="issues">Known Issues</a>
-
-TBD
-
 ----
-```bash
+~~~
 Copyright (c) 2014-2015 Cisco and/or its affiliates.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -452,4 +467,4 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-```
+~~~
