@@ -1,10 +1,11 @@
 {
   "name": "puppetlabs-ciscopuppet",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "author": "cisco",
   "summary": "Cisco Puppet providers and types for NX-OS devices",
   "license": "Apache-2.0",
   "source": "https://github.com/puppetlabs/cisco-ciscopuppet",
+  "tags": ["cisco","nxos","nx-os","network"],
   "project_page": "https://github.com/puppetlabs/cisco-ciscopuppet",
   "issues_url": "https://github.com/puppetlabs/cisco-ciscopuppet/issues",
   "operatingsystem_support": [
