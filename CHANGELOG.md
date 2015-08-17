@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Fixed
+- Metadata URLs now point to new public GitHub repository.
 
 ## [0.9.1] - 2015-08-13
 ### Added
