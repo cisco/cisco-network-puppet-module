@@ -161,7 +161,9 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
       :ipv4_address, :ipv4_netmask_length,
     ]
     l3_props.each { |prop|
-      @property_flush[prop] = @property_hash[prop] unless @property_hash[prop].nil?
+      if @property_flush[prop].nil?
+        @property_flush[prop] = @property_hash[prop] unless @property_hash[prop].nil?
+      end
     }
   end
 
