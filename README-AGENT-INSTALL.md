@@ -296,102 +296,24 @@ It may be desirable to set up automatic restart of the Puppet agent in the event
 #### <a name="svc-mgmt-bs">Optional: bash-shell / init.d</a>
 
 The `bash-shell` environment uses **init.d** for service management.
+The Puppet agent provides a generic init.d script when installed, but a slight
+modification is needed to ensure that Puppet runs in the management namespace:
 
-**Example:** Create an initd script file as `/etc/init.d/puppet`
-
-~~~bash
-#!/bin/bash
-#
-# puppet Startup script 
-#
-### BEGIN INIT INFO
-# Provides: puppet
-# Required-Start: $local_fs $network $remote_fs
-# Required-Stop: $local_fs $network $remote_fs
-# Should-Start: $named $time
-# Should-Stop: $named $time
-# Short-Description: Startup script for puppet 
-# Description: puppet 
-### END INIT INFO
-# Source function library
-. /etc/init.d/functions
-exec="/opt/puppetlabs/puppet/bin/puppet"
-prog="puppet"
-[ -e /etc/sysconfig/$prog ] && . /etc/sysconfig/$prog
-pidfile=${PIDFILE-/var/run/puppetlabs/agent.pid}
-start() {
-    [ -x $exec ] || exit 5
-    [ -f $config ] || exit 6
-    echo -n $"Starting $prog: "
-    daemon sudo ip netns exec management $exec agent --daemonize
-    retval=$?
-echo
-    [ $retval -eq 0 ]
-return $retval
-}
-stop() {
-echo -n $"Stopping $prog: "
-    killproc -p $pidfile $exec
-    retval=$?
-echo
-    [ $retval -eq 0 ]
-return $retval
-}
-restart () {
-    stop
-    start
-}
-reload() {
-echo -n $"Reloading $prog: "
-    killproc -p $pidfile $exec -HUP
-    retval=$?
-echo
-return $retval
-}
-force_reload() {
-    restart
-}
-rh_status() {
-# run checks to determine if the service is running or use generic status
-    status -p $pidfile $prog
-}
-rh_status_q() {
-    rh_status >/dev/null 2>&1
-}
-case "$1" in
-    start)
-        rh_status_q && exit 0
-$1
-        ;;
-    stop)
-        rh_status_q || exit 0
-$1
-        ;;
-    restart)
-$1
-        ;;
-    reload)
-        rh_status_q || exit 7
-$1
-        ;;
-    force-reload)
-        force_reload
-        ;;
-    status)
-        rh_status
-        ;;
-    condrestart|try-restart)
-        rh_status_q || exit 0
-        restart
-        ;;
-*)
-echo $"Usage: $0 {start|stop|status|restart|condrestart|try-restart|reload|force-reload}"
-exit 2
-esac
-exit $?
+~~~diff
+--- /etc/init.d/puppet.old
++++ /etc/init.d/puppet
+@@ -38,7 +38,7 @@
+ 
+ start() {
+     echo -n $"Starting puppet agent: "
+-    daemon $daemonopts $puppetd ${PUPPET_OPTS} ${PUPPET_EXTRA_OPTS}
++    daemon $daemonopts ip netns exec management $puppetd ${PUPPET_OPTS} ${PUPPET_EXTRA_OPTS}
+     RETVAL=$?
+     echo
+         [ $RETVAL = 0 ] && touch ${lockfile}
 ~~~
 
-Next, add your service to initd management and optionally start it:
+Next, enable the puppet service to be automatically started at boot time, and optionally start it now:
 
 ~~~bash
 chkconfig --add puppet
@@ -403,33 +325,21 @@ service puppet start
 #### <a name="svc-mgmt-gs">Optional: guestshell / systemd</a>
 
 The `guestshell` environment uses **systemd** for service management.
+The Puppet agent provides a generic systemd script when installed, but a slight modification
+is needed to ensure that Puppet runs in the management namespace:
 
-**Example:** Cut and paste the following to create a service file in `/usr/lib/systemd/system/`:
-
-~~~bash
-
-cat >> /usr/lib/systemd/system/my_puppet.service << EOF
-
-[Unit]
-Description=my puppet agent daemon
-After=syslog.target network.target auditd.service
-
-[Service]
-Environment=
-ExecStartPre=
-# Note for below:
-# The command prefix '/bin/nsenter --net=/netns/management --' is only
-# needed if using the management interface for puppet connectivity.
-ExecStart=/bin/nsenter --net=/netns/management -- /opt/puppetlabs/puppet/bin/puppet agent -d
-
-ExecReload=/bin/kill -HUP
-KillMode=process
-Restart=on-failure
-RestartSec=42s
-
-[Install]
-WantedBy=multi-user.target
-EOF
+~~~diff
+--- /usr/lib/systemd/system/puppet.service.old
++++ /usr/lib/systemd/system/puppet.service
+@@ -7,7 +7,7 @@
+ EnvironmentFile=-/etc/sysconfig/puppetagent
+ EnvironmentFile=-/etc/sysconfig/puppet
+ EnvironmentFile=-/etc/default/puppet
+-ExecStart=/opt/puppetlabs/puppet/bin/puppet agent $PUPPET_EXTRA_OPTS --no-daemonize
++ExecStart=/bin/nsenter --net=/var/run/netns/management /opt/puppetlabs/puppet/bin/puppet agent $PUPPET_EXTRA_OPTS --no-daemonize
+ KillMode=process
+ 
+ [Install]
 ~~~
 
 Now enable your Puppet systemd service (the `enable` command adds it to systemd for autostarting the next time you boot) and optionally start it.
