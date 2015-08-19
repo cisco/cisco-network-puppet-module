@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added README-creating-types-providers.md and associated templates.
 - Added SUPPORT.md
 - Added Beaker test cases for cisco_command_config, file, package, and service providers.
+- Added VRF attribute to cisco_interface provider.
 
 ### Fixed
 - 'puppet resource cisco_vtp' now works properly.

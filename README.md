@@ -185,6 +185,9 @@ keyword 'default'.
 Network mask length of the IP address on the interface. Valid values are 
 integer and keyword 'default'.
 
+###### `vrf`
+VRF member of the interface.  Valid values are a string or the keyword 'default'.
+
 ##### SVI interface config attributes
 
 ###### `svi_autostate`
