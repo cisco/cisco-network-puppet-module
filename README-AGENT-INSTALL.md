@@ -204,7 +204,19 @@ This section is common to both `bash-shell` and `guestshell`.
 
 #### Install Puppet Agent
 
+The `bash-shell` and `guestshell` environments use different puppet RPMs.
+
+* For `bash-shell` use:
+
 ~~~bash
+yum install http://yum.puppetlabs.com/puppetlabs-release-pc1-nxos-5.noarch.rpm
+yum install puppet
+~~~
+
+* For `guestshell` use:
+
+~~~bash
+yum install http://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm
 yum install puppet
 ~~~
 
