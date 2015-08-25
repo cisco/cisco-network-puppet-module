@@ -22,7 +22,7 @@ This document describes Puppet agent installation and setup on Cisco Nexus switc
 
 The Cisco NX-OS Puppet implementation requires open source Puppet version 4.0 or newer, or Puppet Enterprise 2015.2 or greater.
 
-![1](docs/puppet_outline.png)
+![1](puppet_outline.png)
 
 ## <a name="pre-install">Pre-Install Tasks</a>
 
