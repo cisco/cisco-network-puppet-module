@@ -1,7 +1,4 @@
 # ciscopuppet
-----
-### _EARLY FIELD TRIAL:_ This is a Puppet agent EFT for use with Cisco NX-OS release 7.0(3)I2(1). Please see the [Limitations](#limitations) section for more information.
-----
 
 #### Table of Contents
 
@@ -17,15 +14,20 @@
 
 ## Overview
 
-This ciscopuppet module enables Puppet to config Cisco Nexus Switches that 
-support NXAPI through types and NXAPI based providers.
+The ciscopuppet module allows a network administrator to manage Cisco Network Elements using Puppet. This module bundles a set of Puppet Types, providers, Beaker Tests, Sample Manifests and Installation Tools for effective network management.  The  resources and capabilities provided by this Puppet Module will grow with contributions from Cisco, Puppet Labs and the open source community.
+
+The Cisco Network Elements and Operating Systems managed by this Puppet Module are continuously expanding. Please refer to the [Limitations](#limitations) section for details on currently supported hardware and software.
+The Limitations section also provides details on compatible Puppet Agent and Puppet Master versions.
+
+This GitHub repository contains the latest version of the ciscopuppet module source code. Supported versions of the ciscopuppet module are available at Puppet Forge. Please refer to [SUPPORT.md](#SUPPORT.md) for additional details.
+
+Contributions to this Puppet Module are welcome. Guidelines on contributions to the module are captured in [CONTRIBUTING.md](#CONTRIBUTING.md)
 
 ## Module Description
 
-This module enables users to manage Cisco Nexus switches using Puppet.
+This module enables management of supported Cisco Network Elements using Puppet. This module enhances the Puppet DSL by introducing new Puppet Types and Providers capable of managing network elements.
 
-This module uses Cisco NXAPI to manage various Cisco NX-OS functions on certain Cisco Nexus Switches models such as N9k series and N31xx series. These functions include,
-but are not limited to, tacacs server and host, snmp server and users, and OSPF. 
+The set of supported network element platforms is continuously expanding. Please refer to the [Limitations](#limitations) section for a list of currently supported platforms.
 
 ## Setup
 
@@ -545,14 +547,13 @@ Password for the VTP domain. Valid values are a string or the keyword 'default'.
 
 ## Limitations
 
-This module can only be supported from NX-OS software release 7.0(3)I2(1) 
-on Cisco Nexus switch N95xx, N93xx, N30xx and N31xx platforms. Please ensure 
-that the switch is running a supported version of NX-OS software.
-
-On the supported platforms, it can work with both the native NX-OS 
-Puppet agent or with the CentOS Puppet agent installed into the Guestshell. 
-It does not (yet) address other Cisco operating systems such as IOS, IOS-XE, 
-or IOS XR.
+Minimum Requirements:
+* Cisco NX-OS Puppet implementation requires open source Puppet version 4.0 or Puppet Enterprise 2015.2
+* Supported Platforms:
+  * Cisco Nexus 95xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
+  * Cisco Nexus 93xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
+  * Cisco Nexus 31xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
+  * Cisco Nexus 30xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
 
 ## Development
 
