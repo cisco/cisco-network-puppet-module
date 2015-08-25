@@ -39,7 +39,7 @@ Please see the [CONTRIBUTING](#CONTRIBUTING) document for workflow instructions.
 First install the code base. Clone the ciscopuppet repo into a workspace:
 
 ~~~bash
-git clone https://github.com/puppetlabs/cisco-ciscopuppet
+git clone https://github.com/cisco/cisco-network-puppet-module.git
 ~~~
 
 ## <a name="simp_example">Basic Example: feature bash-shell</a>
