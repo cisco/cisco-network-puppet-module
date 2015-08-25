@@ -16,7 +16,7 @@
 
 This document describes Puppet agent installation and setup on Cisco Nexus switches. These instructions focus on manual setup. See the [Automated Installation](#auto-install) section for documentation regarding alternative installation methods.
 
-![1](puppet_outline.png)
+![1](docs/puppet_outline.png)
 
 ## <a name="pre-install">Pre-Install Tasks</a>
 
