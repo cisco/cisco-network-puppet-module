@@ -17,9 +17,9 @@ Every Beaker test case is expected to have:
 
 The setup section sets the switch up for test case execution. 
 
-The creation section creates the Puppet resource instance and performs attribute verification using resource command on switch agent. It also verifies the switch state using NXOS running-config show CLI commands.
+The creation section creates the Puppet resource instance and performs attribute verification using the 'puppet resource' command on the switch. It also verifies the switch state using NXOS running-config show CLI commands.
 
-The deletion section deletes the Puppet resource instance and performs attribute verification using resource command on switch agent. It also verifies the lack of switch state using NXOS running-config show CLI commands. 
+The deletion section deletes the Puppet resource instance and performs attribute verification using the 'puppet resource' command on the switch. It also verifies the lack of switch state using NXOS running-config show CLI commands. 
 
 The library file in the test directory is expected to contain the manifest generation methods defined in a module for usage in the test cases.
 
