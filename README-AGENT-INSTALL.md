@@ -1,9 +1,5 @@
 # Puppet Agent Installation & Setup: Cisco Nexus
 
-----
-### _EARLY FIELD TRIAL:_ This is a Puppet agent EFT for use with Cisco NX-OS release 7.0(3)I2(1). Please see the [Limitations](#limitations) section for more information.
-----
-
 #### Table of Contents
 
 1. [Overview](#overview)
@@ -20,16 +16,14 @@
 
 This document describes Puppet agent installation and setup on Cisco Nexus switches. These instructions focus on manual setup. See the [Automated Installation](#auto-install) section for documentation regarding alternative installation methods.
 
-The Cisco NX-OS Puppet implementation requires open source Puppet version 4.0 or newer, or Puppet Enterprise 2015.2 or greater.
-
 ![1](puppet_outline.png)
 
 ## <a name="pre-install">Pre-Install Tasks</a>
 
-#### Platform and Software Requirements
+#### Platform and Software Minimum Requirements
 
-* Puppet 4.0 or higher
-* Cisco NX-OS release 7.0(3)I2(1) or later
+* The Cisco NX-OS Puppet implementation requires open source Puppet version 4.0 or Puppet Enterprise 2015.2
+* Cisco NX-OS release 7.0(3)I2(1)
 * Supported Platforms: Cisco Nexus 95xx, Nexus 93xx, Nexus 30xx, Nexus 31xx
 
 #### Disk space
@@ -69,16 +63,6 @@ config term
   interface mgmt0
     vrf member management
     ip address 10.0.0.99/24
-end
-~~~
-
-#### Enable NXAPI (EFT-only)
-
-NXAPI is a NX-OS feature that is required for ciscopuppet. NX-OS EFT images might have this feature disabled, while release images have this feature enabled by default. Manually enable NXAPI with this syntax:
-
-~~~
-config term
-  feature nxapi
 end
 ~~~
 
@@ -220,23 +204,9 @@ This section is common to both `bash-shell` and `guestshell`.
 
 #### Install Puppet Agent
 
-##### Special instructions for EFT customers
-
-EFT images may not have the updated platform family definitions needed for yum to differentiate between `bash-shell` and `guestshell` environments. Therefore, the puppet-agent RPM needs to be specified explicitly during the installation:
-
-* For `bash-shell` use:
-
-  ~~~bash
-  yum install http://yum.puppetlabs.com/nxos/5/PC1/x86_64/puppetlabs-release-pc1-<VERSION>.nxos5.noarch.rpm
-  yum install puppet
-  ~~~
-
-* For `guestshell` use:
-  
-  ~~~bash
-  yum install http://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm
-  yum install puppet
-  ~~~
+~~~bash
+yum install puppet
+~~~
 
 Update PATH var:
 
