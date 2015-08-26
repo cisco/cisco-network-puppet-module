@@ -97,6 +97,6 @@ package { 'package_B':
 
 [Puppet package resource types](https://docs.puppetlabs.com/references/latest/type.html#package) - Generic and specific package management resources.
 
-[Cisco Nexus Puppet Modules](README.md) - Types, Providers, Utilities
+[Cisco Nexus Puppet Modules](../README.md) - Types, Providers, Utilities
 
 [Cisco Nexus Programmability Guide](http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/6-x/programmability/guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_chapter_01010.html) - Guestshell Documentation

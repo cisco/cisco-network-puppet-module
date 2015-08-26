@@ -1,4 +1,4 @@
-# Creating Cisco NX-OS Types and Providers
+# Developing Cisco NX-OS Types and Providers
 
 #### Table of Contents
 
@@ -28,9 +28,9 @@ There are multiple components involved when creating new resources. This documen
 
 * [Resource providers](https://docs.puppetlabs.com/guides/provider_development.html) are essentially backends that implement support for a specific implementation of a given resource type.
 
-* The types and providers work in conjunction with a node\_utils API, which is the interface between Puppet agent and the NX-OS CLI. Please see the [README-creating-node_utils-APIs.md](README-creating-node_utils-APIs.md) guide for more information on writing node_utils APIs.
+* The types and providers work in conjunction with a node\_utils API, which is the interface between Puppet agent and the NX-OS CLI. Please see the [README-develop-node-utils-APIs.md] (https://github.com/cisco/cisco-network-node-utils/blob/master/README-develop-node-utils-APIs.md) guide for more information on writing node_utils APIs.
 
-This document relies heavily on example code. The examples in this document can be written independently, but they are intended to work in conjuction with the example node_utils APIs created in the [README-creating-node_utils-APIs.md](README-creating-node_utils-APIs.md) guide. The examples in that guide are based on code templates for the `feature bash-shell` CLI and the `router eigrp` CLI. Note that some people prefer to write the node_utils API before the resource types and providers, while others might prefer the opposite workflow.
+This document relies heavily on example code. The examples in this document can be written independently, but they are intended to work in conjuction with the example node_utils APIs created in the [README-develop-node_utils-APIs.md](https://github.com/cisco/cisco-network-node-utils/blob/master/README-develop-node-utils-APIs.md) guide. The examples in that guide are based on code templates for the `feature bash-shell` CLI and the `router eigrp` CLI. Note that some people prefer to write the node_utils API before the resource types and providers, while others might prefer the opposite workflow.
 
 ## <a name="clone">Start here: Clone the Repo</a>
 
@@ -192,7 +192,7 @@ end
 
 ## <a name="simp_test">Step 3. Testing: feature bash-shell</a>
 
-Test the new resource using the guestshell environment. See [README-AGENT-INSTALL](README-AGENT-INSTALL.md) for using Puppet agent in guestshell.
+Test the new resource using the guestshell environment. See [README-agent-install.md](README-agent-install.md) for using Puppet agent in guestshell.
 
 * Create a manifest for the new resource:
 
@@ -296,8 +296,7 @@ Inspecting 2 files
 
 ## <a name="comp_example">Complex Example: router eigrp</a>
 
-This resource type and provider exercise will build on the router_eigrp API example shown in the cisco node_utils [README-creating-node_utils-APIs](README-creating-node_utils-APIs.md) document.
-
+This resource type and provider exercise will build on the router_eigrp API example shown in the cisco node_utils [README-develop-node-utils-APIs](https://github.com/cisco/cisco-network-node-utils/blob/master/README-develop-node-utils-APIs.md) document.
 The router_eigrp node_utils example created a new API for the cli below:
 
 ~~~

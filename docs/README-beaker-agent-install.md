@@ -37,7 +37,7 @@ at the same time.
 * `guestshell`
   * This is a secure linux container environment running CentOS. It is enabled by default.
 
-Access the following [link](README-AGENT-INSTALL.md) for more information on enabling these environments.
+Access the following [link](README-agent-install.md) for more information on enabling these environments.
 
 ### Install Beaker
 

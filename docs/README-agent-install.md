@@ -335,11 +335,11 @@ systemctl start my_puppet
 
 ## <a name="auto-install">Automated Installation Options</a>
 
-[Beaker](README-BEAKER.md) - Installing and Configuring Puppet Agent Using the Beaker Tool
+[Beaker](README-beaker-agent-install.md) - Installing and Configuring Puppet Agent Using the Beaker Tool
 
 ## <a name="references">References</a>
 
-[Cisco Nexus Puppet Modules](README.md) - Types, Providers, Utilities
+[Cisco Nexus Puppet Modules](../README.md) - Types, Providers, Utilities
 
 [Cisco Nexus Programmability Guide](http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/6-x/programmability/guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_chapter_01010.html) - Guestshell Documentation
 
