@@ -284,20 +284,15 @@ puppet resource cisco_bash_shell 'test_off' ensure=absent
 
 ## <a name="simp_sa">Static Analysis</a>
 
-* rubocop is a Ruby static analysis tool. Run [rubocop](https://rubygems.org/gems/rubocop) with the --lint option to validate the new code:
+* rubocop is a Ruby static analysis tool. Run [rubocop](https://rubygems.org/gems/rubocop) to validate the new code:
 
 ~~~bash
-% rubocop --lint type/cisco_bash_feature.rb  provider/cisco_bash_feature/nxapi.rb
-warning: parser/current is loading parser/ruby21, which recognizes
-warning: 2.1.7-compliant syntax, but you are running 2.1.1.
+% rubocop type/cisco_bash_feature.rb  provider/cisco_bash_feature/nxapi.rb
 Inspecting 2 files
 ..
 
 2 files inspected, no offenses detected
 ~~~
-
-* TBD: Run [puppet-lint](https://rubygems.org/gems/puppet-lint) against changed files.
-
 
 ## <a name="comp_example">Complex Example: router eigrp</a>
 
@@ -693,18 +688,15 @@ puppet resource cisco_router_eigrp "xyz" ensure=absent
 
 ## <a name="comp_sa">Static Analysis</a>
 
-* Run [rubocop](https://rubygems.org/gems/rubocop) with the --lint option to validate the new code:
+* Run [rubocop](https://rubygems.org/gems/rubocop) to validate the new code:
 
 ~~~bash
-% rubocop --lint type/cisco_router_eigrp.rb provider/cisco_router_eigrp/nxapi.rb
+% rubocop type/cisco_router_eigrp.rb provider/cisco_router_eigrp/nxapi.rb
 Inspecting 2 files
 ..
 
 2 files inspected, no offenses detected
 ~~~
-
-* TBD: Run [puppet-lint](https://rubygems.org/gems/puppet-lint) against changed files.
-
 
 ## <a name="next">Next Steps</a>
 
