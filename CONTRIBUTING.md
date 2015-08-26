@@ -13,11 +13,10 @@ Cisco Network Elements support a rich set of features to make networks robust, e
 * Follow all guidelines documented in [README-creating-types-providers](#README-creating-types-providers.md)
 * Make changes in your branch.
 * Testing
-  * TBD: Add beaker test cases to validate your changes.
+  * Add beaker test cases to validate your changes.
   * Run all the tests to ensure there was no collateral damage to existing code.
   * Check for unnecessary whitespace with `git diff --check`
   * Run `rubocop --lint` against all changed files. See [https://rubygems.org/gems/rubocop](https://rubygems.org/gems/rubocop)
-  * TBD: Run [puppet-lint](https://rubygems.org/gems/puppet-lint) against changed files.
 * For new resources, add a 'demo' entry to examples/demo_install.rb
 * Ensure that your commit messages clearly describe the problem you are trying to solve and the proposed solution.
 
