@@ -21,6 +21,7 @@ require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
 Puppet::Type.type(:cisco_command_config).provide(:nxapi) do
 
   confine :feature => :cisco_node_utils
+  defaultfor :operatingsystem => :nexus
 
   def initialize(value={})
     super(value)

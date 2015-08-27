@@ -32,11 +32,7 @@ Puppet::Type.type(:package).provide :nxapi, :parent => :yum do
   # these commands must exist to execute native yum provider
   commands :yum => "yum", :rpm => "rpm", :python => "python"
 
-  # (TEMPORARY) must include line to prevent default yum getting chosen in GS
-  defaultfor :osfamily => :RedHat
-  # uncomment these lines when new facter facts are implemented
-  #defaultfor :osfamily => :wrlinux
-  #defaultfor :operatingsystem => :nexus
+  defaultfor :operatingsystem => :nexus
 
   # if the following commands aren't present, we're in trouble
   if command('rpm')

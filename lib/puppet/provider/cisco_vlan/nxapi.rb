@@ -29,6 +29,7 @@ Puppet::Type.type(:cisco_vlan).provide(:nxapi) do
   desc "The new NXAPI provider."
 
   confine :feature => :cisco_node_utils
+  defaultfor :operatingsystem => :nexus
 
   mk_resource_methods
 
