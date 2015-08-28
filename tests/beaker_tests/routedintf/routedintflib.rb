@@ -41,6 +41,7 @@ module RoutedIntfLib
   IPV4PROXYARP_NEGATIVE        = 'invalid'
   IPV4REDIR_NEGATIVE           = 'invalid'
   SHUTDOWN_NEGATIVE            = 'invalid'
+  VRF_NEGATIVE                 = '~'
 
   # A. Methods to create manifests for cisco_interface Puppet provider test cases.
 
@@ -62,6 +63,7 @@ node default {
       ipv4_redirects               => 'default',
       switchport_autostate_exclude => 'default',
       switchport_vtp               => 'default',
+      vrf                          => 'default',
   }
 }
 EOF"
@@ -105,6 +107,7 @@ node default {
       ipv4_redirects               => false,
       switchport_autostate_exclude => false,
       switchport_vtp               => false,
+      vrf                          => 'test1',
     }
 }
 EOF"
@@ -198,4 +201,20 @@ EOF"
     return manifest_str
   end
 
+  # Method to create a manifest for RoutedINTF resource attribute 'vrf'.
+  # @param none [None] No input parameters exist.
+  # @result none [None] Returns no object.
+  def RoutedIntfLib.create_routedintf_manifest_vrf_negative()
+    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+node default {
+    cisco_interface { 'ethernet1/4':
+      ensure                       => present,
+      shutdown                     => false,
+      switchport_mode              => disabled,
+      vrf                          => #{RoutedIntfLib::VRF_NEGATIVE},
+    }
+}
+EOF"
+    return manifest_str
+  end
 end

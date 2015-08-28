@@ -24,6 +24,7 @@ Puppet::Type.type(:cisco_tacacs_server).provide(:nxapi) do
   desc "The nxapi provider."
 
   confine :feature => :cisco_node_utils
+  defaultfor :operatingsystem => :nexus
 
   mk_resource_methods
 

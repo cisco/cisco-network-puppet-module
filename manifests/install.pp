@@ -24,26 +24,10 @@ class ciscopuppet::install (String $repo = 'https://rubygems.org', String $proxy
     $opts = { '--http-proxy' => $proxy }
   }
 
-  package { 'net_http_unix' :
-    ensure          => present,
-    provider        => 'gem',
-    source          => $repo,
-    install_options => $opts,
-  }
-
-  package { 'cisco_nxapi' :
-    ensure          => present,
-    provider        => 'gem',
-    source          => $repo,
-    install_options => $opts,
-    require         => Package['net_http_unix'],
-  }
-
   package { 'cisco_node_utils' :
     ensure          => present,
     provider        => 'gem',
     source          => $repo,
     install_options => $opts,
-    require         => Package['cisco_nxapi'],
   }
 }

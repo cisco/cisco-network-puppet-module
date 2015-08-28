@@ -1,9 +1,5 @@
 # Puppet Agent Installation & Setup: Cisco Nexus
 
-----
-### _EARLY FIELD TRIAL:_ This is a Puppet agent EFT for use with Cisco NX-OS release 7.0(3)I2(1). Please see the [Limitations](#limitations) section for more information.
-----
-
 #### Table of Contents
 
 1. [Overview](#overview)
@@ -20,16 +16,14 @@
 
 This document describes Puppet agent installation and setup on Cisco Nexus switches. These instructions focus on manual setup. See the [Automated Installation](#auto-install) section for documentation regarding alternative installation methods.
 
-The Cisco NX-OS Puppet implementation requires open source Puppet version 4.0 or newer, or Puppet Enterprise 2015.2 or greater.
-
 ![1](puppet_outline.png)
 
 ## <a name="pre-install">Pre-Install Tasks</a>
 
-#### Platform and Software Requirements
+#### Platform and Software Minimum Requirements
 
-* Puppet 4.0 or higher
-* Cisco NX-OS release 7.0(3)I2(1) or later
+* The Cisco NX-OS Puppet implementation requires open source Puppet version 4.0 or Puppet Enterprise 2015.2
+* Cisco NX-OS release 7.0(3)I2(1)
 * Supported Platforms: Cisco Nexus 95xx, Nexus 93xx, Nexus 30xx, Nexus 31xx
 
 #### Disk space
@@ -69,16 +63,6 @@ config term
   interface mgmt0
     vrf member management
     ip address 10.0.0.99/24
-end
-~~~
-
-#### Enable NXAPI (EFT-only)
-
-NXAPI is a NX-OS feature that is required for ciscopuppet. NX-OS EFT images might have this feature disabled, while release images have this feature enabled by default. Manually enable NXAPI with this syntax:
-
-~~~
-config term
-  feature nxapi
 end
 ~~~
 
@@ -220,23 +204,21 @@ This section is common to both `bash-shell` and `guestshell`.
 
 #### Install Puppet Agent
 
-##### Special instructions for EFT customers
-
-EFT images may not have the updated platform family definitions needed for yum to differentiate between `bash-shell` and `guestshell` environments. Therefore, the puppet-agent RPM needs to be specified explicitly during the installation:
+The `bash-shell` and `guestshell` environments use different puppet RPMs.
 
 * For `bash-shell` use:
 
-  ~~~bash
-  yum install http://yum.puppetlabs.com/nxos/5/PC1/x86_64/puppetlabs-release-pc1-<VERSION>.nxos5.noarch.rpm
-  yum install puppet
-  ~~~
+~~~bash
+yum install http://yum.puppetlabs.com/puppetlabs-release-pc1-nxos-5.noarch.rpm
+yum install puppet
+~~~
 
 * For `guestshell` use:
-  
-  ~~~bash
-  yum install http://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm
-  yum install puppet
-  ~~~
+
+~~~bash
+yum install http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm
+yum install puppet
+~~~
 
 Update PATH var:
 
@@ -296,102 +278,24 @@ It may be desirable to set up automatic restart of the Puppet agent in the event
 #### <a name="svc-mgmt-bs">Optional: bash-shell / init.d</a>
 
 The `bash-shell` environment uses **init.d** for service management.
+The Puppet agent provides a generic init.d script when installed, but a slight
+modification is needed to ensure that Puppet runs in the management namespace:
 
-**Example:** Create an initd script file as `/etc/init.d/puppet`
-
-~~~bash
-#!/bin/bash
-#
-# puppet Startup script 
-#
-### BEGIN INIT INFO
-# Provides: puppet
-# Required-Start: $local_fs $network $remote_fs
-# Required-Stop: $local_fs $network $remote_fs
-# Should-Start: $named $time
-# Should-Stop: $named $time
-# Short-Description: Startup script for puppet 
-# Description: puppet 
-### END INIT INFO
-# Source function library
-. /etc/init.d/functions
-exec="/opt/puppetlabs/puppet/bin/puppet"
-prog="puppet"
-[ -e /etc/sysconfig/$prog ] && . /etc/sysconfig/$prog
-pidfile=${PIDFILE-/var/run/puppetlabs/agent.pid}
-start() {
-    [ -x $exec ] || exit 5
-    [ -f $config ] || exit 6
-    echo -n $"Starting $prog: "
-    daemon sudo ip netns exec management $exec agent --daemonize
-    retval=$?
-echo
-    [ $retval -eq 0 ]
-return $retval
-}
-stop() {
-echo -n $"Stopping $prog: "
-    killproc -p $pidfile $exec
-    retval=$?
-echo
-    [ $retval -eq 0 ]
-return $retval
-}
-restart () {
-    stop
-    start
-}
-reload() {
-echo -n $"Reloading $prog: "
-    killproc -p $pidfile $exec -HUP
-    retval=$?
-echo
-return $retval
-}
-force_reload() {
-    restart
-}
-rh_status() {
-# run checks to determine if the service is running or use generic status
-    status -p $pidfile $prog
-}
-rh_status_q() {
-    rh_status >/dev/null 2>&1
-}
-case "$1" in
-    start)
-        rh_status_q && exit 0
-$1
-        ;;
-    stop)
-        rh_status_q || exit 0
-$1
-        ;;
-    restart)
-$1
-        ;;
-    reload)
-        rh_status_q || exit 7
-$1
-        ;;
-    force-reload)
-        force_reload
-        ;;
-    status)
-        rh_status
-        ;;
-    condrestart|try-restart)
-        rh_status_q || exit 0
-        restart
-        ;;
-*)
-echo $"Usage: $0 {start|stop|status|restart|condrestart|try-restart|reload|force-reload}"
-exit 2
-esac
-exit $?
+~~~diff
+--- /etc/init.d/puppet.old
++++ /etc/init.d/puppet
+@@ -38,7 +38,7 @@
+ 
+ start() {
+     echo -n $"Starting puppet agent: "
+-    daemon $daemonopts $puppetd ${PUPPET_OPTS} ${PUPPET_EXTRA_OPTS}
++    daemon $daemonopts ip netns exec management $puppetd ${PUPPET_OPTS} ${PUPPET_EXTRA_OPTS}
+     RETVAL=$?
+     echo
+         [ $RETVAL = 0 ] && touch ${lockfile}
 ~~~
 
-Next, add your service to initd management and optionally start it:
+Next, enable the puppet service to be automatically started at boot time, and optionally start it now:
 
 ~~~bash
 chkconfig --add puppet
@@ -403,33 +307,21 @@ service puppet start
 #### <a name="svc-mgmt-gs">Optional: guestshell / systemd</a>
 
 The `guestshell` environment uses **systemd** for service management.
+The Puppet agent provides a generic systemd script when installed, but a slight modification
+is needed to ensure that Puppet runs in the management namespace:
 
-**Example:** Cut and paste the following to create a service file in `/usr/lib/systemd/system/`:
-
-~~~bash
-
-cat >> /usr/lib/systemd/system/my_puppet.service << EOF
-
-[Unit]
-Description=my puppet agent daemon
-After=syslog.target network.target auditd.service
-
-[Service]
-Environment=
-ExecStartPre=
-# Note for below:
-# The command prefix '/bin/nsenter --net=/netns/management --' is only
-# needed if using the management interface for puppet connectivity.
-ExecStart=/bin/nsenter --net=/netns/management -- /opt/puppetlabs/puppet/bin/puppet agent -d
-
-ExecReload=/bin/kill -HUP
-KillMode=process
-Restart=on-failure
-RestartSec=42s
-
-[Install]
-WantedBy=multi-user.target
-EOF
+~~~diff
+--- /usr/lib/systemd/system/puppet.service.old
++++ /usr/lib/systemd/system/puppet.service
+@@ -7,7 +7,7 @@
+ EnvironmentFile=-/etc/sysconfig/puppetagent
+ EnvironmentFile=-/etc/sysconfig/puppet
+ EnvironmentFile=-/etc/default/puppet
+-ExecStart=/opt/puppetlabs/puppet/bin/puppet agent $PUPPET_EXTRA_OPTS --no-daemonize
++ExecStart=/bin/nsenter --net=/var/run/netns/management /opt/puppetlabs/puppet/bin/puppet agent $PUPPET_EXTRA_OPTS --no-daemonize
+ KillMode=process
+ 
+ [Install]
 ~~~
 
 Now enable your Puppet systemd service (the `enable` command adds it to systemd for autostarting the next time you boot) and optionally start it.
@@ -443,11 +335,11 @@ systemctl start my_puppet
 
 ## <a name="auto-install">Automated Installation Options</a>
 
-[Beaker](README-BEAKER.md) - Installing and Configuring Puppet Agent Using the Beaker Tool
+[Beaker](README-beaker-agent-install.md) - Installing and Configuring Puppet Agent Using the Beaker Tool
 
 ## <a name="references">References</a>
 
-[Cisco Nexus Puppet Modules](README.md) - Types, Providers, Utilities
+[Cisco Nexus Puppet Modules](../README.md) - Types, Providers, Utilities
 
 [Cisco Nexus Programmability Guide](http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/6-x/programmability/guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_chapter_01010.html) - Guestshell Documentation
 

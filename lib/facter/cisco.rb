@@ -1,16 +1,11 @@
 require 'facter'
 
 Facter.add(:cisco) do
-  # Facter isn't aware of Puppet features so we have to check for the gem:
-  confine do
-    begin
-      require 'cisco_node_utils'
-      true
-    rescue LoadError
-      false
-    end
+  confine :operatingsystem => :nexus
+  confine :cisco_node_utils do
+    # Any version is OK so long as it is installed
+    true
   end
-  confine :kernel => 'Linux' # TODO be more specific
 
   setcode do
     hash = {}

@@ -2,7 +2,18 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [1.0.0] - 2015-08-28
+### Added
+- New facts `cisco_node_utils` and `cisco_nxapi` report the installed version of these gems.
+- Providers requiring the `cisco_node_utils` feature will generate a warning message if an obsolete gem version is installed.
+- Added README-maintainers.md
+
+### Fixed
+- Metadata URLs now point to new public GitHub repository.
+- Moved misc READMEs into /docs
+- NXAPI providers are marked as defaultfor 'nexus' operating system.
+- Fixed beaker test for package and interface ospf
+- Fixed sample install.pp
 
 ## [0.9.1] - 2015-08-13
 ### Added
@@ -10,6 +21,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added README-creating-types-providers.md and associated templates.
 - Added SUPPORT.md
 - Added Beaker test cases for cisco_command_config, file, package, and service providers.
+- Added VRF attribute to cisco_interface provider.
 
 ### Fixed
 - 'puppet resource cisco_vtp' now works properly.
@@ -26,5 +38,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Initial release of puppetlabs-ciscopuppet module, supporting Cisco NX-OS software release 7.0(3)I2(1) on Cisco Nexus switch platforms: N95xx, N93xx, N30xx and N31xx.
 - Please note: 0.9.0 is an EFT pre-release for a limited audience with access to NX-OS 7.0(3)I2(1). Additional code changes may occur in 0.9.x prior to the final 1.0.0 release.
 
-[unreleased]: https://github.com/cisco/cisco-network-puppet-module/compare/v0.9.1...develop
+[unreleased]: https://github.com/cisco/cisco-network-puppet-module/compare/master...develop
+[1.0.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v0.9.1...v1.0.0
 [0.9.1]: https://github.com/cisco/cisco-network-puppet-module/compare/v0.9.0...v0.9.1

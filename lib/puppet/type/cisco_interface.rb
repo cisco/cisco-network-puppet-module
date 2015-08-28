@@ -225,6 +225,16 @@ Puppet::Type.newtype(:cisco_interface) do
     }
   end # property ipv4_netmask_length
 
+  newproperty(:vrf) do
+    desc "<L3 attribute> VRF member of the interface. Valid values
+          are string, keyword 'default'."
+
+    munge { |value|
+      value = :default if value == 'default'
+      value
+    }
+  end # property vrf
+
   # validate ipv4 address and mask combination
   validate do
     if self[:ipv4_address] != :default and

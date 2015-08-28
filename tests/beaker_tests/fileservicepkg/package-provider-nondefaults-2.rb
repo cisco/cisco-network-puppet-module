@@ -76,9 +76,12 @@ test_name "TestCase :: #{testheader}" do
     on(master, FileSvcPkgLib.create_package_sample_manifest_absent())
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no change.
+    # No change would imply that Sample package is uninstalled prior to test.
+    # Or expected exit_code is 2 since this is a puppet agent cmd with change.
+    # Change would imply that Sample package is installed prior to test.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "agent -t", options)
-    on(agent, cmd_str, {:acceptable_exit_codes => [0]}) 
+    on(agent, cmd_str, {:acceptable_exit_codes => [0, 2]}) 
 
     logger.info("Setup switch for provider test :: #{result}")
   end
@@ -88,10 +91,12 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a bash shell cmd.
     on(master, FileSvcPkgLib.create_package_sample_manifest_present())
 
-    # Expected exit_code is 0 since this is a puppet agent cmd with no change.
+    # Expected exit_code is 2 since this is a puppet agent cmd with change.
+    # Change would imply that Sample package is uninstalled prior to test and
+    # installed after test.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "agent -t", options)
-    on(agent, cmd_str, {:acceptable_exit_codes => [0]}) 
+    on(agent, cmd_str, {:acceptable_exit_codes => [2]}) 
 
     logger.info("Get resource present manifest from master :: #{result}")
   end
@@ -99,13 +104,14 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Checks package resource on agent using resource cmd.
   step "TestStep :: Check package resource presence on agent" do 
     # Expected exit_code is 0 since this is a puppet resource cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
+    # Flag is set to true to check for absence of RegExp pattern in stdout.
+    # Sample package state should not be purged.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
-      "resource package 'n9000_sample.x86_64'", options)
+      "resource package 'n9000_sample'", options)
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout, 
-        {'ensure'         => 'present'},
-        false, self, logger)
+        {'ensure'         => 'purged'},
+        true, self, logger)
     end
 
     logger.info("Check package resource presence on agent :: #{result}")
