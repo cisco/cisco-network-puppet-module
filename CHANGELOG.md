@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
 - New facts `cisco_node_utils` and `cisco_nxapi` report the installed version of these gems.
-- Providers requiring the `cisco_node_utils` feature will generate a warning or error message if an obsolete gem version is installed.
+- Providers requiring the `cisco_node_utils` feature will generate a warning message if an obsolete gem version is installed.
 
 ### Fixed
 - Metadata URLs now point to new public GitHub repository.
