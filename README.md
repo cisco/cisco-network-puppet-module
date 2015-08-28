@@ -6,7 +6,7 @@
 2. [Module Description](#module-description)
 3. [Setup](#setup)
 4. [Usage](#usage)
-5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
+5. [Resource Reference](#resource-reference)
    * [Resource Type Catalog (by Technology)](#resource-by-tech)
    * [Resource Type Catalog (by Name)](#resource-by-name)
 6. [Limitations - OS compatibility, etc.](#limitations)
@@ -51,7 +51,7 @@ The set of supported network element platforms is continuously expanding. Please
 The `ciscopuppet` module is installed on the Puppet Master server. Please see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html) for general information on Puppet module installation.
 
 #### Puppet Agent
-The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md](docs/README-agent-install.md) document for detailed instructions on agent installation and configuration. 
+The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md](docs/README-agent-install.md) document for detailed instructions on agent installation and configuration on Cisco Nexus devices. 
 
 ##### Artifacts
 
@@ -132,7 +132,7 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 }
 ~~~
 
-## Reference
+## Resource Reference
 
 ### <a name="resource-by-tech">Resource Type Catalog (by Technology)<a>
 
