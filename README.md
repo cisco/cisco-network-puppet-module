@@ -53,7 +53,7 @@ The `ciscopuppet` module is installed on the Puppet Master server. Please see [P
 #### Puppet Agent
 The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md](docs/README-agent-install.md) document for detailed instructions on agent installation and configuration. 
 
-##### <a name="artifacts">Artifacts</a>
+##### Artifacts
 
 As noted in the agent installation guide, these are the current RPM versions for use with ciscopuppet:
 * `bash-shell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-nxos-5.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-nxos-5.noarch.rpm)
