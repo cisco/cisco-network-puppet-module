@@ -46,13 +46,20 @@ The set of supported network element platforms is continuously expanding. Please
 
 ## Setup
 
-### Beginning with ciscopuppet
+#### Puppet Master
 
 The `ciscopuppet` module is installed on the Puppet Master server. Please see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html) for general information on Puppet module installation.
 
-The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md](docs/README-agent-install.md) document for detailed instructions on agent installation and configuration. As noted in the agent installation guide, these are the current RPM versions for use with ciscopuppet:
+#### Puppet Agent
+The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md](docs/README-agent-install.md) document for detailed instructions on agent installation and configuration. 
+
+##### <a name="artifacts">Artifacts</a>
+
+As noted in the agent installation guide, these are the current RPM versions for use with ciscopuppet:
 * `bash-shell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-nxos-5.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-nxos-5.noarch.rpm)
 * `guestshell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm)
+
+##### Gems
 
 The ciscopuppet module has dependencies on a few ruby gems. After installing the Puppet Agent software you will then need to install the following gems on the agent device:
 
@@ -72,6 +79,8 @@ cisco_node_utils (1.0.0)
 cisco_nxapi (1.0.0)
 net_http_unix (0.2.1)
 ~~~
+
+##### Gem Persistence
 
 Please note that these gems are currently not persistent across system reload on Nexus switches. This persistence issue can be mitigated by simply defining a manifest entry for installing the `cisco_node_utils` gem via the package provider.
 
