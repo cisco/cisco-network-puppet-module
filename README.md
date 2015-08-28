@@ -9,9 +9,23 @@
 5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
    * [Resource Type Catalog (by Technology)](#resource-by-tech)
    * [Resource Type Catalog (by Name)](#resource-by-name)
-6. [Additional References](#additional-references)
 6. [Limitations - OS compatibility, etc.](#limitations)
 7. [Development - Guide for contributing to the module](#development)
+
+--
+##### Additional References
+
+* Agent Installation
+  * [README-agent-install.md](docs/README-agent-install.md) : Agent Installation and Configuration Guide
+  * [README-beaker-agent-install.md](docs/README-beaker-agent-install.md) : Automated Agent Installation and Configuration via the Beaker Tool
+* User Guides
+  * [README-package-provider.md](docs/README-package-provider.md) : Cisco Nexus Package Management using the Package Provider
+* Developer Guides
+  * [README-develop-types-providers.md](docs/README-develop-types-providers.md) : Developing new ciscopuppet Types and Providers
+  * [README-beaker-testcase-execution.md](docs/README-beaker-testcase-execution.md) : Executing Beaker Tests for ciscopuppet
+  * [README-beaker-testcase-writing.md](docs/README-beaker-testcase-writing.md) : Writing Beaker Tests for ciscopuppet
+
+--
 
 ## Overview
 
@@ -598,18 +612,6 @@ VTP file name. Valid values are a string or the keyword 'default'.
 
 ##### `password`
 Password for the VTP domain. Valid values are a string or the keyword 'default'.
-
-## Additional References
-
-* Agent Installation
-  * [README-agent-install.md](docs/README-agent-install.md) : Agent Installation and Configuration Guide
-  * [README-beaker-agent-install.md](docs/README-beaker-agent-install.md) : Automated Agent Installation and Configuration via the Beaker Tool
-* User Guides
-  * [README-package-provider.md](docs/README-package-provider.md) : Cisco Nexus Package Management using the Package Provider
-* Developer Guides
-  * [README-develop-types-providers.md](docs/README-develop-types-providers.md) : Developing new ciscopuppet Types and Providers
-  * [README-beaker-testcase-execution.md](docs/README-beaker-testcase-execution.md) : Executing Beaker Tests for ciscopuppet
-  * [README-beaker-testcase-writing.md](docs/README-beaker-testcase-writing.md) : Writing Beaker Tests for ciscopuppet
 
 ## Limitations
 
