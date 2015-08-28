@@ -80,9 +80,9 @@ cisco_nxapi (1.0.0)
 net_http_unix (0.2.1)
 ~~~
 
-##### Gem Persistence
+##### Gem Persistence (bash-shell only)
 
-Please note that these gems are currently not persistent across system reload on Nexus switches. This persistence issue can be mitigated by simply defining a manifest entry for installing the `cisco_node_utils` gem via the package provider.
+Please note that in the Nexus `bash-shell` environment these gems are currently not persistent across system reload. This persistence issue can be mitigated by simply defining a manifest entry for installing the `cisco_node_utils` gem via the package provider.
 
 Example:
 
@@ -92,6 +92,7 @@ package { 'cisco_node_utils' :
   ensure => present,
 }
 ~~~
+*This persistence issue does not affect the `guestshell` environment. Gems are persistent across reload in the `guestshell`.*
 
 ## Usage
 
