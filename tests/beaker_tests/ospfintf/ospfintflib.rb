@@ -60,7 +60,7 @@ node default {
 
   cisco_interface_ospf { 'ethernet1/4 test':
     ensure                   => present,
-    area                     => '1',
+    area                     => \"0.0.0.1\",
     cost                     => '1',
     hello_interval           => 'default',
     dead_interval            => 'default',
@@ -131,7 +131,7 @@ node default {
 
   cisco_interface_ospf { 'ethernet1/4 test':
     ensure                   => present,
-    area                     => '100',
+    area                     => \"0.0.0.100\",
     cost                     => '100',
     hello_interval           => '20',
     dead_interval            => '80',
@@ -158,7 +158,7 @@ node default {
 
   cisco_interface_ospf { 'ethernet1/4 test':
     ensure                   => present,
-    area                     => 1,
+    area                     => \"0.0.0.1\",
     cost                     => #{OspfIntfLib::COST_NEGATIVE},
   }
 }
@@ -182,7 +182,7 @@ node default {
 
   cisco_interface_ospf { 'ethernet1/4 test':
     ensure                   => present,
-    area                     => '1',
+    area                     => \"0.0.0.1\",
     hello_interval           => #{OspfIntfLib::HELLOINTERVAL_NEGATIVE},
   }
 }
@@ -206,7 +206,7 @@ node default {
 
   cisco_interface_ospf { 'ethernet1/4 test':
     ensure                   => present,
-    area                     => '1',
+    area                     => \"0.0.0.1\",
     dead_interval            => #{OspfIntfLib::DEADINTERVAL_NEGATIVE},
   }
 }
@@ -230,7 +230,7 @@ node default {
 
   cisco_interface_ospf { 'ethernet1/4 test':
     ensure                   => present,
-    area                     => '1',
+    area                     => \"0.0.0.1\",
     passive_interface        => #{OspfIntfLib::PASSIVEINTF_NEGATIVE},
   }
 }
