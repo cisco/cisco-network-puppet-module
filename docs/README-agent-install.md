@@ -223,7 +223,7 @@ yum install puppet
 Update PATH var:
 
 ~~~bash
-export PATH=$PATH:/opt/puppetlabs/puppet/bin:/opt/puppetlabs/puppet/lib
+export PATH=/opt/puppetlabs/puppet/bin:/opt/puppetlabs/puppet/lib:$PATH
 ~~~
 
 ####Edit the Puppet config file:
