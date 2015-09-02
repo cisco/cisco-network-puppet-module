@@ -107,10 +107,6 @@ test_name "TestCase :: #{testheader}" do
         {"cost" => OspfIntfLib::COST_NEGATIVE},
         true, self, logger)
     end
-    # cleanup partially configured resource
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
-      "resource cisco_interface_ospf 'ethernet1/4 test' ensure=absent", options)
-    on(agent, cmd_str)
 
     logger.info("Check cisco_intf_ospf resource absence on agent :: #{result}")
   end
@@ -122,12 +118,14 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd("show running-config ospf")
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-        [/interface Ethernet1\/4/,
-        /ip ospf cost 1/,
-        /ip ospf dead-interval 40/,
-        /ip router ospf test area 0.0.0.1/],
+        [/ip ospf cost #{OspfIntfLib::COST_NEGATIVE}/],
         true, self, logger)
     end
+
+    # Cleanup partially configured resource.
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+      "resource cisco_interface_ospf 'ethernet1/4 test' ensure=absent", options)
+    on(agent, cmd_str)
 
     logger.info("Check ospfintf instance absence on agent :: #{result}")
   end
@@ -167,12 +165,14 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd("show running-config ospf")
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-        [/interface Ethernet1\/4/,
-        /ip ospf cost 1/,
-        /ip ospf dead-interval 40/,
-        /ip router ospf test area 0.0.0.1/],
+        [/ip ospf hello-interval #{OspfIntfLib::HELLOINTERVAL_NEGATIVE}/],
         true, self, logger)
     end
+
+    # Cleanup partially configured resource.
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+      "resource cisco_interface_ospf 'ethernet1/4 test' ensure=absent", options)
+    on(agent, cmd_str)
 
     logger.info("Check ospfintf instance absence on agent :: #{result}")
   end
@@ -212,12 +212,14 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd("show running-config ospf")
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-        [/interface Ethernet1\/4/,
-        /ip ospf cost 1/,
-        /ip ospf dead-interval 40/,
-        /ip router ospf test area 0.0.0.1/],
+        [/ip ospf dead-interval #{OspfIntfLib::DEADINTERVAL_NEGATIVE}/],
         true, self, logger)
     end
+
+    # Cleanup partially configured resource.
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+      "resource cisco_interface_ospf 'ethernet1/4 test' ensure=absent", options)
+    on(agent, cmd_str)
 
     logger.info("Check ospfintf instance absence on agent :: #{result}")
   end
@@ -257,12 +259,14 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd("show running-config ospf")
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-        [/interface Ethernet1\/4/,
-        /ip ospf cost 1/,
-        /ip ospf dead-interval 40/,
-        /ip router ospf test area 0.0.0.1/],
+        [/ip ospf passive-interface #{OspfIntfLib::PASSIVEINTF_NEGATIVE}/],
         true, self, logger)
     end
+
+    # Cleanup partially configured resource.
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+      "resource cisco_interface_ospf 'ethernet1/4 test' ensure=absent", options)
+    on(agent, cmd_str)
 
     logger.info("Check ospfintf instance absence on agent :: #{result}")
   end

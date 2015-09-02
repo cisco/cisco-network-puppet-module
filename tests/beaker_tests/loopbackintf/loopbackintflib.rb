@@ -41,6 +41,7 @@ module LoopbackIntfLib
   SHUTDOWN_NEGATIVE            = 'invalid'
   IPV4PROXYARP_NEGATIVE        = 'invalid'
   IPV4REDIR_NEGATIVE           = 'invalid'
+  VRF_NEGATIVE                 = '~'
 
   # A. Methods to create manifests for cisco_interface Puppet provider test cases.
 
@@ -57,6 +58,7 @@ node default {
       shutdown                     => false,
       ipv4_address                 => '192.168.1.1',
       ipv4_netmask_length          => 16,
+      vrf                          => 'default',
   }
 }
 EOF"
@@ -92,6 +94,7 @@ node default {
       shutdown                     => true,
       ipv4_address                 => '192.168.1.1',
       ipv4_netmask_length          => 16,
+      vrf                          => 'test1',
     }
 }
 EOF"
@@ -179,4 +182,19 @@ EOF"
     return manifest_str
   end
 
+  # Method to create a manifest for LoopbackINTF resource attribute 'vrf'.
+  # @param none [None] No input parameters exist.
+  # @result none [None] Returns no object.
+  def LoopbackIntfLib.create_loopbackintf_manifest_vrf_negative()
+    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+node default {
+    cisco_interface { 'loopback1':
+      ensure                       => present,
+      shutdown                     => false,
+      vrf                          => #{LoopbackIntfLib::VRF_NEGATIVE},
+    }
+}
+EOF"
+    return manifest_str
+  end
 end

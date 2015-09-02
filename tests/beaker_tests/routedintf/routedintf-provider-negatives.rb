@@ -298,6 +298,48 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check interface instance absence on agent :: #{result}")
   end
 
+  # @step [Step] Requests manifest from the master server to the agent.
+  step "TestStep :: Get negative test resource manifest from master" do
+    # Expected exit_code is 0 since this is a bash shell cmd.
+    on(master, RoutedIntfLib.create_routedintf_manifest_vrf_negative())
+
+    # Expected exit_code is 1 since this is a puppet agent cmd with error.
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+      "agent -t", options)
+    on(agent, cmd_str, {:acceptable_exit_codes => [1]})
+
+    logger.info("Get negative test resource manifest from master :: #{result}")
+  end
+
+  # @step [Step] Checks cisco_interface resource on agent using resource cmd.
+  step "TestStep :: Check cisco_interface resource absence on agent" do
+    # Expected exit_code is 0 since this is a puppet resource cmd.
+    # Flag is set to true to check for absence of RegExp pattern in stdout.
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+      "resource cisco_interface 'ethernet1/4'", options)
+    on(agent, cmd_str) do
+      UtilityLib.search_pattern_in_output(stdout,
+        {"vrf" => RoutedIntfLib::VRF_NEGATIVE},
+        true, self, logger)
+    end
+
+    logger.info("Check cisco_interface resource absence on agent :: #{result}")
+  end
+
+  # @step [Step] Checks interface instance on agent using switch show cli cmds.
+  step "TestStep :: Check interface instance absence on agent" do
+    # Expected exit_code is 0 since this is a vegas shell cmd.
+    # Flag is set to true to check for absence of RegExp pattern in stdout.
+    cmd_str = UtilityLib.get_vshell_cmd("show running-config interface eth1/4")
+    on(agent, cmd_str) do
+      UtilityLib.search_pattern_in_output(stdout,
+        [/vrf member/],
+        true, self, logger)
+    end
+
+    logger.info("Check interface instance absence on agent :: #{result}")
+  end
+
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   UtilityLib.raise_passfail_exception(result, testheader, self, logger)
 

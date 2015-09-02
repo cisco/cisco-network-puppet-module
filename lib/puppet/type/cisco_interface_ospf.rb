@@ -229,7 +229,7 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
 
     munge { |value|
       # Coerce numeric area to the expected dot-decimal format.
-      value = IPAddr.new(value, Socket::AF_INET) unless value.to_s[/\./]
+      value = IPAddr.new(value.to_i, Socket::AF_INET) unless value.to_s[/\./]
       value.to_s
     }
 

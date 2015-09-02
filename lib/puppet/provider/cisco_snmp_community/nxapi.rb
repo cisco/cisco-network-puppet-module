@@ -23,6 +23,7 @@ Puppet::Type.type(:cisco_snmp_community).provide(:nxapi) do
   desc "The NXAPI provider for cisco_snmp_community"
 
   confine :feature => :cisco_node_utils
+  defaultfor :operatingsystem => :nexus
 
   mk_resource_methods
 

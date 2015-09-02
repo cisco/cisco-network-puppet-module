@@ -151,8 +151,9 @@ node default {
     package { 'n9000_sample.x86_64':
         name            => 'n9000_sample-1.0.0-7.0.3.x86_64.rpm',
         ensure          => present,
-        provider        => 'yum',
+        provider        => 'nxapi',
         source          => '/bootflash/n9000_sample-1.0.0-7.0.3.x86_64.rpm',
+        package_settings => {'target' => 'host'}, 
     }
 }
 EOF"
@@ -169,8 +170,9 @@ node default {
     package { 'n9000_sample.x86_64':
         name            => 'n9000_sample-1.0.0-7.0.3.x86_64.rpm',
         ensure          => absent,
-        provider        => 'yum',
-        source          => '/bootflash/puppet-rpm/n9000_sample-1.0.0-7.0.3.x86_64.rpm',
+        provider        => 'nxapi',
+        source          => '/bootflash/n9000_sample-1.0.0-7.0.3.x86_64.rpm',
+        package_settings => {'target' => 'host'}, 
     }
 }
 EOF"

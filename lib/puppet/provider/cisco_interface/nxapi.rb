@@ -30,14 +30,17 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
   desc "The NXAPI provider for cisco_interface."
 
   confine :feature => :cisco_node_utils
+  defaultfor :operatingsystem => :nexus
 
   mk_resource_methods
 
   # Property symbol arrays for method auto-generation. There are separate arrays
   # because the boolean-based methods are processed slightly different.
   # Note: switchport_mode should always process first to evaluate L2 vs L3.
+  # Note: vrf should be the first L3 property to process.  The AutoGen vrf
+  # setting is not used.
   INTF_NON_BOOL_PROPS = [
-    :switchport_mode, :access_vlan, :description,
+    :switchport_mode, :vrf, :access_vlan, :description,
     :ipv4_address, :ipv4_netmask_length,
   ]
   INTF_BOOL_PROPS = [
@@ -146,6 +149,23 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
       end
       @interface.ipv4_addr_mask_set(addr, mask)
     end
+  end
+
+# override vrf setter
+  def vrf=(val)
+    val = @interface.default_vrf if val == :default
+    @property_flush[:vrf] = val
+
+    # flush other L3 properties because vrf will wipe them out
+    l3_props = [
+      :ipv4_proxy_arp, :ipv4_redirects,
+      :ipv4_address, :ipv4_netmask_length,
+    ]
+    l3_props.each { |prop|
+      if @property_flush[prop].nil?
+        @property_flush[prop] = @property_hash[prop] unless @property_hash[prop].nil?
+      end
+    }
   end
 
   def flush

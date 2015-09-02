@@ -116,7 +116,8 @@ test_name "TestCase :: #{testheader}" do
         'shutdown'                     => 'true',
         'switchport_autostate_exclude' => 'false',
         'switchport_mode'              => 'disabled',
-        'switchport_vtp'               => 'false'},
+        'switchport_vtp'               => 'false',
+        'vrf'                          => 'test1'},
         false, self, logger)
     end
 
@@ -130,7 +131,8 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd("show running-config interface loopback1")
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout, [/ip address 192.168.1.1\/16/,
-        /shutdown/],
+        /shutdown/,
+        /vrf member test1/],
         false, self, logger)
     end
 
@@ -166,7 +168,8 @@ test_name "TestCase :: #{testheader}" do
         'shutdown'                     => 'true',
         'switchport_autostate_exclude' => 'false',
         'switchport_mode'              => 'disabled',
-        'switchport_vtp'               => 'false'},
+        'switchport_vtp'               => 'false',
+        'vrf'                          => 'test1'},
         true, self, logger)
     end
 
@@ -180,7 +183,8 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd("show running-config interface loopback1")
     on(agent, cmd_str, {:acceptable_exit_codes => [16]}) do
       UtilityLib.search_pattern_in_output(stdout, [/ip address 192.168.1.1\/16/,
-        /shutdown/],
+        /shutdown/,
+        /vrf member test1/],
         true, self, logger)
     end
 

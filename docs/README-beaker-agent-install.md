@@ -37,7 +37,7 @@ at the same time.
 * `guestshell`
   * This is a secure linux container environment running CentOS. It is enabled by default.
 
-Access the following [link](README-AGENT-INSTALL.md) for more information on enabling these environments.
+Access the following [link](README-agent-install.md) for more information on enabling these environments.
 
 ### Install Beaker
 
@@ -142,15 +142,13 @@ For installs into the `guestshell`, uncomment the `target: guestshell` field in 
 
 ## <a name="limitations">Limitations</a>
 
-Puppet agent is currently supported on:
-
- * Cisco NX-OS software release 7.0(3)I2(1) and later.
- * Cisco Nexus switch platform models: N95xx, N93xx, N30xx, N31xx.
- * Open source Puppet version 4.0 or greater, or Puppet Enterprise 2015.2 or greater.
-
-Please ensure that the platform is running a supported version of NX-OS software.
-
-Puppet agent runs in either the native NX-OS `bash-shell` environment or in the NX-OS `guestshell` environment.
+Minimum Requirements:
+* Cisco NX-OS Puppet implementation requires open source Puppet version 4.0 or Puppet Enterprise 2015.2
+* Supported Platforms:
+ * Cisco Nexus 95xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
+ * Cisco Nexus 93xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
+ * Cisco Nexus 31xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
+ * Cisco Nexus 30xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
 
 ## <a name="license-information">License Information</a>
 

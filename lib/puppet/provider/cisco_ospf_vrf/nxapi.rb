@@ -30,6 +30,7 @@ Puppet::Type.type(:cisco_ospf_vrf).provide(:nxapi) do
   desc "The NXAPI provider."
 
   confine :feature => :cisco_node_utils
+  defaultfor :operatingsystem => :nexus
 
   mk_resource_methods
 

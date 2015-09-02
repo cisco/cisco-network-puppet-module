@@ -1,52 +1,98 @@
 # ciscopuppet
-----
-### _EARLY FIELD TRIAL:_ This is a Puppet agent EFT for use with Cisco NX-OS release 7.0(3)I2(1). Please see the [Limitations](#limitations) section for more information.
-----
 
 #### Table of Contents
 
 1. [Overview](#overview)
 2. [Module Description](#module-description)
 3. [Setup](#setup)
-    * [Setup requirements](#setup-requirements)
-    * [Beginning with ciscopuppet](#beginning-with-ciscopuppet)
 4. [Usage](#usage)
-5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
-5. [Limitations - OS compatibility, etc.](#limitations)
-6. [Development - Guide for contributing to the module](#development)
+5. [Resource Reference](#resource-reference)
+   * [Resource Type Catalog (by Technology)](#resource-by-tech)
+   * [Resource Type Catalog (by Name)](#resource-by-name)
+6. [Limitations - OS compatibility, etc.](#limitations)
+7. [Development - Guide for contributing to the module](#development)
+
+--
+##### Additional References
+
+* Agent Installation
+  * [README-agent-install.md](docs/README-agent-install.md) : Agent Installation and Configuration Guide
+  * [README-beaker-agent-install.md](docs/README-beaker-agent-install.md) : Automated Agent Installation and Configuration via the Beaker Tool
+* User Guides
+  * [README-package-provider.md](docs/README-package-provider.md) : Cisco Nexus Package Management using the Package Provider
+* Developer Guides
+  * [README-develop-types-providers.md](docs/README-develop-types-providers.md) : Developing new ciscopuppet Types and Providers
+  * [README-beaker-testcase-execution.md](docs/README-beaker-testcase-execution.md) : Executing Beaker Tests for ciscopuppet
+  * [README-beaker-testcase-writing.md](docs/README-beaker-testcase-writing.md) : Writing Beaker Tests for ciscopuppet
+
+--
 
 ## Overview
 
-This ciscopuppet module enables Puppet to config Cisco Nexus Switches that 
-support NXAPI through types and NXAPI based providers.
+The ciscopuppet module allows a network administrator to manage Cisco Network Elements using Puppet. This module bundles a set of Puppet Types, providers, Beaker Tests, Sample Manifests and Installation Tools for effective network management.  The  resources and capabilities provided by this Puppet Module will grow with contributions from Cisco, Puppet Labs and the open source community.
+
+The Cisco Network Elements and Operating Systems managed by this Puppet Module are continuously expanding. Please refer to the [Limitations](#limitations) section for details on currently supported hardware and software.
+The Limitations section also provides details on compatible Puppet Agent and Puppet Master versions.
+
+This GitHub repository contains the latest version of the ciscopuppet module source code. Supported versions of the ciscopuppet module are available at Puppet Forge. Please refer to [SUPPORT.md](SUPPORT.md) for additional details.
+
+Contributions to this Puppet Module are welcome. Guidelines on contributions to the module are captured in [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## Module Description
 
-This module enables users to manage Cisco Nexus switches using Puppet.
+This module enables management of supported Cisco Network Elements using Puppet. This module enhances the Puppet DSL by introducing new Puppet Types and Providers capable of managing network elements.
 
-This module uses Cisco NXAPI to manage various Cisco NX-OS functions on certain Cisco Nexus Switches models such as N9k series and N31xx series. These functions include,
-but are not limited to, tacacs server and host, snmp server and users, and OSPF. 
+The set of supported network element platforms is continuously expanding. Please refer to the [Limitations](#limitations) section for a list of currently supported platforms.
 
 ## Setup
 
-### Beginning with ciscopuppet
+#### Puppet Master
 
-Before the module can be run properly on the agent, enable pluginsync in the puppet.conf file on the agent.
+The `ciscopuppet` module is installed on the Puppet Master server. Please see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html) for general information on Puppet module installation.
 
-You must also install the following gems on the agent: net_http_unix, cisco_nxapi,
-and cisco_node_utils. Since these have dependencies on each other, when you 
-install cisco_node_utils, the other two gems will be automatically installed.
-Gems installed under Puppet are not persistent across system reload on Nexus
-switches. To avoid issues after reload, you should include the package
-provider in the manifest to automate installing these gems, as shown in
-the following example.
+#### Puppet Agent
+The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md](docs/README-agent-install.md) document for detailed instructions on agent installation and configuration on Cisco Nexus devices. 
+
+##### Artifacts
+
+As noted in the agent installation guide, these are the current RPM versions for use with ciscopuppet:
+* `bash-shell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-nxos-5.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-nxos-5.noarch.rpm)
+* `guestshell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm)
+
+##### Gems
+
+The ciscopuppet module has dependencies on a few ruby gems. After installing the Puppet Agent software you will then need to install the following gems on the agent device:
+
+* [`net_http_unix`](https://rubygems.org/gems/net_http_unix)
+* [`cisco_nxapi`](https://rubygems.org/gems/cisco_nxapi)
+* [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils)
+
+These gems have dependencies on each other so installing `cisco_node_utils` by itself will automatically install `net_http_unix` and `cisco_nxapi`.
+
+Example:
+
+~~~bash
+[root@guestshell]#  gem install cisco_node_utils
+
+[root@guestshell]#  gem list | egrep 'cisco|net_http'
+cisco_node_utils (1.0.0)
+cisco_nxapi (1.0.0)
+net_http_unix (0.2.1)
+~~~
+
+##### Gem Persistence (bash-shell only)
+
+Please note that in the Nexus `bash-shell` environment these gems are currently not persistent across system reload. This persistence issue can be mitigated by simply defining a manifest entry for installing the `cisco_node_utils` gem via the package provider.
+
+Example:
 
 ~~~Puppet
 package { 'cisco_node_utils' :
   provider => 'gem',
   ensure => present,
 }
-~~~~
+~~~
+*This persistence issue does not affect the `guestshell` environment. Gems are persistent across reload in the `guestshell`.*
 
 ## Usage
 
@@ -86,9 +132,38 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 }
 ~~~
 
-## Reference
+## Resource Reference
 
-### Public Types
+### <a name="resource-by-tech">Resource Type Catalog (by Technology)<a>
+
+1. Miscellaneous Types
+  * [`cisco_command_config`](#type-cisco_command_config)
+
+2. Interface Types
+  * [`cisco_interface`](#type-cisco_interface)
+  * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
+
+3. OSPF Types
+  * [`cisco_ospf`](#type-cisco_ospf)
+  * [`cisco_ospf_vrf`](#type-cisco_ospf_vrf)
+  * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
+
+4. SNMP Types
+  * [`cisco_snmp_community`](#type-cisco_snmp_community)
+  * [`cisco_snmp_group`](#type-cisco_snmp_group)
+  * [`cisco_snmp_server`](#type-cisco_snmp_server)
+  * [`cisco_snmp_user`](#type-cisco_snmp_user)
+
+5. TACACS Types
+  * [`cisco_tacacs_server`](#type-cisco_tacacs_server)
+  * [`cisco_tacacs_server_host`](#type-cisco_tacacs_server_host)
+
+6. VLAN Types
+  * [`cisco_vlan`](#type-cisco_vlan)
+  * [`cisco_vtp`](#type-cisco_vtp)
+
+--
+### <a name="resource-by-name">Resource Type Catalog (by Name)<a>
 
 * [`cisco_command_config`](#type-cisco_command_config)
 * [`cisco_bgp`](#type-cisco_bgp)
@@ -105,6 +180,11 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 * [`cisco_vlan`](#type-cisco_vlan)
 * [`cisco_vrf`](#type-cisco_vrf)
 * [`cisco_vtp`](#type-cisco_vtp)
+
+--
+### Resource Type Details
+
+The following resources are listed alphabetically.
 
 ### Type: cisco_command_config
 
@@ -284,6 +364,9 @@ keyword 'default'.
 ###### `ipv4_netmask_length`
 Network mask length of the IP address on the interface. Valid values are 
 integer and keyword 'default'.
+
+###### `vrf`
+VRF member of the interface.  Valid values are a string or the keyword 'default'.
 
 ##### SVI interface config attributes
 
@@ -663,14 +746,13 @@ Password for the VTP domain. Valid values are a string or the keyword 'default'.
 
 ## Limitations
 
-This module can only be supported from NX-OS software release 7.0(3)I2(1) 
-on Cisco Nexus switch N95xx, N93xx, N30xx and N31xx platforms. Please ensure 
-that the switch is running a supported version of NX-OS software.
-
-On the supported platforms, it can work with both the native NX-OS 
-Puppet agent or with the CentOS Puppet agent installed into the Guestshell. 
-It does not (yet) address other Cisco operating systems such as IOS, IOS-XE, 
-or IOS XR.
+Minimum Requirements:
+* Cisco NX-OS Puppet implementation requires open source Puppet version 4.0 or Puppet Enterprise 2015.2
+* Supported Platforms:
+  * Cisco Nexus 95xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
+  * Cisco Nexus 93xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
+  * Cisco Nexus 31xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
+  * Cisco Nexus 30xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
 
 ## Development
 
