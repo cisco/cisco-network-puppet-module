@@ -136,31 +136,39 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 
 ### <a name="resource-by-tech">Resource Type Catalog (by Technology)<a>
 
-1. Miscellaneous Types
+* Miscellaneous Types
   * [`cisco_command_config`](#type-cisco_command_config)
 
-2. Interface Types
+* BGP Types
+  * [`cisco_vrf`](#type-cisco_vrf)
+  * [`cisco_bgp`](#type-cisco_bgp)
+
+* Interface Types
   * [`cisco_interface`](#type-cisco_interface)
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 
-3. OSPF Types
+* OSPF Types
+  * [`cisco_vrf`](#type-cisco_vrf)
   * [`cisco_ospf`](#type-cisco_ospf)
   * [`cisco_ospf_vrf`](#type-cisco_ospf_vrf)
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 
-4. SNMP Types
+* SNMP Types
   * [`cisco_snmp_community`](#type-cisco_snmp_community)
   * [`cisco_snmp_group`](#type-cisco_snmp_group)
   * [`cisco_snmp_server`](#type-cisco_snmp_server)
   * [`cisco_snmp_user`](#type-cisco_snmp_user)
 
-5. TACACS Types
+* TACACS Types
   * [`cisco_tacacs_server`](#type-cisco_tacacs_server)
   * [`cisco_tacacs_server_host`](#type-cisco_tacacs_server_host)
 
-6. VLAN Types
+* VLAN Types
   * [`cisco_vlan`](#type-cisco_vlan)
   * [`cisco_vtp`](#type-cisco_vtp)
+
+* VRF Type
+  * [`cisco_vrf`](#type-cisco_vrf)
 
 --
 ### <a name="resource-by-name">Resource Type Catalog (by Name)<a>
