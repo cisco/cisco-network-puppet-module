@@ -340,16 +340,16 @@ VRF name. Required. Valid values are string. The name 'default' is a valid VRF r
 Neighbor Identifier. Required. Valid values are string. Neighbors may use IPv4 or IPv6 notation, with or without a subnet mask.
 
 ##### `afi`
-Neighbor Address Family Identifier (AFI). Required. Valid values are string. Valid neighbor AFIs are 'ipv4' and 'ipv6'. Note that some AFI/SAFI address-families may not be supported with some neighbors; e.g. an ipv6 neighbor may not support an ipv4 multicast address-family.
+Neighbor Address Family Identifier (AFI). Required. Valid values are string. Valid neighbor AFIs are `ipv4` and `ipv6`. Note that some AFI/SAFI address-families may not be supported with some neighbors; e.g. an ipv6 neighbor may not support an ipv4 multicast address-family.
 
 ##### `safi`
-Neighbor Sub Address Family Identifier (SAFI). Required. Valid values are string. Valid neighbor SAFIs are 'unicast' and 'multicast'. Note that some AFI/SAFI address-families may not be supported with some neighbors; e.g. an ipv6 neighbor may not support an ipv4 multicast address-family.
+Neighbor Sub Address Family Identifier (SAFI). Required. Valid values are string. Valid neighbor SAFIs are `unicast` and `multicast`. Note that some AFI/SAFI address-families may not be supported with some neighbors; e.g. an ipv6 neighbor may not support an ipv4 multicast address-family.
 
 ##### `advertise_map_exist`
-Conditional route advertisement. This property requires two route maps: an advertise-map and an exist-map. Valid values are an array specifying both the advertise-map name and the exist-map name, or simply 'default'; e.g. ['my_advertise_map', 'my_exist_map']. This command is mutually exclusive with the advertise_map_non_exist property.
+Conditional route advertisement. This property requires two route maps: an advertise-map and an exist-map. Valid values are an array specifying both the advertise-map name and the exist-map name, or simply 'default'; e.g. `['my_advertise_map', 'my_exist_map']`. This command is mutually exclusive with the advertise_map_non_exist property.
 
 ##### `advertise_map_non_exist`
-Conditional route advertisement. This property requires two route maps: an advertise-map and a non-exist-map. Valid values are an array specifying both the advertise-map name and the non-exist-map name, or simply 'default'; e.g. ['my_advertise_map', 'my_non_exist_map']. This command is mutually exclusive with the advertise_map_exist property.
+Conditional route advertisement. This property requires two route maps: an advertise-map and a non-exist-map. Valid values are an array specifying both the advertise-map name and the non-exist-map name, or simply 'default'; e.g. `['my_advertise_map', 'my_non_exist_map']`. This command is mutually exclusive with the advertise_map_exist property.
 
 ##### `allowas_in`
 `allowas-in`. Valid values are true, false, or an integer value, which enables the command with a specific max-occurrences value. Related: `allowas_in_max`.
@@ -361,19 +361,19 @@ Optional max-occurrences value for `allowas_in`. Valid values are an integer val
 `as-override`. Valid values are true, false, or 'default'.
 
 ##### `cap_add_paths_receive`
-`capability additional-paths receive`. Valid values are true, false, or 'default'. Related: `cap_add_paths_receive_disable'.
+`capability additional-paths receive`. Valid values are true, false, or 'default'. Related: `cap_add_paths_receive_disable`.
 
 ##### `cap_add_paths_receive_disable`
 Optional 'disable' keyword for the `cap_add_paths_receive` property. Can be used independently or in conjunction with `cap_add_paths_receive`. Valid values are true, false, or 'default'.
 
 ##### `cap_add_paths_send`
-`capability additional-paths send`. Valid values are true, false, or 'default'. Related: `cap_add_paths_send_disable'.
+`capability additional-paths send`. Valid values are true, false, or 'default'. Related: `cap_add_paths_send_disable`.
 
 ##### `cap_add_paths_send_disable`
 Optional 'disable' keyword for the `cap_add_paths_send` property. Can be used independently or in conjunction with `cap_add_paths_send`. Valid values are true, false, or 'default'.
 
 ##### `default_originate`
-`default-originate`. Valid values are True, False, or 'default'. Related: default_originate_route_map.
+`default-originate`. Valid values are True, False, or 'default'. Related: `default_originate_route_map`.
 
 ##### `default_originate_route_map`
 Optional route-map for the `default_originate` property. Can be used independently or in conjunction with `default_originate`. Valid values are a string defining a route-map name, or 'default'.
