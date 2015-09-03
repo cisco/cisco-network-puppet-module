@@ -1,0 +1,5 @@
+# Use Docker infrastructure
+sudo: false
+
+language: ruby
+cache: bundler
