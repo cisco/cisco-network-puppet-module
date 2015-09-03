@@ -19,104 +19,105 @@
 module PuppetX
   module Cisco
     class AutoGen
-      def AutoGen.mk_puppet_methods(mtype, klass, rlbname, props)
+      # "nu_name" refers to node_utils
+      def self.mk_puppet_methods(mtype, klass, nu_name, props)
         case mtype
         when :non_bool
-          mk_puppet_getters_non_bool(klass, rlbname, props)
-          mk_puppet_setters_non_bool(klass, rlbname, props)
+          mk_puppet_getters_non_bool(klass, nu_name, props)
+          mk_puppet_setters_non_bool(klass, nu_name, props)
         when :bool
-          mk_puppet_getters_bool(klass, rlbname, props)
-          mk_puppet_setters_bool(klass, rlbname, props)
+          mk_puppet_getters_bool(klass, nu_name, props)
+          mk_puppet_setters_bool(klass, nu_name, props)
         end
       end
 
       # Auto-generator for puppet non-boolean-based GETTER methods
-      def AutoGen.mk_puppet_getters_non_bool(klass, rlbname, props)
+      def self.mk_puppet_getters_non_bool(klass, nu_name, props)
         props.each do |prop|
-          klass.instance_eval {
+          klass.instance_eval do
             # Generate GETTER method; e.g.
             # def foo
             #   return :default if
-            #     @resource[foo] == :default and
-            #     @property_hash[foo] == @rlb.default_foo
-            #   @property_hash[foo]
+            #     @resource[:foo] == :default &&
+            #     @property_hash[:foo] == @nu.default_foo
+            #   @property_hash[:foo]
             # end
             define_method(prop) do
               return :default if
-                @resource[prop] == :default and
-                @property_hash[prop] == self.instance_variable_get(rlbname).send("default_#{prop}")
+                @resource[prop] == :default &&
+                @property_hash[prop] == instance_variable_get(nu_name).send("default_#{prop}")
               @property_hash[prop]
             end
-          }
+          end
         end
       end
 
       # Auto-generator for puppet non-boolean-based SETTER methods
-      def AutoGen.mk_puppet_setters_non_bool(klass, rlbname, props)
+      def self.mk_puppet_setters_non_bool(klass, nu_name, props)
         props.each do |prop|
-          klass.instance_eval {
+          klass.instance_eval do
             # Generate SETTER method; e.g.
-            # def foo=
+            # def foo=(val)
             #   if val == :default
-            #     val = @rlb.default_foo
+            #     val = @nu.default_foo
             #   end
-            #   @property_flush[foo] = val
+            #   @property_flush[:foo] = val
             # end
-            define_method("#{prop}=") do |val|
-              raise "@property_flush not defined" if
-                self.instance_variable_get(:@property_flush).nil?
+            define_method("#{prop}=")do |val|
+              fail '@property_flush not defined' if
+                instance_variable_get(:@property_flush).nil?
               if val == :default
-                val = self.instance_variable_get(rlbname).send("default_#{prop}")
+                val = instance_variable_get(nu_name).send("default_#{prop}")
               end
               @property_flush[prop] = val
             end
-          }
+          end
         end
       end
 
       # Auto-generator for puppet boolean-based GETTER methods
-      def AutoGen.mk_puppet_getters_bool(klass, rlbname, props)
+      def self.mk_puppet_getters_bool(klass, nu_name, props)
         props.each do |prop|
-          klass.instance_eval {
+          klass.instance_eval do
             # Generate GETTER method; e.g.
             # def foo
-            #   val = @rlb.foo
+            #   val = @nu.foo
             #   return :default if
-            #     @resource[foo] == :default and
-            #     val == @rlb.default_foo
+            #     @resource[foo] == :default &&
+            #     val == @nu.default_foo
             #   @property_hash[foo] = val.nil? ? nil : (val ? :true : :false)
             # end
             define_method(prop) do
-              val = self.instance_variable_get(rlbname).send(prop)
+              val = instance_variable_get(nu_name).send(prop)
               return :default if
-                @resource[prop] == :default and
-                val == self.instance_variable_get(rlbname).send("default_#{prop}")
-              @property_hash[prop] = val.nil? ? nil : (val ? :true : :false)
+                @resource[prop] == :default &&
+                val == instance_variable_get(nu_name).send("default_#{prop}")
+              @property_hash[prop] = val.nil? ? nil : val.to_s.to_sym
             end
-          }
+          end
         end
       end
 
       # Auto-generator for puppet boolean-based SETTER methods
-      def AutoGen.mk_puppet_setters_bool(klass, rlbname, props)
+      def self.mk_puppet_setters_bool(klass, nu_name, props)
         props.each do |prop|
-          klass.instance_eval {
+          klass.instance_eval do
             # Generate SETTER method; e.g.
-            # def foo=
-            #   @property_flush[foo] =
+            # def foo=(val)
+            #   @property_flush[:foo] =
             #     (val == :default) ?
-            #       @rlb.foo :
+            #       @nu.foo :
             #       (val == :true)
             # end
             define_method("#{prop}=") do |val|
-              raise "@property_flush not defined" if
-                self.instance_variable_get(:@property_flush).nil?
+              fail '@property_flush not defined' if
+                instance_variable_get(:@property_flush).nil?
               @property_flush[prop] =
                 (val == :default) ?
-              self.instance_variable_get(rlbname).send("default_#{prop}") :
+              instance_variable_get(nu_name).send("default_#{prop}") :
                 (val == :true)
             end
-          }
+          end
         end
       end
     end

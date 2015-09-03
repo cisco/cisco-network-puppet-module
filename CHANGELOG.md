@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## feature/bgp
+- Added support for RouterBgpNbrAF class.
+
 ## [1.0.0] - 2015-08-28
 ### Added
 - New facts `cisco_node_utils` and `cisco_nxapi` report the installed version of these gems.

@@ -142,6 +142,7 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 * BGP Types
   * [`cisco_vrf`](#type-cisco_vrf)
   * [`cisco_bgp`](#type-cisco_bgp)
+  * [`cisco_bgp_nbr_af`](#type-cisco_bgp_nbr_af)
 
 * Interface Types
   * [`cisco_interface`](#type-cisco_interface)
@@ -175,6 +176,7 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 
 * [`cisco_command_config`](#type-cisco_command_config)
 * [`cisco_bgp`](#type-cisco_bgp)
+* [`cisco_bgp_nbr_af`](#type-cisco_bgp_nbr_af)
 * [`cisco_interface`](#type-cisco_interface)
 * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 * [`cisco_ospf`](#type-cisco_ospf)
@@ -194,6 +196,7 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 
 The following resources are listed alphabetically.
 
+--
 ### Type: cisco_command_config
 
 Allows execution of configuration commands.
@@ -216,9 +219,10 @@ This provider allows raw configurations to be managed by Puppet. It serves as a 
 * Syntax does not auto-complete: use `Ethernet1/1`, not `Eth1/1`.
 * If a CLI command is rejected during configuration, the resource will abort at that point and will not issue any remaining CLI. For this reason, we recommend limiting the scope of each instance of this resource.
 
+--
 ### Type: cisco_bgp
 
-Manages configuration of an BGP instance.
+Manages configuration of a BGP instance.
 
 #### Parameters
 
@@ -314,6 +318,115 @@ Set bgp keepalive timer. Valid values are Integer, keyword 'default'.
 ##### `timer_bgp_hold`
 Set bgp hold timer. Valid values are Integer, keyword 'default'.
 
+--
+### Type: cisco_bgp_nbr_af
+
+Manages configuration of a BGP Neighbor Address-family instance.
+
+#### Parameters
+
+###### `ensure`
+Determine whether the interface config should be present or not. Valid values
+ are 'present' and 'absent'.
+
+##### `asn`
+BGP autonomous system number. Required. Valid values are String, Integer in ASPLAIN or
+ASDOT notation.
+
+##### `vrf`
+VRF name. Required. Valid values are string. The name 'default' is a valid VRF representing the global bgp.
+
+##### `nbr`
+Neighbor Identifier. Required. Valid values are string. Neighbors may use IPv4 or IPv6 notation, with or without a subnet mask.
+
+##### `afi`
+Neighbor Address Family Identifier (AFI). Required. Valid values are string. Valid neighbor AFIs are 'ipv4' and 'ipv6'. Note that some AFI/SAFI address-families may not be supported with some neighbors; e.g. an ipv6 neighbor may not support an ipv4 multicast address-family.
+
+##### `safi`
+Neighbor Sub Address Family Identifier (SAFI). Required. Valid values are string. Valid neighbor SAFIs are 'unicast' and 'multicast'. Note that some AFI/SAFI address-families may not be supported with some neighbors; e.g. an ipv6 neighbor may not support an ipv4 multicast address-family.
+
+##### `advertise_map_exist`
+Conditional route advertisement. This property requires two route maps: an advertise-map and an exist-map. Valid values are an array specifying both the advertise-map name and the exist-map name, or simply 'default'; e.g. ['my_advertise_map', 'my_exist_map']. This command is mutually exclusive with the advertise_map_non_exist property.
+
+##### `advertise_map_non_exist`
+Conditional route advertisement. This property requires two route maps: an advertise-map and a non-exist-map. Valid values are an array specifying both the advertise-map name and the non-exist-map name, or simply 'default'; e.g. ['my_advertise_map', 'my_non_exist_map']. This command is mutually exclusive with the advertise_map_exist property.
+
+##### `allowas_in`
+`allowas-in`. Valid values are true, false, or an integer value, which enables the command with a specific max-occurrences value. Related: `allowas_in_max`.
+
+##### `allowas_in_max`
+Optional max-occurrences value for `allowas_in`. Valid values are an integer value or 'default'. Can be used independently or in conjunction with `allowas_in`.
+
+##### `as_override`
+`as-override`. Valid values are true, false, or 'default'.
+
+##### `cap_add_paths_receive`
+`capability additional-paths receive`. Valid values are true, false, or 'default'. Related: `cap_add_paths_receive_disable'.
+
+##### `cap_add_paths_receive_disable`
+Optional 'disable' keyword for the `cap_add_paths_receive` property. Can be used independently or in conjunction with `cap_add_paths_receive`. Valid values are true, false, or 'default'.
+
+##### `cap_add_paths_send`
+`capability additional-paths send`. Valid values are true, false, or 'default'. Related: `cap_add_paths_send_disable'.
+
+##### `cap_add_paths_send_disable`
+Optional 'disable' keyword for the `cap_add_paths_send` property. Can be used independently or in conjunction with `cap_add_paths_send`. Valid values are true, false, or 'default'.
+
+##### `default_originate`
+`default-originate`. Valid values are True, False, or 'default'. Related: default_originate_route_map.
+
+##### `default_originate_route_map`
+Optional route-map for the `default_originate` property. Can be used independently or in conjunction with `default_originate`. Valid values are a string defining a route-map name, or 'default'.
+
+##### `filter_list_in`
+Valid values are a string defining a filter-list name, or 'default'.
+
+##### `filter_list_out`
+Valid values are a string defining a filter-list name, or 'default'.
+
+##### `max_prefix_limit`
+`maximum-prefix` limit value. Valid values are an integer value or 'default'. Related: `max_prefix_threshold`, `max_prefix_interval`, and `max_prefix_warning`.
+
+##### `max_prefix_interval`
+Optional restart interval. Valid values are an integer value or 'default'. Requires `max_prefix_limit`.
+
+##### `max_prefix_threshold`
+Optional threshold percentage at which to generate a warning. Valid values are an integer value or 'default'. Requires `max_prefix_limit`.
+
+##### `max_prefix_warning`
+Optional warning-only keyword. Valid values are True, False, or 'default'. Requires `max_prefix_limit`.
+
+##### `next_hop_self`
+`next-hop-self`. Valid values are True, False, or 'default'.
+
+##### `next_hop_third_party`
+`next-hop-third-party`. Valid values are True, False, or 'default'.
+
+##### `route_reflector_client`
+`route-reflector-client`. Valid values are True, False, or 'default'.
+
+##### `send_community`
+`send-community` attribute. Valid values are 'none', 'both', 'extended', 'standard', or 'default'.
+
+##### `soft_reconfiguration_in`
+`soft-reconfiguration inbound`. Valid values are True, False, or 'default'. Related: `soft_reconfiguration_in_always`.
+
+##### `soft_reconfiguration_in_always`
+Optional `always` keyword for `soft_reconfiguration_in`. Valid values are True, False, or 'default'. Can be used independently or in conjunction with `soft_reconfiguration_in`.
+
+##### `soo`
+Site-of-origin. Valid values are a string defining a VPN extcommunity or 'default'.
+
+##### `suppress_inactive`
+`suppress-inactive` Valid values are True, False, or 'default'.
+
+##### `unsuppress_map`
+`unsuppress-map`. Valid values are a string defining a route-map name or 'default'.
+
+##### `weight`
+`weight` value. Valid values are an integer value or 'default'.
+
+--
 ### Type: cisco_interface
 
 Manages a Cisco Network Interface. Any resource dependency should be run before the interface resource.
@@ -385,6 +498,7 @@ Enable/Disable autostate on the SVI interface. Valid values are 'true',
 ###### `svi_management`
 Enable/Disable management on the SVI interface. Valid values are 'true', 'false', and 'default'.
 
+--
 ### Type: cisco_interface_ospf
 Manages configuration of an OSPF interface instance.
 
@@ -443,6 +557,7 @@ Specifies the message_digest password. Valid value is a string.
 ##### `area`
 *Required*. Ospf area associated with this cisco_interface_ospf instance. Valid values are a string, formatted as an IP address (i.e. "0.0.0.0") or as an integer.
 
+--
 ### Type: cisco_ospf
 Manages configuration of an ospf instance.
 
@@ -455,6 +570,7 @@ and 'absent'.
 ##### `ospf`
 Name of the ospf router. Valid value is a string.
 
+--
 ### Type: cisco_ospf_vrf
 
 Manages a VRF for an OSPF router.
@@ -512,6 +628,7 @@ Valid values are an integer, in milliseconds, or the keyword 'default'.
 Specifies the reference bandwidth used to assign OSPF cost.
 Valid values are an integer, in Mbps, or the keyword 'default'.
 
+--
 ### Type: cisco_snmp_community
 Manages an SNMP community on a Cisco SNMP server.
 
@@ -532,6 +649,7 @@ keyword 'default'.
 Assigns an Access Control List (ACL) to an SNMP community to filter SNMP 
 requests. Valid values are a string or the keyword 'default'.
 
+--
 ### Type: cisco_snmp_group
 
 Manages a Cisco SNMP Group on a Cisco SNMP Server. 
@@ -548,6 +666,7 @@ values are 'present', and 'absent'.
 ##### `group`
 Name of the snmp group. Valid value is a string.
 
+--
 ### Type: cisco_snmp_server
 Manages a Cisco SNMP Server. There can only be one instance of the 
 cisco_snmp_server.
@@ -583,6 +702,7 @@ Enable/disable SNMP protocol. Valid values are 'true', 'false', and 'default'.
 Enable/disable a one time authentication for SNMP over TCP session. 
 Valid values are 'true', 'false', and 'default'.
 
+--
 ### Type: cisco_snmp_user
 
 Manages an SNMP user on an cisco SNMP server. 
@@ -621,6 +741,7 @@ Privacy password for SNMP user. Valid value is a string.
 Specifies whether the passwords specified in manifest are in localized key 
 format (in case of true) or cleartext (in case of false). Valid values are 'true', and 'false'.
 
+--
 ### Type: cisco_tacacs_server
 
 Manages a Cisco TACACS+ Server global configuration. There can only be one 
@@ -655,6 +776,7 @@ string, and keyword 'default'.
 Global source interface for all TACACS+ server groups configured on the device. 
 Valid values are string, and keyword 'default'.
 
+--
 ### Type: cisco_tacacs_server_host
 
 Configures Cisco TACACS+ server hosts.
@@ -682,6 +804,7 @@ Specifies a preshared key for the host. Valid values are 'clear', 'encrypted',
 ##### `encryption_password`
 "Specifies the preshared key password for the host. Valid value is a string.
 
+--
 ### Type: cisco_vlan
 
 Manages a Cisco VLAN.
@@ -705,6 +828,7 @@ State of the VLAN. Valid values are 'active', 'suspend', and keyword 'default'.
 Whether or not the vlan is shutdown. Valid values are 'true', 'false' and 
 keyword 'default'.
 
+--
 ### Type: cisco_vrf
 
 Manages Cisco Virtual Routing and Forwarding (VRF) configuration of a Cisco
@@ -726,6 +850,7 @@ Description of the VRF. Valid value is string.
 ##### `shutdown`
 Shutdown state of the VRF. Valid values are 'true' and 'false'.
 
+--
 ### Type: cisco_vtp
 
 Manages the VTP (VLAN Trunking Protocol) configuration of a Cisco device.
