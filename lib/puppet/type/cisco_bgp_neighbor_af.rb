@@ -19,21 +19,21 @@
 require 'ipaddr'
 require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
 
-Puppet::Type.newtype(:cisco_bgp_nbr_af) do
+Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
   @doc = "Manages BGP Neighbor Address-Family configuration.
 
   ~~~puppet
-  cisco_bgp_nbr_af { '<title>':
+  cisco_bgp_neighbor_af { '<title>':
     ..attributes..
   }
   ~~~
 
-  `<title>` is the title of the bgp_nbr_af resource.
+  `<title>` is the title of the bgp_neighbor_af resource.
 
   Example:
 
   ~~~puppet
-    cisco_bgp_nbr_af { 'raleigh':
+    cisco_bgp_neighbor_af { 'raleigh':
       ensure                                 => present,
       asn                                    => '1'
       vrf                                    => 'default',
@@ -72,7 +72,7 @@ Puppet::Type.newtype(:cisco_bgp_nbr_af) do
   Example Title Patterns:
 
   ~~~puppet
-    cisco_bgp_nbr_af { 'new_york':
+    cisco_bgp_neighbor_af { 'new_york':
       ensure                                 => present,
       asn                                    => '1'
       vrf                                    => 'red',
@@ -82,7 +82,7 @@ Puppet::Type.newtype(:cisco_bgp_nbr_af) do
   ~~~
 
   ~~~puppet
-    cisco_bgp_nbr_af { '1':
+    cisco_bgp_neighbor_af { '1':
       ensure                                 => present,
       vrf                                    => 'red',
       neighbor                               => '10.1.1.1',
@@ -91,7 +91,7 @@ Puppet::Type.newtype(:cisco_bgp_nbr_af) do
   ~~~
 
   ~~~puppet
-    cisco_bgp_nbr_af { '1 red':
+    cisco_bgp_neighbor_af { '1 red':
       ensure                                 => present,
       neighbor                               => '10.1.1.1',
       afi                                    => 'ipv4',
@@ -99,20 +99,20 @@ Puppet::Type.newtype(:cisco_bgp_nbr_af) do
   ~~~
 
   ~~~puppet
-    cisco_bgp_nbr_af { '1 red 10.1.1.1':
+    cisco_bgp_neighbor_af { '1 red 10.1.1.1':
       ensure                                 => present,
       afi                                    => 'ipv4',
       safi                                   => 'unicast',
   ~~~
 
   ~~~puppet
-    cisco_bgp_nbr_af { '1 red 10.1.1.1 ipv4':
+    cisco_bgp_neighbor_af { '1 red 10.1.1.1 ipv4':
       ensure                                 => present,
       safi                                   => 'unicast',
   ~~~
 
   ~~~puppet
-    cisco_bgp_nbr_af { '1 red 10.1.1.1 ipv4 unicast':
+    cisco_bgp_neighbor_af { '1 red 10.1.1.1 ipv4 unicast':
       ensure                                 => present,
   ~~~
 
