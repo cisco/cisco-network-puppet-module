@@ -17,6 +17,7 @@
 # limitations under the License.
 
 require 'ipaddr'
+require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
 
 Puppet::Type.newtype(:cisco_bgp_nbr_af) do
   @doc = "Manages BGP Neighbor Address-Family configuration.
@@ -36,7 +37,7 @@ Puppet::Type.newtype(:cisco_bgp_nbr_af) do
       ensure                                 => present,
       asn                                    => '1'
       vrf                                    => 'default',
-      nbr                                    => '10.1.1.1',
+      neighbor                               => '10.1.1.1',
       afi                                    => 'ipv4',
       safi                                   => 'unicast',
       advertise_map_exist                    => ['adv_map', 'my_exist'],
@@ -71,47 +72,47 @@ Puppet::Type.newtype(:cisco_bgp_nbr_af) do
   Example Title Patterns:
 
   ~~~puppet
-    cisco_bgp { 'new_york':
+    cisco_bgp_nbr_af { 'new_york':
       ensure                                 => present,
       asn                                    => '1'
       vrf                                    => 'red',
-      nbr                                    => '10.1.1.1',
+      neighbor                               => '10.1.1.1',
       afi                                    => 'ipv4',
       safi                                   => 'unicast',
   ~~~
 
   ~~~puppet
-    cisco_bgp { '1':
+    cisco_bgp_nbr_af { '1':
       ensure                                 => present,
       vrf                                    => 'red',
-      nbr                                    => '10.1.1.1',
+      neighbor                               => '10.1.1.1',
       afi                                    => 'ipv4',
       safi                                   => 'unicast',
   ~~~
 
   ~~~puppet
-    cisco_bgp { '1 red':
+    cisco_bgp_nbr_af { '1 red':
       ensure                                 => present,
-      nbr                                    => '10.1.1.1',
+      neighbor                               => '10.1.1.1',
       afi                                    => 'ipv4',
       safi                                   => 'unicast',
   ~~~
 
   ~~~puppet
-    cisco_bgp { '1 red 10.1.1.1':
+    cisco_bgp_nbr_af { '1 red 10.1.1.1':
       ensure                                 => present,
       afi                                    => 'ipv4',
       safi                                   => 'unicast',
   ~~~
 
   ~~~puppet
-    cisco_bgp { '1 red 10.1.1.1 ipv4':
+    cisco_bgp_nbr_af { '1 red 10.1.1.1 ipv4':
       ensure                                 => present,
       safi                                   => 'unicast',
   ~~~
 
   ~~~puppet
-    cisco_bgp { '1 red 10.1.1.1 ipv4 unicast':
+    cisco_bgp_nbr_af { '1 red 10.1.1.1 ipv4 unicast':
       ensure                                 => present,
   ~~~
 
@@ -144,7 +145,7 @@ Puppet::Type.newtype(:cisco_bgp_nbr_af) do
         [
           [:asn, identity],
           [:vrf, identity],
-          [:nbr, identity]
+          [:neighbor, identity]
         ]
       ],
       [
@@ -152,7 +153,7 @@ Puppet::Type.newtype(:cisco_bgp_nbr_af) do
         [
           [:asn, identity],
           [:vrf, identity],
-          [:nbr, identity],
+          [:neighbor, identity],
           [:afi, identity]
         ]
       ],
@@ -161,7 +162,7 @@ Puppet::Type.newtype(:cisco_bgp_nbr_af) do
         [
           [:asn, identity],
           [:vrf, identity],
-          [:nbr, identity],
+          [:neighbor, identity],
           [:afi, identity],
           [:safi, identity]
         ]
@@ -194,22 +195,8 @@ Puppet::Type.newtype(:cisco_bgp_nbr_af) do
       end
     end
 
-    # Convert BGP ASN ASDOT+ to ASPLAIN
-    def dot_to_big(dot_str)
-      fail ArgumentError unless dot_str.is_a? String
-      return dot_str unless /\d+\.\d+/.match(dot_str)
-      mask = 0b1111111111111111
-      high = dot_str.to_i
-      low = 0
-      low_match = dot_str.match(/\.(\d+)/)
-      low = low_match[1].to_i if low_match
-      high_bits = (mask & high) << 16
-      low_bits = mask & low
-      high_bits + low_bits
-    end
     munge do |value|
-      value = :default if value == 'default'
-      value = dot_to_big(String(value)) unless value == :default
+      value = Cisco::RouterBgp.process_asnum(value)
       value
     end
   end
@@ -222,8 +209,17 @@ Puppet::Type.newtype(:cisco_bgp_nbr_af) do
     newvalues(/^\S+$/)
   end
 
-  newparam(:nbr, :namevar => true) do
-    desc 'BGP Neighbor ID. Valid values are string.'
+  newparam(:neighbor, :namevar => true) do
+    desc 'BGP Neighbor ID. Valid value is an ipv4 or ipv6 formatted string.'
+
+    munge do |value|
+      begin
+        value = Cisco::RouterBgpNeighbor.nbr_munge(value.to_s)
+        value
+      rescue
+        raise "'neighbor' must be a valid ipv4 or ipv6 address (mask optional)"
+      end
+    end
   end
 
   newparam(:afi, :namevar => true) do
@@ -241,7 +237,8 @@ Puppet::Type.newtype(:cisco_bgp_nbr_af) do
   validate do
     fail("The 'asn' parameter must be set in the manifest.") if self[:asn].nil?
     fail("The 'vrf' parameter must be set in the manifest.") if self[:vrf].nil?
-    fail("The 'nbr' parameter must be set in the manifest.") if self[:nbr].nil?
+    fail("The 'neighbor' parameter must be set in the manifest.") if
+      self[:neighbor].nil?
     fail("The 'afi' parameter must be set in the manifest.") if self[:afi].nil?
     fail("The 'safi' parameter must be set in the manifest.") if self[:safi].nil?
   end

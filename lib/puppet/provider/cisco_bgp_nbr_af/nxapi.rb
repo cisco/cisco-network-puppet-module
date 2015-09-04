@@ -78,23 +78,25 @@ Puppet::Type.type(:cisco_bgp_nbr_af).provide(:nxapi) do
     super(value)
     asn = @property_hash[:asn]
     vrf = @property_hash[:vrf]
-    nbr = @property_hash[:nbr]
-    af = [@property_hash[:afi], @property_hash[:safi]]
+    nbr = @property_hash[:neighbor]
+    afi = @property_hash[:afi]
+    safi = @property_hash[:safi]
+    af = afi, safi
 
     @af = Cisco::RouterBgpNbrAF.afs[asn][vrf][nbr][af] unless
-      asn.nil? || vrf.nil? || nbr.nil? || af.nil?
+      asn.nil? || vrf.nil? || nbr.nil? || afi.nil? || safi.nil?
     @property_flush = {}
   end
 
   def self.properties_get(asn, vrf, nbr, af, obj)
     current_state = {
-      :name    => [asn, vrf, nbr, af.first, af.last].join(' '),
-      :asn     => asn,
-      :vrf     => vrf,
-      :nbr     => nbr,
-      :afi     => af.first,
-      :safi    => af.last,
-      :ensure  => :present,
+      :name     => [asn, vrf, nbr, af.first, af.last].join(' '),
+      :asn      => asn,
+      :vrf      => vrf,
+      :neighbor => nbr,
+      :afi      => af.first,
+      :safi     => af.last,
+      :ensure   => :present,
     }
     # Call node_utils getter for every property
     BGP_NBR_AF_NON_BOOL_PROPS.each do |prop|
@@ -127,7 +129,7 @@ Puppet::Type.type(:cisco_bgp_nbr_af).provide(:nxapi) do
       provider = afs.find do |af|
         af.asn.to_s == resources[name][:asn].to_s &&
         af.vrf == resources[name][:vrf] &&
-        af.nbr == resources[name][:nbr] &&
+        af.neighbor == resources[name][:neighbor] &&
         af.afi == resources[name][:afi] &&
         af.safi == resources[name][:safi]
       end
@@ -357,7 +359,7 @@ Puppet::Type.type(:cisco_bgp_nbr_af).provide(:nxapi) do
       if @af.nil?
         new_af = true
         @af = Cisco::RouterBgpNbrAF.new(@resource[:asn], @resource[:vrf],
-                                        @resource[:nbr],
+                                        @resource[:neighbor],
                                         [@resource[:afi], @resource[:safi]])
       end
       properties_set(new_af)
