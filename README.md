@@ -142,7 +142,7 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 * BGP Types
   * [`cisco_vrf`](#type-cisco_vrf)
   * [`cisco_bgp`](#type-cisco_bgp)
-  * [`cisco_bgp_nbr_af`](#type-cisco_bgp_nbr_af)
+  * [`cisco_bgp_neighbor_af`](#type-cisco_bgp_neighbor_af)
 
 * Interface Types
   * [`cisco_interface`](#type-cisco_interface)
@@ -176,7 +176,7 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 
 * [`cisco_command_config`](#type-cisco_command_config)
 * [`cisco_bgp`](#type-cisco_bgp)
-* [`cisco_bgp_nbr_af`](#type-cisco_bgp_nbr_af)
+* [`cisco_bgp_neighbor_af`](#type-cisco_bgp_neighbor_af)
 * [`cisco_interface`](#type-cisco_interface)
 * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 * [`cisco_ospf`](#type-cisco_ospf)
