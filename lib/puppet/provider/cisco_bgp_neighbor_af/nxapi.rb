@@ -170,12 +170,27 @@ Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:nxapi) do
     soft_reconfiguration_in_set
   end
 
-  # Non-AutoGen custom setters
-  # The following properties are setters have additional complexity and cannot
+  # Non-AutoGen custom getters/setters
+  # The following properties have additional complexity and cannot
   # be handled by PuppetX::Cisco::AutoGen.mk_puppet_methods.
+  def advertise_map_exist
+    return [:default] if
+      @resource[:advertise_map_exist] == [:default] &&
+      @property_hash[:advertise_map_exist] == @af.default_advertise_map_exist
+    @property_hash[:advertise_map_exist]
+  end
+
   def advertise_map_exist=(val)
     val = @af.default_advertise_map_exist if val.first == :default
     @property_flush[:advertise_map_exist] = val
+  end
+
+  def advertise_map_non_exist
+    return [:default] if
+      @resource[:advertise_map_non_exist] == [:default] &&
+      @property_hash[:advertise_map_non_exist] ==
+      @af.default_advertise_map_non_exist
+    @property_hash[:advertise_map_non_exist]
   end
 
   def advertise_map_non_exist=(val)
