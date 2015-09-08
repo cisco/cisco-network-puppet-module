@@ -83,8 +83,7 @@ Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:nxapi) do
     safi = @property_hash[:safi]
     af = afi, safi
 
-    @af = Cisco::RouterBgpNeighborAF.afs[asn][vrf][nbr][af] unless
-      asn.nil? || vrf.nil? || nbr.nil? || afi.nil? || safi.nil?
+    @af = Cisco::RouterBgpNeighborAF.afs[asn][vrf][nbr][af] unless asn.nil?
     @property_flush = {}
   end
 
@@ -130,8 +129,8 @@ Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:nxapi) do
         af.asn.to_s == resources[name][:asn].to_s &&
         af.vrf == resources[name][:vrf] &&
         af.neighbor == resources[name][:neighbor] &&
-        af.afi == resources[name][:afi] &&
-        af.safi == resources[name][:safi]
+        af.afi.to_s == resources[name][:afi].to_s &&
+        af.safi.to_s == resources[name][:safi].to_s
       end
       resources[name].provider = provider unless provider.nil?
     end
