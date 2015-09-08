@@ -319,7 +319,7 @@ Set bgp keepalive timer. Valid values are Integer, keyword 'default'.
 Set bgp hold timer. Valid values are Integer, keyword 'default'.
 
 --
-### Type: cisco_bgp_nbr_af
+### Type: cisco_bgp_neighbor_af
 
 Manages configuration of a BGP Neighbor Address-family instance.
 
@@ -336,7 +336,7 @@ ASDOT notation.
 ##### `vrf`
 VRF name. Required. Valid values are string. The name 'default' is a valid VRF representing the global bgp.
 
-##### `nbr`
+##### `neighbor`
 Neighbor Identifier. Required. Valid values are string. Neighbors may use IPv4 or IPv6 notation, with or without a subnet mask.
 
 ##### `afi`
