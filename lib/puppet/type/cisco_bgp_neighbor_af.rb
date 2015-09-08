@@ -46,6 +46,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
       allowas_in_max                         => 5,
       as_override                            => true,
       cap_add_paths_receive                  => true,
+      cap_add_paths_receive_disable          => false,
       cap_add_paths_send                     => true,
       cap_add_paths_send_disable             => true,
       default_originate                      => true,
@@ -313,12 +314,6 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     newvalues(:true, :false, :default)
   end
 
-  newproperty(:disable_peer_as_check) do
-    desc 'disable_peer_as_check state. ' \
-         "Valid values are true, false or 'default'"
-    newvalues(:true, :false, :default)
-  end
-
   newproperty(:default_originate_route_map) do
     desc 'default_originate_route_map state. Valid values are a string ' \
          "defining a route-map name or 'default'"
@@ -326,6 +321,12 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
       value = :default if value == 'default'
       value
     end
+  end
+
+  newproperty(:disable_peer_as_check) do
+    desc 'disable_peer_as_check state. ' \
+         "Valid values are true, false or 'default'"
+    newvalues(:true, :false, :default)
   end
 
   newproperty(:filter_list_in) do
