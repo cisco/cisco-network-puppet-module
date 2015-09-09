@@ -117,7 +117,7 @@ test_name "TestCase :: #{testheader}" do
         'deadtime'            => '0',
         'encryption_password' => 'WXYZ12',
         'directed_request'    => 'false',
-        'source_interface'    => 'Ethernet1/24'},
+        'source_interface'    => 'Ethernet1/4'},
         false, self, logger)
     end
 
@@ -133,7 +133,7 @@ test_name "TestCase :: #{testheader}" do
       UtilityLib.search_pattern_in_output(stdout,
         [/feature tacacs\+/,
         /tacacs\-server key 7 "WXYZ12"/,
-        /ip tacacs source\-interface Ethernet1\/24/,
+        /ip tacacs source\-interface Ethernet1\/4/,
         /tacacs\-server timeout 50/],
         false, self, logger)
     end
@@ -167,7 +167,7 @@ test_name "TestCase :: #{testheader}" do
         'deadtime'            => '0',
         'encryption_password' => 'WXYZ12',
         'directed_request'    => 'false',
-        'source_interface'    => 'Ethernet1/24'},
+        'source_interface'    => 'Ethernet1/4'},
         true, self, logger)
     end
 
@@ -183,7 +183,7 @@ test_name "TestCase :: #{testheader}" do
       UtilityLib.search_pattern_in_output(stdout,
         [/feature tacacs\+/,
         /tacacs\-server key 7 "WXYZ12"/,
-        /ip tacacs source\-interface Ethernet1\/24/,
+        /ip tacacs source\-interface Ethernet1\/4/,
         /tacacs\-server timeout 50/],
         true, self, logger)
     end

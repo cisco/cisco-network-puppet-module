@@ -95,7 +95,7 @@ node default {
     encryption_type     => 'encrypted',
     encryption_password => 'WXYZ12',
     directed_request    => 'false',
-    source_interface    => 'Ethernet1/24',
+    source_interface    => 'Ethernet1/4',
   }
 }
 EOF"
