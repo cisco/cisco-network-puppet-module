@@ -238,8 +238,23 @@ Switchport mode of the interface. To make an interface Layer 3, set
 The VLAN ID assigned to the interface. Valid values are an integer or the keyword 
 'default'.
 
+##### `encapsulation_dot1q`
+Enable IEEE 802.1Q encapsulation of traffic on a specified subinterface.
+Valid values are integer, keyword 'default'.
+
+##### `mtu`
+Maximum Trasnmission Unit size for frames received and sent on the specified
+interface. Valid value is an integer.
+
 ##### `switchport_autostate_exclude`
 Exclude this port for the SVI link calculation. Valid values are 'true', 'false', and 'default'.
+
+##### `switchport_trunk_allowed_vlan`
+The allowed VLANs for the specified Ethernet interface. Valid values are
+string, keyword 'default'.
+
+##### `switchport_trunk_native_vlan`
+The Native VLAN assigned to the switch port. Valid values are integer, keyword 'default'.
 
 ###### `switchport_vtp`
 Enable or disable VTP on the interface. Valid values are 'true', 'false', 

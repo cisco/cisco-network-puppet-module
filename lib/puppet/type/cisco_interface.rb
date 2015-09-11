@@ -112,6 +112,22 @@ Puppet::Type.newtype(:cisco_interface) do
 
   end # property description
 
+  newproperty(:encapsulation_dot1q) do
+    desc "Enable IEEE 802.1Q encapsulation of traffic on a specified
+          subinterface.  Valid values are integer, keyword 'default'."
+
+    munge { |value| value == 'default' ? :default : value.to_i }
+
+  end # property encapsulation_dot1q
+
+  newproperty(:mtu) do
+    desc "Maximum Trasnmission Unit size for frames received and sent on the
+          specified interface. Valid values are integer, keyword 'default'."
+
+    munge { |value| value == 'default' ? :default : value.to_i }
+
+  end # property mtu
+
   newproperty(:shutdown) do
     desc "Shutdown state of the interface."
 
@@ -153,6 +169,22 @@ Puppet::Type.newtype(:cisco_interface) do
 
     newvalues(:true, :false, :default)
   end # property switchport_autostate_exclude
+
+  newproperty(:switchport_trunk_allowed_vlan) do
+    desc "The allowed VLANs for the specified Ethernet interface. Valid values
+          are string, keyword 'default'."
+
+    munge { |value| value == 'default' ? :default : value }
+
+  end # property switchport_trunk_allowed_vlan
+
+  newproperty(:switchport_trunk_native_vlan) do
+    desc "The Native VLAN assigned to the switch port. Valid values are
+          integer, keyword 'default'."
+
+    munge { |value| value == 'default' ? :default : value.to_i }
+
+  end # property switchport_trunk_native_vlan
 
   newproperty(:switchport_vtp) do
     desc "Enable or disable VTP on the interface."
