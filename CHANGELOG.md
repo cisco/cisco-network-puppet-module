@@ -10,6 +10,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - switchport trunk allowed VLANs
   - switchport trunk native VLAN
 
+### Fixed
+- Fixed broken documentation links.
+
 ## [1.0.0] - 2015-08-28
 ### Added
 - New facts `cisco_node_utils` and `cisco_nxapi` report the installed version of these gems.
