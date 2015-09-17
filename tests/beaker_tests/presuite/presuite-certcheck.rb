@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-# TestCase Name: 
+# TestCase Name:
 # -------------
 # Presuite-Certcheck.rb
 #
@@ -21,46 +21,45 @@
 # -----------------------
 # This is a Puppet presuite testcase for Puppet Agent on Nexus devices.
 # The test case assumes the following prerequisites are already satisfied:
-# A. Populating the HOSTS configuration file with the agent and master 
+# A. Populating the HOSTS configuration file with the agent and master
 # information.
-# B. Enabling SSH connection prerequisites on the N9K switch based Agent. 
+# B. Enabling SSH connection prerequisites on the N9K switch based Agent.
 # C. Starting of Puppet master server on master.
 # D. Sending to and signing of Puppet agent certificate request on master.
 #
 # TestCase:
 # ---------
-# This is a presuite test that tests for Puppet Agent certificate 
+# This is a presuite test that tests for Puppet Agent certificate
 # on the master server.
 #
 # There is a single section to the test: Setup.
 ###############################################################################
 
 # Require UtilityLib.rb path.
-require File.expand_path("../../lib/utilitylib.rb", __FILE__)
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 _result = 'PASS'
-_testheader = "Resource :: Presuite"
+_testheader = 'Resource :: Presuite'
 _puppetagentcert = nil
 
 # @test_name [TestCase] Executes presuite testcase for provider resource.
 test_name "TestCase :: #{_testheader}" do
-
   # @step [Setup] Checks for Puppet Agent Cert on master.
-  step "TestStep :: Check for Puppet Agent cert on master" do
+  step 'TestStep :: Check for Puppet Agent cert on master' do
     # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
     UtilityLib.set_manifest_path(master, self)
 
     # Expected exit_code is 0 since this is a puppet config cmd with no change.
-    cmd_str = UtilityLib::PUPPET_BINPATH + "config print certname"
+    cmd_str = UtilityLib::PUPPET_BINPATH + 'config print certname'
     on(agent, cmd_str) do
       _puppetagentcert = stdout.strip
     end
 
     # Expected exit_code is 0 since this is a puppet cert cmd with no change.
-    cmd_str = UtilityLib::PUPPET_BINPATH + "cert --list " + _puppetagentcert
+    cmd_str = UtilityLib::PUPPET_BINPATH + 'cert --list ' + _puppetagentcert
     on(master, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout, \
-       [Regexp.new(_puppetagentcert)], false, self, logger)
+                                          [Regexp.new(_puppetagentcert)], false, self, logger)
     end
 
     logger.info("Check for Puppet Agent cert on master :: #{_result}")
@@ -68,8 +67,6 @@ test_name "TestCase :: #{_testheader}" do
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   UtilityLib.raise_passfail_exception(_result, _testheader, self, logger)
-
 end
 
 logger.info("TestCase :: #{_testheader} :: End")
-

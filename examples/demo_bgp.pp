@@ -15,6 +15,10 @@
 # limitations under the License.
 
 class ciscopuppet::demo_bgp {
+
+  # --------------------------------------------------------------------------#
+  # Configure Global BGP                                                      #
+  # --------------------------------------------------------------------------#
   cisco_bgp { 'default':
     ensure                                 => present,
     asn                                    => 55.77,
@@ -25,7 +29,7 @@ class ciscopuppet::demo_bgp {
     confederation_peers                    => '99 88 200.1',
     suppress_fib_pending                   => false,
     log_neighbor_changes                   => false,
-    
+
     # Best Path Properties
     bestpath_always_compare_med            => true,
     bestpath_aspath_multipath_relax        => true,
@@ -35,15 +39,63 @@ class ciscopuppet::demo_bgp {
     bestpath_med_non_deterministic         => true,
     timer_bestpath_limit                   => '255',
     timer_bestpath_limit_always            => true,
-    
+
     # Graceful Restart Properties
     graceful_restart                       => false,
     graceful_restart_timers_restart        => '131',
     graceful_restart_timers_stalepath_time => '311',
     graceful_restart_helper                => true,
-    
+
     # Timer Properties
     timer_bgp_keepalive                    => '46',
     timer_bgp_holdtime                     => '111',
+  }
+
+  # --------------------------------------------------------------------------#
+  # Configure Address Family IPv4 Unicast                                     #
+  # --------------------------------------------------------------------------#
+  cisco_bgp_af { 'default':
+    ensure                                 => present,
+    asn                                    => 55.77,
+    vrf                                    => 'blue',
+    afi                                    => 'ipv4',
+    safi                                   => 'unicast',
+
+    # Properties
+    client_to_client                       => false,
+    default_information_originate          => false,
+    next_hop_route_map                     => 'RouteMap',
+  }
+
+  # --------------------------------------------------------------------------#
+  # Configure Address Family IPv4 Multicast                                   #
+  # --------------------------------------------------------------------------#
+  cisco_bgp_af { 'default':
+    ensure                                 => present,
+    asn                                    => 55.77,
+    vrf                                    => 'blue',
+    afi                                    => 'ipv4',
+    safi                                   => 'multicast',
+
+    # Properties
+    client_to_client                       => false,
+    default_information_originate          => false,
+    next_hop_route_map                     => 'RouteMap',
+  }
+
+  # --------------------------------------------------------------------------#
+  # Configure Address Family IPv6 Unicast                                     #
+  # --------------------------------------------------------------------------#
+  cisco_bgp_af { 'default':
+    ensure                                 => present,
+    asn                                    => 55.77,
+    vrf                                    => 'blue',
+    afi                                    => 'ipv6',
+    safi                                   => 'unicast',
+
+    # Properties
+    client_to_client                       => false,
+    default_information_originate          => false,
+    next_hop_route_map                     => 'RouteMap',
   }
 }

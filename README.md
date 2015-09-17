@@ -51,7 +51,7 @@ The set of supported network element platforms is continuously expanding. Please
 The `ciscopuppet` module is installed on the Puppet Master server. Please see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html) for general information on Puppet module installation.
 
 #### Puppet Agent
-The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md](docs/README-agent-install.md) document for detailed instructions on agent installation and configuration on Cisco Nexus devices. 
+The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md](docs/README-agent-install.md) document for detailed instructions on agent installation and configuration on Cisco Nexus devices.
 
 ##### Artifacts
 
@@ -96,13 +96,13 @@ package { 'cisco_node_utils' :
 
 ## Usage
 
-The following example shows how to use ciscopuppet to configure ospf on a 
+The following example shows how to use ciscopuppet to configure ospf on a
 Cisco Nexus switch.
 
-Three types are needed to add OSPF support on an interface: cisco_ospf, 
+Three types are needed to add OSPF support on an interface: cisco_ospf,
 cisco_ospf_vrf, and cisco_interface_ospf.
 
-First, to configure cisco_ospf to enable ospf on the device, add the 
+First, to configure cisco_ospf to enable ospf on the device, add the
 following type in the manifest:
 
 ~~~puppet
@@ -142,6 +142,7 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 * BGP Types
   * [`cisco_vrf`](#type-cisco_vrf)
   * [`cisco_bgp`](#type-cisco_bgp)
+  * [`cisco_bgp_af`](#type-cisco_bgp_af)
   * [`cisco_bgp_neighbor_af`](#type-cisco_bgp_neighbor_af)
 
 * Interface Types
@@ -176,6 +177,7 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 
 * [`cisco_command_config`](#type-cisco_command_config)
 * [`cisco_bgp`](#type-cisco_bgp)
+* [`cisco_bgp_af`](#type-cisco_bgp_af)
 * [`cisco_bgp_neighbor_af`](#type-cisco_bgp_neighbor_af)
 * [`cisco_interface`](#type-cisco_interface)
 * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
@@ -205,7 +207,7 @@ Allows execution of configuration commands.
 
 ##### `command`
 
-Configuration command(s) to be applied to the network element. Valid values 
+Configuration command(s) to be applied to the network element. Valid values
 are string.
 
 This provider allows raw configurations to be managed by Puppet. It serves as a stopgap until specialized types are created. It has the following limitations:
@@ -227,7 +229,7 @@ Manages configuration of a BGP instance.
 #### Parameters
 
 ##### `ensure`
-Determines whether the config should be present or not on the device. Valid 
+Determines whether the config should be present or not on the device. Valid
 values are 'present' and 'absent'.
 
 ##### `asn`
@@ -235,11 +237,11 @@ BGP autonomous system number.  Valid values are String, Integer in ASPLAIN or
 ASDOT notation.
 
 ##### `vrf`
-Name of the resource instance. Valid values are string. The name 'default' is 
+Name of the resource instance. Valid values are string. The name 'default' is
 a valid VRF representing the global bgp.
 
 ##### `router_id`
-Router Identifier (ID) of the BGP router VRF instance. 
+Router Identifier (ID) of the BGP router VRF instance.
 Valid values are string, and keyword 'default'.
 
 ##### `cluster_id`
@@ -317,6 +319,39 @@ Set bgp keepalive timer. Valid values are Integer, keyword 'default'.
 
 ##### `timer_bgp_hold`
 Set bgp hold timer. Valid values are Integer, keyword 'default'.
+
+--
+### Type: cisco_bgp_af
+
+Manages configuration of a BGP Address-family instance.
+
+#### Parameters
+
+###### `ensure`
+Determine whether the interface config should be present or not. Valid values
+ are 'present' and 'absent'.
+
+##### `asn`
+BGP autonomous system number. Required. Valid values are String, Integer in ASPLAIN or
+ASDOT notation.
+
+##### `vrf`
+VRF name. Required. Valid values are string. The name 'default' is a valid VRF representing the global bgp.
+
+##### `afi`
+Address Family Identifier (AFI). Required. Valid values are `ipv4` and `ipv6`.
+
+##### `safi`
+Sub Address Family Identifier (SAFI). Required. Valid values are `unicast` and `multicast`.
+
+##### `client_to_client`
+`client-to-client reflection`. Valid values are true and false.
+
+##### `default_information_originate`
+`default-information originate`. Valid values are true and false.
+
+##### `next_hop_route_map`
+`nexthop route-map`. Valid values are a string defining a route-map.
 
 --
 ### Type: cisco_bgp_neighbor_af
@@ -436,7 +471,7 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 ##### Basic interface config attributes
 
 ###### `ensure`
-Determine whether the interface config should be present or not. Valid values 
+Determine whether the interface config should be present or not. Valid values
 are 'present' and 'absent'.
 
 ###### `interface`
@@ -446,28 +481,28 @@ Name of the interface on the network element. Valid value is a string.
 Description of the interface. Valid values are a string or the keyword 'default'.
 
 ###### `shutdown`
-Shutdown state of the interface. Valid values are 'true', 'false', and 
+Shutdown state of the interface. Valid values are 'true', 'false', and
 'default'.
 
 ###### `switchport_mode`
-Switchport mode of the interface. To make an interface Layer 3, set 
+Switchport mode of the interface. To make an interface Layer 3, set
 `switchport_mode` to 'disabled'. Valid values are 'disabled', 'access', 'tunnel', 'fex_fabric', 'trunk', and 'default'.
 
 ##### L2 interface config attributes
 
 ###### `access_vlan`
-The VLAN ID assigned to the interface. Valid values are an integer or the keyword 
+The VLAN ID assigned to the interface. Valid values are an integer or the keyword
 'default'.
 
 ##### `switchport_autostate_exclude`
 Exclude this port for the SVI link calculation. Valid values are 'true', 'false', and 'default'.
 
 ###### `switchport_vtp`
-Enable or disable VTP on the interface. Valid values are 'true', 'false', 
+Enable or disable VTP on the interface. Valid values are 'true', 'false',
 and 'default'.
 
 ###### `negotiate_auto`
-Enable/Disable negotiate auto on the interface. Valid values are 'true', 
+Enable/Disable negotiate auto on the interface. Valid values are 'true',
 'false', and 'default'.
 
 ##### L3 interface config attributes
@@ -479,11 +514,11 @@ Enables or disables proxy arp on the interface. Valid values are 'true', 'false'
 Enables or disables sending of IP redirect messages. Valid values are 'true', 'false', and 'default'.
 
 ###### `ipv4_address`
-IP address of the interface. Valid values are a string of ipv4 address or the 
+IP address of the interface. Valid values are a string of ipv4 address or the
 keyword 'default'.
 
 ###### `ipv4_netmask_length`
-Network mask length of the IP address on the interface. Valid values are 
+Network mask length of the IP address on the interface. Valid values are
 integer and keyword 'default'.
 
 ###### `vrf`
@@ -492,7 +527,7 @@ VRF member of the interface.  Valid values are a string or the keyword 'default'
 ##### SVI interface config attributes
 
 ###### `svi_autostate`
-Enable/Disable autostate on the SVI interface. Valid values are 'true', 
+Enable/Disable autostate on the SVI interface. Valid values are 'true',
 'false', and 'default'.
 
 ###### `svi_management`
@@ -505,7 +540,7 @@ Manages configuration of an OSPF interface instance.
 #### Parameters
 
 ##### `ensure`
-Determine whether the config should be present or not. Valid values are 
+Determine whether the config should be present or not. Valid values are
 'present' and 'absent'.
 
 ##### `interface`
@@ -518,36 +553,36 @@ Name of the cisco_ospf resource. Valid value is a string.
 The cost associated with this cisco_interface_ospf instance. Valid value is an integer.
 
 ##### `hello_interval`
-The hello_interval associated with this cisco_interface_ospf instance. Time 
-between sending successive hello packets. Valid values are an integer or the 
+The hello_interval associated with this cisco_interface_ospf instance. Time
+between sending successive hello packets. Valid values are an integer or the
 keyword 'default'.
 
 ##### `dead_interval`
-The dead_interval associated with the cisco_interface_ospf instance. 
-Time interval an ospf neighbor waits for a hello packet before tearing down 
+The dead_interval associated with the cisco_interface_ospf instance.
+Time interval an ospf neighbor waits for a hello packet before tearing down
 adjacencies. Valid values are an integer or the keyword 'default'.
 
 ##### `passive_interface`
-Passive interface associated with the cisco_interface_ospf instance. Setting 
+Passive interface associated with the cisco_interface_ospf instance. Setting
 to true will prevent this interface from receiving HELLO packets.
 Valid values are 'true' and 'false'.
 
 ##### `message_digest`
-Enables or disables the usage of message digest authentication. 
+Enables or disables the usage of message digest authentication.
 Valid values are 'true' and 'false'.
 
 ##### `message_digest_key_id`
-md5 authentication key-id associated with thecisco_interface_ospf instance. 
-If this is present in the manifest, message_digest_encryption_type, 
-message_digest_algorithm_type and message_digest_password are mandatory. 
+md5 authentication key-id associated with thecisco_interface_ospf instance.
+If this is present in the manifest, message_digest_encryption_type,
+message_digest_algorithm_type and message_digest_password are mandatory.
 Valid value is an integer.
 
 ##### `message_digest_algorithm_type`
-Algorithm used for authentication among neighboring routers within an area. 
+Algorithm used for authentication among neighboring routers within an area.
 Valid values are 'md5' and keyword 'default'.
 
 ##### `message_digest_encryption_type`
-Specifies the scheme used for encrypting message_digest_password. 
+Specifies the scheme used for encrypting message_digest_password.
 Valid values are 'cleartext', '3des' or 'cisco_type_7' encryption, and
 'default', which defaults to 'cleartext'.
 
@@ -564,7 +599,7 @@ Manages configuration of an ospf instance.
 #### Parameters
 
 ##### `ensure`
-Determine if the config should be present or not. Valid values are 'present', 
+Determine if the config should be present or not. Valid values are 'present',
 and 'absent'.
 
 ##### `ospf`
@@ -578,11 +613,11 @@ Manages a VRF for an OSPF router.
 #### Parameters
 
 ##### `ensure`
-Determines whether the config should be present or not on the device. Valid 
+Determines whether the config should be present or not on the device. Valid
 values are 'present' and 'absent'.
 
 ##### `vrf`
-Name of the resource instance. Valid value is a string. The name 'default' is 
+Name of the resource instance. Valid value is a string. The name 'default' is
 a valid VRF representing the global ospf.
 
 ##### `ospf`
@@ -592,7 +627,7 @@ Name of the ospf instance. Valid value is a string.
 Router Identifier (ID) of the OSPF router VRF instance. Valid values are a string or the keyword 'default'.
 
 ##### `default_metric`
-Specify the default Metric value. Valid values are an  integer or the keyword 
+Specify the default Metric value. Valid values are an  integer or the keyword
 'default'.
 
 ##### `log_adjacency`
@@ -600,28 +635,28 @@ Controls the level of log messages generated whenever a neighbor changes state.
 Valid values are 'log', 'detail', 'none', and 'default'.
 
 ##### `timer_throttle_lsa_start`
-Specify the start interval for rate-limiting Link-State Advertisement (LSA) 
+Specify the start interval for rate-limiting Link-State Advertisement (LSA)
 generation. Valid values are an integer, in milliseconds, or the keyword 'default'.
 
 ##### `timer_throttle_lsa_hold`
-Specifies the hold interval for rate-limiting Link-State Advertisement (LSA) 
+Specifies the hold interval for rate-limiting Link-State Advertisement (LSA)
 generation. Valid values are an integer, in milliseconds, or the keyword 'default'.
 
 ##### `timer_throttle_lsa_max`
-Specifies the max interval for rate-limiting Link-State Advertisement (LSA) 
-generation. 
+Specifies the max interval for rate-limiting Link-State Advertisement (LSA)
+generation.
 Valid values are an integer, in milliseconds, or the keyword 'default'.
 
 ##### `timer_throttle_spf_start`
-Specify initial Shortest Path First (SPF) schedule delay. 
+Specify initial Shortest Path First (SPF) schedule delay.
 Valid values are an integer, in milliseconds, or the keyword 'default'.
 
 ##### `timer_throttle_spf_hold`
-Specify minimum hold time between Shortest Path First (SPF) calculations. 
+Specify minimum hold time between Shortest Path First (SPF) calculations.
 Valid values are an integer, in milliseconds, or the keyword 'default'.
 
 ##### `timer_throttle_spf_max`
-Specify the maximum wait time between Shortest Path First (SPF) calculations. 
+Specify the maximum wait time between Shortest Path First (SPF) calculations.
 Valid values are an integer, in milliseconds, or the keyword 'default'.
 
 ##### `auto_cost`
@@ -635,7 +670,7 @@ Manages an SNMP community on a Cisco SNMP server.
 #### Parameters
 
 ##### `ensure`
-Determine whether the config should be present or not on the device. Valid 
+Determine whether the config should be present or not on the device. Valid
 values are 'present' and 'absent'.
 
 ##### `community`
@@ -646,21 +681,21 @@ Group that the SNMP community belongs to. Valid values are a string or the
 keyword 'default'.
 
 ##### `acl`
-Assigns an Access Control List (ACL) to an SNMP community to filter SNMP 
+Assigns an Access Control List (ACL) to an SNMP community to filter SNMP
 requests. Valid values are a string or the keyword 'default'.
 
 --
 ### Type: cisco_snmp_group
 
-Manages a Cisco SNMP Group on a Cisco SNMP Server. 
+Manages a Cisco SNMP Group on a Cisco SNMP Server.
 
-The term 'group' is a standard SNMP term, but in NXOS role it serves the purpose 
+The term 'group' is a standard SNMP term, but in NXOS role it serves the purpose
 of group; thus this provider utility does not create snmp groups and only reports group (role) existence.
 
 #### Parameters
 
 ##### `ensure`
-Determines whether the config should be present on the device or not. Valid 
+Determines whether the config should be present on the device or not. Valid
 values are 'present', and 'absent'.
 
 ##### `group`
@@ -668,83 +703,83 @@ Name of the snmp group. Valid value is a string.
 
 --
 ### Type: cisco_snmp_server
-Manages a Cisco SNMP Server. There can only be one instance of the 
+Manages a Cisco SNMP Server. There can only be one instance of the
 cisco_snmp_server.
 
 #### Parameters
 
 ##### `name`
-The name of the SNMP Server instance. Only 'default' is accepted as a valid 
+The name of the SNMP Server instance. Only 'default' is accepted as a valid
 name.
 
 ##### `location`
 SNMP location (sysLocation). Valid values are a string or the keyword 'default'.
 
 ##### `contact`
-SNMP system contact (sysContact). Valid values are a string or the keyword 
+SNMP system contact (sysContact). Valid values are a string or the keyword
 'default'.
 
 ##### `aaa_user_cache_timeout`
-Configures how long the AAA synchronized user configuration stays in the local 
+Configures how long the AAA synchronized user configuration stays in the local
 cache. Valid values are an integer or the keyword 'default'.
 
 ##### `packet_size`
 Size of SNMP packet. Valid values are an integer, in bytes, or the keyword 'default'.
 
 ##### `global_enforce_priv`
-Enable/disable SNMP message encryption for all users. Valid values are 'true', 
+Enable/disable SNMP message encryption for all users. Valid values are 'true',
 'false', and 'default'.
 
 ##### `protocol`
 Enable/disable SNMP protocol. Valid values are 'true', 'false', and 'default'.
 
 ##### `tcp_session_auth`
-Enable/disable a one time authentication for SNMP over TCP session. 
+Enable/disable a one time authentication for SNMP over TCP session.
 Valid values are 'true', 'false', and 'default'.
 
 --
 ### Type: cisco_snmp_user
 
-Manages an SNMP user on an cisco SNMP server. 
+Manages an SNMP user on an cisco SNMP server.
 
 #### Parameters
 
 ##### `ensure`
-Determines whether the config should be present or not on the device. Valid 
+Determines whether the config should be present or not on the device. Valid
 values are 'present', and 'absent'.
 
-##### `user` 
+##### `user`
 Name of the SNMP user. Valid value is a string.
 
 ##### `engine_id`
-Engine ID of the SNMP user. Valid values are empty string or 5 to 32 octets 
+Engine ID of the SNMP user. Valid values are empty string or 5 to 32 octets
 seprated by colon.
 
 ##### `groups`
 Groups that the SNMP user belongs to. Valid value is a string.
 
 ##### `auth_protocol`
-Authentication protocol for the SNMP user. Valid values are 'md5', 'sha', 
+Authentication protocol for the SNMP user. Valid values are 'md5', 'sha',
 and 'none'.
 
 ##### `auth_password`
 Authentication password for the SNMP user. Valid value is string.
 
 ##### `priv_protocol`
-Privacy protocol for the SNMP user. Valid values are 'aes128', 'des', and 
+Privacy protocol for the SNMP user. Valid values are 'aes128', 'des', and
 'none'.
 
 ##### `priv_password`
 Privacy password for SNMP user. Valid value is a string.
 
 ##### `localized_key`
-Specifies whether the passwords specified in manifest are in localized key 
+Specifies whether the passwords specified in manifest are in localized key
 format (in case of true) or cleartext (in case of false). Valid values are 'true', and 'false'.
 
 --
 ### Type: cisco_tacacs_server
 
-Manages a Cisco TACACS+ Server global configuration. There can only be one 
+Manages a Cisco TACACS+ Server global configuration. There can only be one
 instance of the cisco_tacacs_server.
 
 #### Parameters
@@ -753,15 +788,15 @@ instance of the cisco_tacacs_server.
 Instance of the tacacs_server, only allows the value 'default'.
 
 ##### `timeout`
-Global timeout interval for TACACS+ servers.  Valid value is an integer, 
+Global timeout interval for TACACS+ servers.  Valid value is an integer,
 in seconds, or the keyword 'default'.
 
 ##### `directed_request`
-Allows users to specify a TACACS+ server to send the authentication request 
+Allows users to specify a TACACS+ server to send the authentication request
 when logging in. Valid values are 'true', and 'false'.
 
 ##### `deadtime`
-Specifies the global deadtime interval for TACACS+ servers. Valid values are 
+Specifies the global deadtime interval for TACACS+ servers. Valid values are
 Integer, in minutes, and keyword 'default'.
 
 ##### `encryption_type`
@@ -769,11 +804,11 @@ Specifies the global preshared key type for TACACS+ servers.
 Valid values are 'clear', 'encrypted', 'none', and 'default'.
 
 ##### `encryption_password`
-Specifies the global TACACS+ servers preshared key password. Valid values are 
+Specifies the global TACACS+ servers preshared key password. Valid values are
 string, and keyword 'default'.
 
 ##### `source_interface`
-Global source interface for all TACACS+ server groups configured on the device. 
+Global source interface for all TACACS+ server groups configured on the device.
 Valid values are string, and keyword 'default'.
 
 --
@@ -784,7 +819,7 @@ Configures Cisco TACACS+ server hosts.
 #### Parameters
 
 ##### `ensure`
-Determines whether or not the config should be present on the device. Valid 
+Determines whether or not the config should be present on the device. Valid
 values are 'present' and 'absent'.
 
 ##### `host`
@@ -794,11 +829,11 @@ Name of the tacacs_server_host instance. Valid value is a string.
 Server port for the host. Valid values are an integer or the keyword 'default'.
 
 ##### `timeout`
-Timeout interval for the host. Valid values are an integer, in seconds, or the 
+Timeout interval for the host. Valid values are an integer, in seconds, or the
 keyword 'default'.
 
 ##### `encryption_type`
-Specifies a preshared key for the host. Valid values are 'clear', 'encrypted', 
+Specifies a preshared key for the host. Valid values are 'clear', 'encrypted',
 'none', and keyword 'default'.
 
 ##### `encryption_password`
@@ -815,7 +850,7 @@ Manages a Cisco VLAN.
 ID of the Virtual LAN. Valid value is an integer.
 
 ##### `ensure`
-Determined wether the config should be present or not. Valid values are 
+Determined wether the config should be present or not. Valid values are
 'present' and 'absent'.
 
 ##### `vlan_name`
@@ -825,23 +860,23 @@ The name of the VLAN. Valid values are a string or the keyword 'default'.
 State of the VLAN. Valid values are 'active', 'suspend', and keyword 'default'.
 
 ##### `shutdown`
-Whether or not the vlan is shutdown. Valid values are 'true', 'false' and 
+Whether or not the vlan is shutdown. Valid values are 'true', 'false' and
 keyword 'default'.
 
 --
 ### Type: cisco_vrf
 
 Manages Cisco Virtual Routing and Forwarding (VRF) configuration of a Cisco
-device. 
+device.
 
 #### Parameters
 
 ##### `ensure`
-Determines whether or not the config should be present on the device. Valid 
+Determines whether or not the config should be present on the device. Valid
 values are 'present' and 'absent'. Default value is 'present'.
 
 ##### `name`
-Name of the VRF. Valid value is a string of non-whitespace characters. It is 
+Name of the VRF. Valid value is a string of non-whitespace characters. It is
 not case-sensitive and overrides the title of the type.
 
 ##### `description`
@@ -859,7 +894,7 @@ There can only be one instance of the cisco_vtp.
 #### Parameters
 
 ##### `ensure`
-Determines whether or not the config should be present on the device. Valid 
+Determines whether or not the config should be present on the device. Valid
 values are 'present' and 'absent'.
 
 ##### `name`
