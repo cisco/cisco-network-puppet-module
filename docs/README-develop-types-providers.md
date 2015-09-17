@@ -22,7 +22,7 @@ This document is a guide for writing new Puppet resource types and providers for
 
 There are multiple components involved when creating new resources. This document focuses on the type and provider files:
 
-![1](docs/tp_files.png)
+![1](tp_files.png)
 
 * Every resource is associated with a [resource type](https://docs.puppetlabs.com/puppet/latest/reference/lang_resources.html), which determines the kind of configuration it manages.
 
