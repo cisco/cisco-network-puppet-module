@@ -30,7 +30,7 @@ There are multiple components involved when creating new resources. This documen
 
 * The types and providers work in conjunction with a node\_utils API, which is the interface between Puppet agent and the NX-OS CLI. Please see the [README-develop-node-utils-APIs.md] (https://github.com/cisco/cisco-network-node-utils/blob/master/README-develop-node-utils-APIs.md) guide for more information on writing node_utils APIs.
 
-This document relies heavily on example code. The examples in this document can be written independently, but they are intended to work in conjuction with the example node_utils APIs created in the [README-develop-node_utils-APIs.md](https://github.com/cisco/cisco-network-node-utils/blob/master/README-develop-node-utils-APIs.md) guide. The examples in that guide are based on code templates for the `feature bash-shell` CLI and the `router eigrp` CLI. Note that some people prefer to write the node_utils API before the resource types and providers, while others might prefer the opposite workflow.
+This document relies heavily on example code. The examples in this document can be written independently, but they are intended to work in conjuction with the example node_utils APIs created in the [README-develop-node_utils-APIs.md](https://github.com/cisco/cisco-network-node-utils/blob/master/docs/README-develop-node-utils-APIs.md) guide. The examples in that guide are based on code templates for the `feature bash-shell` CLI and the `router eigrp` CLI. Note that some people prefer to write the node_utils API before the resource types and providers, while others might prefer the opposite workflow.
 
 ## <a name="clone">Start here: Clone the Repo</a>
 
