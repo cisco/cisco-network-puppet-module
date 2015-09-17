@@ -7,9 +7,8 @@
 3. [Beaker Installer Configuration](#beaker-install-config)
 4. [Automated Puppet Agent Install: bash-shell](#install-bs)
 5. [Automated Puppet Agent Install: guestshell](#install-gs)
-6. [References](#references)
-7. [Limitations](#limitations)
-8. [License Information](#license-information)
+6. [Limitations](#limitations)
+7. [License Information](#license-information)
 
 ## <a name="overview">Overview</a>
 
