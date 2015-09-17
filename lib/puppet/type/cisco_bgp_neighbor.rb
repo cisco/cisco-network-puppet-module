@@ -165,7 +165,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
           ipv4/prefix length, ipv6, or ipv6/prefix length'
     munge do |value|
       begin
-        value = Cisco::RouterBgpNeighbor.nbr_munge(value)
+        value = Cisco::Utils.process_network_mask(value)
         value
       rescue
         fail "neighbor must be in valid ipv4/v6 address or address/length 

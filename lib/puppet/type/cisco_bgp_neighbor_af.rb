@@ -215,7 +215,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
 
     munge do |value|
       begin
-        value = Cisco::RouterBgpNeighbor.nbr_munge(value.to_s)
+        value = Cisco::Utils.process_network_mask(value.to_s)
         value
       rescue
         raise "'neighbor' must be a valid ipv4 or ipv6 address (mask optional)"
