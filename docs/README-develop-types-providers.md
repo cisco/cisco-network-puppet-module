@@ -34,7 +34,7 @@ This document relies heavily on example code. The examples in this document can 
 
 ## <a name="clone">Start here: Clone the Repo</a>
 
-Please see the [CONTRIBUTING](#CONTRIBUTING) document for workflow instructions. In general, fork the ciscopuppet repository for your changes and submit a pull request when it is ready for commit.
+Please see the [CONTRIBUTING](../CONTRIBUTING.md) document for workflow instructions. In general, fork the ciscopuppet repository for your changes and submit a pull request when it is ready for commit.
 
 First install the code base. Clone the ciscopuppet repo into a workspace:
 
@@ -296,7 +296,7 @@ Inspecting 2 files
 
 ## <a name="comp_example">Complex Example: router eigrp</a>
 
-This resource type and provider exercise will build on the router_eigrp API example shown in the cisco node_utils [README-develop-node-utils-APIs](https://github.com/cisco/cisco-network-node-utils/blob/master/README-develop-node-utils-APIs.md) document.
+This resource type and provider exercise will build on the router_eigrp API example shown in the cisco node_utils [README-develop-node-utils-APIs](https://github.com/cisco/cisco-network-node-utils/blob/master/docs/README-develop-node-utils-APIs.md) document.
 The router_eigrp node_utils example created a new API for the cli below:
 
 ~~~
@@ -699,4 +699,4 @@ Inspecting 2 files
 
 ## <a name="next">Next Steps</a>
 
-Please see the [CONTRIBUTING](#CONTRIBUTING) document for workflow instructions.
+Please see the [CONTRIBUTING](../CONTRIBUTING.md) document for workflow instructions.
