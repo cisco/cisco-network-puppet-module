@@ -56,7 +56,7 @@ The Puppet Agent requires installation and setup on each device. Agent setup can
 ##### Artifacts
 
 As noted in the agent installation guide, these are the current RPM versions for use with ciscopuppet:
-* `bash-shell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-nxos-5.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-nxos-5.noarch.rpm)
+* `bash-shell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm)
 * `guestshell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm)
 
 ##### Gems
