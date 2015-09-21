@@ -25,7 +25,7 @@
   * [README-beaker-testcase-execution.md](docs/README-beaker-testcase-execution.md) : Executing Beaker Tests for ciscopuppet
   * [README-beaker-testcase-writing.md](docs/README-beaker-testcase-writing.md) : Writing Beaker Tests for ciscopuppet
 
---
+Please see [Learning Resources](#learning-resources) for additional references.
 
 ## Overview
 
@@ -656,6 +656,29 @@ Minimum Requirements:
 4. Write tests for your change (if applicable).
 5. Run the tests, ensuring they all pass.
 6. Submit a Pull Request using Github.
+
+## Learning Resources
+
+* Puppet
+  * [https://learn.puppetlabs.com/](https://learn.puppetlabs.com/)
+  * [https://en.wikipedia.org/wiki/Puppet_(software)](https://en.wikipedia.org/wiki/Puppet_(software))
+* Markdown (for editing documentation)
+  * [https://help.github.com/articles/markdown-basics/](https://help.github.com/articles/markdown-basics/)
+* Ruby
+  * [https://en.wikipedia.org/wiki/Ruby_(programming_language)](https://en.wikipedia.org/wiki/Ruby_(programming_language))
+  * [https://www.codecademy.com/tracks/ruby](https://www.codecademy.com/tracks/ruby)
+  * [https://rubymonk.com/](https://rubymonk.com/)
+  * [https://www.codeschool.com/paths/ruby](https://www.codeschool.com/paths/ruby)
+* Ruby Gems
+  * [http://guides.rubygems.org/](http://guides.rubygems.org/)
+  * [https://en.wikipedia.org/wiki/RubyGems](https://en.wikipedia.org/wiki/RubyGems)
+* YAML
+  * [https://en.wikipedia.org/wiki/YAML](https://en.wikipedia.org/wiki/YAML)
+  * [http://www.yaml.org/start.html](http://www.yaml.org/start.html)
+* Yum
+  * [https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified](https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified)
+  * [https://www.centos.org/docs/5/html/yum/](https://www.centos.org/docs/5/html/yum/)
+  * [http://www.linuxcommand.org/man_pages](http://www.linuxcommand.org/man_pages/yum8.html)
 
 ## License
 
