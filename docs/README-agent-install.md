@@ -243,10 +243,10 @@ This file can be used to override the default Puppet settings. At a minimum, the
 
 See the following references for more puppet.conf settings:
 
-<https://docs.puppetlabs.com/puppet/latest/reference/config_important_settings.html>
-<https://docs.puppetlabs.com/puppet/latest/reference/config_about_settings.html>
-<https://docs.puppetlabs.com/puppet/latest/reference/config_file_main.html>
-<https://docs.puppetlabs.com/references/latest/configuration.html>
+* https://docs.puppetlabs.com/puppet/latest/reference/config_important_settings.html
+* https://docs.puppetlabs.com/puppet/latest/reference/config_about_settings.html
+* https://docs.puppetlabs.com/puppet/latest/reference/config_file_main.html
+* https://docs.puppetlabs.com/references/latest/configuration.html
 
 #### Run the Puppet Agent
 

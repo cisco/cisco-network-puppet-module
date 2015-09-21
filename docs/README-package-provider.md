@@ -4,10 +4,8 @@
 
 1. [Overview](#overview)
 2. [Syntax](#syntax)
-3. [Examples](examples)
-9. [References](#references)
-10. [Limitations](#limitations)
-11. [Known Issues](#issues)
+3. [Examples](#examples)
+4. [References](#references)
 
 ## <a name="overview">Overview</a>
 
@@ -51,7 +49,7 @@ where:
 * `provider`: Optional. Set to 'nxapi' if installling a Cisco package.
 
 
-## <a name="Examples">Examples</a>
+## <a name="examples">Examples</a>
 
 * **Cisco RPMs**
 
