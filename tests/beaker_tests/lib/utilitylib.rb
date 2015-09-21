@@ -117,8 +117,8 @@ module UtilityLib
     patarr = UtilityLib.hash_to_patterns(patarr) if patarr.instance_of?(Hash)
     patarr.each do |pattern|
       inverse ? (match = (output !~ pattern)) : (match = (output =~ pattern))
-      (match) ? logger.debug("TestStep :: Match #{pattern} :: PASS") \
-        : testcase.fail_test("TestStep :: Match #{pattern} :: FAIL")
+      (match) ? logger.debug("TestStep :: Match #{pattern} :: PASS") : \
+        testcase.fail_test("TestStep :: Match #{pattern} :: FAIL")
     end
   end
 
@@ -133,9 +133,9 @@ module UtilityLib
   # @param logger [Logger] A default instance of Beaker::Logger.
   # @result none [None] Returns no object.
   def self.raise_passfail_exception(testresult, message, testcase, logger)
-    (testresult == 'PASS') \
-      ? testcase.pass_test("\nTestCase :: #{message} :: PASS") \
-      : testcase.fail_test("\nTestCase :: #{message} :: FAIL")
+    (testresult == 'PASS') ? \
+      testcase.pass_test("\nTestCase :: #{message} :: PASS") : \
+      testcase.fail_test("\nTestCase :: #{message} :: FAIL")
   rescue Beaker::DSL::Outcomes::PassTest
     logger.success("TestCase :: #{message} :: PASS")
   rescue Beaker::DSL::Outcomes::FailTest
@@ -152,64 +152,113 @@ def puppet_agent_cmd
   UtilityLib.get_namespace_cmd(agent, cmd, options)
 end
 
+# Auto generation of properties for manifests
+# attributes: hash of property names and values
+# return: a manifest friendly string of property names / values
+def prop_hash_to_manifest(attributes)
+  manifest_str = ''
+  attributes.each do |k, v|
+    next if v.to_s.empty?
+    if v.is_a?(String)
+      manifest_str += "       #{k} => '#{v}',\n"
+    else
+      manifest_str += "       #{k} => #{v},\n"
+    end
+  end
+  manifest_str
+end
+
+# Wrapper for processing all tests for each test scenario.
+#
+# Inputs:
+# tests - a hash of control values
+# id - identifies the specific test case hash key
+#
+# Top-level keys set by caller:
+# tests[:master] - the master object
+# tests[:agent] - the agent object
+# tests[:show_cmd] - the common show command to use for test_show_run
+#
+# tests[id] keys set by caller:
+# tests[id][:desc] - a string to use with logs & debugs
+# tests[id][:manifest] - the complete manifest, as used by test_harness_common
+# tests[id][:resource] - a hash of expected states, used by test_resource
+# tests[id][:resource_cmd] - 'puppet resource' command to use with test_resource
+# tests[id][:show_pattern] - array of regexp patterns to use with test_show_cmd
+# tests[id][:ensure] - (Optional) set to :present or :absent before calling
+# tests[id][:code] - (Optional) override the default exit code in some tests.
+#
+def test_harness_common(tests, id)
+  tests[id][:ensure] = :present if tests[id][:ensure].nil?
+  tests[id][:log_desc] = tests[id][:desc] + " [ensure => #{tests[id][:ensure]}]"
+  logger.info("\n--------\n#{tests[id][:log_desc]}")
+
+  test_manifest(tests, id)
+  test_resource(tests, id)
+  test_show_cmd(tests, id)
+  test_idempotence(tests, id)
+end
+
+# Wrapper for formatting test log entries
+def format_stepinfo(tests, id, test_str)
+  tests[id][:log_desc] + sprintf(' :: %-12s', test_str)
+end
+
 # Wrapper for manifest tests
-# Pass code = [0], to test idempotence
-# Alternative to 'test_idempotence'
-def test_manifest(master, agent, manifest, stepinfo = nil, code = [2])
-  stepinfo = 'Manifest Test: ' + stepinfo
+# Pass code = [0], as an alternative to 'test_idempotence'
+def test_manifest(tests, id)
+  stepinfo = format_stepinfo(tests, id, 'MANIFEST')
   step "TestStep :: #{stepinfo}" do
-    on(master, manifest)
-    on(agent, puppet_agent_cmd, :acceptable_exit_codes => code)
+    logger.debug("test_manifest :: manifest:\n#{tests[id][:manifest]}")
+    on(tests[:master], tests[id][:manifest])
+
+    code = tests[id][:code] ? tests[id][:code] : [2]
+    on(tests[:agent], puppet_agent_cmd, :acceptable_exit_codes => code)
     logger.info("#{stepinfo} :: PASS")
   end
 end
 
 # Wrapper for 'puppet resource' command tests
-def test_resource(agent, puppet_cmd, exp, stepinfo)
-  stepinfo = 'Puppet Resource Test: ' + stepinfo
+def test_resource(tests, id)
+  stepinfo = format_stepinfo(tests, id, 'RESOURCE')
   step "TestStep :: #{stepinfo}" do
-    on(agent, puppet_cmd) do
-      UtilityLib.search_pattern_in_output(stdout, exp, false, self, logger)
+    logger.debug("test_resource :: cmd:\n#{tests[id][:resource_cmd]}")
+    on(tests[:agent], tests[id][:resource_cmd]) do
+      UtilityLib.search_pattern_in_output(stdout, tests[id][:resource],
+                                          false, self, logger)
     end
     logger.info("#{stepinfo} :: PASS")
   end
 end
 
 # Wrapper for config pattern-match tests
-def test_show_run(agent, show_cmd, pattern, stepinfo, absent = false)
-  stepinfo = 'Agent Show Test: ' + stepinfo
-  show_run_bgp = UtilityLib.get_vshell_cmd(show_cmd)
+def test_show_cmd(tests, id, state=false)
+  stepinfo = format_stepinfo(tests, id, 'SHOW CMD')
+  show_cmd = UtilityLib.get_vshell_cmd(tests[:show_cmd])
   step "TestStep :: #{stepinfo}" do
-    on(agent, show_run_bgp) do
-      UtilityLib.search_pattern_in_output(stdout, pattern, absent, self, logger)
+    on(tests[:agent], show_cmd) do
+      logger.debug("test_show_cmd :: cmd:\n#{show_cmd}")
+      logger.debug("test_show_cmd :: pattern:\n#{tests[id][:show_pattern]}")
+      UtilityLib.search_pattern_in_output(stdout, tests[id][:show_pattern],
+                                          state, self, logger)
     end
     logger.info("#{stepinfo} :: PASS")
   end
 end
 
 # Wrapper for idempotency tests
-def test_idempotence(agent, stepinfo)
-  stepinfo = 'Idempotence Test: ' + stepinfo
+def test_idempotence(tests, id)
+  stepinfo = format_stepinfo(tests, id, 'IDEMPOTENCE')
   step "TestStep :: #{stepinfo}" do
-    on(agent, puppet_agent_cmd, :acceptable_exit_codes => [0])
-    logger.info("#{stepinfo} :: PASS")
-  end
-end
-
-# Wrapper for absent tests
-def test_absent(master, agent, manifest, stepinfo = nil)
-  stepinfo = 'Absent Test: ' + stepinfo
-  step "TestStep :: #{stepinfo}" do
-    on(master, manifest)
-    on(agent, puppet_agent_cmd, :acceptable_exit_codes => [2])
+    on(tests[:agent], puppet_agent_cmd, :acceptable_exit_codes => [0])
     logger.info("#{stepinfo} :: PASS")
   end
 end
 
 # Common BGP cleanup
-def node_cleanup_bgp(agent, stepinfo)
-  step "TestStep :: #{stepinfo}" do
-    clean = UtilityLib.get_vshell_cmd('conf t ; no feature bgp')
+def node_cleanup_bgp(agent)
+  step 'TestStep :: BGP CLEANUP START' do
+    clean = UtilityLib.get_vshell_cmd('conf t ; feature bgp ; no feature bgp')
     on(agent, clean, :acceptable_exit_codes => [0, 2])
     show_cmd = UtilityLib.get_vshell_cmd('show running-config section bgp')
     on(agent, show_cmd) do
@@ -225,4 +274,32 @@ def node_cleanup_bgp(agent, stepinfo)
                                           false, self, logger)
     end
   end
+  logger.info 'TestStep :: BGP CLEANUP FIN'
+end
+
+# bgp neighbor remote-as configuration helper
+def bgp_nbr_remote_as(agent, remote_as)
+  asn, vrf, nbr, remote = remote_as.split
+  vrf = (vrf == 'default') ? '' : "vrf #{vrf}"
+  cfg_str = "conf t ; router bgp #{asn} ; #{vrf} ; " \
+            "neighbor #{nbr} ; remote-as #{remote}"
+  on(agent, UtilityLib.get_vshell_cmd(cfg_str))
+end
+
+# If a [:title] exists merge it with the [:af] values to create a complete af.
+def bgp_title_pattern_munge(tests, id)
+  title = tests[id][:title_pattern]
+  af = tests[id][:af]
+
+  if title.nil?
+    puts 'no title'
+    return af
+  end
+
+  tests[id][:af] = {} if af.nil?
+  t = {}
+  t[:asn], t[:vrf], t[:neighbor], t[:afi], t[:safi] = title.split
+  t.merge!(tests[id][:af])
+  t[:vrf] = 'default' if t[:vrf].nil?
+  t
 end
