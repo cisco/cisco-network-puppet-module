@@ -98,4 +98,48 @@ class ciscopuppet::demo_bgp {
     default_information_originate          => false,
     next_hop_route_map                     => 'RouteMap',
   }
+
+  # --------------------------------------------------------------------------#
+  # Configure Neighbor-level Address Family IPv4 Unicast
+  # --------------------------------------------------------------------------#
+  cisco_bgp_neighbor_af { '55.77 blue 1.1.1.1 ipv4 unicast':
+    ensure                                 => present,
+
+    # Properties
+    allowas_in_max                         => 5,
+    cap_add_paths_receive_disable          => false,
+    cap_add_paths_send_disable             => true,
+    default_originate_route_map            => 'my_def_map',
+    disable_peer_as_check                  => true,
+    max_prefix_limit                       => 100,
+    max_prefix_threshold                   => 50,
+    max_prefix_interval                    => 30,
+    next_hop_self                          => true,
+    next_hop_third_party                   => false,
+    send_community                         => 'extended',
+    soft_reconfiguration_in                => true,
+    soft_reconfiguration_in_always         => true,
+    soo                                    => '3:3',
+    suppress_inactive                      => true,
+    unsuppress_map                         => 'unsup_map',
+    weight                                 => 30,
+  }
+
+  # TBD: The following manifests need cisco_bgp_neighbor to define remote-as ***
+  #
+  # --------------------------------------------------------------------------#
+  # Configure Neighbor-level Address Family IPv4 Unicast (eBgp-only)
+  # --------------------------------------------------------------------------#
+  # cisco_bgp_neighbor_af { '55.77 blue2 2.2.2.2 ipv4 unicast':
+  #   ensure                               => present,
+  #   as_override                          => true,
+  # }
+  #
+  # --------------------------------------------------------------------------#
+  # Configure Neighbor-level Address Family IPv4 Unicast (iBgp-only)
+  # --------------------------------------------------------------------------#
+  # cisco_bgp_neighbor_af { '55.77 blue3 3.3.3.3 ipv4 unicast':
+  #   ensure                               => present,
+  #   route_reflector_client               => true,
+  # }
 }
