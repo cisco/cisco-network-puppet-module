@@ -20,7 +20,7 @@ This document describes how to use the example demo manifest files contained wit
 * `demo_bgp_[ipv4|ipv6]_site.pp`
   * Provides sample manifests to configure bgp using the `cisco_command_config` provider.
 
-**Note:** Before following the steps in this guide make sure the puppet agent is [installed and configured.](https://github.com/puppetlabs/cisco-ciscopuppet/blob/master/README-AGENT-INSTALL.md)
+**Note:** Before following the steps in this guide make sure the puppet agent is [installed and configured.](../docs/README-AGENT-INSTALL.md)
 
 ## <a name="setup">Initial Setup</a>
 

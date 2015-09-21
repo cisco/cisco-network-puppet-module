@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.1] - 2015-09-18
+### Fixed
+- Fixed broken documentation links
+
 ## [1.0.0] - 2015-08-28
 ### Added
 - New facts `cisco_node_utils` and `cisco_nxapi` report the installed version of these gems.
