@@ -209,7 +209,7 @@ The `bash-shell` and `guestshell` environments use different puppet RPMs.
 * For `bash-shell` use:
 
 ~~~bash
-yum install http://yum.puppetlabs.com/puppetlabs-release-pc1-nxos-5.noarch.rpm
+yum install http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm
 yum install puppet
 ~~~
 
