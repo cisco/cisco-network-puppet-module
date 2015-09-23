@@ -87,7 +87,7 @@
 #       auth_methods: *Optional* SSH authentication method.
 #                       Set to 'password' for username/password authentication
 #       username:     *Optional* SSH username if auth_methods is password
-#                       NOTE: Puppet master user must be root 
+#                       NOTE: Puppet master user must be root
 #       password:     *Optional* SSH password if auth_methods is password
 #
 #   CONFIG Section:
@@ -114,11 +114,11 @@ USAGE = <<ENDUSAGE
 ** WARNING ** This script is not a standalone script and can only be executed
               using the puppetlabs beaker tool!
 Usage:
-   beaker --host [HOST_CONFIG_FILE] --pre-suite [#{$0} PATH]
+   beaker --host [HOST_CONFIG_FILE] --pre-suite [#{$PROGRAM_NAME} PATH]
      --no-validate --no-config
 
    --host         Path to host configuration file.
-   --pre-suite    Path to #{$0} script
+   --pre-suite    Path to #{$PROGRAM_NAME} script
    --no-validate  Do not perform beaker agent node package check
    --no-config    Do not perform beaker post-provisioning configuration
 
@@ -129,9 +129,9 @@ if ARGV.empty?
   exit
 end
 
-GSUTILITY = "/isan/bin/guestshell"
-TMP_PUPPET_LOCATION = "/bootflash/tmp_puppet"
-PUPPET_PATH = "/opt/puppetlabs/puppet"
+GSUTILITY = '/isan/bin/guestshell'
+TMP_PUPPET_LOCATION = '/bootflash/tmp_puppet'
+PUPPET_PATH = '/opt/puppetlabs/puppet'
 
 # -------------------------#
 # Bootstrap Helper Methods #
@@ -147,7 +147,7 @@ def pp(host)
   case host['platform']
   when /cisco/
     if host['vrf'].nil?
-      command = "sudo"
+      command = 'sudo'
     else
       target_guestshell?(host) ?
         command = "sudo chvrf #{host['vrf']}" :
@@ -161,11 +161,11 @@ def pp(host)
     command.prepend "PATH=$PATH:#{PUPPET_PATH}/bin/:#{PUPPET_PATH}/lib/ " unless
                      target_guestshell?(host)
   when /other_platform/
-    command = "do something different"
+    command = 'do something different'
   else
-    command = ""
+    command = ''
   end
-  return command
+  command
 end
 
 # Get location of puppet.conf file
@@ -174,7 +174,7 @@ end
 # @return [String] Path to puppet.conf file
 def get_puppet_config(agent)
   cl = "#{pp(agent)} puppet agent --configprint config"
-  (on agent, cl, :pty => true).stdout.chomp
+  (on agent, cl, pty: true).stdout.chomp
 end
 
 # Determine if this is a native or guestshell install
@@ -207,8 +207,8 @@ end
 # @return [Boolean] true if it exists, else false
 def agent_template_exists?(agent)
   target_guestshell?(agent) ?
-    opts = {:acceptable_exit_codes => [0,2], :pty => true} :
-    opts = {:acceptable_exit_codes => [0,2]}
+    opts = { acceptable_exit_codes: [0, 2], pty: true } :
+    opts = { acceptable_exit_codes: [0, 2] }
   result = on agent, "#{pp(agent)} ls #{get_puppet_config(agent)}", opts
   result.exit_code == 0
 end
@@ -227,9 +227,9 @@ end
 # @param agent [String]
 # @return [String] Data containing puppet.conf information
 def get_agent_config(agent)
-  target_guestshell?(agent) ? opts = {:pty => true} : opts = {}
-  config = on( agent,
-    "#{pp(agent)} cat #{get_puppet_config(agent)}", opts).stdout
+  target_guestshell?(agent) ? opts = { pty: true } : opts = {}
+  config = on(agent,
+              "#{pp(agent)} cat #{get_puppet_config(agent)}", opts).stdout
   config
 end
 
@@ -239,8 +239,8 @@ end
 # @return [Hash] puppet.conf data.
 def check_pkg_info
   return false if options['package_url'].nil? ||
-    options['package_name'].nil?
-  return true
+                  options['package_name'].nil?
+  true
 end
 
 # Get default puppet.conf file from puppet.conf file after
@@ -271,7 +271,7 @@ end
 # }
 def puppet_config_tohash(config)
   config_hash = Hash['main' => {}, 'agent' => {}]
-  context = ""
+  context = ''
   config_array = config.split("\n")
   config_array.each do |line|
     context = 'main' if /\[main\]/.match(line)
@@ -280,7 +280,7 @@ def puppet_config_tohash(config)
     # Match all lines in main and agent sections except comment lines.
     config_hash[context][match[1]] = match[2] unless match.nil?
   end
-  return config_hash
+  config_hash
 end
 
 # Build puppet.conf with user defined template or default
@@ -289,56 +289,55 @@ end
 #
 # @param agent [String]
 # @return [String] Data containing custom per node puppet.conf
-def build_puppet_config(agent)  
-
-  error_string = %{
+def build_puppet_config(agent)
+  error_string = %(
     INSTALL PUPPET: Unable to retrieve puppet.conf
     template from #{options['hosts_file']} or agent #{agent}
-  }
+  )
 
   if user_template_exists?
     puppet_config = puppet_config_tohash(get_template_config)
   elsif agent_template_exists?(agent)
     puppet_config = puppet_config_tohash(get_agent_config(agent))
   else
-    raise error_string
+    fail error_string
   end
 
   # Add certname and server values to main section
   puppet_config['main']['certname'] = agent['ip']
   puppet_config['main']['server'] = master['ip']
 
-  return puppet_config
+  puppet_config
 end
 
 # Handle install of puppet rpm to native or guestshell
 #
 # @param agent [String]
 def install_target(agent, package)
-  opts = {:pty => true, :prepend_cmds => pp(agent)}
-  opts = {:acceptable_exit_codes => [0,1]}.merge(opts)
+  opts = { pty: true, prepend_cmds: pp(agent) }
+  opts = { acceptable_exit_codes: [0, 1] }.merge(opts)
   agent.install_package(package, '', nil, opts)
-  agent.check_for_package("puppet-agent", opts) ?
-    agent.upgrade_package("puppet", '', opts) :
-    agent.install_package("puppet", '', nil, opts)
+  agent.check_for_package('puppet-agent', opts) ?
+    agent.upgrade_package('puppet', '', opts) :
+    agent.install_package('puppet', '', nil, opts)
   # Make sure install/upgrade succeeded
-  agent.check_for_package('puppet-agent', {:pty => true,
-                    :prepend_cmds => pp(agent),
-                    :acceptable_exit_codes => [0]})
+  agent.check_for_package('puppet-agent', pty:                   true,
+                                          prepend_cmds:          pp(agent),
+                                          acceptable_exit_codes: [0])
 end
 
 # Configure puppet.conf file
 #
 # @param agent [String]
-def configure_puppet_nexus(agent, opts = {})
+def configure_puppet_nexus(agent, opts={})
   # Create temporary storage location for puppet.conf
   # file under /bootflash.  Bootflash is mounted into
   # the guestshell.
   tmp_puppet_file = "#{TMP_PUPPET_LOCATION}/puppet.conf"
   on agent, "rmdir #{TMP_PUPPET_LOCATION}",
-    {:acceptable_exit_codes => [0,1]}
+     acceptable_exit_codes: [0, 1]
   on agent, "mkdir #{TMP_PUPPET_LOCATION}",
-    {:acceptable_exit_codes => [0,1]}
+     acceptable_exit_codes: [0, 1]
 
   # Determine location of puppet.conf
   puppet_conf = get_puppet_config(agent)
@@ -346,43 +345,43 @@ def configure_puppet_nexus(agent, opts = {})
   # Build puppet.conf file within the temporary directory and then
   # move it to the correct /etc location
   conf_data = ''
-  opts.each do |section,options|
+  opts.each do |section, options|
     conf_data << "[#{section}]\n"
-      options.each do |option,value|
-        conf_data << "#{option}=#{value}\n"
-      end
-      conf_data << "\n"
+    options.each do |option, value|
+      conf_data << "#{option}=#{value}\n"
+    end
+    conf_data << "\n"
   end
-  on agent,"echo \"#{conf_data}\" > #{tmp_puppet_file}"
-  on agent,"#{pp(agent)} mv #{tmp_puppet_file} #{puppet_conf}",
-    {:pty => true}
+  on agent, "echo \"#{conf_data}\" > #{tmp_puppet_file}"
+  on agent, "#{pp(agent)} mv #{tmp_puppet_file} #{puppet_conf}",
+     pty: true
   on agent, "rmdir #{TMP_PUPPET_LOCATION}",
-    :acceptable_exit_codes => [0,1]
+     acceptable_exit_codes: [0, 1]
 end
 
 # Copy local resolve.conf file to target agent
 #
 # @param agent [String]
 def copy_resolve_conf(agent)
-  resolve_path = "/etc/resolv.conf"
+  resolve_path = '/etc/resolv.conf'
   on agent, "#{pp(agent)} rm -rf #{resolve_path}",
-    {:acceptable_exit_codes => [0,1],  :pty => true}
+     acceptable_exit_codes: [0, 1], pty: true
   tmp_puppet_file = "#{TMP_PUPPET_LOCATION}/resolve.conf"
   on agent, "rmdir #{TMP_PUPPET_LOCATION}",
-    {:acceptable_exit_codes => [0,1]}
+     acceptable_exit_codes: [0, 1]
   on agent, "mkdir #{TMP_PUPPET_LOCATION}",
-    {:acceptable_exit_codes => [0,1]}
+     acceptable_exit_codes: [0, 1]
   scp_to agent, options['resolver'], "#{tmp_puppet_file}"
-  on agent,"#{pp(agent)} mv #{tmp_puppet_file} #{resolve_path}",
-    {:pty => true}
+  on agent, "#{pp(agent)} mv #{tmp_puppet_file} #{resolve_path}",
+     pty: true
   on agent, "rmdir #{TMP_PUPPET_LOCATION}",
-    {:acceptable_exit_codes => [0,1]}
+     acceptable_exit_codes: [0, 1]
 end
 
 def setup_env(agent)
-  pupurl = "http://yum.puppetlabs.com/RPM-GPG-KEY-puppetlabs"
-  gpgdir = "/etc/pki/rpm-gpg"
-  codes  = {:acceptable_exit_codes => [0,1], :pty => true}
+  pupurl = 'http://yum.puppetlabs.com/RPM-GPG-KEY-puppetlabs'
+  gpgdir = '/etc/pki/rpm-gpg'
+  codes  = { acceptable_exit_codes: [0, 1], pty: true }
 
   on agent, "#{pp(agent)} mkdir -p #{gpgdir}", codes
   if options['rpm_gpg_key'].nil?
@@ -412,12 +411,12 @@ end
 # 3) Start the puppet agent.
 #---------------------------------------------------------------------#
 
-package_error = %{
+package_error = %(
   INSTALL PUPPET: 'package_url:' and/or 'package_name:' parameters are
   not specfied in #{options['hosts_file']}
-}
+)
 # Make sure package information is set in the host configuration file
-if !check_pkg_info
+unless check_pkg_info
   logger.warn package_error
   exit
 end
@@ -452,17 +451,17 @@ agents.each do |agent|
     # Clean agent certificats on master and agent
     if options['cert_clean']
       on master, "#{PUPPET_PATH}/bin/puppet cert clean #{agent['ip']}",
-        {:accept_all_exit_codes => true, :pty => true}
+         accept_all_exit_codes: true, pty: true
       ssl_dir = (on agent, "#{pp(agent)} puppet agent --configprint ssldir",
-        {:accept_all_exit_codes => true,  :pty => true}).stdout.chomp
+                    accept_all_exit_codes: true, pty: true).stdout.chomp
       on agent, "#{pp(agent)} find #{ssl_dir} -name #{agent['ip']}.pem -delete",
-        {:accept_all_exit_codes => true,  :pty => true}
+         accept_all_exit_codes: true, pty: true
     end
 
     # Start puppet agent
     logger.notify "Kick start puppet on agent: #{agent}"
     result = on agent, "#{pp(agent)} puppet agent -t",
-      {:accept_all_exit_codes => true, :pty => true}
+                accept_all_exit_codes: true, pty: true
     if result.exit_code != 0
       logger.warn "AGENT: #{agent} did not start properly. Check logs for details"
       $start_failures += 1
@@ -477,19 +476,18 @@ agents.each do |agent|
 end
 
 def report_results
-
   total_passed = agents.size - $failures
   total_failed = $failures
   total_agents = agents.size
 
-  report = %{
+  report = %(
   PUPPET AGENT BOOTSTRAP RESULTS:
   +---------------------------------------------------------+
     TOTAL NUMBER OF AGENTS PROCESSED : #{total_agents}
     TOTAL SUCCESSFUL AGENT INSTALLS  : #{total_passed}
     TOTAL FAILED AGENT INSTALLS      : #{total_failed}
   +---------------------------------------------------------+
-  }
+  )
 
   install_report = %{
   WARNING:
@@ -510,11 +508,11 @@ def report_results
     logger.debug "#{exception}"
   end
 
-  if options['log_level'] == "info"
+  if options['log_level'] == 'info'
     logger.info "Rerun with '--log-level trace' for additional debug info"
   end
 end
 
 report_results
 assert_equal(0, $failures,
-  "** Failed to bootstrap (#{$failures}) of (#{agents.size}) agents **")
+             "** Failed to bootstrap (#{$failures}) of (#{agents.size}) agents **")

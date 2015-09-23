@@ -19,7 +19,7 @@
 module PuppetX
   module Cisco
     class AutoGen
-      def AutoGen.mk_puppet_methods(mtype, klass, rlbname, props)
+      def self.mk_puppet_methods(mtype, klass, rlbname, props)
         case mtype
         when :non_bool
           mk_puppet_getters_non_bool(klass, rlbname, props)
@@ -31,9 +31,9 @@ module PuppetX
       end
 
       # Auto-generator for puppet non-boolean-based GETTER methods
-      def AutoGen.mk_puppet_getters_non_bool(klass, rlbname, props)
+      def self.mk_puppet_getters_non_bool(klass, rlbname, props)
         props.each do |prop|
-          klass.instance_eval {
+          klass.instance_eval do
             # Generate GETTER method; e.g.
             # def foo
             #   return :default if
@@ -43,18 +43,18 @@ module PuppetX
             # end
             define_method(prop) do
               return :default if
-                @resource[prop] == :default and
-                @property_hash[prop] == self.instance_variable_get(rlbname).send("default_#{prop}")
+                @resource[prop] == :default &&
+                @property_hash[prop] == instance_variable_get(rlbname).send("default_#{prop}")
               @property_hash[prop]
             end
-          }
+          end
         end
       end
 
       # Auto-generator for puppet non-boolean-based SETTER methods
-      def AutoGen.mk_puppet_setters_non_bool(klass, rlbname, props)
+      def self.mk_puppet_setters_non_bool(klass, rlbname, props)
         props.each do |prop|
-          klass.instance_eval {
+          klass.instance_eval do
             # Generate SETTER method; e.g.
             # def foo=
             #   if val == :default
@@ -63,21 +63,21 @@ module PuppetX
             #   @property_flush[foo] = val
             # end
             define_method("#{prop}=") do |val|
-              raise "@property_flush not defined" if
-                self.instance_variable_get(:@property_flush).nil?
+              fail '@property_flush not defined' if
+                instance_variable_get(:@property_flush).nil?
               if val == :default
-                val = self.instance_variable_get(rlbname).send("default_#{prop}")
+                val = instance_variable_get(rlbname).send("default_#{prop}")
               end
               @property_flush[prop] = val
             end
-          }
+          end
         end
       end
 
       # Auto-generator for puppet boolean-based GETTER methods
-      def AutoGen.mk_puppet_getters_bool(klass, rlbname, props)
+      def self.mk_puppet_getters_bool(klass, rlbname, props)
         props.each do |prop|
-          klass.instance_eval {
+          klass.instance_eval do
             # Generate GETTER method; e.g.
             # def foo
             #   val = @rlb.foo
@@ -87,20 +87,20 @@ module PuppetX
             #   @property_hash[foo] = val.nil? ? nil : (val ? :true : :false)
             # end
             define_method(prop) do
-              val = self.instance_variable_get(rlbname).send(prop)
+              val = instance_variable_get(rlbname).send(prop)
               return :default if
-                @resource[prop] == :default and
-                val == self.instance_variable_get(rlbname).send("default_#{prop}")
+                @resource[prop] == :default &&
+                val == instance_variable_get(rlbname).send("default_#{prop}")
               @property_hash[prop] = val.nil? ? nil : (val ? :true : :false)
             end
-          }
+          end
         end
       end
 
       # Auto-generator for puppet boolean-based SETTER methods
-      def AutoGen.mk_puppet_setters_bool(klass, rlbname, props)
+      def self.mk_puppet_setters_bool(klass, rlbname, props)
         props.each do |prop|
-          klass.instance_eval {
+          klass.instance_eval do
             # Generate SETTER method; e.g.
             # def foo=
             #   @property_flush[foo] =
@@ -109,14 +109,14 @@ module PuppetX
             #       (val == :true)
             # end
             define_method("#{prop}=") do |val|
-              raise "@property_flush not defined" if
-                self.instance_variable_get(:@property_flush).nil?
+              fail '@property_flush not defined' if
+                instance_variable_get(:@property_flush).nil?
               @property_flush[prop] =
                 (val == :default) ?
-              self.instance_variable_get(rlbname).send("default_#{prop}") :
+              instance_variable_get(rlbname).send("default_#{prop}") :
                 (val == :true)
             end
-          }
+          end
         end
       end
     end

@@ -13,28 +13,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-# VLAN Utility Library: 
+# VLAN Utility Library:
 # ---------------------
 # vlanlib.rb
-#  
-# This is the utility library for the VLAN provider Beaker test cases that 
-# contains the common methods used across the VLAN testsuite's cases. The  
+#
+# This is the utility library for the VLAN provider Beaker test cases that
+# contains the common methods used across the VLAN testsuite's cases. The
 # library is implemented as a module with related methods and constants defined
-# inside it for use as a namespace. All of the methods are defined as module 
+# inside it for use as a namespace. All of the methods are defined as module
 # methods.
 #
-# Every Beaker VLAN test case that runs an instance of Beaker::TestCase 
+# Every Beaker VLAN test case that runs an instance of Beaker::TestCase
 # requires VlanLib module.
-# 
+#
 # The module has a single set of methods:
 # A. Methods to create manifests for cisco_vlan Puppet provider test cases.
 ###############################################################################
 
 # Require UtilityLib.rb path.
-require File.expand_path("../../lib/utilitylib.rb", __FILE__)
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 module VlanLib
-
   # Group of Constants used in negative tests for VLAN provider.
   VLANNAME_NEGATIVE   = ''
   STATE_NEGATIVE      = 'invalid'
@@ -44,9 +43,9 @@ module VlanLib
 
   # Method to create a manifest for StandardVLAN resource attribute 'ensure' where
   # 'ensure' is set to present.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def VlanLib.create_stdvlan_manifest_present()
+  def self.create_stdvlan_manifest_present
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_vlan { '128':
@@ -56,14 +55,14 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for StandardVLAN resource attribute 'ensure' where
   # 'ensure' is set to absent.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def VlanLib.create_stdvlan_manifest_absent()
+  def self.create_stdvlan_manifest_absent
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_vlan { '128':
@@ -71,14 +70,14 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for StandardVLAN resource attributes:
-  # vlan_name, state and shutdown. 
-  # @param none [None] No input parameters exist. 
+  # vlan_name, state and shutdown.
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def VlanLib.create_stdvlan_manifest_nondefaults()
+  def self.create_stdvlan_manifest_nondefaults
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_vlan { '128':
@@ -89,13 +88,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for StandardVLAN resource attribute 'vlan_name'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def VlanLib.create_stdvlan_manifest_vlanname_negative()
+  def self.create_stdvlan_manifest_vlanname_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_vlan { '128':
@@ -104,13 +103,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for StandardVLAN resource attribute 'state'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def VlanLib.create_stdvlan_manifest_state_negative()
+  def self.create_stdvlan_manifest_state_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_vlan { '128':
@@ -119,13 +118,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for StandardVLAN resource attribute 'shutdown'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def VlanLib.create_stdvlan_manifest_shutdown_negative()
+  def self.create_stdvlan_manifest_shutdown_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_vlan { '128':
@@ -134,14 +133,14 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for ExtendedVLAN resource attribute 'ensure' where
   # 'ensure' is set to present.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def VlanLib.create_extvlan_manifest_present()
+  def self.create_extvlan_manifest_present
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_vlan { '2400':
@@ -151,14 +150,14 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for ExtendedVLAN resource attribute 'ensure' where
   # 'ensure' is set to absent.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def VlanLib.create_extvlan_manifest_absent()
+  def self.create_extvlan_manifest_absent
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_vlan { '2400':
@@ -166,15 +165,15 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for ExtendedVLAN resource attributes:
   # vlan_name and state.
   # Extended VLANs cannot be shutdown.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def VlanLib.create_extvlan_manifest_nondefaults()
+  def self.create_extvlan_manifest_nondefaults
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_vlan { '2400':
@@ -184,13 +183,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for ExtendedVLAN resource attribute 'vlan_name'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def VlanLib.create_extvlan_manifest_vlanname_negative()
+  def self.create_extvlan_manifest_vlanname_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_vlan { '2400':
@@ -199,13 +198,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for ExtendedVLAN resource attribute 'state'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def VlanLib.create_extvlan_manifest_state_negative()
+  def self.create_extvlan_manifest_state_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_vlan { '2400':
@@ -214,13 +213,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for ExtendedVLAN resource attribute 'shutdown'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def VlanLib.create_extvlan_manifest_shutdown_negative()
+  def self.create_extvlan_manifest_shutdown_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_vlan { '2400':
@@ -229,7 +228,6 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
-
 end

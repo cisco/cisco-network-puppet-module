@@ -13,28 +13,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-# TACACSERVER Utility Library: 
+# TACACSERVER Utility Library:
 # ----------------------------
 # tacacsserverlib.rb
-#  
+#
 # This is the utility library for the TACACSSERVER Beaker test cases that
 # contains the common methods used across the TACACSSERVER testsuite cases. The
 # library is implemented as a module with related methods and constants defined
-# inside it for use as a namespace. All of the methods are defined as module 
+# inside it for use as a namespace. All of the methods are defined as module
 # methods.
 #
 # Every Beaker TACACSSERVER test case that runs an instance of Beaker::TestCase
 # requires TacacsServerLib module.
-# 
+#
 # The module has a single set of methods:
 # A. Methods to create manifests for cisco_tacacs_server Puppet provider tests.
 ###############################################################################
 
 # Require UtilityLib.rb path.
-require File.expand_path("../../lib/utilitylib.rb", __FILE__)
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 module TacacsServerLib
-
   # Group of Constants used in negative tests for TACACSSERVER provider.
   TIMEOUT_NEGATIVE       = '-1'
   DEADTIME_NEGATIVE      = '-1'
@@ -46,9 +45,9 @@ module TacacsServerLib
 
   # Method to create a manifest for TACACSSERVER attribute 'ensure' where
   # 'ensure' is set to present.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def TacacsServerLib.create_tacacsserver_present()
+  def self.create_tacacsserver_present
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_tacacs_server { 'default':
@@ -62,14 +61,14 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for TACACSSERVER attribute 'ensure' where
   # 'ensure' is set to absent.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def TacacsServerLib.create_tacacsserver_absent()
+  def self.create_tacacsserver_absent
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_tacacs_server { 'default':
@@ -77,15 +76,15 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for TACACSSERVER attributes:
   # ensure, timeout, deadtime, encryption_type, encryption_password,
   # directed_request and source_interface.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def TacacsServerLib.create_tacacsserver_nondefaults()
+  def self.create_tacacsserver_nondefaults
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_tacacs_server { 'test':
@@ -99,13 +98,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for TACACSSERVER attribute 'timeout'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def TacacsServerLib.create_tacacsserver_timeout_negative()
+  def self.create_tacacsserver_timeout_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_tacacs_server { 'test':
@@ -114,13 +113,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for TACACSSERVER attribute 'deadtime'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def TacacsServerLib.create_tacacsserver_deadtime_negative()
+  def self.create_tacacsserver_deadtime_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_tacacs_server { 'test':
@@ -129,13 +128,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for TACACSSERVER attribute 'encryption_type'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def TacacsServerLib.create_tacacsserver_type_negative()
+  def self.create_tacacsserver_type_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_tacacs_server { 'test':
@@ -144,13 +143,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for TACACSSERVER attribute 'encryption_password'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def TacacsServerLib.create_tacacsserver_passwd_negative()
+  def self.create_tacacsserver_passwd_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_tacacs_server { 'test':
@@ -160,13 +159,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for TACACSSERVER attribute 'source_interface'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def TacacsServerLib.create_tacacsserver_sourceintf_negative()
+  def self.create_tacacsserver_sourceintf_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_tacacs_server { 'test':
@@ -175,8 +174,6 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
-
 end
-

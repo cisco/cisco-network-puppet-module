@@ -13,35 +13,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-# FILESVCPKG Utility Library: 
+# FILESVCPKG Utility Library:
 # ----------------------------
 # filesvcpkglib.rb
-#  
+#
 # This is the utility library for the FILESVCPKG provider Beaker test cases that
-# contains the common methods used across the FILESVCPKG testsuite's cases. The  
+# contains the common methods used across the FILESVCPKG testsuite's cases. The
 # library is implemented as a module with related methods and constants defined
-# inside it for use as a namespace. All of the methods are defined as module 
+# inside it for use as a namespace. All of the methods are defined as module
 # methods.
 #
-# Every Beaker FILESVCPKG test case that runs an instance of Beaker::TestCase 
+# Every Beaker FILESVCPKG test case that runs an instance of Beaker::TestCase
 # requires FileSvcPkgLib module.
-# 
+#
 # The module has a single set of methods:
 # A. Methods to create manifests for file, service and pkg Puppet test cases.
 ###############################################################################
 
 # Require UtilityLib.rb path.
-require File.expand_path("../../lib/utilitylib.rb", __FILE__)
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 module FileSvcPkgLib
-
   # A. Methods to create manifests for file, service and pkg Puppet test cases.
 
   # Method to create a manifest for FILE resource attributes:
   # path, ensure, content, checksum, mode, owner and provider.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def FileSvcPkgLib.create_file_manifest_nondefaults()
+  def self.create_file_manifest_nondefaults
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     file { 'testfile.txt':
@@ -55,14 +54,14 @@ node default {
     }
 }
 EOF"
-    return manifest_str
-  end 
+    manifest_str
+  end
 
   # Method to create a manifest for FILE resource attribute 'ensure' where
   # 'ensure' is set to absent.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def FileSvcPkgLib.create_file_manifest_absent()
+  def self.create_file_manifest_absent
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     file { 'testfile.txt':
@@ -71,14 +70,14 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for SVC resource attributes:
   # name, ensure and enable.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def FileSvcPkgLib.create_service_manifest_nondefaults()
+  def self.create_service_manifest_nondefaults
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     service { 'syslog':
@@ -88,14 +87,14 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for SVC resource attribute 'ensure' where
   # 'ensure' is set to stopped.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def FileSvcPkgLib.create_service_manifest_stopped()
+  def self.create_service_manifest_stopped
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     service { 'syslog':
@@ -104,14 +103,14 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for PKG resource attribute 'ensure' where
   # 'ensure' is set to installed.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def FileSvcPkgLib.create_package_curl_manifest_installed()
+  def self.create_package_curl_manifest_installed
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     package { 'curl':
@@ -122,14 +121,14 @@ node default {
     }
 }
 EOF"
-    return manifest_str
-  end 
+    manifest_str
+  end
 
   # Method to create a manifest for PKG resource attribute 'ensure' where
   # 'ensure' is set to latest.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def FileSvcPkgLib.create_package_curl_manifest_latest()
+  def self.create_package_curl_manifest_latest
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     package { 'curl':
@@ -138,14 +137,14 @@ node default {
     }
 }
 EOF"
-    return manifest_str
-  end 
+    manifest_str
+  end
 
   # Method to create a manifest for PKG resource attribute 'ensure' where
   # 'ensure' is set to present.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def FileSvcPkgLib.create_package_sample_manifest_present()
+  def self.create_package_sample_manifest_present
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     package { 'n9000_sample.x86_64':
@@ -153,18 +152,18 @@ node default {
         ensure          => present,
         provider        => 'nxapi',
         source          => '/bootflash/n9000_sample-1.0.0-7.0.3.x86_64.rpm',
-        package_settings => {'target' => 'host'}, 
+        package_settings => {'target' => 'host'},
     }
 }
 EOF"
-    return manifest_str
-  end 
+    manifest_str
+  end
 
   # Method to create a manifest for PKG resource attribute 'ensure' where
   # 'ensure' is set to absent.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def FileSvcPkgLib.create_package_sample_manifest_absent()
+  def self.create_package_sample_manifest_absent
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     package { 'n9000_sample.x86_64':
@@ -172,12 +171,10 @@ node default {
         ensure          => absent,
         provider        => 'nxapi',
         source          => '/bootflash/n9000_sample-1.0.0-7.0.3.x86_64.rpm',
-        package_settings => {'target' => 'host'}, 
+        package_settings => {'target' => 'host'},
     }
 }
 EOF"
-    return manifest_str
-  end 
-
+    manifest_str
+  end
 end
-

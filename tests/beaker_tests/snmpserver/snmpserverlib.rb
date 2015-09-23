@@ -13,28 +13,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-# SNMPSERVER Utility Library: 
+# SNMPSERVER Utility Library:
 # ---------------------------
 # snmpserverlib.rb
-#  
-# This is the utility library for the SNMPSERVER provider Beaker test cases that 
-# contains the common methods used across the SNMPSERVER testsuite's cases. The  
+#
+# This is the utility library for the SNMPSERVER provider Beaker test cases that
+# contains the common methods used across the SNMPSERVER testsuite's cases. The
 # library is implemented as a module with related methods and constants defined
-# inside it for use as a namespace. All of the methods are defined as module 
+# inside it for use as a namespace. All of the methods are defined as module
 # methods.
 #
-# Every Beaker SNMPSERVER test case that runs an instance of Beaker::TestCase 
+# Every Beaker SNMPSERVER test case that runs an instance of Beaker::TestCase
 # requires SnmpServerLib module.
-# 
+#
 # The module has a single set of methods:
 # A. Methods to create manifests for cisco_snmp_server Puppet provider test cases.
 ###############################################################################
 
 # Require UtilityLib.rb path.
-require File.expand_path("../../lib/utilitylib.rb", __FILE__)
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 module SnmpServerLib
-
   # Group of Constants used in negative tests for SNMPSERVER provider.
   PACKETSIZE_NEGATIVE   = '-1'
   AAATIMEOUT_NEGATIVE   = '-1'
@@ -47,9 +46,9 @@ module SnmpServerLib
   # Method to create a manifest for SNMPSERVER resource attributes:
   # aaa_user_cache_timeout, global_enforce_priv, packet_size,
   # protocol, tcp_session_auth, contact and location.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def SnmpServerLib.create_snmpserver_manifest_defaults()
+  def self.create_snmpserver_manifest_defaults
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_snmp_server { 'default':
@@ -63,15 +62,15 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for SNMPSERVER resource attributes:
   # aaa_user_cache_timeout, global_enforce_priv, packet_size,
   # protocol, tcp_session_auth, contact and location.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def SnmpServerLib.create_snmpserver_manifest_nondefaults()
+  def self.create_snmpserver_manifest_nondefaults
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_snmp_server { 'default':
@@ -85,13 +84,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for SNMPSERVER resource attribute 'packet_size'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def SnmpServerLib.create_snmpserver_manifest_packetsize_negative()
+  def self.create_snmpserver_manifest_packetsize_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_snmp_server { 'test':
@@ -99,13 +98,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for SNMPSERVER resource attribute 'aaa_cache_timeout'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def SnmpServerLib.create_snmpserver_manifest_aaatimeout_negative()
+  def self.create_snmpserver_manifest_aaatimeout_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_snmp_server { 'test':
@@ -113,13 +112,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for SNMPSERVER resource attribute 'tcp_session_auth'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def SnmpServerLib.create_snmpserver_manifest_tcpauth_negative()
+  def self.create_snmpserver_manifest_tcpauth_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_snmp_server { 'test':
@@ -127,13 +126,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for SNMPSERVER resource attribute 'protocol'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def SnmpServerLib.create_snmpserver_manifest_protocol_negative()
+  def self.create_snmpserver_manifest_protocol_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_snmp_server { 'test':
@@ -141,13 +140,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for SNMPSERVER resource attribute 'global_priv'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def SnmpServerLib.create_snmpserver_manifest_globalpriv_negative()
+  def self.create_snmpserver_manifest_globalpriv_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_snmp_server { 'test':
@@ -155,8 +154,6 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
-
 end
-

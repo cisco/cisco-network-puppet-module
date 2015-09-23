@@ -1,0 +1,13 @@
+# Rubocop configuration
+
+inherit_from: ../.rubocop.yml
+
+# The wildcards in the templates make the following cops unhappy. Too bad!
+Style/ClassAndModuleCamelCase:
+  Enabled: false
+
+Style/FileName:
+  Enabled: false
+
+Style/MethodName:
+  Enabled: false

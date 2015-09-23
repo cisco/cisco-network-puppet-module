@@ -16,7 +16,6 @@
 # limitations under the License.
 
 Puppet::Type.newtype(:X__RESOURCE_NAME__X) do
-
   @doc = "Manages configuration of feature bash-shell
 
   ```
@@ -35,8 +34,8 @@ Puppet::Type.newtype(:X__RESOURCE_NAME__X) do
 
   ensurable
 
-  newparam(:name, :namevar => true) do
-    desc "Resource title. Valid values are string."
+  newparam(:name, namevar: true) do
+    desc 'Resource title. Valid values are string.'
   end
 
   # There are no additional properties for this command.

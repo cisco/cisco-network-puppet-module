@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-# TestCase Name: 
+# TestCase Name:
 # -------------
 # TrunkVlan-Provider-Negatives.rb
 #
@@ -21,18 +21,18 @@
 # -----------------------
 # This is a Puppet TRUNKVLAN resource testcase for Puppet Agent on Nexus devices.
 # The test case assumes the following prerequisites are already satisfied:
-# A. Populating the HOSTS configuration file with the agent and master 
+# A. Populating the HOSTS configuration file with the agent and master
 # information.
-# B. Enabling SSH connection prerequisites on the N9K switch based Agent. 
+# B. Enabling SSH connection prerequisites on the N9K switch based Agent.
 # C. Starting of Puppet master server on master.
 # D. Sending to and signing of Puppet agent certificate request on master.
 #
 # TestCase:
 # ---------
-# This is a TRUNKVLAN resource test that tests for negative values for 
+# This is a TRUNKVLAN resource test that tests for negative values for
 # access_vlan, description, ipv4_proxy_arp, ipv4_redirects,
-# negotiate_auto, shutdown, switchport_autostate_exclude, 
-# switchport_mode and switchport_vtp attributes of a  
+# negotiate_auto, shutdown, switchport_autostate_exclude,
+# switchport_mode and switchport_vtp attributes of a
 # cisco_interface resource when created with 'ensure' => 'present'.
 # Trunk Standard VLANs are in the VLAN ID range 2..1005.
 #
@@ -43,300 +43,299 @@
 #
 # The testcode checks for exit_codes from Puppet Agent, Vegas shell and
 # Bash shell command executions. For Vegas shell and Bash shell command
-# string executions, this is the exit_code convention: 
+# string executions, this is the exit_code convention:
 # 0 - successful command execution, > 0 - failed command execution.
 # For Puppet Agent command string executions, this is the exit_code convention:
-# 0 - no changes have occurred, 1 - errors have occurred, 
-# 2 - changes have occurred, 4 - failures have occurred and 
+# 0 - no changes have occurred, 1 - errors have occurred,
+# 2 - changes have occurred, 4 - failures have occurred and
 # 6 - changes and failures have occurred.
 # 0 is the default exit_code checked in Beaker::DSL::Helpers::on() method.
-# The testcode also uses RegExp pattern matching on stdout or output IO 
+# The testcode also uses RegExp pattern matching on stdout or output IO
 # instance attributes of Result object from on() method invocation.
 #
 ###############################################################################
 
 # Require UtilityLib.rb and TrunkVlanLib.rb paths.
-require File.expand_path("../../lib/utilitylib.rb", __FILE__)
-require File.expand_path("../trunkvlanlib.rb", __FILE__)
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
+require File.expand_path('../trunkvlanlib.rb', __FILE__)
 
 result = 'PASS'
-testheader = "TRUNKVLAN Resource :: All Attributes Negatives"
+testheader = 'TRUNKVLAN Resource :: All Attributes Negatives'
 
 # @test_name [TestCase] Executes negatives testcase for TRUNKVLAN Resource.
 test_name "TestCase :: #{testheader}" do
-
   # @step [Step] Sets up switch for provider test.
-  step "TestStep :: Setup switch for provider test" do 
+  step 'TestStep :: Setup switch for provider test' do
     # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
     UtilityLib.set_manifest_path(master, self)
 
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, TrunkVlanLib.create_trunkvlan_manifest_absent())
+    on(master, TrunkVlanLib.create_trunkvlan_manifest_absent)
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no change.
     # Or expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
-      "agent -t", options)
-    on(agent, cmd_str, {:acceptable_exit_codes => [0, 2]})
+      'agent -t', options)
+    on(agent, cmd_str, { acceptable_exit_codes: [0, 2] })
 
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd("show running-config interface eth1/4")
+    cmd_str = UtilityLib.get_vshell_cmd('show running-config interface eth1/4')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout, [/interface Ethernet1\/4/],
-        false, self, logger)
+                                          false, self, logger)
     end
 
     logger.info("Setup switch for provider test :: #{result}")
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
-  step "TestStep :: Get negative test resource manifest from master" do
+  step 'TestStep :: Get negative test resource manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, TrunkVlanLib.create_trunkvlan_manifest_ipv4proxyarp_negative())
+    on(master, TrunkVlanLib.create_trunkvlan_manifest_ipv4proxyarp_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
-      "agent -t", options)
-    on(agent, cmd_str, {:acceptable_exit_codes => [1]})
+      'agent -t', options)
+    on(agent, cmd_str, { acceptable_exit_codes: [1] })
 
     logger.info("Get negative test resource manifest from master :: #{result}")
   end
 
   # @step [Step] Checks cisco_interface resource on agent using resource cmd.
-  step "TestStep :: Check cisco_interface resource absence on agent" do 
+  step 'TestStep :: Check cisco_interface resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_interface 'ethernet1/4'", options)
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-        {"ipv4_proxy_arp" => TrunkVlanLib::IPV4PROXYARP_NEGATIVE},
-        true, self, logger)
+                                          { 'ipv4_proxy_arp' => TrunkVlanLib::IPV4PROXYARP_NEGATIVE },
+                                          true, self, logger)
     end
 
     logger.info("Check cisco_interface resource presence on agent :: #{result}")
   end
 
   # @step [Step] Checks interface instance on agent using switch show cli cmds.
-  step "TestStep :: Check interface instance absence on agent" do
+  step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd("show running-config interface eth1/4")
+    cmd_str = UtilityLib.get_vshell_cmd('show running-config interface eth1/4')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-        [/switchport access vlan 128/],
-        true, self, logger)
+                                          [/switchport access vlan 128/],
+                                          true, self, logger)
     end
 
     logger.info("Check interface instance absence on agent :: #{result}")
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
-  step "TestStep :: Get negative test resource manifest from master" do
+  step 'TestStep :: Get negative test resource manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, TrunkVlanLib.create_trunkvlan_manifest_ipv4redir_negative())
+    on(master, TrunkVlanLib.create_trunkvlan_manifest_ipv4redir_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
-      "agent -t", options)
-    on(agent, cmd_str, {:acceptable_exit_codes => [1]})
+      'agent -t', options)
+    on(agent, cmd_str, { acceptable_exit_codes: [1] })
 
     logger.info("Get negative test resource manifest from master :: #{result}")
   end
 
   # @step [Step] Checks cisco_interface resource on agent using resource cmd.
-  step "TestStep :: Check cisco_interface resource absence on agent" do 
+  step 'TestStep :: Check cisco_interface resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_interface 'ethernet1/4'", options)
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-        {"ipv4_redirects" => TrunkVlanLib::IPV4REDIRECTS_NEGATIVE},
-        true, self, logger)
+                                          { 'ipv4_redirects' => TrunkVlanLib::IPV4REDIRECTS_NEGATIVE },
+                                          true, self, logger)
     end
 
     logger.info("Check cisco_interface resource presence on agent :: #{result}")
   end
 
   # @step [Step] Checks interface instance on agent using switch show cli cmds.
-  step "TestStep :: Check interface instance absence on agent" do
+  step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd("show running-config interface eth1/4")
+    cmd_str = UtilityLib.get_vshell_cmd('show running-config interface eth1/4')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-        [/switchport access vlan 128/],
-        true, self, logger)
+                                          [/switchport access vlan 128/],
+                                          true, self, logger)
     end
 
     logger.info("Check interface instance absence on agent :: #{result}")
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
-  step "TestStep :: Get negative test resource manifest from master" do
+  step 'TestStep :: Get negative test resource manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, TrunkVlanLib.create_trunkvlan_manifest_negoauto_negative())
+    on(master, TrunkVlanLib.create_trunkvlan_manifest_negoauto_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
-      "agent -t", options)
-    on(agent, cmd_str, {:acceptable_exit_codes => [1]})
+      'agent -t', options)
+    on(agent, cmd_str, { acceptable_exit_codes: [1] })
 
     logger.info("Get negative test resource manifest from master :: #{result}")
   end
 
   # @step [Step] Checks cisco_interface resource on agent using resource cmd.
-  step "TestStep :: Check cisco_interface resource absence on agent" do 
+  step 'TestStep :: Check cisco_interface resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_interface 'ethernet1/4'", options)
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-        {"negotiate_auto" => TrunkVlanLib::NEGOTIATEAUTO_NEGATIVE},
-        true, self, logger)
+                                          { 'negotiate_auto' => TrunkVlanLib::NEGOTIATEAUTO_NEGATIVE },
+                                          true, self, logger)
     end
 
     logger.info("Check cisco_interface resource presence on agent :: #{result}")
   end
 
   # @step [Step] Checks interface instance on agent using switch show cli cmds.
-  step "TestStep :: Check interface instance absence on agent" do
+  step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd("show running-config interface eth1/4")
+    cmd_str = UtilityLib.get_vshell_cmd('show running-config interface eth1/4')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-        [/switchport access vlan 128/],
-        true, self, logger)
+                                          [/switchport access vlan 128/],
+                                          true, self, logger)
     end
 
     logger.info("Check interface instance absence on agent :: #{result}")
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
-  step "TestStep :: Get negative test resource manifest from master" do
+  step 'TestStep :: Get negative test resource manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, TrunkVlanLib.create_trunkvlan_manifest_shutdown_negative())
+    on(master, TrunkVlanLib.create_trunkvlan_manifest_shutdown_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
-      "agent -t", options)
-    on(agent, cmd_str, {:acceptable_exit_codes => [1]})
+      'agent -t', options)
+    on(agent, cmd_str, { acceptable_exit_codes: [1] })
 
     logger.info("Get negative test resource manifest from master :: #{result}")
   end
 
   # @step [Step] Checks cisco_interface resource on agent using resource cmd.
-  step "TestStep :: Check cisco_interface resource absence on agent" do 
+  step 'TestStep :: Check cisco_interface resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_interface 'ethernet1/4'", options)
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-        {"shutdown" => TrunkVlanLib::SHUTDOWN_NEGATIVE},
-        true, self, logger)
+                                          { 'shutdown' => TrunkVlanLib::SHUTDOWN_NEGATIVE },
+                                          true, self, logger)
     end
 
     logger.info("Check cisco_interface resource presence on agent :: #{result}")
   end
 
   # @step [Step] Checks interface instance on agent using switch show cli cmds.
-  step "TestStep :: Check interface instance absence on agent" do
+  step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd("show running-config interface eth1/4")
+    cmd_str = UtilityLib.get_vshell_cmd('show running-config interface eth1/4')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-        [/switchport access vlan 128/],
-        true, self, logger)
+                                          [/switchport access vlan 128/],
+                                          true, self, logger)
     end
 
     logger.info("Check interface instance absence on agent :: #{result}")
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
-  step "TestStep :: Get negative test resource manifest from master" do
+  step 'TestStep :: Get negative test resource manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, TrunkVlanLib.create_trunkvlan_manifest_autostate_negative())
+    on(master, TrunkVlanLib.create_trunkvlan_manifest_autostate_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
-      "agent -t", options)
-    on(agent, cmd_str, {:acceptable_exit_codes => [1]})
+      'agent -t', options)
+    on(agent, cmd_str, { acceptable_exit_codes: [1] })
 
     logger.info("Get negative test resource manifest from master :: #{result}")
   end
 
   # @step [Step] Checks cisco_interface resource on agent using resource cmd.
-  step "TestStep :: Check cisco_interface resource absence on agent" do 
+  step 'TestStep :: Check cisco_interface resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_interface 'ethernet1/4'", options)
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-        {"switchport_autostate_exclude" => TrunkVlanLib::AUTOSTATE_NEGATIVE},
-        true, self, logger)
+                                          { 'switchport_autostate_exclude' => TrunkVlanLib::AUTOSTATE_NEGATIVE },
+                                          true, self, logger)
     end
 
     logger.info("Check cisco_interface resource presence on agent :: #{result}")
   end
 
   # @step [Step] Checks interface instance on agent using switch show cli cmds.
-  step "TestStep :: Check interface instance absence on agent" do
+  step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd("show running-config interface eth1/4")
+    cmd_str = UtilityLib.get_vshell_cmd('show running-config interface eth1/4')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-        [/switchport access vlan 128/],
-        true, self, logger)
+                                          [/switchport access vlan 128/],
+                                          true, self, logger)
     end
 
     logger.info("Check interface instance absence on agent :: #{result}")
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
-  step "TestStep :: Get negative test resource manifest from master" do
+  step 'TestStep :: Get negative test resource manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, TrunkVlanLib.create_trunkvlan_manifest_vtp_negative())
+    on(master, TrunkVlanLib.create_trunkvlan_manifest_vtp_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
-      "agent -t", options)
-    on(agent, cmd_str, {:acceptable_exit_codes => [1]})
+      'agent -t', options)
+    on(agent, cmd_str, { acceptable_exit_codes: [1] })
 
     logger.info("Get negative test resource manifest from master :: #{result}")
   end
 
   # @step [Step] Checks cisco_interface resource on agent using resource cmd.
-  step "TestStep :: Check cisco_interface resource absence on agent" do 
+  step 'TestStep :: Check cisco_interface resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_interface 'ethernet1/4'", options)
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-        {"switchport_vtp" => TrunkVlanLib::SWITCHPORTVTP_NEGATIVE},
-        true, self, logger)
+                                          { 'switchport_vtp' => TrunkVlanLib::SWITCHPORTVTP_NEGATIVE },
+                                          true, self, logger)
     end
 
     logger.info("Check cisco_interface resource presence on agent :: #{result}")
   end
 
   # @step [Step] Checks interface instance on agent using switch show cli cmds.
-  step "TestStep :: Check interface instance absence on agent" do
+  step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd("show running-config interface eth1/4")
+    cmd_str = UtilityLib.get_vshell_cmd('show running-config interface eth1/4')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-        [/switchport access vlan 128/],
-        true, self, logger)
+                                          [/switchport access vlan 128/],
+                                          true, self, logger)
     end
 
     logger.info("Check interface instance absence on agent :: #{result}")
@@ -344,8 +343,6 @@ test_name "TestCase :: #{testheader}" do
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   UtilityLib.raise_passfail_exception(result, testheader, self, logger)
-
 end
 
 logger.info("TestCase :: #{testheader} :: End")
-

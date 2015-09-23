@@ -31,7 +31,7 @@
 #
 # TestCase:
 # ---------
-# This is a PROVIDER resource test that tests for 'ensure' attribute with 
+# This is a PROVIDER resource test that tests for 'ensure' attribute with
 # a state transition from 'present' to 'absent'.
 #
 # The following exit_codes are validated for Puppet, Vegas shell and
@@ -55,110 +55,109 @@
 ###############################################################################
 
 # Require UtilityLib.rb and __PROVIDERLIB__.rb paths.
-require File.expand_path("../../lib/utilitylib.rb", __FILE__)
-require File.expand_path("../__PROVIDERLIB__.rb", __FILE__)
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
+require File.expand_path('../__PROVIDERLIB__.rb', __FILE__)
 
 # -----------------------------
 # Common settings and variables
 # -----------------------------
 result = 'PASS'
-testheader = "__PROVIDER__ Resource :: Ensurability"
+testheader = '__PROVIDER__ Resource :: Ensurability'
 
 # @test_name [TestCase] Executes ensurability testcase for __PROVIDER__ Resource.
 test_name "TestCase :: #{testheader}" do
-
   # ------------------
-  # List of Test Steps 
+  # List of Test Steps
   # ------------------
-  step "TestStep :: Setup switch for <PROVIDER> test" do 
+  step 'TestStep :: Setup switch for <PROVIDER> test' do
     # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
     UtilityLib.set_manifest_path(master, self)
 
     # Expected exit_code depends on the feature for this vegas shell cmd.
     # Expected exit_code can be 0 or can be > 0 depending on feature.
-    cmd_str = UtilityLib.get_vshell_cmd("conf t ; no feature <PROVIDER>")
-    on(agent, cmd_str) 
+    cmd_str = UtilityLib.get_vshell_cmd('conf t ; no feature <PROVIDER>')
+    on(agent, cmd_str)
 
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd("show running-config section <PROVIDER>")
+    cmd_str = UtilityLib.get_vshell_cmd('show running-config section <PROVIDER>')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout, [/feature <PROVIDER>/],
-        true, self, logger)
+                                          true, self, logger)
     end
 
     logger.info("Setup switch for <PROVIDER> test :: #{result}")
   end
 
-  step "TestStep :: Get resource present manifest from master" do 
+  step 'TestStep :: Get resource present manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, __PROVIDERLIB__.create_<PROVIDER>_manifest_present())
+    on(master, __PROVIDERLIB__.create_ < PROVIDER > _manifest_present)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
-      "agent -t", options)
-    on(agent, cmd_str, {:acceptable_exit_codes => [2]}) 
+      'agent -t', options)
+    on(agent, cmd_str, { acceptable_exit_codes: [2] })
 
     logger.info("Get resource present manifest from master :: #{result}")
   end
 
-  step "TestStep :: Check <CISCO_PROVIDER> resource presence on agent" do 
+  step 'TestStep :: Check <CISCO_PROVIDER> resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
-      "resource <CISCO_PROVIDER> test", options)
+      'resource <CISCO_PROVIDER> test', options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, {'ensure' => 'present'},
-        false, self, logger)
+      UtilityLib.search_pattern_in_output(stdout, { 'ensure' => 'present' },
+                                          false, self, logger)
     end
 
     logger.info("Check <CISCO_PROVIDER> resource presence on agent :: #{result}")
   end
 
-  step "TestStep :: Check <PROVIDER> instance presence on agent" do
+  step 'TestStep :: Check <PROVIDER> instance presence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd("show running-config section <PROVIDER>")
+    cmd_str = UtilityLib.get_vshell_cmd('show running-config section <PROVIDER>')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout, [/<PROVIDER> test/],
-        false, self, logger)
+                                          false, self, logger)
     end
 
     logger.info("Check <PROVIDER> instance presence on agent :: #{result}")
   end
 
-  step "TestStep :: Get resource absent manifest from master" do 
+  step 'TestStep :: Get resource absent manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, __PROVIDERLIB__.create_<PROVIDER>_manifest_absent())
+    on(master, __PROVIDERLIB__.create_ < PROVIDER > _manifest_absent)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
-      "agent -t", options)
-    on(agent, cmd_str, {:acceptable_exit_codes => [2]})
+      'agent -t', options)
+    on(agent, cmd_str, { acceptable_exit_codes: [2] })
 
     logger.info("Get resource absent manifest from master :: #{result}")
   end
 
-  step "TestStep :: Check <CISCO_PROVIDER> resource absence on agent" do 
+  step 'TestStep :: Check <CISCO_PROVIDER> resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
-      "resource <CISCO_PROVIDER> test", options)
+      'resource <CISCO_PROVIDER> test', options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, {'ensure' => 'present'},
-        true, self, logger)
+      UtilityLib.search_pattern_in_output(stdout, { 'ensure' => 'present' },
+                                          true, self, logger)
     end
 
     logger.info("Check <CISCO_PROVIDER> resource absence on agent :: #{result}")
   end
 
-  step "TestStep :: Check <PROVIDER> instance absence on agent" do
+  step 'TestStep :: Check <PROVIDER> instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd("show running-config section <PROVIDER>")
+    cmd_str = UtilityLib.get_vshell_cmd('show running-config section <PROVIDER>')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout, [/<PROVIDER> test/],
-        true, self, logger)
+                                          true, self, logger)
     end
 
     logger.info("Check <PROVIDER> instance absence on agent :: #{result}")
@@ -166,8 +165,6 @@ test_name "TestCase :: #{testheader}" do
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   UtilityLib.raise_passfail_exception(result, testheader, self, logger)
-
 end
 
 logger.info("TestCase :: #{testheader} :: End")
-

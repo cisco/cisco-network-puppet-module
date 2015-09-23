@@ -18,26 +18,25 @@
 
 require 'facter'
 
-task :default => :test
+task default: :test
 
 task :test do
-    rspec_cmd = ""
-    spec_files = ""
+  rspec_cmd = ''
+  spec_files = ''
 
-    puppet_version = Facter.value(:puppetversion)
-    if puppet_version.nil?
-        raise "Can't find a puppet version."
-    elsif puppet_version.include? "Enterprise"
-        rspec_cmd = "/opt/puppet/bin/rspec"
-    else
-        rspec_cmd = "rspec" # from path
-    end # if version
+  puppet_version = Facter.value(:puppetversion)
+  if puppet_version.nil?
+    fail "Can't find a puppet version."
+  elsif puppet_version.include? 'Enterprise'
+    rspec_cmd = '/opt/puppet/bin/rspec'
+  else
+    rspec_cmd = 'rspec' # from path
+  end # if version
 
-    RSPEC_OPTS = [
-        "--color",
-        "--format documentation"
-    ].join(' ')
+  RSPEC_OPTS = [
+    '--color',
+    '--format documentation',
+  ].join(' ')
 
-    sh "#{rspec_cmd} #{RSPEC_OPTS} #{spec_files}"
+  sh "#{rspec_cmd} #{RSPEC_OPTS} #{spec_files}"
 end # task test
-

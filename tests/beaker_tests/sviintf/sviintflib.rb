@@ -13,28 +13,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-# SVIINTF Utility Library: 
+# SVIINTF Utility Library:
 # -------------------------
 # sviintflib.rb
-#  
+#
 # This is the utility library for the SVIINTF provider Beaker test cases that
-# contains the common methods used across the SVIINTF testsuite's cases. The 
+# contains the common methods used across the SVIINTF testsuite's cases. The
 # library is implemented as a module with related methods and constants defined
-# inside it for use as a namespace. All of the methods are defined as module 
+# inside it for use as a namespace. All of the methods are defined as module
 # methods.
 #
-# Every Beaker SVIINTF test case that runs an instance of Beaker::TestCase 
+# Every Beaker SVIINTF test case that runs an instance of Beaker::TestCase
 # requires SviIntfLib module.
-# 
+#
 # The module has a single set of methods:
 # A. Methods to create manifests for cisco_interface Puppet provider test cases.
 ###############################################################################
 
 # Require UtilityLib.rb path.
-require File.expand_path("../../lib/utilitylib.rb", __FILE__)
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 module SviIntfLib
-
   # Group of Constants used in negative tests for SVIINTF provider.
   SVIMANAGEMENT_NEGATIVE       = 'invalid'
   SVIAUTOSTATE_NEGATIVE        = 'invalid'
@@ -46,9 +45,9 @@ module SviIntfLib
 
   # Method to create a manifest for SviINTF resource attribute 'ensure' where
   # 'ensure' is set to present.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def SviIntfLib.create_sviintf_manifest_present()
+  def self.create_sviintf_manifest_present
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan      { '80':
@@ -65,14 +64,14 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for SviINTF resource attribute 'ensure' where
   # 'ensure' is set to absent.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def SviIntfLib.create_sviintf_manifest_absent()
+  def self.create_sviintf_manifest_absent
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan      { '80':
@@ -83,15 +82,15 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for SviINTF resource attributes:
-  # svi_management, svi_autostate, shutdown, 
+  # svi_management, svi_autostate, shutdown,
   # ipv4_address and ipv4_netmask_length.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def SviIntfLib.create_sviintf_manifest_nondefaults()
+  def self.create_sviintf_manifest_nondefaults
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan      { '80':
@@ -108,13 +107,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for SviINTF resource attribute 'svi_management'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def SviIntfLib.create_sviintf_manifest_svimanagement_negative()
+  def self.create_sviintf_manifest_svimanagement_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan      { '80':
@@ -127,13 +126,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for SviINTF resource attribute 'svi_autostate'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def SviIntfLib.create_sviintf_manifest_sviautostate_negative()
+  def self.create_sviintf_manifest_sviautostate_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan      { '80':
@@ -146,13 +145,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for SviINTF resource attribute 'shutdown'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def SviIntfLib.create_sviintf_manifest_shutdown_negative()
+  def self.create_sviintf_manifest_shutdown_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan      { '80':
@@ -165,13 +164,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for SviINTF resource attribute 'ipv4_address'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def SviIntfLib.create_sviintf_manifest_ipv4addr_negative()
+  def self.create_sviintf_manifest_ipv4addr_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan      { '80':
@@ -185,13 +184,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for SviINTF resource attribute 'ipv4_netmask_length'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def SviIntfLib.create_sviintf_manifest_ipv4masklen_negative()
+  def self.create_sviintf_manifest_ipv4masklen_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan      { '80':
@@ -205,7 +204,6 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
-
 end

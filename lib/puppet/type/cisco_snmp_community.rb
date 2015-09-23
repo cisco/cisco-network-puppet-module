@@ -41,7 +41,7 @@ Puppet::Type.newtype(:cisco_snmp_community) do
   # Parse out the title to fill in the attributes in these patterns.
   # These attributes can be overwritten later.
   def self.title_patterns
-    identity = lambda { |x| x }
+    identity = ->(x) { x }
     patterns = []
 
     # Below pattern matches both parts of the full composite name.
@@ -49,13 +49,13 @@ Puppet::Type.newtype(:cisco_snmp_community) do
       /^(\S+)$/,
       [
         [:community, identity],
-      ]
+      ],
     ]
-    return patterns
+    patterns
   end
 
-  newparam(:community, :namevar => true) do
-    desc "Name of the SNMP community. Valid values are string."
+  newparam(:community, namevar: true) do
+    desc 'Name of the SNMP community. Valid values are string.'
   end
 
   ##############
@@ -73,11 +73,10 @@ Puppet::Type.newtype(:cisco_snmp_community) do
       begin
         value = :default if value == 'default'
       rescue
-        fail "Munge for default of group property failed"
+        raise 'Munge for default of group property failed'
       end
       value
     end
-
   end
 
   newproperty(:acl) do
@@ -86,14 +85,13 @@ Puppet::Type.newtype(:cisco_snmp_community) do
 
     munge do |value|
       begin
-        fail("acl property - #{value} should be a string") unless value.kind_of? String or value == :default
+        fail("acl property - #{value} should be a string") unless value.kind_of?(String) || value == :default
         value = :default if value == 'default'
       rescue
-        fail "Munge for default of acl property failed"
+        raise 'Munge for default of acl property failed'
       end
       value
     end
-
   end
 
   ################
@@ -107,5 +105,4 @@ Puppet::Type.newtype(:cisco_snmp_community) do
                                            "#{self[:group]}")
     groups
   end
-
 end

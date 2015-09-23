@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-# TestCase Name: 
+# TestCase Name:
 # -------------
 # SnmpUser-Provider-Negatives.rb
 #
@@ -21,17 +21,17 @@
 # -----------------------
 # This is a Puppet SNMPUSER resource testcase for Puppet Agent on Nexus devices.
 # The test case assumes the following prerequisites are already satisfied:
-# A. Populating the HOSTS configuration file with the agent and master 
+# A. Populating the HOSTS configuration file with the agent and master
 # information.
-# B. Enabling SSH connection prerequisites on the N9K switch based Agent. 
+# B. Enabling SSH connection prerequisites on the N9K switch based Agent.
 # C. Starting of Puppet master server on master.
 # D. Sending to and signing of Puppet agent certificate request on master.
 #
 # TestCase:
 # ---------
-# This is a SNMPUSER resource test that tests for negative values for 
-# ensure, groups, auth_protocol, auth_password, 
-# priv_protocol, priv_password and localized_key attributes of a 
+# This is a SNMPUSER resource test that tests for negative values for
+# ensure, groups, auth_protocol, auth_password,
+# priv_protocol, priv_password and localized_key attributes of a
 # cisco_snmp_user resource when created with 'ensure' => 'present'.
 #
 # There are 2 sections to the testcase: Setup, group of teststeps.
@@ -41,130 +41,129 @@
 #
 # The testcode checks for exit_codes from Puppet Agent, Vegas shell and
 # Bash shell command executions. For Vegas shell and Bash shell command
-# string executions, this is the exit_code convention: 
+# string executions, this is the exit_code convention:
 # 0 - successful command execution, > 0 - failed command execution.
 # For Puppet Agent command string executions, this is the exit_code convention:
-# 0 - no changes have occurred, 1 - errors have occurred, 
-# 2 - changes have occurred, 4 - failures have occurred and 
+# 0 - no changes have occurred, 1 - errors have occurred,
+# 2 - changes have occurred, 4 - failures have occurred and
 # 6 - changes and failures have occurred.
 # 0 is the default exit_code checked in Beaker::DSL::Helpers::on() method.
-# The testcode also uses RegExp pattern matching on stdout or output IO 
+# The testcode also uses RegExp pattern matching on stdout or output IO
 # instance attributes of Result object from on() method invocation.
 #
 ###############################################################################
 
 # Require UtilityLib.rb and SnmpUserLib.rb paths.
-require File.expand_path("../../lib/utilitylib.rb", __FILE__)
-require File.expand_path("../snmpuserlib.rb", __FILE__)
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
+require File.expand_path('../snmpuserlib.rb', __FILE__)
 
 result = 'PASS'
-testheader = "SNMPUSER Resource :: All Attributes Negatives"
+testheader = 'SNMPUSER Resource :: All Attributes Negatives'
 
 # @test_name [TestCase] Executes negatives testcase for SNMPUSER Resource.
 test_name "TestCase :: #{testheader}" do
-
   # @step [Step] Sets up switch for provider test.
-  step "TestStep :: Setup switch for provider test" do 
+  step 'TestStep :: Setup switch for provider test' do
     # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
     UtilityLib.set_manifest_path(master, self)
 
     # Expected exit_code is 0 since this is a vegas shell cmd with no change.
-    cmd_str = UtilityLib.get_vshell_cmd("conf t ; no snmp-server user snmpuser1")
+    cmd_str = UtilityLib.get_vshell_cmd('conf t ; no snmp-server user snmpuser1')
     on(agent, cmd_str)
 
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd("show running-config snmp")
+    cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-        [/snmp-server user snmpuser1 network-operator auth md5/],
-        true, self, logger)
+                                          [/snmp-server user snmpuser1 network-operator auth md5/],
+                                          true, self, logger)
     end
 
     logger.info("Setup switch for provider test :: #{result}")
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
-  step "TestStep :: Get negative test resource manifest from master" do
+  step 'TestStep :: Get negative test resource manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, SnmpUserLib.create_snmpuser_manifest_authprotocol_negative())
+    on(master, SnmpUserLib.create_snmpuser_manifest_authprotocol_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
-      "agent -t", options)
-    on(agent, cmd_str, {:acceptable_exit_codes => [1]}) 
+      'agent -t', options)
+    on(agent, cmd_str, { acceptable_exit_codes: [1] })
 
     logger.info("Get negative test resource manifest from master :: #{result}")
   end
 
   # @step [Step] Checks cisco_snmp_user resource on agent using resource cmd.
-  step "TestStep :: Check cisco_snmp_user resource absence on agent" do 
+  step 'TestStep :: Check cisco_snmp_user resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_snmp_user 'snmpuser1'", options)
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-        {'auth_protocol' => 'unknown',
-        'auth_password'  => '0x[0-9a-fA-F]*'},
-        true, self, logger)
+                                          { 'auth_protocol' => 'unknown',
+                                            'auth_password' => '0x[0-9a-fA-F]*' },
+                                          true, self, logger)
     end
 
     logger.info("Check cisco_snmp_user resource absence on agent :: #{result}")
   end
 
   # @step [Step] Checks snmpuser instance on agent using switch show cli cmds.
-  step "TestStep :: Check snmpuser instance absence on agent" do
+  step 'TestStep :: Check snmpuser instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd("show running-config snmp")
+    cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-        [/snmp-server user snmpuser1 network-operator auth unknown/],
-        true, self, logger)
+                                          [/snmp-server user snmpuser1 network-operator auth unknown/],
+                                          true, self, logger)
     end
 
     logger.info("Check snmpuser instance absence on agent :: #{result}")
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
-  step "TestStep :: Get negative test resource manifest from master" do
+  step 'TestStep :: Get negative test resource manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, SnmpUserLib.create_snmpuser_manifest_privprotocol_negative())
+    on(master, SnmpUserLib.create_snmpuser_manifest_privprotocol_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
-      "agent -t", options)
-    on(agent, cmd_str, {:acceptable_exit_codes => [1]}) 
+      'agent -t', options)
+    on(agent, cmd_str, { acceptable_exit_codes: [1] })
 
     logger.info("Get negative test resource manifest from master :: #{result}")
   end
 
   # @step [Step] Checks cisco_snmp_user resource on agent using resource cmd.
-  step "TestStep :: Check cisco_snmp_user resource absence on agent" do 
+  step 'TestStep :: Check cisco_snmp_user resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_snmp_user 'snmpuser1'", options)
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-        {'priv_protocol' => 'unknown',
-        'priv_password'  => '0x[0-9a-fA-F]*'},
-        true, self, logger)
+                                          { 'priv_protocol' => 'unknown',
+                                            'priv_password' => '0x[0-9a-fA-F]*' },
+                                          true, self, logger)
     end
 
     logger.info("Check cisco_snmp_user resource absence on agent :: #{result}")
   end
 
   # @step [Step] Checks snmpuser instance on agent using switch show cli cmds.
-  step "TestStep :: Check snmpuser instance absence on agent" do
+  step 'TestStep :: Check snmpuser instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd("show running-config snmp")
+    cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-        [/snmp-server user snmpuser1 network-operator auth (.*) priv unknown/],
-        true, self, logger)
+                                          [/snmp-server user snmpuser1 network-operator auth (.*) priv unknown/],
+                                          true, self, logger)
     end
 
     logger.info("Check snmpuser instance absence on agent :: #{result}")
@@ -172,8 +171,6 @@ test_name "TestCase :: #{testheader}" do
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   UtilityLib.raise_passfail_exception(result, testheader, self, logger)
-
 end
 
 logger.info("TestCase :: #{testheader} :: End")
-

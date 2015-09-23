@@ -13,28 +13,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-# OSPF Utility Library: 
+# OSPF Utility Library:
 # ---------------------
 # ospflib.rb
-#  
-# This is the utility library for the OSPF provider Beaker test cases that 
-# contains the common methods used across the OSPF testsuite's cases. The  
+#
+# This is the utility library for the OSPF provider Beaker test cases that
+# contains the common methods used across the OSPF testsuite's cases. The
 # library is implemented as a module with related methods and constants defined
-# inside it for use as a namespace. All of the methods are defined as module 
+# inside it for use as a namespace. All of the methods are defined as module
 # methods.
 #
-# Every Beaker OSPF test case that runs an instance of Beaker::TestCase 
+# Every Beaker OSPF test case that runs an instance of Beaker::TestCase
 # requires OspfLib module.
-# 
+#
 # The module has a single set of methods:
 # A. Methods to create manifests for cisco_ospf Puppet provider test cases.
 ###############################################################################
 
 # Require UtilityLib.rb path.
-require File.expand_path("../../lib/utilitylib.rb", __FILE__)
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 module OspfLib
-
   # Group of Constants used in negative tests for OSPF provider.
   ENSURE_NEGATIVE = 'unknown'
 
@@ -42,9 +41,9 @@ module OspfLib
 
   # Method to create a manifest for OSPF resource attribute 'ensure' where
   # 'ensure' is set to present.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def OspfLib.create_ospf_manifest_present()
+  def self.create_ospf_manifest_present
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_ospf {'green':
@@ -52,14 +51,14 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for OSPF resource attribute 'ensure' where
   # 'ensure' is set to absent.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def OspfLib.create_ospf_manifest_absent()
+  def self.create_ospf_manifest_absent
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_ospf {'green':
@@ -67,14 +66,14 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for OSPF resource attribute 'ensure' where
   # 'ensure' is set to unknown.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def OspfLib.create_ospf_manifest_negative()
+  def self.create_ospf_manifest_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_ospf {'green':
@@ -82,7 +81,6 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
-
 end

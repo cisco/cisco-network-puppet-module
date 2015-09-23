@@ -13,28 +13,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-# ACCESSVLAN Utility Library: 
+# ACCESSVLAN Utility Library:
 # ---------------------------
 # accessvlanlib.rb
-#  
+#
 # This is the utility library for the ACCESSVLAN provider Beaker test cases that
-# contains the common methods used across the ACCESSVLAN testsuite's cases. The 
+# contains the common methods used across the ACCESSVLAN testsuite's cases. The
 # library is implemented as a module with related methods and constants defined
-# inside it for use as a namespace. All of the methods are defined as module 
+# inside it for use as a namespace. All of the methods are defined as module
 # methods.
 #
-# Every Beaker ACCESSVLAN test case that runs an instance of Beaker::TestCase 
+# Every Beaker ACCESSVLAN test case that runs an instance of Beaker::TestCase
 # requires AccessVlanLib module.
-# 
+#
 # The module has a single set of methods:
 # A. Methods to create manifests for cisco_interface Puppet provider test cases.
 ###############################################################################
 
 # Require UtilityLib.rb path.
-require File.expand_path("../../lib/utilitylib.rb", __FILE__)
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 module AccessVlanLib
-
   # Group of Constants used in negative tests for ACCESSVLAN provider.
   DESCRIPTION_NEGATIVE         = ''
   IPV4PROXYARP_NEGATIVE        = 'invalid'
@@ -48,9 +47,9 @@ module AccessVlanLib
 
   # Method to create a manifest for AccessVLAN resource attribute 'ensure' where
   # 'ensure' is set to present.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def AccessVlanLib.create_accessvlan_manifest_present()
+  def self.create_accessvlan_manifest_present
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan { '128':
@@ -72,14 +71,14 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for AccessVLAN resource attribute 'ensure' where
   # 'ensure' is set to absent.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def AccessVlanLib.create_accessvlan_manifest_absent()
+  def self.create_accessvlan_manifest_absent
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan { '128':
@@ -99,16 +98,16 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for AccessVLAN resource attributes:
-  # access_vlan, description, ipv4_proxy_arp, ipv4_redirects, 
-  # negotiate_auto, shutdown, switchport_autostate_exclude, switchport_mode 
+  # access_vlan, description, ipv4_proxy_arp, ipv4_redirects,
+  # negotiate_auto, shutdown, switchport_autostate_exclude, switchport_mode
   # and switchport_vtp.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def AccessVlanLib.create_accessvlan_manifest_nondefaults()
+  def self.create_accessvlan_manifest_nondefaults
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan { '128':
@@ -130,13 +129,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for AccessVLAN resource attribute 'ipv4_proxy_arp'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def AccessVlanLib.create_accessvlan_manifest_ipv4proxyarp_negative()
+  def self.create_accessvlan_manifest_ipv4proxyarp_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan { '128':
@@ -150,13 +149,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for AccessVLAN resource attribute 'ipv4_redirects'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def AccessVlanLib.create_accessvlan_manifest_ipv4redir_negative()
+  def self.create_accessvlan_manifest_ipv4redir_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan { '128':
@@ -170,13 +169,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for AccessVLAN resource attribute 'negotiate_auto'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def AccessVlanLib.create_accessvlan_manifest_negoauto_negative()
+  def self.create_accessvlan_manifest_negoauto_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan { '128':
@@ -190,13 +189,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for AccessVLAN resource attribute 'shutdown'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def AccessVlanLib.create_accessvlan_manifest_shutdown_negative()
+  def self.create_accessvlan_manifest_shutdown_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan { '128':
@@ -210,13 +209,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for AccessVLAN resource attribute 'autostate'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def AccessVlanLib.create_accessvlan_manifest_autostate_negative()
+  def self.create_accessvlan_manifest_autostate_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan { '128':
@@ -230,13 +229,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for AccessVLAN resource attribute 'switchport_vtp'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def AccessVlanLib.create_accessvlan_manifest_vtp_negative()
+  def self.create_accessvlan_manifest_vtp_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan { '128':
@@ -250,7 +249,6 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
-
 end

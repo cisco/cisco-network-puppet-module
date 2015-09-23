@@ -13,28 +13,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-# OSPFVRF Utility Library: 
+# OSPFVRF Utility Library:
 # ------------------------
 # ospfvrflib.rb
-#  
-# This is the utility library for the OSPFVRF provider Beaker test cases that 
-# contains the common methods used across the OSPFVRF testsuite's cases. The  
+#
+# This is the utility library for the OSPFVRF provider Beaker test cases that
+# contains the common methods used across the OSPFVRF testsuite's cases. The
 # library is implemented as a module with related methods and constants defined
-# inside it for use as a namespace. All of the methods are defined as module 
+# inside it for use as a namespace. All of the methods are defined as module
 # methods.
 #
-# Every Beaker OSPFVRF test case that runs an instance of Beaker::TestCase 
+# Every Beaker OSPFVRF test case that runs an instance of Beaker::TestCase
 # requires OspfVrfLib module.
-# 
+#
 # The module has a single set of methods:
 # A. Methods to create manifests for cisco_ospf_vrf Puppet provider test cases.
 ###############################################################################
 
 # Require UtilityLib.rb path.
-require File.expand_path("../../lib/utilitylib.rb", __FILE__)
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 module OspfVrfLib
-
   # Group of Constants used in negative tests for OSPFVRF provider.
   AUTOCOST_NEGATIVE          = '100000000'
   DEFAULTMETRIC_NEGATIVE     = '-1'
@@ -49,9 +48,9 @@ module OspfVrfLib
 
   # Method to create a manifest for OSPFVRF resource attribute 'ensure' where
   # 'ensure' is set to present.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def OspfVrfLib.create_ospfvrf_manifest_present()
+  def self.create_ospfvrf_manifest_present
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf_vrf { 'test green':
@@ -68,14 +67,14 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for OSPFVRF resource attribute 'ensure' where
   # 'ensure' is set to absent.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def OspfVrfLib.create_ospfvrf_manifest_absent()
+  def self.create_ospfvrf_manifest_absent
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf_vrf { 'test green':
@@ -86,19 +85,19 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for OSPFVRF resource attributes:
   # ensure, auto_cost, default_metric, log_adjacency, timer_throttle_lsa_hold,
   # timer_throttle_lsa_max, timer_throttle_lsa_start, timer_throttle_spf_hold,
   # timer_throttle_spf_max and timer_throttle_spf_start.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def OspfVrfLib.create_ospfvrf_manifest_nondefaults()
+  def self.create_ospfvrf_manifest_nondefaults
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
-  cisco_ospf_vrf { 'test green': 
+  cisco_ospf_vrf { 'test green':
     ensure                   => present,
     auto_cost                => '80000',
     default_metric           => '1',
@@ -106,19 +105,19 @@ node default {
     timer_throttle_lsa_hold  => '2000',
     timer_throttle_lsa_max   => '10000',
     timer_throttle_lsa_start => '1',
-    timer_throttle_spf_hold  => '2000', 
+    timer_throttle_spf_hold  => '2000',
     timer_throttle_spf_max   => '10000',
     timer_throttle_spf_start => '400',
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for OSPFVRF resource attribute 'autocost'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def OspfVrfLib.create_ospfvrf_manifest_autocost_negative()
+  def self.create_ospfvrf_manifest_autocost_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf_vrf { 'test green':
@@ -127,13 +126,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for OSPFVRF resource attribute 'default_metric'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def OspfVrfLib.create_ospfvrf_manifest_defaultmetric_negative()
+  def self.create_ospfvrf_manifest_defaultmetric_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf_vrf { 'test green':
@@ -142,13 +141,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for OSPFVRF resource attribute 'lsahold'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def OspfVrfLib.create_ospfvrf_manifest_lsahold_negative()
+  def self.create_ospfvrf_manifest_lsahold_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf_vrf { 'test green':
@@ -157,13 +156,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for OSPFVRF resource attribute 'lsamax'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def OspfVrfLib.create_ospfvrf_manifest_lsamax_negative()
+  def self.create_ospfvrf_manifest_lsamax_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf_vrf { 'test green':
@@ -172,13 +171,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for OSPFVRF resource attribute 'lsastart'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def OspfVrfLib.create_ospfvrf_manifest_lsastart_negative()
+  def self.create_ospfvrf_manifest_lsastart_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf_vrf { 'test green':
@@ -187,13 +186,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for OSPFVRF resource attribute 'spfhold'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def OspfVrfLib.create_ospfvrf_manifest_spfhold_negative()
+  def self.create_ospfvrf_manifest_spfhold_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf_vrf { 'test green':
@@ -202,13 +201,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for OSPFVRF resource attribute 'spfmax'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def OspfVrfLib.create_ospfvrf_manifest_spfmax_negative()
+  def self.create_ospfvrf_manifest_spfmax_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf_vrf { 'test green':
@@ -217,13 +216,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for OSPFVRF resource attribute 'spfstart'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def OspfVrfLib.create_ospfvrf_manifest_spfstart_negative()
+  def self.create_ospfvrf_manifest_spfstart_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf_vrf { 'test green':
@@ -232,8 +231,6 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
-
 end
-

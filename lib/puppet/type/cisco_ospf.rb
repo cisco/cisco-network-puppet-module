@@ -39,21 +39,20 @@ Puppet::Type.newtype(:cisco_ospf) do
   # Parse out the title to fill in the attributes in these
   # patterns. These attributes can be overwritten later.
   def self.title_patterns
-    identity = lambda { |x| x }
+    identity = ->(x) { x }
     patterns = []
 
     # Below pattern matches the ospf name.
     patterns << [
       /^(\S+)$/,
       [
-        [:ospf, identity]
-      ]
+        [:ospf, identity],
+      ],
     ]
-    return patterns
+    patterns
   end
 
-  newparam(:ospf, :namevar => true) do
-    desc "Name of the ospf router. Valid values are string."
+  newparam(:ospf, namevar: true) do
+    desc 'Name of the ospf router. Valid values are string.'
   end
-
 end

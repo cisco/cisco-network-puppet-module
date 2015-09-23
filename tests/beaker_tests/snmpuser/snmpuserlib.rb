@@ -13,28 +13,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-# SNMPUSER Utility Library: 
+# SNMPUSER Utility Library:
 # -------------------------
 # snmpuserlib.rb
-#  
-# This is the utility library for the SNMPUSER provider Beaker test cases that 
-# contains the common methods used across the SNMPUSER testsuite's cases. The  
+#
+# This is the utility library for the SNMPUSER provider Beaker test cases that
+# contains the common methods used across the SNMPUSER testsuite's cases. The
 # library is implemented as a module with related methods and constants defined
-# inside it for use as a namespace. All of the methods are defined as module 
+# inside it for use as a namespace. All of the methods are defined as module
 # methods.
 #
-# Every Beaker SNMPUSER test case that runs an instance of Beaker::TestCase 
+# Every Beaker SNMPUSER test case that runs an instance of Beaker::TestCase
 # requires SnmpUserLib module.
-# 
+#
 # The module has a single set of methods:
 # A. Methods to create manifests for cisco_snmp_user Puppet provider test cases.
 ###############################################################################
 
 # Require UtilityLib.rb path.
-require File.expand_path("../../lib/utilitylib.rb", __FILE__)
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 module SnmpUserLib
-
   # Group of Constants used in negative tests for SNMPUSER provider.
   AUTHPROT_NEGATIVE       = 'unknown'
   PRIVPROT_NEGATIVE       = 'unknown'
@@ -43,9 +42,9 @@ module SnmpUserLib
 
   # Method to create a manifest for SNMPUSER resource attribute 'ensure' where
   # 'ensure' is set to present.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def SnmpUserLib.create_snmpuser_manifest_present()
+  def self.create_snmpuser_manifest_present
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_snmp_user { 'snmpuser1':
@@ -59,14 +58,14 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for SNMPUSER resource attribute 'ensure' where
   # 'ensure' is set to absent.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def SnmpUserLib.create_snmpuser_manifest_absent()
+  def self.create_snmpuser_manifest_absent
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_snmp_user { 'snmpuser1':
@@ -74,15 +73,15 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for SNMPUSER resource attributes:
-  # ensure, groups, auth_protocol, auth_password, priv_protocol, 
+  # ensure, groups, auth_protocol, auth_password, priv_protocol,
   # priv_password and localized_key.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def SnmpUserLib.create_snmpuser_manifest_nondefaults()
+  def self.create_snmpuser_manifest_nondefaults
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_snmp_user { 'snmpuser1':
@@ -96,13 +95,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for SNMPUSER resource attribute 'auth_protocol'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def SnmpUserLib.create_snmpuser_manifest_authprotocol_negative()
+  def self.create_snmpuser_manifest_authprotocol_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_snmp_user { 'snmpuser1':
@@ -112,13 +111,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for SNMPUSER resource attribute 'priv_protocol'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def SnmpUserLib.create_snmpuser_manifest_privprotocol_negative()
+  def self.create_snmpuser_manifest_privprotocol_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_snmp_user { 'snmpuser1':
@@ -128,8 +127,6 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
-
 end
-

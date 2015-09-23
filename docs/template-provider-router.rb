@@ -25,9 +25,9 @@ rescue LoadError # seen on master, not on agent
 end
 
 Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:nxapi) do
-  desc "The NXAPI provider for cisco_X__RESOURCE_NAME__X."
+  desc 'The NXAPI provider for cisco_X__RESOURCE_NAME__X.'
 
-  confine :feature => :cisco_node_utils
+  confine feature: :cisco_node_utils
 
   mk_resource_methods
 
@@ -50,9 +50,9 @@ Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:nxapi) do
     X__CONSTANT_NAME__X_NON_BOOL_PROPS + __CONSTANT_NAME___BOOL_PROPS
 
   # Dynamic method generation for getters & setters
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, "@X__RESOURCE_NAME__X",
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@X__RESOURCE_NAME__X',
                                             X__CONSTANT_NAME__X_NON_BOOL_PROPS)
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, "@X__RESOURCE_NAME__X",
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@X__RESOURCE_NAME__X',
                                             X__CONSTANT_NAME__X_BOOL_PROPS)
 
   def initialize(value={})
@@ -64,28 +64,30 @@ Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:nxapi) do
   def self.get_properties(instance_name, inst)
     debug "Checking instance, #{instance_name}."
     current_state = {
-      :name => instance_name,
-      :ensure => :present,
+      name:   instance_name,
+      ensure: :present,
     }
     # Call node_utils getter for each property
-    X__CONSTANT_NAME__X_NON_BOOL_PROPS.each { |prop|
+    X__CONSTANT_NAME__X_NON_BOOL_PROPS.each do |prop|
       current_state[prop] = inst.send(prop)
-    }
-    X__CONSTANT_NAME__X_BOOL_PROPS.each { |prop|
+    end
+
+    X__CONSTANT_NAME__X_BOOL_PROPS.each do |prop|
       val = inst.send(prop)
       current_state[prop] = val.nil? ? nil : (val ? :true : :false)
-    }
+    end
+
     new(current_state)
   end # self.get_properties
 
   def self.instances
     instance_array = []
-    Cisco::X__CLASS_NAME__X.routers.each { | instance_name, inst |
+    Cisco::X__CLASS_NAME__X.routers.each do |instance_name, inst|
       begin
         instance_array << get_properties(instance_name, inst)
       end
-    }
-    return instance_array
+    end
+    instance_array
   end # self.instances
 
   def self.prefetch(resources)
@@ -97,7 +99,7 @@ Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:nxapi) do
   end # self.prefetch
 
   def exists?
-    return (@property_hash[:ensure] == :present)
+    (@property_hash[:ensure] == :present)
   end
 
   def create
@@ -109,11 +111,11 @@ Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:nxapi) do
   end
 
   def set_properties(new_instance=false)
-    X__CONSTANT_NAME__X_ALL_PROPS.each { |prop|
+    X__CONSTANT_NAME__X_ALL_PROPS.each do |prop|
       if @resource[prop]
         if new_instance
           # Call puppet setter to set @property_flush[prop]
-          self.send("#{prop}=", @resource[prop])
+          send("#{prop}=", @resource[prop])
         end
         unless @property_flush[prop].nil?
           # Call node_utils setter to update node
@@ -121,7 +123,7 @@ Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:nxapi) do
             @X__RESOURCE_NAME__X.respond_to?("#{prop}=")
         end
       end
-    }
+    end
   end
 
   def flush
@@ -137,5 +139,4 @@ Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:nxapi) do
       set_properties(new_instance)
     end
   end
-
 end
