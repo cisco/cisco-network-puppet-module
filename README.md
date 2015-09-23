@@ -1,5 +1,28 @@
 # ciscopuppet
 
+--
+##### Documentation Workflow Map
+
+This workflow map aids *users*, *developers* and *maintainers* of the ciscopuppet project in selecting the appropriate document(s) for their task.
+
+* User Guides
+  * [README-agent-install.md](docs/README-agent-install.md) : Agent Installation and Configuration Guide
+  * [README-beaker-agent-install.md](docs/README-beaker-agent-install.md) : Automated Agent Installation and Configuration
+  * [README-package-provider.md](docs/README-package-provider.md) : Cisco Nexus Package Management using the Package Provider
+  * [README-example-manifest.md](examples/README.md) : Example Demo Manifest User Guide
+  * The remainder of this document is aimed at end users
+* Developer Guides
+  * [CONTRIBUTING.md](CONTRIBUTING.md) : Contribution guidelines
+  * [README-develop-types-providers.md](docs/README-develop-types-providers.md) : Developing new ciscopuppet Types and Providers
+  * [README-beaker-testcase-execution.md](docs/README-beaker-testcase-execution.md) : Executing Beaker Tests for ciscopuppet
+  * [README-beaker-testcase-writing.md](docs/README-beaker-testcase-writing.md) : Writing Beaker Tests for ciscopuppet
+* Maintainers Guides
+  * [README-maintainers.md](docs/README-maintainers.md) : Guidelines for core maintainers of the ciscopuppet project
+  * All developer guides apply to maintainers as well
+
+Please see [Learning Resources](#learning-resources) for additional references.
+
+--
 #### Table of Contents
 
 1. [Overview](#overview)
@@ -10,22 +33,9 @@
    * [Resource Type Catalog (by Technology)](#resource-by-tech)
    * [Resource Type Catalog (by Name)](#resource-by-name)
 6. [Limitations - OS compatibility, etc.](#limitations)
-7. [Development - Guide for contributing to the module](#development)
+7. [Learning Resources](#learning-resources)
 
---
-##### Additional References
 
-* Agent Installation
-  * [README-agent-install.md](docs/README-agent-install.md) : Agent Installation and Configuration Guide
-  * [README-beaker-agent-install.md](docs/README-beaker-agent-install.md) : Automated Agent Installation and Configuration via the Beaker Tool
-* User Guides
-  * [README-package-provider.md](docs/README-package-provider.md) : Cisco Nexus Package Management using the Package Provider
-* Developer Guides
-  * [README-develop-types-providers.md](docs/README-develop-types-providers.md) : Developing new ciscopuppet Types and Providers
-  * [README-beaker-testcase-execution.md](docs/README-beaker-testcase-execution.md) : Executing Beaker Tests for ciscopuppet
-  * [README-beaker-testcase-writing.md](docs/README-beaker-testcase-writing.md) : Writing Beaker Tests for ciscopuppet
-
-Please see [Learning Resources](#learning-resources) for additional references.
 
 ## Overview
 
@@ -647,15 +657,6 @@ Minimum Requirements:
   * Cisco Nexus 93xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
   * Cisco Nexus 31xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
   * Cisco Nexus 30xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
-
-## Development
-
-1. Fork the repository on Github.
-2. Create a named feature branch (like add_component_x).
-3. Write your change.
-4. Write tests for your change (if applicable).
-5. Run the tests, ensuring they all pass.
-6. Submit a Pull Request using Github.
 
 ## Learning Resources
 
