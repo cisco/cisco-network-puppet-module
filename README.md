@@ -1,6 +1,5 @@
 # ciscopuppet
 
---
 ##### Documentation Workflow Map
 
 This workflow map aids *users*, *developers* and *maintainers* of the ciscopuppet project in selecting the appropriate document(s) for their task.
