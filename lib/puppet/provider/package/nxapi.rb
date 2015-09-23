@@ -88,7 +88,7 @@ Puppet::Type.type(:package).provide :nxapi, parent: :yum do
     name_ver_arch_regex = /^([\w\-\+]+)-(\d+\..*)\.(\w{4,})(?:\.rpm)?$/
 
     # ex n9000-dk9.LIBPROCMIBREST-1.0.0-7.0.3.x86_64.rpm
-    name_ver_arch_regex_NX = /^(.*)-([\d\.]+-[\d\.]+)\.(\w{4,})\.rpm$/
+    name_var_arch_regex_nx = /^(.*)-([\d\.]+-[\d\.]+)\.(\w{4,})\.rpm$/
 
     # ex: b+z-ip2.x64_64
     name_arch_regex = /^([\w\-\+]+)\.(\w+)$/
@@ -104,7 +104,7 @@ Puppet::Type.type(:package).provide :nxapi, parent: :yum do
       filename = @resource[:source].strip.tr(':', '/').split('/').last
 
       if filename =~ name_ver_arch_regex ||
-         filename =~ name_ver_arch_regex_NX
+         filename =~ name_var_arch_regex_nx
         @resource[:name] = Regexp.last_match(1)
         @resource[:package_settings]['version'] = Regexp.last_match(2)
         @resource[:platform] = Regexp.last_match(3)

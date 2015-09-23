@@ -218,8 +218,8 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
       valid_integer = true
       valid_ipaddr  = true
 
-      Integer(value)     rescue valid_integer = false
-      IPAddr.new(value)  rescue valid_ipaddr  = false
+      Integer(value)
+      IPAddr.new(value)
       fail "area [#{value}] must be a valid ip address or integer" if
         valid_integer == false && valid_ipaddr == false
     end

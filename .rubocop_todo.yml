@@ -105,15 +105,5 @@ Style/Next:
 
 # Offense count: 34
 # Configuration parameters: EnforcedStyle, SupportedStyles, AllowInnerSlashes.
-Style/RegexpLiteral:
-  Enabled: false
-
-# Offense count: 2
-Style/RescueModifier:
-  Exclude:
-    - 'lib/puppet/type/cisco_interface_ospf.rb'
-
-# Offense count: 4
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/VariableName:
-  Enabled: false
+#Style/RegexpLiteral:
+#  Enabled: false
