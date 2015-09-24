@@ -17,7 +17,6 @@
 # limitations under the License.
 
 require 'ipaddr'
-require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
 
 Puppet::Type.newtype(:cisco_bgp_neighbor) do
   @doc = "Manages BGP Neighbor configuration.
@@ -144,11 +143,11 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
           or ASDOT notation or Integer"
     munge do |value|
       begin
-        value = Cisco::RouterBgp.process_asnum(value)
+        value = Cisco::RouterBgp.process_asnum(value.to_s)
         value.to_s
-      rescue 
+      rescue
         fail("BGP asn #{value} must be specified in ASPLAIN or ASDOT notation")
-      end  
+      end
     end
   end
 
@@ -165,32 +164,24 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
           ipv4/prefix length, ipv6, or ipv6/prefix length'
     munge do |value|
       begin
-        value = Cisco::Utils.process_network_mask(value)
+        value = Cisco::Utils.process_network_mask(value) unless value.nil?
         value
       rescue
-        fail "neighbor must be in valid ipv4/v6 address or address/length 
-              format" 
+        fail "neighbor must be in valid ipv4/v6 address or address/length
+              format"
       end
-    end  
+    end
   end
 
   ##############
   # Properties #
   ##############
-
-  validate do
-    fail("The 'asn' parameter must be set in the manifest.") if self[:asn].nil?
-    fail("The 'vrf' parameter must be set in the manifest.") if self[:vrf].nil?
-    fail("The 'neighbor' parameter must be set in the manifest.") if 
-      self[:neighbor].nil?
-  end
-  
   newproperty(:description) do
     desc "Description of the neighbor. Valid value is string."
   end # property description
 
   newproperty(:connected_check) do
-    desc "Configure whether or not check for directly connected peer. Valid 
+    desc "Configure whether or not check for directly connected peer. Valid
           values are true or false"
     newvalues(:true, :false)
   end
@@ -211,10 +202,10 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
           integers between 2 and 255, or keyword 'default' to 
           disable this property"
     munge do |value|
-      value = :default if value == "default"
+      value = :default if value == 'default'
       unless value == :default
         value = value.to_i
-        fail "ebgp_multihop value should be between 2 and 255" unless 
+        fail "ebgp_multihop value should be between 2 and 255" unless
           value.between?(2, 255)
       end
       value
@@ -225,48 +216,50 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
     desc "Specify the local-as number for the eBGP neighbor. Valid values are 
           String in ASPLAIN or ASDOT notation, integer, or 'default', which 
           means do not configure it"
-    munge do |value|
-      value = :default if value == "default"
-    end
-    
     validate do |value|
-      begin  
-        Cisco::RouterBgp.process_asnum(value) unless value == :default
+      begin
+        Cisco::RouterBgp.process_asnum(value.to_s) unless value.to_s.to_sym == :default
       rescue
         fail("BGP asn #{value} must be specified in ASPLAIN or ASDOT notation")
-      end 
+      end
     end
-  end        
+
+    munge do |value|
+      value = :default if value.to_s.to_sym == :default
+      value.to_s unless value == :default
+    end
+  end
 
   newproperty(:log_neighbor_changes) do
     desc "Log message for neighbor up/down event. Valid values are 'enable', to enable
-          it, 'disable' to disable it, or 'inherit' to use the config in 
+          it, 'disable' to disable it, or 'inherit' to use the config in
           cisco_bgp type"
     munge do |value|
       value.to_sym
     end
     newvalues(:enable, :disable, :inherit)
-  end  
+  end
 
   newproperty(:low_memory_exempt) do
-    desc "Whether or not to shut down this neighbor under memory pressue. Valid 
+    desc "Whether or not to shut down this neighbor under memory pressue. Valid
           values are 'true' to exempt the neighbor from being shutdown, 'false'
           to shut it down, or 'default' which is the default behavior"
     munge do |value|
-      value = :default if value == "default"
-      value
+      value = :default if value.to_s.to_sym == :default
+      value.to_s.to_sym
     end
     newvalues(:true, :false, :default)
   end
  
   newproperty(:maximum_peers) do
     desc "Maximum number of peers for this neighbor prefix. Valid values are between
-          1 and 1000, or 'default', which does not impose any limit"
+          1 and 1000, or 'default', which does not impose any limit. This attribute
+          can only be configured if neighbor is in 'ip/prefix' format"
     munge do |value|
-      value = :default if value == "default"
+      value = :default if value.to_s.to_sym == :default
       unless value == :default
         value = value.to_i
-        fail "maximum peer value should be between 1 and 1000" unless 
+        fail "maximum peer value should be between 1 and 1000" unless
           value.between?(1, 1000)
       end
       value
@@ -278,14 +271,14 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
           empty string means removing the password config"
 
     validate do |password|
-      fail("password - #{password} should be a string") unless 
+      fail("password - #{password} should be a string") unless
         password.nil? or password.kind_of?(String)
     end
   end
 
   newparam(:password_type) do
-    desc "Specifies the encryption type that password will use. 
-          Valid values are 'cleartext', '3des' or 'cisco_type_7' encryption, 
+    desc "Specifies the encryption type that password will use.
+          Valid values are 'cleartext', '3des' or 'cisco_type_7' encryption,
           and 'default', which defaults to 'cleartext'."
 
     newvalues(:cleartext,
@@ -303,16 +296,17 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
     desc "Specify the remote-as number for the eBGP neighbor. Valid values are
           string in ASPLAIN or ASDOT notation, integer, or 'default', which
           means do not configure it"
-    munge do |value|
-      value = :default if value == "default"
-    end
-    
     validate do |value|
       begin
-        Cisco::RouterBgp.process_asnum(value) unless value == :default
+        Cisco::RouterBgp.process_asnum(value.to_s) unless value.to_s.to_sym == :default
       rescue
         fail("BGP asn #{value} must be specified in ASPLAIN or ASDOT notation")
       end
+    end
+
+    munge do |value|
+      value = :default if value.to_s.to_sym == :default
+      value.to_s unless value == :default
     end
   end
 
@@ -337,21 +331,20 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
           'false', and 'default', which sets to the default 'false' value"
     newvalues(:true, :false, :default)
     munge do |value|
-      value = :default if value == "default"
-    end 
+      value = :default if value.to_s.to_sym == :default
+      value.to_s.to_sym
+    end
   end
 
   newproperty(:timers_keepalive) do
     desc "Keepalive timer value. Valid values are integers between 0 and 3600
           in terms of seconds, or 'default', which is 60"
     munge do |value|
-      value = :default if value == "default"
+      value = :default if value.to_s.to_sym == :default
       unless value == :default
         value = value.to_i
         fail "keepalive timer value should be between 0 and 3600 seconds" unless
           value.between?(0, 3600)
-      else
-        value = 60
       end
       value
     end
@@ -361,29 +354,29 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
     desc "holdtime timer value. Valid values are integers between 0 and 3600
           in terms of seconds, or 'default', which is 180"
     munge do |value|
-      value = :default if value == "default"
+      value = :default if value.to_s.to_sym == :default
       unless value == :default
         value = value.to_i
         fail "holdtime timer value should be between 0 and 3600 seconds" unless
           value.between?(0,3600)
-      else
-        value = 180
       end
       value
     end
   end
 
   newproperty(:transport_passive_only) do
-    desc "Allow passive connection setup only. Valid values are 'true',  
-          'false', and 'default' which defaults to 'false'"
+    desc "Allow passive connection setup only. Valid values are 'true',
+          'false', and 'default' which defaults to 'false'. This attribute can
+          only be configured when neighbor is in 'ip' address format"
     munge do |value|
-      value = :default if value == "default"
+      value = :default if value.to_s.to_sym == :default
+      value.to_s.to_sym
     end
     newvalues(:true, :false, :default)
   end
 
   newproperty(:update_source) do
-    desc "Specify source interface of BGP session and updates. Valid value is 
+    desc "Specify source interface of BGP session and updates. Valid value is
           a string of the interface name"
     munge do |value|
       fail "Interface name must be a string" unless value.kind_of?(String)
@@ -392,12 +385,24 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
   end
 
   validate do
+    fail("The 'asn' parameter must be set in the manifest.") if self[:asn].nil?
+    fail("The 'vrf' parameter must be set in the manifest.") if self[:vrf].nil?
+    fail("The 'neighbor' parameter must be set in the manifest.") if self[:neighbor].nil?
+
     if self[:password] && !self[:password].strip.empty? &&
        self[:password_type].nil?
       fail "the 'password_type' must be present if 'password' is present \
             and not an empty string"
     elsif self[:password].nil? && self[:password_type]
       fail "the 'password' must be present if 'password_type' is present"
+    end
+    mask = self[:neighbor].split('/')[1]
+    if mask.nil?
+      fail "attribute 'maximum_peers' is only available when the neighbor
+            address is in 'ip/prefix' format" if self[:maximum_peers]
+    else
+      fail "attribute 'transport_passive_only' is only available when the
+            neighbor address is in 'ip' format" if self[:transport_passive_only]
     end
   end
 end

@@ -158,9 +158,9 @@ end
 def prop_hash_to_manifest(attributes)
   manifest_str = ''
   attributes.each do |k, v|
-    next if v.to_s.empty?
+    next if v.nil?
     if v.is_a?(String)
-      manifest_str += "       #{k} => '#{v}',\n"
+      manifest_str += "       #{k} => '#{v.strip}',\n"
     else
       manifest_str += "       #{k} => #{v},\n"
     end
@@ -190,12 +190,16 @@ end
 #
 def test_harness_common(tests, id)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
-  tests[id][:log_desc] = tests[id][:desc] + " [ensure => #{tests[id][:ensure]}]"
+  tests[id][:state] = false if tests[id][:state].nil?
+  tests[id][:log_desc] =
+    (tests[id][:desc].nil? ? '' : tests[id][:desc]) +
+    (tests[id][:log_desc].nil? ? '':tests[id][:log_desc]) +
+    " [ensure => #{tests[id][:ensure]}]"
   logger.info("\n--------\n#{tests[id][:log_desc]}")
 
   test_manifest(tests, id)
   test_resource(tests, id)
-  test_show_cmd(tests, id)
+  test_show_cmd(tests, id, tests[id][:state]) unless tests[id][:show_pattern].nil?
   test_idempotence(tests, id)
 end
 
@@ -232,7 +236,7 @@ def test_resource(tests, id)
 end
 
 # Wrapper for config pattern-match tests
-def test_show_cmd(tests, id, state=false)
+def test_show_cmd(tests, id, state = false)
   stepinfo = format_stepinfo(tests, id, 'SHOW CMD')
   show_cmd = UtilityLib.get_vshell_cmd(tests[:show_cmd])
   step "TestStep :: #{stepinfo}" do
@@ -252,6 +256,30 @@ def test_idempotence(tests, id)
   step "TestStep :: #{stepinfo}" do
     on(tests[:agent], puppet_agent_cmd, :acceptable_exit_codes => [0])
     logger.info("#{stepinfo} :: PASS")
+  end
+end
+
+# Method to clean up a feature on the test node
+# @param agent [String] the agent that is going to run the test
+# @param feature [String] the feature name that will be cleaned up
+# @param logger [String] the logger that is used by the test
+def node_feature_cleanup(agent, feature, stepinfo, logger)
+  step "TestStep :: #{stepinfo}" do
+    clean = UtilityLib.get_vshell_cmd("conf t ; no feature #{feature}")
+    on(agent, clean, :acceptable_exit_codes => [0, 2])
+    show_cmd = UtilityLib.get_vshell_cmd('show running-config')
+    on(agent, show_cmd) do
+      UtilityLib.search_pattern_in_output(stdout, [/feature #{feature}/],
+                                          true, self, logger)
+    end
+
+    clean = UtilityLib.get_vshell_cmd("conf t ; feature #{feature}")
+    on(agent, clean, :acceptable_exit_codes => [0, 2])
+    show_cmd = UtilityLib.get_vshell_cmd('show running-config')
+    on(agent, show_cmd) do
+      UtilityLib.search_pattern_in_output(stdout, [/feature #{feature}/],
+                                          false, self, logger)
+    end
   end
 end
 

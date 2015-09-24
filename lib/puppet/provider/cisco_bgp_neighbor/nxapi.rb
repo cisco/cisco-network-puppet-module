@@ -132,12 +132,12 @@ Puppet::Type.type(:cisco_bgp_neighbor).provide(:nxapi) do
     if @resource[:local_as]
       if @resource[:local_as] == :default
         return :default if @property_hash[:local_as] == @nbr.default_local_as
-      elsif current_as == Cisco::RouterBgp.process_asnum(@resource[:local_as]).to_s  
+      elsif current_as == Cisco::RouterBgp.process_asnum(@resource[:local_as]).to_s
         # if current as is same as the resource value, return resource value in
         # its current format (dot or integer)
         return @resource[:local_as]
       end
-    end  
+    end
     @property_hash[:local_as]
   end
 
@@ -169,10 +169,10 @@ Puppet::Type.type(:cisco_bgp_neighbor).provide(:nxapi) do
   def properties_set(new_nbr = false)
     BGP_NBR_ALL_PROPS.each do |prop|
       next unless @resource[prop]
-      
+
       # Set @property_flush for the current object
       send("#{prop}=", @resource[prop]) if new_nbr
-      
+
       next if @property_flush[prop].nil?
       # Call the AutoGen setters for the @nbr node_utils object.
       # For password and type, keepalive and hold timers, we don't have 
@@ -189,10 +189,10 @@ Puppet::Type.type(:cisco_bgp_neighbor).provide(:nxapi) do
 
   # Non-AutoGen custom setters
   # The following properties have additional complexity and cannot
-  # be handled by PuppetX::Cisco::AutoGen.mk_puppet_methods.
+  # be handled by PuppetX::Cisco::AutoGen.mk_puppet_methods
   def password_set
-    return if @property_flush[:password].nil? 
-    type = @resource[:password_type].nil? ? 
+    return if @property_flush[:password].nil?
+    type = @resource[:password_type].nil? ?
            @property_hash[:password_type] :
            @resource[:password_type]
     password = @property_flush[:password].nil? ?
@@ -204,8 +204,8 @@ Puppet::Type.type(:cisco_bgp_neighbor).provide(:nxapi) do
   def timers_set
     return if @property_flush[:timers_keepalive].nil? &&
               @property_flush[:timers_holdtime].nil?
-    keepalive = @property_flush[:timers_keepalive].nil? ? 
-                @property_hash[:timers_keepalive] : 
+    keepalive = @property_flush[:timers_keepalive].nil? ?
+                @property_hash[:timers_keepalive] :
                 @property_flush[:timers_keepalive]
     holdtime = @property_flush[:timers_holdtime].nil? ?
                @property_hash[:timers_holdtime] :
