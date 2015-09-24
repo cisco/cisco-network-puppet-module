@@ -84,14 +84,22 @@ module PuppetX
             #   return :default if
             #     @resource[foo] == :default and
             #     val == @rlb.default_foo
-            #   @property_hash[foo] = val.nil? ? nil : (val ? :true : :false)
+            #   if val.nil?
+            #     @property_hash[prop] = nil
+            #   else
+            #     @property_hash[prop] = val ? :true : :false
+            #   end
             # end
             define_method(prop) do
               val = instance_variable_get(rlbname).send(prop)
               return :default if
                 @resource[prop] == :default &&
                 val == instance_variable_get(rlbname).send("default_#{prop}")
-              @property_hash[prop] = val.nil? ? nil : (val ? :true : :false)
+              if val.nil?
+                @property_hash[prop] = nil
+              else
+                @property_hash[prop] = val ? :true : :false
+              end
             end
           end
         end
@@ -103,18 +111,20 @@ module PuppetX
           klass.instance_eval do
             # Generate SETTER method; e.g.
             # def foo=
-            #   @property_flush[foo] =
-            #     (val == :default) ?
-            #       @rlb.foo :
-            #       (val == :true)
+            #   if val == :default
+            #     @property_flush[foo] = @rlb.foo
+            #   else
+            #     @property_flush[prop] = (val == :true)
+            #   end
             # end
             define_method("#{prop}=") do |val|
               fail '@property_flush not defined' if
                 instance_variable_get(:@property_flush).nil?
-              @property_flush[prop] =
-                (val == :default) ?
-              instance_variable_get(rlbname).send("default_#{prop}") :
-                (val == :true)
+              if val == :default
+                @property_flush[prop] = instance_variable_get(rlbname).send("default_#{prop}")
+              else
+                @property_flush[prop] = (val == :true)
+              end
             end
           end
         end

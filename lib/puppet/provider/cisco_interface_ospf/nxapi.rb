@@ -127,39 +127,42 @@ Puppet::Type.type(:cisco_interface_ospf).provide(:nxapi) do
       end
     end
 
-    should_message_digest_key_id =
-      @property_flush[:message_digest_key_id].nil? ?
-        @interface_ospf.message_digest_key_id :
-        @property_flush[:message_digest_key_id]
+    if @property_flush[:message_digest_key_id].nil?
+      should_message_digest_key_id = @interface_ospf.message_digest_key_id
+    else
+      should_message_digest_key_id = @property_flush[:message_digest_key_id]
+    end
 
-    should_message_digest_password =
-      @property_flush[:message_digest_password].nil? ?
-        @interface_ospf.message_digest_password :
-        @property_flush[:message_digest_password]
+    if @property_flush[:message_digest_password].nil?
+      should_message_digest_password = @interface_ospf.message_digest_password
+    else
+      should_message_digest_password = @property_flush[:message_digest_password]
+    end
 
     # should_message_digest_password could still be nil if not configured on box
     should_message_digest_password = '' if should_message_digest_password.nil?
 
-    should_message_digest_algorithm_type =
-      @resource[:message_digest_algorithm_type].nil? ?
-        @interface_ospf.message_digest_algorithm_type :
-        @resource[:message_digest_algorithm_type]
-
-    should_message_digest_encryption_type =
-      @resource[:message_digest_encryption_type].nil? ?
-        @interface_ospf.message_digest_encryption_type :
-        @resource[:message_digest_encryption_type]
-
-    if (new_instance &&
-        should_message_digest_key_id != @interface_ospf.default_message_digest_key_id) ||
-       (@property_flush[:message_digest_key_id] && !new_instance) ||
-       (@property_flush[:message_digest_password] && !new_instance)
-      @interface_ospf.message_digest_key_set(
-        should_message_digest_key_id,
-        should_message_digest_algorithm_type.to_s,
-        should_message_digest_encryption_type,
-        should_message_digest_password)
+    if @resource[:message_digest_algorithm_type].nil?
+      should_message_digest_algorithm_type = @interface_ospf.message_digest_algorithm_type
+    else
+      should_message_digest_algorithm_type = @resource[:message_digest_algorithm_type]
     end
+
+    if @resource[:message_digest_encryption_type].nil?
+      should_message_digest_encryption_type = @interface_ospf.message_digest_encryption_type
+    else
+      should_message_digest_encryption_type = @resource[:message_digest_encryption_type]
+    end
+
+    return unless (new_instance &&
+                  should_message_digest_key_id != @interface_ospf.default_message_digest_key_id) ||
+                  (@property_flush[:message_digest_key_id] && !new_instance) ||
+                  (@property_flush[:message_digest_password] && !new_instance)
+    @interface_ospf.message_digest_key_set(
+      should_message_digest_key_id,
+      should_message_digest_algorithm_type.to_s,
+      should_message_digest_encryption_type,
+      should_message_digest_password)
   end
 
   def flush

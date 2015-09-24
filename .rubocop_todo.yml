@@ -47,16 +47,11 @@ Style/AccessorMethodName:
 
 # Offense count: 220
 # Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/BracesAroundHashParameters:
-  Enabled: false
+#Style/BracesAroundHashParameters:
+#  Enabled: false
 
 # Offense count: 20
 Style/Documentation:
-  Enabled: false
-
-# Offense count: 55
-# Configuration parameters: Exclude.
-Style/FileName:
   Enabled: false
 
 # Offense count: 18
@@ -65,45 +60,10 @@ Style/GlobalVars:
   Exclude:
     - 'utilities/installer/install_puppet.rb'
 
-# Offense count: 9
-# Configuration parameters: MinBodyLength.
-Style/GuardClause:
-  Exclude:
-    - 'lib/puppet/provider/cisco_interface/nxapi.rb'
-    - 'lib/puppet/provider/cisco_interface_ospf/nxapi.rb'
-    - 'lib/puppet/provider/cisco_ospf_vrf/nxapi.rb'
-    - 'lib/puppet/provider/cisco_tacacs_server/nxapi.rb'
-    - 'lib/puppet/provider/cisco_tacacs_server_host/nxapi.rb'
-    - 'lib/puppet/provider/package/nxapi.rb'
-    - 'utilities/installer/install_puppet.rb'
-
-# Offense count: 9
-Style/MultilineTernaryOperator:
-  Exclude:
-    - 'lib/puppet/provider/cisco_interface_ospf/nxapi.rb'
-    - 'lib/puppet/provider/cisco_ospf_vrf/nxapi.rb'
-    - 'lib/puppet_x/cisco/autogen.rb'
-    - 'utilities/installer/install_puppet.rb'
-
-# Offense count: 4
-Style/NestedTernaryOperator:
-  Exclude:
-    - 'docs/template-provider-router.rb'
-    - 'lib/puppet/provider/cisco_interface/nxapi.rb'
-    - 'lib/puppet/provider/cisco_vlan/nxapi.rb'
-    - 'lib/puppet_x/cisco/autogen.rb'
-
-# Offense count: 5
-# Configuration parameters: EnforcedStyle, MinBodyLength, SupportedStyles.
-Style/Next:
-  Exclude:
-    - 'docs/template-provider-router.rb'
-    - 'lib/puppet/provider/cisco_interface/nxapi.rb'
-    - 'lib/puppet/provider/cisco_ospf_vrf/nxapi.rb'
-    - 'lib/puppet/provider/cisco_vlan/nxapi.rb'
-    - 'lib/puppet/provider/cisco_vtp/nxapi.rb'
-
 # Offense count: 34
 # Configuration parameters: EnforcedStyle, SupportedStyles, AllowInnerSlashes.
-#Style/RegexpLiteral:
-#  Enabled: false
+Style/RegexpLiteral:
+  Enabled: false
+
+Style/Next:
+  Enabled: false

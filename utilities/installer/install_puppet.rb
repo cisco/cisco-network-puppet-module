@@ -149,9 +149,11 @@ def pp(host)
     if host['vrf'].nil?
       command = 'sudo'
     else
-      target_guestshell?(host) ?
-        command = "sudo chvrf #{host['vrf']}" :
+      if target_guestshell?(host)
+        command = "sudo chvrf #{host['vrf']}"
+      else
         command = "sudo ip netns exec #{host['vrf']}"
+      end
     end
     command.prepend "sudo #{GSUTILITY} " if target_guestshell?(host)
     command.prepend "http_proxy=#{options['http_proxy']} " if
@@ -206,9 +208,11 @@ end
 # @param agent [String]
 # @return [Boolean] true if it exists, else false
 def agent_template_exists?(agent)
-  target_guestshell?(agent) ?
-    opts = { acceptable_exit_codes: [0, 2], pty: true } :
+  if target_guestshell?(agent)
+    opts = { acceptable_exit_codes: [0, 2], pty: true }
+  else
     opts = { acceptable_exit_codes: [0, 2] }
+  end
   result = on agent, "#{pp(agent)} ls #{get_puppet_config(agent)}", opts
   result.exit_code == 0
 end
@@ -317,9 +321,11 @@ def install_target(agent, package)
   opts = { pty: true, prepend_cmds: pp(agent) }
   opts = { acceptable_exit_codes: [0, 1] }.merge(opts)
   agent.install_package(package, '', nil, opts)
-  agent.check_for_package('puppet-agent', opts) ?
-    agent.upgrade_package('puppet', '', opts) :
+  if agent.check_for_package('puppet-agent', opts)
+    agent.upgrade_package('puppet', '', opts)
+  else
     agent.install_package('puppet', '', nil, opts)
+  end
   # Make sure install/upgrade succeeded
   agent.check_for_package('puppet-agent', pty:                   true,
                                           prepend_cmds:          pp(agent),
@@ -508,9 +514,8 @@ def report_results
     logger.debug "#{exception}"
   end
 
-  if options['log_level'] == 'info'
-    logger.info "Rerun with '--log-level trace' for additional debug info"
-  end
+  return unless options['log_level'] == 'info'
+  logger.info "Rerun with '--log-level trace' for additional debug info"
 end
 
 report_results

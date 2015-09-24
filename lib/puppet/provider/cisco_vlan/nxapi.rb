@@ -62,8 +62,8 @@ Puppet::Type.type(:cisco_vlan).provide(:nxapi) do
       current_state[prop] = v.send(prop)
     end
     VLAN_BOOL_PROPS.each do |prop|
-      val = v.send(prop)
-      current_state[prop] = val.nil? ? nil : (val ? :true : :false)
+      val = v.send(prop) ? :true : :false
+      current_state[prop] = val.nil? ? nil : val
     end
     new(current_state)
   end # self.get_properties

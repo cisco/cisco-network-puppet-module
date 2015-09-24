@@ -138,19 +138,17 @@ Puppet::Type.type(:cisco_tacacs_server_host).provide(:nxapi) do
     end
 
     # call the setter
-    if encryption_pw_value
-      debug "type #{encryption_type_value}, value #{encryption_pw_value}"
-      @tacacs_server_host.encryption_key_set(encryption_type_value,
-                                             encryption_pw_value)
-    end
+    return unless encryption_pw_value
+    debug "type #{encryption_type_value}, value #{encryption_pw_value}"
+    @tacacs_server_host.encryption_key_set(encryption_type_value,
+                                           encryption_pw_value)
   end
 
   def update_port_or_timeout_attribute(attribute)
-    if @resource[attribute] && @resource[attribute] != :default
-      # The attribute is specified in the manifest and not the default.
-      # Default values are no-op when creating a new host.
-      @property_flush[attribute] = @resource[attribute]
-    end
+    return unless @resource[attribute] && @resource[attribute] != :default
+    # The attribute is specified in the manifest and not the default.
+    # Default values are no-op when creating a new host.
+    @property_flush[attribute] = @resource[attribute]
   end
 
   def flush

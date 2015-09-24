@@ -99,23 +99,23 @@ Puppet::Type.type(:package).provide :nxapi, parent: :yum do
       debug "parsed name:#{Regexp.last_match(1)}, arch:#{Regexp.last_match(2)}"
     end
     # [source] overrides [name]
-    if @resource[:source]
-      # convert to linux-style path before parsing filename
-      filename = @resource[:source].strip.tr(':', '/').split('/').last
+    return unless @resource[:source]
 
-      if filename =~ name_ver_arch_regex ||
-         filename =~ name_var_arch_regex_nx
-        @resource[:name] = Regexp.last_match(1)
-        @resource[:package_settings]['version'] = Regexp.last_match(2)
-        @resource[:platform] = Regexp.last_match(3)
-        debug "parsed name:#{Regexp.last_match(1)}, version:#{Regexp.last_match(2)}, arch:#{Regexp.last_match(3)}"
-      else
-        @resource.fail 'Could not parse name|version|arch from source: ' \
-          "#{@resource[:source]}"
-      end
-      # replace linux path with ios-style path
-      @resource[:source].gsub!(/^\/([^\/]+)\//, '\1:')
+    # convert to linux-style path before parsing filename
+    filename = @resource[:source].strip.tr(':', '/').split('/').last
+
+    if filename =~ name_ver_arch_regex ||
+       filename =~ name_var_arch_regex_nx
+      @resource[:name] = Regexp.last_match(1)
+      @resource[:package_settings]['version'] = Regexp.last_match(2)
+      @resource[:platform] = Regexp.last_match(3)
+      debug "parsed name:#{Regexp.last_match(1)}, version:#{Regexp.last_match(2)}, arch:#{Regexp.last_match(3)}"
+    else
+      @resource.fail 'Could not parse name|version|arch from source: ' \
+        "#{@resource[:source]}"
     end
+    # replace linux path with ios-style path
+    @resource[:source].gsub!(/^\/([^\/]+)\//, '\1:')
   end
 
   # helper to retrieve version info for installed package

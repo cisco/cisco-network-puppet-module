@@ -143,62 +143,62 @@ Puppet::Type.type(:cisco_ospf_vrf).provide(:nxapi) do
   end
 
   def auto_cost_set
-    @resource[:auto_cost] == :default ?
-      value = get_default_auto_cost_mbps :
+    if @resource[:auto_cost] == :default
+      value = get_default_auto_cost_mbps
+    else
       value = @resource[:auto_cost]
+    end
     @vrf.auto_cost_set(value, Cisco::RouterOspfVrf::OSPF_AUTO_COST[:mbps])
   end
 
   def timer_throttle_lsa_set
-    if @property_flush[:timer_throttle_lsa_start] ||
-       @property_flush[:timer_throttle_lsa_hold] ||
-       @property_flush[:timer_throttle_lsa_max]
+    return unless @property_flush[:timer_throttle_lsa_start] ||
+                  @property_flush[:timer_throttle_lsa_hold] ||
+                  @property_flush[:timer_throttle_lsa_max]
 
-      if @property_flush[:timer_throttle_lsa_start]
-        start = @property_flush[:timer_throttle_lsa_start]
-      else
-        start = @vrf.timer_throttle_lsa_start
-      end
-
-      if @property_flush[:timer_throttle_lsa_hold]
-        hold = @property_flush[:timer_throttle_lsa_hold]
-      else
-        hold = @vrf.timer_throttle_lsa_hold
-      end
-
-      if @property_flush[:timer_throttle_lsa_max]
-        max = @property_flush[:timer_throttle_lsa_max]
-      else
-        max = @vrf.timer_throttle_lsa_max
-      end
-      @vrf.timer_throttle_lsa_set(start, hold, max)
+    if @property_flush[:timer_throttle_lsa_start]
+      start = @property_flush[:timer_throttle_lsa_start]
+    else
+      start = @vrf.timer_throttle_lsa_start
     end
+
+    if @property_flush[:timer_throttle_lsa_hold]
+      hold = @property_flush[:timer_throttle_lsa_hold]
+    else
+      hold = @vrf.timer_throttle_lsa_hold
+    end
+
+    if @property_flush[:timer_throttle_lsa_max]
+      max = @property_flush[:timer_throttle_lsa_max]
+    else
+      max = @vrf.timer_throttle_lsa_max
+    end
+    @vrf.timer_throttle_lsa_set(start, hold, max)
   end
 
   def timer_throttle_spf_set
-    if @property_flush[:timer_throttle_spf_start] ||
-       @property_flush[:timer_throttle_spf_hold] ||
-       @property_flush[:timer_throttle_spf_max]
+    return unless @property_flush[:timer_throttle_spf_start] ||
+                  @property_flush[:timer_throttle_spf_hold] ||
+                  @property_flush[:timer_throttle_spf_max]
 
-      if @property_flush[:timer_throttle_spf_start]
-        start = @property_flush[:timer_throttle_spf_start]
-      else
-        start = @vrf.timer_throttle_spf_start
-      end
-
-      if @property_flush[:timer_throttle_spf_hold]
-        hold = @property_flush[:timer_throttle_spf_hold]
-      else
-        hold = @vrf.timer_throttle_spf_hold
-      end
-
-      if @property_flush[:timer_throttle_spf_max]
-        max = @property_flush[:timer_throttle_spf_max]
-      else
-        max = @vrf.timer_throttle_spf_max
-      end
-      @vrf.timer_throttle_spf_set(start, hold, max)
+    if @property_flush[:timer_throttle_spf_start]
+      start = @property_flush[:timer_throttle_spf_start]
+    else
+      start = @vrf.timer_throttle_spf_start
     end
+
+    if @property_flush[:timer_throttle_spf_hold]
+      hold = @property_flush[:timer_throttle_spf_hold]
+    else
+      hold = @vrf.timer_throttle_spf_hold
+    end
+
+    if @property_flush[:timer_throttle_spf_max]
+      max = @property_flush[:timer_throttle_spf_max]
+    else
+      max = @vrf.timer_throttle_spf_max
+    end
+    @vrf.timer_throttle_spf_set(start, hold, max)
   end
 
   def flush

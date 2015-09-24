@@ -207,10 +207,9 @@ Puppet::Type.type(:cisco_tacacs_server).provide(:nxapi) do
     end
     debug "type: #{encryption_type_value}, value #{encryption_pw_value}"
 
-    if encryption_pw_value
-      @tacacs_server.encryption_key_set(encryption_type_value,
-                                        encryption_pw_value)
-    end
+    return unless encryption_pw_value
+    @tacacs_server.encryption_key_set(encryption_type_value,
+                                      encryption_pw_value)
   end
 
   def flush

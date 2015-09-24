@@ -81,8 +81,8 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
       current_state[prop] = intf.send(prop)
     end
     INTF_BOOL_PROPS.each do |prop|
-      val = intf.send(prop)
-      current_state[prop] = val.nil? ? nil : (val ? :true : :false)
+      val = intf.send(prop) ? :true : :false
+      current_state[prop] = val.nil? ? nil : val
     end
     new(current_state)
   end # self.get_properties
@@ -138,23 +138,22 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
 
   def ipv4_addr_mask_set
     # Combo property: ipv4 address/mask
-    if @property_flush[:ipv4_address] ||
-       @property_flush[:ipv4_netmask_length] ||
-       @resource[:ipv4_address] == :default
+    return unless @property_flush[:ipv4_address] ||
+                  @property_flush[:ipv4_netmask_length] ||
+                  @resource[:ipv4_address] == :default
 
-      if @resource[:ipv4_address] == :default
-        addr = @interface.default_ipv4_address
-      else
-        addr = @resource[:ipv4_address]
-      end
-
-      if @resource[:ipv4_netmask_length] == :default
-        mask = @interface.default_ipv4_netmask_length
-      else
-        mask = @resource[:ipv4_netmask_length]
-      end
-      @interface.ipv4_addr_mask_set(addr, mask)
+    if @resource[:ipv4_address] == :default
+      addr = @interface.default_ipv4_address
+    else
+      addr = @resource[:ipv4_address]
     end
+
+    if @resource[:ipv4_netmask_length] == :default
+      mask = @interface.default_ipv4_netmask_length
+    else
+      mask = @resource[:ipv4_netmask_length]
+    end
+    @interface.ipv4_addr_mask_set(addr, mask)
   end
 
   # override vrf setter
