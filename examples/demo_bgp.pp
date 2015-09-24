@@ -99,6 +99,34 @@ class ciscopuppet::demo_bgp {
     next_hop_route_map                     => 'RouteMap',
   }
 
+  #---------------------------------------------------------------------------#
+  # Configure A BGP Neighbor
+  #---------------------------------------------------------------------------#
+  cisco_bgp_neighbor {'default':
+    ensure                                 => present,
+    asn                                    => 55.77,
+    vrf                                    => 'blue',
+    neighbor                               => '1.1.1.1',
+
+    #Properties
+    description                            => 'my description',
+    connected_check                        => true,
+    capability_negotiation                 => true,
+    dynamic_capability                     => true,
+    ebgp_multihop                          => 2,
+    local_as                               => 55.77,
+    log_neighbor_changes                   => disable,
+    low_memory_exempt                      => false,
+    remote_as                              => 12,
+    remove_private_as                      => 'all',
+    shutdown                               => true,
+    suppress_4_byte_as                     => true,
+    timers_keepalive                       => 90,
+    timers_holdtime                        => 270,
+    update_source                          => 'ethernet1/1',
+    transport_passive_only                 => false,
+  }
+
   # --------------------------------------------------------------------------#
   # Configure Neighbor-level Address Family IPv4 Unicast
   # --------------------------------------------------------------------------#
@@ -125,12 +153,37 @@ class ciscopuppet::demo_bgp {
     weight                                 => 30,
   }
 
+  # --------------------------------------------------------------------------#
+  # Configure A BGP Neighbor using title pattern
+  # --------------------------------------------------------------------------#
+  cisco_bgp_neighbor { '55.77 blue2 2.2.2.0/24':
+    ensure                                 => present,
+
+    #Properties
+    description                            => 'my description',
+    connected_check                        => true,
+    capability_negotiation                 => true,
+    dynamic_capability                     => true,
+    ebgp_multihop                          => 2,
+    local_as                               => 55.77,
+    log_neighbor_changes                   => disable,
+    low_memory_exempt                      => false,
+    remote_as                              => 12,
+    remove_private_as                      => 'all',
+    shutdown                               => true,
+    suppress_4_byte_as                     => true,
+    timers_keepalive                       => 90,
+    timers_holdtime                        => 270,
+    update_source                          => 'ethernet1/1',
+    maximum_peers                          => 2,
+  }
+
   # TBD: The following manifests need cisco_bgp_neighbor to define remote-as ***
   #
   # --------------------------------------------------------------------------#
   # Configure Neighbor-level Address Family IPv4 Unicast (eBgp-only)
   # --------------------------------------------------------------------------#
-  # cisco_bgp_neighbor_af { '55.77 blue2 2.2.2.2 ipv4 unicast':
+  # cisco_bgp_neighbor_af { '55.77 blue2 2.2.2.0/24 ipv4 unicast':
   #   ensure                               => present,
   #   as_override                          => true,
   # }

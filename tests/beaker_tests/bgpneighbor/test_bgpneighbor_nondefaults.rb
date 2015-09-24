@@ -31,7 +31,9 @@
 # TestCase:
 # ---------
 # This is a BGP Neighbor resource test that tests for non-default values of all
-# attributes when created with only 'ensure' => 'present'.
+# attributes except password and type when created with 'ensure' => 'present'.
+# Password and type attributes will be tested in another test case as they
+# don't support idempotent.
 #
 # The testcode checks for exit_codes from Puppet Agent, Vegas shell and
 # Bash shell command executions. For Vegas shell and Bash shell command

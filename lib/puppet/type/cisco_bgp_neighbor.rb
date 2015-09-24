@@ -178,16 +178,16 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
   ##############
   newproperty(:description) do
     desc "Description of the neighbor. Valid value is string."
-  end # property description
+  end
 
   newproperty(:connected_check) do
-    desc "Configure whether or not check for directly connected peer. Valid
+    desc "Configure whether or not to check for directly connected peer. Valid
           values are true or false"
     newvalues(:true, :false)
   end
 
   newproperty(:capability_negotiation) do
-    desc "Configure whether or not negotiate capability with this neighbor. 
+    desc "Configure whether or not to negotiate capability with this neighbor.
           Valid values are true or false"
     newvalues(:true, :false)
   end
@@ -214,8 +214,8 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
 
   newproperty(:local_as) do
     desc "Specify the local-as number for the eBGP neighbor. Valid values are 
-          String in ASPLAIN or ASDOT notation, integer, or 'default', which 
-          means do not configure it"
+          String or Integer in ASPLAIN or ASDOT notation, or 'default', which 
+          means not to configure it"
     validate do |value|
       begin
         Cisco::RouterBgp.process_asnum(value.to_s) unless value.to_s.to_sym == :default
@@ -267,7 +267,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
   end
 
   newproperty(:password) do
-    desc "Specifies the password for neighbor. Valid value is string, where an
+    desc "Specify the password for neighbor. Valid value is string, where an
           empty string means removing the password config"
 
     validate do |password|
@@ -277,7 +277,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
   end
 
   newparam(:password_type) do
-    desc "Specifies the encryption type that password will use.
+    desc "Specify the encryption type that password will use.
           Valid values are 'cleartext', '3des' or 'cisco_type_7' encryption,
           and 'default', which defaults to 'cleartext'."
 
@@ -293,9 +293,9 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
   end
 
   newproperty(:remote_as) do
-    desc "Specify the remote-as number for the eBGP neighbor. Valid values are
-          string in ASPLAIN or ASDOT notation, integer, or 'default', which
-          means do not configure it"
+    desc "Specify Autonomous System Number of the neighbor. Valid values are
+          String or Integer in ASPLAIN or ASDOT notation, or 'default', which
+          means not to configure it"
     validate do |value|
       begin
         Cisco::RouterBgp.process_asnum(value.to_s) unless value.to_s.to_sym == :default

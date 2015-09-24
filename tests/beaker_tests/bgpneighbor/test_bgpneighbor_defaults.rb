@@ -30,8 +30,8 @@
 #
 # TestCase:
 # ---------
-# This is a BGP Neighbor resource test that tests for default values of all
-# attributes when created with only 'ensure' => 'present'.
+# This is a BGP Neighbor resource test that tests for attribute default values
+# when created with 'ensure' => 'present'.
 #
 # The testcode checks for exit_codes from Puppet Agent, Vegas shell and
 # Bash shell command executions. For Vegas shell and Bash shell command
