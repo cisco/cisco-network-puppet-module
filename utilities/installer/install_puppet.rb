@@ -431,10 +431,10 @@ end
 package = options['package_url'] + options['package_name']
 
 # Keep track of failure information
-$failures = 0
-$failure_messages = []
-$exceptions = []
-$start_failures = 0
+failures = 0
+failure_messages = []
+exceptions = []
+start_failures = 0
 
 agents.each do |agent|
   begin
@@ -470,20 +470,20 @@ agents.each do |agent|
                 accept_all_exit_codes: true, pty: true
     if result.exit_code != 0
       logger.warn "AGENT: #{agent} did not start properly. Check logs for details"
-      $start_failures += 1
+      start_failures += 1
     end
 
   rescue StandardError => e
-    $failure_messages[$failures] = "BOOTSTRAP OF AGENT #{agent} FAILED"
-    $exceptions[$failures] = "AGENT: #{agent} Exception \n #{e.message}"
-    $failures += 1
+    failure_messages[failures] = "BOOTSTRAP OF AGENT #{agent} FAILED"
+    exceptions[failures] = "AGENT: #{agent} Exception \n #{e.message}"
+    failures += 1
     next
   end
 end
 
 def report_results
-  total_passed = agents.size - $failures
-  total_failed = $failures
+  total_passed = agents.size - failures
+  total_failed = failures
   total_agents = agents.size
 
   report = %(
@@ -498,19 +498,19 @@ def report_results
   install_report = %{
   WARNING:
     Attempt to start the puppet agent using 'puppet agent -t'
-    resulted in a non-zero exit code on (#{$start_failures}) agents.
+    resulted in a non-zero exit code on (#{start_failures}) agents.
 
     Check logs above for details
   }
 
   logger.notify report
-  logger.notify install_report if $start_failures > 0
+  logger.notify install_report if start_failures > 0
 
-  $failure_messages.each do |note|
+  failure_messages.each do |note|
     logger.warn "#{note}"
   end
 
-  $exceptions.each do |exception|
+  exceptions.each do |exception|
     logger.debug "#{exception}"
   end
 
@@ -519,5 +519,5 @@ def report_results
 end
 
 report_results
-assert_equal(0, $failures,
-             "** Failed to bootstrap (#{$failures}) of (#{agents.size}) agents **")
+assert_equal(0, failures,
+             "** Failed to bootstrap (#{failures}) of (#{agents.size}) agents **")

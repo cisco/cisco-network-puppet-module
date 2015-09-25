@@ -45,12 +45,6 @@ Style/AccessorMethodName:
     - 'lib/puppet/provider/package/nxapi.rb'
     - 'utilities/installer/install_puppet.rb'
 
-# Offense count: 18
-# Configuration parameters: AllowedVariables.
-Style/GlobalVars:
-  Exclude:
-    - 'utilities/installer/install_puppet.rb'
-
 # Offense count: 34
 # Configuration parameters: EnforcedStyle, SupportedStyles, AllowInnerSlashes.
 Style/RegexpLiteral:
