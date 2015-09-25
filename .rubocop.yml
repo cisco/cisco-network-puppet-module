@@ -25,3 +25,7 @@ Style/TrailingComma:
 
 Style/FormatString:
   EnforcedStyle: sprintf
+
+Style/Documentation:
+  Exclude:
+    - 'tests/**/*.rb'
