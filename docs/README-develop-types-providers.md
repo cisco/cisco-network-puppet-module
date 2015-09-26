@@ -4,10 +4,10 @@
 
 * [Overview](#overview)
 * [Start here: Clone the Repo](#clone)
-* [Basic Example: feature bash-shell](#simp_example)
-   * [Step 1. Type: feature bash-shell](#simp_type)
-   * [Step 2. Provider: feature bash-shell](#simp_prov)
-   * [Step 3. Testing: feature bash-shell](#simp_test)
+* [Basic Example: feature tunnel](#simp_example)
+   * [Step 1. Type: feature tunnel](#simp_type)
+   * [Step 2. Provider: feature tunnel](#simp_prov)
+   * [Step 3. Testing: feature tunnel](#simp_test)
    * [Static Analysis](#simp_sa)
 * [Complex Example: router eigrp](#comp_example)
    * [Step 1. Type: router eigrp](#comp_type)
@@ -30,7 +30,7 @@ There are multiple components involved when creating new resources. This documen
 
 * The types and providers work in conjunction with a node\_utils API, which is the interface between Puppet agent and the NX-OS CLI. Please see the [README-develop-node-utils-APIs.md] (https://github.com/cisco/cisco-network-node-utils/blob/master/docs/README-develop-node-utils-APIs.md) guide for more information on writing node_utils APIs.
 
-This document relies heavily on example code. The examples in this document can be written independently, but they are intended to work in conjuction with the example node_utils APIs created in the [README-develop-node_utils-APIs.md](https://github.com/cisco/cisco-network-node-utils/blob/master/docs/README-develop-node-utils-APIs.md) guide. The examples in that guide are based on code templates for the `feature bash-shell` CLI and the `router eigrp` CLI. Note that some people prefer to write the node_utils API before the resource types and providers, while others might prefer the opposite workflow.
+This document relies heavily on example code. The examples in this document can be written independently, but they are intended to work in conjuction with the example node_utils APIs created in the [README-develop-node_utils-APIs.md](https://github.com/cisco/cisco-network-node-utils/blob/master/docs/README-develop-node-utils-APIs.md) guide. The examples in that guide are based on code templates for the `feature tunnel` CLI and the `router eigrp` CLI. Note that some people prefer to write the node_utils API before the resource types and providers, while others might prefer the opposite workflow.
 
 ## <a name="clone">Start here: Clone the Repo</a>
 
@@ -42,38 +42,38 @@ First install the code base. Clone the ciscopuppet repo into a workspace:
 git clone https://github.com/cisco/cisco-network-puppet-module.git
 ~~~
 
-## <a name="simp_example">Basic Example: feature bash-shell</a>
+## <a name="simp_example">Basic Example: feature tunnel</a>
 
-The NX-OS CLI for `feature bash-shell` is a simple on / off style configuration:
+The NX-OS CLI for `feature tunnel` is a simple on / off style configuration:
 
-`[no] feature bash-shell`
+`[no] feature tunnel`
 
 This resource has no other properties.
 
-*Note. This example disables the bash-shell, so use the guestshell environment when testing.*
+*Note. This example disables the tunnel, so use the guestshell environment when testing.*
 
-## <a name="simp_type">Step 1. Type: feature bash-shell</a>
+## <a name="simp_type">Step 1. Type: feature tunnel</a>
 
-* There are template files in `/docs` that might help when you write new types and providers. These templates provide most of the necessary code with a few customizations required for a new resource. Copy the `template-type-feature.rb` file to use as the basis for our new `cisco_bash_shell.rb` type file:
+* There are template files in `/docs` that might help when you write new types and providers. These templates provide most of the necessary code with a few customizations required for a new resource. Copy the `template-type-feature.rb` file to use as the basis for our new `cisco_tunnel.rb` type file:
 
 ~~~bash
 cp  cisco-ciscopuppet/docs/template-type-feature.rb \
-    cisco-ciscopuppet/lib/puppet/type/cisco_bash_shell.rb
+    cisco-ciscopuppet/lib/puppet/type/cisco_tunnel.rb
 ~~~
 
-* Edit `cisco_bash_shell.rb` and substitute the placeholder text as shown here:
+* Edit `cisco_tunnel.rb` and substitute the placeholder text as shown here:
 
 ~~~bash
-/X__RESOURCE_NAME__X/bash_shell/
+/X__RESOURCE_NAME__X/tunnel/
 ~~~
 
-#### Example: cisco_bash_shell.rb type file
+#### Example: cisco_tunnel.rb type file
 
-This is the completed bash_shell resource type based on `template-type-feature.rb`:
+This is the completed tunnel resource type based on `template-type-feature.rb`:
 
 ~~~puppet
 #
-# Puppet resource type for feature bash_shell
+# Puppet resource type for feature tunnel
 #
 # Copyright (c) 2014-2015 Cisco and/or its affiliates.
 #
@@ -89,12 +89,12 @@ This is the completed bash_shell resource type based on `template-type-feature.r
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Puppet::Type.newtype(:bash_shell) do
+Puppet::Type.newtype(:tunnel) do
 
-  @doc = "Manages configuration of feature bash-shell
+  @doc = "Manages configuration of feature tunnel
 
     ~~~
-  cisco_bash_shell {'<title>':
+  cisco_tunnel {'<title>':
     ..attributes..
   }
     ~~~
@@ -102,7 +102,7 @@ Puppet::Type.newtype(:bash_shell) do
   Example:
 
      ~~~
-    cisco_bash_shell {'xxxxx' :
+    cisco_tunnel {'xxxxx' :
       ensure => present,
     }
      ~~~
@@ -118,31 +118,31 @@ Puppet::Type.newtype(:bash_shell) do
 end
 ~~~
 
-## <a name="simp_prov">Step 2. Provider: feature bash-shell</a>
+## <a name="simp_prov">Step 2. Provider: feature tunnel</a>
 
-* The provider files for Cisco NX-OS are named nxapi.rb and are each stored in a unique provider directory. Create a new directory for the bash_shell provider and use `template-provider-feature.rb` to populate the new provider file:
+* The provider files for Cisco NX-OS are named nxapi.rb and are each stored in a unique provider directory. Create a new directory for the tunnel provider and use `template-provider-feature.rb` to populate the new provider file:
 
 ~~~bash
-mkdir  cisco-ciscopuppet/lib/puppet/provider/cisco_bash_shell
+mkdir  cisco-ciscopuppet/lib/puppet/provider/cisco_tunnel
 
 cp  cisco-ciscopuppet/docs/template-provider-feature.rb \
-       cisco-ciscopuppet/lib/puppet/provider/cisco_bash_shell/nxapi.rb
+       cisco-ciscopuppet/lib/puppet/provider/cisco_tunnel/nxapi.rb
 ~~~
 
 * Edit `nxapi.rb` and substitute the placeholder text as shown here:
 
 ~~~bash
-/X__RESOURCE_NAME__X/bash_shell/
+/X__RESOURCE_NAME__X/tunnel/
 
-/X__CLASS_NAME__X/BashShell/
+/X__CLASS_NAME__X/Tunnel/
 ~~~
 
-#### Example: cisco_bash_shell.rb provider file
+#### Example: cisco_tunnel.rb provider file
 
-This is the completed bash_shell provider based on `template-provider-feature.rb`:
+This is the completed tunnel provider based on `template-provider-feature.rb`:
 
 ~~~puppet
-:Type.type(:cisco_bash_shell).provide(:nxapi) do
+:Type.type(:cisco_tunnel).provide(:nxapi) do
 
   confine :feature => :cisco_node_utils
 
@@ -155,7 +155,7 @@ This is the completed bash_shell provider based on `template-provider-feature.rb
 
   def self.instances
     inst = []
-    return inst unless Cisco::BashShell.feature_enabled
+    return inst unless Cisco::Tunnel.feature_enabled
     current_state = { :name => 'default', :ensure => :present}
     inst << new(current_state)
     return inst
@@ -181,31 +181,31 @@ This is the completed bash_shell provider based on `template-provider-feature.rb
   def flush
     case @property_flush[:ensure]
     when :present
-      Cisco::BashShell.new.feature_enable
+      Cisco::Tunnel.new.feature_enable
     when :absent
-      Cisco::BashShell.new.feature_disable
+      Cisco::Tunnel.new.feature_disable
     end
   end
 
 end
 ~~~
 
-## <a name="simp_test">Step 3. Testing: feature bash-shell</a>
+## <a name="simp_test">Step 3. Testing: feature tunnel</a>
 
 Test the new resource using the guestshell environment. See [README-agent-install.md](README-agent-install.md) for using Puppet agent in guestshell.
 
 * Create a manifest for the new resource:
 
 ~~~puppet
-cisco_bash_shell { 'bash_on' :
+cisco_tunnel { 'tunnel_on' :
   ensure => present,
 }
 ~~~
 
-* Manually check that the state of the resource is disabled on the switch. In this case the NX-OS CLI config is not present when feature bash-shell is disabled.
+* Manually check that the state of the resource is disabled on the switch. In this case the NX-OS CLI config is not present when feature tunnel is disabled.
 
 ~~~
-n3k# sh run | i 'feature bash'
+n3k# sh run | i 'feature tunnel'
 n3k#
 ~~~
 
@@ -220,22 +220,22 @@ Info: Retrieving plugin
 Info: Loading facts
 Info: Caching catalog for n3k.cisco.com
 Info: Applying configuration version '1438270388'
-Notice: /Stage[main]/Main/Node[n3k]/Cisco_bash_shell[bash_on]/ensure: created
+Notice: /Stage[main]/Main/Node[n3k]/Cisco_tunnel[tunnel_on]/ensure: created
 Notice: Applied catalog in 0.26 seconds
 ~~~
 
 * Check state on the switch again:
 
 ~~~
-n3k# sh run | i 'feature bash'
-feature bash-shell
+n3k# sh run | i 'feature tunnel'
+feature tunnel
 ~~~
 
 * We now have the expected state. Next, test the Puppet resource command while the feature is still enabled:
 
 ~~~
-[root@guestshell guestshell]# puppet resource cisco_bash_shell
-cisco_bash_shell { 'default':
+[root@guestshell guestshell]# puppet resource cisco_tunnel
+cisco_tunnel { 'default':
   ensure => 'present',
 }
 ~~~
@@ -244,14 +244,14 @@ cisco_bash_shell { 'default':
 * Change the manifest to ensure => absent to disable the state, then repeat the tests:
 
 ~~~puppet
-cisco_bash_shell { 'bash_off' :
+cisco_tunnel { 'tunnel_off' :
   ensure => absent,
 }
 ~~~
 
 ~~~
-n3k# sh run | i 'feature bash'
-feature bash-shell
+n3k# sh run | i 'feature tunnel'
+feature tunnel
 ~~~
 ~~~
 [root@guestshell guestshell]# puppet agent -t
@@ -260,15 +260,15 @@ Info: Retrieving plugin
 Info: Loading facts
 Info: Caching catalog for n3k.cisco.com
 Info: Applying configuration version '1438270530'
-Notice: /Stage[main]/Main/Node[n3k]/Cisco_bash_shell[bash_off]/ensure: removed
+Notice: /Stage[main]/Main/Node[n3k]/Cisco_tunnel[tunnel_off]/ensure: removed
 Notice: Applied catalog in 0.35 seconds
 ~~~
 ~~~
-n3k# sh run | i 'feature bash'
+n3k# sh run | i 'feature tunnel'
 n3k#
 ~~~
 ~~~
-[root@guestshell guestshell]# puppet resource cisco_bash_shell
+[root@guestshell guestshell]# puppet resource cisco_tunnel
 
  (a blank response is correct here)
 ~~~
@@ -276,9 +276,9 @@ n3k#
 * `puppet resource` can also be used for testing changes to provider states. This method is often easier and doesn't require a manifest:
 
 ~~~puppet
-puppet resource cisco_bash_shell 'test_on' ensure=present
+puppet resource cisco_tunnel 'test_on' ensure=present
 
-puppet resource cisco_bash_shell 'test_off' ensure=absent
+puppet resource cisco_tunnel 'test_off' ensure=absent
 ~~~
 
 
@@ -287,7 +287,7 @@ puppet resource cisco_bash_shell 'test_off' ensure=absent
 * rubocop is a Ruby static analysis tool. Run [rubocop](https://rubygems.org/gems/rubocop) to validate the new code:
 
 ~~~bash
-% rubocop type/cisco_bash_feature.rb  provider/cisco_bash_feature/nxapi.rb
+% rubocop type/cisco_tunnel.rb  provider/cisco_tunnel/nxapi.rb
 Inspecting 2 files
 ..
 
