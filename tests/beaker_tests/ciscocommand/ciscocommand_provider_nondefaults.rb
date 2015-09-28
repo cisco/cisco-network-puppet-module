@@ -89,8 +89,8 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface ethernet1/2')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/description This is the new interface config/,
-                                           /switchport access vlan 100/],
+                                          [%r{description This is the new interface config},
+                                           %r{switchport access vlan 100}],
                                           false, self, logger)
     end
 

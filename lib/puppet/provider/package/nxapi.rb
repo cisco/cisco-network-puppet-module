@@ -85,13 +85,13 @@ Puppet::Type.type(:package).provide :nxapi, parent: :yum do
   # local repository
   def normalize_resource
     # ex: chef-12.0.0alpha.2+20150319.git.1.b6f-1.el5.x86_64.rpm
-    name_ver_arch_regex = /^([\w\-\+]+)-(\d+\..*)\.(\w{4,})(?:\.rpm)?$/
+    name_ver_arch_regex = %r{^([\w\-\+]+)-(\d+\..*)\.(\w{4,})(?:\.rpm)?$}
 
     # ex n9000-dk9.LIBPROCMIBREST-1.0.0-7.0.3.x86_64.rpm
-    name_var_arch_regex_nx = /^(.*)-([\d\.]+-[\d\.]+)\.(\w{4,})\.rpm$/
+    name_var_arch_regex_nx = %r{^(.*)-([\d\.]+-[\d\.]+)\.(\w{4,})\.rpm$}
 
     # ex: b+z-ip2.x64_64
-    name_arch_regex = /^([\w\-\+]+)\.(\w+)$/
+    name_arch_regex = %r{^([\w\-\+]+)\.(\w+)$}
 
     if @resource[:name] =~ name_arch_regex
       @resource[:name] = Regexp.last_match(1)
@@ -115,7 +115,7 @@ Puppet::Type.type(:package).provide :nxapi, parent: :yum do
         "#{@resource[:source]}"
     end
     # replace linux path with ios-style path
-    @resource[:source].gsub!(/^\/([^\/]+)\//, '\1:')
+    @resource[:source].gsub!(%r{^\/([^\/]+)\/}, '\1:')
   end
 
   # helper to retrieve version info for installed package
@@ -156,7 +156,7 @@ Puppet::Type.type(:package).provide :nxapi, parent: :yum do
 
   def in_guestshell?
     # update this to more robust fact when new facter facts are implemented
-    Facter.value(:virtual) =~ /lxc/
+    Facter.value(:virtual) =~ %r{lxc}
     true # temporarily force use of NXAPI if using target->host in native
   end
 
@@ -171,7 +171,7 @@ Puppet::Type.type(:package).provide :nxapi, parent: :yum do
     else
       debug 'Not Guestshell + target=>host, use native yum provider for install'
       # replace bootflash:path with /bootflash/path for native env
-      @resource[:source].gsub!(/^([^\/]+):\/?/, '/\1/') if @resource[:source]
+      @resource[:source].gsub!(%r{^([^\/]+):\/?}, '/\1/') if @resource[:source]
       super
     end
   end

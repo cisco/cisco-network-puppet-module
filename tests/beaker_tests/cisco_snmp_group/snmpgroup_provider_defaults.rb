@@ -78,11 +78,11 @@ test_name "TestCase :: #{testheader}" do
     on(agent, cmd_str) do
       # Flag is set to false to check for presence of RegExp pattern in stdout.
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/Role: *network-admin/],
+                                          [%r{Role: *network-admin}],
                                           false, self, logger)
       # Flag is set to true to check for absence of RegExp pattern in stdout.
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/Role: *foobar/],
+                                          [%r{Role: *foobar}],
                                           true, self, logger)
     end
     logger.info("Setup switch for provider test :: #{result}")
@@ -133,11 +133,11 @@ test_name "TestCase :: #{testheader}" do
     on(agent, cmd_str) do
       # Flag is set to false to check for presence of RegExp pattern in stdout.
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/Role: *network-admin/],
+                                          [%r{Role: *network-admin}],
                                           false, self, logger)
       # Flag is set to true to check for absence of RegExp pattern in stdout.
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/Role: *foobar/],
+                                          [%r{Role: *foobar}],
                                           true, self, logger)
     end
 

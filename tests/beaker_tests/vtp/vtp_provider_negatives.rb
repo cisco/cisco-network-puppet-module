@@ -75,7 +75,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config vtp')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/feature vtp/],
+                                          [%r{feature vtp}],
                                           true, self, logger)
     end
 
@@ -117,7 +117,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config vtp')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/vtp domain #{VtpLib::DOMAIN_NEGATIVE}/],
+                                          [%r{vtp domain #{VtpLib::DOMAIN_NEGATIVE}}],
                                           true, self, logger)
     end
 
@@ -159,7 +159,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config vtp')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/vtp filename #{VtpLib::FILENAME_NEGATIVE}/],
+                                          [%r{vtp filename #{VtpLib::FILENAME_NEGATIVE}}],
                                           true, self, logger)
     end
 
@@ -201,7 +201,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config vtp')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/vtp password #{VtpLib::PASSWORD_NEGATIVE}/],
+                                          [%r{vtp password #{VtpLib::PASSWORD_NEGATIVE}}],
                                           true, self, logger)
     end
 
@@ -243,7 +243,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config vtp')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/vtp version #{VtpLib::VERSION_NEGATIVE}/],
+                                          [%r{vtp version #{VtpLib::VERSION_NEGATIVE}}],
                                           true, self, logger)
     end
 

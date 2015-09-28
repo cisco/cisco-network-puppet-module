@@ -92,7 +92,7 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     Cisco::Interface.interfaces.each do |interface_name, intf|
       begin
         # Not allowed to create an interface for mgmt0
-        next if interface_name.match(/mgmt0/)
+        next if interface_name.match(%r{mgmt0})
         interfaces << get_properties(interface_name, intf)
       end
     end

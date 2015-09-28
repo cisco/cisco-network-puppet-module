@@ -75,7 +75,7 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd('show running-config section ospf')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [/feature ospf/],
+      UtilityLib.search_pattern_in_output(stdout, [%r{feature ospf}],
                                           true, self, logger)
     end
 
@@ -117,7 +117,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config ospf')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/ip ospf cost #{OspfIntfLib::COST_NEGATIVE}/],
+                                          [%r{ip ospf cost #{OspfIntfLib::COST_NEGATIVE}}],
                                           true, self, logger)
     end
 
@@ -164,7 +164,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config ospf')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/ip ospf hello-interval #{OspfIntfLib::HELLOINTERVAL_NEGATIVE}/],
+                                          [%r{ip ospf hello-interval #{OspfIntfLib::HELLOINTERVAL_NEGATIVE}}],
                                           true, self, logger)
     end
 
@@ -211,7 +211,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config ospf')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/ip ospf dead-interval #{OspfIntfLib::DEADINTERVAL_NEGATIVE}/],
+                                          [%r{ip ospf dead-interval #{OspfIntfLib::DEADINTERVAL_NEGATIVE}}],
                                           true, self, logger)
     end
 
@@ -258,7 +258,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config ospf')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/ip ospf passive-interface #{OspfIntfLib::PASSIVEINTF_NEGATIVE}/],
+                                          [%r{ip ospf passive-interface #{OspfIntfLib::PASSIVEINTF_NEGATIVE}}],
                                           true, self, logger)
     end
 

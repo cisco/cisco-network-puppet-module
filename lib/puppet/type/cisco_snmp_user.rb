@@ -63,7 +63,7 @@ Puppet::Type.newtype(:cisco_snmp_user) do
 
     # Below pattern matches both parts of the full composite name.
     patterns << [
-      /^(\S+)\s+??(\S+)?\s+??$/,
+      %r{^(\S+)\s+??(\S+)?\s+??$},
       [
         [:user, identity],
         [:engine_id, identity2],
@@ -84,7 +84,7 @@ Puppet::Type.newtype(:cisco_snmp_user) do
   newparam(:user, namevar: true) do
     desc 'Name of the SNMP user. Valid values are string.'
     validate do |user|
-      if /^(\w+)\s*$/.match(user).nil?
+      if %r{^(\w+)\s*$}.match(user).nil?
         fail 'user must be string of word characters'
       end
     end
@@ -95,7 +95,7 @@ Puppet::Type.newtype(:cisco_snmp_user) do
     octets seprated by colon."
     validate do |engine_id|
       id = engine_id.strip
-      pattern = /([0-9]{1,3}(?::[0-9]{1,3}){4,31})?\s+??$/
+      pattern = %r{([0-9]{1,3}(?::[0-9]{1,3}){4,31})?\s+??$}
       if !id.empty? && pattern.match(id)[1].nil?
         fail 'Engine ID should be either empty string or 5 to 32 octets separated by colon'
       end

@@ -76,7 +76,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/snmp-server community test group network-operator/],
+                                          [%r{snmp-server community test group network-operator}],
                                           true, self, logger)
     end
 
@@ -118,7 +118,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/snmp-server community test group #{SnmpCommLib::GROUP_NEGATIVE}/],
+                                          [%r{snmp-server community test group #{SnmpCommLib::GROUP_NEGATIVE}}],
                                           true, self, logger)
     end
 
@@ -160,7 +160,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/snmp-server community test use-acl #{SnmpCommLib::ACL_NEGATIVE}/],
+                                          [%r{snmp-server community test use-acl #{SnmpCommLib::ACL_NEGATIVE}}],
                                           true, self, logger)
     end
 

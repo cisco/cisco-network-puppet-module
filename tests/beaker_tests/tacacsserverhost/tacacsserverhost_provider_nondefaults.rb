@@ -83,7 +83,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/feature tacacs\+/],
+                                          [%r{feature tacacs\+}],
                                           true, self, logger)
     end
 
@@ -128,7 +128,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/tacacs\-server host samplehost1 key 7 "test123" port 90 timeout 39/],
+                                          [%r{tacacs\-server host samplehost1 key 7 "test123" port 90 timeout 39}],
                                           false, self, logger)
     end
 
@@ -173,7 +173,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/tacacs\-server host samplehost1 key 7 "test123" port 90 timeout 39/],
+                                          [%r{tacacs\-server host samplehost1 key 7 "test123" port 90 timeout 39}],
                                           true, self, logger)
     end
 

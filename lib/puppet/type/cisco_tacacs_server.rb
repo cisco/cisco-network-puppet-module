@@ -51,7 +51,7 @@ Puppet::Type.newtype(:cisco_tacacs_server) do
 
     # Below pattern matches both parts of the full composite name.
     patterns << [
-      /^(\S+)$/,
+      %r{^(\S+)$},
       [
         [:name, identity],
       ],

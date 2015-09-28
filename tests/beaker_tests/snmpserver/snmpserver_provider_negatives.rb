@@ -81,7 +81,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/snmp-server user admin network-admin auth md5/],
+                                          [%r{snmp-server user admin network-admin auth md5}],
                                           false, self, logger)
     end
 
@@ -123,7 +123,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/snmp-server packetsize #{SnmpServerLib::PACKETSIZE_NEGATIVE}/],
+                                          [%r{snmp-server packetsize #{SnmpServerLib::PACKETSIZE_NEGATIVE}}],
                                           true, self, logger)
     end
 
@@ -165,7 +165,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/snmp-server aaa-user cache-timeout #{SnmpServerLib::AAATIMEOUT_NEGATIVE}/],
+                                          [%r{snmp-server aaa-user cache-timeout #{SnmpServerLib::AAATIMEOUT_NEGATIVE}}],
                                           true, self, logger)
     end
 
@@ -207,7 +207,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/snmp-server tcp_session_auth #{SnmpServerLib::TCPAUTH_NEGATIVE}/],
+                                          [%r{snmp-server tcp_session_auth #{SnmpServerLib::TCPAUTH_NEGATIVE}}],
                                           true, self, logger)
     end
 
@@ -249,7 +249,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/snmp-server protocol #{SnmpServerLib::PROTOCOL_NEGATIVE}/],
+                                          [%r{snmp-server protocol #{SnmpServerLib::PROTOCOL_NEGATIVE}}],
                                           true, self, logger)
     end
 
@@ -291,7 +291,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/snmp-server global_enforce_priv #{SnmpServerLib::GLOBALPRIV_NEGATIVE}/],
+                                          [%r{snmp-server global_enforce_priv #{SnmpServerLib::GLOBALPRIV_NEGATIVE}}],
                                           true, self, logger)
     end
 

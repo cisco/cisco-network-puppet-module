@@ -56,7 +56,7 @@ Puppet::Type.newtype(:cisco_X__RESOURCE_NAME__X) do
 
     # Below pattern matches the resource name.
     patterns << [
-      /^(\S+)$/,
+      %r{^(\S+)$},
       [
         [:name, identity],
       ],

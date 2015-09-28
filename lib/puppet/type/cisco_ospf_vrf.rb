@@ -56,7 +56,7 @@ Puppet::Type.newtype(:cisco_ospf_vrf) do
 
     # Below pattern matches both parts of the full composite name.
     patterns << [
-      /^(\S+) (\S+)$/,
+      %r{^(\S+) (\S+)$},
       [
         [:ospf, identity],
         [:vrf, identity],

@@ -131,9 +131,9 @@ test_name "TestCase :: #{testheader}" do
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
                                           [
-                                            /ip address 192.168.1.1\/16/,
-                                            /shutdown/,
-                                            /vrf member test1/,
+                                            %r{ip address 192.168.1.1\/16},
+                                            %r{shutdown},
+                                            %r{vrf member test1},
                                           ],
                                           false, self, logger)
     end
@@ -186,9 +186,9 @@ test_name "TestCase :: #{testheader}" do
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
       UtilityLib.search_pattern_in_output(stdout,
                                           [
-                                            /ip address 192.168.1.1\/16/,
-                                            /shutdown/,
-                                            /vrf member test1/,
+                                            %r{ip address 192.168.1.1\/16},
+                                            %r{shutdown},
+                                            %r{vrf member test1},
                                           ],
                                           true, self, logger)
     end

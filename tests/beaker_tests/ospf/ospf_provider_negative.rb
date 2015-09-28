@@ -73,7 +73,7 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd('show running-config section ospf')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [/feature ospf/],
+      UtilityLib.search_pattern_in_output(stdout, [%r{feature ospf}],
                                           true, self, logger)
     end
 
@@ -113,7 +113,7 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd('show running-config section ospf')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [/router ospf green/],
+      UtilityLib.search_pattern_in_output(stdout, [%r{router ospf green}],
                                           true, self, logger)
     end
 

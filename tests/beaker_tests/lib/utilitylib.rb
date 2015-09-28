@@ -54,7 +54,7 @@ module UtilityLib
   # command string for 'cisco' platform.
   def self.get_namespace_cmd(host, cmdstr, options)
     case host['platform']
-    when /cisco/
+    when %r{cisco}
       agentvrf = options[:HOSTS][host.to_s.to_sym]['vrf']
       return "sudo ip netns exec #{agentvrf} " + cmdstr
     else

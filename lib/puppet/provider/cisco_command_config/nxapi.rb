@@ -51,7 +51,7 @@ Puppet::Type.type(:cisco_command_config).provide(:nxapi) do
         manifest_hash.configuration)
     debug "Manifest:\n>#{manifest_config_str}<"
 
-    if existing_str.gsub(/^ *| *$/, '').include?(manifest_config_str)
+    if existing_str.gsub(%r{^ *| *$}, '').include?(manifest_config_str)
       debug 'Current running-config already satisfies manifest'
       @property_hash[:command] = @resource[:command]
     else

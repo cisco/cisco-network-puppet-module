@@ -78,7 +78,7 @@ Puppet::Type.newtype(:cisco_command_config) do
 
     # Below pattern matches the instance name.
     patterns << [
-      /^(\S+)$/,
+      %r{^(\S+)$},
       [
         [:name, identity],
       ],
@@ -101,9 +101,9 @@ Puppet::Type.newtype(:cisco_command_config) do
       # split off into validate function
       fail('Unrecognized input format.') unless value.class == String
       value << "\n"
-      value.gsub!(/^\s*$\n/, '')
-      indent_level = value.match(/\A\s*/)
-      value.gsub!(/^(#{indent_level})/, '') # remove extra indentation
+      value.gsub!(%r{^\s*$\n}, '')
+      indent_level = value.match(%r{\A\s*})
+      value.gsub!(%r{^(#{indent_level})}, '') # remove extra indentation
     end # validate
   end # property command
 end # Puppet::Type.newtype

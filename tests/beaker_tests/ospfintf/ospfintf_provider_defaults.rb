@@ -77,7 +77,7 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd('show running-config section ospf')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [/feature ospf/],
+      UtilityLib.search_pattern_in_output(stdout, [%r{feature ospf}],
                                           true, self, logger)
     end
 
@@ -136,11 +136,11 @@ test_name "TestCase :: #{testheader}" do
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
                                           [
-                                            /router ospf test/,
-                                            /interface Ethernet1\/4/,
-                                            /ip ospf cost 1/,
-                                            /ip ospf dead-interval 40/,
-                                            /ip router ospf test area 0.0.0.1/,
+                                            %r{router ospf test},
+                                            %r{interface Ethernet1\/4},
+                                            %r{ip ospf cost 1},
+                                            %r{ip ospf dead-interval 40},
+                                            %r{ip router ospf test area 0.0.0.1},
                                           ],
                                           false, self, logger)
     end
@@ -190,11 +190,11 @@ test_name "TestCase :: #{testheader}" do
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
       UtilityLib.search_pattern_in_output(stdout,
                                           [
-                                            /router ospf test/,
-                                            /interface Ethernet1\/4/,
-                                            /ip ospf cost 1/,
-                                            /ip ospf dead-interval 40/,
-                                            /ip router ospf test area 0.0.0.1/,
+                                            %r{router ospf test},
+                                            %r{interface Ethernet1\/4},
+                                            %r{ip ospf cost 1},
+                                            %r{ip ospf dead-interval 40},
+                                            %r{ip router ospf test area 0.0.0.1},
                                           ],
                                           true, self, logger)
     end
