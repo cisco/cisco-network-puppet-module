@@ -29,3 +29,6 @@ Style/FormatString:
 Style/Documentation:
   Exclude:
     - 'tests/**/*.rb'
+
+Style/Next:
+  Enabled: false

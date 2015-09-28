@@ -49,6 +49,3 @@ Style/AccessorMethodName:
 # Configuration parameters: EnforcedStyle, SupportedStyles, AllowInnerSlashes.
 Style/RegexpLiteral:
   Enabled: false
-
-Style/Next:
-  Enabled: false
