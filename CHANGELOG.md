@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.2] - 2015-09-28
+### Fixed
+- Updated documentation links to reflect that the repo and agent RPM packages have had their platform renamed from 'nxos' to 'cisco-wrlinux'.
+
 ## [1.0.1] - 2015-09-18
 ### Fixed
 - Fixed broken documentation links
