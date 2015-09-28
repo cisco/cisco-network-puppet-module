@@ -89,12 +89,11 @@ Puppet::Type.type(:cisco_vtp).provide(:nxapi) do
 
   def property_set(new_vtp=false)
     VTP_ALL_PROPS.each do |prop|
-      if @resource[prop]
-        send("#{prop}=", @resource[prop]) if new_vtp
-        unless @property_flush[prop].nil?
-          @vtp.send("#{prop}=", @property_flush[prop]) if
-            @vtp.respond_to?("#{prop}=")
-        end
+      next unless @resource[prop]
+      send("#{prop}=", @resource[prop]) if new_vtp
+      unless @property_flush[prop].nil?
+        @vtp.send("#{prop}=", @property_flush[prop]) if
+          @vtp.respond_to?("#{prop}=")
       end
     end
   end

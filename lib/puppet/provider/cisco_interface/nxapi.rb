@@ -125,12 +125,11 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
 
   def property_set(new_interface=false)
     INTF_ALL_PROPS.each do |prop|
-      if @resource[prop]
-        send("#{prop}=", @resource[prop]) if new_interface
-        unless @property_flush[prop].nil?
-          @interface.send("#{prop}=", @property_flush[prop]) if
-            @interface.respond_to?("#{prop}=")
-        end
+      next unless @resource[prop]
+      send("#{prop}=", @resource[prop]) if new_interface
+      unless @property_flush[prop].nil?
+        @interface.send("#{prop}=", @property_flush[prop]) if
+          @interface.respond_to?("#{prop}=")
       end
     end
     ipv4_addr_mask_set

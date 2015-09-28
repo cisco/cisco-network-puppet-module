@@ -112,17 +112,13 @@ Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:nxapi) do
 
   def property_set(new_instance=false)
     X__CONSTANT_NAME__X_ALL_PROPS.each do |prop|
-      if @resource[prop]
-        if new_instance
-          # Call puppet setter to set @property_flush[prop]
-          send("#{prop}=", @resource[prop])
-        end
-        unless @property_flush[prop].nil?
-          # Call node_utils setter to update node
-          @X__RESOURCE_NAME__X.send("#{prop}=", @property_flush[prop]) if
-            @X__RESOURCE_NAME__X.respond_to?("#{prop}=")
-        end
-      end
+      next unless @resource[prop]
+      # Call puppet setter to set @property_flush[prop]
+      send("#{prop}=", @resource[prop]) if new_instance
+      next if @property_flush[prop].nil?
+      # Call node_utils setter to update node
+      @X__RESOURCE_NAME__X.send("#{prop}=", @property_flush[prop]) if
+        @X__RESOURCE_NAME__X.respond_to?("#{prop}=")
     end
   end
 

@@ -103,12 +103,11 @@ Puppet::Type.type(:cisco_vlan).provide(:nxapi) do
 
   def property_set(new_vlan=false)
     VLAN_ALL_PROPS.each do |prop|
-      if @resource[prop]
-        send("#{prop}=", @resource[prop]) if new_vlan
-        unless @property_flush[prop].nil?
-          @vlan.send("#{prop}=", @property_flush[prop]) if
-            @vlan.respond_to?("#{prop}=")
-        end
+      next unless @resource[prop]
+      send("#{prop}=", @resource[prop]) if new_vlan
+      unless @property_flush[prop].nil?
+        @vlan.send("#{prop}=", @property_flush[prop]) if
+          @vlan.respond_to?("#{prop}=")
       end
     end
   end
