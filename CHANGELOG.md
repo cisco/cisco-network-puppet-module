@@ -9,6 +9,21 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added support for cisco_bgp_neighbor provider.
 - Added support for cisco_bgp_neighbor_af provider.
 
+## Unreleased
+### Fixed
+- Updated documentation links to reflect that the repo and agent RPM packages have had their platform renamed from 'nxos' to 'cisco-wrlinux'.
+
+### Added
+- Extended cisco_interface with the following attributes:
+  - encapsulation dot1q
+  - mtu
+  - switchport trunk allowed VLANs
+  - switchport trunk native VLAN
+
+## [1.0.1] - 2015-09-18
+### Fixed
+- Fixed broken documentation links
+
 ## [1.0.0] - 2015-08-28
 ### Added
 - New facts `cisco_node_utils` and `cisco_nxapi` report the installed version of these gems.
@@ -46,5 +61,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Please note: 0.9.0 is an EFT pre-release for a limited audience with access to NX-OS 7.0(3)I2(1). Additional code changes may occur in 0.9.x prior to the final 1.0.0 release.
 
 [unreleased]: https://github.com/cisco/cisco-network-puppet-module/compare/master...develop
+[1.0.1]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v0.9.1...v1.0.0
 [0.9.1]: https://github.com/cisco/cisco-network-puppet-module/compare/v0.9.0...v0.9.1

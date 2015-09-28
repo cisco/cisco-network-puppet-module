@@ -116,6 +116,7 @@ test_name "TestCase :: #{testheader}" do
         'ipv4_netmask_length'          => '16',
         'ipv4_proxy_arp'               => 'false',
         'ipv4_redirects'               => 'true',
+        'mtu'                          => '1500',
         'shutdown'                     => 'false',
         'switchport_autostate_exclude' => 'false',
         'switchport_mode'              => 'disabled',
@@ -130,11 +131,59 @@ test_name "TestCase :: #{testheader}" do
   step "TestStep :: Check interface instance presence on agent" do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd("show running-config interface eth1/4")
+    cmd_str = UtilityLib.get_vshell_cmd("show running-config interface eth1/4 all")
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout, [/ip address 192.168.1.1\/16/,
+        /mtu 1500/,
         /no switchport/,
         /no shutdown/],
+        false, self, logger)
+    end
+
+    logger.info("Check interface instance presence on agent :: #{result}")
+  end
+
+  # @step [Step] Requests manifest from the master server to the agent.
+  step "TestStep :: Get resource present manifest from master" do
+    # Expected exit_code is 0 since this is a bash shell cmd.
+    on(master,
+        RoutedIntfLib.create_routedintf_manifest_switchport_trunk_defaults())
+
+    # Expected exit_code is 2 since this is a puppet agent cmd with change.
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+      "agent -t", options)
+    on(agent, cmd_str, {:acceptable_exit_codes => [2]})
+
+    logger.info("Get resource present manifest from master :: #{result}")
+  end
+
+  # @step [Step] Checks cisco_interface resource on agent using resource cmd.
+  step "TestStep :: Check cisco_interface resource presence on agent" do
+    # Expected exit_code is 0 since this is a puppet resource cmd.
+    # Flag is set to false to check for presence of RegExp pattern in stdout.
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+      "resource cisco_interface 'ethernet1/4'", options)
+    on(agent, cmd_str) do
+      UtilityLib.search_pattern_in_output(stdout,
+        {'ensure'                       => 'present',
+        'switchport_mode'               => 'trunk',
+        'switchport_trunk_allowed_vlan' => '1-4094',
+        'switchport_trunk_native_vlan'  => '1'},
+        false, self, logger)
+    end
+
+    logger.info("Check cisco_interface resource presence on agent :: #{result}")
+  end
+
+  # @step [Step] Checks interface instance on agent using switch show cli cmds.
+  step "TestStep :: Check interface instance presence on agent" do
+    # Expected exit_code is 0 since this is a vegas shell cmd.
+    # Flag is set to false to check for presence of RegExp pattern in stdout.
+    cmd_str = UtilityLib.get_vshell_cmd("show running-config interface eth1/4 all")
+    on(agent, cmd_str) do
+      UtilityLib.search_pattern_in_output(stdout, [
+        /switchport trunk allowed vlan 1-4094/,
+        /switchport trunk native vlan 1/],
         false, self, logger)
     end
 
@@ -184,8 +233,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd("show running-config interface eth1/4")
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout, [/ip address 192.168.1.1\/16/,
-        /no switchport/,
-        /no shutdown/],
+        /no switchport/],
         true, self, logger)
     end
 

@@ -16,11 +16,10 @@
 # limitations under the License.
 
 Puppet::Type.newtype(:X__RESOURCE_NAME__X) do
-
-  @doc = "Manages configuration of feature bash-shell
+  @doc = "Manages configuration of feature X__RESOURCE_NAME__X
 
   ```
-  cisco_bash_shell {'<title>':
+  cisco_X__RESOURCE_NAME__X {'<title>':
     ..attributes..
   }
   ```
@@ -36,7 +35,7 @@ Puppet::Type.newtype(:X__RESOURCE_NAME__X) do
   ensurable
 
   newparam(:name, :namevar => true) do
-    desc "Resource title. Valid values are string."
+    desc 'Resource title. Valid values are string.'
   end
 
   # There are no additional properties for this command.

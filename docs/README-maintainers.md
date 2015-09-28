@@ -1,6 +1,6 @@
 # Maintainers Guide
 
-Guidelines for the core maintainers of the ciscopuppet project - above and beyond the [general developer guidelines](https://github.com/cisco/cisco-network-puppet-module/blob/develop/CONTRIBUTING.md).
+Guidelines for the core maintainers of the ciscopuppet project - above and beyond the [general developer guidelines](../CONTRIBUTING.md).
 
 ## Accepting Pull Requests
 

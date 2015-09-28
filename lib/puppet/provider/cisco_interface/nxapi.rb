@@ -40,8 +40,16 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
   # Note: vrf should be the first L3 property to process.  The AutoGen vrf
   # setting is not used.
   INTF_NON_BOOL_PROPS = [
-    :switchport_mode, :vrf, :access_vlan, :description,
-    :ipv4_address, :ipv4_netmask_length,
+    :switchport_mode,
+    :vrf,
+    :access_vlan,
+    :description,
+    :encapsulation_dot1q,
+    :ipv4_address,
+    :ipv4_netmask_length,
+    :mtu,
+    :switchport_trunk_allowed_vlan,
+    :switchport_trunk_native_vlan,
   ]
   INTF_BOOL_PROPS = [
     :shutdown, :negotiate_auto, :ipv4_redirects, :ipv4_proxy_arp,

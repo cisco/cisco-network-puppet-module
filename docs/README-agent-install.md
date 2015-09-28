@@ -209,7 +209,7 @@ The `bash-shell` and `guestshell` environments use different puppet RPMs.
 * For `bash-shell` use:
 
 ~~~bash
-yum install http://yum.puppetlabs.com/puppetlabs-release-pc1-nxos-5.noarch.rpm
+yum install http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm
 yum install puppet
 ~~~
 
@@ -223,7 +223,7 @@ yum install puppet
 Update PATH var:
 
 ~~~bash
-export PATH=$PATH:/opt/puppetlabs/puppet/bin:/opt/puppetlabs/puppet/lib
+export PATH=/opt/puppetlabs/puppet/bin:/opt/puppetlabs/puppet/lib:$PATH
 ~~~
 
 ####Edit the Puppet config file:
@@ -243,10 +243,10 @@ This file can be used to override the default Puppet settings. At a minimum, the
 
 See the following references for more puppet.conf settings:
 
-<https://docs.puppetlabs.com/puppet/latest/reference/config_important_settings.html>
-<https://docs.puppetlabs.com/puppet/latest/reference/config_about_settings.html>
-<https://docs.puppetlabs.com/puppet/latest/reference/config_file_main.html>
-<https://docs.puppetlabs.com/references/latest/configuration.html>
+* https://docs.puppetlabs.com/puppet/latest/reference/config_important_settings.html
+* https://docs.puppetlabs.com/puppet/latest/reference/config_about_settings.html
+* https://docs.puppetlabs.com/puppet/latest/reference/config_file_main.html
+* https://docs.puppetlabs.com/references/latest/configuration.html
 
 #### Run the Puppet Agent
 

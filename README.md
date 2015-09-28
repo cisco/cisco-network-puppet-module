@@ -1,5 +1,27 @@
 # ciscopuppet
 
+##### Documentation Workflow Map
+
+This workflow map aids *users*, *developers* and *maintainers* of the ciscopuppet project in selecting the appropriate document(s) for their task.
+
+* User Guides
+  * [README-agent-install.md](docs/README-agent-install.md) : Agent Installation and Configuration Guide
+  * [README-beaker-agent-install.md](docs/README-beaker-agent-install.md) : Automated Agent Installation and Configuration
+  * [README-package-provider.md](docs/README-package-provider.md) : Cisco Nexus Package Management using the Package Provider
+  * [README-example-manifest.md](examples/README.md) : Example Demo Manifest User Guide
+  * The remainder of this document is aimed at end users
+* Developer Guides
+  * [CONTRIBUTING.md](CONTRIBUTING.md) : Contribution guidelines
+  * [README-develop-types-providers.md](docs/README-develop-types-providers.md) : Developing new ciscopuppet Types and Providers
+  * [README-beaker-testcase-execution.md](docs/README-beaker-testcase-execution.md) : Executing Beaker Tests for ciscopuppet
+  * [README-beaker-testcase-writing.md](docs/README-beaker-testcase-writing.md) : Writing Beaker Tests for ciscopuppet
+* Maintainers Guides
+  * [README-maintainers.md](docs/README-maintainers.md) : Guidelines for core maintainers of the ciscopuppet project
+  * All developer guides apply to maintainers as well
+
+Please see [Learning Resources](#learning-resources) for additional references.
+
+--
 #### Table of Contents
 
 1. [Overview](#overview)
@@ -10,22 +32,9 @@
    * [Resource Type Catalog (by Technology)](#resource-by-tech)
    * [Resource Type Catalog (by Name)](#resource-by-name)
 6. [Limitations - OS compatibility, etc.](#limitations)
-7. [Development - Guide for contributing to the module](#development)
+7. [Learning Resources](#learning-resources)
 
---
-##### Additional References
 
-* Agent Installation
-  * [README-agent-install.md](docs/README-agent-install.md) : Agent Installation and Configuration Guide
-  * [README-beaker-agent-install.md](docs/README-beaker-agent-install.md) : Automated Agent Installation and Configuration via the Beaker Tool
-* User Guides
-  * [README-package-provider.md](docs/README-package-provider.md) : Cisco Nexus Package Management using the Package Provider
-* Developer Guides
-  * [README-develop-types-providers.md](docs/README-develop-types-providers.md) : Developing new ciscopuppet Types and Providers
-  * [README-beaker-testcase-execution.md](docs/README-beaker-testcase-execution.md) : Executing Beaker Tests for ciscopuppet
-  * [README-beaker-testcase-writing.md](docs/README-beaker-testcase-writing.md) : Writing Beaker Tests for ciscopuppet
-
---
 
 ## Overview
 
@@ -56,7 +65,7 @@ The Puppet Agent requires installation and setup on each device. Agent setup can
 ##### Artifacts
 
 As noted in the agent installation guide, these are the current RPM versions for use with ciscopuppet:
-* `bash-shell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-nxos-5.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-nxos-5.noarch.rpm)
+* `bash-shell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm)
 * `guestshell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm)
 
 ##### Gems
@@ -603,8 +612,23 @@ Switchport mode of the interface. To make an interface Layer 3, set
 The VLAN ID assigned to the interface. Valid values are an integer or the keyword
 'default'.
 
+##### `encapsulation_dot1q`
+Enable IEEE 802.1Q encapsulation of traffic on a specified subinterface.
+Valid values are integer, keyword 'default'.
+
+##### `mtu`
+Maximum Trasnmission Unit size for frames received and sent on the specified
+interface. Valid value is an integer.
+
 ##### `switchport_autostate_exclude`
 Exclude this port for the SVI link calculation. Valid values are 'true', 'false', and 'default'.
+
+##### `switchport_trunk_allowed_vlan`
+The allowed VLANs for the specified Ethernet interface. Valid values are
+string, keyword 'default'.
+
+##### `switchport_trunk_native_vlan`
+The Native VLAN assigned to the switch port. Valid values are integer, keyword 'default'.
 
 ###### `switchport_vtp`
 Enable or disable VTP on the interface. Valid values are 'true', 'false',
@@ -1031,14 +1055,28 @@ Minimum Requirements:
   * Cisco Nexus 31xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
   * Cisco Nexus 30xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
 
-## Development
+## Learning Resources
 
-1. Fork the repository on Github.
-2. Create a named feature branch (like add_component_x).
-3. Write your change.
-4. Write tests for your change (if applicable).
-5. Run the tests, ensuring they all pass.
-6. Submit a Pull Request using Github.
+* Puppet
+  * [https://learn.puppetlabs.com/](https://learn.puppetlabs.com/)
+  * [https://en.wikipedia.org/wiki/Puppet_(software)](https://en.wikipedia.org/wiki/Puppet_(software))
+* Markdown (for editing documentation)
+  * [https://help.github.com/articles/markdown-basics/](https://help.github.com/articles/markdown-basics/)
+* Ruby
+  * [https://en.wikipedia.org/wiki/Ruby_(programming_language)](https://en.wikipedia.org/wiki/Ruby_(programming_language))
+  * [https://www.codecademy.com/tracks/ruby](https://www.codecademy.com/tracks/ruby)
+  * [https://rubymonk.com/](https://rubymonk.com/)
+  * [https://www.codeschool.com/paths/ruby](https://www.codeschool.com/paths/ruby)
+* Ruby Gems
+  * [http://guides.rubygems.org/](http://guides.rubygems.org/)
+  * [https://en.wikipedia.org/wiki/RubyGems](https://en.wikipedia.org/wiki/RubyGems)
+* YAML
+  * [https://en.wikipedia.org/wiki/YAML](https://en.wikipedia.org/wiki/YAML)
+  * [http://www.yaml.org/start.html](http://www.yaml.org/start.html)
+* Yum
+  * [https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified](https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified)
+  * [https://www.centos.org/docs/5/html/yum/](https://www.centos.org/docs/5/html/yum/)
+  * [http://www.linuxcommand.org/man_pages](http://www.linuxcommand.org/man_pages/yum8.html)
 
 ## License
 

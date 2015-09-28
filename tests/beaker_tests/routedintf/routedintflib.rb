@@ -36,11 +36,15 @@ require File.expand_path("../../lib/utilitylib.rb", __FILE__)
 module RoutedIntfLib
 
   # Group of Constants used in negative tests for ROUTEDINTF provider.
+  ENCAP_DOT1Q_NEGATIVE         = 'invalid'
   IPV4ADDRESS_NEGATIVE         = '-1.-1.-1.-1'
   IPV4MASKLEN_NEGATIVE         = '-1'
   IPV4PROXYARP_NEGATIVE        = 'invalid'
   IPV4REDIR_NEGATIVE           = 'invalid'
+  MTU_NEGATIVE                 = '1999'
   SHUTDOWN_NEGATIVE            = 'invalid'
+  TRUNK_ALLOWED_NEGATIVE       = 'invalid'
+  TRUNK_NATIVE_NEGATIVE        = 'invalid'
   VRF_NEGATIVE                 = '~'
 
   # A. Methods to create manifests for cisco_interface Puppet provider test cases.
@@ -61,6 +65,7 @@ node default {
       ipv4_netmask_length          => 16,
       ipv4_proxy_arp               => 'default',
       ipv4_redirects               => 'default',
+      mtu                          => 'default',
       switchport_autostate_exclude => 'default',
       switchport_vtp               => 'default',
       vrf                          => 'default',
@@ -88,6 +93,46 @@ EOF"
     return manifest_str
   end
 
+  # Method to create a manifest for RoutedINTF resource attribute 'ensure' where
+  # 'ensure' is set to present and 'switchport_mode' is set to trunk.
+  # @param none [None] No input parameters exist. 
+  # @result none [None] Returns no object.
+  def RoutedIntfLib.create_routedintf_manifest_switchport_trunk_defaults()
+    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+node default {
+    cisco_interface { 'ethernet1/4':
+      ensure                        => present,
+      description                   => 'default',
+      shutdown                      => false,
+      switchport_mode               => trunk,
+      switchport_trunk_allowed_vlan => 'default',
+      switchport_trunk_native_vlan  => 'default',
+    }
+}
+EOF"
+    return manifest_str
+  end
+
+  # Method to create a manifest for RoutedINTF resource attribute 'ensure' where
+  # 'ensure' is set to present and 'switchport_mode' is set to trunk.
+  # @param none [None] No input parameters exist. 
+  # @result none [None] Returns no object.
+  def RoutedIntfLib.create_routedintf_manifest_switchport_trunk_nondefaults()
+    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+node default {
+    cisco_interface { 'ethernet1/4':
+      ensure                        => present,
+      description                   => 'default',
+      shutdown                      => false,
+      switchport_mode               => trunk,
+      switchport_trunk_allowed_vlan => '30, 40',
+      switchport_trunk_native_vlan  => 20,
+    }
+}
+EOF"
+    return manifest_str
+  end
+
   # Method to create a manifest for RoutedINTF resource attributes:
   # description, shutdown, switchport_mode, ipv4_address, 
   # ipv4_netmask_length, ipv4_proxy_arp and ipv4_redirects.  
@@ -105,9 +150,49 @@ node default {
       ipv4_netmask_length          => 16,
       ipv4_proxy_arp               => true,
       ipv4_redirects               => false,
+      mtu                          => 1556,
       switchport_autostate_exclude => false,
       switchport_vtp               => false,
       vrf                          => 'test1',
+    }
+}
+EOF"
+    return manifest_str
+  end
+
+  # Method to create a manifest for RoutedINTF subinterface attributes.
+  # @param none [None] No input parameters exist. 
+  # @result none [None] Returns no object.
+  def RoutedIntfLib.create_routedintf_manifest_subinterface()
+    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+node default {
+    cisco_interface { 'ethernet1/4':
+      ensure => present,
+      switchport_mode => disabled,
+    }
+    cisco_interface { 'ethernet1/4.1':
+      ensure              => present,
+      encapsulation_dot1q => 30,
+    }
+}
+EOF"
+    return manifest_str
+  end
+
+  # Method to create a manifest for RoutedINTF resource attribute:
+  # 'encapsulation_dot1q'.
+  # @param none [None] No input parameters exist. 
+  # @result none [None] Returns no object.
+  def RoutedIntfLib.create_routedintf_manifest_encap_negative()
+    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+node default {
+    cisco_interface { 'ethernet1/4':
+      ensure => present,
+      switchport_mode => disabled,
+    }
+    cisco_interface { 'ethernet1/4.1':
+      ensure              => present,
+      encapsulation_dot1q => #{RoutedIntfLib::ENCAP_DOT1Q_NEGATIVE},
     }
 }
 EOF"
@@ -150,6 +235,23 @@ EOF"
     return manifest_str
   end
 
+  # Method to create a manifest for RoutedINTF resource attribute 'mtu'.
+  # @param none [None] No input parameters exist.
+  # @result none [None] Returns no object.
+  def RoutedIntfLib.create_routedintf_manifest_mtu_negative()
+    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+node default {
+    cisco_interface { 'ethernet1/4':
+      ensure                       => present,
+      shutdown                     => false,
+      switchport_mode              => disabled,
+      mtu                          => #{RoutedIntfLib::MTU_NEGATIVE},
+    }
+}
+EOF"
+    return manifest_str
+  end
+
   # Method to create a manifest for RoutedINTF resource attribute 'shutdown'.
   # @param none [None] No input parameters exist. 
   # @result none [None] Returns no object.
@@ -161,6 +263,42 @@ node default {
       shutdown                     => false,
       switchport_mode              => disabled,
       shutdown                     => #{RoutedIntfLib::SHUTDOWN_NEGATIVE},
+    }
+}
+EOF"
+    return manifest_str
+  end
+
+  # Method to create a manifest for RoutedINTF resource attributes:
+  # switchport_trunk_allowed_vlan.
+  # @param none [None] No input parameters exist.
+  # @result none [None] Returns no object.
+  def RoutedIntfLib.create_routedintf_manifest_trunk_allowed_negative()
+    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+node default {
+    cisco_interface { 'ethernet1/4':
+      ensure                        => present,
+      shutdown                      => false,
+      switchport_mode               => trunk,
+      switchport_trunk_allowed_vlan => #{RoutedIntfLib::TRUNK_ALLOWED_NEGATIVE},
+    }
+}
+EOF"
+    return manifest_str
+  end
+
+  # Method to create a manifest for RoutedINTF resource attributes:
+  # switchport_trunk_native_vlan.
+  # @param none [None] No input parameters exist.
+  # @result none [None] Returns no object.
+  def RoutedIntfLib.create_routedintf_manifest_trunk_native_negative()
+    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+node default {
+    cisco_interface { 'ethernet1/4':
+      ensure                       => present,
+      shutdown                     => false,
+      switchport_mode              => trunk,
+      switchport_trunk_native_vlan => #{RoutedIntfLib::TRUNK_NATIVE_NEGATIVE},
     }
 }
 EOF"

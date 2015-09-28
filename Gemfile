@@ -24,10 +24,9 @@ def location_for(place, fake_version = nil)
   end
 end
 
-gem 'cisco_node_utils', '0.0.1', :require => false, :path => '../cisco_node_utils-0.0.1/'
-gem 'cisco_nxapi',      '0.0.1', :require => false, :path => '../cisco_nxapi-0.0.1/'
 
 group :development, :unit_tests do
+  gem 'cisco_node_utils', '~> 1.0', :require => false
   gem 'rake', '~> 10.1.0',       :require => false
   gem 'rspec', '~> 3.1.0',       :require => false
   gem 'rspec-puppet',            :require => false
