@@ -101,7 +101,7 @@ Puppet::Type.type(:cisco_vlan).provide(:nxapi) do
     vlan
   end
 
-  def set_properties(new_vlan=false)
+  def property_set(new_vlan=false)
     VLAN_ALL_PROPS.each do |prop|
       if @resource[prop]
         send("#{prop}=", @resource[prop]) if new_vlan
@@ -123,7 +123,7 @@ Puppet::Type.type(:cisco_vlan).provide(:nxapi) do
         new_vlan = true
         @vlan = Cisco::Vlan.new(@resource[:vlan])
       end
-      set_properties(new_vlan)
+      property_set(new_vlan)
     end
     puts_config
   end

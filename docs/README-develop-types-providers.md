@@ -568,7 +568,7 @@ Puppet::Type.type(:cisco_router_eigrp).provide(:nxapi) do
     @property_flush[:ensure] = :absent
   end
 
-  def set_properties(new_instance=false)
+  def property_set(new_instance=false)
     ROUTER_EIGRP_ALL_PROPS.each { |prop|
       if @resource[prop]
         if new_instance
@@ -594,7 +594,7 @@ Puppet::Type.type(:cisco_router_eigrp).provide(:nxapi) do
         new_instance = true
         @router_eigrp = Cisco::RouterEigrp.new(@resource[:name])
       end
-      set_properties(new_instance)
+      property_set(new_instance)
     end
   end
 

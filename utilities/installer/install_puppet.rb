@@ -221,7 +221,7 @@ end
 # host configuration file
 #
 # @return [String] Data containing puppet.conf information
-def get_template_config
+def template_config
   File.read(options['puppet_config_template'])
 end
 
@@ -300,7 +300,7 @@ def build_puppet_config(agent)
   )
 
   if user_template_exists?
-    puppet_config = puppet_config_tohash(get_template_config)
+    puppet_config = puppet_config_tohash(template_config)
   elsif agent_template_exists?(agent)
     puppet_config = puppet_config_tohash(get_agent_config(agent))
   else

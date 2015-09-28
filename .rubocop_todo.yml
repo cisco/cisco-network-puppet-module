@@ -33,18 +33,6 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Max: 16
 
-# Offense count: 9
-Style/AccessorMethodName:
-  Exclude:
-    - 'docs/template-provider-router.rb'
-    - 'lib/puppet/provider/cisco_interface/nxapi.rb'
-    - 'lib/puppet/provider/cisco_interface_ospf/nxapi.rb'
-    - 'lib/puppet/provider/cisco_ospf_vrf/nxapi.rb'
-    - 'lib/puppet/provider/cisco_vlan/nxapi.rb'
-    - 'lib/puppet/provider/cisco_vtp/nxapi.rb'
-    - 'lib/puppet/provider/package/nxapi.rb'
-    - 'utilities/installer/install_puppet.rb'
-
 # Offense count: 34
 # Configuration parameters: EnforcedStyle, SupportedStyles, AllowInnerSlashes.
 Style/RegexpLiteral:

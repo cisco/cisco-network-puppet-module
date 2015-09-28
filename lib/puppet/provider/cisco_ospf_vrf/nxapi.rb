@@ -108,7 +108,7 @@ Puppet::Type.type(:cisco_ospf_vrf).provide(:nxapi) do
     @property_flush[:ensure] = :absent
   end
 
-  def set_properties(new_vrf=false)
+  def property_set(new_vrf=false)
     OSPF_VRF_PROPS.each do |prop|
       if @resource[prop]
         send("#{prop}=", @resource[prop]) if new_vrf
@@ -130,7 +130,7 @@ Puppet::Type.type(:cisco_ospf_vrf).provide(:nxapi) do
     value
   end
 
-  def get_default_auto_cost_mbps
+  def default_auto_cost_mbps
     default_value, default_type = @vrf.default_auto_cost
     convert_cost_type(default_value, default_type)
   end
@@ -138,13 +138,13 @@ Puppet::Type.type(:cisco_ospf_vrf).provide(:nxapi) do
   def auto_cost
     return :default if
       @resource[:auto_cost] == :default &&
-      @property_hash[:auto_cost] == get_default_auto_cost_mbps
+      @property_hash[:auto_cost] == default_auto_cost_mbps
     @property_hash[:auto_cost]
   end
 
   def auto_cost_set
     if @resource[:auto_cost] == :default
-      value = get_default_auto_cost_mbps
+      value = default_auto_cost_mbps
     else
       value = @resource[:auto_cost]
     end
@@ -210,7 +210,7 @@ Puppet::Type.type(:cisco_ospf_vrf).provide(:nxapi) do
         new_vrf = true
         @vrf = Cisco::RouterOspfVrf.new(@resource[:ospf], @resource[:vrf])
       end
-      set_properties(new_vrf)
+      property_set(new_vrf)
     end
     puts_config
   end

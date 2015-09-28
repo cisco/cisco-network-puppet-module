@@ -58,7 +58,7 @@ Puppet::Type.type(:package).provide :nxapi, parent: :yum do
     if in_guestshell? && target_host?
       normalize_resource
 
-      is_ver = get_current_version
+      is_ver = current_version
       should_ver = @resource[:package_settings]['version']
 
       # set absent if no version is installed, or if installed version
@@ -119,7 +119,7 @@ Puppet::Type.type(:package).provide :nxapi, parent: :yum do
   end
 
   # helper to retrieve version info for installed package
-  def get_current_version
+  def current_version
     if @resource[:platform]
       ver = Cisco::Yum.query("#{@resource[:name]}.#{@resource[:platform]}")
     else

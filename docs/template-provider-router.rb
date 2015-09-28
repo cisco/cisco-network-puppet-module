@@ -110,7 +110,7 @@ Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:nxapi) do
     @property_flush[:ensure] = :absent
   end
 
-  def set_properties(new_instance=false)
+  def property_set(new_instance=false)
     X__CONSTANT_NAME__X_ALL_PROPS.each do |prop|
       if @resource[prop]
         if new_instance
@@ -136,7 +136,7 @@ Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:nxapi) do
         new_instance = true
         @X__RESOURCE_NAME__X = Cisco::X__CLASS_NAME__X.new(@resource[:name])
       end
-      set_properties(new_instance)
+      property_set(new_instance)
     end
   end
 end

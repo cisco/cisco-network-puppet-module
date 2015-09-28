@@ -87,7 +87,7 @@ Puppet::Type.type(:cisco_vtp).provide(:nxapi) do
     domain
   end
 
-  def set_properties(new_vtp=false)
+  def property_set(new_vtp=false)
     VTP_ALL_PROPS.each do |prop|
       if @resource[prop]
         send("#{prop}=", @resource[prop]) if new_vtp
@@ -109,7 +109,7 @@ Puppet::Type.type(:cisco_vtp).provide(:nxapi) do
         new_vtp = true
         @vtp = Cisco::Vtp.new
       end
-      set_properties(new_vtp)
+      property_set(new_vtp)
     end
     puts_config
   end

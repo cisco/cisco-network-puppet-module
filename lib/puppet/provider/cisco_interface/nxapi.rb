@@ -123,7 +123,7 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     interface
   end
 
-  def set_properties(new_interface=false)
+  def property_set(new_interface=false)
     INTF_ALL_PROPS.each do |prop|
       if @resource[prop]
         send("#{prop}=", @resource[prop]) if new_interface
@@ -183,7 +183,7 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
         new_interface = true
         @interface = Cisco::Interface.new(@resource[:interface])
       end
-      set_properties(new_interface)
+      property_set(new_interface)
     end
     puts_config
   end

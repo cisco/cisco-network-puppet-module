@@ -118,7 +118,7 @@ Puppet::Type.type(:cisco_interface_ospf).provide(:nxapi) do
     @property_flush[:ensure] = :absent
   end
 
-  def set_properties(new_instance=false)
+  def property_set(new_instance=false)
     ALL_SETTER_PROPS.each do |prop|
       send("#{prop}=", @resource[prop]) if new_instance if @resource[prop]
       unless @property_flush[prop].nil?
@@ -173,9 +173,9 @@ Puppet::Type.type(:cisco_interface_ospf).provide(:nxapi) do
       @interface_ospf = Cisco::InterfaceOspf.new(@resource[:interface],
                                                  @resource[:ospf],
                                                  @resource[:area])
-      set_properties(true)
+      property_set(true)
     else
-      set_properties
+      property_set
     end
   end
 end
