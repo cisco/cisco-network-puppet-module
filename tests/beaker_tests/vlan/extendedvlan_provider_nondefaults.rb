@@ -119,7 +119,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config vlan')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{vlan 2400/, /name DESCR-VLAN2400}],
+                                          [%r{vlan 2400}, %r{name DESCR-VLAN2400}],
                                           false, self, logger)
     end
 
@@ -164,7 +164,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config vlan')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{vlan 2400/, /name DESCR-VLAN2400}],
+                                          [%r{vlan 2400}, %r{name DESCR-VLAN2400}],
                                           true, self, logger)
     end
 

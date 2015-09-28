@@ -134,7 +134,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface vlan 80')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{ip address 192.168.1.1\/16/, /no shutdown}],
+                                          [%r{ip address 192.168.1.1\/16}, %r{no shutdown}],
                                           false, self, logger)
     end
 
@@ -186,7 +186,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface vlan 80')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{ip address 192.168.1.1\/16/, /no shutdown}],
+                                          [%r{ip address 192.168.1.1\/16}, %r{no shutdown}],
                                           true, self, logger)
     end
 
