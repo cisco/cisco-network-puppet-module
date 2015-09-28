@@ -13,6 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
+
+# Require UtilityLib.rb path.
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
+
 # OSPFVRF Utility Library:
 # ------------------------
 # ospfvrflib.rb
@@ -28,11 +32,6 @@
 #
 # The module has a single set of methods:
 # A. Methods to create manifests for cisco_ospf_vrf Puppet provider test cases.
-###############################################################################
-
-# Require UtilityLib.rb path.
-require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-
 module OspfVrfLib
   # Group of Constants used in negative tests for OSPFVRF provider.
   AUTOCOST_NEGATIVE          = '100000000'

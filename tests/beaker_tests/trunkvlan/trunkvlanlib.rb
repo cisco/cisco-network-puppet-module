@@ -13,6 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
+
+# Require UtilityLib.rb path.
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
+
 # TRUNKVLAN Utility Library:
 # --------------------------
 # trunkvlanlib.rb
@@ -28,11 +32,6 @@
 #
 # The module has two sets of methods:
 # A. Methods to create manifests for cisco_interface Puppet provider test cases.
-###############################################################################
-
-# Require UtilityLib.rb path.
-require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-
 module TrunkVlanLib
   # Group of Constants used in negative tests for TRUNKVLAN provider.
   DESCRIPTION_NEGATIVE         = ''

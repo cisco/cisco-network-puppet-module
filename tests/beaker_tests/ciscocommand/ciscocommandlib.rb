@@ -13,6 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
+
+# Require UtilityLib.rb path.
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
+
 # CISCOCOMMAND Utility Library:
 # -----------------------------
 # ciscocommandlib.rb
@@ -28,11 +32,6 @@
 #
 # The module has a single set of methods:
 # A. Methods to create manifests for cisco_command_config Puppet test cases.
-###############################################################################
-
-# Require UtilityLib.rb path.
-require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-
 module CiscoCommandLib
   # A. Methods to create manifests for cisco_command_config Puppet test cases.
 

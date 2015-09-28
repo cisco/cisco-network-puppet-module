@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
+
 # TestCase Utility Library:
 # --------------------------
 # utilitylib.rb
@@ -34,8 +35,6 @@
 # raise fail_test exceptions for failed pattern matches in the output.
 # D. Method to raise pass_test or fail_test exception based on testcase
 # result.
-###############################################################################
-
 module UtilityLib
   # Group of constants for use by the Beaker::TestCase instances.
   # Sleep time of 10 seconds to release any pending puppet agent locks.

@@ -18,6 +18,7 @@
 
 module PuppetX
   module Cisco
+    # PuppetX::Cisco::AutoGen - automatically generate getter/setter methods
     class AutoGen
       def self.mk_puppet_methods(mtype, klass, rlbname, props)
         case mtype

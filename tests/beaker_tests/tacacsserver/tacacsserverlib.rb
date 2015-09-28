@@ -13,6 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
+
+# Require UtilityLib.rb path.
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
+
 # TACACSERVER Utility Library:
 # ----------------------------
 # tacacsserverlib.rb
@@ -28,11 +32,6 @@
 #
 # The module has a single set of methods:
 # A. Methods to create manifests for cisco_tacacs_server Puppet provider tests.
-###############################################################################
-
-# Require UtilityLib.rb path.
-require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-
 module TacacsServerLib
   # Group of Constants used in negative tests for TACACSSERVER provider.
   TIMEOUT_NEGATIVE       = '-1'
