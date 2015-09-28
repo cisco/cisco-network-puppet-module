@@ -28,6 +28,7 @@ Style/FormatString:
 
 Style/Documentation:
   Exclude:
+    - 'lib/puppet_x/cisco/autogen.rb'
     - 'tests/**/*.rb'
 
 Style/Next:
