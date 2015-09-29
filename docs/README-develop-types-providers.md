@@ -243,6 +243,8 @@ Test the new resource using the guestshell environment. See [README-agent-instal
 
 **NOTE:** Before you can test your puppet provider code, you need to [install the cisco_node_utils gem](https://github.com/cisco/cisco-network-node-utils/blob/develop/docs/README-develop-node-utils-APIs.md#gem) that contains the supporting APIs for your provider.
 
+* Copy your completed `lib/puppet/type/cisco_tunnel.rb` type file to the `/etc/puppetlabs/code/environments/production/modules/ciscopuppet/lib/puppet/type` directory on your puppet master.
+* Copy your completed `lib/puppet/provider/cisco_tunnel/nxapi.rb` provider file to the `/etc/puppetlabs/code/environments/production/modules/ciscopuppet/lib/puppet/cisco_tunnel` directory on your puppet master.
 * Copy all of the manifest files under the `examples` directory to the `/etc/puppetlabs/code/environments/production/modules/ciscopuppet/manifests` directory on your puppet master.
 * On your puppet master, create a manifest for the new resource under `/etc/puppetlabs/code/environments/production/modules/ciscopuppet/manifests` in a file called `demo_tunnel.pp`
 * Add the following content to the file:
@@ -682,6 +684,8 @@ end
 
 **NOTE:** Before you can test your puppet provider code, you need to [install the cisco_node_utils gem](https://github.com/cisco/cisco-network-node-utils/blob/develop/docs/README-develop-node-utils-APIs.md#comp_gem) that contains the supporting APIs for your provider.
 
+* Copy your completed `lib/puppet/type/cisco_router_eigrp.rb` type file to the `/etc/puppetlabs/code/environments/production/modules/ciscopuppet/lib/puppet/type` directory on your puppet master.
+* Copy your completed `lib/puppet/provider/cisco_router_eigrp/nxapi.rb` provider file to the `/etc/puppetlabs/code/environments/production/modules/ciscopuppet/lib/puppet/cisco_router_eigrp` directory on your puppet master.
 * Copy all of the manifest files under the `examples` directory to the `/etc/puppetlabs/code/environments/production/modules/ciscopuppet/manifests` directory on your puppet master *unless* you did this ealier while developing the tunnel provider.
 * On your puppet master, create a manifest for the new resource under `/etc/puppetlabs/code/environments/production/modules/ciscopuppet/manifests` in a file called `demo_eigrp.pp`
 * Add the following content to the file:
