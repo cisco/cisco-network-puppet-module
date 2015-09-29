@@ -138,7 +138,7 @@ This is the completed tunnel resource type based on `template-type-feature.rb`:
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Puppet::Type.newtype(:tunnel) do
+Puppet::Type.newtype(:cisco_tunnel) do
 
   @doc = "Manages configuration of feature tunnel
 
