@@ -118,7 +118,7 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd('show running-config vlan')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [%r{vlan 1,(.*)2400}],
+      UtilityLib.search_pattern_in_output(stdout, [/vlan 1,(.*)2400/],
                                           false, self, logger)
     end
 
@@ -162,7 +162,7 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd('show running-config vlan')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [%r{vlan 1,(.*)2400}],
+      UtilityLib.search_pattern_in_output(stdout, [/vlan 1,(.*)2400/],
                                           true, self, logger)
     end
 

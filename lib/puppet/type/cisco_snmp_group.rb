@@ -48,7 +48,7 @@ Puppet::Type.newtype(:cisco_snmp_group) do
 
     # Below pattern matches both parts of the full composite name.
     patterns << [
-      %r{^(\S+)$},
+      /^(\S+)$/,
       [
         [:group, identity],
       ],

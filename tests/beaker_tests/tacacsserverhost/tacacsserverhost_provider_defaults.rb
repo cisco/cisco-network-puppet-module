@@ -83,7 +83,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{feature tacacs\+}],
+                                          [/feature tacacs\+/],
                                           true, self, logger)
     end
 
@@ -127,7 +127,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{tacacs\-server host samplehost1}],
+                                          [/tacacs\-server host samplehost1/],
                                           false, self, logger)
     end
 
@@ -171,7 +171,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{tacacs\-server host samplehost1}],
+                                          [/tacacs\-server host samplehost1/],
                                           true, self, logger)
     end
 

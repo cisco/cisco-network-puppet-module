@@ -145,7 +145,7 @@ PUPPET_PATH = '/opt/puppetlabs/puppet'
 # @example on agent, "#{pp(agent)} puppet agent -t"
 def pp(host)
   case host['platform']
-  when %r{cisco}
+  when /cisco/
     if host['vrf'].nil?
       command = 'sudo'
     else
@@ -162,7 +162,7 @@ def pp(host)
                      options['https_proxy']
     command.prepend "PATH=$PATH:#{PUPPET_PATH}/bin/:#{PUPPET_PATH}/lib/ " unless
                      target_guestshell?(host)
-  when %r{other_platform}
+  when /other_platform/
     command = 'do something different'
   else
     command = ''
@@ -278,9 +278,9 @@ def puppet_config_tohash(config)
   context = ''
   config_array = config.split("\n")
   config_array.each do |line|
-    context = 'main' if %r{\[main\]}.match(line)
-    context = 'agent' if %r{\[agent\]}.match(line)
-    match = %r{^\s*(\w+)\s*=\s*(\S+)}.match(line)
+    context = 'main' if /\[main\]/.match(line)
+    context = 'agent' if /\[agent\]/.match(line)
+    match = /^\s*(\w+)\s*=\s*(\S+)/.match(line)
     # Match all lines in main and agent sections except comment lines.
     config_hash[context][match[1]] = match[2] unless match.nil?
   end

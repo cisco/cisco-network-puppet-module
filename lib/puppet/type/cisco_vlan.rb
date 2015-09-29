@@ -45,7 +45,7 @@ Puppet::Type.newtype(:cisco_vlan) do
 
     # Below pattern matches both parts of the full composite name.
     patterns << [
-      %r{^(\d+)$},
+      /^(\d+)$/,
       [
         [:vlan, identity],
       ],

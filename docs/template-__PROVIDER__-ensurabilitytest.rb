@@ -82,7 +82,7 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd('show running-config section <PROVIDER>')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [%r{feature <PROVIDER>}],
+      UtilityLib.search_pattern_in_output(stdout, [/feature <PROVIDER>/],
                                           true, self, logger)
     end
 
@@ -119,7 +119,7 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd('show running-config section <PROVIDER>')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [%r{<PROVIDER> test}],
+      UtilityLib.search_pattern_in_output(stdout, [/<PROVIDER> test/],
                                           false, self, logger)
     end
 
@@ -156,7 +156,7 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd('show running-config section <PROVIDER>')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [%r{<PROVIDER> test}],
+      UtilityLib.search_pattern_in_output(stdout, [/<PROVIDER> test/],
                                           true, self, logger)
     end
 

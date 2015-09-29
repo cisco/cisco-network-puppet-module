@@ -73,7 +73,7 @@ Puppet::Type.newtype(:cisco_interface) do
 
     # Below pattern matches both parts of the full composite name.
     patterns << [
-      %r{^(\S+)},
+      /^(\S+)/,
       [
         [:interface, identity],
       ],

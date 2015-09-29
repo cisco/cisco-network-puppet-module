@@ -77,7 +77,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config vtp')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{feature vtp}],
+                                          [/feature vtp/],
                                           true, self, logger)
     end
 
@@ -122,8 +122,8 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config vtp')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{feature vtp},
-                                           %r{vtp domain cisco1234}],
+                                          [/feature vtp/,
+                                           /vtp domain cisco1234/],
                                           false, self, logger)
     end
 
@@ -168,8 +168,8 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config vtp')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{feature vtp},
-                                           %r{vtp domain cisco1234}],
+                                          [/feature vtp/,
+                                           /vtp domain cisco1234/],
                                           true, self, logger)
     end
 

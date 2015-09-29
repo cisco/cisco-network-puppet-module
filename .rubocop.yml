@@ -25,7 +25,3 @@ Style/TrailingComma:
 
 Style/FormatString:
   EnforcedStyle: sprintf
-
-# Configuration parameters: EnforcedStyle, SupportedStyles, AllowInnerSlashes.
-Style/RegexpLiteral:
-  EnforcedStyle: percent_r

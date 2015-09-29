@@ -81,7 +81,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{feature tacacs\+}],
+                                          [/feature tacacs\+/],
                                           true, self, logger)
     end
 
@@ -123,7 +123,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{tacacs\-server timeout #{TacacsServerLib::TIMEOUT_NEGATIVE}}],
+                                          [/tacacs\-server timeout #{TacacsServerLib::TIMEOUT_NEGATIVE}/],
                                           true, self, logger)
     end
 
@@ -165,7 +165,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{tacacs\-server deadtime #{TacacsServerLib::DEADTIME_NEGATIVE}}],
+                                          [/tacacs\-server deadtime #{TacacsServerLib::DEADTIME_NEGATIVE}/],
                                           true, self, logger)
     end
 
@@ -207,7 +207,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{tacacs\-server key #{TacacsServerLib::ENCRYPTYPE_NEGATIVE}}],
+                                          [/tacacs\-server key #{TacacsServerLib::ENCRYPTYPE_NEGATIVE}/],
                                           true, self, logger)
     end
 
@@ -249,7 +249,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{tacacs\-server key 7 #{TacacsServerLib::ENCRYPPASSWD_NEGATIVE}}],
+                                          [/tacacs\-server key 7 #{TacacsServerLib::ENCRYPPASSWD_NEGATIVE}/],
                                           true, self, logger)
     end
 
@@ -291,7 +291,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{ip tacacs source\-interface #{TacacsServerLib::SOURCEINTF_NEGATIVE}}],
+                                          [/ip tacacs source\-interface #{TacacsServerLib::SOURCEINTF_NEGATIVE}/],
                                           true, self, logger)
     end
 

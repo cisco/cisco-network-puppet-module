@@ -22,7 +22,7 @@ Metrics/LineLength:
 # Offense count: 119
 # Configuration parameters: CountComments.
 Metrics/MethodLength:
-  Max: 37
+  Max: 34
 
 # Offense count: 10
 # Configuration parameters: CountComments.
@@ -31,4 +31,4 @@ Metrics/ModuleLength:
 
 # Offense count: 9
 Metrics/PerceivedComplexity:
-  Max: 20
+  Max: 16

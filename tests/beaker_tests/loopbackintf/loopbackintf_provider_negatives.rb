@@ -119,7 +119,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface loopback1')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{ip address #{LoopbackIntfLib::IPV4ADDRESS_NEGATIVE}}],
+                                          [/ip address #{LoopbackIntfLib::IPV4ADDRESS_NEGATIVE}/],
                                           true, self, logger)
     end
 
@@ -161,7 +161,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface loopback1')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
       UtilityLib.search_pattern_in_output(stdout, \
-                                          [%r{ip address 192.168.1.1\/#{LoopbackIntfLib::IPV4MASKLEN_NEGATIVE}}],
+                                          [/ip address 192.168.1.1\/#{LoopbackIntfLib::IPV4MASKLEN_NEGATIVE}/],
                                           true, self, logger)
     end
 
@@ -203,7 +203,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface loopback1')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{shutdown}],
+                                          [/shutdown/],
                                           true, self, logger)
     end
 
@@ -245,7 +245,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface loopback1')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{ip proxy-arp}],
+                                          [/ip proxy-arp/],
                                           true, self, logger)
     end
 
@@ -287,7 +287,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface loopback1')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{ip redirects}],
+                                          [/ip redirects/],
                                           true, self, logger)
     end
 
@@ -329,7 +329,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface loopback1')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{vrf member}],
+                                          [/vrf member/],
                                           true, self, logger)
     end
 

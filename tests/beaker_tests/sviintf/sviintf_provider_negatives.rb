@@ -80,7 +80,7 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface vlan 80')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
-      UtilityLib.search_pattern_in_output(stdout, [%r{interface Vlan80}],
+      UtilityLib.search_pattern_in_output(stdout, [/interface Vlan80/],
                                           true, self, logger)
     end
 
@@ -122,7 +122,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface vlan 80')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{management}],
+                                          [/management/],
                                           true, self, logger)
     end
 
@@ -164,7 +164,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface vlan 80')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{autostate}],
+                                          [/autostate/],
                                           true, self, logger)
     end
 
@@ -206,7 +206,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface vlan 80')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{shutdown}],
+                                          [/shutdown/],
                                           true, self, logger)
     end
 
@@ -248,7 +248,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface vlan 80')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{ip address #{SviIntfLib::IPV4ADDRESS_NEGATIVE}}],
+                                          [/ip address #{SviIntfLib::IPV4ADDRESS_NEGATIVE}/],
                                           true, self, logger)
     end
 
@@ -290,7 +290,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface vlan 80')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{ip address 192.168.1.1\/#{SviIntfLib::IPV4MASKLEN_NEGATIVE}}],
+                                          [/ip address 192.168.1.1\/#{SviIntfLib::IPV4MASKLEN_NEGATIVE}/],
                                           true, self, logger)
     end
 

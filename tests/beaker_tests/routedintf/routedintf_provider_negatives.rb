@@ -80,7 +80,7 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface eth1/4')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [%r{no switchport}],
+      UtilityLib.search_pattern_in_output(stdout, [/no switchport/],
                                           true, self, logger)
     end
 
@@ -122,7 +122,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface eth1/4')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{^ *ip address #{RoutedIntfLib::IPV4ADDRESS_NEGATIVE}}],
+                                          [/^ *ip address #{RoutedIntfLib::IPV4ADDRESS_NEGATIVE}/],
                                           true, self, logger)
     end
 
@@ -164,7 +164,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface eth1/4')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{^ *ip address 192.168.1.1\/#{RoutedIntfLib::IPV4MASKLEN_NEGATIVE}}],
+                                          [/^ *ip address 192.168.1.1\/#{RoutedIntfLib::IPV4MASKLEN_NEGATIVE}/],
                                           true, self, logger)
     end
 
@@ -206,7 +206,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface eth1/4')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{^ *shutdown}],
+                                          [/^ *shutdown/],
                                           true, self, logger)
     end
 
@@ -248,7 +248,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface eth1/4')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{^ *ip proxy-arp}],
+                                          [/^ *ip proxy-arp/],
                                           true, self, logger)
     end
 
@@ -290,7 +290,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface eth1/4')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{^ *ip redirects}],
+                                          [/^ *ip redirects/],
                                           true, self, logger)
     end
 
@@ -333,7 +333,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface eth1/4')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{encapsulation dot1q}],
+                                          [/encapsulation dot1q/],
                                           true, self, logger)
     end
 
@@ -375,7 +375,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface eth1/4')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{mtu}],
+                                          [/mtu/],
                                           true, self, logger)
     end
 
@@ -418,7 +418,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface eth1/4')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{switchport trunk allowed vlan}],
+                                          [/switchport trunk allowed vlan/],
                                           true, self, logger)
     end
 
@@ -461,7 +461,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface eth1/4')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{switchport trunk native vlan}],
+                                          [/switchport trunk native vlan/],
                                           true, self, logger)
     end
 
@@ -503,7 +503,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface eth1/4')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{vrf member}],
+                                          [/vrf member/],
                                           true, self, logger)
     end
 

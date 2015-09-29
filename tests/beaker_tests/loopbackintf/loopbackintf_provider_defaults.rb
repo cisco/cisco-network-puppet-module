@@ -128,7 +128,7 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface loopback1')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [%r{ip address 192.168.1.1\/16}],
+      UtilityLib.search_pattern_in_output(stdout, [/ip address 192.168.1.1\/16/],
                                           false, self, logger)
     end
 
@@ -177,7 +177,7 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface loopback1')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
-      UtilityLib.search_pattern_in_output(stdout, [%r{ip address 192.168.1.1\/16}],
+      UtilityLib.search_pattern_in_output(stdout, [/ip address 192.168.1.1\/16/],
                                           true, self, logger)
     end
 

@@ -82,7 +82,7 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface eth1/4')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [%r{no switchport}],
+      UtilityLib.search_pattern_in_output(stdout, [/no switchport/],
                                           true, self, logger)
     end
 
@@ -134,10 +134,10 @@ test_name "TestCase :: #{testheader}" do
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
                                           [
-                                            %r{ip address 192.168.1.1\/16},
-                                            %r{mtu 1500},
-                                            %r{no switchport},
-                                            %r{no shutdown},
+                                            /ip address 192.168.1.1\/16/,
+                                            /mtu 1500/,
+                                            /no switchport/,
+                                            /no shutdown/,
                                           ],
                                           false, self, logger)
     end
@@ -184,8 +184,8 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface eth1/4 all')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout, [
-        %r{switchport trunk allowed vlan 1-4094},
-        %r{switchport trunk native vlan 1}],
+        /switchport trunk allowed vlan 1-4094/,
+        /switchport trunk native vlan 1/],
                                           false, self, logger)
     end
 
@@ -235,7 +235,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface eth1/4')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{ip address 192.168.1.1\/16/, /no switchport}],
+                                          [/ip address 192.168.1.1\/16/, /no switchport/],
                                           true, self, logger)
     end
 

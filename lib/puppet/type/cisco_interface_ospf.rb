@@ -53,7 +53,7 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
 
     # Below pattern matches both parts of the full composite name.
     patterns << [
-      %r{^(\S+) (\S+)$},
+      /^(\S+) (\S+)$/,
       [
         [:interface, identity],
         [:ospf, identity],
@@ -226,7 +226,7 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
 
     munge do |value|
       # Coerce numeric area to the expected dot-decimal format.
-      value = IPAddr.new(value.to_i, Socket::AF_INET) unless value.to_s[%r{\.}]
+      value = IPAddr.new(value.to_i, Socket::AF_INET) unless value.to_s[/\./]
       value.to_s
     end
   end
@@ -260,7 +260,7 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
     end
 
     if self[:passive_interface] &&
-       !%r{^lo\S+$}.match(self[:interface].downcase).nil?
+       !/^lo\S+$/.match(self[:interface].downcase).nil?
       fail 'passive_interface value cannot be set on loopback interfaces'
     end
   end

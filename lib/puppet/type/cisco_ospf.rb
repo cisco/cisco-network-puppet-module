@@ -44,7 +44,7 @@ Puppet::Type.newtype(:cisco_ospf) do
 
     # Below pattern matches the ospf name.
     patterns << [
-      %r{^(\S+)$},
+      /^(\S+)$/,
       [
         [:ospf, identity],
       ],
