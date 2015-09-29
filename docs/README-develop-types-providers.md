@@ -3,17 +3,18 @@
 #### Table of Contents
 
 * [Overview](#overview)
+* [Before You Begin](#prerequisites)
 * [Start here: Clone the Repo](#clone)
 * [Basic Example: feature tunnel](#simp_example)
    * [Step 1. Type: feature tunnel](#simp_type)
    * [Step 2. Provider: feature tunnel](#simp_prov)
    * [Step 3. Testing: feature tunnel](#simp_test)
-   * [Static Analysis](#simp_sa)
+   * [Step 4. Static Analysis](#simp_sa)
 * [Complex Example: router eigrp](#comp_example)
    * [Step 1. Type: router eigrp](#comp_type)
    * [Step 2. Provider: router eigrp](#comp_prov)
    * [Step 3. Testing: router eigrp](#comp_test)
-   * [Static Analysis](#comp_sa)
+   * [Step 4. Static Analysis](#comp_sa)
 * [Next Steps](#next)
 
 ## <a name="overview">Overview</a>
@@ -28,21 +29,59 @@ There are multiple components involved when creating new resources. This documen
 
 * [Resource providers](https://docs.puppetlabs.com/guides/provider_development.html) are essentially backends that implement support for a specific implementation of a given resource type.
 
-* The types and providers work in conjunction with a node\_utils API, which is the interface between Puppet agent and the NX-OS CLI. Please see the [README-develop-node-utils-APIs.md] (https://github.com/cisco/cisco-network-node-utils/blob/master/docs/README-develop-node-utils-APIs.md) guide for more information on writing node_utils APIs.
+* The types and providers work in conjunction with a node_utils API, which is the interface between Puppet agent and the NX-OS CLI. Please see the [README-develop-node-utils-APIs.md] (https://github.com/cisco/cisco-network-node-utils/blob/master/docs/README-develop-node-utils-APIs.md) guide for more information on writing node_utils APIs.
 
 This document relies heavily on example code. The examples in this document can be written independently, but they are intended to work in conjuction with the example node_utils APIs created in the [README-develop-node_utils-APIs.md](https://github.com/cisco/cisco-network-node-utils/blob/master/docs/README-develop-node-utils-APIs.md) guide. The examples in that guide are based on code templates for the `feature tunnel` CLI and the `router eigrp` CLI. Note that some people prefer to write the node_utils API before the resource types and providers, while others might prefer the opposite workflow.
+
+## <a name="prerequisites">Before You Begin</a>
+
+This development guide uses rubocop which is packaged as a gem that needs to be installed on your server.
+
+```bash
+gem install rubocop
+```
+
+**NOTE:** If you are working from a server where you don't have admin/root privilages, use the following commands to install the gems and then update the `PATH` to include `~/.gem/ruby/x.x.x/bin`
+
+```bash
+gem install --user-install rubocop
+```
 
 ## <a name="clone">Start here: Clone the Repo</a>
 
 Please see the [CONTRIBUTING](../CONTRIBUTING.md) document for workflow instructions. In general, fork the ciscopuppet repository for your changes and submit a pull request when it is ready for commit.
 
-First install the code base. Clone the ciscopuppet repo into a workspace:
+First [fork](https://help.github.com/articles/fork-a-repo) the [cisco-network-puppet-module](https://github.com/cisco/cisco-network-puppet-module) git repository 
+
+Clone the cisco-network-puppet-module repo from your fork into a workspace.
 
 ~~~bash
-git clone https://github.com/cisco/cisco-network-puppet-module.git
+git clone https://github.com/YOUR-USERNAME/cisco-network-puppet-module.git
+cd cisco-network-puppet-module
 ~~~
 
+As a best practice go ahead and create a topic/feature branch for your feature work using the `git branch feature/<feature_name>` command.
+
+```bash
+git branch feature/tunnel
+git branch feature/eigrp
+git branch
+* develop
+  feature/tunnel
+  feature/eigrp
+```
+
 ## <a name="simp_example">Basic Example: feature tunnel</a>
+
+Before you start working on the tunnel feature, checkout the feature branch you created earlier.
+
+```bash
+git checkout feature/tunnel
+git branch
+  develop
+* feature/tunnel
+  feature/eigrp
+```
 
 The NX-OS CLI for `feature tunnel` is a simple on / off style configuration:
 
@@ -57,8 +96,7 @@ This resource has no other properties.
 * There are template files in `/docs` that might help when you write new types and providers. These templates provide most of the necessary code with a few customizations required for a new resource. Copy the `template-type-feature.rb` file to use as the basis for our new `cisco_tunnel.rb` type file:
 
 ~~~bash
-cp  cisco-ciscopuppet/docs/template-type-feature.rb \
-    cisco-ciscopuppet/lib/puppet/type/cisco_tunnel.rb
+cp docs/template-type-feature.rb  lib/puppet/type/cisco_tunnel.rb
 ~~~
 
 * Edit `cisco_tunnel.rb` and substitute the placeholder text as shown here:
@@ -123,10 +161,8 @@ end
 * The provider files for Cisco NX-OS are named nxapi.rb and are each stored in a unique provider directory. Create a new directory for the tunnel provider and use `template-provider-feature.rb` to populate the new provider file:
 
 ~~~bash
-mkdir  cisco-ciscopuppet/lib/puppet/provider/cisco_tunnel
-
-cp  cisco-ciscopuppet/docs/template-provider-feature.rb \
-       cisco-ciscopuppet/lib/puppet/provider/cisco_tunnel/nxapi.rb
+mkdir lib/puppet/provider/cisco_tunnel
+cp docs/template-provider-feature.rb lib/puppet/provider/cisco_tunnel/nxapi.rb
 ~~~
 
 * Edit `nxapi.rb` and substitute the placeholder text as shown here:
@@ -193,6 +229,8 @@ end
 ## <a name="simp_test">Step 3. Testing: feature tunnel</a>
 
 Test the new resource using the guestshell environment. See [README-agent-install.md](README-agent-install.md) for using Puppet agent in guestshell.
+
+**NOTE:** Before you can test your puppet provider code, you need to [install the cisco_node_utils gem](https://github.com/cisco/cisco-network-node-utils/blob/develop/docs/README-develop-node-utils-APIs.md#gem) that contains the supporting APIs for your provider.
 
 * Create a manifest for the new resource:
 
@@ -282,7 +320,7 @@ puppet resource cisco_tunnel 'test_off' ensure=absent
 ~~~
 
 
-## <a name="simp_sa">Static Analysis</a>
+## <a name="simp_sa">Step 4. Static Analysis</a>
 
 * rubocop is a Ruby static analysis tool. Run [rubocop](https://rubygems.org/gems/rubocop) to validate the new code:
 
@@ -295,6 +333,16 @@ Inspecting 2 files
 ~~~
 
 ## <a name="comp_example">Complex Example: router eigrp</a>
+
+Before you start working on the eigrp feature, checkout the feature branch you created earlier.
+
+```bash
+git checkout feature/eigrp
+git branch
+  develop
+  feature/tunnel
+* feature/eigrp
+```
 
 This resource type and provider exercise will build on the router_eigrp API example shown in the cisco node_utils [README-develop-node-utils-APIs](https://github.com/cisco/cisco-network-node-utils/blob/master/docs/README-develop-node-utils-APIs.md) document.
 The router_eigrp node_utils example created a new API for the cli below:
@@ -321,8 +369,7 @@ The Puppet type and provider code doesn't need any knowledge of `feature eigrp` 
 * Copy the `template-type-router.rb` file to use as the basis for the `cisco_router_eigrp.rb` type file:
 
 ~~~bash
-cp  cisco-ciscopuppet/docs/template-type-router.rb \
-    cisco-ciscopuppet/lib/puppet/type/cisco_router_eigrp.rb
+cp docs/template-type-router.rb lib/puppet/type/cisco_router_eigrp.rb
 ~~~
 
 * Edit `cisco_router_eigrp.rb` and substitute the placeholder text as shown here:
@@ -439,10 +486,9 @@ end
 * Create a new directory for the router_eigrp provider and use `template-provider-router.rb` to populate the new provider file:
 
 ~~~bash
-mkdir  cisco-ciscopuppet/lib/puppet/provider/cisco_router_eigrp
+mkdir lib/puppet/provider/cisco_router_eigrp
 
-cp  cisco-ciscopuppet/docs/template-provider-router.rb \
-       cisco-ciscopuppet/lib/puppet/provider/cisco_router_eigrp/nxapi.rb
+cp docs/template-provider-router.rb lib/puppet/provider/cisco_router_eigrp/nxapi.rb
 ~~~
 
 * Edit `nxapi.rb` and substitute the placeholder text as shown here:
@@ -603,6 +649,8 @@ end
 
 ## <a name="comp_test">Step 3. Testing: router eigrp</a>
 
+**NOTE:** Before you can test your puppet provider code, you need to [install the cisco_node_utils gem](https://github.com/cisco/cisco-network-node-utils/blob/develop/docs/README-develop-node-utils-APIs.md#comp_gem) that contains the supporting APIs for your provider.
+
 * Create a manifest for the new resource:
 
 ~~~puppet
@@ -685,7 +733,7 @@ puppet resource cisco_router_eigrp "xyz" shutdown='default'
 puppet resource cisco_router_eigrp "xyz" ensure=absent
 ~~~
 
-## <a name="comp_sa">Static Analysis</a>
+## <a name="comp_sa">Step 4. Static Analysis</a>
 
 * Run [rubocop](https://rubygems.org/gems/rubocop) to validate the new code:
 
