@@ -62,289 +62,224 @@ testheader = 'Resource cisco_bgp_af :: All default property values'
 # Define PUPPETMASTER_MANIFESTPATH.
 UtilityLib.set_manifest_path(master, self)
 
-# Create hash entries for each test case's manifest config data and
-# puppet resource command expected results.
-# :manifest is used to create the manifest that gets applied on the puppet master
-# :resource is used to build the test data structure that gets compared to the
-#  manifest application result
-data_hash = {}
+# The 'tests' hash is used to define all of the test data values and expected
+# results. It is also used to pass optional flags to the test methods when
+# necessary.
 
+# 'tests' hash
+# Top-level keys set by caller:
+# tests[:master] - the master object
+# tests[:agent] - the agent object
+# tests[:show_cmd] - the common show command to use for test_show_run
 #
-# Test_1_default_properties
+tests = {
+  :master => master,
+  :agent => agent,
+  :show_cmd => 'show run bgp all',
+}
+
+# tests[id] keys set by caller and used by test_harness_common:
+#
+# tests[id] keys set by caller:
+# tests[id][:desc] - a string to use with logs & debugs
+# tests[id][:manifest] - the complete manifest, as used by test_harness_common
+# tests[id][:resource] - a hash of expected states, used by test_resource
+# tests[id][:resource_cmd] - 'puppet resource' command to use with test_resource
+# tests[id][:show_pattern] - array of regexp patterns to use with test_show_cmd
+# tests[id][:ensure] - (Optional) set to :present or :absent before calling
+# tests[id][:code] - (Optional) override the default exit code in some tests.
+#
+# These keys are local use only and not used by test_harness_common:
+#
+# tests[id][:manifest_props] - This is essentially a master list of properties
+#   that permits re-use of the properties for both :present and :absent testing
+#   without destroying the list
+# tests[id][:resource_props] - This is essentially a master hash of properties
+#   that permits re-use of the properties for both :present and :absent testing
+#   without destroying the hash
+# tests[id][:title_pattern] - (Optional) defines the manifest title.
+#   Can be used with :af for mixed title/af testing. If mixing, :af values will
+#   be merged with title values and override any duplicates. If omitted,
+#   :title_pattern will be set to 'id'.
+# tests[id][:af] - (Optional) defines the address-family values.
+#   Must use :title_pattern if :af is not specified. Useful for testing mixed
+#   title/af manifests
+# tests[id][:remote_as] - (Optional) allows explicit remote-as configuration
+#   for some ebgp/ibgp-only testing
+#
+
+# default_properties
 #
 # client_to_client (default is no client-to-client reflection)
 # default_information_originate
-data_hash['Test_1_default_properties'] = {
-  :manifest => "
-    ensure                        => present,
+tests['default_properties'] = {
+  :desc => '1.1 Default Properties',
+  :title_pattern => '2 blue ipv4 unicast',
+  :manifest_props => "
     client_to_client              => 'default',
     default_information_originate => 'default',
     ",
 
-  :resource => {
-    'ensure'                        => 'present',
+  :resource_props => {
     'client_to_client'              => 'false',
     'default_information_originate' => 'false',
   }
 }
 
 #
-# Test_2_non_default_properties
+# non_default_properties
 #
-data_hash['Test_2_non_default_properties'] = {
-  :manifest => "
-    ensure                        => present,
-    client_to_client              => false,
-    default_information_originate => false,
-    next_hop_route_map            => 'RouteMap',
+tests['non_default_properties_C'] = {
+  :desc => "2.1 Non Default Properties: 'C' commands",
+  :title_pattern => '2 blue ipv4 unicast',
+  :manifest_props => "
+    client_to_client                => false,
   ",
 
-  :resource => {
-    'ensure'                        => 'present',
+  :resource_props => {
     'client_to_client'              => 'false',
-    'default_information_originate' => 'false',
-    'next_hop_route_map'            => 'RouteMap',
   }
 }
 
-#
-# Test_3_non_default_properties
-#
-data_hash['Test_3_non_default_properties'] = {
-  :manifest => "
-    ensure                        => present,
-    client_to_client              => true,
-    default_information_originate => true,
-    next_hop_route_map            => 'RouteMap',
+tests['non_default_properties_D'] = {
+  :desc => "2.2 Non Default Properties: 'D' commands",
+  :title_pattern => '2 blue ipv4 unicast',
+  :manifest_props => "
+    default_information_originate   => true,
   ",
 
-  :resource => {
-    'ensure'                        => 'present',
-    'client_to_client'              => 'true',
+  :resource_props => {
     'default_information_originate' => 'true',
-    'next_hop_route_map'            => 'RouteMap',
   }
 }
 
-#
-# Test_4_title_pattern1
-#
-data_hash['1'] = {
-  :manifest => "
-    ensure                        => present,
-    client_to_client              => false,
-    default_information_originate => true,
-    next_hop_route_map            => 'RouteMap',
+tests['non_default_properties_N'] = {
+  :desc => "2.3 Non Default Properties: 'N' commands",
+  :title_pattern => '2 blue ipv4 unicast',
+  :manifest_props => "
+    next_hop_route_map              => 'RouteMap',
   ",
 
-  :resource => {
-    'ensure'                        => 'present',
-    'client_to_client'              => 'false',
-    'default_information_originate' => 'true',
+  :resource_props => {
     'next_hop_route_map'            => 'RouteMap',
   }
 }
 
-#
-# Test_4_title_pattern2
-#
-data_hash['1 red'] = {
-  :manifest => "
-    ensure                        => present,
-    client_to_client              => true,
-    default_information_originate => false,
-    next_hop_route_map            => 'RouteMap',
-  ",
-
-  :resource => {
-    'ensure'                        => 'present',
-    'client_to_client'              => 'true',
-    'default_information_originate' => 'false',
-    'next_hop_route_map'            => 'RouteMap',
-  }
+tests['title_patterns'] = {
+  :manifest_props => '',
+  :resource_props => { 'ensure' => 'present', }
 }
 
-#
-# Test_4_title_pattern3
-#
-data_hash['1 red ipv4'] = {
-  :manifest => "
-    ensure                        => present,
-    client_to_client              => true,
-    default_information_originate => true,
-    next_hop_route_map            => 'RouteMap',
-  ",
-
-  :resource => {
-    'ensure'                        => 'present',
-    'client_to_client'              => 'true',
-    'default_information_originate' => 'true',
-    'next_hop_route_map'            => 'RouteMap',
-  }
-}
-
-#
-# Test_4_title_pattern4
-#
-data_hash['1 red ipv4 unicast'] = {
-  :manifest => "
-    ensure                        => present,
-    client_to_client              => false,
-    default_information_originate => false,
-    next_hop_route_map            => 'RouteMap',
-  ",
-
-  :resource => {
-    'ensure'                        => 'present',
-    'client_to_client'              => 'false',
-    'default_information_originate' => 'false',
-    'next_hop_route_map'            => 'RouteMap',
-  }
-}
-
-#
-# Test_4_title_pattern5
-#
-data_hash['1 red ipv4 multicast'] = {
-  :manifest => "
-    ensure                        => present,
-    client_to_client              => false,
-    default_information_originate => false,
-    next_hop_route_map            => 'RouteMap',
-  ",
-
-  :resource => {
-    'ensure'                        => 'present',
-    'client_to_client'              => 'false',
-    'default_information_originate' => 'false',
-    'next_hop_route_map'            => 'RouteMap',
-  }
-}
-
-# Create actual manifest for a given test scenario
-def build_manifest(af, data_hash, test_name)
-  "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
-     node 'default' {
-       cisco_bgp_af { '#{test_name}':
-         #{BgpAFLib.manifest_id_props(af)}
-         #{data_hash[test_name][:manifest]}
-       }
-     }
-     EOF"
+# Search pattern for show run config testing
+def af_pattern(tests, id, af)
+  asn, vrf, afi, safi = af.values
+  if tests[id][:ensure] == :present
+    if vrf[/default/]
+      [/router bgp #{asn}/, /address-family #{afi} #{safi}/]
+    else
+      [/router bgp #{asn}/, /vrf #{vrf}/, /address-family #{afi} #{safi}/]
+    end
+  else
+    if vrf[/default/]
+      [/router bgp #{asn}/]
+    else
+      [/router bgp #{asn}/, /vrf #{vrf}/]
+    end
+  end
 end
 
-# Wrapper for processing the four tests for each test scenario
-def harness(af, test_name, master, agent, data_hash, test_name_hash = '')
-  logger.info("----\nAddress-Family ID: #{af} #{test_name}")
-
-  node_cleanup_bgp(agent, 'Clean Test Node')
-
-  test_manifest(master, agent,
-                build_manifest(af, data_hash, test_name),
-                test_name)
-
-  unless test_name_hash.to_s.empty?
-    # Merge title pattern hash and original af if using a title pattern
-    af = af.merge(test_name_hash)
+# Create actual manifest for a given test scenario.
+def build_manifest_bgp_af(tests, id)
+  manifest = prop_hash_to_manifest(tests[id][:af])
+  if tests[id][:ensure] == :absent
+    state = 'ensure => absent,'
+    tests[id][:resource] = { 'ensure' => 'absent' }
+  else
+    state = 'ensure => present,'
+    manifest += tests[id][:manifest_props]
+    tests[id][:resource] = tests[id][:resource_props]
   end
 
-  test_resource(agent, puppet_resource_cmd(af),
-                data_hash[test_name][:resource], test_name)
-
-  test_show_run(agent, 'show run bgp all', BgpAFLib.af_pattern(af), test_name)
-
-  test_idempotence(agent, test_name)
-
-  # Clean up old manifest, change ensure to absent
-  # Create an absent data hash
-  data_hash_absent = {}
-  data_hash_absent["#{test_name}"] = {
-    :manifest => "
-      ensure => absent,
-    ",
-
-    :resource => {
-      'ensure' => 'absent',
+  tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
+  logger.debug("build_manifest_bgp_af :: title_pattern:\n" +
+               tests[id][:title_pattern])
+  tests[id][:manifest] = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+  node 'default' {
+    cisco_bgp_af { '#{tests[id][:title_pattern]}':
+      #{state}
+      #{manifest}
     }
   }
+EOF"
+end
 
-  test_absent(master, agent,
-              build_manifest(af, data_hash_absent, test_name),
-              test_name)
+# Wrapper for bgp_af specific settings prior to calling the
+# common test_harness.
+def test_harness_bgp_af(tests, id)
+  af = bgp_title_pattern_munge(tests, id, 'bgp_af')
+  logger.info("\n--------\nTest Case Address-Family ID: #{af}")
+
+  tests[id][:ensure] = :present if tests[id][:ensure].nil?
+  tests[id][:show_pattern] = af_pattern(tests, id, af)
+  tests[id][:resource_cmd] = puppet_resource_cmd(af)
+
+  # Build the manifest for this test
+  build_manifest_bgp_af(tests, id)
+
+  test_harness_common(tests, id)
+  tests[id][:ensure] = nil
 end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
-  # -----------------------------------
-  # Test 1. Default properties
-  # -----------------------------------
-  test_name = 'Test_1_default_properties'
-  af = { :asn => 2, :vrf => 'blue', :afi => 'ipv4', :safi => 'unicast' }
-  harness(af, test_name, master, agent, data_hash)
+  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
+  node_feature_cleanup(agent, 'bgp')
 
   # -----------------------------------
-  # Test 2. Non-Default properties
-  # -----------------------------------
-  test_name = 'Test_2_non_default_properties'
-  af = { :asn => 2, :vrf => 'blue', :afi => 'ipv4', :safi => 'unicast' }
-  harness(af, test_name, master, agent, data_hash)
+  id = 'default_properties'
+  test_harness_bgp_af(tests, id)
+
+  tests[id][:desc] = '1.1 Default Properties'
+  tests[id][:ensure] = :absent
+  test_harness_bgp_af(tests, id)
+
+  # -------------------------------------------------------------------
+  logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
+  node_feature_cleanup(agent, 'bgp')
+
+  test_harness_bgp_af(tests, 'non_default_properties_C')
+  test_harness_bgp_af(tests, 'non_default_properties_D')
+  test_harness_bgp_af(tests, 'non_default_properties_N')
+
+  # -------------------------------------------------------------------
+  logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
+  node_feature_cleanup(agent, 'bgp')
+
+  id = 'title_patterns'
+  tests[id][:desc] = '3.1 Title Patterns'
+  tests[id][:title_pattern] = '2'
+  tests[id][:af] = { :afi => 'ipv4', :safi => 'unicast' }
+  test_harness_bgp_af(tests, id)
 
   # -----------------------------------
-  # Test 3. Non-Default properties (change afi and safi)
-  # -----------------------------------
-  test_name = 'Test_3_non_default_properties'
-  af = { :asn => 2, :vrf => 'blue', :afi => 'ipv4', :safi => 'unicast' }
-  harness(af, test_name, master, agent, data_hash)
-
-  # IPv6
-  test_name = 'Test_3_non_default_properties'
-  af = { :asn => 2, :vrf => 'green', :afi => 'ipv6', :safi => 'unicast' }
-  harness(af, test_name, master, agent, data_hash)
-
-  # IPv4 Multicast
-  test_name = 'Test_3_non_default_properties'
-  af = { :asn => 55, :vrf => 'red', :afi => 'ipv4', :safi => 'multicast' }
-  harness(af, test_name, master, agent, data_hash)
+  tests[id][:desc] = '3.2 Title Patterns'
+  tests[id][:title_pattern] = '2 blue'
+  tests[id][:af] = { :afi => 'ipv4', :safi => 'unicast' }
+  test_harness_bgp_af(tests, id)
 
   # -----------------------------------
-  # Test 4. Test Title Patterns
+  tests[id][:desc] = '3.3 Title Patterns'
+  tests[id][:title_pattern] = '2 red ipv4'
+  tests[id][:af] = { :safi => 'unicast' }
+  test_harness_bgp_af(tests, id)
+
   # -----------------------------------
-  # 'test_name' is also a title pattern
-  # 'test_name_hash' is a copy of test_name in hash format. This is
-  # necessary because in the case of title patterns we need to combine the title
-  # pattern and the af to run the puppet resource command.
-
-  # Title pattern includes asn
-  test_name = '1'
-  test_name_hash = { :asn => '1' }
-  af = { :asn => nil, :vrf => 'red', :afi => 'ipv4', :safi => 'unicast' }
-  harness(af, test_name, master, agent, data_hash, test_name_hash)
-
-  # Title pattern includes asn and vrf
-  test_name = '1 red'
-  test_name_hash = { :asn => '1', :vrf => 'red' }
-  af = { :asn => nil, :vrf => '', :afi => 'ipv4', :safi => 'unicast' }
-  harness(af, test_name, master, agent, data_hash, test_name_hash)
-
-  # Title pattern includes asn, vrf and afi
-  test_name = '1 red ipv4'
-  test_name_hash = { :asn => '1', :vrf => 'red', :afi => 'ipv4' }
-  af = { :asn => nil, :vrf => '', :afi => '', :safi => 'unicast' }
-  harness(af, test_name, master, agent, data_hash, test_name_hash)
-
-  # Title pattern includes asn, vrf, afi and safi
-  test_name = '1 red ipv4 unicast'
-  test_name_hash = { :asn => '1', :vrf => 'red', :afi => 'ipv4', :safi => 'unicast' }
-  af = { :asn => nil, :vrf => '', :afi => '', :safi => '' }
-  harness(af, test_name, master, agent, data_hash, test_name_hash)
-
-  # Title pattern includes asn, vrf, afi and safi (changed)
-  test_name = '1 red ipv4 multicast'
-  test_name_hash = { :asn => '1', :vrf => 'red', :afi => 'ipv4', :safi => 'multicast' }
-  af = { :asn => nil, :vrf => '', :afi => '', :safi => '' }
-  harness(af, test_name, master, agent, data_hash, test_name_hash)
+  tests[id][:desc] = '3.4 Title Patterns'
+  tests[id][:title_pattern] = '2 yellow ipv4 unicast'
+  tests[id].delete(:af)
+  test_harness_bgp_af(tests, id)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

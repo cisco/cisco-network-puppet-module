@@ -55,21 +55,21 @@ require File.expand_path('../bgpneighborlib.rb', __FILE__)
 
 result = 'PASS'
 testheader = 'BGP Neighbor Resource :: Password and type attributes'
-neighbor_name = 'test_green'
+id = 'test_green'
 UtilityLib.set_manifest_path(master, self)
-bgp_neighbor = {
+tests = {
   :master => master,
   :agent => agent,
 }
 
 test_name "TestCase :: #{testheader}" do
   stepinfo = 'Setup switch for provider test'
-  node_feature_cleanup(agent, 'bgp', stepinfo, logger)
+  node_feature_cleanup(agent, 'bgp', stepinfo)
   logger.info("TestStep :: #{stepinfo} :: #{result}")
 
   asn = 42
   vrf = 'red'
-  bgp_neighbor[neighbor_name] = {}
+  tests[id] = {}
   neighbor = '1.1.1.1'
   passwords = { :default => 'test',
                 'default' => 'test',
@@ -77,7 +77,7 @@ test_name "TestCase :: #{testheader}" do
                 'cleartext' => 'test',
               }
   passwords.each do |type, password|
-    bgp_neighbor[neighbor_name] = {
+    tests[id] = {
       :manifest_props => { :ensure => :present,
                            :asn => asn,
                            :vrf => vrf,
@@ -90,40 +90,36 @@ test_name "TestCase :: #{testheader}" do
         'password' => '386c0565965f89de'
       }
     }
+    resource_cmd_str =
+      UtilityLib::PUPPET_BINPATH +
+      'resource cisco_bgp_neighbor ' + "'#{asn} #{vrf} #{neighbor}'"
+    tests[id][:resource_cmd] =
+      UtilityLib.get_namespace_cmd(agent, resource_cmd_str, options)
+    tests[id][:desc] = '1.1 Apply manifest with password attributes'
+    create_bgpneighbor_manifest(tests, id)
+    test_manifest(tests, id)
 
-    bgp_neighbor[neighbor_name][:resource_cmd] =
-      UtilityLib.get_namespace_cmd(agent,
-                                   UtilityLib::PUPPET_BINPATH +
-                                   "resource cisco_bgp_neighbor '#{asn} #{vrf} #{neighbor}'",
-                                   options)
-    bgp_neighbor[neighbor_name][:log_desc] =
-      'apply manifest with password attributes'
-    create_bgpneighbor_manifest(neighbor_name, bgp_neighbor)
-    test_manifest(bgp_neighbor, neighbor_name)
+    tests[id][:desc] = '1.2 Verify puppet resource'
+    test_resource(tests, id)
 
-    bgp_neighbor[neighbor_name][:log_desc] = 'verify puppet resource'
-    test_resource(bgp_neighbor, neighbor_name)
+    tests[id][:desc] = '1.3 Verify password has been configured on the box'
+    tests[:show_cmd] = "show run bgp all | section #{neighbor}"
+    tests[id][:show_pattern] = [/password/]
+    test_show_cmd(tests, id)
 
-    bgp_neighbor[neighbor_name][:log_desc] =
-      'verify password has been configured on the box'
-    bgp_neighbor[:show_cmd] = "show run bgp all | section #{neighbor}"
-    bgp_neighbor[neighbor_name][:show_pattern] = [/password/]
-    test_show_cmd(bgp_neighbor, neighbor_name)
-
-    bgp_neighbor[neighbor_name][:log_desc] = 'test removing the password'
-    bgp_neighbor[neighbor_name][:manifest_props] = {
+    tests[id][:desc] = '1.4 Test removing the password'
+    tests[id][:manifest_props] = {
       :ensure => :present,
       :asn => asn,
       :vrf => vrf,
       :neighbor => neighbor,
       :password => '',
     }
-    create_bgpneighbor_manifest(neighbor_name, bgp_neighbor)
-    test_manifest(bgp_neighbor, neighbor_name)
+    create_bgpneighbor_manifest(tests, id)
+    test_manifest(tests, id)
 
-    bgp_neighbor[neighbor_name][:log_desc] =
-      'verify password has been removed on the box'
-    test_show_cmd(bgp_neighbor, neighbor_name, true)
+    tests[id][:desc] = '1.5 Verify password has been removed on the box'
+    test_show_cmd(tests, id, true)
   end
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   UtilityLib.raise_passfail_exception(result, testheader, self, logger)

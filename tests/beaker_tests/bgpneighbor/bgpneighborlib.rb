@@ -20,7 +20,7 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 # @param name [String] Name of the bgp neighbor.
 # @param tests [Hash] a hash that contains the supported attributes
 # @result none [None] Returns no object.
-def create_bgpneighbor_manifest(name, tests)
+def create_bgpneighbor_manifest(tests, name)
   tests[name][:manifest] = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
   node default {
     cisco_bgp_neighbor { '#{name}':\n

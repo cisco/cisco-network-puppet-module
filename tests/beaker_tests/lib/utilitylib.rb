@@ -188,23 +188,27 @@ end
 # tests[id][:ensure] - (Optional) set to :present or :absent before calling
 # tests[id][:code] - (Optional) override the default exit code in some tests.
 #
+# Reserved keys
+# tests[id][:log_desc] - the final form of the log description
+#
 def test_harness_common(tests, id)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:state] = false if tests[id][:state].nil?
-  tests[id][:log_desc] =
-    (tests[id][:desc].nil? ? '' : tests[id][:desc]) +
-    (tests[id][:log_desc].nil? ? '':tests[id][:log_desc]) +
-    " [ensure => #{tests[id][:ensure]}]"
+  tests[id][:desc] = '' if tests[id][:desc].nil?
+  tests[id][:log_desc] = tests[id][:desc] + " [ensure => #{tests[id][:ensure]}]"
   logger.info("\n--------\n#{tests[id][:log_desc]}")
 
   test_manifest(tests, id)
   test_resource(tests, id)
   test_show_cmd(tests, id, tests[id][:state]) unless tests[id][:show_pattern].nil?
   test_idempotence(tests, id)
+  tests[id].delete(:log_desc)
 end
 
 # Wrapper for formatting test log entries
 def format_stepinfo(tests, id, test_str)
+  logger.debug("format_stepinfo :: (#{tests[id][:desc]}) (#{test_str})")
+  tests[id][:log_desc] = tests[id][:desc] if tests[id][:log_desc].nil?
   tests[id][:log_desc] + sprintf(' :: %-12s', test_str)
 end
 
@@ -215,11 +219,12 @@ def test_manifest(tests, id)
   step "TestStep :: #{stepinfo}" do
     logger.debug("test_manifest :: manifest:\n#{tests[id][:manifest]}")
     on(tests[:master], tests[id][:manifest])
-
     code = tests[id][:code] ? tests[id][:code] : [2]
+    logger.debug('test_manifest :: check puppet agent cmd')
     on(tests[:agent], puppet_agent_cmd, :acceptable_exit_codes => code)
-    logger.info("#{stepinfo} :: PASS")
   end
+  logger.info("#{stepinfo} :: PASS")
+  tests[id].delete(:log_desc)
 end
 
 # Wrapper for 'puppet resource' command tests
@@ -232,6 +237,7 @@ def test_resource(tests, id)
                                           false, self, logger)
     end
     logger.info("#{stepinfo} :: PASS")
+    tests[id].delete(:log_desc)
   end
 end
 
@@ -247,6 +253,7 @@ def test_show_cmd(tests, id, state = false)
                                           state, self, logger)
     end
     logger.info("#{stepinfo} :: PASS")
+    tests[id].delete(:log_desc)
   end
 end
 
@@ -256,14 +263,14 @@ def test_idempotence(tests, id)
   step "TestStep :: #{stepinfo}" do
     on(tests[:agent], puppet_agent_cmd, :acceptable_exit_codes => [0])
     logger.info("#{stepinfo} :: PASS")
+    tests[id].delete(:log_desc)
   end
 end
 
 # Method to clean up a feature on the test node
 # @param agent [String] the agent that is going to run the test
 # @param feature [String] the feature name that will be cleaned up
-# @param logger [String] the logger that is used by the test
-def node_feature_cleanup(agent, feature, stepinfo, logger)
+def node_feature_cleanup(agent, feature, stepinfo='feature cleanup')
   step "TestStep :: #{stepinfo}" do
     clean = UtilityLib.get_vshell_cmd("conf t ; no feature #{feature}")
     on(agent, clean, :acceptable_exit_codes => [0, 2])
@@ -283,28 +290,6 @@ def node_feature_cleanup(agent, feature, stepinfo, logger)
   end
 end
 
-# Common BGP cleanup
-def node_cleanup_bgp(agent)
-  step 'TestStep :: BGP CLEANUP START' do
-    clean = UtilityLib.get_vshell_cmd('conf t ; feature bgp ; no feature bgp')
-    on(agent, clean, :acceptable_exit_codes => [0, 2])
-    show_cmd = UtilityLib.get_vshell_cmd('show running-config section bgp')
-    on(agent, show_cmd) do
-      UtilityLib.search_pattern_in_output(stdout, [/feature bgp/],
-                                          true, self, logger)
-    end
-
-    clean = UtilityLib.get_vshell_cmd('conf t ; feature bgp')
-    on(agent, clean, :acceptable_exit_codes => [0, 2])
-    show_cmd = UtilityLib.get_vshell_cmd('show running-config section bgp')
-    on(agent, show_cmd) do
-      UtilityLib.search_pattern_in_output(stdout, [/feature bgp/],
-                                          false, self, logger)
-    end
-  end
-  logger.info 'TestStep :: BGP CLEANUP FIN'
-end
-
 # bgp neighbor remote-as configuration helper
 def bgp_nbr_remote_as(agent, remote_as)
   asn, vrf, nbr, remote = remote_as.split
@@ -315,7 +300,7 @@ def bgp_nbr_remote_as(agent, remote_as)
 end
 
 # If a [:title] exists merge it with the [:af] values to create a complete af.
-def bgp_title_pattern_munge(tests, id)
+def bgp_title_pattern_munge(tests, id, provider=nil)
   title = tests[id][:title_pattern]
   af = tests[id][:af]
 
@@ -326,7 +311,13 @@ def bgp_title_pattern_munge(tests, id)
 
   tests[id][:af] = {} if af.nil?
   t = {}
-  t[:asn], t[:vrf], t[:neighbor], t[:afi], t[:safi] = title.split
+
+  case provider
+  when 'bgp_af'
+    t[:asn], t[:vrf], t[:afi], t[:safi] = title.split
+  when 'bgp_neighbor_af'
+    t[:asn], t[:vrf], t[:neighbor], t[:afi], t[:safi] = title.split
+  end
   t.merge!(tests[id][:af])
   t[:vrf] = 'default' if t[:vrf].nil?
   t

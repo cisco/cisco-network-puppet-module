@@ -56,184 +56,200 @@ require File.expand_path('../bgpneighborlib.rb', __FILE__)
 
 result = 'PASS'
 testheader = 'BGP Neighbor Resource :: Negative Value Test'
-neighbor_name = 'test_green'
 UtilityLib.set_manifest_path(master, self)
-bgp_neighbor = {
+tests = {
   :master => master,
   :agent => agent,
 }
 
 test_name "TestCase :: #{testheader}" do
-  stepinfo = 'Setup switch for provider test'
-  node_feature_cleanup(agent, 'bgp', stepinfo, logger)
-  logger.info("TestStep :: #{stepinfo} :: #{result}")
+  logger.info("\n#{'-' * 60}\nSection 1. Title Patterns")
+  node_feature_cleanup(agent, 'bgp', 'Setup switch for provider test')
 
   asn = 42
   vrf = 'red'
-  title = neighbor_name
-  bgp_neighbor[title] = {
-    :manifest_props => {
-      :ensure => :present,
-    },
-    :resource => {
-      'ensure' => 'present',
-    },
+  id = 'test_green'
+
+  tests[id] = {
+    :desc => '1.1 Apply id pattern of resource name',
     :code => [1],
+    :manifest_props => { :ensure => :present },
+    :resource => { 'ensure' => 'present' },
   }
+  create_bgpneighbor_manifest(tests, id)
+  test_manifest(tests, id)
 
-  bgp_neighbor[title][:log_desc] =
-    'apply title pattern of resource name'
-  create_bgpneighbor_manifest(title, bgp_neighbor)
-  test_manifest(bgp_neighbor, title)
-
-  stepinfo = 'apply a manifest that misses asn'
-  title = 'missing_asn'
-  bgp_neighbor[title] = {
-    :log_desc => stepinfo,
+  tests[id] = {
+    :desc => '1.2 Apply a manifest that misses asn',
+    :code => [1],
     :manifest_props => {
       :ensure => :present,
       :vrf => vrf,
       :neighbor => '1.1.1.1',
     },
-    :code => [1],
   }
-  create_bgpneighbor_manifest(title, bgp_neighbor)
-  test_manifest(bgp_neighbor, title)
+  create_bgpneighbor_manifest(tests, id)
+  test_manifest(tests, id)
 
-  stepinfo = "apply title pattern of 'asn vrf', missing neighbor"
-  title = "#{asn} #{vrf}"
-  bgp_neighbor[title] = {
-    :log_desc => stepinfo,
-    :manifest_props => {
-      :ensure => :present,
-    },
+  id = "#{asn} #{vrf}"
+  tests[id] = {
+    :desc => "1.3 Apply id pattern of 'asn vrf', missing neighbor",
     :code => [1],
+    :manifest_props => { :ensure => :present },
   }
-  create_bgpneighbor_manifest(title, bgp_neighbor)
-  test_manifest(bgp_neighbor, title)
+  create_bgpneighbor_manifest(tests, id)
+  test_manifest(tests, id)
 
-  stepinfo = 'apply invalid asn'
-  title = neighbor_name
-  bgp_neighbor[title] = {
-    :log_desc => stepinfo,
+  tests[id] = {
+    :desc => '1.4 Apply invalid asn',
+    :code => [1],
     :manifest_props => {
       :ensure => :present,
       :asn => '5 12',
       :vrf => vrf,
       :neighbor => '1.1.1.1',
     },
-    :code => [1],
   }
-  create_bgpneighbor_manifest(title, bgp_neighbor)
-  test_manifest(bgp_neighbor, title)
+  create_bgpneighbor_manifest(tests, id)
+  test_manifest(tests, id)
 
-  title = "#{asn} #{vrf} 1.1.1.1"
-  bgp_neighbor[title] = {
-    :log_desc => 'apply invalid local_as',
+  # -------------------------------------------------------------------
+  logger.info("\n#{'-' * 60}\nSection 2. Properties")
+
+  id = "#{asn} #{vrf} 1.1.1.1"
+  tests[id] = {
+    :desc => '2.1 Apply invalid local_as',
+    :code => [1],
     :manifest_props => {
       :ensure => :present,
       :local_as => '5 12'
     },
+  }
+  create_bgpneighbor_manifest(tests, id)
+  test_manifest(tests, id)
+
+  tests[id] = {
+    :desc => '2.2 Apply invalid remote_as',
     :code => [1],
+    :manifest_props => {
+      :ensure => :present,
+      :remote_as => '5 12'
+    },
   }
-  create_bgpneighbor_manifest(title, bgp_neighbor)
-  test_manifest(bgp_neighbor, title)
+  create_bgpneighbor_manifest(tests, id)
+  test_manifest(tests, id)
 
-  bgp_neighbor[title][:log_desc] = 'apply invalid remote_as'
-  bgp_neighbor[title][:manifest_props] = {
-    :ensure => :present,
-    :remote_as => '5 12'
+  tests[id] = {
+    :desc => '2.3 Apply invalid ebgp_multihop value',
+    :code => [1],
+    :manifest_props => {
+      :ensure => :present,
+      :ebgp_multihop => 256,
+    },
   }
-  create_bgpneighbor_manifest(title, bgp_neighbor)
-  test_manifest(bgp_neighbor, title)
+  create_bgpneighbor_manifest(tests, id)
+  test_manifest(tests, id)
 
-  bgp_neighbor[title][:log_desc] = 'apply invalid ebgp_multihop value'
-  bgp_neighbor[title][:manifest_props] = {
-    :ensure => :present,
-    :ebgp_multihop => 256,
+  tests[id] = {
+    :desc => '2.4 Apply maximum_peers when it is not allowed',
+    :code => [1],
+    :manifest_props => {
+      :ensure => :present,
+      :maximum_peers => 2,
+    },
   }
-  create_bgpneighbor_manifest(title, bgp_neighbor)
-  test_manifest(bgp_neighbor, title)
+  create_bgpneighbor_manifest(tests, id)
+  test_manifest(tests, id)
 
-  bgp_neighbor[title][:log_desc] = 'apply maximum_peers when it is not allowed'
-  bgp_neighbor[title][:manifest_props] = {
-    :ensure => :present,
-    :maximum_peers => 2,
-  }
-  create_bgpneighbor_manifest(title, bgp_neighbor)
-  test_manifest(bgp_neighbor, title)
-
-  title = "#{asn} #{vrf} 1.1.1.0/24"
-  bgp_neighbor[title] = {
-    :log_desc => 'apply invalid maximum_peers number',
+  id = "#{asn} #{vrf} 1.1.1.0/24"
+  tests[id] = {
+    :desc => '2.5 Apply invalid maximum_peers number',
+    :code => [1],
     :manifest_props => {
       :ensure => :present,
       :maximum_peers => 1001,
     },
+  }
+  create_bgpneighbor_manifest(tests, id)
+  test_manifest(tests, id)
+
+  tests[id] = {
+    :desc => '2.6 Apply invalid password',
     :code => [1],
+    :manifest_props => {
+      :ensure => :present,
+      :password_type => default,
+      :password => 32,
+    },
   }
-  create_bgpneighbor_manifest(title, bgp_neighbor)
-  test_manifest(bgp_neighbor, title)
+  create_bgpneighbor_manifest(tests, id)
+  test_manifest(tests, id)
 
-  bgp_neighbor[title][:log_desc] = 'apply invalid password'
-  bgp_neighbor[title][:manifest_props] = {
-    :ensure => :present,
-    :password_type => default,
-    :password => 32,
+  tests[id] = {
+    :desc => '2.7 Apply invalid keepalive timer',
+    :code => [1],
+    :manifest_props => {
+      :ensure => :present,
+      :timers_keepalive => 3700,
+    },
   }
-  create_bgpneighbor_manifest(title, bgp_neighbor)
-  test_manifest(bgp_neighbor, title)
+  create_bgpneighbor_manifest(tests, id)
+  test_manifest(tests, id)
 
-  bgp_neighbor[title][:log_desc] = 'apply invalid keepalive timer'
-  bgp_neighbor[title][:manifest_props] = {
-    :ensure => :present,
-    :timers_keepalive => 3700,
+  tests[id] = {
+    :desc => '2.8 Apply invalid holdtime timer',
+    :code => [1],
+    :manifest_props => {
+      :ensure => :present,
+      :timers_holdtime => 3700,
+    },
   }
-  create_bgpneighbor_manifest(title, bgp_neighbor)
-  test_manifest(bgp_neighbor, title)
+  create_bgpneighbor_manifest(tests, id)
+  test_manifest(tests, id)
 
-  bgp_neighbor[title][:log_desc] = 'apply invalid holdtime timer'
-  bgp_neighbor[title][:manifest_props] = {
-    :ensure => :present,
-    :timers_holdtime => 3700,
+  tests[id] = {
+    :desc => '2.9 Apply transport_passive_only when it is not allowed',
+    :code => [1],
+    :manifest_props => {
+      :ensure => :present,
+      :transport_passive_only => true,
+    },
   }
-  create_bgpneighbor_manifest(title, bgp_neighbor)
-  test_manifest(bgp_neighbor, title)
+  create_bgpneighbor_manifest(tests, id)
+  test_manifest(tests, id)
 
-  bgp_neighbor[title][:log_desc] =
-    'apply transport_passive_only when it is not allowed'
-  bgp_neighbor[title][:manifest_props] = {
-    :ensure => :present,
-    :transport_passive_only => true,
+  tests[id] = {
+    :desc => '2.10 Apply invalid update_source',
+    :code => [1],
+    :manifest_props => {
+      :ensure => :present,
+      :update_source => 15,
+    },
   }
-  create_bgpneighbor_manifest(title, bgp_neighbor)
-  test_manifest(bgp_neighbor, title)
+  create_bgpneighbor_manifest(tests, id)
+  test_manifest(tests, id)
 
-  bgp_neighbor[title][:log_desc] = 'apply invalid update_source'
-  bgp_neighbor[title][:manifest_props] = {
-    :ensure => :present,
-    :update_source => 15,
+  tests[id] = {
+    :desc => '2.11 Validate password type must be present if password is configured',
+    :code => [1],
+    :manifest_props => {
+      :ensure => :present,
+      :password => 'test',
+    },
   }
-  create_bgpneighbor_manifest(title, bgp_neighbor)
-  test_manifest(bgp_neighbor, title)
+  create_bgpneighbor_manifest(tests, id)
+  test_manifest(tests, id)
 
-  bgp_neighbor[title][:log_desc] =
-    'validate password type must be present, if password is configured'
-  bgp_neighbor[title][:manifest_props] = {
-    :ensure => :present,
-    :password => 'test',
+  tests[id] = {
+    :desc => '2.12 Validate password type must be present if password is configured',
+    :code => [1],
+    :manifest_props => {
+      :ensure => :present,
+      :password_type => :cleartext,
+    },
   }
-  create_bgpneighbor_manifest(title, bgp_neighbor)
-  test_manifest(bgp_neighbor, title)
-
-  bgp_neighbor[title][:log_desc] =
-    'validate password must be present, if password type is present'
-  bgp_neighbor[title][:manifest_props] = {
-    :ensure => :present,
-    :password_type => :cleartext,
-  }
-  create_bgpneighbor_manifest(title, bgp_neighbor)
-  test_manifest(bgp_neighbor, title)
+  create_bgpneighbor_manifest(tests, id)
+  test_manifest(tests, id)
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   UtilityLib.raise_passfail_exception(result, testheader, self, logger)

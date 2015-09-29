@@ -17,6 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
+
 begin
   require 'puppet_x/cisco/autogen'
 rescue LoadError # seen on master, not on agent

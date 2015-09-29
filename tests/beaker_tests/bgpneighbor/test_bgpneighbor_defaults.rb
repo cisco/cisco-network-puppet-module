@@ -56,19 +56,19 @@ require File.expand_path('../bgpneighborlib.rb', __FILE__)
 UtilityLib.set_manifest_path(master, self)
 result = 'PASS'
 testheader = 'BGP Neighbor Resource :: Attribute Defaults'
-neighbor_name = 'test_green'
-bgp_neighbor = {
+id = 'test_green'
+tests = {
   :master => master,
   :agent => agent,
 }
 
-def create_bgp_neighbor_defaults(test, id, title, string = false)
+def create_bgp_neighbor_defaults(tests, id, title, string = false)
   asn = title[:asn]
   vrf = title[:vrf]
   neighbor = title[:neighbor]
   val = string ? 'default' : :default
 
-  test[id][:manifest_props] = {
+  tests[id][:manifest_props] = {
     :ensure => :present,
     :asn => asn,
     :vrf => vrf,
@@ -82,7 +82,7 @@ def create_bgp_neighbor_defaults(test, id, title, string = false)
     :timers_holdtime => val,
   }
 
-  test[id][:resource] = {
+  tests[id][:resource] = {
     'ensure' => 'present',
     'ebgp_multihop' => '1',
     'local_as' => '0',
@@ -99,60 +99,61 @@ def create_bgp_neighbor_defaults(test, id, title, string = false)
     # transport_passive_only attribute is only available in neighbor ip address
     # format, maximum_peers option is only available in neighbor ip/prefix
     # format.
-    test[id][:manifest_props][:transport_passive_only] = val
-    test[id][:manifest_props][:maximum_peers] = nil
+    tests[id][:manifest_props][:transport_passive_only] = val
+    tests[id][:manifest_props][:maximum_peers] = nil
   else
-    test[id][:manifest_props][:transport_passive_only] = nil
-    test[id][:manifest_props][:maximum_peers] = val
+    tests[id][:manifest_props][:transport_passive_only] = nil
+    tests[id][:manifest_props][:maximum_peers] = val
   end
 
-  create_bgpneighbor_manifest(id, test)
-  test[id][:resource_cmd] = UtilityLib.get_namespace_cmd(agent,
-                                                         UtilityLib::PUPPET_BINPATH +
-                                                         "resource cisco_bgp_neighbor '#{asn} #{vrf} #{neighbor}'",
-                                                         options)
+  create_bgpneighbor_manifest(tests, id)
+  resource_cmd_str =
+    UtilityLib::PUPPET_BINPATH +
+    "resource cisco_bgp_neighbor '#{asn} #{vrf} #{neighbor}'"
+  tests[id][:resource_cmd] =
+    UtilityLib.get_namespace_cmd(agent, resource_cmd_str, options)
 end
 
 test_name "TestCase :: #{testheader}" do
   stepinfo = 'Setup switch for provider test'
-  node_feature_cleanup(agent, 'bgp', stepinfo, logger)
+  node_feature_cleanup(agent, 'bgp', stepinfo)
   logger.info("TestStep :: #{stepinfo} :: #{result}")
 
-  bgp_neighbor[neighbor_name] = {}
+  tests[id] = {}
   ['1.1.1.1', '2.2.2.0/24'].each do |neighbor|
     title = { :asn => 42, :vrf => 'red', :neighbor => neighbor }
 
-    bgp_neighbor[neighbor_name][:log_desc] =
-      "apply default manifest with 'default' as a string in attributes"
-    create_bgp_neighbor_defaults(bgp_neighbor, neighbor_name, title, true)
-    test_manifest(bgp_neighbor, neighbor_name)
+    tests[id][:desc] =
+      "1.1 Apply default manifest with 'default' as a string in attributes"
+    create_bgp_neighbor_defaults(tests, id, title, true)
+    test_manifest(tests, id)
 
-    bgp_neighbor[neighbor_name][:log_desc] =
-      'Check cisco_bgp_neighbor resource present on agent'
-    test_resource(bgp_neighbor, neighbor_name)
+    tests[id][:desc] =
+      '1.2 Check cisco_bgp_neighbor resource present on agent'
+    test_resource(tests, id)
 
-    bgp_neighbor[neighbor_name][:log_desc] =
-      "apply default manifest with 'default' as a symbol in attributes"
-    create_bgp_neighbor_defaults(bgp_neighbor, neighbor_name, title, false)
+    tests[id][:desc] =
+      "1.3 Apply default manifest with 'default' as a symbol in attributes"
+    create_bgp_neighbor_defaults(tests, id, title, false)
     # In this case, nothing changed, we would expect the puppet run return 0,
     # It also verified idempotent of the provider.
-    bgp_neighbor[neighbor_name][:code] = [0]
-    test_manifest(bgp_neighbor, neighbor_name)
+    tests[id][:code] = [0]
+    test_manifest(tests, id)
 
-    bgp_neighbor[neighbor_name][:log_desc] = 'Test resource absent manifest'
-    bgp_neighbor[neighbor_name][:manifest_props] = {
+    tests[id][:desc] = '1.4 Test resource absent manifest'
+    tests[id][:manifest_props] = {
       :ensure => :absent,
       :asn => title[:asn],
       :vrf => title[:vrf],
       :neighbor => title[:neighbor],
     }
-    bgp_neighbor[neighbor_name][:code] = nil
-    bgp_neighbor[neighbor_name][:resource] = { 'ensure' => 'absent', }
-    create_bgpneighbor_manifest(neighbor_name, bgp_neighbor)
-    test_manifest(bgp_neighbor, neighbor_name)
+    tests[id][:code] = nil
+    tests[id][:resource] = { 'ensure' => 'absent', }
+    create_bgpneighbor_manifest(tests, id)
+    test_manifest(tests, id)
 
-    bgp_neighbor[neighbor_name][:log_desc]  = 'Verify resource absent on agent'
-    test_resource(bgp_neighbor, neighbor_name)
+    tests[id][:desc]  = '1.5 Verify resource absent on agent'
+    test_resource(tests, id)
   end
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   UtilityLib.raise_passfail_exception(result, testheader, self, logger)

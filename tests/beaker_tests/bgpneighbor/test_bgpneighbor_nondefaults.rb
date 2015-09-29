@@ -57,23 +57,23 @@ require File.expand_path('../bgpneighborlib.rb', __FILE__)
 
 result = 'PASS'
 testheader = 'BGP Neighbor Resource :: Attribute Non-defaults'
-neighbor_name = 'test_green'
 UtilityLib.set_manifest_path(master, self)
-bgp_neighbor = {
+id = 'test_green'
+tests = {
   :master => master,
   :agent => agent,
 }
 
 test_name "TestCase :: #{testheader}" do
   stepinfo = 'Setup switch for provider test'
-  node_feature_cleanup(agent, 'bgp', stepinfo, logger)
+  node_feature_cleanup(agent, 'bgp', stepinfo)
   logger.info("TestStep :: #{stepinfo} :: #{result}")
 
   asn = 42
   vrf = 'red'
-  bgp_neighbor[neighbor_name] = {}
+  tests[id] = {}
   ['1.1.1.1', '2.2.2.0/24'].each do |neighbor|
-    bgp_neighbor[neighbor_name] = {
+    tests[id] = {
       :manifest_props => {
         :ensure => :present,
         :asn => asn,
@@ -114,35 +114,35 @@ test_name "TestCase :: #{testheader}" do
         'update_source' => 'ethernet1/1'
       }
     }
-    bgp_neighbor[neighbor_name][:resource_cmd] =
-      UtilityLib.get_namespace_cmd(agent,
-                                   UtilityLib::PUPPET_BINPATH +
-                                   "resource cisco_bgp_neighbor '#{asn} #{vrf} #{neighbor}'",
-                                   options)
+    resource_cmd_str =
+      UtilityLib::PUPPET_BINPATH +
+      "resource cisco_bgp_neighbor '#{asn} #{vrf} #{neighbor}'"
+    tests[id][:resource_cmd] =
+      UtilityLib.get_namespace_cmd(agent, resource_cmd_str, options)
     # transport_passive_only attribute is only available in neighbor ip address
     # format, maximum_peers option is only available in neighbor ip/prefix
     # format.
     if neighbor == '1.1.1.1'
-      bgp_neighbor[neighbor_name][:manifest_props][:transport_passive_only] = :true
-      bgp_neighbor[neighbor_name][:resource]['transport_passive_only'] = 'true'
-      bgp_neighbor[neighbor_name][:manifest_props][:maximum_peers] = nil
-      bgp_neighbor[neighbor_name][:resource]['maximum_peers'] = '0'
+      tests[id][:manifest_props][:transport_passive_only] = :true
+      tests[id][:resource]['transport_passive_only'] = 'true'
+      tests[id][:manifest_props][:maximum_peers] = nil
+      tests[id][:resource]['maximum_peers'] = '0'
     else
-      bgp_neighbor[neighbor_name][:manifest_props][:transport_passive_only] = nil
-      bgp_neighbor[neighbor_name][:resource]['transport_passive_only'] =
+      tests[id][:manifest_props][:transport_passive_only] = nil
+      tests[id][:resource]['transport_passive_only'] =
         'false'
-      bgp_neighbor[neighbor_name][:manifest_props][:maximum_peers] = 2
-      bgp_neighbor[neighbor_name][:resource]['maximum_peers'] = '2'
+      tests[id][:manifest_props][:maximum_peers] = 2
+      tests[id][:resource]['maximum_peers'] = '2'
     end
 
-    bgp_neighbor[neighbor_name][:log_desc] =
-      'apply manifest with non-default attributes, and test harness'
-    create_bgpneighbor_manifest(neighbor_name, bgp_neighbor)
-    test_harness_common(bgp_neighbor, neighbor_name)
+    tests[id][:desc] =
+      '1.1 Apply manifest with non-default attributes, and test harness'
+    create_bgpneighbor_manifest(tests, id)
+    test_harness_common(tests, id)
 
-    bgp_neighbor[neighbor_name][:log_desc] =
-      'apply manifest with string format non-default attributes'
-    bgp_neighbor[neighbor_name][:manifest_props] = {
+    tests[id][:desc] =
+      '1.2 Apply manifest with string format non-default attributes'
+    tests[id][:manifest_props] = {
       :ensure => :present,
       :asn => asn,
       :vrf => vrf,
@@ -164,21 +164,21 @@ test_name "TestCase :: #{testheader}" do
       :update_source => 'ethernet1/1'
     }
     if neighbor == '1.1.1.1'
-      bgp_neighbor[neighbor_name][:manifest_props][:transport_passive_only] = 'true'
-      bgp_neighbor[neighbor_name][:manifest_props][:maximum_peers] = nil
+      tests[id][:manifest_props][:transport_passive_only] = 'true'
+      tests[id][:manifest_props][:maximum_peers] = nil
     else
-      bgp_neighbor[neighbor_name][:manifest_props][:transport_passive_only] = nil
-      bgp_neighbor[neighbor_name][:manifest_props][:maximum_peers] = '2'
+      tests[id][:manifest_props][:transport_passive_only] = nil
+      tests[id][:manifest_props][:maximum_peers] = '2'
     end
 
-    create_bgpneighbor_manifest(neighbor_name, bgp_neighbor)
+    create_bgpneighbor_manifest(tests, id)
     # In this case, nothing changed, we would expect the puppet run return 0,
-    bgp_neighbor[neighbor_name][:code] = [0]
-    test_manifest(bgp_neighbor, neighbor_name)
+    tests[id][:code] = [0]
+    test_manifest(tests, id)
 
-    bgp_neighbor[neighbor_name][:log_desc] =
-      'Update manifest and test harness'
-    bgp_neighbor[neighbor_name][:manifest_props] = {
+    tests[id][:desc] =
+      '1.3 Update manifest and test harness'
+    tests[id][:manifest_props] = {
       :ensure => :present,
       :asn => asn,
       :vrf => vrf,
@@ -199,7 +199,7 @@ test_name "TestCase :: #{testheader}" do
       :timers_holdtime => '90',
       :update_source => 'ethernet1/2'
     }
-    bgp_neighbor[neighbor_name][:resource] = {
+    tests[id][:resource] = {
       'ensure' => :present,
       'connected_check' => 'false',
       'capability_negotiation' => 'false',
@@ -216,22 +216,22 @@ test_name "TestCase :: #{testheader}" do
       'timers_holdtime' => '90',
       'update_source' => 'ethernet1/2'
     }
-    bgp_neighbor[:show_cmd] = "show run bgp all | section #{neighbor}"
+    tests[id][:show_cmd] = "show run bgp all | section #{neighbor}"
     # when description is empty string, puppet resource will not return
     # its value, we have to use show command to verify its removal
-    bgp_neighbor[neighbor_name][:show_pattern] = [/description/]
-    bgp_neighbor[neighbor_name][:state] = true
-    bgp_neighbor[neighbor_name][:code] = nil
-    create_bgpneighbor_manifest(neighbor_name, bgp_neighbor)
-    test_harness_common(bgp_neighbor, neighbor_name)
+    tests[id][:show_pattern] = [/description/]
+    tests[id][:state] = true
+    tests[id][:code] = nil
+    create_bgpneighbor_manifest(tests, id)
+    test_harness_common(tests, id)
 
-    bgp_neighbor[neighbor_name][:log_desc] =
-      'Change format of local_as and remote_as, and verify idempotent'
-    bgp_neighbor[neighbor_name][:manifest_props][:local_as] = 65_537
-    bgp_neighbor[neighbor_name][:manifest_props][:remote_as] = 65_537
-    bgp_neighbor[neighbor_name][:code] = [0]
-    create_bgpneighbor_manifest(neighbor_name, bgp_neighbor)
-    test_manifest(bgp_neighbor, neighbor_name)
+    tests[id][:desc] =
+      '1.4 Change format of local_as and remote_as, and verify idempotent'
+    tests[id][:manifest_props][:local_as] = 65_537
+    tests[id][:manifest_props][:remote_as] = 65_537
+    tests[id][:code] = [0]
+    create_bgpneighbor_manifest(tests, id)
+    test_manifest(tests, id)
   end
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   UtilityLib.raise_passfail_exception(result, testheader, self, logger)

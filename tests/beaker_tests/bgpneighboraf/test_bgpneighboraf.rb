@@ -391,7 +391,7 @@ end
 # Wrapper for bgp_nbr_af specific settings prior to calling the
 # common test_harness.
 def test_harness_bgp_nbr_af(tests, id)
-  af = bgp_title_pattern_munge(tests, id)
+  af = bgp_title_pattern_munge(tests, id, 'bgp_neighbor_af')
   logger.info("\n--------\nTest Case Address-Family ID: #{af}")
 
   # Set up remote-as if necessary
@@ -414,7 +414,7 @@ end
 test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  node_cleanup_bgp(agent)
+  node_feature_cleanup(agent, 'bgp')
 
   # -----------------------------------
   id = 'default_properties'
@@ -425,7 +425,7 @@ test_name "TestCase :: #{testheader}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  node_cleanup_bgp(agent)
+  node_feature_cleanup(agent, 'bgp')
 
   test_harness_bgp_nbr_af(tests, 'non_default_properties_A')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_C')
@@ -444,7 +444,7 @@ test_name "TestCase :: #{testheader}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
-  node_cleanup_bgp(agent)
+  node_feature_cleanup(agent, 'bgp')
 
   id = 'title_patterns'
   tests[id][:desc] = '3.1 Title Patterns'
@@ -454,7 +454,6 @@ test_name "TestCase :: #{testheader}" do
   test_harness_bgp_nbr_af(tests, id)
 
   # -----------------------------------
-  id = 'title_patterns'
   tests[id][:desc] = '3.2 Title Patterns'
   tests[id][:title_pattern] = '2 blue'
   tests[id][:af] = { :neighbor => '2.2.2.2', :afi => 'ipv4',
@@ -462,23 +461,21 @@ test_name "TestCase :: #{testheader}" do
   test_harness_bgp_nbr_af(tests, id)
 
   # -----------------------------------
-  id = 'title_patterns'
   tests[id][:desc] = '3.3 Title Patterns'
   tests[id][:title_pattern] = '2 green 3.3.3.3'
   tests[id][:af] = { :afi => 'ipv4', :safi => 'unicast' }
   test_harness_bgp_nbr_af(tests, id)
 
   # -----------------------------------
-  id = 'title_patterns'
   tests[id][:desc] = '3.4 Title Patterns'
   tests[id][:title_pattern] = '2 red 4.4.4.4 ipv4'
   tests[id][:af] = { :safi => 'unicast' }
   test_harness_bgp_nbr_af(tests, id)
 
   # -----------------------------------
-  id = 'title_patterns'
   tests[id][:desc] = '3.5 Title Patterns'
   tests[id][:title_pattern] = '2 yellow 5.5.5.5 ipv4 unicast'
+  tests[id].delete(:af)
   test_harness_bgp_nbr_af(tests, id)
 end
 
