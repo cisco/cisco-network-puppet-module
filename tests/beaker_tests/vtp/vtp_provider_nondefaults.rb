@@ -125,7 +125,7 @@ test_name "TestCase :: #{testheader}" do
       UtilityLib.search_pattern_in_output(stdout,
                                           [/feature vtp/,
                                            /vtp domain cisco1234/,
-                                           /vtp file bootflash:\/vtp\.dat/],
+                                           %r{vtp file bootflash:/vtp.dat}],
                                           false, self, logger)
     end
 
@@ -173,7 +173,7 @@ test_name "TestCase :: #{testheader}" do
       UtilityLib.search_pattern_in_output(stdout,
                                           [/feature vtp/,
                                            /vtp domain cisco1234/,
-                                           /vtp file bootflash:\/vtp\.dat/],
+                                           %r{vtp file bootflash:/vtp.dat}],
                                           true, self, logger)
     end
 

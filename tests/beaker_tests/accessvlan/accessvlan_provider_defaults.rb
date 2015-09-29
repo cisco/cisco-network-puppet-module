@@ -84,7 +84,7 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface eth1/4')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [/interface Ethernet1\/4/],
+      UtilityLib.search_pattern_in_output(stdout, [%r{interface Ethernet1/4}],
                                           false, self, logger)
     end
 

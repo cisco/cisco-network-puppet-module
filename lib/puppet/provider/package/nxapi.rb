@@ -115,7 +115,7 @@ Puppet::Type.type(:package).provide :nxapi, parent: :yum do
         "#{@resource[:source]}"
     end
     # replace linux path with ios-style path
-    @resource[:source].gsub!(/^\/([^\/]+)\//, '\1:')
+    @resource[:source].gsub!(%r{^/([^/]+)/}, '\1:')
   end
 
   # helper to retrieve version info for installed package
@@ -171,7 +171,7 @@ Puppet::Type.type(:package).provide :nxapi, parent: :yum do
     else
       debug 'Not Guestshell + target=>host, use native yum provider for install'
       # replace bootflash:path with /bootflash/path for native env
-      @resource[:source].gsub!(/^([^\/]+):\/?/, '/\1/') if @resource[:source]
+      @resource[:source].gsub!(%r{^([^/]+):/?}, '/\1/') if @resource[:source]
       super
     end
   end

@@ -161,7 +161,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config interface loopback1')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
       UtilityLib.search_pattern_in_output(stdout, \
-                                          [/ip address 192.168.1.1\/#{LoopbackIntfLib::IPV4MASKLEN_NEGATIVE}/],
+                                          [%r{ip address 192.168.1.1/#{LoopbackIntfLib::IPV4MASKLEN_NEGATIVE}}],
                                           true, self, logger)
     end
 

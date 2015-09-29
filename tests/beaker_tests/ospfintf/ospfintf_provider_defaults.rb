@@ -137,7 +137,7 @@ test_name "TestCase :: #{testheader}" do
       UtilityLib.search_pattern_in_output(stdout,
                                           [
                                             /router ospf test/,
-                                            /interface Ethernet1\/4/,
+                                            %r{interface Ethernet1/4},
                                             /ip ospf cost 1/,
                                             /ip ospf dead-interval 40/,
                                             /ip router ospf test area 0.0.0.1/,
@@ -191,7 +191,7 @@ test_name "TestCase :: #{testheader}" do
       UtilityLib.search_pattern_in_output(stdout,
                                           [
                                             /router ospf test/,
-                                            /interface Ethernet1\/4/,
+                                            %r{interface Ethernet1/4},
                                             /ip ospf cost 1/,
                                             /ip ospf dead-interval 40/,
                                             /ip router ospf test area 0.0.0.1/,

@@ -135,7 +135,7 @@ test_name "TestCase :: #{testheader}" do
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
                                           [
-                                            /ip address 192.168.1.1\/16/,
+                                            %r{ip address 192.168.1.1/16},
                                             /no switchport/,
                                             /no ip redirects/,
                                             /ip proxy-arp/,
@@ -280,7 +280,7 @@ test_name "TestCase :: #{testheader}" do
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
                                           [
-                                            /ip address 192.168.1.1\/16/,
+                                            %r{ip address 192.168.1.1/16},
                                             /no switchport/,
                                             /no ip redirects/,
                                             /ip proxy-arp/,

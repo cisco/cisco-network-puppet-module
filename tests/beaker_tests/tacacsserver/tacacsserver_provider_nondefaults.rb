@@ -83,7 +83,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{feature tacacs\+}],
+                                          [/feature tacacs\+/],
                                           true, self, logger)
     end
 
@@ -130,10 +130,10 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{feature tacacs\+},
-                                           %r{tacacs\-server key 7 "WXYZ12"},
-                                           %r{ip tacacs source\-interface Ethernet1\/4},
-                                           %r{tacacs\-server timeout 50}],
+                                          [/feature tacacs\+/,
+                                           /tacacs\-server key 7 "WXYZ12"/,
+                                           %r{ip tacacs source-interface Ethernet1/4},
+                                           /tacacs\-server timeout 50/],
                                           false, self, logger)
     end
 
@@ -180,10 +180,10 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{feature tacacs\+},
-                                           %r{tacacs\-server key 7 "WXYZ12"},
-                                           %r{ip tacacs source\-interface Ethernet1\/4},
-                                           %r{tacacs\-server timeout 50}],
+                                          [/feature tacacs\+/,
+                                           /tacacs\-server key 7 "WXYZ12"/,
+                                           %r{ip tacacs source-interface Ethernet1/4},
+                                           /tacacs\-server timeout 50/],
                                           true, self, logger)
     end
 

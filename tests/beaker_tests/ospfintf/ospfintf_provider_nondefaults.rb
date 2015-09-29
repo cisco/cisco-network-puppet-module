@@ -127,7 +127,7 @@ test_name "TestCase :: #{testheader}" do
       UtilityLib.search_pattern_in_output(stdout,
                                           [
                                             /router ospf test/,
-                                            /interface Ethernet1\/4/,
+                                            %r{interface Ethernet1/4},
                                             /ip ospf cost 100/,
                                             /ip ospf dead-interval 80/,
                                             /ip ospf hello-interval 20/,
@@ -183,7 +183,7 @@ test_name "TestCase :: #{testheader}" do
       UtilityLib.search_pattern_in_output(stdout,
                                           [
                                             /router ospf test/,
-                                            /interface Ethernet1\/4/,
+                                            %r{interface Ethernet1/4},
                                             /ip ospf cost 100/,
                                             /ip ospf dead-interval 80/,
                                             /ip ospf hello-interval 20/,
@@ -211,7 +211,7 @@ test_name "TestCase :: #{testheader}" do
       UtilityLib.search_pattern_in_output(stdout,
                                           [
                                             /router ospf test/,
-                                            /interface Ethernet1\/4/,
+                                            %r{interface Ethernet1/4},
                                             /ip router ospf test area #{area1}/,
                                           ],
                                           false, self, logger)
@@ -228,7 +228,7 @@ test_name "TestCase :: #{testheader}" do
       UtilityLib.search_pattern_in_output(stdout,
                                           [
                                             /router ospf test/,
-                                            /interface Ethernet1\/4/,
+                                            %r{interface Ethernet1/4},
                                             /ip router ospf test area #{area2}/,
                                           ],
                                           false, self, logger)
