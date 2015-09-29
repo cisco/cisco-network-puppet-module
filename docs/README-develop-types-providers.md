@@ -4,6 +4,8 @@
 
 * [Overview](#overview)
 * [Before You Begin](#prerequisites)
+   * [Install prerequisite gems](#gems)
+   * [Install puppet module](#pmodule)
 * [Start here: Clone the Repo](#clone)
 * [Basic Example: feature tunnel](#simp_example)
    * [Step 1. Type: feature tunnel](#simp_type)
@@ -15,6 +17,7 @@
    * [Step 2. Provider: router eigrp](#comp_prov)
    * [Step 3. Testing: router eigrp](#comp_test)
    * [Step 4. Static Analysis](#comp_sa)
+* [Copy Manifests Back to `examples` directory](#manifests)
 * [Next Steps](#next)
 
 ## <a name="overview">Overview</a>
@@ -35,17 +38,25 @@ This document relies heavily on example code. The examples in this document can 
 
 ## <a name="prerequisites">Before You Begin</a>
 
-This development guide uses rubocop which is packaged as a gem that needs to be installed on your server.
+### <a name="gems">Install prerequisite gems</a>
+This development guide uses tools which are packaged as a gems that need to be installed on your development server.
 
 ```bash
 gem install rubocop
+gem install puppet-lint
 ```
 
 **NOTE:** If you are working from a server where you don't have admin/root privilages, use the following commands to install the gems and then update the `PATH` to include `~/.gem/ruby/x.x.x/bin`
 
 ```bash
 gem install --user-install rubocop
+gem install --user-install puppet-lint
 ```
+
+### <a name="pmodule">Install puppet module</a>
+This development guide assumes that the puppetlabs-ciscopuppet module is installed on your puppet master.  The simplest way to do this is to clone the cisco-network-puppet-module git repository on  your puppet master, however we do not recommend that your puppet master act as your primary development server.
+
+Follow the [Initial Setup](../examples/README.md#setup) step to build and install the puppetlabs-ciscopuppet module on your puppet master.
 
 ## <a name="clone">Start here: Clone the Repo</a>
 
@@ -53,7 +64,7 @@ Please see the [CONTRIBUTING](../CONTRIBUTING.md) document for workflow instruct
 
 First [fork](https://help.github.com/articles/fork-a-repo) the [cisco-network-puppet-module](https://github.com/cisco/cisco-network-puppet-module) git repository 
 
-Clone the cisco-network-puppet-module repo from your fork into a workspace.
+Clone the cisco-network-puppet-module repo from your fork into a workspace on your development server.
 
 ~~~bash
 git clone https://github.com/YOUR-USERNAME/cisco-network-puppet-module.git
@@ -232,13 +243,33 @@ Test the new resource using the guestshell environment. See [README-agent-instal
 
 **NOTE:** Before you can test your puppet provider code, you need to [install the cisco_node_utils gem](https://github.com/cisco/cisco-network-node-utils/blob/develop/docs/README-develop-node-utils-APIs.md#gem) that contains the supporting APIs for your provider.
 
-* Create a manifest for the new resource:
+* Copy all of the manifest files under the `examples` directory to the `/etc/puppetlabs/code/environments/production/modules/ciscopuppet/manifests` directory on your puppet master.
+* On your puppet master, create a manifest for the new resource under `/etc/puppetlabs/code/environments/production/modules/ciscopuppet/manifests` in a file called `demo_tunnel.pp`
+* Add the following content to the file:
 
 ~~~puppet
-cisco_tunnel { 'tunnel_on' :
-  ensure => present,
+class ciscopuppet::demo_tunnel {
+  cisco_tunnel { 'tunnel_on' :
+    ensure => present,
+  }
 }
 ~~~
+
+* On your puppet master, modify `/etc/puppetlabs/code/environments/production/modules/ciscopuppet/manifests/demo_all.pp` to include the following:
+
+~~~puppet
+include ciscopuppet::demo_tunnel
+~~~
+
+**NOTE:** To isolate testing to your provider, comment out all of the other `include` statements in the `demo_all.pp` file.
+
+* Run puppet-lint against the modified manifest files and correct any errors.
+
+```bash
+puppetmaster#cd /etc/puppetlabs/code/environments/production/modules/ciscopuppet/manifests
+puppetmaster#puppet-lint demo_tunnel.pp
+puppetmaster#puppet-lint demo_all.pp
+```
 
 * Manually check that the state of the resource is disabled on the switch. In this case the NX-OS CLI config is not present when feature tunnel is disabled.
 
@@ -651,15 +682,35 @@ end
 
 **NOTE:** Before you can test your puppet provider code, you need to [install the cisco_node_utils gem](https://github.com/cisco/cisco-network-node-utils/blob/develop/docs/README-develop-node-utils-APIs.md#comp_gem) that contains the supporting APIs for your provider.
 
-* Create a manifest for the new resource:
+* Copy all of the manifest files under the `examples` directory to the `/etc/puppetlabs/code/environments/production/modules/ciscopuppet/manifests` directory on your puppet master *unless* you did this ealier while developing the tunnel provider.
+* On your puppet master, create a manifest for the new resource under `/etc/puppetlabs/code/environments/production/modules/ciscopuppet/manifests` in a file called `demo_eigrp.pp`
+* Add the following content to the file:
 
 ~~~puppet
-cisco_router_eigrp { 'test' :
-  ensure => present,
-  maximum_paths => 5,
-  shutdown => true,
+class ciscopuppet::demo_eigrp {
+  cisco_router_eigrp { 'test' :
+    ensure => present,
+    maximum_paths => 5,
+    shutdown => true,
+  }
 }
 ~~~
+
+* On your puppet master, modify `/etc/puppetlabs/code/environments/production/modules/ciscopuppet/manifests/demo_all.pp` to include the following:
+
+~~~puppet
+include ciscopuppet::demo_eigrp
+~~~
+
+**NOTE:** To isolate testing to your provider, comment out all of the other `include` statements in the `demo_all.pp` file.
+
+* Run puppet-lint against the modified manifest files and correct any errors.
+
+```bash
+puppetmaster#cd /etc/puppetlabs/code/environments/production/modules/ciscopuppet/manifests
+puppetmaster#puppet-lint demo_eigrp.pp
+puppetmaster#puppet-lint demo_all.pp
+```
 
 * Manually check that the state of the resource is disabled on the switch.
 
@@ -744,6 +795,12 @@ Inspecting 2 files
 
 2 files inspected, no offenses detected
 ~~~
+
+## <a name="manifests">Copy Manifests Back to `examples` directory</a>
+
+Now that you have completed your providers and created sample manifests to test them, go ahead and copy the new and modified manifest files from the `/etc/puppetlabs/code/environments/production/modules/ciscopuppet/manifests` directory on your puppet master to the `examples` directory under your cisco-network-puppet-module git repository.
+
+Make sure you can [run the basic demo](../examples/README.md) with your new providers included.
 
 ## <a name="next">Next Steps</a>
 
