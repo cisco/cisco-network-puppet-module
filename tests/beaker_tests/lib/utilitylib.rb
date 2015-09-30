@@ -246,6 +246,7 @@ def test_show_cmd(tests, id, state = false)
   stepinfo = format_stepinfo(tests, id, 'SHOW CMD')
   show_cmd = UtilityLib.get_vshell_cmd(tests[:show_cmd])
   step "TestStep :: #{stepinfo}" do
+    logger.debug("test_show_cmd :: BEGIN")
     on(tests[:agent], show_cmd) do
       logger.debug("test_show_cmd :: cmd:\n#{show_cmd}")
       logger.debug("test_show_cmd :: pattern:\n#{tests[id][:show_pattern]}")
@@ -261,6 +262,7 @@ end
 def test_idempotence(tests, id)
   stepinfo = format_stepinfo(tests, id, 'IDEMPOTENCE')
   step "TestStep :: #{stepinfo}" do
+    logger.debug("test_idempotence :: BEGIN")
     on(tests[:agent], puppet_agent_cmd, :acceptable_exit_codes => [0])
     logger.info("#{stepinfo} :: PASS")
     tests[id].delete(:log_desc)
@@ -270,20 +272,23 @@ end
 # Method to clean up a feature on the test node
 # @param agent [String] the agent that is going to run the test
 # @param feature [String] the feature name that will be cleaned up
-def node_feature_cleanup(agent, feature, stepinfo='feature cleanup', enable=true)
+def node_feature_cleanup(agent, feature, stepinfo='feature cleanup',
+                         enable=true)
   step "TestStep :: #{stepinfo}" do
+    logger.debug("#{stepinfo} disable feature")
     clean = UtilityLib.get_vshell_cmd("conf t ; no feature #{feature}")
     on(agent, clean, :acceptable_exit_codes => [0, 2])
-    show_cmd = UtilityLib.get_vshell_cmd('show running-config')
+    show_cmd = UtilityLib.get_vshell_cmd('show running-config section feature')
     on(agent, show_cmd) do
       UtilityLib.search_pattern_in_output(stdout, [/feature #{feature}/],
                                           true, self, logger)
     end
 
     return unless enable
+    logger.debug("#{stepinfo} re-enable feature")
     clean = UtilityLib.get_vshell_cmd("conf t ; feature #{feature}")
     on(agent, clean, :acceptable_exit_codes => [0, 2])
-    show_cmd = UtilityLib.get_vshell_cmd('show running-config')
+    show_cmd = UtilityLib.get_vshell_cmd('show running-config section feature')
     on(agent, show_cmd) do
       UtilityLib.search_pattern_in_output(stdout, [/feature #{feature}/],
                                           false, self, logger)
