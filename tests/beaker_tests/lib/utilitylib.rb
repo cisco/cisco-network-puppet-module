@@ -270,7 +270,7 @@ end
 # Method to clean up a feature on the test node
 # @param agent [String] the agent that is going to run the test
 # @param feature [String] the feature name that will be cleaned up
-def node_feature_cleanup(agent, feature, stepinfo='feature cleanup')
+def node_feature_cleanup(agent, feature, stepinfo='feature cleanup', cycle=true)
   step "TestStep :: #{stepinfo}" do
     clean = UtilityLib.get_vshell_cmd("conf t ; no feature #{feature}")
     on(agent, clean, :acceptable_exit_codes => [0, 2])
@@ -280,6 +280,7 @@ def node_feature_cleanup(agent, feature, stepinfo='feature cleanup')
                                           true, self, logger)
     end
 
+    return unless cycle
     clean = UtilityLib.get_vshell_cmd("conf t ; feature #{feature}")
     on(agent, clean, :acceptable_exit_codes => [0, 2])
     show_cmd = UtilityLib.get_vshell_cmd('show running-config')
