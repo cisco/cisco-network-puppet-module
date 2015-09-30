@@ -81,8 +81,12 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
       current_state[prop] = intf.send(prop)
     end
     INTF_BOOL_PROPS.each do |prop|
-      val = intf.send(prop) ? :true : :false
-      current_state[prop] = val.nil? ? nil : val
+      val = inst.send(prop)
+      if val.nil?
+        current_state[prop] = nil
+      else
+        current_state[prop] = val ? :true : :false
+      end
     end
     new(current_state)
   end # self.get_properties

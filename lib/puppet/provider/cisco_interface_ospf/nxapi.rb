@@ -120,7 +120,7 @@ Puppet::Type.type(:cisco_interface_ospf).provide(:nxapi) do
 
   def property_set(new_instance=false)
     ALL_SETTER_PROPS.each do |prop|
-      send("#{prop}=", @resource[prop]) if new_instance if @resource[prop]
+      send("#{prop}=", @resource[prop]) if new_instance && @resource[prop]
       unless @property_flush[prop].nil?
         @interface_ospf.send("#{prop}=", @property_flush[prop]) if
           @interface_ospf.respond_to?("#{prop}=")
@@ -155,9 +155,11 @@ Puppet::Type.type(:cisco_interface_ospf).provide(:nxapi) do
     end
 
     return unless (new_instance &&
-                  should_message_digest_key_id != @interface_ospf.default_message_digest_key_id) ||
+                   (should_message_digest_key_id !=
+                    @interface_ospf.default_message_digest_key_id)) ||
                   (@property_flush[:message_digest_key_id] && !new_instance) ||
                   (@property_flush[:message_digest_password] && !new_instance)
+
     @interface_ospf.message_digest_key_set(
       should_message_digest_key_id,
       should_message_digest_algorithm_type.to_s,

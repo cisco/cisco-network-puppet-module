@@ -91,7 +91,7 @@ test_name "TestCase :: #{testheader}" do
 
   step 'TestStep :: Get resource present manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, __PROVIDERLIB__.create_ < PROVIDER > _manifest_present)
+    on(master, __PROVIDERLIB__.create_<PROVIDER>_manifest_present)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
@@ -128,7 +128,7 @@ test_name "TestCase :: #{testheader}" do
 
   step 'TestStep :: Get resource absent manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, __PROVIDERLIB__.create_ < PROVIDER > _manifest_absent)
+    on(master, __PROVIDERLIB__.create_<PROVIDER>_manifest_absent)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +

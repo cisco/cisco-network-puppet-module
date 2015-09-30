@@ -73,8 +73,12 @@ Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:nxapi) do
     end
 
     X__CONSTANT_NAME__X_BOOL_PROPS.each do |prop|
-      val = inst.send(prop) ? :true : :false
-      current_state[prop] = val.nil? ? nil : val
+      val = inst.send(prop)
+      if val.nil?
+        current_state[prop] = nil
+      else
+        current_state[prop] = val ? :true : :false
+      end
     end
 
     new(current_state)

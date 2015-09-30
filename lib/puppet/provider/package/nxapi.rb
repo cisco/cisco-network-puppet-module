@@ -36,15 +36,15 @@ Puppet::Type.type(:package).provide :nxapi, parent: :yum do
 
   # if the following commands aren't present, we're in trouble
   if command('rpm')
-    confine true: begin
-        rpm('--version')
-        yum('--version')
-        python('--version')
-      rescue Puppet::ExecutionFailure
-        false
-                  else
-                    true
-      end
+    commands_present = true
+    begin
+      rpm('--version')
+      yum('--version')
+      python('--version')
+    rescue Puppet::ExecutionFailure
+      commands_present = false
+    end
+    confine true: commands_present
   end
 
   # IMPORTANT: it's useless to override self.instances and prefetch,

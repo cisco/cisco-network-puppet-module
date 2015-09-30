@@ -1,27 +1,75 @@
 # Rubocop configuration
 
-inherit_from: .rubocop_todo.yml
-
 AllCops:
   Exclude:
     - 'pkg/**/*'
 
-# Team preferences different from Rubocop defaults:
+# Baseline code complexity metrics - we should try and reduce these over time
+Metrics/AbcSize:
+  Max: 41
+
+Metrics/CyclomaticComplexity:
+  Max: 16
+
+Metrics/LineLength:
+  Max: 167
+
+Metrics/MethodLength:
+  Max: 38
+
+Metrics/ModuleLength:
+  Max: 245
+
+Metrics/PerceivedComplexity:
+  Max: 20
+
+
+# We like table alignment for readability
 Style/AlignHash:
   EnforcedHashRocketStyle: table
   EnforcedColonStyle: table
 
+# Template files have wildcard strings in class names
+Style/ClassAndModuleCamelCase:
+  Exclude:
+    - 'docs/*.rb'
+
+# Permit is_a? and kind_of? interchangeably
 Style/ClassCheck:
   Enabled: false
 
+# Template files have atypical file names on purpose
+Style/FileName:
+  Exclude:
+    - 'docs/*.rb'
+
+# As a team we like 'sprintf' rather than 'format'
+Style/FormatString:
+  EnforcedStyle: sprintf
+
+# Mixed keys are ugly. Use one or the other as needed
 Style/HashSyntax:
   EnforcedStyle: ruby19_no_mixed_keys
 
+# Template files have wildcard strings in method names
+Style/MethodName:
+  Exclude:
+    - 'docs/*.rb'
+
+# "def foo(bar=baz)" not "def foo(bar = baz)"
 Style/SpaceAroundEqualsInParameterDefault:
   EnforcedStyle: no_space
 
+# Template file has atypical variable name that rubocop doesn't like
+Style/SpaceAroundOperators:
+  Exclude:
+    - 'docs/template-__PROVIDER__-ensurabilitytest.rb'
+
+# Make it neater to extend multi-line arrays and hashes
 Style/TrailingComma:
   EnforcedStyleForMultiline: comma
 
-Style/FormatString:
-  EnforcedStyle: sprintf
+# Template files have atypical variable names on purpose
+Style/VariableName:
+  Exclude:
+    - 'docs/*.rb'

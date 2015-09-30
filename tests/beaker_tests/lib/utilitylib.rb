@@ -217,7 +217,7 @@ def test_manifest(tests, id)
     on(tests[:master], tests[id][:manifest])
     code = tests[id][:code] ? tests[id][:code] : [2]
     logger.debug('test_manifest :: check puppet agent cmd')
-    on(tests[:agent], puppet_agent_cmd, :acceptable_exit_codes => code)
+    on(tests[:agent], puppet_agent_cmd, acceptable_exit_codes: code)
   end
   logger.info("#{stepinfo} :: PASS")
   tests[id].delete(:log_desc)
@@ -238,7 +238,7 @@ def test_resource(tests, id)
 end
 
 # Wrapper for config pattern-match tests
-def test_show_cmd(tests, id, state = false)
+def test_show_cmd(tests, id, state=false)
   stepinfo = format_stepinfo(tests, id, 'SHOW CMD')
   show_cmd = UtilityLib.get_vshell_cmd(tests[:show_cmd])
   step "TestStep :: #{stepinfo}" do
@@ -257,7 +257,7 @@ end
 def test_idempotence(tests, id)
   stepinfo = format_stepinfo(tests, id, 'IDEMPOTENCE')
   step "TestStep :: #{stepinfo}" do
-    on(tests[:agent], puppet_agent_cmd, :acceptable_exit_codes => [0])
+    on(tests[:agent], puppet_agent_cmd, acceptable_exit_codes: [0])
     logger.info("#{stepinfo} :: PASS")
     tests[id].delete(:log_desc)
   end
@@ -269,7 +269,7 @@ end
 def node_feature_cleanup(agent, feature, stepinfo='feature cleanup', enable=true)
   step "TestStep :: #{stepinfo}" do
     clean = UtilityLib.get_vshell_cmd("conf t ; no feature #{feature}")
-    on(agent, clean, :acceptable_exit_codes => [0, 2])
+    on(agent, clean, acceptable_exit_codes: [0, 2])
     show_cmd = UtilityLib.get_vshell_cmd('show running-config')
     on(agent, show_cmd) do
       UtilityLib.search_pattern_in_output(stdout, [/feature #{feature}/],
@@ -278,7 +278,7 @@ def node_feature_cleanup(agent, feature, stepinfo='feature cleanup', enable=true
 
     return unless enable
     clean = UtilityLib.get_vshell_cmd("conf t ; feature #{feature}")
-    on(agent, clean, :acceptable_exit_codes => [0, 2])
+    on(agent, clean, acceptable_exit_codes: [0, 2])
     show_cmd = UtilityLib.get_vshell_cmd('show running-config')
     on(agent, show_cmd) do
       UtilityLib.search_pattern_in_output(stdout, [/feature #{feature}/],
@@ -318,5 +318,4 @@ def bgp_title_pattern_munge(tests, id, provider=nil)
   t.merge!(tests[id][:af])
   t[:vrf] = 'default' if t[:vrf].nil?
   t
->>>>>>> develop
 end

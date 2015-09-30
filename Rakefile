@@ -17,8 +17,11 @@
 # limitations under the License.
 
 require 'facter'
+require 'rubocop/rake_task'
 
-task default: :test
+task default: %w(rubocop test)
+
+Rubocop::RakeTask.new
 
 task :test do
   rspec_cmd = ''

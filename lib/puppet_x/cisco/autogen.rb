@@ -113,7 +113,7 @@ module PuppetX
             # Generate SETTER method; e.g.
             # def foo=
             #   if val == :default
-            #     @property_flush[foo] = @rlb.foo
+            #     @property_flush[foo] = @rlb.default_foo
             #   else
             #     @property_flush[prop] = (val == :true)
             #   end
