@@ -11,7 +11,13 @@ Facter.add(:cisco) do
     hash = {}
 
     hash['images'] = {}
-    hash['images']['system_image'] = Platform.system_image
+    begin
+      hash['images']['system_image'] = Platform.system_image
+    rescue NameError
+      # In more recent versions, Platform moved into the Cisco namespace.
+      Platform = Cisco::Platform
+      hash['images']['system_image'] = Platform.system_image
+    end
     hash['images']['packages'] = Platform.packages
 
     hash['hardware'] = {}

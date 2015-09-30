@@ -15,11 +15,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Puppet::Type.newtype(:X__RESOURCE_NAME__X) do
-  @doc = "Manages configuration of feature bash-shell
+Puppet::Type.newtype(:cisco_X__RESOURCE_NAME__X) do
+  @doc = "Manages configuration of feature X__RESOURCE_NAME__X
 
   ```
-  cisco_bash_shell {'<title>':
+  cisco_X__RESOURCE_NAME__X {'<title>':
     ..attributes..
   }
   ```

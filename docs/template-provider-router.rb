@@ -47,7 +47,7 @@ Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:nxapi) do
     :X__PROPERTY_BOOL__X,
   ]
   X__CONSTANT_NAME__X_ALL_PROPS =
-    X__CONSTANT_NAME__X_NON_BOOL_PROPS + __CONSTANT_NAME___BOOL_PROPS
+    X__CONSTANT_NAME__X_NON_BOOL_PROPS + X__CONSTANT_NAME__X_BOOL_PROPS
 
   # Dynamic method generation for getters & setters
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@X__RESOURCE_NAME__X',

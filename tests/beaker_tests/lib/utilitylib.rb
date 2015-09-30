@@ -138,3 +138,185 @@ module UtilityLib
     logger.error("TestCase :: #{message} :: FAIL")
   end
 end
+
+### TBD: The helper methods below live outside the module for now,
+###      until we solve the 'step' and 'on' references.
+
+# Full command string for puppet agent
+def puppet_agent_cmd
+  cmd = UtilityLib::PUPPET_BINPATH + 'agent -t'
+  UtilityLib.get_namespace_cmd(agent, cmd, options)
+end
+
+# Auto generation of properties for manifests
+# attributes: hash of property names and values
+# return: a manifest friendly string of property names / values
+def prop_hash_to_manifest(attributes)
+  manifest_str = ''
+  attributes.each do |k, v|
+    next if v.nil?
+    if v.is_a?(String)
+      manifest_str += "       #{k} => '#{v.strip}',\n"
+    else
+      manifest_str += "       #{k} => #{v},\n"
+    end
+  end
+  manifest_str
+end
+
+# Wrapper for processing all tests for each test scenario.
+#
+# Inputs:
+# tests - a hash of control values
+# id - identifies the specific test case hash key
+#
+# Top-level keys set by caller:
+# tests[:master] - the master object
+# tests[:agent] - the agent object
+# tests[:show_cmd] - the common show command to use for test_show_run
+#
+# tests[id] keys set by caller:
+# tests[id][:desc] - a string to use with logs & debugs
+# tests[id][:manifest] - the complete manifest, as used by test_harness_common
+# tests[id][:resource] - a hash of expected states, used by test_resource
+# tests[id][:resource_cmd] - 'puppet resource' command to use with test_resource
+# tests[id][:show_pattern] - array of regexp patterns to use with test_show_cmd
+# tests[id][:ensure] - (Optional) set to :present or :absent before calling
+# tests[id][:code] - (Optional) override the default exit code in some tests.
+#
+# Reserved keys
+# tests[id][:log_desc] - the final form of the log description
+#
+def test_harness_common(tests, id)
+  tests[id][:ensure] = :present if tests[id][:ensure].nil?
+  tests[id][:state] = false if tests[id][:state].nil?
+  tests[id][:desc] = '' if tests[id][:desc].nil?
+  tests[id][:log_desc] = tests[id][:desc] + " [ensure => #{tests[id][:ensure]}]"
+  logger.info("\n--------\n#{tests[id][:log_desc]}")
+
+  test_manifest(tests, id)
+  test_resource(tests, id)
+  test_show_cmd(tests, id, tests[id][:state]) unless tests[id][:show_pattern].nil?
+  test_idempotence(tests, id)
+  tests[id].delete(:log_desc)
+end
+
+# Wrapper for formatting test log entries
+def format_stepinfo(tests, id, test_str)
+  logger.debug("format_stepinfo :: (#{tests[id][:desc]}) (#{test_str})")
+  tests[id][:log_desc] = tests[id][:desc] if tests[id][:log_desc].nil?
+  tests[id][:log_desc] + sprintf(' :: %-12s', test_str)
+end
+
+# Wrapper for manifest tests
+# Pass code = [0], as an alternative to 'test_idempotence'
+def test_manifest(tests, id)
+  stepinfo = format_stepinfo(tests, id, 'MANIFEST')
+  step "TestStep :: #{stepinfo}" do
+    logger.debug("test_manifest :: manifest:\n#{tests[id][:manifest]}")
+    on(tests[:master], tests[id][:manifest])
+    code = tests[id][:code] ? tests[id][:code] : [2]
+    logger.debug('test_manifest :: check puppet agent cmd')
+    on(tests[:agent], puppet_agent_cmd, :acceptable_exit_codes => code)
+  end
+  logger.info("#{stepinfo} :: PASS")
+  tests[id].delete(:log_desc)
+end
+
+# Wrapper for 'puppet resource' command tests
+def test_resource(tests, id)
+  stepinfo = format_stepinfo(tests, id, 'RESOURCE')
+  step "TestStep :: #{stepinfo}" do
+    logger.debug("test_resource :: cmd:\n#{tests[id][:resource_cmd]}")
+    on(tests[:agent], tests[id][:resource_cmd]) do
+      UtilityLib.search_pattern_in_output(stdout, tests[id][:resource],
+                                          false, self, logger)
+    end
+    logger.info("#{stepinfo} :: PASS")
+    tests[id].delete(:log_desc)
+  end
+end
+
+# Wrapper for config pattern-match tests
+def test_show_cmd(tests, id, state = false)
+  stepinfo = format_stepinfo(tests, id, 'SHOW CMD')
+  show_cmd = UtilityLib.get_vshell_cmd(tests[:show_cmd])
+  step "TestStep :: #{stepinfo}" do
+    on(tests[:agent], show_cmd) do
+      logger.debug("test_show_cmd :: cmd:\n#{show_cmd}")
+      logger.debug("test_show_cmd :: pattern:\n#{tests[id][:show_pattern]}")
+      UtilityLib.search_pattern_in_output(stdout, tests[id][:show_pattern],
+                                          state, self, logger)
+    end
+    logger.info("#{stepinfo} :: PASS")
+    tests[id].delete(:log_desc)
+  end
+end
+
+# Wrapper for idempotency tests
+def test_idempotence(tests, id)
+  stepinfo = format_stepinfo(tests, id, 'IDEMPOTENCE')
+  step "TestStep :: #{stepinfo}" do
+    on(tests[:agent], puppet_agent_cmd, :acceptable_exit_codes => [0])
+    logger.info("#{stepinfo} :: PASS")
+    tests[id].delete(:log_desc)
+  end
+end
+
+# Method to clean up a feature on the test node
+# @param agent [String] the agent that is going to run the test
+# @param feature [String] the feature name that will be cleaned up
+def node_feature_cleanup(agent, feature, stepinfo='feature cleanup', enable=true)
+  step "TestStep :: #{stepinfo}" do
+    clean = UtilityLib.get_vshell_cmd("conf t ; no feature #{feature}")
+    on(agent, clean, :acceptable_exit_codes => [0, 2])
+    show_cmd = UtilityLib.get_vshell_cmd('show running-config')
+    on(agent, show_cmd) do
+      UtilityLib.search_pattern_in_output(stdout, [/feature #{feature}/],
+                                          true, self, logger)
+    end
+
+    return unless enable
+    clean = UtilityLib.get_vshell_cmd("conf t ; feature #{feature}")
+    on(agent, clean, :acceptable_exit_codes => [0, 2])
+    show_cmd = UtilityLib.get_vshell_cmd('show running-config')
+    on(agent, show_cmd) do
+      UtilityLib.search_pattern_in_output(stdout, [/feature #{feature}/],
+                                          false, self, logger)
+    end
+  end
+end
+
+# bgp neighbor remote-as configuration helper
+def bgp_nbr_remote_as(agent, remote_as)
+  asn, vrf, nbr, remote = remote_as.split
+  vrf = (vrf == 'default') ? '' : "vrf #{vrf}"
+  cfg_str = "conf t ; router bgp #{asn} ; #{vrf} ; " \
+            "neighbor #{nbr} ; remote-as #{remote}"
+  on(agent, UtilityLib.get_vshell_cmd(cfg_str))
+end
+
+# If a [:title] exists merge it with the [:af] values to create a complete af.
+def bgp_title_pattern_munge(tests, id, provider=nil)
+  title = tests[id][:title_pattern]
+  af = tests[id][:af]
+
+  if title.nil?
+    puts 'no title'
+    return af
+  end
+
+  tests[id][:af] = {} if af.nil?
+  t = {}
+
+  case provider
+  when 'bgp_af'
+    t[:asn], t[:vrf], t[:afi], t[:safi] = title.split
+  when 'bgp_neighbor_af'
+    t[:asn], t[:vrf], t[:neighbor], t[:afi], t[:safi] = title.split
+  end
+  t.merge!(tests[id][:af])
+  t[:vrf] = 'default' if t[:vrf].nil?
+  t
+>>>>>>> develop
+end
