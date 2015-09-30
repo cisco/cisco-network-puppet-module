@@ -107,7 +107,6 @@ tests['default_properties'] = {
     #bar                            => 'default',
   ",
   :resource_props => {
-    'ensure'                       => 'present',
     #'bar'                          => 'default',
   },
 }
@@ -117,7 +116,6 @@ tests['non_default_properties'] = {
     #bar                            => true,
   ",
   :resource_props => {
-    'ensure'                       => 'present',
     #'bar'                          => 'true',
   }
 }
