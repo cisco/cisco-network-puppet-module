@@ -104,19 +104,23 @@ tests = {
 #
 tests['default_properties'] = {
   :manifest_props => "
-    #bar                            => 'default',
+    # PLEASE NOTE: The feature template has no additional properties so these
+    # hash entries are intentionally commented out and included here solely
+    # as an example of where properties would be defined.
+
+    # bar                            => 'default',
   ",
   :resource_props => {
-    #'bar'                          => 'default',
+    # 'bar'                          => 'default',
   },
 }
 
 tests['non_default_properties'] = {
   :manifest_props => "
-    #bar                            => true,
+    # bar                            => true,
   ",
   :resource_props => {
-    #'bar'                          => 'true',
+    # 'bar'                          => 'true',
   }
 }
 
@@ -162,6 +166,8 @@ def test_harness_X__RESOURCE_NAME__X(tests, id)
   # Build the manifest for this test
   build_manifest_X__RESOURCE_NAME__X(tests, id)
 
+  # For full test support of properties use test_harness_common; as an
+  # alternative use direct calls to individual test_* wrapper methods:
   # test_harness_common(tests, id)
   test_manifest(tests, id)
   test_idempotence(tests, id)
