@@ -100,8 +100,6 @@ The NX-OS CLI for `feature tunnel` is a simple on / off style configuration:
 
 This resource has no other properties.
 
-*Note. This example disables the tunnel, so use the guestshell environment when testing.*
-
 ## <a name="simp_type">Step 1. Type: feature tunnel</a>
 
 * There are template files in `/docs` that might help when you write new types and providers. These templates provide most of the necessary code with a few customizations required for a new resource. Copy the `template-type-feature.rb` file to use as the basis for our new `cisco_tunnel.rb` type file:
