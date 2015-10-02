@@ -57,7 +57,7 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 # -----------------------------
 # Common settings and variables
 # -----------------------------
-testheader = 'Resource cisco_X__RESOURCE_NAME__X'
+testheader = 'Resource cisco_router_X__RESOURCE_NAME__X'
 
 # Define PUPPETMASTER_MANIFESTPATH.
 UtilityLib.set_manifest_path(master, self)
@@ -152,8 +152,6 @@ end
 def build_manifest_X__RESOURCE_NAME__X(tests, id)
   if tests[id][:ensure] == :absent
     state = 'ensure => absent,'
-    #manifest = ''
-    #tests[id][:resource] = { 'ensure' => 'absent' }
     tests[id][:resource] = {}
   else
     state = 'ensure => present,'
@@ -218,20 +216,20 @@ test_name "TestCase :: #{testheader}" do
 
   # -------------------------------------------------------------------
   # FUTURE
-  #logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
-  #node_feature_cleanup(agent, 'X__RESOURCE_NAME__X')
+  # logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
+  # node_feature_cleanup(agent, 'X__RESOURCE_NAME__X')
 
-  #id = 'title_patterns'
-  #tests[id][:desc] = '3.1 Title Patterns'
-  #tests[id][:title_pattern] = '2'
-  #tests[id][:af] = { :vrf => 'default', :afi => 'ipv4', :safi => 'unicast' }
-  #test_harness_X__RESOURCE_NAME__X(tests, id)
+  # id = 'title_patterns'
+  # tests[id][:desc] = '3.1 Title Patterns'
+  # tests[id][:title_pattern] = '2'
+  # tests[id][:af] = { :vrf => 'default', :afi => 'ipv4', :safi => 'unicast' }
+  # test_harness_X__RESOURCE_NAME__X(tests, id)
 
-  #id = 'title_patterns'
-  #tests[id][:desc] = '3.2 Title Patterns'
-  #tests[id][:title_pattern] = '2 blue'
-  #tests[id][:af] = { :afi => 'ipv4', :safi => 'unicast' }
-  #test_harness_X__RESOURCE_NAME__X(tests, id)
+  # id = 'title_patterns'
+  # tests[id][:desc] = '3.2 Title Patterns'
+  # tests[id][:title_pattern] = '2 blue'
+  # tests[id][:af] = { :afi => 'ipv4', :safi => 'unicast' }
+  # test_harness_X__RESOURCE_NAME__X(tests, id)
 end
 
-logger.info("TestCase :: #{testheader} :: End")
+logger.info("TestCase :: # {testheader} :: End")
