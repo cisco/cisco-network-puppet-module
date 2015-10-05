@@ -44,6 +44,8 @@ Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:nxapi) do
     :max_prefix_limit,
     :max_prefix_interval,
     :max_prefix_threshold,
+    :route_map_in,
+    :route_map_out,
     :send_community,
     :soo,
     :unsuppress_map,
