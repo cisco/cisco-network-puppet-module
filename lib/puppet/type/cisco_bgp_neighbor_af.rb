@@ -336,7 +336,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
          "of the filter-list or 'default'."
     munge do |value|
       value = :default if value == 'default'
-      value
+      value.to_s
     end
   end
 
@@ -345,7 +345,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
          "of the filter-list or 'default'."
     munge do |value|
       value = :default if value == 'default'
-      value
+      value.to_s
     end
   end
 
@@ -394,7 +394,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
          "of the route-map or 'default'."
     munge do |value|
       value = :default if value == 'default'
-      value
+      value.to_s
     end
   end
 
@@ -403,7 +403,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
          "of the route-map or 'default'."
     munge do |value|
       value = :default if value == 'default'
-      value
+      value.to_s
     end
   end
 
