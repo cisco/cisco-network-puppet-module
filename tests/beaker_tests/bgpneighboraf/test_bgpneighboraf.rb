@@ -308,11 +308,15 @@ tests['non_default_misc_maps_part_1'] = {
     advertise_map_exist              => ['admap', 'exist_map'],
     filter_list_in                   => 'flin',
     filter_list_out                  => 'flout',
+    route_map_in                     => 'rm_in',
+    route_map_out                    => 'rm_out',
   ",
   :resource_props => {
     'advertise_map_exist'            => '..admap., .exist_map..',
     'filter_list_in'                 => 'flin',
     'filter_list_out'                => 'flout',
+    'route_map_in'                   => 'rm_in',
+    'route_map_out'                  => 'rm_out',
   }
 }
 

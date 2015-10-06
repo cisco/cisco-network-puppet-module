@@ -59,6 +59,8 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
       max_prefix_interval                    => 30,
       next_hop_self                          => 'true',
       next_hop_third_party                   => false,
+      route_map_in                           => 'rm_in',
+      route_map_out                          => 'rm_out',
       route_reflector_client                 => true,
       send_community                         => 'extended',
       soft_reconfiguration_in                => true,
@@ -385,6 +387,24 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     desc 'next_hop_third_party state. ' \
          "Valid values are true, false or 'default'."
     newvalues(:true, :false, :default)
+  end
+
+  newproperty(:route_map_in) do
+    desc 'route-map in state. Valid values are a string defining the name ' \
+         "of the route-map or 'default'."
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end
+
+  newproperty(:route_map_out) do
+    desc 'route-map out state. Valid values are a string defining the name ' \
+         "of the route-map or 'default'."
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
   end
 
   newproperty(:route_reflector_client) do

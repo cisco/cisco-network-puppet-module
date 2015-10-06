@@ -555,6 +555,12 @@ Optional warning-only keyword. Valid values are True, False, or 'default'. Requi
 ##### `next_hop_third_party`
 `next-hop-third-party`. Valid values are True, False, or 'default'.
 
+##### `route_map_in`
+Valid values are a string defining a route-map name, or 'default'.
+
+##### `route_map_out`
+Valid values are a string defining a route-map name, or 'default'.
+
 ##### `route_reflector_client`
 `route-reflector-client`. Valid values are True, False, or 'default'.
 
