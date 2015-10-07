@@ -113,10 +113,6 @@ tests['default_properties'] = {
   :manifest_props => "
     allowas_in                     => 'default',
     allowas_in_max                 => 'default',
-    cap_add_paths_receive          => 'default',
-    cap_add_paths_receive_disable  => 'default',
-    cap_add_paths_send             => 'default',
-    cap_add_paths_send_disable     => 'default',
     default_originate              => 'default',
     default_originate_route_map    => 'default',
     disable_peer_as_check          => 'default',
@@ -127,8 +123,6 @@ tests['default_properties'] = {
     next_hop_third_party           => 'default',
     route_reflector_client         => 'default',
     send_community                 => 'default',
-    soft_reconfiguration_in        => 'default',
-    soft_reconfiguration_in_always => 'default',
     suppress_inactive              => 'default',
     unsuppress_map                 => 'default',
     weight                         => 'default',
@@ -136,28 +130,24 @@ tests['default_properties'] = {
 
   # default_properties
   :resource_props => {
-    'ensure'                         => 'present',
+    'additional_paths_receive'       => 'inherit',
+    'additional_paths_send'          => 'inherit',
     'allowas_in'                     => 'false',
     'allowas_in_max'                 => '3',
     'as_override'                    => 'false',
-    'cap_add_paths_receive'          => 'false',
-    'cap_add_paths_receive_disable'  => 'false',
-    'cap_add_paths_send'             => 'false',
-    'cap_add_paths_send_disable'     => 'false',
     'default_originate'              => 'false',
     'disable_peer_as_check'          => 'false',
     'next_hop_self'                  => 'false',
     'next_hop_third_party'           => 'true',
     'route_reflector_client'         => 'false',
     'send_community'                 => 'none',
-    'soft_reconfiguration_in'        => 'false',
-    'soft_reconfiguration_in_always' => 'false',
+    'soft_reconfiguration_in'        => 'inherit',
     'suppress_inactive'              => 'false',
   },
 }
 
-tests['non_default_properties_A'] = {
-  :desc => "2.1 Non Default Properties: 'A' commands",
+tests['non_default_properties_A1'] = {
+  :desc => "2.1.1 Non Default Properties: 'A1' commands",
   :title_pattern => '2 blue 1.1.1.1 ipv4 unicast',
   :manifest_props => "
     allowas_in                       => true,
@@ -170,21 +160,31 @@ tests['non_default_properties_A'] = {
   }
 }
 
-tests['non_default_properties_C'] = {
-  :desc => "2.2 Non Default Properties: 'C' commands",
+tests['non_default_properties_A2'] = {
+  :desc => "2.1.2 Non Default Properties: 'A2' commands",
   :title_pattern => '2 blue 1.1.1.1 ipv4 unicast',
   :manifest_props => "
-    cap_add_paths_receive            => true,
-    cap_add_paths_receive_disable    => false,
-    cap_add_paths_send               => true,
-    cap_add_paths_send_disable       => true,
+    additional_paths_receive         => 'disable',
+    additional_paths_send            => 'disable',
   ",
   :resource_props => {
     'ensure'                         => 'present',
-    'cap_add_paths_receive'          => 'true',
-    'cap_add_paths_receive_disable'  => 'false',
-    'cap_add_paths_send'             => 'true',
-    'cap_add_paths_send_disable'     => 'true',
+    'additional_paths_receive'       => 'disable',
+    'additional_paths_send'          => 'disable',
+  }
+}
+
+tests['non_default_properties_A3'] = {
+  :desc => "2.1.3 Non Default Properties: 'A3' commands",
+  :title_pattern => '2 blue 1.1.1.1 ipv4 unicast',
+  :manifest_props => "
+    additional_paths_receive         => 'enable',
+    additional_paths_send            => 'enable',
+  ",
+  :resource_props => {
+    'ensure'                         => 'present',
+    'additional_paths_receive'       => 'enable',
+    'additional_paths_send'          => 'enable',
   }
 }
 
@@ -234,23 +234,43 @@ tests['non_default_properties_N'] = {
   }
 }
 
-tests['non_default_properties_S'] = {
-  :desc => "2.6 Non Default Properties: 'S' commands",
+tests['non_default_properties_S1'] = {
+  :desc => "2.6.1 Non Default Properties: 'S1' commands",
   :title_pattern => '2 blue 1.1.1.1 ipv4 unicast',
   :manifest_props => "
     send_community                   => 'extended',
-    soft_reconfiguration_in          => true,
-    soft_reconfiguration_in_always   => true,
     suppress_inactive                => true,
     unsuppress_map                   => 'unsup_map',
   ",
   :resource_props => {
     'ensure'                         => 'present',
     'send_community'                 => 'extended',
-    'soft_reconfiguration_in'        => 'true',
-    'soft_reconfiguration_in_always' => 'true',
     'suppress_inactive'              => 'true',
     'unsuppress_map'                 => 'unsup_map',
+  }
+}
+
+tests['non_default_properties_S2'] = {
+  :desc => "2.6.2 Non Default Properties: 'S2' commands",
+  :title_pattern => '2 blue 1.1.1.1 ipv4 unicast',
+  :manifest_props => "
+    soft_reconfiguration_in          => 'always',
+  ",
+  :resource_props => {
+    'ensure'                         => 'present',
+    'soft_reconfiguration_in'        => 'always',
+  }
+}
+
+tests['non_default_properties_S3'] = {
+  :desc => "2.6.3 Non Default Properties: 'S3' commands",
+  :title_pattern => '2 blue 1.1.1.1 ipv4 unicast',
+  :manifest_props => "
+    soft_reconfiguration_in          => 'enable',
+  ",
+  :resource_props => {
+    'ensure'                         => 'present',
+    'soft_reconfiguration_in'        => 'enable',
   }
 }
 
@@ -426,13 +446,15 @@ test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   node_feature_cleanup(agent, 'bgp')
-
-  test_harness_bgp_nbr_af(tests, 'non_default_properties_A')
-  test_harness_bgp_nbr_af(tests, 'non_default_properties_C')
+  test_harness_bgp_nbr_af(tests, 'non_default_properties_A1')
+  test_harness_bgp_nbr_af(tests, 'non_default_properties_A2')
+  test_harness_bgp_nbr_af(tests, 'non_default_properties_A3')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_D')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_M')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_N')
-  test_harness_bgp_nbr_af(tests, 'non_default_properties_S')
+  test_harness_bgp_nbr_af(tests, 'non_default_properties_S1')
+  test_harness_bgp_nbr_af(tests, 'non_default_properties_S2')
+  test_harness_bgp_nbr_af(tests, 'non_default_properties_S3')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_W')
 
   # Special Cases

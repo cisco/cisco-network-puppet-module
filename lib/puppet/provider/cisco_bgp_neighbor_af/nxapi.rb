@@ -35,6 +35,8 @@ Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:nxapi) do
   # Property symbol array for method auto-generation.
   # NOTE: For maintainability please keep this list in alphabetical order.
   BGP_NBR_AF_NON_BOOL_PROPS = [
+    :additional_paths_receive,
+    :additional_paths_send,
     :allowas_in_max,
     :advertise_map_exist,
     :advertise_map_non_exist,
@@ -45,6 +47,7 @@ Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:nxapi) do
     :max_prefix_interval,
     :max_prefix_threshold,
     :send_community,
+    :soft_reconfiguration_in,
     :soo,
     :unsuppress_map,
     :weight,
@@ -52,18 +55,12 @@ Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:nxapi) do
   BGP_NBR_AF_BOOL_PROPS = [
     :allowas_in,
     :as_override,
-    :cap_add_paths_send,
-    :cap_add_paths_send_disable,
-    :cap_add_paths_receive,
-    :cap_add_paths_receive_disable,
     :default_originate,
     :disable_peer_as_check,
     :max_prefix_warning,
     :next_hop_self,
     :next_hop_third_party,
     :route_reflector_client,
-    :soft_reconfiguration_in,
-    :soft_reconfiguration_in_always,
     :suppress_inactive,
   ]
 
@@ -163,11 +160,8 @@ Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:nxapi) do
 
     # Non-AutoGen custom setters follow
     allowas_in_set
-    cap_add_paths_receive_set
-    cap_add_paths_send_set
     default_originate_set
     max_prefix_set
-    soft_reconfiguration_in_set
   end
 
   # Non-AutoGen custom getters/setters
@@ -216,49 +210,6 @@ Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:nxapi) do
       state = max ? true : @af.allowas_in
     end
     @af.allowas_in_set(state, max)
-  end
-
-  def cap_add_paths_receive_set
-    return unless
-      @property_flush.key?(:cap_add_paths_receive) ||
-      @property_flush.key?(:cap_add_paths_receive_disable)
-
-    # disable is an optional keyword
-    disable = @property_flush[:cap_add_paths_receive_disable]
-    if @property_flush.key?(:cap_add_paths_receive_disable)
-      disable = (disable == :default) ?
-                  @af.default_cap_add_paths_receive_disable :
-                  @property_flush[:cap_add_paths_receive_disable]
-    end
-
-    if @property_flush.key?(:cap_add_paths_receive)
-      state = @property_flush[:cap_add_paths_receive]
-    else
-      state = (disable) ? true : @af.cap_add_paths_receive
-    end
-
-    @af.cap_add_paths_receive_set(state, disable)
-  end
-
-  def cap_add_paths_send_set
-    return unless
-      @property_flush.key?(:cap_add_paths_send) ||
-      @property_flush.key?(:cap_add_paths_send_disable)
-
-    # disable is an optional keyword
-    disable = @property_flush[:cap_add_paths_send_disable]
-    if @property_flush.key?(:cap_add_paths_send_disable)
-      disable = (disable == :default) ?
-                  @af.default_cap_add_paths_send_disable :
-                  @property_flush[:cap_add_paths_send_disable]
-    end
-
-    if @property_flush.key?(:cap_add_paths_send)
-      state = @property_flush[:cap_add_paths_send]
-    else
-      state = (disable) ? true : @af.cap_add_paths_send
-    end
-    @af.cap_add_paths_send_set(state, disable)
   end
 
   def default_originate_set
@@ -342,27 +293,6 @@ Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:nxapi) do
          'exclusive properties.' if
       @property_flush.key?(:max_prefix_interval) &&
       @property_flush.key?(:max_prefix_warning)
-  end
-
-  def soft_reconfiguration_in_set
-    return unless
-      @property_flush.key?(:soft_reconfiguration_in) ||
-      @property_flush.key?(:soft_reconfiguration_in_always)
-
-    # 'always' is an optional keyword
-    always = @property_flush[:soft_reconfiguration_in_always]
-    if @property_flush.key?(:soft_reconfiguration_in_always)
-      always = (always == :default) ?
-                  @af.default_soft_reconfiguration_in_always :
-                  @property_flush[:soft_reconfiguration_in_always]
-    end
-
-    if @property_flush.key?(:soft_reconfiguration_in)
-      state = @property_flush[:soft_reconfiguration_in]
-    else
-      state = (always) ? true : @af.soft_reconfiguration_in
-    end
-    @af.soft_reconfiguration_in_set(state, always)
   end
 
   def flush
