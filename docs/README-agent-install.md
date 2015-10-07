@@ -108,6 +108,12 @@ search mycompany.com
 EOF
 ~~~
 
+*Please note: The current NX-OS bash-shell implementation does not automatically persist the entire linux filesystem. This means that certain files such as `/etc/resolv.conf` will not automatically be persistent after system reloads. Please execute `copy running-config startup-config` from the NX-OS cli after any changes to /etc/resolv.conf to ensure that it is persistent. This command can also be executed directly from the bash-shell using the vsh tool as shown:*
+
+```
+vsh -c 'copy running-config startup-config'
+```
+
 Optionally, configure a proxy server:
 
 ~~~bash
