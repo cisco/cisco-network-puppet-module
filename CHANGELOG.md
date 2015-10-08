@@ -4,11 +4,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 ### Added
+- New documentation for developing beaker testcases: README-develop-beaker-scripts.md
 - Extended cisco_interface with the following attributes:
   - encapsulation dot1q
   - mtu
   - switchport trunk allowed VLANs
   - switchport trunk native VLAN
+
+### Removed
+- Obsolete documents: README-beaker-testcase-execution.md, README-beaker-testcase-writing.md
 
 ## [1.0.2] - 2015-09-28
 ### Fixed
