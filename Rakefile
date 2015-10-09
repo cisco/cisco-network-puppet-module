@@ -21,7 +21,7 @@ require 'rubocop/rake_task'
 
 task default: %w(rubocop test)
 
-Rubocop::RakeTask.new
+RuboCop::RakeTask.new
 
 task :test do
   rspec_cmd = ''
