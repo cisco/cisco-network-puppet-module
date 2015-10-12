@@ -49,7 +49,7 @@ Puppet::Type.type(:cisco_vlan).provide(:nxapi) do
     debug 'Created provider instance of cisco_vlan.'
   end
 
-  def self.get_properties(vlan_id, v)
+  def self.property_get(vlan_id, v)
     debug "Checking instance, vlan #{vlan_id}"
     current_state = {
       vlan:   vlan_id,
@@ -70,12 +70,12 @@ Puppet::Type.type(:cisco_vlan).provide(:nxapi) do
       end
     end
     new(current_state)
-  end # self.get_properties
+  end # self.property_get
 
   def self.instances
     vlans = []
     Cisco::Vlan.vlans.each do |vlan_id, v|
-      vlans << get_properties(vlan_id, v)
+      vlans << property_get(vlan_id, v)
     end
     vlans
   end

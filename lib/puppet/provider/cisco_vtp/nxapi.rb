@@ -44,7 +44,7 @@ Puppet::Type.type(:cisco_vtp).provide(:nxapi) do
     @property_flush = {}
   end
 
-  def self.get_properties(vtp)
+  def self.property_get(vtp)
     current_state = {
       name:   'default',
       ensure: :present,
@@ -55,7 +55,7 @@ Puppet::Type.type(:cisco_vtp).provide(:nxapi) do
       current_state[prop] = vtp.send(prop)
     end
     new(current_state)
-  end # self.get_properties
+  end # self.property_get
 
   def self.instances
     vtps = []
@@ -63,7 +63,7 @@ Puppet::Type.type(:cisco_vtp).provide(:nxapi) do
 
     vtp = Cisco::Vtp.new
 
-    vtps << get_properties(vtp)
+    vtps << property_get(vtp)
     vtps
   end # self.instances
 

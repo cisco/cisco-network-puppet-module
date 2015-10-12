@@ -63,7 +63,7 @@ Puppet::Type.type(:cisco_interface_ospf).provide(:nxapi) do
     @property_flush = {}
   end
 
-  def self.get_properties(interface_name, interface_ospf)
+  def self.property_get(interface_name, interface_ospf)
     current_state = {
       interface: interface_name,
       name:      "#{interface_name} #{interface_ospf.ospf_name}",
@@ -82,14 +82,14 @@ Puppet::Type.type(:cisco_interface_ospf).provide(:nxapi) do
       current_state[:message_digest].to_s.to_sym
 
     new(current_state)
-  end # self.get_properties
+  end # self.property_get
 
   def self.instances
     intf_ospf_instances = []
 
     Cisco::InterfaceOspf.interfaces.each do |intf_name, intf_ospf|
       begin
-        intf_ospf_instances << get_properties(intf_name, intf_ospf)
+        intf_ospf_instances << property_get(intf_name, intf_ospf)
       end
     end
     intf_ospf_instances

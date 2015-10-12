@@ -598,7 +598,7 @@ Puppet::Type.type(:cisco_router_eigrp).provide(:nxapi) do
     @property_flush = {}
   end
 
-  def self.get_properties(instance_name, inst)
+  def self.property_get(instance_name, inst)
     debug 'Checking instance, #{instance_name}.'
     current_state = {
       name:   instance_name,
@@ -617,13 +617,13 @@ Puppet::Type.type(:cisco_router_eigrp).provide(:nxapi) do
       end
     end
     new(current_state)
-  end # self.get_properties
+  end # self.property_get
 
   def self.instances
     instance_array = []
     Cisco::RouterEigrp.routers.each do | instance_name, inst |
       begin
-        instance_array << get_properties(instance_name, inst)
+        instance_array << property_get(instance_name, inst)
       end
     end
     instance_array

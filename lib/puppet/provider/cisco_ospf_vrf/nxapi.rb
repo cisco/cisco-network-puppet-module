@@ -53,7 +53,7 @@ Puppet::Type.type(:cisco_ospf_vrf).provide(:nxapi) do
     @property_flush = {}
   end
 
-  def self.get_properties(ospf, name, vrf)
+  def self.property_get(ospf, name, vrf)
     debug "Checking ospf instance, #{ospf} #{name}"
     current_state = {
       name:   "#{ospf} #{name}",
@@ -73,14 +73,14 @@ Puppet::Type.type(:cisco_ospf_vrf).provide(:nxapi) do
     current_state[:auto_cost] = cost_value
     debug current_state
     new(current_state)
-  end # self.get_properties
+  end # self.property_get
 
   def self.instances
     vrf_instances = []
     Cisco::RouterOspfVrf.vrfs.each do |ospf, vrfs|
       vrfs.each do |name, vrf|
         begin
-          vrf_instances << get_properties(ospf, name, vrf)
+          vrf_instances << property_get(ospf, name, vrf)
         end
       end
     end
