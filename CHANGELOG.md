@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - mtu
   - switchport trunk allowed VLANs
   - switchport trunk native VLAN
+- Rubocop enabled and passes (@robert-w-gries)
 - Gemfile now requires puppet version 4.0 or higher
 - Gemfile.lock added to gitignore
 

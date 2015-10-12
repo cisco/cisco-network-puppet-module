@@ -15,11 +15,11 @@
 ###############################################################################
 # TestCase Name:
 # -------------
-# SyslogSetting-Provider-Defaults.rb
+# NetworkSnmp-Provider-Defaults.rb
 #
 # TestCase Prerequisites:
 # -----------------------
-# This is a syslog_settings resource testcase for Puppet Agent on Nexus devices.
+# This is a network_snmp resource testcase for Puppet Agent on Nexus devices.
 # The test case assumes the following prerequisites are already satisfied:
 # A. Populating the HOSTS configuration file with the agent and master
 # information.
@@ -29,8 +29,8 @@
 #
 # TestCase:
 # ---------
-# This is a syslog_settings resource test that tests for default value for
-# 'ensure' attribute of a syslog_settings resource.
+# This is a network_snmp resource test that tests for default value for
+# 'ensure' attribute of a network_snmp resource.
 #
 # There are 2 sections to the testcase: Setup, group of teststeps.
 # The 1st step is the Setup teststep that cleans up the switch state.
@@ -53,73 +53,81 @@
 
 # Require UtilityLib.rb and SnmpGroupLib.rb paths.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-require File.expand_path('../syslog_settingslib.rb', __FILE__)
+require File.expand_path('../network_snmplib.rb', __FILE__)
 
 result = 'PASS'
-testheader = 'syslog_settings Resource :: All Attributes Defaults'
+testheader = 'network_snmp Resource :: All Attributes Defaults'
 
-# @test_name [TestCase] Executes defaults testcase for syslog_settings Resource.
+# @test_name [TestCase] Executes defaults testcase for network_snmp Resource.
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider' do
     # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
     UtilityLib.set_manifest_path(master, self)
 
-    logger.info("Setup switch for provider")
+    logger.info('Setup switch for provider')
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
-  step 'TestStep :: Get resource present manifest from master' do
+  step 'TestStep :: Get resource set manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, SyslogSettingLib.create_syslog_settings_manifest_milliseconds)
+    on(master, NetworkSnmpLib.create_network_snmp_manifest_set)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
-    logger.info("Get resource present manifest from master :: #{result}")
+    logger.info("Get resource set manifest from master :: #{result}")
   end
 
-  # @step [Step] Checks syslog_settings resource on agent using resource cmd.
-  step 'TestStep :: Check syslog_settings resource presence on agent' do
+  # @step [Step] Checks network_snmp resource on agent using resource cmd.
+  step 'TestStep :: Check network_snmp resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
-      "resource syslog_settings default", options)
+      'resource network_snmp default', options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, { 'time_stamp_units' => 'milliseconds' },
+      UtilityLib.search_pattern_in_output(stdout, { 'enable' => 'true' },
+                                          false, self, logger)
+      UtilityLib.search_pattern_in_output(stdout, { 'contact' => 'SysAdmin' },
+                                          false, self, logger)
+      UtilityLib.search_pattern_in_output(stdout, { 'location' => 'UK' },
                                           false, self, logger)
     end
 
-    logger.info("Check syslog_settings resource presence on agent :: #{result}")
+    logger.info("Check network_snmp resource presence on agent :: #{result}")
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
-  step 'TestStep :: Get resource present manifest from master' do
+  step 'TestStep :: Get resource unset manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, SyslogSettingLib.create_syslog_settings_manifest_seconds)
+    on(master, NetworkSnmpLib.create_network_snmp_manifest_unset)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
-    logger.info("Get resource present manifest from master :: #{result}")
+    logger.info("Get resource unset manifest from master :: #{result}")
   end
 
-  # @step [Step] Checks syslog_settings resource on agent using resource cmd.
-  step 'TestStep :: Check syslog_settings resource presence on agent' do
+  # @step [Step] Checks network_snmp resource on agent using resource cmd.
+  step 'TestStep :: Check network_snmp resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
-      "resource syslog_settings default", options)
+      'resource network_snmp default', options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, { 'time_stamp_units' => 'seconds' },
+      UtilityLib.search_pattern_in_output(stdout, { 'enable' => 'false' },
+                                          false, self, logger)
+      UtilityLib.search_pattern_in_output(stdout, { 'contact' => 'unset' },
+                                          false, self, logger)
+      UtilityLib.search_pattern_in_output(stdout, { 'location' => 'unset' },
                                           false, self, logger)
     end
 
-    logger.info("Check syslog_settings resource presence on agent :: #{result}")
+    logger.info("Check network_snmp resource presence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.

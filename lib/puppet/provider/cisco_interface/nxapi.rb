@@ -69,7 +69,7 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     @property_flush = {}
   end
 
-  def self.get_properties(interface_name, intf)
+  def self.properties_get(interface_name, intf)
     debug "Checking instance, #{interface_name}."
     current_state = {
       interface: interface_name,
@@ -89,7 +89,7 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
       end
     end
     new(current_state)
-  end # self.get_properties
+  end # self.properties_get
 
   def self.instances
     interfaces = []
@@ -97,7 +97,7 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
       begin
         # Not allowed to create an interface for mgmt0
         next if interface_name.match(/mgmt0/)
-        interfaces << get_properties(interface_name, intf)
+        interfaces << properties_get(interface_name, intf)
       end
     end
     interfaces
@@ -127,7 +127,7 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     interface
   end
 
-  def property_set(new_interface=false)
+  def properties_set(new_interface=false)
     INTF_ALL_PROPS.each do |prop|
       next unless @resource[prop]
       send("#{prop}=", @resource[prop]) if new_interface
@@ -186,7 +186,7 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
         new_interface = true
         @interface = Cisco::Interface.new(@resource[:interface])
       end
-      property_set(new_interface)
+      properties_set(new_interface)
     end
     puts_config
   end

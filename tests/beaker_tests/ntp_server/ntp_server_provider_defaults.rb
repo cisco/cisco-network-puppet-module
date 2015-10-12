@@ -64,7 +64,6 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Setup switch for provider test' do
     # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
     UtilityLib.set_manifest_path(master, self)
-
   end
 
   # @step [Step] Requests manifest from the master server to the agent.

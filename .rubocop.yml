@@ -2,15 +2,7 @@
 
 AllCops:
   Exclude:
-    - 'lib/puppet/provider/ntp_config/nxapi.rb'
-    - 'lib/puppet/provider/ntp_server/nxapi.rb'
-    - 'lib/puppet/provider/syslog_server/nxapi.rb'
-    - 'lib/puppet/provider/syslog_settings/nxapi.rb'
     - 'pkg/**/*'
-    - 'tests/beaker_tests/ntp_config/*'
-    - 'tests/beaker_tests/ntp_server/*'
-    - 'tests/beaker_tests/syslog_server/*'
-    - 'tests/beaker_tests/syslog_settings/*'
     - 'vendor/**/*'
 
 # Baseline code complexity metrics - we should try and reduce these over time
