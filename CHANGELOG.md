@@ -10,9 +10,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - mtu
   - switchport trunk allowed VLANs
   - switchport trunk native VLAN
+- Gemfile now requires puppet version 4.0 or higher
+- Gemfile.lock added to gitignore
 
 ### Removed
 - Obsolete documents: README-beaker-testcase-execution.md, README-beaker-testcase-writing.md
+- Travis no longer tests ruby version 1.9.3
 
 ## [1.0.2] - 2015-09-28
 ### Fixed
