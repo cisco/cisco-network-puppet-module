@@ -24,6 +24,18 @@ def location_for(place, fake_version=nil)
   end
 end
 
+beaker_version = ENV['BEAKER_VERSION']
+beaker_rspec_version = ENV['BEAKER_RSPEC_VERSION']
+group :system_tests do
+  gem 'beaker', *location_for(beaker_version) if beaker_version
+  if beaker_rspec_version
+    gem 'beaker-rspec', *location_for(beaker_rspec_version)
+  else
+    gem 'beaker-rspec', require: false
+  end
+  gem 'serverspec', require: false
+end
+
 facterversion = ENV['GEM_FACTER_VERSION'] || ENV['FACTER_GEM_VERSION']
 if facterversion
   gem 'facter', *location_for(facterversion)
