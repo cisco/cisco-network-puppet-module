@@ -157,8 +157,8 @@ Puppet::Type.newtype(:cisco_tunnel) do
 
   ensurable
 
-  newparam(:name, :namevar => true) do
-    desc "Resource title. Valid values are string."
+  newparam(:name, namevar: true) do
+    desc 'Resource title. Valid values are string.'
   end
 
   # There are no additional properties for this command.
@@ -189,7 +189,7 @@ This is the completed tunnel provider based on `template-provider-feature.rb`:
 ~~~puppet
 :Type.type(:cisco_tunnel).provide(:nxapi) do
 
-  confine :feature => :cisco_node_utils
+  confine feature: :cisco_node_utils
 
   mk_resource_methods
 
@@ -201,9 +201,9 @@ This is the completed tunnel provider based on `template-provider-feature.rb`:
   def self.instances
     inst = []
     return inst unless Cisco::Tunnel.feature_enabled
-    current_state = { :name => 'default', :ensure => :present}
+    current_state = { name: 'default', ensure: :present}
     inst << new(current_state)
-    return inst
+    inst
   end
 
   def self.prefetch(resources)
@@ -484,8 +484,8 @@ Puppet::Type.newtype(:cisco_router_eigrp) do
     return patterns
   end
 
-  newparam(:name, :namevar => true) do
-    desc "Name of the router_eigrp instance. Valid values are string."
+  newparam(:name, namevar: true) do
+    desc 'Name of the router_eigrp instance. Valid values are string.'
   end
 
   newproperty(:maximum_paths) do
@@ -504,7 +504,7 @@ Puppet::Type.newtype(:cisco_router_eigrp) do
   end
 
   newproperty(:shutdown) do
-    desc "shutdown state of the interface."
+    desc 'shutdown state of the interface.'
 
     newvalues(:true, :false, :default)
   end
@@ -569,9 +569,9 @@ rescue LoadError # seen on master, not on agent
 end
 
 Puppet::Type.type(:cisco_router_eigrp).provide(:nxapi) do
-  desc "The NXAPI provider for cisco_router_eigrp."
+  desc 'The NXAPI provider for cisco_router_eigrp.'
 
-  confine :feature => :cisco_node_utils
+  confine feature: :cisco_node_utils
 
   mk_resource_methods
 
@@ -599,30 +599,34 @@ Puppet::Type.type(:cisco_router_eigrp).provide(:nxapi) do
   end
 
   def self.get_properties(instance_name, inst)
-    debug "Checking instance, #{instance_name}."
+    debug 'Checking instance, #{instance_name}.'
     current_state = {
-      :name => instance_name,
-      :ensure => :present,
+      name:   instance_name,
+      ensure: :present,
     }
     # Call node_utils getter for each property
-    ROUTER_EIGRP_NON_BOOL_PROPS.each { |prop|
+    ROUTER_EIGRP_NON_BOOL_PROPS.each do |prop|
       current_state[prop] = inst.send(prop)
-    }
-    ROUTER_EIGRP_BOOL_PROPS.each { |prop|
+    end
+    ROUTER_EIGRP_BOOL_PROPS.each do |prop|
       val = inst.send(prop)
-      current_state[prop] = val.nil? ? nil : (val ? :true : :false)
-    }
+      if val.nil?
+        current_state[prop] = nil
+      else
+        current_state[prop] = val ? :true : :false
+      end
+    end
     new(current_state)
   end # self.get_properties
 
   def self.instances
     instance_array = []
-    Cisco::RouterEigrp.routers.each { | instance_name, inst |
+    Cisco::RouterEigrp.routers.each do | instance_name, inst |
       begin
         instance_array << get_properties(instance_name, inst)
       end
-    }
-    return instance_array
+    end
+    instance_array
   end # self.instances
 
   def self.prefetch(resources)
@@ -634,7 +638,7 @@ Puppet::Type.type(:cisco_router_eigrp).provide(:nxapi) do
   end # self.prefetch
 
   def exists?
-    return (@property_hash[:ensure] == :present)
+    @property_hash[:ensure] == :present
   end
 
   def create
@@ -646,7 +650,7 @@ Puppet::Type.type(:cisco_router_eigrp).provide(:nxapi) do
   end
 
   def property_set(new_instance=false)
-    ROUTER_EIGRP_ALL_PROPS.each { |prop|
+    ROUTER_EIGRP_ALL_PROPS.each do |prop|
       if @resource[prop]
         if new_instance
           # Call puppet setter to set @property_flush[prop]
@@ -658,7 +662,7 @@ Puppet::Type.type(:cisco_router_eigrp).provide(:nxapi) do
             @router_eigrp.respond_to?("#{prop}=")
         end
       end
-    }
+    end
   end
 
   def flush
