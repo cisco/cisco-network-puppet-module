@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - mtu
   - switchport trunk allowed VLANs
   - switchport trunk native VLAN
+- Rubocop enabled and passes (@robert-w-gries)
 
 ### Removed
 - Obsolete documents: README-beaker-testcase-execution.md, README-beaker-testcase-writing.md
