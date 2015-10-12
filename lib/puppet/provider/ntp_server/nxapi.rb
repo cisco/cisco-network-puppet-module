@@ -26,10 +26,10 @@ rescue LoadError # seen on master, not on agent
 end
 
 Puppet::Type.type(:ntp_server).provide(:nxapi) do
-  desc "The Cisco NXAPI provider for ntp_server."
+  desc 'The Cisco NXAPI provider for ntp_server.'
 
-  confine :feature => :cisco_node_utils
-  defaultfor :operatingsystem => :nexus
+  confine feature: :cisco_node_utils
+  defaultfor operatingsystem: :nexus
 
   mk_resource_methods
 
@@ -41,15 +41,15 @@ Puppet::Type.type(:ntp_server).provide(:nxapi) do
     super(value)
     @ntpserver = Cisco::NtpServer.ntpservers[@property_hash[:name]]
     @property_flush = {}
-    debug "Created provider instance of ntp_server"
+    debug 'Created provider instance of ntp_server'
   end
 
   def self.get_properties(ntpserver_ip, v)
     debug "Checking instance, ntpserver #{ntpserver_ip}"
 
     current_state = {
-      :name => ntpserver_ip,
-      :ensure => :present,
+      name:   ntpserver_ip,
+      ensure: :present,
     }
 
     NTP_SERVER_ALL_PROPS.each do |prop|
@@ -61,11 +61,11 @@ Puppet::Type.type(:ntp_server).provide(:nxapi) do
 
   def self.instances
     ntpservers = []
-    Cisco::NtpServer.ntpservers.each { |ntpserver_ip, v|
+    Cisco::NtpServer.ntpservers.each do |ntpserver_ip, v|
       ntpservers << get_properties(ntpserver_ip, v)
-    }
+    end
 
-    return ntpservers
+    ntpservers
   end
 
   def self.prefetch(resources)
@@ -78,7 +78,7 @@ Puppet::Type.type(:ntp_server).provide(:nxapi) do
   end # self.prefetch
 
   def exists?
-    return (@property_hash[:ensure] == :present)
+    @property_hash[:ensure] == :present
   end
 
   def create
@@ -95,9 +95,8 @@ Puppet::Type.type(:ntp_server).provide(:nxapi) do
       @ntpserver = nil
     else
       # Create/Update
-        @ntpserver = Cisco::NtpServer.new(@resource[:name], @resource[:prefer] == :true ? true : false)
+      @ntpserver = Cisco::NtpServer.new(@resource[:name], @resource[:prefer] == :true ? true : false)
     end
     # puts_config
   end
-end   #Puppet::Type
-
+end # Puppet::Type

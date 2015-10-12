@@ -26,34 +26,34 @@ rescue LoadError # seen on master, not on agent
 end
 
 Puppet::Type.type(:network_snmp).provide(:nxapi) do
-  desc "The Cisco NXAPI provider for network_snmp."
+  desc 'The Cisco NXAPI provider for network_snmp.'
 
-  confine :feature => :cisco_node_utils
-  defaultfor :operatingsystem => :nexus
+  confine feature: :cisco_node_utils
+  defaultfor operatingsystem: :nexus
 
   mk_resource_methods
 
-  NETWORK_SNMP_PROPS={
-    :enable => :protocol,
-    :contact => :contact,
-    :location => :location,
+  NETWORK_SNMP_PROPS = {
+    enable:   :protocol,
+    contact:  :contact,
+    location: :location,
   }
 
   def initialize(value={})
     super(value)
-    @network_snmp = Cisco::SnmpServer.new()
+    @network_snmp = Cisco::SnmpServer.new
     @property_flush = {}
-    debug "Created provider instance of network_snmp"
+    debug 'Created provider instance of network_snmp'
   end
 
-  def self.get_properties
-    network_snmp = Cisco::SnmpServer.new()
+  def self.get_properties # rubocop:disable Style/AccessorMethodName
+    network_snmp = Cisco::SnmpServer.new
 
     current_state = {
-      :name => 'default',
-      :enable => network_snmp.protocol? ? :true : :false,
-      :contact => network_snmp.contact.empty? ? 'unset' : network_snmp.contact,
-      :location => network_snmp.location.empty? ? 'unset' : network_snmp.location,
+      name:     'default',
+      enable:   network_snmp.protocol? ? :true : :false,
+      contact:  network_snmp.contact.empty? ? 'unset' : network_snmp.contact,
+      location: network_snmp.location.empty? ? 'unset' : network_snmp.location,
     }
 
     new(current_state)
@@ -63,7 +63,7 @@ Puppet::Type.type(:network_snmp).provide(:nxapi) do
     network_snmp = []
     network_snmp << get_properties
 
-    return network_snmp
+    network_snmp
   end
 
   def self.prefetch(resources)
@@ -97,12 +97,11 @@ Puppet::Type.type(:network_snmp).provide(:nxapi) do
   def flush
     validate
 
-    NETWORK_SNMP_PROPS.each { |puppet_prop,cisco_prop|
+    NETWORK_SNMP_PROPS.each do |puppet_prop, cisco_prop|
       if @resource[puppet_prop]
-          @network_snmp.send("#{cisco_prop}=", munge_flush(@resource[puppet_prop])) \
-            if @network_snmp.respond_to?("#{cisco_prop}=")
+        @network_snmp.send("#{cisco_prop}=", munge_flush(@resource[puppet_prop])) \
+          if @network_snmp.respond_to?("#{cisco_prop}=")
       end
-    }
+    end
   end
-end   #Puppet::Type
-
+end # Puppet::Type

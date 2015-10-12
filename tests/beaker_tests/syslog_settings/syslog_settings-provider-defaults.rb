@@ -65,7 +65,7 @@ test_name "TestCase :: #{testheader}" do
     # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
     UtilityLib.set_manifest_path(master, self)
 
-    logger.info("Setup switch for provider")
+    logger.info('Setup switch for provider')
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
@@ -86,7 +86,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
-      "resource syslog_settings default", options)
+      'resource syslog_settings default', options)
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout, { 'time_stamp_units' => 'milliseconds' },
                                           false, self, logger)
@@ -113,7 +113,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
-      "resource syslog_settings default", options)
+      'resource syslog_settings default', options)
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout, { 'time_stamp_units' => 'seconds' },
                                           false, self, logger)

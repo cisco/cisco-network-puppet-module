@@ -26,10 +26,10 @@ rescue LoadError # seen on master, not on agent
 end
 
 Puppet::Type.type(:syslog_server).provide(:nxapi) do
-  desc "The Cisco NXAPI provider for syslog_server."
+  desc 'The Cisco NXAPI provider for syslog_server.'
 
-  confine :feature => :cisco_node_utils
-  defaultfor :operatingsystem => :nexus
+  confine feature: :cisco_node_utils
+  defaultfor operatingsystem: :nexus
 
   mk_resource_methods
 
@@ -37,17 +37,17 @@ Puppet::Type.type(:syslog_server).provide(:nxapi) do
     super(value)
     @syslogserver = Cisco::SyslogServer.syslogservers[@property_hash[:name]]
     @property_flush = {}
-    debug "Created provider instance of syslog_server"
+    debug 'Created provider instance of syslog_server'
   end
 
   def self.get_properties(syslogserver_name, v)
     debug "Checking instance, SyslogServer #{syslogserver_name}"
 
     current_state = {
-      :ensure           => :present,
-      :name             => syslogserver_name,
-      :severity_level   => v.level,
-      :vrf              => v.vrf,
+      ensure:         :present,
+      name:           syslogserver_name,
+      severity_level: v.level,
+      vrf:            v.vrf,
     }
 
     new(current_state)
@@ -55,11 +55,11 @@ Puppet::Type.type(:syslog_server).provide(:nxapi) do
 
   def self.instances
     syslogservers = []
-    Cisco::SyslogServer.syslogservers.each { |syslogserver_name, v|
+    Cisco::SyslogServer.syslogservers.each do |syslogserver_name, v|
       syslogservers << get_properties(syslogserver_name, v)
-    }
+    end
 
-    return syslogservers
+    syslogservers
   end
 
   def self.prefetch(resources)
@@ -72,7 +72,7 @@ Puppet::Type.type(:syslog_server).provide(:nxapi) do
   end # self.prefetch
 
   def exists?
-    return (@property_hash[:ensure] == :present)
+    @property_hash[:ensure] == :present
   end
 
   def create
@@ -97,5 +97,4 @@ Puppet::Type.type(:syslog_server).provide(:nxapi) do
       @syslogserver = Cisco::SyslogServer.new(@resource[:name], @resource[:severity_level], @resource[:vrf])
     end
   end
-end   #Puppet::Type
-
+end # Puppet::Type

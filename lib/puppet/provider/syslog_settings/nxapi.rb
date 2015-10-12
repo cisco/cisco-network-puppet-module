@@ -26,31 +26,31 @@ rescue LoadError # seen on master, not on agent
 end
 
 Puppet::Type.type(:syslog_settings).provide(:nxapi) do
-  desc "The Cisco NXAPI provider for syslog_setting."
+  desc 'The Cisco NXAPI provider for syslog_setting.'
 
-  confine :feature => :cisco_node_utils
-  defaultfor :operatingsystem => :nexus
+  confine feature: :cisco_node_utils
+  defaultfor operatingsystem: :nexus
 
   mk_resource_methods
 
-  SYSLOG_SETTINGS_PROPS={
-    :time_stamp_units => :timestamp
+  SYSLOG_SETTINGS_PROPS = {
+    time_stamp_units: :timestamp,
   }
 
   def initialize(value={})
     super(value)
     @syslogsetting = Cisco::SyslogSettings.syslogsettings['default']
     @property_flush = {}
-    debug "Created provider instance of syslog_setting"
+    debug 'Created provider instance of syslog_setting'
   end
 
   def self.get_properties(syslogsetting_name, v)
     debug "Checking instance, SyslogSetting #{syslogsetting_name}"
 
     current_state = {
-      :name             => 'default',
-      :time_stamp_units => v.timestamp,
-      :ensure           => :present,
+      name:             'default',
+      time_stamp_units: v.timestamp,
+      ensure:           :present,
     }
 
     new(current_state)
@@ -58,11 +58,11 @@ Puppet::Type.type(:syslog_settings).provide(:nxapi) do
 
   def self.instances
     syslogsettings = []
-    Cisco::SyslogSettings.syslogsettings.each { |syslogsetting_name, v|
+    Cisco::SyslogSettings.syslogsettings.each do |syslogsetting_name, v|
       syslogsettings << get_properties(syslogsetting_name, v)
-    }
+    end
 
-    return syslogsettings
+    syslogsettings
   end
 
   def self.prefetch(resources)
@@ -75,7 +75,7 @@ Puppet::Type.type(:syslog_settings).provide(:nxapi) do
   end # self.prefetch
 
   def exists?
-    return true
+    true
   end
 
   def validate
@@ -84,7 +84,7 @@ Puppet::Type.type(:syslog_settings).provide(:nxapi) do
 
     fail ArgumentError,
          "This provider does not support the 'enable' property. "\
-         "Syslog servers are enabled implicitly when using the syslog_server resource." if @resource[:enable]
+         'Syslog servers are enabled implicitly when using the syslog_server resource.' if @resource[:enable]
   end
 
   def munge_flush(val)
@@ -100,12 +100,11 @@ Puppet::Type.type(:syslog_settings).provide(:nxapi) do
   def flush
     validate
 
-    SYSLOG_SETTINGS_PROPS.each { |puppet_prop,cisco_prop|
+    SYSLOG_SETTINGS_PROPS.each do |puppet_prop, cisco_prop|
       if @resource[puppet_prop]
-          @syslogsetting.send("#{cisco_prop}=", munge_flush(@resource[puppet_prop])) \
-            if @syslogsetting.respond_to?("#{cisco_prop}=")
+        @syslogsetting.send("#{cisco_prop}=", munge_flush(@resource[puppet_prop])) \
+          if @syslogsetting.respond_to?("#{cisco_prop}=")
       end
-    }
+    end
   end
-end   #Puppet::Type
-
+end # Puppet::Type

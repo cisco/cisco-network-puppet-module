@@ -26,31 +26,31 @@ rescue LoadError # seen on master, not on agent
 end
 
 Puppet::Type.type(:ntp_config).provide(:nxapi) do
-  desc "The Cisco NXAPI provider for ntp_config."
+  desc 'The Cisco NXAPI provider for ntp_config.'
 
-  confine :feature => :cisco_node_utils
-  defaultfor :operatingsystem => :nexus
+  confine feature: :cisco_node_utils
+  defaultfor operatingsystem: :nexus
 
   mk_resource_methods
 
-  NTP_CONFIG_PROPS={
-    :source_interface => :source_interface
+  NTP_CONFIG_PROPS = {
+    source_interface: :source_interface,
   }
 
   def initialize(value={})
     super(value)
     @ntpconfig = Cisco::NtpConfig.ntpconfigs[@property_hash[:name]]
     @property_flush = {}
-    debug "Created provider instance of ntp_config"
+    debug 'Created provider instance of ntp_config'
   end
 
   def self.get_properties(ntpconfig_name, v)
     debug "Checking instance, NtpConfig #{ntpconfig_name}"
 
     current_state = {
-      :name             => 'default',
-      :source_interface => v.source_interface.nil? ? 'unset' : v.source_interface,
-      :ensure           => :present,
+      name:             'default',
+      source_interface: v.source_interface.nil? ? 'unset' : v.source_interface,
+      ensure:           :present,
     }
 
     new(current_state)
@@ -58,11 +58,11 @@ Puppet::Type.type(:ntp_config).provide(:nxapi) do
 
   def self.instances
     ntpconfigs = []
-    Cisco::NtpConfig.ntpconfigs.each { |ntpconfig_name, v|
+    Cisco::NtpConfig.ntpconfigs.each do |ntpconfig_name, v|
       ntpconfigs << get_properties(ntpconfig_name, v)
-    }
+    end
 
-    return ntpconfigs
+    ntpconfigs
   end
 
   def self.prefetch(resources)
@@ -75,22 +75,25 @@ Puppet::Type.type(:ntp_config).provide(:nxapi) do
   end # self.prefetch
 
   def exists?
-    return (@property_hash[:ensure] == :present)
+    @property_hash[:ensure] == :present
   end
 
   def validate
-    fail ArgumentError,
-      "This provider only supports a namevar of 'default'" unless @resource[:name].to_s == 'default'
-
-    if @resource[:source_interface]
-      fail ArgumentError,
-        "The parameter 'source_interface' must not contain any spaces" \
-          if @resource[:source_interface] =~ /\s+/
-
-      fail ArgumentError,
-        "The parameter 'source_interface' must not contain any uppercase characters" \
-          if @resource[:source_interface] =~ /[A-Z]+/
+    unless @resource[:name].to_s == 'default'
+      fail ArgumentError, "This provider only supports a namevar of 'default'"
     end
+
+    return unless @resource[:source_interface]
+
+    if @resource[:source_interface] =~ /\s+/
+      fail ArgumentError, "The parameter 'source_interface' must not contain" \
+                          'any spaces'
+    end
+
+    return unless @resource[:source_interface] =~ /[A-Z]+/
+
+    fail ArgumentError, "The parameter 'source_interface' must not contain" \
+                        'any uppercase characters'
   end
 
   def munge_flush(val)
@@ -106,12 +109,11 @@ Puppet::Type.type(:ntp_config).provide(:nxapi) do
   def flush
     validate
 
-    NTP_CONFIG_PROPS.each { |puppet_prop,cisco_prop|
+    NTP_CONFIG_PROPS.each do |puppet_prop, cisco_prop|
       if @resource[puppet_prop]
-          @ntpconfig.send("#{cisco_prop}=", munge_flush(@resource[puppet_prop])) if
-          @ntpconfig.respond_to?("#{cisco_prop}=")
+        @ntpconfig.send("#{cisco_prop}=", munge_flush(@resource[puppet_prop])) if
+        @ntpconfig.respond_to?("#{cisco_prop}=")
       end
-    }
+    end
   end
-end   #Puppet::Type
-
+end # Puppet::Type

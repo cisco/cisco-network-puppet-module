@@ -24,7 +24,7 @@ Puppet::Type.type(:name_server).provide(:nxapi) do
 
   mk_resource_methods
 
-  def initialize(value = {})
+  def initialize(value={})
     super(value)
     @nameserver = Cisco::NameServer.nameservers[@property_hash[:name]]
     @property_flush = {}
@@ -35,7 +35,7 @@ Puppet::Type.type(:name_server).provide(:nxapi) do
     Cisco::NameServer.nameservers.each_key do |id|
       nameserver_instances << new(
         name:   id,
-        ensure: :present
+        ensure: :present,
       )
     end
     nameserver_instances
