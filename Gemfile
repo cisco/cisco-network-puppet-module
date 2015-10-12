@@ -24,19 +24,6 @@ def location_for(place, fake_version=nil)
   end
 end
 
-group :development, :unit_tests do
-  gem 'cisco_node_utils', '~> 1.0', require: false
-  gem 'rake', '~> 10.1.0',       require: false
-  gem 'rspec', '~> 3.1.0',       require: false
-  gem 'rspec-puppet',            require: false
-  gem 'mocha',                   require: false
-  gem 'puppetlabs_spec_helper',  require: false
-  gem 'puppet-lint',             require: false
-  gem 'pry',                     require: false
-  gem 'rubocop',                 require: false
-  gem 'simplecov',               require: false
-end
-
 beaker_version = ENV['BEAKER_VERSION']
 beaker_rspec_version = ENV['BEAKER_RSPEC_VERSION']
 group :system_tests do
@@ -60,7 +47,20 @@ puppetversion = ENV['GEM_PUPPET_VERSION'] || ENV['PUPPET_GEM_VERSION']
 if puppetversion
   gem 'puppet', *location_for(puppetversion)
 else
-  gem 'puppet', require: false
+  gem 'puppet', '~> 4.0', require: false
+end
+
+group :development, :unit_tests do
+  gem 'cisco_node_utils', '~> 1.0', require: false
+  gem 'rake', '~> 10.1.0',       require: false
+  gem 'rspec', '~> 3.1.0',       require: false
+  gem 'rspec-puppet',            require: false
+  gem 'mocha',                   require: false
+  gem 'puppetlabs_spec_helper',  require: false
+  gem 'puppet-lint',             require: false
+  gem 'pry',                     require: false
+  gem 'rubocop', '~> 0.34',      require: false
+  gem 'simplecov',               require: false
 end
 
 # vim:ft=ruby
