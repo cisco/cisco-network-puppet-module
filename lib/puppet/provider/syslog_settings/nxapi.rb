@@ -44,7 +44,7 @@ Puppet::Type.type(:syslog_settings).provide(:nxapi) do
     debug 'Created provider instance of syslog_setting'
   end
 
-  def self.property_get(syslogsetting_name, v)
+  def self.properties_get(syslogsetting_name, v)
     debug "Checking instance, SyslogSetting #{syslogsetting_name}"
 
     current_state = {
@@ -54,12 +54,12 @@ Puppet::Type.type(:syslog_settings).provide(:nxapi) do
     }
 
     new(current_state)
-  end # self.property_get
+  end # self.properties_get
 
   def self.instances
     syslogsettings = []
     Cisco::SyslogSettings.syslogsettings.each do |syslogsetting_name, v|
-      syslogsettings << property_get(syslogsetting_name, v)
+      syslogsettings << properties_get(syslogsetting_name, v)
     end
 
     syslogsettings

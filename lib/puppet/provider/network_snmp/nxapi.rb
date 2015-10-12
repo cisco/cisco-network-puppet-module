@@ -46,7 +46,7 @@ Puppet::Type.type(:network_snmp).provide(:nxapi) do
     debug 'Created provider instance of network_snmp'
   end
 
-  def self.property_get
+  def self.properties_get
     network_snmp = Cisco::SnmpServer.new
 
     current_state = {
@@ -57,11 +57,11 @@ Puppet::Type.type(:network_snmp).provide(:nxapi) do
     }
 
     new(current_state)
-  end # self.property_get
+  end # self.properties_get
 
   def self.instances
     network_snmp = []
-    network_snmp << property_get
+    network_snmp << properties_get
 
     network_snmp
   end

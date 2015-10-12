@@ -44,7 +44,7 @@ Puppet::Type.type(:ntp_server).provide(:nxapi) do
     debug 'Created provider instance of ntp_server'
   end
 
-  def self.property_get(ntpserver_ip, v)
+  def self.properties_get(ntpserver_ip, v)
     debug "Checking instance, ntpserver #{ntpserver_ip}"
 
     current_state = {
@@ -57,12 +57,12 @@ Puppet::Type.type(:ntp_server).provide(:nxapi) do
     end
 
     new(current_state)
-  end # self.property_get
+  end # self.properties_get
 
   def self.instances
     ntpservers = []
     Cisco::NtpServer.ntpservers.each do |ntpserver_ip, v|
-      ntpservers << property_get(ntpserver_ip, v)
+      ntpservers << properties_get(ntpserver_ip, v)
     end
 
     ntpservers

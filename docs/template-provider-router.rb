@@ -61,7 +61,7 @@ Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:nxapi) do
     @property_flush = {}
   end
 
-  def self.property_get(instance_name, inst)
+  def self.properties_get(instance_name, inst)
     debug "Checking instance, #{instance_name}."
     current_state = {
       name:   instance_name,
@@ -82,13 +82,13 @@ Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:nxapi) do
     end
 
     new(current_state)
-  end # self.property_get
+  end # self.properties_get
 
   def self.instances
     instance_array = []
     Cisco::X__CLASS_NAME__X.routers.each do |instance_name, inst|
       begin
-        instance_array << property_get(instance_name, inst)
+        instance_array << properties_get(instance_name, inst)
       end
     end
     instance_array
@@ -114,7 +114,7 @@ Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:nxapi) do
     @property_flush[:ensure] = :absent
   end
 
-  def property_set(new_instance=false)
+  def properties_set(new_instance=false)
     X__CONSTANT_NAME__X_ALL_PROPS.each do |prop|
       next unless @resource[prop]
       # Call puppet setter to set @property_flush[prop]
@@ -136,7 +136,7 @@ Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:nxapi) do
         new_instance = true
         @X__RESOURCE_NAME__X = Cisco::X__CLASS_NAME__X.new(@resource[:name])
       end
-      property_set(new_instance)
+      properties_set(new_instance)
     end
   end
 end

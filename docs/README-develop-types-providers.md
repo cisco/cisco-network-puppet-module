@@ -598,7 +598,7 @@ Puppet::Type.type(:cisco_router_eigrp).provide(:nxapi) do
     @property_flush = {}
   end
 
-  def self.property_get(instance_name, inst)
+  def self.properties_get(instance_name, inst)
     debug 'Checking instance, #{instance_name}.'
     current_state = {
       name:   instance_name,
@@ -617,13 +617,13 @@ Puppet::Type.type(:cisco_router_eigrp).provide(:nxapi) do
       end
     end
     new(current_state)
-  end # self.property_get
+  end # self.properties_get
 
   def self.instances
     instance_array = []
     Cisco::RouterEigrp.routers.each do | instance_name, inst |
       begin
-        instance_array << property_get(instance_name, inst)
+        instance_array << properties_get(instance_name, inst)
       end
     end
     instance_array
@@ -649,7 +649,7 @@ Puppet::Type.type(:cisco_router_eigrp).provide(:nxapi) do
     @property_flush[:ensure] = :absent
   end
 
-  def property_set(new_instance=false)
+  def properties_set(new_instance=false)
     ROUTER_EIGRP_ALL_PROPS.each do |prop|
       if @resource[prop]
         if new_instance
@@ -675,7 +675,7 @@ Puppet::Type.type(:cisco_router_eigrp).provide(:nxapi) do
         new_instance = true
         @router_eigrp = Cisco::RouterEigrp.new(@resource[:name])
       end
-      property_set(new_instance)
+      properties_set(new_instance)
     end
   end
 

@@ -53,7 +53,7 @@ Puppet::Type.type(:cisco_ospf_vrf).provide(:nxapi) do
     @property_flush = {}
   end
 
-  def self.property_get(ospf, name, vrf)
+  def self.properties_get(ospf, name, vrf)
     debug "Checking ospf instance, #{ospf} #{name}"
     current_state = {
       name:   "#{ospf} #{name}",
@@ -73,14 +73,14 @@ Puppet::Type.type(:cisco_ospf_vrf).provide(:nxapi) do
     current_state[:auto_cost] = cost_value
     debug current_state
     new(current_state)
-  end # self.property_get
+  end # self.properties_get
 
   def self.instances
     vrf_instances = []
     Cisco::RouterOspfVrf.vrfs.each do |ospf, vrfs|
       vrfs.each do |name, vrf|
         begin
-          vrf_instances << property_get(ospf, name, vrf)
+          vrf_instances << properties_get(ospf, name, vrf)
         end
       end
     end
@@ -108,7 +108,7 @@ Puppet::Type.type(:cisco_ospf_vrf).provide(:nxapi) do
     @property_flush[:ensure] = :absent
   end
 
-  def property_set(new_vrf=false)
+  def properties_set(new_vrf=false)
     OSPF_VRF_PROPS.each do |prop|
       next unless @resource[prop]
       send("#{prop}=", @resource[prop]) if new_vrf
@@ -209,7 +209,7 @@ Puppet::Type.type(:cisco_ospf_vrf).provide(:nxapi) do
         new_vrf = true
         @vrf = Cisco::RouterOspfVrf.new(@resource[:ospf], @resource[:vrf])
       end
-      property_set(new_vrf)
+      properties_set(new_vrf)
     end
     puts_config
   end
