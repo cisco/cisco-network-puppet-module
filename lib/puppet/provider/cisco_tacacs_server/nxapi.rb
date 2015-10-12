@@ -21,10 +21,10 @@
 require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
 
 Puppet::Type.type(:cisco_tacacs_server).provide(:nxapi) do
-  desc "The nxapi provider."
+  desc 'The nxapi provider.'
 
-  confine :feature => :cisco_node_utils
-  defaultfor :operatingsystem => :nexus
+  confine feature: :cisco_node_utils
+  defaultfor operatingsystem: :nexus
 
   mk_resource_methods
 
@@ -70,16 +70,16 @@ Puppet::Type.type(:cisco_tacacs_server).provide(:nxapi) do
     end
 
     tacacs_servers << new(
-       :ensure                => :present,
-       :name                  => "default", # necessary for puppet resource cmd
-       :timeout               => tacacs_server.timeout,
-       :directed_request      => tacacs_server.directed_request? ? :true : :false,
-       :deadtime              => tacacs_server.deadtime,
-       :encryption_type       => self.enc_type_to_sym(tacacs_server.encryption_type),
-       :encryption_password   => tacacs_server.encryption_password,
-       :source_interface      => src_intf)
-    debug "Found a tacacs server on the device."
-    return tacacs_servers
+      ensure:              :present,
+      name:                'default', # necessary for puppet resource cmd
+      timeout:             tacacs_server.timeout,
+      directed_request:    tacacs_server.directed_request? ? :true : :false,
+      deadtime:            tacacs_server.deadtime,
+      encryption_type:     enc_type_to_sym(tacacs_server.encryption_type),
+      encryption_password: tacacs_server.encryption_password,
+      source_interface:    src_intf)
+    debug 'Found a tacacs server on the device.'
+    tacacs_servers
   end # self.instances
 
   def self.prefetch(resources)
@@ -87,11 +87,11 @@ Puppet::Type.type(:cisco_tacacs_server).provide(:nxapi) do
   end
 
   def exists?
-    return (@property_hash[:ensure] == :present)
+    (@property_hash[:ensure] == :present)
   end # exists
 
   def create
-    debug "Creating tacacs server."
+    debug 'Creating tacacs server.'
 
     @tacacs_server = Cisco::TacacsServer.new
 
@@ -107,18 +107,18 @@ Puppet::Type.type(:cisco_tacacs_server).provide(:nxapi) do
     self.source_interface = @resource[:source_interface] unless
       @resource[:source_interface].nil?
 
-    tacacs_server_encryption_key_set 
+    tacacs_server_encryption_key_set
   end # create
 
   def destroy
-    debug "Removing a tacacs server."
+    debug 'Removing a tacacs server.'
     @tacacs_server.destroy
     @tacacs_server = nil
   end # destroy
 
   def timeout
-    debug "Getting timeout."
-    if @resource[:timeout] == :default and
+    debug 'Getting timeout.'
+    if @resource[:timeout] == :default &&
        @property_hash[:timeout] == Cisco::TacacsServer.default_timeout
       timeout = :default
     else
@@ -142,7 +142,7 @@ Puppet::Type.type(:cisco_tacacs_server).provide(:nxapi) do
   end # directed_request=
 
   def deadtime
-    if @resource[:deadtime] == :default and
+    if @resource[:deadtime] == :default &&
        @property_hash[:deadtime] == Cisco::TacacsServer.default_deadtime
       debug "Default value is #{deadtime_value}."
       deadtime = :default
@@ -170,7 +170,7 @@ Puppet::Type.type(:cisco_tacacs_server).provide(:nxapi) do
     else
       source_interface_value = should_value
     end
-    
+
     @tacacs_server.source_interface = source_interface_value
   end # source_interface=
 
@@ -183,8 +183,8 @@ Puppet::Type.type(:cisco_tacacs_server).provide(:nxapi) do
     if @resource[:encryption_type] == :default
       encryption_type_value = Cisco::TacacsServer.default_encryption_type
     else
-      if resource[:encryption_type] and
-        resource[:encryption_type] != @property_hash[:encryption_type]
+      if resource[:encryption_type] &&
+         resource[:encryption_type] != @property_hash[:encryption_type]
         # If manifest has updated value and it is not default
         encryption_type_value =
           self.class.enc_sym_to_type(@resource[:encryption_type])
@@ -206,15 +206,13 @@ Puppet::Type.type(:cisco_tacacs_server).provide(:nxapi) do
       encryption_pw_value = @resource[:encryption_password]
     end
     debug "type: #{encryption_type_value}, value #{encryption_pw_value}"
-    
-    if encryption_pw_value
-      @tacacs_server.encryption_key_set(encryption_type_value,
-                                        encryption_pw_value)
-    end
-  end 
+
+    return unless encryption_pw_value
+    @tacacs_server.encryption_key_set(encryption_type_value,
+                                      encryption_pw_value)
+  end
 
   def flush
     tacacs_server_encryption_key_set if @property_flush[:encryption_password]
   end
-
 end # provider

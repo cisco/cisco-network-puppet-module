@@ -73,9 +73,9 @@ UtilityLib.set_manifest_path(master, self)
 # tests[:show_cmd] - the common show command to use for test_show_run
 #
 tests = {
-  :master => master,
-  :agent => agent,
-  :show_cmd => 'show run section X__RESOURCE_NAME__X',
+  master:   master,
+  agent:    agent,
+  show_cmd: 'show run section X__RESOURCE_NAME__X',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -103,25 +103,25 @@ tests = {
 #   :title_pattern will be set to 'id'.
 #
 tests['default_properties'] = {
-  :manifest_props => "
+  manifest_props: "
     # PLEASE NOTE: The feature template has no additional properties so these
     # hash entries are intentionally commented out and included here solely
     # as an example of where properties would be defined.
 
     # bar                            => 'default',
   ",
-  :resource_props => {
+  resource_props: {
     # 'bar'                          => 'default',
   },
 }
 
 tests['non_default_properties'] = {
-  :manifest_props => "
+  manifest_props: "
     # bar                            => true,
   ",
-  :resource_props => {
+  resource_props: {
     # 'bar'                          => 'true',
-  }
+  },
 }
 
 #################################################################

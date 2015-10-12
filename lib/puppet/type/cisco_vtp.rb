@@ -34,13 +34,13 @@ Puppet::Type.newtype(:cisco_vtp) do
     }
   "
 
-  newparam(:name, :namevar => :true) do
+  newparam(:name, namevar: :true) do
     desc "Instance of vtp, only allow the value 'default'"
-    validate { |name|
+    validate do |name|
       if name != 'default'
         error "only 'default' is accepted as a valid vtp resource name"
       end
-    }
+    end
   end
 
   ##############
@@ -50,48 +50,46 @@ Puppet::Type.newtype(:cisco_vtp) do
   ensurable
 
   newproperty(:domain) do
-    desc "VTP administrative domain. Valid values are string. Mandatory parameter."
+    desc 'VTP administrative domain. Valid values are string. Mandatory parameter.'
 
-    validate { |domain_name|
-      fail "Domain name is not a string." unless domain_name.is_a? String
-    }
+    validate do |domain_name|
+      fail 'Domain name is not a string.' unless domain_name.is_a? String
+    end
   end # property domain
 
   newproperty(:version) do
     desc "Version for the VTP domain. Valid values are integer, keyword 'default'."
 
-    munge { |version|
+    munge do |version|
       begin
         version = :default if version == 'default'
         version = Integer(version) unless version == :default
       rescue
-        fail "Version #{version} is not a number."
+        raise "Version #{version} is not a number."
       end # rescue
       version
-    }
+    end
   end # property version
 
   newproperty(:filename) do
     desc "VTP file name. Valid values are string, keyword 'default'."
 
-    munge { |file_name|
+    munge do |file_name|
       file_name = :default if file_name == 'default'
-      fail "File name is not a string." unless
-        file_name == :default or file_name.is_a? String
+      fail 'File name is not a string.' unless
+        file_name == :default || file_name.is_a?(String)
       file_name
-    }
+    end
   end # property filename
 
   newproperty(:password) do
     desc "Password for the VTP domain. Valid values are string, keyword 'default'."
 
-    munge { |password|
+    munge do |password|
       password = :default if password == 'default'
-      fail "Password is not a string." unless
-        password == :default or password.is_a? String
+      fail 'Password is not a string.' unless
+        password == :default || password.is_a?(String)
       password
-    }
+    end
   end # property password
-
 end # type
-

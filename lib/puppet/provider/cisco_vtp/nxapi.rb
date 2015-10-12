@@ -26,16 +26,16 @@ rescue LoadError # seen on master, not on agent
 end
 
 Puppet::Type.type(:cisco_vtp).provide(:nxapi) do
-  desc "The nxapi provider."
+  desc 'The nxapi provider.'
 
-  confine :feature => :cisco_node_utils
-  defaultfor :operatingsystem => :nexus
+  confine feature: :cisco_node_utils
+  defaultfor operatingsystem: :nexus
 
   mk_resource_methods
 
   VTP_ALL_PROPS = [:domain, :filename, :version, :password]
 
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, "@vtp",
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@vtp',
                                             VTP_ALL_PROPS)
 
   def initialize(value={})
@@ -46,14 +46,14 @@ Puppet::Type.type(:cisco_vtp).provide(:nxapi) do
 
   def self.get_properties(vtp)
     current_state = {
-      :name   => 'default',
-      :ensure => :present,
+      name:   'default',
+      ensure: :present,
     }
 
     # Call node_utils getter for each property
-    VTP_ALL_PROPS.each { |prop|
+    VTP_ALL_PROPS.each do |prop|
       current_state[prop] = vtp.send(prop)
-    }
+    end
     new(current_state)
   end # self.get_properties
 
@@ -64,7 +64,7 @@ Puppet::Type.type(:cisco_vtp).provide(:nxapi) do
     vtp = Cisco::Vtp.new
 
     vtps << get_properties(vtp)
-    return vtps
+    vtps
   end # self.instances
 
   def self.prefetch(resources)
@@ -72,7 +72,7 @@ Puppet::Type.type(:cisco_vtp).provide(:nxapi) do
   end
 
   def exists?
-    return (@property_hash[:ensure] == :present)
+    (@property_hash[:ensure] == :present)
   end
 
   def create
@@ -84,21 +84,18 @@ Puppet::Type.type(:cisco_vtp).provide(:nxapi) do
   end
 
   def instance_name
-    return domain
+    domain
   end
 
-  def set_properties(new_vtp=false)
-    VTP_ALL_PROPS.each { |prop|
-      if @resource[prop]
-        if new_vtp
-          self.send("#{prop}=", @resource[prop])
-        end
-        unless @property_flush[prop].nil?
-          @vtp.send("#{prop}=", @property_flush[prop]) if
-            @vtp.respond_to?("#{prop}=")
-        end
+  def property_set(new_vtp=false)
+    VTP_ALL_PROPS.each do |prop|
+      next unless @resource[prop]
+      send("#{prop}=", @resource[prop]) if new_vtp
+      unless @property_flush[prop].nil?
+        @vtp.send("#{prop}=", @property_flush[prop]) if
+          @vtp.respond_to?("#{prop}=")
       end
-    }
+    end
   end
 
   def flush
@@ -111,7 +108,7 @@ Puppet::Type.type(:cisco_vtp).provide(:nxapi) do
         new_vtp = true
         @vtp = Cisco::Vtp.new
       end
-      set_properties(new_vtp)
+      property_set(new_vtp)
     end
     puts_config
   end
@@ -120,12 +117,10 @@ Puppet::Type.type(:cisco_vtp).provide(:nxapi) do
     return if @vtp.nil?
 
     # Dump all current properties for this vtp
-    current = sprintf("\n%30s: %s", "vtp", instance_name)
-    VTP_ALL_PROPS.each { |prop|
+    current = sprintf("\n%30s: %s", 'vtp', instance_name)
+    VTP_ALL_PROPS.each do |prop|
       current.concat(sprintf("\n%30s: %s", prop, @vtp.send(prop)))
-    }
+    end
     debug current
   end # puts_config
-
-end #Puppet::Type
-
+end # Puppet::Type

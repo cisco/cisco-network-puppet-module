@@ -73,9 +73,9 @@ UtilityLib.set_manifest_path(master, self)
 # tests[:show_cmd] - the common show command to use for test_show_run
 #
 tests = {
-  :master => master,
-  :agent => agent,
-  :show_cmd => 'show run section X__RESOURCE_NAME__X',
+  master:   master,
+  agent:    agent,
+  show_cmd: 'show run section X__RESOURCE_NAME__X',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -106,37 +106,37 @@ tests = {
 #   title/af manifests
 #
 tests['default_properties'] = {
-  :title_pattern => '1',
-  :manifest_props => "
+  title_pattern:  '1',
+  manifest_props: "
     maximum_paths                  => 'default',
     shutdown                       => 'default',
   ",
-  :resource_props => {
-    'maximum_paths'                => '8',
-    'shutdown'                     => 'false',
+  resource_props: {
+    'maximum_paths' => '8',
+    'shutdown'      => 'false',
   },
 }
 
 tests['non_default_properties_M'] = {
-  :desc => "2.1 Non Default Properties 'M' commands",
-  :title_pattern => '1',
-  :manifest_props => "
-    maximum_paths                  => '5',
+  desc:           "2.1 Non Default Properties 'M' commands",
+  title_pattern:  '1',
+  manifest_props: "
+    maximum_paths => '5',
   ",
-  :resource_props => {
-    'maximum_paths'                => '5',
-  }
+  resource_props: {
+    'maximum_paths' => '5',
+  },
 }
 
 tests['non_default_properties_S'] = {
-  :desc => "2.2 Non Default Properties 'S' commands",
-  :title_pattern => '1',
-  :manifest_props => "
-    shutdown                       => 'true',
+  desc:           "2.2 Non Default Properties 'S' commands",
+  title_pattern:  '1',
+  manifest_props: "
+    shutdown => 'true',
   ",
-  :resource_props => {
-    'shutdown'                     => 'true',
-  }
+  resource_props: {
+    'shutdown' => 'true',
+  },
 }
 
 #################################################################
@@ -232,4 +232,4 @@ test_name "TestCase :: #{testheader}" do
   # test_harness_X__RESOURCE_NAME__X(tests, id)
 end
 
-logger.info("TestCase :: # {testheader} :: End")
+logger.info('TestCase :: # {testheader} :: End')

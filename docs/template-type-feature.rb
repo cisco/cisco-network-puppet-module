@@ -34,7 +34,7 @@ Puppet::Type.newtype(:cisco_X__RESOURCE_NAME__X) do
 
   ensurable
 
-  newparam(:name, :namevar => true) do
+  newparam(:name, namevar: true) do
     desc 'Resource title. Valid values are string.'
   end
 

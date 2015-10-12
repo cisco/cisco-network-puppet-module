@@ -27,10 +27,10 @@ rescue LoadError # seen on master, not on agent
 end
 
 Puppet::Type.type(:cisco_interface).provide(:nxapi) do
-  desc "The NXAPI provider for cisco_interface."
+  desc 'The NXAPI provider for cisco_interface.'
 
-  confine :feature => :cisco_node_utils
-  defaultfor :operatingsystem => :nexus
+  confine feature: :cisco_node_utils
+  defaultfor operatingsystem: :nexus
 
   mk_resource_methods
 
@@ -54,13 +54,13 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
   INTF_BOOL_PROPS = [
     :shutdown, :negotiate_auto, :ipv4_redirects, :ipv4_proxy_arp,
     :switchport_vtp, :switchport_autostate_exclude,
-    :svi_autostate, :svi_management,
+    :svi_autostate, :svi_management
   ]
   INTF_ALL_PROPS = INTF_NON_BOOL_PROPS + INTF_BOOL_PROPS
 
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, "@interface",
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@interface',
                                             INTF_NON_BOOL_PROPS)
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, "@interface",
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@interface',
                                             INTF_BOOL_PROPS)
 
   def initialize(value={})
@@ -72,31 +72,35 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
   def self.get_properties(interface_name, intf)
     debug "Checking instance, #{interface_name}."
     current_state = {
-      :interface => interface_name,
-      :name => interface_name,
-      :ensure => :present,
+      interface: interface_name,
+      name:      interface_name,
+      ensure:    :present,
     }
     # Call node_utils getter for each property
-    INTF_NON_BOOL_PROPS.each { |prop|
+    INTF_NON_BOOL_PROPS.each do |prop|
       current_state[prop] = intf.send(prop)
-    }
-    INTF_BOOL_PROPS.each { |prop|
-      val = intf.send(prop)
-      current_state[prop] = val.nil? ? nil : (val ? :true : :false)
-    }
+    end
+    INTF_BOOL_PROPS.each do |prop|
+      val = inst.send(prop)
+      if val.nil?
+        current_state[prop] = nil
+      else
+        current_state[prop] = val ? :true : :false
+      end
+    end
     new(current_state)
   end # self.get_properties
 
   def self.instances
     interfaces = []
-    Cisco::Interface.interfaces.each { | interface_name, intf |
+    Cisco::Interface.interfaces.each do |interface_name, intf|
       begin
         # Not allowed to create an interface for mgmt0
         next if interface_name.match(/mgmt0/)
         interfaces << get_properties(interface_name, intf)
       end
-    }
-    return interfaces
+    end
+    interfaces
   end # self.instances
 
   def self.prefetch(resources)
@@ -108,7 +112,7 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
   end # self.prefetch
 
   def exists?
-    return (@property_hash[:ensure] == :present)
+    (@property_hash[:ensure] == :present)
   end
 
   def create
@@ -120,46 +124,42 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
   end
 
   def instance_name
-    return interface
+    interface
   end
 
-  def set_properties(new_interface=false)
-    INTF_ALL_PROPS.each { |prop|
-      if @resource[prop]
-        if new_interface
-          self.send("#{prop}=", @resource[prop])
-        end
-        unless @property_flush[prop].nil?
-          @interface.send("#{prop}=", @property_flush[prop]) if
-            @interface.respond_to?("#{prop}=")
-        end
+  def property_set(new_interface=false)
+    INTF_ALL_PROPS.each do |prop|
+      next unless @resource[prop]
+      send("#{prop}=", @resource[prop]) if new_interface
+      unless @property_flush[prop].nil?
+        @interface.send("#{prop}=", @property_flush[prop]) if
+          @interface.respond_to?("#{prop}=")
       end
-    }
+    end
     ipv4_addr_mask_set
   end
 
   def ipv4_addr_mask_set
     # Combo property: ipv4 address/mask
-    if @property_flush[:ipv4_address] or
-       @property_flush[:ipv4_netmask_length] or
-       @resource[:ipv4_address] == :default
+    return unless @property_flush[:ipv4_address] ||
+                  @property_flush[:ipv4_netmask_length] ||
+                  @resource[:ipv4_address] == :default
 
-      if @resource[:ipv4_address] == :default
-        addr = @interface.default_ipv4_address
-      else
-        addr = @resource[:ipv4_address]
-      end
-
-      if @resource[:ipv4_netmask_length] == :default
-        mask = @interface.default_ipv4_netmask_length
-      else
-        mask = @resource[:ipv4_netmask_length]
-      end
-      @interface.ipv4_addr_mask_set(addr, mask)
+    if @resource[:ipv4_address] == :default
+      addr = @interface.default_ipv4_address
+    else
+      addr = @resource[:ipv4_address]
     end
+
+    if @resource[:ipv4_netmask_length] == :default
+      mask = @interface.default_ipv4_netmask_length
+    else
+      mask = @resource[:ipv4_netmask_length]
+    end
+    @interface.ipv4_addr_mask_set(addr, mask)
   end
 
-# override vrf setter
+  # override vrf setter
   def vrf=(val)
     val = @interface.default_vrf if val == :default
     @property_flush[:vrf] = val
@@ -167,13 +167,13 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     # flush other L3 properties because vrf will wipe them out
     l3_props = [
       :ipv4_proxy_arp, :ipv4_redirects,
-      :ipv4_address, :ipv4_netmask_length,
+      :ipv4_address, :ipv4_netmask_length
     ]
-    l3_props.each { |prop|
+    l3_props.each do |prop|
       if @property_flush[prop].nil?
         @property_flush[prop] = @property_hash[prop] unless @property_hash[prop].nil?
       end
-    }
+    end
   end
 
   def flush
@@ -186,7 +186,7 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
         new_interface = true
         @interface = Cisco::Interface.new(@resource[:interface])
       end
-      set_properties(new_interface)
+      property_set(new_interface)
     end
     puts_config
   end
@@ -198,11 +198,10 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     end
 
     # Dump all current properties for this interface
-    current = sprintf("\n%30s: %s", "interface", @interface.name)
-    INTF_ALL_PROPS.each { |prop|
+    current = sprintf("\n%30s: %s", 'interface', @interface.name)
+    INTF_ALL_PROPS.each do |prop|
       current.concat(sprintf("\n%30s: %s", prop, @interface.send(prop)))
-    }
+    end
     debug current
   end # puts_config
-end #Puppet::Type
-
+end # Puppet::Type
