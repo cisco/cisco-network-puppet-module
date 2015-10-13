@@ -13,8 +13,7 @@ This workflow map aids *users*, *developers* and *maintainers* of the ciscopuppe
 * Developer Guides
   * [CONTRIBUTING.md](CONTRIBUTING.md) : Contribution guidelines
   * [README-develop-types-providers.md](docs/README-develop-types-providers.md) : Developing new ciscopuppet Types and Providers
-  * [README-beaker-testcase-execution.md](docs/README-beaker-testcase-execution.md) : Executing Beaker Tests for ciscopuppet
-  * [README-beaker-testcase-writing.md](docs/README-beaker-testcase-writing.md) : Writing Beaker Tests for ciscopuppet
+  * [README-develop-beaker-scripts.md](docs/README-develop-beaker-scripts.md) : Developing new beaker test scripts for ciscopuppet
 * Maintainers Guides
   * [README-maintainers.md](docs/README-maintainers.md) : Guidelines for core maintainers of the ciscopuppet project
   * All developer guides apply to maintainers as well
@@ -548,6 +547,12 @@ Optional warning-only keyword. Valid values are True, False, or 'default'. Requi
 
 ##### `next_hop_third_party`
 `next-hop-third-party`. Valid values are True, False, or 'default'.
+
+##### `route_map_in`
+Valid values are a string defining a route-map name, or 'default'.
+
+##### `route_map_out`
+Valid values are a string defining a route-map name, or 'default'.
 
 ##### `route_reflector_client`
 `route-reflector-client`. Valid values are True, False, or 'default'.

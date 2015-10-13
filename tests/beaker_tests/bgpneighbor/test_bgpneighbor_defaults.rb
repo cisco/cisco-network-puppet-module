@@ -48,6 +48,7 @@
 # instance attributes to verify resource properties.
 #
 ###############################################################################
+# rubocop:disable Style/HashSyntax,Style/ExtraSpacing,Metrics/MethodLength
 
 # Require UtilityLib.rb and BgpNeighborLib.rb paths.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
@@ -59,39 +60,39 @@ testheader = 'BGP Neighbor Resource :: Attribute Defaults'
 id = 'test_green'
 tests = {
   :master => master,
-  :agent => agent,
+  :agent  => agent,
 }
 
-def create_bgp_neighbor_defaults(tests, id, title, string = false)
+def create_bgp_neighbor_defaults(tests, id, title, string=false)
   asn = title[:asn]
   vrf = title[:vrf]
   neighbor = title[:neighbor]
   val = string ? 'default' : :default
 
   tests[id][:manifest_props] = {
-    :ensure => :present,
-    :asn => asn,
-    :vrf => vrf,
-    :neighbor => neighbor,
-    :ebgp_multihop => val,
-    :local_as => val,
-    :low_memory_exempt => val,
-    :remote_as => val,
+    :ensure             => :present,
+    :asn                => asn,
+    :vrf                => vrf,
+    :neighbor           => neighbor,
+    :ebgp_multihop      => val,
+    :local_as           => val,
+    :low_memory_exempt  => val,
+    :remote_as          => val,
     :suppress_4_byte_as => val,
-    :timers_keepalive => val,
-    :timers_holdtime => val,
+    :timers_keepalive   => val,
+    :timers_holdtime    => val,
   }
 
   tests[id][:resource] = {
-    'ensure' => 'present',
-    'ebgp_multihop' => '1',
-    'local_as' => '0',
-    'low_memory_exempt' => 'false',
-    'maximum_peers' => '0',
-    'remote_as' => '0',
-    'suppress_4_byte_as' => 'false',
-    'timers_keepalive' => '60',
-    'timers_holdtime' => '180',
+    'ensure'                 => 'present',
+    'ebgp_multihop'          => '1',
+    'local_as'               => '0',
+    'low_memory_exempt'      => 'false',
+    'maximum_peers'          => '0',
+    'remote_as'              => '0',
+    'suppress_4_byte_as'     => 'false',
+    'timers_keepalive'       => '60',
+    'timers_holdtime'        => '180',
     'transport_passive_only' => 'false',
   }
 
@@ -142,13 +143,13 @@ test_name "TestCase :: #{testheader}" do
 
     tests[id][:desc] = '1.4 Test resource absent manifest'
     tests[id][:manifest_props] = {
-      :ensure => :absent,
-      :asn => title[:asn],
-      :vrf => title[:vrf],
+      :ensure   => :absent,
+      :asn      => title[:asn],
+      :vrf      => title[:vrf],
       :neighbor => title[:neighbor],
     }
     tests[id][:code] = nil
-    tests[id][:resource] = { 'ensure' => 'absent', }
+    tests[id][:resource] = { 'ensure' => 'absent' }
     create_bgpneighbor_manifest(tests, id)
     test_manifest(tests, id)
 

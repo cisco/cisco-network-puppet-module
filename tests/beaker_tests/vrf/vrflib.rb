@@ -14,16 +14,16 @@
 # limitations under the License.
 
 # Require UtilityLib.rb path.
-require File.expand_path("../../lib/utilitylib.rb", __FILE__)
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
+# VrfLib module for beaker test cases against cisco_vrf
 module VrfLib
-
   # Method to create a manifest for VRF resource attribute with only
-  # 'ensure' is set 
-  # @param name [string] Vrf name to be created 
+  # 'ensure' is set
+  # @param name [string] Vrf name to be created
   # @param present [boolean] the value for ensure attribute
   # @result none [None] Returns no object.
-  def VrfLib.create_vrf_manifest_default(name, present=true)
+  def self.create_vrf_manifest_default(name, present=true)
     ensure_str = present ? 'present' : 'absent'
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
     node default {
@@ -32,32 +32,32 @@ module VrfLib
       }
     }
     EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for VRF resource attributes:
   # ensure, description and shutdown
-  # @param name [String] Name of the vrf. 
+  # @param name [String] Name of the vrf.
   # @param description [String] String for the description attribute
   # @param shutdown [Boolean] Boolean for the shutdown attribute
   # @result none [None] Returns no object.
-  def VrfLib.create_vrf_manifest_nondefaults(name, description, shutdown)
+  def self.create_vrf_manifest_nondefaults(name, description, shutdown)
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
     node default {
-      cisco_vrf { '#{name}': 
+      cisco_vrf { '#{name}':
         ensure       => present,
         description  => '#{description}',
         shutdown     => #{shutdown},
       }
     }
     EOF"
-    return manifest_str
+    manifest_str
   end
-  
+
   # Method to test removal of description
   # @param name [String] Name of the vrf
   # @result none [None] Returns no object
-  def VrfLib.update_vrf_manifest_no_description(name)
+  def self.update_vrf_manifest_no_description(name)
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
     node default {
       cisco_vrf { '#{name}':
@@ -66,16 +66,16 @@ module VrfLib
       }
     }
     EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for VRF resource attribute 'name' to verify
   # the title pattern can be overridden by name attribute.
-  # @param name [String] Name of the vrf. 
+  # @param name [String] Name of the vrf.
   # @param description [String] String for the description attribute
   # @param shutdown [Boolean] Boolean for the shutdown attribute
   # @result none [None] Returns no object.
-  def VrfLib.update_vrf_manifest_by_name_attribute(name, description, shutdown)
+  def self.update_vrf_manifest_by_name_attribute(name, description, shutdown)
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
     node default {
       cisco_vrf { 'any_#{name}':
@@ -86,8 +86,6 @@ module VrfLib
       }
     }
     EOF"
-    return manifest_str
+    manifest_str
   end
-
 end
-

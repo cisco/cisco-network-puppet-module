@@ -26,10 +26,10 @@ rescue LoadError # seen on master, not on agent
 end
 
 Puppet::Type.type(:cisco_vlan).provide(:nxapi) do
-  desc "The new NXAPI provider."
+  desc 'The new NXAPI provider.'
 
-  confine :feature => :cisco_node_utils
-  defaultfor :operatingsystem => :nexus
+  confine feature: :cisco_node_utils
+  defaultfor operatingsystem: :nexus
 
   mk_resource_methods
 
@@ -37,43 +37,47 @@ Puppet::Type.type(:cisco_vlan).provide(:nxapi) do
   VLAN_BOOL_PROPS = [:shutdown]
   VLAN_ALL_PROPS = VLAN_NON_BOOL_PROPS + VLAN_BOOL_PROPS
 
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, "@vlan",
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@vlan',
                                             VLAN_NON_BOOL_PROPS)
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, "@vlan",
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@vlan',
                                             VLAN_BOOL_PROPS)
 
   def initialize(value={})
     super(value)
     @vlan = Cisco::Vlan.vlans[@property_hash[:name]]
     @property_flush = {}
-    debug "Created provider instance of cisco_vlan."
+    debug 'Created provider instance of cisco_vlan.'
   end
 
-  def self.get_properties(vlan_id, v)
+  def self.properties_get(vlan_id, v)
     debug "Checking instance, vlan #{vlan_id}"
     current_state = {
-      :vlan => vlan_id,
-      :name => vlan_id,
-      :ensure => :present,
+      vlan:   vlan_id,
+      name:   vlan_id,
+      ensure: :present,
     }
 
     # Call node_utils getter for each property
-    VLAN_NON_BOOL_PROPS.each { |prop|
+    VLAN_NON_BOOL_PROPS.each do |prop|
       current_state[prop] = v.send(prop)
-    }
-    VLAN_BOOL_PROPS.each { |prop|
-      val = v.send(prop)
-      current_state[prop] = val.nil? ? nil : (val ? :true : :false)
-    }
+    end
+    VLAN_BOOL_PROPS.each do |prop|
+      val = inst.send(prop)
+      if val.nil?
+        current_state[prop] = nil
+      else
+        current_state[prop] = val ? :true : :false
+      end
+    end
     new(current_state)
-  end # self.get_properties
+  end # self.properties_get
 
   def self.instances
     vlans = []
-    Cisco::Vlan.vlans.each { |vlan_id, v|
-      vlans << get_properties(vlan_id, v)
-    }
-    return vlans
+    Cisco::Vlan.vlans.each do |vlan_id, v|
+      vlans << properties_get(vlan_id, v)
+    end
+    vlans
   end
 
   def self.prefetch(resources)
@@ -86,7 +90,7 @@ Puppet::Type.type(:cisco_vlan).provide(:nxapi) do
   end # self.prefetch
 
   def exists?
-    return (@property_hash[:ensure] == :present)
+    (@property_hash[:ensure] == :present)
   end
 
   def create
@@ -98,21 +102,18 @@ Puppet::Type.type(:cisco_vlan).provide(:nxapi) do
   end
 
   def instance_name
-    return vlan
+    vlan
   end
 
-  def set_properties(new_vlan=false)
-    VLAN_ALL_PROPS.each { |prop|
-      if @resource[prop]
-        if new_vlan
-          self.send("#{prop}=", @resource[prop])
-        end
-        unless @property_flush[prop].nil?
-          @vlan.send("#{prop}=", @property_flush[prop]) if
-            @vlan.respond_to?("#{prop}=")
-        end
+  def properties_set(new_vlan=false)
+    VLAN_ALL_PROPS.each do |prop|
+      next unless @resource[prop]
+      send("#{prop}=", @resource[prop]) if new_vlan
+      unless @property_flush[prop].nil?
+        @vlan.send("#{prop}=", @property_flush[prop]) if
+          @vlan.respond_to?("#{prop}=")
       end
-    }
+    end
   end
 
   def flush
@@ -125,7 +126,7 @@ Puppet::Type.type(:cisco_vlan).provide(:nxapi) do
         new_vlan = true
         @vlan = Cisco::Vlan.new(@resource[:vlan])
       end
-      set_properties(new_vlan)
+      properties_set(new_vlan)
     end
     puts_config
   end
@@ -137,12 +138,10 @@ Puppet::Type.type(:cisco_vlan).provide(:nxapi) do
     end
 
     # Dump all current properties for this vlan
-    current = sprintf("\n%30s: %s", "vlan", instance_name)
-    VLAN_ALL_PROPS.each { |prop|
+    current = sprintf("\n%30s: %s", 'vlan', instance_name)
+    VLAN_ALL_PROPS.each do |prop|
       current.concat(sprintf("\n%30s: %s", prop, @vlan.send(prop)))
-    }
+    end
     debug current
   end # puts_config
-
-end   #Puppet::Type
-
+end   # Puppet::Type

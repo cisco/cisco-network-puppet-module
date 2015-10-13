@@ -57,6 +57,8 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
       max_prefix_interval                    => 30,
       next_hop_self                          => 'true',
       next_hop_third_party                   => false,
+      route_map_in                           => 'rm_in',
+      route_map_out                          => 'rm_out',
       route_reflector_client                 => true,
       send_community                         => 'extended',
       soft_reconfiguration_in                => 'always',
@@ -122,29 +124,30 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
   # Parse out the title to fill in the attributes in these patterns. These
   # attributes can be overwritten later.
 
+  # rubocop:disable Metrics/MethodLength
   def self.title_patterns
-    identity = lambda { |x| x }
+    identity = ->(x) { x }
     [
       [
         /^(\d+|\d+\.\d+)$/,
         [
-          [:asn, identity]
-        ]
+          [:asn, identity],
+        ],
       ],
       [
         /^(\d+|\d+\.\d+) (\S+)$/,
         [
           [:asn, identity],
-          [:vrf, identity]
-        ]
+          [:vrf, identity],
+        ],
       ],
       [
         /^(\d+|\d+\.\d+) (\S+) (\S+)$/,
         [
           [:asn, identity],
           [:vrf, identity],
-          [:neighbor, identity]
-        ]
+          [:neighbor, identity],
+        ],
       ],
       [
         /^(\d+|\d+\.\d+) (\S+) (\S+) (\S+)$/,
@@ -152,8 +155,8 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
           [:asn, identity],
           [:vrf, identity],
           [:neighbor, identity],
-          [:afi, identity]
-        ]
+          [:afi, identity],
+        ],
       ],
       [
         /^(\d+|\d+\.\d+) (\S+) (\S+) (\S+) (\S+)$/,
@@ -162,17 +165,18 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
           [:vrf, identity],
           [:neighbor, identity],
           [:afi, identity],
-          [:safi, identity]
-        ]
+          [:safi, identity],
+        ],
       ],
       [
         /^(\S+)$/,
         [
-          [:name, identity]
-        ]
+          [:name, identity],
+        ],
       ],
     ]
   end
+  # rubocop:enable Metrics/MethodLength
 
   ##############
   # Parameters #
@@ -184,7 +188,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
   newparam(:name) do
   end
 
-  newparam(:asn, :namevar => true) do
+  newparam(:asn, namevar: true) do
     desc "BGP autonomous system number.  Valid values are String, Integer in
           ASPLAIN or ASDOT notation"
     validate do |value|
@@ -199,7 +203,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     end
   end
 
-  newparam(:vrf, :namevar => true) do
+  newparam(:vrf, namevar: true) do
     desc 'BGP vrf name. Valid values are string. ' \
          "The name 'default' is a valid VRF."
 
@@ -207,7 +211,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     newvalues(/^\S+$/)
   end
 
-  newparam(:neighbor, :namevar => true) do
+  newparam(:neighbor, namevar: true) do
     desc 'BGP Neighbor ID. Valid value is an ipv4 or ipv6 formatted string.'
 
     munge do |value|
@@ -220,12 +224,12 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     end
   end
 
-  newparam(:afi, :namevar => true) do
+  newparam(:afi, namevar: true) do
     desc 'BGP Address-family AFI (ipv4|ipv6). Valid values are string.'
     newvalues(:ipv4, :ipv6)
   end
 
-  newparam(:safi, :namevar => true) do
+  newparam(:safi, namevar: true) do
     desc 'BGP Address-family SAFI (unicast|multicast). Valid values are string.'
     newvalues(:unicast, :multicast)
   end
@@ -243,7 +247,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     fail("The 'safi' parameter must be set in the manifest.") if self[:safi].nil?
   end
 
-  newproperty(:advertise_map_exist, :array_matching => :all) do
+  newproperty(:advertise_map_exist, array_matching: :all) do
     desc 'advertise_map_exist state. Valid values are an array specifying' \
          " both the advertise-map name and the exist-map name, or 'default'."
     munge do |value|
@@ -252,7 +256,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     end
   end
 
-  newproperty(:advertise_map_non_exist, :array_matching => :all) do
+  newproperty(:advertise_map_non_exist, array_matching: :all) do
     desc 'advertise_map_non_exist state. Valid values are an array specifying' \
          " both the advertise-map name and the non_exist-map name, or 'default'."
     munge do |value|
@@ -325,7 +329,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
          "of the filter-list or 'default'."
     munge do |value|
       value = :default if value == 'default'
-      value
+      value.to_s
     end
   end
 
@@ -334,7 +338,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
          "of the filter-list or 'default'."
     munge do |value|
       value = :default if value == 'default'
-      value
+      value.to_s
     end
   end
 
@@ -376,6 +380,24 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     desc 'next_hop_third_party state. ' \
          "Valid values are true, false or 'default'."
     newvalues(:true, :false, :default)
+  end
+
+  newproperty(:route_map_in) do
+    desc 'route-map in state. Valid values are a string defining the name ' \
+         "of the route-map or 'default'."
+    munge do |value|
+      value = :default if value == 'default'
+      value.to_s
+    end
+  end
+
+  newproperty(:route_map_out) do
+    desc 'route-map out state. Valid values are a string defining the name ' \
+         "of the route-map or 'default'."
+    munge do |value|
+      value = :default if value == 'default'
+      value.to_s
+    end
   end
 
   newproperty(:route_reflector_client) do

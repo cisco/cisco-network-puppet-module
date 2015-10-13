@@ -50,6 +50,7 @@
 # instance attributes to verify resource properties.
 #
 ###############################################################################
+# rubocop:disable Style/HashSyntax,Style/ExtraSpacing
 
 # Require UtilityLib.rb and BgpNeighborLib.rb paths.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
@@ -61,7 +62,7 @@ UtilityLib.set_manifest_path(master, self)
 id = 'test_green'
 tests = {
   :master => master,
-  :agent => agent,
+  :agent  => agent,
 }
 
 test_name "TestCase :: #{testheader}" do
@@ -75,44 +76,44 @@ test_name "TestCase :: #{testheader}" do
   ['1.1.1.1', '2.2.2.0/24'].each do |neighbor|
     tests[id] = {
       :manifest_props => {
-        :ensure => :present,
-        :asn => asn,
-        :vrf => vrf,
-        :neighbor => neighbor,
-        :description => 'tested by beaker',
-        :connected_check => :true,
+        :ensure                 => :present,
+        :asn                    => asn,
+        :vrf                    => vrf,
+        :neighbor               => neighbor,
+        :description            => 'tested by beaker',
+        :connected_check        => :true,
         :capability_negotiation => :true,
-        :dynamic_capability => :true,
-        :ebgp_multihop => 2,
-        :local_as => 42,
-        :log_neighbor_changes => :enable,
-        :low_memory_exempt => :true,
-        :remote_as => 12.1,
-        :remove_private_as => :all,
-        :shutdown => :true,
-        :suppress_4_byte_as => :true,
-        :timers_keepalive => 90,
-        :timers_holdtime => 270,
-        :update_source => 'Ethernet1/1'
+        :dynamic_capability     => :true,
+        :ebgp_multihop          => 2,
+        :local_as               => 42,
+        :log_neighbor_changes   => :enable,
+        :low_memory_exempt      => :true,
+        :remote_as              => 12.1,
+        :remove_private_as      => :all,
+        :shutdown               => :true,
+        :suppress_4_byte_as     => :true,
+        :timers_keepalive       => 90,
+        :timers_holdtime        => 270,
+        :update_source          => 'Ethernet1/1',
       },
-      :resource => {
-        'ensure' => 'present',
-        'description' => 'tested by beaker',
-        'connected_check' => 'true',
+      :resource       => {
+        'ensure'                 => 'present',
+        'description'            => 'tested by beaker',
+        'connected_check'        => 'true',
         'capability_negotiation' => 'true',
-        'dynamic_capability' => 'true',
-        'ebgp_multihop' => '2',
-        'local_as' => '42',
-        'log_neighbor_changes' => 'enable',
-        'low_memory_exempt' => 'true',
-        'remote_as' => '12.1',
-        'remove_private_as' => 'all',
-        'shutdown' => 'true',
-        'suppress_4_byte_as' => 'true',
-        'timers_keepalive' => '90',
-        'timers_holdtime' => '270',
-        'update_source' => 'ethernet1/1'
-      }
+        'dynamic_capability'     => 'true',
+        'ebgp_multihop'          => '2',
+        'local_as'               => '42',
+        'log_neighbor_changes'   => 'enable',
+        'low_memory_exempt'      => 'true',
+        'remote_as'              => '12.1',
+        'remove_private_as'      => 'all',
+        'shutdown'               => 'true',
+        'suppress_4_byte_as'     => 'true',
+        'timers_keepalive'       => '90',
+        'timers_holdtime'        => '270',
+        'update_source'          => 'ethernet1/1',
+      },
     }
     resource_cmd_str =
       UtilityLib::PUPPET_BINPATH +
@@ -143,25 +144,25 @@ test_name "TestCase :: #{testheader}" do
     tests[id][:desc] =
       '1.2 Apply manifest with string format non-default attributes'
     tests[id][:manifest_props] = {
-      :ensure => :present,
-      :asn => asn,
-      :vrf => vrf,
-      :neighbor => neighbor,
-      :description => 'tested by beaker',
-      :connected_check => 'true',
+      :ensure                 => :present,
+      :asn                    => asn,
+      :vrf                    => vrf,
+      :neighbor               => neighbor,
+      :description            => 'tested by beaker',
+      :connected_check        => 'true',
       :capability_negotiation => 'true',
-      :dynamic_capability => 'true',
-      :ebgp_multihop => '2',
-      :local_as => '42',
-      :log_neighbor_changes => 'enable',
-      :low_memory_exempt => 'true',
-      :remote_as => '12.1',
-      :remove_private_as => 'all',
-      :shutdown => 'true',
-      :suppress_4_byte_as => 'true',
-      :timers_keepalive => '90',
-      :timers_holdtime => '270',
-      :update_source => 'ethernet1/1'
+      :dynamic_capability     => 'true',
+      :ebgp_multihop          => '2',
+      :local_as               => '42',
+      :log_neighbor_changes   => 'enable',
+      :low_memory_exempt      => 'true',
+      :remote_as              => '12.1',
+      :remove_private_as      => 'all',
+      :shutdown               => 'true',
+      :suppress_4_byte_as     => 'true',
+      :timers_keepalive       => '90',
+      :timers_holdtime        => '270',
+      :update_source          => 'ethernet1/1',
     }
     if neighbor == '1.1.1.1'
       tests[id][:manifest_props][:transport_passive_only] = 'true'
@@ -179,42 +180,42 @@ test_name "TestCase :: #{testheader}" do
     tests[id][:desc] =
       '1.3 Update manifest and test harness'
     tests[id][:manifest_props] = {
-      :ensure => :present,
-      :asn => asn,
-      :vrf => vrf,
-      :neighbor => neighbor,
-      :description => '',
-      :connected_check => 'false',
+      :ensure                 => :present,
+      :asn                    => asn,
+      :vrf                    => vrf,
+      :neighbor               => neighbor,
+      :description            => '',
+      :connected_check        => 'false',
       :capability_negotiation => 'false',
-      :dynamic_capability => 'false',
-      :ebgp_multihop => 'default',
-      :local_as => 1.1,
-      :log_neighbor_changes => 'disable',
-      :low_memory_exempt => 'false',
-      :remote_as => 1.1,
-      :remove_private_as => 'disable',
-      :shutdown => 'false',
-      :suppress_4_byte_as => 'false',
-      :timers_keepalive => '30',
-      :timers_holdtime => '90',
-      :update_source => 'ethernet1/2'
+      :dynamic_capability     => 'false',
+      :ebgp_multihop          => 'default',
+      :local_as               => 1.1,
+      :log_neighbor_changes   => 'disable',
+      :low_memory_exempt      => 'false',
+      :remote_as              => 1.1,
+      :remove_private_as      => 'disable',
+      :shutdown               => 'false',
+      :suppress_4_byte_as     => 'false',
+      :timers_keepalive       => '30',
+      :timers_holdtime        => '90',
+      :update_source          => 'ethernet1/2',
     }
     tests[id][:resource] = {
-      'ensure' => :present,
-      'connected_check' => 'false',
+      'ensure'                 => :present,
+      'connected_check'        => 'false',
       'capability_negotiation' => 'false',
-      'dynamic_capability' => 'false',
-      'ebgp_multihop' => '1',
-      'local_as' => '1.1',
-      'log_neighbor_changes' => 'disable',
-      'low_memory_exempt' => 'false',
-      'remote_as' => '1.1',
-      'remove_private_as' => 'disable',
-      'shutdown' => 'false',
-      'suppress_4_byte_as' => 'false',
-      'timers_keepalive' => '30',
-      'timers_holdtime' => '90',
-      'update_source' => 'ethernet1/2'
+      'dynamic_capability'     => 'false',
+      'ebgp_multihop'          => '1',
+      'local_as'               => '1.1',
+      'log_neighbor_changes'   => 'disable',
+      'low_memory_exempt'      => 'false',
+      'remote_as'              => '1.1',
+      'remove_private_as'      => 'disable',
+      'shutdown'               => 'false',
+      'suppress_4_byte_as'     => 'false',
+      'timers_keepalive'       => '30',
+      'timers_holdtime'        => '90',
+      'update_source'          => 'ethernet1/2',
     }
     tests[id][:show_cmd] = "show run bgp all | section #{neighbor}"
     # when description is empty string, puppet resource will not return

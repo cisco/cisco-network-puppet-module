@@ -43,25 +43,25 @@ Puppet::Type.newtype(:cisco_vrf) do
   # Parse out the title to fill in the attributes in these
   # patterns. These attributes can be overwritten later.
   def self.title_patterns
-    identity = lambda { |x| x }
+    identity = ->(x) { x }
     patterns = []
 
     # Below pattern matches both parts of the full composite name.
     patterns << [
       /^(\S+)$/,
       [
-        [:name, identity]
-      ]
+        [:name, identity],
+      ],
     ]
-    return patterns
+    patterns
   end
 
-  newparam(:name, :namevar => :true) do
-    desc "Name of the VRF. Valid value is a string of non-whitespace 
+  newparam(:name, namevar: :true) do
+    desc "Name of the VRF. Valid value is a string of non-whitespace
           characters. It is not case-sensitive"
-    munge { |value|
+    munge do |value|
       value.downcase.strip
-    }
+    end
   end # param name
 
   ##############
@@ -71,13 +71,11 @@ Puppet::Type.newtype(:cisco_vrf) do
   ensurable
 
   newproperty(:description) do
-    desc "Description of the VRF. Valid value is string."
+    desc 'Description of the VRF. Valid value is string.'
   end # property description
 
   newproperty(:shutdown) do
-    desc "Shutdown state of the VRF."
+    desc 'Shutdown state of the VRF.'
     newvalues(:true, :false)
   end # property shutdown
-
 end # Puppet::Type.newtype
-

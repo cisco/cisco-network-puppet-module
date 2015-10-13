@@ -95,26 +95,26 @@ Puppet::Type.newtype(:cisco_bgp) do
   # attributes can be overwritten later.
 
   def self.title_patterns
-    identity = lambda { |x| x }
+    identity = ->(x) { x }
     [
       [
         /^(\d+|\d+\.\d+)$/,
         [
-          [:asn, identity]
-        ]
+          [:asn, identity],
+        ],
       ],
       [
         /^(\d+|\d+\.\d+) (\S+)$/,
         [
           [:asn, identity],
-          [:vrf, identity]
-        ]
+          [:vrf, identity],
+        ],
       ],
       [
         /^(\S+)$/,
         [
-          [:name, identity]
-        ]
+          [:name, identity],
+        ],
       ],
     ]
   end
@@ -124,23 +124,23 @@ Puppet::Type.newtype(:cisco_bgp) do
   ##############
 
   ensurable
-  
+
   # Only needed to satisfy name parameter.
   newparam(:name) do
   end
 
-  newparam(:asn, :namevar => true) do
+  newparam(:asn, namevar: true) do
     desc "BGP autonomous system number.  Valid values are String, Integer in
           ASPLAIN or ASDOT notation"
     validate do |value|
-      unless /^\d+.\d+$/.match(value.to_s) or /^\d+$/.match(value.to_s)
+      unless /^\d+.\d+$/.match(value.to_s) || /^\d+$/.match(value.to_s)
         fail("BGP asn #{value} must be specified in ASPLAIN or ASDOT notation")
       end
     end
 
     # Convert BGP ASN ASDOT+ to ASPLAIN
     def dot_to_big(dot_str)
-      raise ArgumentError unless dot_str.is_a? String
+      fail ArgumentError unless dot_str.is_a? String
       return dot_str unless /\d+\.\d+/.match(dot_str)
       mask = 0b1111111111111111
       high = dot_str.to_i
@@ -154,10 +154,11 @@ Puppet::Type.newtype(:cisco_bgp) do
     munge do |value|
       value = :default if value == 'default'
       value = dot_to_big(String(value)) unless value == :default
+      value
     end
   end # param asn
 
-  newparam(:vrf, :namevar => true) do
+  newparam(:vrf, namevar: true) do
     desc "Name of the resource instance. Valid values are string. The
           name 'default' is a valid VRF."
 
@@ -175,9 +176,9 @@ Puppet::Type.newtype(:cisco_bgp) do
 
     validate do |id|
       begin
-        IPAddr.new(id) unless id == :default or id.empty? or id == 'default'
+        IPAddr.new(id) unless id == :default || id.empty? || id == 'default'
       rescue
-        fail "Router ID is not a valid IP address."
+        raise 'Router ID is not a valid IP address.'
       end
     end
 
@@ -194,12 +195,12 @@ Puppet::Type.newtype(:cisco_bgp) do
     validate do |id|
       begin
         if /^\d+\.\d+\.\d+\.\d+$/.match(id)
-          IPAddr.new(id) unless id == :default or id.empty? or id == 'default'
+          IPAddr.new(id) unless id == :default || id.empty? || id == 'default'
         else
-          Integer(id) unless id == :default or id.empty? or id == 'default'
+          Integer(id) unless id == :default || id.empty? || id == 'default'
         end
       rescue
-        fail "Cluster-ID is not a valid IP address or Integer"
+        raise 'Cluster-ID is not a valid IP address or Integer'
       end
     end
 
@@ -215,11 +216,11 @@ Puppet::Type.newtype(:cisco_bgp) do
 
     validate do |id|
       begin
-        if /^\d+\.\d+$/.match(id) or /^\d+$/.match(id)
-          String(id) unless id == :default or id.empty? or id == 'default'
+        if /^\d+\.\d+$/.match(id) || /^\d+$/.match(id)
+          String(id) unless id == :default || id.empty? || id == 'default'
         end
       rescue
-        fail "Cluster-ID is not a valid IP address or Integer"
+        raise 'Cluster-ID is not a valid IP address or Integer'
       end
     end
 
@@ -233,13 +234,13 @@ Puppet::Type.newtype(:cisco_bgp) do
     desc "AS confederation parameters. Valid values are String,
           keyword 'default'."
 
-    match_error = "must be specified in ASPLAIN or ASDOT notation"
+    match_error = 'must be specified in ASPLAIN or ASDOT notation'
     validate do |peers|
       list = peers.split(' ')
-      list.each do | value |
+      list.each do |value|
         fail "Confederation peer value '#{value}' #{match_error}" unless
-          /^\d+$/.match(value) or /^\d+\.\d+$/.match(value) or
-          peers == 'default' or peers == :default
+          /^\d+$/.match(value) || /^\d+\.\d+$/.match(value) ||
+          peers == 'default' || peers == :default
       end
     end
 
@@ -250,7 +251,7 @@ Puppet::Type.newtype(:cisco_bgp) do
   end # property confederation_peers
 
   newproperty(:shutdown) do
-    desc "Administratively shutdown the BGP protocol"
+    desc 'Administratively shutdown the BGP protocol'
 
     newvalues(:true, :false, :default)
   end # property shutdown
@@ -263,7 +264,7 @@ Puppet::Type.newtype(:cisco_bgp) do
   end # property supress_fib_pending
 
   newproperty(:log_neighbor_changes) do
-    desc "Enable/Disable message logging for neighbor up/down event"
+    desc 'Enable/Disable message logging for neighbor up/down event'
 
     newvalues(:true, :false, :default)
   end # property log_neighbor_changes
@@ -283,7 +284,7 @@ Puppet::Type.newtype(:cisco_bgp) do
   end # bestpath_aspath_multipath_relax
 
   newproperty(:bestpath_compare_routerid) do
-    desc "Enable/Disable comparison of router IDs for identical eBGP paths."
+    desc 'Enable/Disable comparison of router IDs for identical eBGP paths.'
 
     newvalues(:true, :false, :default)
   end # property bestpath_compare_routerid
@@ -313,31 +314,31 @@ Puppet::Type.newtype(:cisco_bgp) do
     desc "Specify timeout for the first best path after a restart, in seconds.
           Valid values are Integer, keyword 'default'."
 
-    munge { |value|
+    munge do |value|
       begin
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
       rescue
-        fail "timer_bestpath_limit must be an Integer."
+        raise 'timer_bestpath_limit must be an Integer.'
       end # rescue
       value
-    }
+    end
   end # property timer_bestpath_limit
 
   newproperty(:timer_bestpath_limit_always) do
-    desc "Enable/Disable update-delay-always option"
+    desc 'Enable/Disable update-delay-always option'
 
     newvalues(:true, :false, :default)
   end # property timer_bestpath_limit_always
 
   newproperty(:graceful_restart) do
-    desc "Enable/Disable"
+    desc 'Enable/Disable'
 
     newvalues(:true, :false, :default)
   end # property graceful_restart
 
   newproperty(:graceful_restart_helper) do
-    desc "Enable/Disable"
+    desc 'Enable/Disable'
 
     newvalues(:true, :false, :default)
   end # property graceful_restart_helper
@@ -346,63 +347,62 @@ Puppet::Type.newtype(:cisco_bgp) do
     desc "Set maximum time for a restart sent to the BGP peer.
           Valid values are Integer, keyword 'default'."
 
-    munge { |value|
+    munge do |value|
       begin
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
       rescue
-        fail "graceful_restart_timers_restart must be an Integer."
+        raise 'graceful_restart_timers_restart must be an Integer.'
       end # rescue
       value
-    }
+    end
   end # property graceful_restart_timers_restart
 
   newproperty(:graceful_restart_timers_stalepath_time) do
     desc "Set maximum time that BGP keeps the stale routes from the
           restarting BGP peer. Valid values are Integer, keyword 'default'."
 
-    munge { |value|
+    munge do |value|
       begin
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
       rescue
-        fail "graceful_restart_timers_stalepath_time must be an Integer."
+        raise 'graceful_restart_timers_stalepath_time must be an Integer.'
       end # rescue
       value
-    }
+    end
   end # property graceful_restart_timers_stalepath_time
 
   newproperty(:timer_bgp_keepalive) do
     desc "Set bgp keepalive timer. Valid values are Integer, keyword 'default'."
 
-    munge { |value|
+    munge do |value|
       begin
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
       rescue
-        fail "timer_bgp_keepalive must be an Integer."
+        raise 'timer_bgp_keepalive must be an Integer.'
       end # rescue
       value
-    }
+    end
   end # property timer_bgp_keepalive
 
   newproperty(:timer_bgp_holdtime) do
     desc "Set bgp hold timer. Valid values are Integer, keyword 'default'."
 
-    munge { |value|
+    munge do |value|
       begin
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
       rescue
-        fail "timer_bgp_hold must be an Integer."
+        raise 'timer_bgp_hold must be an Integer.'
       end # rescue
       value
-    }
+    end
   end # property timer_bgp_holdtime
 
- # Make sure the asn parameter is set.
+  # Make sure the asn parameter is set.
   validate do
     fail("The 'asn' parameter must be set in the manifest.") if self[:asn].nil?
   end
-
 end

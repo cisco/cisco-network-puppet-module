@@ -48,7 +48,7 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
   # Parse out the title to fill in the attributes in these
   # patterns. These attributes can be overwritten later.
   def self.title_patterns
-    identity = lambda { |x| x }
+    identity = ->(x) { x }
     patterns = []
 
     # Below pattern matches both parts of the full composite name.
@@ -56,47 +56,45 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
       /^(\S+) (\S+)$/,
       [
         [:interface, identity],
-        [:ospf, identity]
-      ]
+        [:ospf, identity],
+      ],
     ]
-    return patterns
+    patterns
   end
 
   # Overwrites name method. Original method simply returns self[:name],
   # which is no longer valid or complete.
   # Would not have failed, but just return nothing useful.
   def name
-    return "#{self[:interface]} #{self[:ospf]}"
+    "#{self[:interface]} #{self[:ospf]}"
   end
 
-  newparam(:interface, :namevar => :true) do
-    desc "Name of this cisco_interface resource. Valid values are string."
+  newparam(:interface, namevar: :true) do
+    desc 'Name of this cisco_interface resource. Valid values are string.'
 
-    munge { |value|
-      value.downcase
-    }
+    munge(&:downcase)
   end
 
-  newparam(:ospf, :namevar => :true) do
-    desc "Name of the cisco_ospf resource. Valid values are string."
+  newparam(:ospf, namevar: :true) do
+    desc 'Name of the cisco_ospf resource. Valid values are string.'
   end
 
   newparam(:name) do
-    desc "dummy paramenter to support puppet resource command"
+    desc 'dummy paramenter to support puppet resource command'
   end
 
   newproperty(:cost) do
     desc "The cost associated with this cisco_interface_ospf
           instance. Valid values are integer."
 
-    munge { |value|
+    munge do |value|
       begin
         value = Integer(value)
       rescue
-        fail "cost property must be an integer."
+        raise 'cost property must be an integer.'
       end
       value
-    }
+    end
   end
 
   newproperty(:hello_interval) do
@@ -104,15 +102,15 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
           instance. Time between sending successive hello packets. Valid
           values are integer, keyword 'default'."
 
-    munge { |value|
+    munge do |value|
       begin
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
       rescue
-        fail "hello_interval property must be an integer."
+        raise 'hello_interval property must be an integer.'
       end
       value
-    }
+    end
   end
 
   newproperty(:dead_interval) do
@@ -121,15 +119,15 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
           packet before tearing down adjacencies. Valid values are
           integer, keyword 'default'."
 
-    munge { |value|
+    munge do |value|
       begin
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
       rescue
-        fail "dead_interval property must be an integer."
+        raise 'dead_interval property must be an integer.'
       end
       value
-    }
+    end
   end
 
   newproperty(:passive_interface) do
@@ -154,31 +152,30 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
           message_digest_algorithm_type and message_digest_password are
           mandatory. Valid values are integer."
 
-    munge { |value|
+    munge do |value|
       begin
         value = Integer(value)
       rescue
-        fail "message_digest_key_id provided in the manifest - #{value} is not a valid integer."
+        raise "message_digest_key_id provided in the manifest - #{value} is not a valid integer."
       end
       value
-    }
+    end
   end
 
   newparam(:message_digest_algorithm_type) do
     desc "Algorithm used for authentication among neighboring routers
           within an area. Keyword: 'default'"
 
-    munge { |value|
+    munge do |value|
       value = :md5 if value == 'default'
       value.to_sym
-    }     
+    end
     newvalues(:md5, :default)
   end
 
   newparam(:message_digest_encryption_type) do
-
     desc "Specifies the scheme used for encrypting
-          message_digest_password. Valid values are 'cleartext', 
+          message_digest_password. Valid values are 'cleartext',
           '3des' or 'cisco_type_7' encryption, and
           'default', which defaults to 'cleartext'."
 
@@ -189,26 +186,26 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
               :encrypted,
               :default)
 
-    validate { |value|
+    validate do |value|
       warning("keyword 'clear' is deprecated, please use 'cleartext'") if
         value.to_sym == :clear
       warning("keyword 'encrypted' is deprecated, please use 'cisco_type_7'") if
         value.to_sym == :encrypted
-    }
+    end
 
-    munge { |value|
-      value = :cleartext if value.to_sym == :default or value.to_sym == :clear 
-      value = :cisco_type_7 if value.to_sym == :encrypted 
+    munge do |value|
+      value = :cleartext if value.to_sym == :default || value.to_sym == :clear
+      value = :cisco_type_7 if value.to_sym == :encrypted
       value.to_sym
-    }
+    end
   end
 
   newproperty(:message_digest_password) do
-    desc "Specifies the message_digest password. Valid values are string."
+    desc 'Specifies the message_digest password. Valid values are string.'
 
     validate do |message_digest_password|
       fail("message_digest_password - #{message_digest_password} should be a string")  \
-        unless message_digest_password.nil? or message_digest_password.kind_of? String
+        unless message_digest_password.nil? || message_digest_password.kind_of?(String)
     end
   end
 
@@ -217,22 +214,31 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
           instance. Valid values are string, formatted as an IP address
           i.e. \"0.0.0.0\" or as an integer. Mandatory parameter."
 
-    validate { |value|
+    validate do |value|
       valid_integer = true
       valid_ipaddr  = true
 
-      Integer(value)     rescue valid_integer = false
-      IPAddr.new(value)  rescue valid_ipaddr  = false
-      fail "area [#{value}] must be a valid ip address or integer" if
-        valid_integer == false and valid_ipaddr == false
-    }
+      begin
+        Integer(value)
+      rescue
+        valid_integer = false
+      end
 
-    munge { |value|
+      begin
+        IPAddr.new(value)
+      rescue
+        valid_ipaddr = false
+      end
+
+      fail "area [#{value}] must be a valid ip address or integer" if
+        valid_integer == false && valid_ipaddr == false
+    end
+
+    munge do |value|
       # Coerce numeric area to the expected dot-decimal format.
       value = IPAddr.new(value.to_i, Socket::AF_INET) unless value.to_s[/\./]
       value.to_s
-    }
-
+    end
   end
 
   # validation for area, message_digest_key_id,
@@ -240,34 +246,33 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
   # and message_digest_password combination
 
   validate do
-    fail("area must be supplied when ensure=present") if
-      self[:ensure] == :present and self[:area].nil?
+    fail('area must be supplied when ensure=present') if
+      self[:ensure] == :present && self[:area].nil?
 
-    if (self[:message_digest_key_id].nil?) and
-         (!self[:message_digest_algorithm_type].nil? or
-          !self[:message_digest_encryption_type].nil? or
-          !self[:message_digest_password].nil?)
+    if (self[:message_digest_key_id].nil?) &&
+       (!self[:message_digest_algorithm_type].nil? ||
+        !self[:message_digest_encryption_type].nil? ||
+        !self[:message_digest_password].nil?)
       fail("If message_digest_key_id is not present in the manifest, \
             the following attributes must not be present - \
             message_digest_algorithm_type, \
             message_digest_encryption_type, message_digest_password" )
     end
 
-    if (!self[:message_digest_key_id].nil?) and
-         (self[:message_digest_algorithm_type].nil? or
-          self[:message_digest_encryption_type].nil? or
-          self[:message_digest_password].nil?)
+    if (!self[:message_digest_key_id].nil?) &&
+       (self[:message_digest_algorithm_type].nil? ||
+        self[:message_digest_encryption_type].nil? ||
+        self[:message_digest_password].nil?)
       fail("If message_digest_key_id is present in the manifest, \
-	    the following attributes must also be present - \
+      the following attributes must also be present - \
             message_digest_algorithm_type, \
             message_digest_encryption_type, message_digest_password")
     end
-    
-    if self[:passive_interface] and
-      !/^lo\S+$/.match(self[:interface].downcase).nil?
-      fail "passive_interface value cannot be set on loopback interfaces"
-    end
 
+    if self[:passive_interface] &&
+       !/^lo\S+$/.match(self[:interface].downcase).nil?
+      fail 'passive_interface value cannot be set on loopback interfaces'
+    end
   end
 
   ################
@@ -282,8 +287,8 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
 
     dep = rel_catalog.catalog.resource('cisco_interface', interface_title)
 
-    info "Cisco_interface[#{interface_title}] was not found in catalog. " +
-         "Will obtain from device." if dep.nil?
+    info "Cisco_interface[#{interface_title}] was not found in catalog. " \
+         'Will obtain from device.' if dep.nil?
     reqs << dep
     reqs
   end
@@ -296,8 +301,8 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
 
     dep = rel_catalog.catalog.resource('cisco_ospf', ospf_title)
 
-    info "Cisco_ospf[#{ospf_title}] was not found in catalog. " +
-         "Will obtain from device." if dep.nil?
+    info "Cisco_ospf[#{ospf_title}] was not found in catalog. " \
+         'Will obtain from device.' if dep.nil?
     reqs << dep
     reqs
   end

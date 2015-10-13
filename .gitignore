@@ -2,3 +2,4 @@
 junit/
 log/
 pkg/
+Gemfile.lock

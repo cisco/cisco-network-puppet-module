@@ -1,7 +1,7 @@
 # The NXAPI provider for snmp group.
 #
 # February, 2015
-# 
+#
 # Copyright (c) 2015 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,21 +19,21 @@
 require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
 
 Puppet::Type.type(:cisco_snmp_group).provide(:nxapi) do
-  desc "The NXAPI provider for snmp group."
+  desc 'The NXAPI provider for snmp group.'
 
-  confine :feature => :cisco_node_utils
-  defaultfor :operatingsystem => :nexus
+  confine feature: :cisco_node_utils
+  defaultfor operatingsystem: :nexus
 
   mk_resource_methods
 
   def self.instances
     group_instances = []
-    Cisco::SnmpGroup.groups.each_key { |id|
+    Cisco::SnmpGroup.groups.each_key do |id|
       group_instances << new(
-        :name => id,
-        :ensure => :present)
-    }
-    return group_instances
+        name:   id,
+        ensure: :present)
+    end
+    group_instances
   end
 
   def self.prefetch(resources)
@@ -48,29 +48,27 @@ Puppet::Type.type(:cisco_snmp_group).provide(:nxapi) do
   def initialize(value={})
     super(value)
     @group = nil
-    debug "Created provider instance of cisco_snmp_group."
+    debug 'Created provider instance of cisco_snmp_group.'
   end
 
   def exists?
-    if not Cisco::SnmpGroup.exists?(@resource[:group])
+    unless Cisco::SnmpGroup.exists?(@resource[:group])
       debug "Group instance with name #{@resource[:group]} not found"
       @property_hash[:ensure] = :absent
       return false
     end
     @property_hash[:ensure]  = :present
     @property_hash[:group] = @resource[:group]
-    return true
+    true
   end
 
   def create
-    fail "Snmp group creation not supported. " +
+    fail 'Snmp group creation not supported. ' \
          "Group #{@resource[:group]} not created."
   end
 
   def destroy
-    fail "Snmp group deletion not supported. " +
+    fail 'Snmp group deletion not supported. ' \
          "Group #{@resource[:group]} not deleted."
   end
-
 end
-

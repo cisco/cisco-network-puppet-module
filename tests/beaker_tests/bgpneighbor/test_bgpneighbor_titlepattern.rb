@@ -48,6 +48,7 @@
 # instance attributes to verify resource properties.
 #
 ###############################################################################
+# rubocop:disable Style/HashSyntax,Style/ExtraSpacing
 
 # Require UtilityLib.rb and BgpNeighborLib.rb paths.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
@@ -59,7 +60,7 @@ id = 'test_green'
 UtilityLib.set_manifest_path(master, self)
 tests = {
   :master => master,
-  :agent => agent,
+  :agent  => agent,
 }
 
 test_name "TestCase :: #{testheader}" do
@@ -72,14 +73,14 @@ test_name "TestCase :: #{testheader}" do
   neighbor = '1.1.1.0/24'
   ['default', :default, 'red'].each do |vrf|
     tests[id] = {
-      :desc => '1.1 Apply title pattern of resource name and test harness',
+      :desc           => '1.1 Apply title pattern of resource name and test harness',
       :manifest_props => {
-        :ensure => :present,
-        :asn => asn,
-        :vrf => vrf,
+        :ensure   => :present,
+        :asn      => asn,
+        :vrf      => vrf,
         :neighbor => neighbor,
       },
-      :resource => {
+      :resource       => {
         'ensure' => 'present',
       },
     }
@@ -100,11 +101,11 @@ test_name "TestCase :: #{testheader}" do
 
     id = "#{asn}"
     tests[id] = {
-      :desc => '1.2 Apply title pattern of asn',
-      :code => [0],
+      :desc           => '1.2 Apply title pattern of asn',
+      :code           => [0],
       :manifest_props => {
-        :ensure => :present,
-        :vrf => vrf,
+        :ensure   => :present,
+        :vrf      => vrf,
         :neighbor => neighbor,
       },
     }
@@ -114,10 +115,10 @@ test_name "TestCase :: #{testheader}" do
     if vrf == 'default'
       # Test if :vrf can default to 'default'
       tests[id] = {
-        :desc => '1.3 Test default vrf in manifest',
-        :code => [0],
+        :desc           => '1.3 Test default vrf in manifest',
+        :code           => [0],
         :manifest_props => {
-          :ensure => :present,
+          :ensure   => :present,
           :neighbor => neighbor,
         },
       }
@@ -127,10 +128,10 @@ test_name "TestCase :: #{testheader}" do
 
     id = "#{asn} #{vrf}"
     tests[id] = {
-      :desc => "1.4 Apply title pattern of 'asn vrf'",
-      :code => [0],
+      :desc           => "1.4 Apply title pattern of 'asn vrf'",
+      :code           => [0],
       :manifest_props => {
-        :ensure => :present,
+        :ensure   => :present,
         :neighbor => neighbor,
       },
     }
@@ -139,8 +140,8 @@ test_name "TestCase :: #{testheader}" do
 
     id = "#{asn} #{vrf} #{neighbor}"
     tests[id] = {
-      :desc => "1.5 Apply title pattern of 'asn vrf neighbor'",
-      :code => [0],
+      :desc           => "1.5 Apply title pattern of 'asn vrf neighbor'",
+      :code           => [0],
       :manifest_props => {
         :ensure => :present,
       },
@@ -150,8 +151,8 @@ test_name "TestCase :: #{testheader}" do
 
     id = "#{asn} #{vrf} 1.1.1.1/24"
     tests[id] = {
-      :desc => '1.6 Test neighbor munge function',
-      :code => [0],
+      :desc           => '1.6 Test neighbor munge function',
+      :code           => [0],
       :manifest_props => {
         :ensure => :present,
       },
