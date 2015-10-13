@@ -27,8 +27,8 @@ rescue LoadError # seen on master, not on agent
 end
 
 Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:nxapi) do
-  confine :feature => :cisco_node_utils
-  defaultfor :operatingsystem => :nexus
+  confine feature: :cisco_node_utils
+  defaultfor operatingsystem: :nexus
 
   mk_resource_methods
 
@@ -76,7 +76,7 @@ Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:nxapi) do
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@af',
                                             BGP_NBR_AF_BOOL_PROPS)
 
-  def initialize(value = {})
+  def initialize(value={})
     super(value)
     asn = @property_hash[:asn]
     vrf = @property_hash[:vrf]
@@ -91,13 +91,13 @@ Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:nxapi) do
 
   def self.properties_get(asn, vrf, nbr, af, obj)
     current_state = {
-      :name     => [asn, vrf, nbr, af.first, af.last].join(' '),
-      :asn      => asn,
-      :vrf      => vrf,
-      :neighbor => nbr,
-      :afi      => af.first,
-      :safi     => af.last,
-      :ensure   => :present,
+      name:     [asn, vrf, nbr, af.first, af.last].join(' '),
+      asn:      asn,
+      vrf:      vrf,
+      neighbor: nbr,
+      afi:      af.first,
+      safi:     af.last,
+      ensure:   :present,
     }
     # Call node_utils getter for every property
     BGP_NBR_AF_NON_BOOL_PROPS.each do |prop|
@@ -150,7 +150,7 @@ Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:nxapi) do
     @property_flush[:ensure] = :absent
   end
 
-  def properties_set(new_af = false)
+  def properties_set(new_af=false)
     BGP_NBR_AF_ALL_PROPS.each do |prop|
       next unless @resource[prop]
       if new_af
@@ -208,9 +208,11 @@ Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:nxapi) do
     # max is optional
     max = @property_flush[:allowas_in_max]
     if @property_flush.key?(:allowas_in_max)
-      max = (max == :default) ?
-              @af.default_allowas_in_max :
-              @property_flush[:allowas_in_max]
+      if max == :default
+        max = @af.default_allowas_in_max
+      else
+        max = @property_flush[:allowas_in_max]
+      end
     end
     if @property_flush.key?(:allowas_in)
       state = @property_flush[:allowas_in]
@@ -228,9 +230,11 @@ Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:nxapi) do
     # disable is an optional keyword
     disable = @property_flush[:cap_add_paths_receive_disable]
     if @property_flush.key?(:cap_add_paths_receive_disable)
-      disable = (disable == :default) ?
-                  @af.default_cap_add_paths_receive_disable :
-                  @property_flush[:cap_add_paths_receive_disable]
+      if disable == :default
+        disable = @af.default_cap_add_paths_receive_disable
+      else
+        disable = @property_flush[:cap_add_paths_receive_disable]
+      end
     end
 
     if @property_flush.key?(:cap_add_paths_receive)
@@ -250,9 +254,11 @@ Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:nxapi) do
     # disable is an optional keyword
     disable = @property_flush[:cap_add_paths_send_disable]
     if @property_flush.key?(:cap_add_paths_send_disable)
-      disable = (disable == :default) ?
-                  @af.default_cap_add_paths_send_disable :
-                  @property_flush[:cap_add_paths_send_disable]
+      if disable == :default
+        disable = @af.default_cap_add_paths_send_disable
+      else
+        disable = @property_flush[:cap_add_paths_send_disable]
+      end
     end
 
     if @property_flush.key?(:cap_add_paths_send)
@@ -271,9 +277,11 @@ Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:nxapi) do
     # route_map is optional
     route_map = @property_flush[:default_originate_route_map]
     if @property_flush.key?(:default_originate_route_map)
-      route_map = (route_map == :default) ?
-                    @af.default_default_originate_route_map :
-                    @property_flush[:default_originate_route_map]
+      if route_map == :default
+        route_map = @af.default_default_originate_route_map
+      else
+        route_map = @property_flush[:default_originate_route_map]
+      end
     end
 
     if @property_flush.key?(:default_originate)
@@ -284,6 +292,7 @@ Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:nxapi) do
     @af.default_originate_set(state, route_map)
   end
 
+  # rubocop:disable Metrics/MethodLength
   def max_prefix_set
     return unless
       @property_flush.key?(:max_prefix_limit) ||
@@ -296,9 +305,11 @@ Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:nxapi) do
     # restart interval is optional and mutually exclusive with warning
     interval = @property_flush[:max_prefix_interval]
     if @property_flush.key?(:max_prefix_interval)
-      opt = (interval == :default) ?
-              @af.default_max_prefix_interval :
-              @property_flush[:max_prefix_interval]
+      if interval == :default
+        opt = @af.default_max_prefix_interval
+      else
+        opt = @property_flush[:max_prefix_interval]
+      end
     else
       opt = @af.max_prefix_interval
     end
@@ -306,9 +317,11 @@ Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:nxapi) do
     # warning is optional and mutually exclusive with restart interval
     warning = @property_flush[:max_prefix_warning]
     if @property_flush.key?(:max_prefix_warning)
-      opt = (warning == :default) ?
-              @af.default_max_prefix_warning :
-              @property_flush[:max_prefix_warning]
+      if warning == :default
+        opt = @af.default_max_prefix_warning
+      else
+        opt = @property_flush[:max_prefix_warning]
+      end
     else
       # Use current value, but do not overwrite opt if already populated
       opt = @af.max_prefix_warning unless opt
@@ -317,9 +330,11 @@ Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:nxapi) do
     # threshold is optional
     threshold = @property_flush[:max_prefix_threshold]
     if @property_flush.key?(:max_prefix_threshold)
-      threshold = (threshold == :default) ?
-                    @af.default_max_prefix_threshold :
-                    @property_flush[:max_prefix_threshold]
+      if threshold == :default
+        threshold = @af.default_max_prefix_threshold
+      else
+        threshold = @property_flush[:max_prefix_threshold]
+      end
     else
       threshold = @af.max_prefix_threshold
     end
@@ -332,6 +347,7 @@ Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:nxapi) do
     end
     @af.max_prefix_set(limit, threshold, opt)
   end
+  # rubocop:enable Metrics/MethodLength
 
   def max_prefix_validate_args
     fail ArgumentError,
@@ -354,9 +370,11 @@ Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:nxapi) do
     # 'always' is an optional keyword
     always = @property_flush[:soft_reconfiguration_in_always]
     if @property_flush.key?(:soft_reconfiguration_in_always)
-      always = (always == :default) ?
-                  @af.default_soft_reconfiguration_in_always :
-                  @property_flush[:soft_reconfiguration_in_always]
+      if always == :default
+        always = @af.default_soft_reconfiguration_in_always
+      else
+        always = @property_flush[:soft_reconfiguration_in_always]
+      end
     end
 
     if @property_flush.key?(:soft_reconfiguration_in)

@@ -19,30 +19,30 @@
 require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
 
 Puppet::Type.type(:cisco_snmp_user).provide(:nxapi) do
-  desc "The NXAPI provider."
+  desc 'The NXAPI provider.'
 
-  confine :feature => :cisco_node_utils
-  defaultfor :operatingsystem => :nexus
+  confine feature: :cisco_node_utils
+  defaultfor operatingsystem: :nexus
 
   mk_resource_methods
 
   def self.instances
     snmp_users = []
 
-    Cisco::SnmpUser.users.each_value { |snmp_user|
+    Cisco::SnmpUser.users.each_value do |snmp_user|
       snmp_users << new(
-        :user           => snmp_user.name,
-        :name           => "#{snmp_user.name} #{snmp_user.engine_id}".strip,
-        :ensure         => :present,
-        :engine_id      => snmp_user.engine_id,
-        :groups         => snmp_user.groups,
-        :priv_protocol  => snmp_user.priv_protocol,
-        :priv_password  => snmp_user.priv_password,
-        :auth_protocol  => snmp_user.auth_protocol,
-        :auth_password  => snmp_user.auth_password,
-        :localized_key  => :true)
-    } 
-    return snmp_users
+        user:          snmp_user.name,
+        name:          "#{snmp_user.name} #{snmp_user.engine_id}".strip,
+        ensure:        :present,
+        engine_id:     snmp_user.engine_id,
+        groups:        snmp_user.groups,
+        priv_protocol: snmp_user.priv_protocol,
+        priv_password: snmp_user.priv_password,
+        auth_protocol: snmp_user.auth_protocol,
+        auth_password: snmp_user.auth_password,
+        localized_key: :true)
+    end
+    snmp_users
   end
 
   def self.prefetch(resources)
@@ -55,16 +55,16 @@ Puppet::Type.type(:cisco_snmp_user).provide(:nxapi) do
 
   def initialize(value={})
     super(value)
-    @snmp_user   = Cisco::SnmpUser.users[@property_hash[:name]]
+    @snmp_user = Cisco::SnmpUser.users[@property_hash[:name]]
     @localized_key = false
 
-    # When this hash is changed, it means that  one property has 
+    # When this hash is changed, it means that  one property has
     # changed and needs to flush
     @property_flush = {}
   end
 
   def exists?
-    return (@property_hash[:ensure] == :present)
+    (@property_hash[:ensure] == :present)
   end
 
   def create
@@ -79,12 +79,12 @@ Puppet::Type.type(:cisco_snmp_user).provide(:nxapi) do
 
   def groups
     curr_groups = @property_hash[:groups]
-    if @resource[:groups] == ["default"]
-      if curr_groups.empty? or curr_groups == Cisco::SnmpUser.default_groups
-        curr_groups = ["default"]
+    if @resource[:groups] == ['default']
+      if curr_groups.empty? || curr_groups == Cisco::SnmpUser.default_groups
+        curr_groups = ['default']
       end
     end
-    return curr_groups
+    curr_groups
   end
 
   def groups=(_should_groups)
@@ -134,7 +134,7 @@ Puppet::Type.type(:cisco_snmp_user).provide(:nxapi) do
 
     config = handle_attribute_update
 
-    debug "Creating a snmp user, "          \
+    debug 'Creating a snmp user, '          \
       "name #{@resource[:user]}, "          \
       "groups #{config[:groups]}, "                 \
       "auth_protocol #{config[:auth_protocol]}, "   \
@@ -165,7 +165,7 @@ Puppet::Type.type(:cisco_snmp_user).provide(:nxapi) do
     @property_hash[:name] = @resource[:name]
 
   rescue RuntimeError => e
-    fail e.message + " The user has been unconfigured."
+    raise e.message + ' The user has been unconfigured.'
   end
 
   def update_attribute(attribute, default_value=:none)
@@ -182,41 +182,41 @@ Puppet::Type.type(:cisco_snmp_user).provide(:nxapi) do
 
         # for passwords, property hash only had hashed password, change
         # localized key to true
-        if attribute == :auth_password or attribute == :priv_password
+        if attribute == :auth_password || attribute == :priv_password
           @localized_key = true
         end
       end
     else
       # manifest specified value. Use it except it is groups
-      if attribute != :groups or @resource[:groups] != ["default"]
+      if attribute != :groups || @resource[:groups] != ['default']
         should_value = @resource[attribute]
       else
         # groups supports default, do not configure
         should_value = []
       end
     end
-    return should_value
+    should_value
   end
 
   def handle_attribute_update
-    attributes = { 
-		   :auth_protocol => update_attribute(:auth_protocol),
-		   :priv_protocol => update_attribute(:priv_protocol),
-		   :auth_password => update_attribute(:auth_password, ""),
-                   :priv_password => update_attribute(:priv_password, ""),
-                   :groups => update_attribute(:groups, [])
-		 }
+    attributes = {
+      auth_protocol: update_attribute(:auth_protocol),
+      priv_protocol: update_attribute(:priv_protocol),
+      auth_password: update_attribute(:auth_password, ''),
+      priv_password: update_attribute(:priv_password, ''),
+      groups:        update_attribute(:groups, []),
+    }
 
     # If @localized_key is true, it means priv password or auth password have
     # been set as hashed. Otherwise, those password should be consisistent with
     # what have been specified by @resource[:localized_key]
-    @localized_key = @localized_key || (@resource[:localized_key] == :true)
+    @localized_key ||= (@resource[:localized_key] == :true)
 
-    return attributes
+    attributes
   end
 
   def unconfigure_snmp_user
-    @snmp_user.destroy()
+    @snmp_user.destroy
     @snmp_user = nil
     @property_hash[:ensure] = :absent
   end
@@ -232,5 +232,4 @@ Puppet::Type.type(:cisco_snmp_user).provide(:nxapi) do
       configure_snmp_user
     end
   end
-
 end

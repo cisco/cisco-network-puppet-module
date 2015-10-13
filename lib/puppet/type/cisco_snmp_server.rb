@@ -17,7 +17,6 @@
 # limitations under the License.
 
 Puppet::Type.newtype(:cisco_snmp_server) do
-
   @doc = "Manages a Cisco SNMP Server.
 
   cisco_snmp_server {\"<instance_name>\":
@@ -43,67 +42,63 @@ Puppet::Type.newtype(:cisco_snmp_server) do
 
   # Parse out the title to fill in the attributes in these patterns. These
   # attributes can be overwritten later.
-    def self.title_patterns
-      identity = lambda { |x| x }
-      patterns = []
+  def self.title_patterns
+    identity = ->(x) { x }
+    patterns = []
 
-      # Below pattern matches both parts of the full composite name.
-      patterns << [
-        /^(\S+)$/,
-        [
-          [:name, identity]
-        ]
-      ]
-      return patterns
-    end
+    # Below pattern matches both parts of the full composite name.
+    patterns << [
+      /^(\S+)$/,
+      [
+        [:name, identity],
+      ],
+    ]
+    patterns
+  end
 
   ##############
   # Attributes #
   ##############
 
-  newparam(:name, :namevar => :true) do
+  newparam(:name, namevar: :true) do
     # Note, this parameter is only created to satisfy the namevar
     # since none of the snmp_server attributes are good candidates.
-    desc "The name of the SNMP Server instance. Valid values are string."
-    validate { |name|
-      if name != 'default'
-        warning "only 'default' is accepted as a valid name"
-      end
-    }
+    desc 'The name of the SNMP Server instance. Valid values are string.'
+    validate do |name|
+      warning "only 'default' is accepted as a valid name" if name != 'default'
+    end
   end # property name
 
   newproperty(:location) do
-    desc "SNMP location (sysLocation). " +
+    desc 'SNMP location (sysLocation). ' \
          "Valid values are string, keyword 'default'."
 
-    munge { |value|
+    munge do |value|
       begin
         fail("location property - #{value} should be a string") unless
-          value.kind_of? String or value == :default
+          value.kind_of?(String) || value == :default
         value = :default if value == 'default'
       rescue
-        fail "Munge for default of location property failed"
+        raise 'Munge for default of location property failed'
       end
       value
-    }
-
+    end
   end
 
   newproperty(:contact) do
     desc "SNMP system contact (sysContact). Valid values are string,
           keyword 'default'."
 
-    munge { |value|
+    munge do |value|
       begin
         fail("contact property - #{value} should be a string") unless
-          value.kind_of? String or value == :default
+          value.kind_of?(String) || value == :default
         value = :default if value == 'default'
       rescue
-        fail "Munge for default of contact property failed"
+        raise 'Munge for default of contact property failed'
       end
       value
-    }
-
+    end
   end
 
   newproperty(:aaa_user_cache_timeout) do
@@ -115,11 +110,10 @@ Puppet::Type.newtype(:cisco_snmp_server) do
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
       rescue
-        fail "aaa user cache timeout - #{value} is not a valid number."
+        raise "aaa user cache timeout - #{value} is not a valid number."
       end
       value
     end
-
   end
 
   newproperty(:packet_size) do
@@ -131,27 +125,26 @@ Puppet::Type.newtype(:cisco_snmp_server) do
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
       rescue
-        fail "Packet size - #{value} is not a valid number."
+        raise "Packet size - #{value} is not a valid number."
       end
       value
     end
-
   end
 
   newproperty(:global_enforce_priv) do
-    desc "Enable/disable SNMP message encryption for all users."
+    desc 'Enable/disable SNMP message encryption for all users.'
 
     newvalues(:true, :false, :default)
   end
 
   newproperty(:protocol) do
-    desc "Enable/disable SNMP protocol."
+    desc 'Enable/disable SNMP protocol.'
 
     newvalues(:true, :false, :default)
   end
 
   newproperty(:tcp_session_auth) do
-    desc "Enable/disable a one time authentication for SNMP over TCP session."
+    desc 'Enable/disable a one time authentication for SNMP over TCP session.'
 
     newvalues(:true, :false, :default)
   end

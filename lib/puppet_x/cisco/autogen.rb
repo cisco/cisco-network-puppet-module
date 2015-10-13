@@ -18,6 +18,7 @@
 
 module PuppetX
   module Cisco
+    # PuppetX::Cisco::AutoGen - automatically generate getter/setter methods
     class AutoGen
       # "nu_name" refers to node_utils
       def self.mk_puppet_methods(mtype, klass, nu_name, props)
@@ -83,16 +84,24 @@ module PuppetX
             # def foo
             #   val = @nu.foo
             #   return :default if
-            #     @resource[foo] == :default &&
-            #     val == @nu.default_foo
-            #   @property_hash[foo] = val.nil? ? nil : (val ? :true : :false)
+            #     @resource[foo] == :default and
+            #     val == @nu_name.default_foo
+            #   if val.nil?
+            #     @property_hash[prop] = nil
+            #   else
+            #     @property_hash[prop] = val ? :true : :false
+            #   end
             # end
             define_method(prop) do
               val = instance_variable_get(nu_name).send(prop)
               return :default if
                 @resource[prop] == :default &&
                 val == instance_variable_get(nu_name).send("default_#{prop}")
-              @property_hash[prop] = val.nil? ? nil : val.to_s.to_sym
+              if val.nil?
+                @property_hash[prop] = nil
+              else
+                @property_hash[prop] = val ? :true : :false
+              end
             end
           end
         end
@@ -103,19 +112,21 @@ module PuppetX
         props.each do |prop|
           klass.instance_eval do
             # Generate SETTER method; e.g.
-            # def foo=(val)
-            #   @property_flush[:foo] =
-            #     (val == :default) ?
-            #       @nu.foo :
-            #       (val == :true)
+            # def foo=
+            #   if val == :default
+            #     @property_flush[foo] = @nu_name.default_foo
+            #   else
+            #     @property_flush[prop] = (val == :true)
+            #   end
             # end
             define_method("#{prop}=") do |val|
               fail '@property_flush not defined' if
                 instance_variable_get(:@property_flush).nil?
-              @property_flush[prop] =
-                (val == :default) ?
-              instance_variable_get(nu_name).send("default_#{prop}") :
-                (val == :true)
+              if val == :default
+                @property_flush[prop] = instance_variable_get(nu_name).send("default_#{prop}")
+              else
+                @property_flush[prop] = (val == :true)
+              end
             end
           end
         end

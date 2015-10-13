@@ -88,7 +88,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
   ~~~
 
   "
- 
+
   ###################
   # Resource Naming #
   ###################
@@ -96,34 +96,34 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
   # attributes can be overwritten later.
 
   def self.title_patterns
-    identity = lambda { |x| x }
+    identity = ->(x) { x }
     [
       [
         /^(\d+|\d+\.\d+)$/,
         [
-          [:asn, identity]
-        ]
+          [:asn, identity],
+        ],
       ],
       [
         /^(\d+|\d+\.\d+) (\S+)$/,
         [
           [:asn, identity],
-          [:vrf, identity]
-        ]
+          [:vrf, identity],
+        ],
       ],
       [
         /^(\d+|\d+\.\d+) (\S+) (\S+)$/,
         [
           [:asn, identity],
           [:vrf, identity],
-          [:neighbor, identity]
-        ]
+          [:neighbor, identity],
+        ],
       ],
       [
         /^(\S+)$/,
         [
-          [:name, identity]
-        ]
+          [:name, identity],
+        ],
       ],
     ]
   end
@@ -138,20 +138,20 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
   newparam(:name) do
   end
 
-  newparam(:asn, :namevar => true) do
-    desc "BGP autonomous system number.  Valid values are String in ASPLAIN 
+  newparam(:asn, namevar: true) do
+    desc "BGP autonomous system number.  Valid values are String in ASPLAIN
           or ASDOT notation or Integer"
     munge do |value|
       begin
         value = Cisco::RouterBgp.process_asnum(value.to_s)
         value.to_s
       rescue
-        fail("BGP asn #{value} must be specified in ASPLAIN or ASDOT notation")
+        raise("BGP asn #{value} must be specified in ASPLAIN or ASDOT notation")
       end
     end
   end
 
-  newparam(:vrf, :namevar => true) do
+  newparam(:vrf, namevar: true) do
     desc 'BGP vrf name. Valid values are string. ' \
          "The name 'default' is a valid VRF."
 
@@ -159,7 +159,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
     newvalues(/^\S+$/)
   end
 
-  newparam(:neighbor, :namevar => true) do
+  newparam(:neighbor, namevar: true) do
     desc 'BGP Neighbor ID. Valid values are string in the format of ipv4,
           ipv4/prefix length, ipv6, or ipv6/prefix length'
     munge do |value|
@@ -167,7 +167,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
         value = Cisco::Utils.process_network_mask(value) unless value.nil?
         value
       rescue
-        fail "neighbor must be in valid ipv4/v6 address or address/length
+        raise "neighbor must be in valid ipv4/v6 address or address/length
               format"
       end
     end
@@ -177,7 +177,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
   # Properties #
   ##############
   newproperty(:description) do
-    desc "Description of the neighbor. Valid value is string."
+    desc 'Description of the neighbor. Valid value is string.'
   end
 
   newproperty(:connected_check) do
@@ -193,19 +193,19 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
   end
 
   newproperty(:dynamic_capability) do
-    desc "Enable dynamic capability or not. Valid values are true or false"
+    desc 'Enable dynamic capability or not. Valid values are true or false'
     newvalues(:true, :false)
   end
 
   newproperty(:ebgp_multihop) do
-    desc "Specify multihop TTL for remote peer. Valid values are 
-          integers between 2 and 255, or keyword 'default' to 
+    desc "Specify multihop TTL for remote peer. Valid values are
+          integers between 2 and 255, or keyword 'default' to
           disable this property"
     munge do |value|
       value = :default if value == 'default'
       unless value == :default
         value = value.to_i
-        fail "ebgp_multihop value should be between 2 and 255" unless
+        fail 'ebgp_multihop value should be between 2 and 255' unless
           value.between?(2, 255)
       end
       value
@@ -213,14 +213,14 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
   end
 
   newproperty(:local_as) do
-    desc "Specify the local-as number for the eBGP neighbor. Valid values are 
-          String or Integer in ASPLAIN or ASDOT notation, or 'default', which 
+    desc "Specify the local-as number for the eBGP neighbor. Valid values are
+          String or Integer in ASPLAIN or ASDOT notation, or 'default', which
           means not to configure it"
     validate do |value|
       begin
         Cisco::RouterBgp.process_asnum(value.to_s) unless value.to_s.to_sym == :default
       rescue
-        fail("BGP asn #{value} must be specified in ASPLAIN or ASDOT notation")
+        raise("BGP asn #{value} must be specified in ASPLAIN or ASDOT notation")
       end
     end
 
@@ -234,9 +234,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
     desc "Log message for neighbor up/down event. Valid values are 'enable', to enable
           it, 'disable' to disable it, or 'inherit' to use the config in
           cisco_bgp type"
-    munge do |value|
-      value.to_sym
-    end
+    munge(&:to_sym)
     newvalues(:enable, :disable, :inherit)
   end
 
@@ -250,7 +248,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
     end
     newvalues(:true, :false, :default)
   end
- 
+
   newproperty(:maximum_peers) do
     desc "Maximum number of peers for this neighbor prefix. Valid values are between
           1 and 1000, or 'default', which does not impose any limit. This attribute
@@ -259,7 +257,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
       value = :default if value.to_s.to_sym == :default
       unless value == :default
         value = value.to_i
-        fail "maximum peer value should be between 1 and 1000" unless
+        fail 'maximum peer value should be between 1 and 1000' unless
           value.between?(1, 1000)
       end
       value
@@ -272,7 +270,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
 
     validate do |password|
       fail("password - #{password} should be a string") unless
-        password.nil? or password.kind_of?(String)
+        password.nil? || password.kind_of?(String)
     end
   end
 
@@ -286,10 +284,10 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
               :cisco_type_7,
               :default)
 
-    munge { |value|
+    munge do |value|
       value = :cleartext if value.to_sym == :default
       value.to_sym
-    }
+    end
   end
 
   newproperty(:remote_as) do
@@ -300,7 +298,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
       begin
         Cisco::RouterBgp.process_asnum(value.to_s) unless value.to_s.to_sym == :default
       rescue
-        fail("BGP asn #{value} must be specified in ASPLAIN or ASDOT notation")
+        raise("BGP asn #{value} must be specified in ASPLAIN or ASDOT notation")
       end
     end
 
@@ -313,11 +311,9 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
   newproperty(:remove_private_as) do
     desc "Specify the config to remove private AS number from outbound updates.
           Valid values are 'enable' to enable this config, 'disable' to disable
-          this config, 'all' to remove all private AS number, or 'replace-as' 
+          this config, 'all' to remove all private AS number, or 'replace-as'
           to replace the private AS number"
-    munge do |value|
-      value.to_sym
-    end
+    munge(&:to_sym)
     newvalues(:enable, :disable, :all, :"replace-as")
   end
 
@@ -343,7 +339,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
       value = :default if value.to_s.to_sym == :default
       unless value == :default
         value = value.to_i
-        fail "keepalive timer value should be between 0 and 3600 seconds" unless
+        fail 'keepalive timer value should be between 0 and 3600 seconds' unless
           value.between?(0, 3600)
       end
       value
@@ -357,8 +353,8 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
       value = :default if value.to_s.to_sym == :default
       unless value == :default
         value = value.to_i
-        fail "holdtime timer value should be between 0 and 3600 seconds" unless
-          value.between?(0,3600)
+        fail 'holdtime timer value should be between 0 and 3600 seconds' unless
+          value.between?(0, 3600)
       end
       value
     end
@@ -379,7 +375,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
     desc "Specify source interface of BGP session and updates. Valid value is
           a string of the interface name"
     munge do |value|
-      fail "Interface name must be a string" unless value.kind_of?(String)
+      fail 'Interface name must be a string' unless value.kind_of?(String)
       value.downcase
     end
   end

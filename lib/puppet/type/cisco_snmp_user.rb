@@ -55,9 +55,9 @@ Puppet::Type.newtype(:cisco_snmp_user) do
   # Parse out the title to fill in the attributes in these patterns.
   # These attributes can be overwritten later.
   def self.title_patterns
-    identity = lambda { |x| x }
+    identity = ->(x) { x }
     # please call that "optional"
-    identity2 = lambda { |x| x.nil? ? "" : x}
+    identity2 = ->(x) { x.nil? ? '' : x }
 
     patterns = []
 
@@ -67,37 +67,37 @@ Puppet::Type.newtype(:cisco_snmp_user) do
       [
         [:user, identity],
         [:engine_id, identity2],
-      ]
+      ],
     ]
-    return patterns
+    patterns
   end
 
   # Overwrites default name method.
   def name
-    return "#{self[:user].strip} #{self[:engine_id]}".strip
+    "#{self[:user].strip} #{self[:engine_id]}".strip
   end
 
   newparam(:name) do
-    desc "Name of cisco_snmp_user, not used, just to make puppet happy"
+    desc 'Name of cisco_snmp_user, not used, just to make puppet happy'
   end
 
-  newparam(:user, :namevar => true) do
-    desc "Name of the SNMP user. Valid values are string."
+  newparam(:user, namevar: true) do
+    desc 'Name of the SNMP user. Valid values are string.'
     validate do |user|
       if /^(\w+)\s*$/.match(user).nil?
-        fail "user must be string of word characters"
+        fail 'user must be string of word characters'
       end
     end
   end
 
-  newparam(:engine_id, :namevar => true) do
+  newparam(:engine_id, namevar: true) do
     desc "Engine ID of the SNMP user. Valid values are empty string or 5 to 32
     octets seprated by colon."
     validate do |engine_id|
       id = engine_id.strip
       pattern = /([0-9]{1,3}(?::[0-9]{1,3}){4,31})?\s+??$/
-      if !id.empty? and pattern.match(id)[1].nil?
-        fail "Engine ID should be either empty string or 5 to 32 octets separated by colon"
+      if !id.empty? && pattern.match(id)[1].nil?
+        fail 'Engine ID should be either empty string or 5 to 32 octets separated by colon'
       end
     end
   end
@@ -107,21 +107,20 @@ Puppet::Type.newtype(:cisco_snmp_user) do
   ##############
 
   # Groups associated with this user.
-  newproperty(:groups, :array_matching => :all) do
-    desc "Groups that the SNMP user belongs to. Valid values are string."
+  newproperty(:groups, array_matching: :all) do
+    desc 'Groups that the SNMP user belongs to. Valid values are string.'
 
     # Override puppet's insync method, which checks whether current value is equal to value specified in manifest
     # Make sure puppet considers 2 arrays with same elements but in different order as equal
 
     # See puppet's user#group property for a different way to do that.
     def insync?(is)
-      return (is.size == should.size && is.sort == should.sort)
+      (is.size == should.size && is.sort == should.sort)
     end
-
   end
 
   newproperty(:auth_protocol) do
-    desc "Authentication protocol for the SNMP user."
+    desc 'Authentication protocol for the SNMP user.'
     newvalues(:md5, :sha, :none)
   end
 
@@ -130,23 +129,23 @@ Puppet::Type.newtype(:cisco_snmp_user) do
           string."
 
     validate do |auth_password|
-      fail("auth_password property - #{auth_password} should be a string") unless auth_password.kind_of? String 
+      fail("auth_password property - #{auth_password} should be a string") unless auth_password.kind_of? String
     end
     # auth password from box is hashed. Override insync? method and
     # use the method provided by the provider.
     def insync?(*)
-        provider.auth_password_in_sync?
+      provider.auth_password_in_sync?
     end
   end
 
   newproperty(:priv_protocol) do
-    desc "Privacy protocol for the SNMP user."
+    desc 'Privacy protocol for the SNMP user.'
 
     newvalues(:aes128, :des, :none)
   end
 
   newproperty(:priv_password) do
-    desc "Privacy password for SNMP user. Valid values are string"
+    desc 'Privacy password for SNMP user. Valid values are string'
 
     validate do |privacy_password|
       fail("privacy_password property - #{privacy_password} should be a string") unless privacy_password.kind_of? String
@@ -154,7 +153,7 @@ Puppet::Type.newtype(:cisco_snmp_user) do
     # Priv password from box is hashed. Override the insync method and
     # use the method provided by the provider.
     def insync?(*)
-        provider.priv_password_in_sync?
+      provider.priv_password_in_sync?
     end
   end
 
@@ -174,14 +173,13 @@ Puppet::Type.newtype(:cisco_snmp_user) do
   autorequire(:cisco_snmp_group) do |rel_catalog|
     groups = []
 
-    if !self[:groups].nil?
-       (self[:groups]).select { |group|
-         group_name = "#{group}"
-         groups << rel_catalog.catalog.resource('cisco_snmp_group', group_name)
-       }
+    unless self[:groups].nil?
+      (self[:groups]).select do |group|
+        group_name = "#{group}"
+        groups << rel_catalog.catalog.resource('cisco_snmp_group', group_name)
+      end
     end
 
     groups
   end
-
 end

@@ -13,6 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
+
+# Require UtilityLib.rb path.
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
+
 # SNMPGROUP Utility Library:
 # ---------------------------
 # snmpgrouplib.rb
@@ -28,11 +32,6 @@
 #
 # The module has a single set of methods:
 # A. Methods to create manifests for cisco_snmp_group Puppet provider tests.
-###############################################################################
-
-# Require UtilityLib.rb path.
-require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-
 module SnmpGroupLib
   # Create a manifest describing SNMP group default state.
   def self.create_snmpgroup_manifest_defaults

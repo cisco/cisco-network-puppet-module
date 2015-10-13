@@ -26,6 +26,8 @@ This document describes Puppet agent installation and setup on Cisco Nexus switc
 * Cisco NX-OS release 7.0(3)I2(1)
 * Supported Platforms: Cisco Nexus 95xx, Nexus 93xx, Nexus 30xx, Nexus 31xx
 
+Please note: A virtual Nexus N9000/N3000 may be helpful for development and testing. Users with a valid [cisco.com](http://cisco.com) user ID can obtain a copy of a virtual Nexus N9000/N3000 by sending their [cisco.com](http://cisco.com) user ID in an email to <get-n9kv@cisco.com>. If you do not have a [cisco.com](http://cisco.com) user ID please register for one at [https://tools.cisco.com/IDREG/guestRegistration](https://tools.cisco.com/IDREG/guestRegistration)
+
 #### Disk space
 
 400MB of free disk space on bootflash is recommended before installing the
@@ -105,6 +107,12 @@ domain mycompany.com
 search mycompany.com
 EOF
 ~~~
+
+*Please note: The current NX-OS bash-shell implementation does not automatically persist the entire linux filesystem. This means that certain files such as `/etc/resolv.conf` will not automatically be persistent after system reloads. Please execute `copy running-config startup-config` from the NX-OS cli after any changes to /etc/resolv.conf to ensure that it is persistent. This command can also be executed directly from the bash-shell using the vsh tool as shown:*
+
+```
+vsh -c 'copy running-config startup-config'
+```
 
 Optionally, configure a proxy server:
 

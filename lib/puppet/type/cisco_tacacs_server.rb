@@ -45,19 +45,19 @@ Puppet::Type.newtype(:cisco_tacacs_server) do
 
   # Parse out the title to fill in the attributes in these patterns. These
   # attributes can be overwritten later.
-    def self.title_patterns
-      identity = lambda { |x| x }
-      patterns = []
+  def self.title_patterns
+    identity = ->(x) { x }
+    patterns = []
 
-      # Below pattern matches both parts of the full composite name.
-      patterns << [
-        /^(\S+)$/,
-        [
-          [:name, identity]
-        ]
-      ]
-      return patterns
-    end
+    # Below pattern matches both parts of the full composite name.
+    patterns << [
+      /^(\S+)$/,
+      [
+        [:name, identity],
+      ],
+    ]
+    patterns
+  end
 
   ##############
   # Attributes #
@@ -65,15 +65,15 @@ Puppet::Type.newtype(:cisco_tacacs_server) do
 
   ensurable
 
-  newparam(:name, :namevar => :true) do
+  newparam(:name, namevar: :true) do
     # Note, this parameter is only created to satisfy the namevar
     # since none of the tacacs_server attributes are good candidates.
     desc "Instance of the tacacs_server, only allow the value 'default'"
-    validate { |name|
+    validate do |name|
       if name != 'default'
         error "only 'default' is accepted as a valid tacacs_server resource name"
       end
-    }
+    end
   end # property name
 
   # timeout
@@ -81,15 +81,15 @@ Puppet::Type.newtype(:cisco_tacacs_server) do
     desc "Global timeout interval for TACACS+ servers.  Valid values are
           Integer, in seconds, keyword 'default'."
 
-    munge { | value |
+    munge do |value|
       begin
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
       rescue
-        fail "timeout must be an integer."
+        raise 'timeout must be an integer.'
       end
       value
-    }
+    end
   end
 
   # directed_request
@@ -98,7 +98,6 @@ Puppet::Type.newtype(:cisco_tacacs_server) do
           authentication request when logging in."
 
     newvalues(:true, :false)
-
   end
 
   # deadtime
@@ -106,25 +105,25 @@ Puppet::Type.newtype(:cisco_tacacs_server) do
     desc "Specifies the global deadtime interval for TACACS+
           servers. Valid values are Integer, in minutes, keyword 'default'."
 
-    munge { | value |
+    munge do |value|
       begin
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
       rescue
-        fail "deadtime must be an integer."
+        raise 'deadtime must be an integer.'
       end
       value
-    }
+    end
   end
 
   # encryption type
   newparam(:encryption_type) do
-    desc "Specifies the global preshared key type for TACACS+ servers."
-    
-    munge { | value |
+    desc 'Specifies the global preshared key type for TACACS+ servers.'
+
+    munge do |value|
       value = :default if value == 'default'
       value.to_sym
-    }
+    end
 
     newvalues(:clear,
               :encrypted,
@@ -143,21 +142,20 @@ Puppet::Type.newtype(:cisco_tacacs_server) do
     desc "Global source interface for all TACACS+ server groups
           configured on the device. Valid values are string, keyword 'default'."
 
-    munge { | value |
+    munge do |value|
       value = :default if value == 'default'
       value
-    }
-    validate { | source_interface |
-      fail("source_interface - #{source_interface} must be a string") unless source_interface == :default or source_interface.kind_of? String
-    }
+    end
+    validate do |source_interface|
+      fail("source_interface - #{source_interface} must be a string") unless source_interface == :default || source_interface.kind_of?(String)
+    end
   end
 
   # validation for encryption_type and encryption_password combination
   validate do
-    if (self[:encryption_password].nil? and !self[:encryption_type].nil? and
-        self[:encryption_type] != :none)
+    if self[:encryption_password].nil? && !self[:encryption_type].nil? &&
+       self[:encryption_type] != :none
       fail("The encryption_password must be present in the manifest if encryption_type is present and not 'none'.")
     end
   end
-
 end # Puppet::Type.newtype

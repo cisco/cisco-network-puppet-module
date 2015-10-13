@@ -29,7 +29,7 @@ end
 
 Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
   confine feature: :cisco_node_utils
-  defaultfor :operatingsystem => :nexus
+  defaultfor operatingsystem: :nexus
 
   mk_resource_methods
 
@@ -38,12 +38,12 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
   # NOTE: For maintainability please keep this list in alphabetical order and
   # one property per line.
   BGP_AF_NON_BOOL_PROPS = [
-    :next_hop_route_map
+    :next_hop_route_map,
   ]
 
   BGP_AF_BOOL_PROPS = [
     :client_to_client,
-    :default_information_originate
+    :default_information_originate,
   ]
 
   BGP_AF_ALL_PROPS = BGP_AF_NON_BOOL_PROPS + BGP_AF_BOOL_PROPS
@@ -53,7 +53,7 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@af',
                                             BGP_AF_BOOL_PROPS)
 
-  def initialize(value = {})
+  def initialize(value={})
     super(value)
     asn  = @property_hash[:asn]
     vrf  = @property_hash[:vrf]
@@ -69,12 +69,12 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
   def self.properties_get(asn, vrf, af, obj)
     debug "Checking bgp af instance, #{asn} #{vrf} #{af}"
     current_state = {
-      :name => [asn, vrf, af.first, af.last].join(' '),
-      asn: asn,
-      vrf: vrf,
-      afi: af.first,
-      safi: af.last,
-      ensure: :present
+      name:   [asn, vrf, af.first, af.last].join(' '),
+      asn:    asn,
+      vrf:    vrf,
+      afi:    af.first,
+      safi:   af.last,
+      ensure: :present,
     }
     # Call node_utils getter for every property
     BGP_AF_NON_BOOL_PROPS.each { |prop| current_state[prop] = obj.send(prop) }
@@ -122,7 +122,7 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
     @property_flush[:ensure] = :absent
   end
 
-  def properties_set(new_af = false)
+  def properties_set(new_af=false)
     BGP_AF_ALL_PROPS.each do |prop|
       next unless @resource[prop]
       if new_af

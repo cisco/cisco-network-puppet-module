@@ -48,6 +48,7 @@
 # instance attributes to verify resource properties.
 #
 ###############################################################################
+# rubocop:disable Style/HashSyntax
 
 # Require UtilityLib.rb and BgpNeighborLib.rb paths.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
@@ -59,7 +60,7 @@ id = 'test_green'
 UtilityLib.set_manifest_path(master, self)
 tests = {
   :master => master,
-  :agent => agent,
+  :agent  => agent,
 }
 
 test_name "TestCase :: #{testheader}" do
@@ -71,24 +72,24 @@ test_name "TestCase :: #{testheader}" do
   vrf = 'red'
   tests[id] = {}
   neighbor = '1.1.1.1'
-  passwords = { :default => 'test',
-                'default' => 'test',
-                :cleartext => 'test',
+  passwords = { :default    => 'test',
+                'default'   => 'test',
+                :cleartext  => 'test',
                 'cleartext' => 'test',
               }
   passwords.each do |type, password|
     tests[id] = {
-      :manifest_props => { :ensure => :present,
-                           :asn => asn,
-                           :vrf => vrf,
-                           :neighbor => neighbor,
+      :manifest_props => { :ensure        => :present,
+                           :asn           => asn,
+                           :vrf           => vrf,
+                           :neighbor      => neighbor,
                            :password_type => type,
-                           :password => password,
+                           :password      => password,
                    },
-      :resource => {
-        'ensure' => 'present',
-        'password' => '386c0565965f89de'
-      }
+      :resource       => {
+        'ensure'   => 'present',
+        'password' => '386c0565965f89de',
+      },
     }
     resource_cmd_str =
       UtilityLib::PUPPET_BINPATH +
@@ -109,9 +110,9 @@ test_name "TestCase :: #{testheader}" do
 
     tests[id][:desc] = '1.4 Test removing the password'
     tests[id][:manifest_props] = {
-      :ensure => :present,
-      :asn => asn,
-      :vrf => vrf,
+      :ensure   => :present,
+      :asn      => asn,
+      :vrf      => vrf,
       :neighbor => neighbor,
       :password => '',
     }

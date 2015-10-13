@@ -27,8 +27,8 @@ rescue LoadError # seen on master, not on agent
 end
 
 Puppet::Type.type(:cisco_bgp_neighbor).provide(:nxapi) do
-  confine :feature => :cisco_node_utils
-  defaultfor :operatingsystem => :nexus
+  confine feature: :cisco_node_utils
+  defaultfor operatingsystem: :nexus
 
   mk_resource_methods
 
@@ -59,15 +59,15 @@ Puppet::Type.type(:cisco_bgp_neighbor).provide(:nxapi) do
   ]
 
   BGP_NBR_ALL_PROPS = BGP_NBR_NON_BOOL_PROPS + BGP_NBR_BOOL_PROPS
-  
+
   # We need to write our own getter and setter for local_as and remote_as
   # to cover different AS format
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@nbr',
-                          (BGP_NBR_NON_BOOL_PROPS - [:local_as, :remote_as]))
+                                            (BGP_NBR_NON_BOOL_PROPS - [:local_as, :remote_as]))
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@nbr',
                                             BGP_NBR_BOOL_PROPS)
 
-  def initialize(value = {})
+  def initialize(value={})
     super(value)
     asn = @property_hash[:asn]
     vrf = @property_hash[:vrf]
@@ -78,11 +78,11 @@ Puppet::Type.type(:cisco_bgp_neighbor).provide(:nxapi) do
 
   def self.properties_get(asn, vrf, addr, nbr)
     current_state = {
-      :name     => [asn, vrf, addr].join(' '),
-      :asn      => asn,
-      :vrf      => vrf,
-      :neighbor => addr,
-      :ensure   => :present,
+      name:     [asn, vrf, addr].join(' '),
+      asn:      asn,
+      vrf:      vrf,
+      neighbor: addr,
+      ensure:   :present,
     }
     # Call node_utils getter for every property
     BGP_NBR_ALL_PROPS.each do |prop|
@@ -151,8 +151,8 @@ Puppet::Type.type(:cisco_bgp_neighbor).provide(:nxapi) do
     if @resource[:remote_as]
       if @resource[:remote_as] == :default
         return :default if @property_hash[:remote_as] == @nbr.default_remote_as
-      elsif current_as == 
-        Cisco::RouterBgp.process_asnum(@resource[:remote_as]).to_s
+      elsif current_as ==
+            Cisco::RouterBgp.process_asnum(@resource[:remote_as]).to_s
         # if current as is same as the resource value, return resource value in
         # its current format (dot or integer)
         return @resource[:remote_as]
@@ -166,7 +166,7 @@ Puppet::Type.type(:cisco_bgp_neighbor).provide(:nxapi) do
     @property_flush[:remote_as] = asnum
   end
 
-  def properties_set(new_nbr = false)
+  def properties_set(new_nbr=false)
     BGP_NBR_ALL_PROPS.each do |prop|
       next unless @resource[prop]
 
@@ -175,8 +175,8 @@ Puppet::Type.type(:cisco_bgp_neighbor).provide(:nxapi) do
 
       next if @property_flush[prop].nil?
       # Call the AutoGen setters for the @nbr node_utils object.
-      # For password and type, keepalive and hold timers, we don't have 
-      # individual setters (respond_to? will return false). For these 
+      # For password and type, keepalive and hold timers, we don't have
+      # individual setters (respond_to? will return false). For these
       # properties, we need to process them separately.
       @nbr.send("#{prop}=", @property_flush[prop]) if
         @nbr.respond_to?("#{prop}=")
@@ -192,24 +192,32 @@ Puppet::Type.type(:cisco_bgp_neighbor).provide(:nxapi) do
   # be handled by PuppetX::Cisco::AutoGen.mk_puppet_methods
   def password_set
     return if @property_flush[:password].nil?
-    type = @resource[:password_type].nil? ?
-           @property_hash[:password_type] :
-           @resource[:password_type]
-    password = @property_flush[:password].nil? ?
-               @property_hash[:password] :
-               @property_flush[:password]
+    if @resource[:password_type].nil?
+      type = @property_hash[:password_type]
+    else
+      type = @resource[:password_type]
+    end
+    if @property_flush[:password].nil?
+      password = @property_hash[:password]
+    else
+      password = @property_flush[:password]
+    end
     @nbr.password_set(password, type)
   end
 
   def timers_set
     return if @property_flush[:timers_keepalive].nil? &&
               @property_flush[:timers_holdtime].nil?
-    keepalive = @property_flush[:timers_keepalive].nil? ?
-                @property_hash[:timers_keepalive] :
-                @property_flush[:timers_keepalive]
-    holdtime = @property_flush[:timers_holdtime].nil? ?
-               @property_hash[:timers_holdtime] :
-               @property_flush[:timers_holdtime]
+    if @property_flush[:timers_keepalive].nil?
+      keepalive = @property_hash[:timers_keepalive]
+    else
+      keepalive = @property_flush[:timers_keepalive]
+    end
+    if @property_flush[:timers_holdtime].nil?
+      holdtime = @property_hash[:timers_holdtime]
+    else
+      holdtime = @property_flush[:timers_holdtime]
+    end
     @nbr.timers_set(keepalive, holdtime)
   end
 
