@@ -289,7 +289,8 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     desc 'additional_paths_receive state. ' \
          "Valid values are 'enable' for basic command enablement; 'disable' " \
          "for disabling the command at the neighbor_af level; and 'inherit' " \
-         'to remove the command at this level.'
+         'to remove the command at this level (the command value is ' \
+         'inherited from a higher bgp layer)'
     munge(&:to_sym)
     newvalues(:enable, :disable, :inherit)
   end
@@ -298,7 +299,8 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     desc 'additional_paths_send state. ' \
          "Valid values are 'enable' for basic command enablement; 'disable' " \
          "for disabling the command at the neighbor_af level; and 'inherit' " \
-         'to remove the command at this level.'
+         'to remove the command at this level (the command value is ' \
+         'inherited from a higher bgp layer)'
     munge(&:to_sym)
     newvalues(:enable, :disable, :inherit)
   end
@@ -422,7 +424,8 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     desc 'soft_reconfiguration_in state. ' \
          "Valid values are 'enable' for basic command enablement; 'always' " \
          "to add the 'always' keyword to the basic command; and 'inherit' " \
-         'to remove the command at this level.'
+         'to remove the command at this level (the command value is ' \
+         'inherited from a higher bgp layer)'
     munge(&:to_sym)
     newvalues(:enable, :always, :inherit)
   end
