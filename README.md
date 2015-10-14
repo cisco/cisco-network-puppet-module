@@ -512,17 +512,11 @@ Optional max-occurrences value for `allowas_in`. Valid values are an integer val
 ##### `as_override`
 `as-override`. Valid values are true, false, or 'default'.
 
-##### `cap_add_paths_receive`
-`capability additional-paths receive`. Valid values are true, false, or 'default'. Related: `cap_add_paths_receive_disable`.
+##### `additional_paths_receive`
+`capability additional-paths receive`. Valid values are `enable` for basic command enablement; `disable` for disabling the command at the neighbor_af level (it adds the `disable` keyword to the basic command); and `inherit` to remove the command at this level (the command value is inherited from a higher BGP layer).
 
-##### `cap_add_paths_receive_disable`
-Optional 'disable' keyword for the `cap_add_paths_receive` property. Can be used independently or in conjunction with `cap_add_paths_receive`. Valid values are true, false, or 'default'.
-
-##### `cap_add_paths_send`
-`capability additional-paths send`. Valid values are true, false, or 'default'. Related: `cap_add_paths_send_disable`.
-
-##### `cap_add_paths_send_disable`
-Optional 'disable' keyword for the `cap_add_paths_send` property. Can be used independently or in conjunction with `cap_add_paths_send`. Valid values are true, false, or 'default'.
+##### `additional_paths_send`
+`capability additional-paths send`. Valid values are `enable` for basic command enablement; `disable` for disabling the command at the neighbor_af level (it adds the `disable` keyword to the basic command); and `inherit` to remove the command at this level (the command value is inherited from a higher BGP layer).
 
 ##### `default_originate`
 `default-originate`. Valid values are True, False, or 'default'. Related: `default_originate_route_map`.
@@ -567,10 +561,7 @@ Valid values are a string defining a route-map name, or 'default'.
 `send-community` attribute. Valid values are 'none', 'both', 'extended', 'standard', or 'default'.
 
 ##### `soft_reconfiguration_in`
-`soft-reconfiguration inbound`. Valid values are True, False, or 'default'. Related: `soft_reconfiguration_in_always`.
-
-##### `soft_reconfiguration_in_always`
-Optional `always` keyword for `soft_reconfiguration_in`. Valid values are True, False, or 'default'. Can be used independently or in conjunction with `soft_reconfiguration_in`.
+`soft-reconfiguration inbound`. Valid values are `enable` for basic command enablement; `always` to add the `always` keyword to the basic command; and `inherit` to remove the command at this level (the command value is inherited from a higher BGP layer).
 
 ##### `soo`
 Site-of-origin. Valid values are a string defining a VPN extcommunity or 'default'.

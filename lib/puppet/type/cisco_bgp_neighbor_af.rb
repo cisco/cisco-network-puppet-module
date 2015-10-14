@@ -40,15 +40,13 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
       neighbor                               => '10.1.1.1',
       afi                                    => 'ipv4',
       safi                                   => 'unicast',
+      additional_paths_receive               => 'disable',
+      additional_paths_send                  => 'enable',
       advertise_map_exist                    => ['adv_map', 'my_exist'],
       advertise_map_non_exist                => ['foo_map', 'my_non_exist'],
       allowas_in                             => true,
       allowas_in_max                         => 5,
       as_override                            => true,
-      cap_add_paths_receive                  => true,
-      cap_add_paths_receive_disable          => false,
-      cap_add_paths_send                     => true,
-      cap_add_paths_send_disable             => true,
       default_originate                      => true,
       default_originate_route_map            => 'my_def_map',
       disable_peer_as_check                  => true,
@@ -63,8 +61,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
       route_map_out                          => 'rm_out',
       route_reflector_client                 => true,
       send_community                         => 'extended',
-      soft_reconfiguration_in                => true,
-      soft_reconfiguration_in_always         => true,
+      soft_reconfiguration_in                => 'always',
       soo                                    => '3:3',
       suppress_inactive                      => true,
       unsuppress_map                         => 'unsup_map',
@@ -288,28 +285,24 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     newvalues(:true, :false, :default)
   end
 
-  newproperty(:cap_add_paths_receive) do
-    desc 'cap_add_paths_receive state. ' \
-         "Valid values are true, false or 'default'"
-    newvalues(:true, :false, :default)
+  newproperty(:additional_paths_receive) do
+    desc 'additional_paths_receive state. ' \
+         "Valid values are 'enable' for basic command enablement; 'disable' " \
+         "for disabling the command at the neighbor_af level; and 'inherit' " \
+         'to remove the command at this level (the command value is ' \
+         'inherited from a higher bgp layer)'
+    munge(&:to_sym)
+    newvalues(:enable, :disable, :inherit)
   end
 
-  newproperty(:cap_add_paths_receive_disable) do
-    desc 'cap_add_paths_receive_disable state. ' \
-         "Valid values are true, false or 'default'"
-    newvalues(:true, :false, :default)
-  end
-
-  newproperty(:cap_add_paths_send) do
-    desc 'cap_add_paths_send state. ' \
-         "Valid values are true, false or 'default'"
-    newvalues(:true, :false, :default)
-  end
-
-  newproperty(:cap_add_paths_send_disable) do
-    desc 'cap_add_paths_send_disable state. ' \
-         "Valid values are true, false or 'default'"
-    newvalues(:true, :false, :default)
+  newproperty(:additional_paths_send) do
+    desc 'additional_paths_send state. ' \
+         "Valid values are 'enable' for basic command enablement; 'disable' " \
+         "for disabling the command at the neighbor_af level; and 'inherit' " \
+         'to remove the command at this level (the command value is ' \
+         'inherited from a higher bgp layer)'
+    munge(&:to_sym)
+    newvalues(:enable, :disable, :inherit)
   end
 
   newproperty(:default_originate) do
@@ -429,14 +422,12 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
 
   newproperty(:soft_reconfiguration_in) do
     desc 'soft_reconfiguration_in state. ' \
-         "Valid values are true, false or 'default'."
-    newvalues(:true, :false, :default)
-  end
-
-  newproperty(:soft_reconfiguration_in_always) do
-    desc 'soft_reconfiguration_in_always state. ' \
-         "Valid values are true, false or 'default'."
-    newvalues(:true, :false, :default)
+         "Valid values are 'enable' for basic command enablement; 'always' " \
+         "to add the 'always' keyword to the basic command; and 'inherit' " \
+         'to remove the command at this level (the command value is ' \
+         'inherited from a higher bgp layer)'
+    munge(&:to_sym)
+    newvalues(:enable, :always, :inherit)
   end
 
   newproperty(:soo) do

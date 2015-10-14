@@ -52,7 +52,6 @@
 #
 ###############################################################################
 # rubocop:disable Style/HashSyntax
-
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 # -----------------------------
@@ -112,57 +111,47 @@ tests['default_properties'] = {
   :desc           => '1.1 Default Properties',
   :title_pattern  => '2 default 1.1.1.1 ipv4 unicast',
   :manifest_props => "
-    allowas_in                     => 'default',
-    allowas_in_max                 => 'default',
-    cap_add_paths_receive          => 'default',
-    cap_add_paths_receive_disable  => 'default',
-    cap_add_paths_send             => 'default',
-    cap_add_paths_send_disable     => 'default',
-    default_originate              => 'default',
-    default_originate_route_map    => 'default',
-    disable_peer_as_check          => 'default',
-    max_prefix_limit               => 'default',
-    max_prefix_threshold           => 'default',
-    max_prefix_interval            => 'default',
-    next_hop_self                  => 'default',
-    next_hop_third_party           => 'default',
-    route_reflector_client         => 'default',
-    send_community                 => 'default',
-    soft_reconfiguration_in        => 'default',
-    soft_reconfiguration_in_always => 'default',
-    suppress_inactive              => 'default',
-    unsuppress_map                 => 'default',
-    weight                         => 'default',
+    allowas_in                  => 'default',
+    allowas_in_max              => 'default',
+    default_originate           => 'default',
+    default_originate_route_map => 'default',
+    disable_peer_as_check       => 'default',
+    max_prefix_limit            => 'default',
+    max_prefix_threshold        => 'default',
+    max_prefix_interval         => 'default',
+    next_hop_self               => 'default',
+    next_hop_third_party        => 'default',
+    route_reflector_client      => 'default',
+    send_community              => 'default',
+    suppress_inactive           => 'default',
+    unsuppress_map              => 'default',
+    weight                      => 'default',
     ",
 
   # default_properties
   :resource_props => {
-    'ensure'                         => 'present',
-    'allowas_in'                     => 'false',
-    'allowas_in_max'                 => '3',
-    'as_override'                    => 'false',
-    'cap_add_paths_receive'          => 'false',
-    'cap_add_paths_receive_disable'  => 'false',
-    'cap_add_paths_send'             => 'false',
-    'cap_add_paths_send_disable'     => 'false',
-    'default_originate'              => 'false',
-    'disable_peer_as_check'          => 'false',
-    'next_hop_self'                  => 'false',
-    'next_hop_third_party'           => 'true',
-    'route_reflector_client'         => 'false',
-    'send_community'                 => 'none',
-    'soft_reconfiguration_in'        => 'false',
-    'soft_reconfiguration_in_always' => 'false',
-    'suppress_inactive'              => 'false',
+    'additional_paths_receive' => 'inherit',
+    'additional_paths_send'    => 'inherit',
+    'allowas_in'               => 'false',
+    'allowas_in_max'           => '3',
+    'as_override'              => 'false',
+    'default_originate'        => 'false',
+    'disable_peer_as_check'    => 'false',
+    'next_hop_self'            => 'false',
+    'next_hop_third_party'     => 'true',
+    'route_reflector_client'   => 'false',
+    'send_community'           => 'none',
+    'soft_reconfiguration_in'  => 'inherit',
+    'suppress_inactive'        => 'false',
   },
 }
 
-tests['non_default_properties_A'] = {
-  :desc           => "2.1 Non Default Properties: 'A' commands",
+tests['non_default_properties_A1'] = {
+  :desc           => "2.1.1 Non Default Properties: 'A1' commands",
   :title_pattern  => '2 blue 1.1.1.1 ipv4 unicast',
   :manifest_props => "
-    allowas_in                       => true,
-    allowas_in_max                   => 5,
+    allowas_in     => true,
+    allowas_in_max => 5,
   ",
   :resource_props => {
     'ensure'         => 'present',
@@ -171,21 +160,31 @@ tests['non_default_properties_A'] = {
   },
 }
 
-tests['non_default_properties_C'] = {
-  :desc           => "2.2 Non Default Properties: 'C' commands",
+tests['non_default_properties_A2'] = {
+  :desc           => "2.1.2 Non Default Properties: 'A2' commands",
   :title_pattern  => '2 blue 1.1.1.1 ipv4 unicast',
   :manifest_props => "
-    cap_add_paths_receive            => true,
-    cap_add_paths_receive_disable    => false,
-    cap_add_paths_send               => true,
-    cap_add_paths_send_disable       => true,
+    additional_paths_receive => 'disable',
+    additional_paths_send    => 'disable',
   ",
   :resource_props => {
-    'ensure'                        => 'present',
-    'cap_add_paths_receive'         => 'true',
-    'cap_add_paths_receive_disable' => 'false',
-    'cap_add_paths_send'            => 'true',
-    'cap_add_paths_send_disable'    => 'true',
+    'ensure'                   => 'present',
+    'additional_paths_receive' => 'disable',
+    'additional_paths_send'    => 'disable',
+  },
+}
+
+tests['non_default_properties_A3'] = {
+  :desc           => "2.1.3 Non Default Properties: 'A3' commands",
+  :title_pattern  => '2 blue 1.1.1.1 ipv4 unicast',
+  :manifest_props => "
+    additional_paths_receive => 'enable',
+    additional_paths_send    => 'enable',
+  ",
+  :resource_props => {
+    'ensure'                   => 'present',
+    'additional_paths_receive' => 'enable',
+    'additional_paths_send'    => 'enable',
   },
 }
 
@@ -193,9 +192,9 @@ tests['non_default_properties_D'] = {
   :desc           => "2.3 Non Default Properties: 'D' commands",
   :title_pattern  => '2 blue 1.1.1.1 ipv4 unicast',
   :manifest_props => "
-    default_originate                => true,
-    default_originate_route_map      => 'my_def_map',
-    disable_peer_as_check            => true,
+    default_originate           => true,
+    default_originate_route_map => 'my_def_map',
+    disable_peer_as_check       => true,
   ",
   :resource_props => {
     'ensure'                      => 'present',
@@ -209,9 +208,9 @@ tests['non_default_properties_M'] = {
   :desc           => "2.4 Non Default Properties: 'M' commands",
   :title_pattern  => '2 blue 1.1.1.1 ipv4 unicast',
   :manifest_props => "
-    max_prefix_limit                 => 100,
-    max_prefix_threshold             => 50,
-    max_prefix_interval              => 30,
+    max_prefix_limit     => 100,
+    max_prefix_threshold => 50,
+    max_prefix_interval  => 30,
   ",
   :resource_props => {
     'ensure'               => 'present',
@@ -225,8 +224,8 @@ tests['non_default_properties_N'] = {
   :desc           => "2.5 Non Default Properties: 'N' commands",
   :title_pattern  => '2 blue 1.1.1.1 ipv4 unicast',
   :manifest_props => "
-    next_hop_self                    => true,
-    next_hop_third_party             => false,
+    next_hop_self        => true,
+    next_hop_third_party => false,
   ",
   :resource_props => {
     'ensure'               => 'present',
@@ -235,23 +234,43 @@ tests['non_default_properties_N'] = {
   },
 }
 
-tests['non_default_properties_S'] = {
-  :desc           => "2.6 Non Default Properties: 'S' commands",
+tests['non_default_properties_S1'] = {
+  :desc           => "2.6.1 Non Default Properties: 'S1' commands",
   :title_pattern  => '2 blue 1.1.1.1 ipv4 unicast',
   :manifest_props => "
-    send_community                   => 'extended',
-    soft_reconfiguration_in          => true,
-    soft_reconfiguration_in_always   => true,
-    suppress_inactive                => true,
-    unsuppress_map                   => 'unsup_map',
+    send_community    => 'extended',
+    suppress_inactive => true,
+    unsuppress_map    => 'unsup_map',
   ",
   :resource_props => {
-    'ensure'                         => 'present',
-    'send_community'                 => 'extended',
-    'soft_reconfiguration_in'        => 'true',
-    'soft_reconfiguration_in_always' => 'true',
-    'suppress_inactive'              => 'true',
-    'unsuppress_map'                 => 'unsup_map',
+    'ensure'            => 'present',
+    'send_community'    => 'extended',
+    'suppress_inactive' => 'true',
+    'unsuppress_map'    => 'unsup_map',
+  },
+}
+
+tests['non_default_properties_S2'] = {
+  :desc           => "2.6.2 Non Default Properties: 'S2' commands",
+  :title_pattern  => '2 blue 1.1.1.1 ipv4 unicast',
+  :manifest_props => "
+    soft_reconfiguration_in => 'always',
+  ",
+  :resource_props => {
+    'ensure'                  => 'present',
+    'soft_reconfiguration_in' => 'always',
+  },
+}
+
+tests['non_default_properties_S3'] = {
+  :desc           => "2.6.3 Non Default Properties: 'S3' commands",
+  :title_pattern  => '2 blue 1.1.1.1 ipv4 unicast',
+  :manifest_props => "
+    soft_reconfiguration_in => 'enable',
+  ",
+  :resource_props => {
+    'ensure'                  => 'present',
+    'soft_reconfiguration_in' => 'enable',
   },
 }
 
@@ -259,7 +278,7 @@ tests['non_default_properties_W'] = {
   :desc           => "2.7 Non Default Properties: 'W' commands",
   :title_pattern  => '2 blue 1.1.1.1 ipv4 unicast',
   :manifest_props => "
-    weight                           => 30,
+    weight => 30,
   ",
   :resource_props => {
     'ensure' => 'present',
@@ -272,10 +291,10 @@ tests['non_default_properties_ebgp_only'] = {
   :title_pattern  => '2 yellow 3.3.3.3 ipv4 unicast',
   :remote_as      => '2 yellow  3.3.3.3 3',
   :manifest_props => "
-    as_override                      => true,
+    as_override => true,
   ",
   :resource_props => {
-    'as_override'                    => 'true',
+    'as_override' => 'true',
   },
 }
 
@@ -284,10 +303,10 @@ tests['non_default_properties_ibgp_only'] = {
   :title_pattern  => '2 green 2.2.2.2 ipv4 unicast',
   :remote_as      => '2 green  2.2.2.2 2',
   :manifest_props => "
-    route_reflector_client           => true,
+    route_reflector_client => true,
   ",
   :resource_props => {
-    'route_reflector_client'         => 'true',
+    'route_reflector_client' => 'true',
   },
 }
 
@@ -295,10 +314,10 @@ tests['non_default_properties_vrf_only'] = {
   :desc           => "2.11 Non Default Properties: 'vrf only' commands",
   :title_pattern  => '2 purple 4.4.4.4 ipv4 unicast',
   :manifest_props => "
-    soo                              => '3:3',
+    soo => '3:3',
   ",
   :resource_props => {
-    'soo'                            => '3:3',
+    'soo' => '3:3',
   },
 }
 
@@ -306,11 +325,11 @@ tests['non_default_misc_maps_part_1'] = {
   :desc           => '2.12.1 Non Default Misc Map commands Part 1',
   :title_pattern  => '2 default 1.1.1.1 ipv4 unicast',
   :manifest_props => "
-    advertise_map_exist              => ['admap', 'exist_map'],
-    filter_list_in                   => 'flin',
-    filter_list_out                  => 'flout',
-    route_map_in                     => 'rm_in',
-    route_map_out                    => 'rm_out',
+    advertise_map_exist => ['admap', 'exist_map'],
+    filter_list_in      => 'flin',
+    filter_list_out     => 'flout',
+    route_map_in        => 'rm_in',
+    route_map_out       => 'rm_out',
   ",
   :resource_props => {
     'advertise_map_exist' => '..admap., .exist_map..',
@@ -325,10 +344,10 @@ tests['non_default_misc_maps_part_2'] = {
   :desc           => '2.12.2 Non Default Misc Map commands Part 2',
   :title_pattern  => '2 default 2.2.2.2 ipv4 unicast',
   :manifest_props => "
-    advertise_map_non_exist          => ['admap', 'non_exist_map'],
+    advertise_map_non_exist => ['admap', 'non_exist_map'],
   ",
   :resource_props => {
-    'advertise_map_non_exist'        => '..admap., .non_exist_map..',
+    'advertise_map_non_exist' => '..admap., .non_exist_map..',
   },
 }
 
@@ -431,13 +450,15 @@ test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   node_feature_cleanup(agent, 'bgp')
-
-  test_harness_bgp_nbr_af(tests, 'non_default_properties_A')
-  test_harness_bgp_nbr_af(tests, 'non_default_properties_C')
+  test_harness_bgp_nbr_af(tests, 'non_default_properties_A1')
+  test_harness_bgp_nbr_af(tests, 'non_default_properties_A2')
+  test_harness_bgp_nbr_af(tests, 'non_default_properties_A3')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_D')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_M')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_N')
-  test_harness_bgp_nbr_af(tests, 'non_default_properties_S')
+  test_harness_bgp_nbr_af(tests, 'non_default_properties_S1')
+  test_harness_bgp_nbr_af(tests, 'non_default_properties_S2')
+  test_harness_bgp_nbr_af(tests, 'non_default_properties_S3')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_W')
 
   # Special Cases
