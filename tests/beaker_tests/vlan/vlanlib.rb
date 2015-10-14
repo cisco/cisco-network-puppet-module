@@ -57,6 +57,19 @@ EOF"
     manifest_str
   end
 
+  #This is identical in purpose to create_stdvlan_manifest_present(), but it applies to the netdev_stdlib type
+  def VlanLib.create_networkvlan_manifest_present()
+    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+node default {
+  network_vlan { '128':
+    ensure         => present,
+    shutdown       => 'false',
+  }
+}
+EOF"
+    return manifest_str
+  end
+
   # Method to create a manifest for StandardVLAN resource attribute 'ensure' where
   # 'ensure' is set to absent.
   # @param none [None] No input parameters exist.
@@ -70,6 +83,18 @@ node default {
 }
 EOF"
     manifest_str
+  end
+
+  #This is identical in purpose to create_stdvlan_manifest_absent(), but it applies to the netdev_stdlib type
+  def VlanLib.create_networkvlan_manifest_absent()
+    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+node default {
+  network_vlan { '128':
+    ensure         => absent,
+  }
+}
+EOF"
+    return manifest_str
   end
 
   # Method to create a manifest for StandardVLAN resource attributes:
