@@ -57,6 +57,8 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
       max_prefix_interval                    => 30,
       next_hop_self                          => 'true',
       next_hop_third_party                   => false,
+      prefix_list_in                         => 'pfx_in',
+      prefix_list_out                        => 'pfx_out',
       route_map_in                           => 'rm_in',
       route_map_out                          => 'rm_out',
       route_reflector_client                 => true,
@@ -382,6 +384,24 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     desc 'next_hop_third_party state. ' \
          "Valid values are true, false or 'default'."
     newvalues(:true, :false, :default)
+  end
+
+  newproperty(:prefix_list_in) do
+    desc 'prefix-list in state. Valid values are a string defining the name ' \
+         "of the prefix-list or 'default'."
+    munge do |value|
+      value = :default if value == 'default'
+      value.to_s
+    end
+  end
+
+  newproperty(:prefix_list_out) do
+    desc 'prefix-list out state. Valid values are a string defining the name ' \
+         "of the filter-list or 'default'."
+    munge do |value|
+      value = :default if value == 'default'
+      value.to_s
+    end
   end
 
   newproperty(:route_map_in) do
