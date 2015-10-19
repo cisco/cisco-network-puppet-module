@@ -81,6 +81,7 @@ resource_asdot = UtilityLib.get_namespace_cmd(agent,
 # Define expected default values for cisco_bgp resource
 expected_default_values = {
   'ensure'                                 => 'present',
+  'enforce_first_as'                       => 'true',
   'shutdown'                               => 'false',
   'suppress_fib_pending'                   => 'false',
   'log_neighbor_changes'                   => 'false',
@@ -191,6 +192,9 @@ test_name "TestCase :: #{testheader}" do
   method_present_list.zip(method_absent_list) do |mp, ma|
     current_manifest_present = BgpLib.send("#{mp}")
     current_manifest_absent = BgpLib.send("#{ma}")
+ 
+    #enforce_first_as only in the default_vrf
+    expected_default_values.delete('enforce_first_as')
 
     stepinfo = "Apply title patterns manifest: #{mp}"
     step "TestStep :: #{stepinfo}" do
