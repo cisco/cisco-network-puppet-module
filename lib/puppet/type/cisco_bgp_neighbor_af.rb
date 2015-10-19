@@ -332,7 +332,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     desc 'filter-list in state. Valid values are a string defining the name ' \
          "of the filter-list or 'default'."
     munge do |value|
-      # Integers are valid prefix-list names
+      # Integers are valid filter-list names
       (value == 'default') ? :default : value.to_s
     end
   end
@@ -341,7 +341,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     desc 'filter-list out state. Valid values are a string defining the name ' \
          "of the filter-list or 'default'."
     munge do |value|
-      # Integers are valid prefix-list names
+      # Integers are valid filter-list names
       (value == 'default') ? :default : value.to_s
     end
   end
@@ -408,7 +408,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     desc 'route-map in state. Valid values are a string defining the name ' \
          "of the route-map or 'default'."
     munge do |value|
-      # Integers are valid prefix-list names
+      # Integers are valid route-map names
       (value == 'default') ? :default : value.to_s
     end
   end
@@ -417,7 +417,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     desc 'route-map out state. Valid values are a string defining the name ' \
          "of the route-map or 'default'."
     munge do |value|
-      # Integers are valid prefix-list names
+      # Integers are valid route-map names
       (value == 'default') ? :default : value.to_s
     end
   end
