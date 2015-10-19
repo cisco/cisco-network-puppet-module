@@ -192,8 +192,8 @@ test_name "TestCase :: #{testheader}" do
   method_present_list.zip(method_absent_list) do |mp, ma|
     current_manifest_present = BgpLib.send("#{mp}")
     current_manifest_absent = BgpLib.send("#{ma}")
- 
-    #enforce_first_as only in the default_vrf
+
+    # enforce_first_as only in the default_vrf
     expected_default_values.delete('enforce_first_as')
 
     stepinfo = "Apply title patterns manifest: #{mp}"

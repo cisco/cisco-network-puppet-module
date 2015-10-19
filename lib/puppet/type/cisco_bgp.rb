@@ -258,7 +258,7 @@ Puppet::Type.newtype(:cisco_bgp) do
   end # property shutdown
 
   newproperty(:enforce_first_as) do
-    desc 'Enable/Disable enforces the neighbor autonomous system 
+    desc 'Enable/Disable enforces the neighbor autonomous system
           to be the first AS number listed in the AS_path attribute for eBGP'
 
     newvalues(:true, :false, :default)

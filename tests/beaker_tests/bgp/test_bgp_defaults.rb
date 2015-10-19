@@ -164,8 +164,8 @@ test_name "TestCase :: #{testheader}" do
 
   context = "vrf #{BgpLib::VRF1}"
 
-  #enforce_first_as only in default_vrf
-  expected_default_values.delete('enforce_first_as') 
+  # enforce_first_as only in default_vrf
+  expected_default_values.delete('enforce_first_as')
   stepinfo = "Apply resource ensure => present manifest (#{context})"
   step "TestStep :: #{stepinfo}" do
     on(master, BgpLib.create_bgp_manifest_present_vrf1)
