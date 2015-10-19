@@ -13,28 +13,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-# OSPFVRF Utility Library: 
-# ------------------------
-# ospfintflib.rb
-#  
-# This is the utility library for the OSPFINTF provider Beaker test cases that 
-# contains the common methods used across the OSPFINTF testsuite's cases. The  
-# library is implemented as a module with related methods and constants defined
-# inside it for use as a namespace. All of the methods are defined as module 
-# methods.
-#
-# Every Beaker OSPFINTF test case that runs an instance of Beaker::TestCase 
-# requires OspfIntfLib module.
-# 
-# The module has a single set of methods:
-# A. Methods to create manifests for cisco_intf_ospf Puppet provider test cases.
-###############################################################################
 
 # Require UtilityLib.rb path.
-require File.expand_path("../../lib/utilitylib.rb", __FILE__)
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
+# OSPFVRF Utility Library:
+# ------------------------
+# ospfintflib.rb
+#
+# This is the utility library for the OSPFINTF provider Beaker test cases that
+# contains the common methods used across the OSPFINTF testsuite's cases. The
+# library is implemented as a module with related methods and constants defined
+# inside it for use as a namespace. All of the methods are defined as module
+# methods.
+#
+# Every Beaker OSPFINTF test case that runs an instance of Beaker::TestCase
+# requires OspfIntfLib module.
+#
+# The module has a single set of methods:
+# A. Methods to create manifests for cisco_intf_ospf Puppet provider test cases.
 module OspfIntfLib
-
   # Group of Constants used in negative tests for OSPFINTF provider.
   COST_NEGATIVE              = '-1'
   HELLOINTERVAL_NEGATIVE     = '-1'
@@ -45,9 +43,9 @@ module OspfIntfLib
 
   # Method to create a manifest for OSPFINTF resource attribute 'ensure' where
   # 'ensure' is set to present.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def OspfIntfLib.create_ospfintf_manifest_present()
+  def self.create_ospfintf_manifest_present
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf { 'test':
@@ -68,14 +66,14 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to configure the given area inside a manifest for ensure present
   # @param area is used to set the area for the manifest
   # @param intf is used to optionally specify the interface to use
   # @result manifest_str is the newly constructed manifest
-  def OspfIntfLib.create_ospfintf_area_manifest(area, intf='ethernet1/4')
+  def self.create_ospfintf_area_manifest(area, intf='ethernet1/4')
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf { 'test':
@@ -92,14 +90,14 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for OSPFINTF resource attribute 'ensure' where
   # 'ensure' is set to absent.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def OspfIntfLib.create_ospfintf_manifest_absent()
+  def self.create_ospfintf_manifest_absent
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_interface_ospf { 'ethernet1/4 test':
@@ -111,14 +109,14 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for OSPFINTF resource attributes:
   # ensure, cost, dead_interval, hello_interval, area and passive_interface.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def OspfIntfLib.create_ospfintf_manifest_nondefaults()
+  def self.create_ospfintf_manifest_nondefaults
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf { 'test':
@@ -139,13 +137,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for OSPFINTF resource attribute 'cost'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def OspfIntfLib.create_ospfintf_manifest_cost_negative()
+  def self.create_ospfintf_manifest_cost_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf { 'test':
@@ -163,13 +161,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for OSPFINTF resource attribute 'hello_interval'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def OspfIntfLib.create_ospfintf_manifest_hellointerval_negative()
+  def self.create_ospfintf_manifest_hellointerval_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf { 'test':
@@ -187,13 +185,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for OSPFINTF resource attribute 'dead_interval'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def OspfIntfLib.create_ospfintf_manifest_deadinterval_negative()
+  def self.create_ospfintf_manifest_deadinterval_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf { 'test':
@@ -211,13 +209,13 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for OSPFINTF resource attribute 'passive_intf'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def OspfIntfLib.create_ospfintf_manifest_passiveintf_negative()
+  def self.create_ospfintf_manifest_passiveintf_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf { 'test':
@@ -235,7 +233,6 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
-
 end

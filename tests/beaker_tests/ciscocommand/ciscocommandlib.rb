@@ -13,36 +13,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-# CISCOCOMMAND Utility Library: 
-# -----------------------------
-# ciscocommandlib.rb
-#  
-# This is the utility library for the CISCOCMD provider Beaker test cases that
-# contains the common methods used across the CISCOCMD testsuite's cases. The 
-# library is implemented as a module with related methods and constants defined
-# inside it for use as a namespace. All of the methods are defined as module 
-# methods.
-#
-# Every Beaker CISCOCMD test case that runs an instance of Beaker::TestCase 
-# requires CiscoCommandLib module.
-# 
-# The module has a single set of methods:
-# A. Methods to create manifests for cisco_command_config Puppet test cases.
-###############################################################################
 
 # Require UtilityLib.rb path.
-require File.expand_path("../../lib/utilitylib.rb", __FILE__)
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
+# CISCOCOMMAND Utility Library:
+# -----------------------------
+# ciscocommandlib.rb
+#
+# This is the utility library for the CISCOCMD provider Beaker test cases that
+# contains the common methods used across the CISCOCMD testsuite's cases. The
+# library is implemented as a module with related methods and constants defined
+# inside it for use as a namespace. All of the methods are defined as module
+# methods.
+#
+# Every Beaker CISCOCMD test case that runs an instance of Beaker::TestCase
+# requires CiscoCommandLib module.
+#
+# The module has a single set of methods:
+# A. Methods to create manifests for cisco_command_config Puppet test cases.
 module CiscoCommandLib
-
   # A. Methods to create manifests for cisco_command_config Puppet test cases.
 
   # Method to create a manifest for CISCOCOMMAND resource attribute:
   # command.
   # 'command' is set to the NXOS command list to be applied to switch config.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def CiscoCommandLib.create_cisco_command_nondefaults()
+  def self.create_cisco_command_nondefaults
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_command_config { 'interface_config':
@@ -60,8 +58,6 @@ node default {
   }
 }
 EOF"
-    return manifest_str
-  end 
-
+    manifest_str
+  end
 end
-

@@ -13,28 +13,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-# ROUTEDINTF Utility Library: 
-# ---------------------------
-# routedintflib.rb
-#  
-# This is the utility library for the ROUTEDINTF provider Beaker test cases that
-# contains the common methods used across the ROUTEDINTF testsuite's cases. The 
-# library is implemented as a module with related methods and constants defined
-# inside it for use as a namespace. All of the methods are defined as module 
-# methods.
-#
-# Every Beaker ROUTEDINTF test case that runs an instance of Beaker::TestCase 
-# requires RoutedIntfLib module.
-# 
-# The module has a single set of methods:
-# A. Methods to create manifests for cisco_interface Puppet provider test cases.
-###############################################################################
 
 # Require UtilityLib.rb path.
-require File.expand_path("../../lib/utilitylib.rb", __FILE__)
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
+# ROUTEDINTF Utility Library:
+# ---------------------------
+# routedintflib.rb
+#
+# This is the utility library for the ROUTEDINTF provider Beaker test cases that
+# contains the common methods used across the ROUTEDINTF testsuite's cases. The
+# library is implemented as a module with related methods and constants defined
+# inside it for use as a namespace. All of the methods are defined as module
+# methods.
+#
+# Every Beaker ROUTEDINTF test case that runs an instance of Beaker::TestCase
+# requires RoutedIntfLib module.
+#
+# The module has a single set of methods:
+# A. Methods to create manifests for cisco_interface Puppet provider test cases.
 module RoutedIntfLib
-
   # Group of Constants used in negative tests for ROUTEDINTF provider.
   ENCAP_DOT1Q_NEGATIVE         = 'invalid'
   IPV4ADDRESS_NEGATIVE         = '-1.-1.-1.-1'
@@ -51,9 +49,9 @@ module RoutedIntfLib
 
   # Method to create a manifest for RoutedINTF resource attribute 'ensure' where
   # 'ensure' is set to present and 'switchport_mode' is set to disabled.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def RoutedIntfLib.create_routedintf_manifest_switchport_disabled()
+  def self.create_routedintf_manifest_switchport_disabled
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'ethernet1/4':
@@ -72,14 +70,14 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for RoutedINTF resource attribute 'ensure' where
   # 'ensure' is set to present and 'switchport_mode' is set to access.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def RoutedIntfLib.create_routedintf_manifest_switchport_access()
+  def self.create_routedintf_manifest_switchport_access
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'ethernet1/4':
@@ -90,14 +88,14 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for RoutedINTF resource attribute 'ensure' where
   # 'ensure' is set to present and 'switchport_mode' is set to trunk.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def RoutedIntfLib.create_routedintf_manifest_switchport_trunk_defaults()
+  def self.create_routedintf_manifest_switchport_trunk_defaults
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'ethernet1/4':
@@ -110,14 +108,14 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for RoutedINTF resource attribute 'ensure' where
   # 'ensure' is set to present and 'switchport_mode' is set to trunk.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def RoutedIntfLib.create_routedintf_manifest_switchport_trunk_nondefaults()
+  def self.create_routedintf_manifest_switchport_trunk_nondefaults
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'ethernet1/4':
@@ -130,15 +128,15 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for RoutedINTF resource attributes:
-  # description, shutdown, switchport_mode, ipv4_address, 
-  # ipv4_netmask_length, ipv4_proxy_arp and ipv4_redirects.  
-  # @param none [None] No input parameters exist. 
+  # description, shutdown, switchport_mode, ipv4_address,
+  # ipv4_netmask_length, ipv4_proxy_arp and ipv4_redirects.
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def RoutedIntfLib.create_routedintf_manifest_nondefaults()
+  def self.create_routedintf_manifest_nondefaults
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'ethernet1/4':
@@ -157,13 +155,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for RoutedINTF subinterface attributes.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def RoutedIntfLib.create_routedintf_manifest_subinterface()
+  def self.create_routedintf_manifest_subinterface
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'ethernet1/4':
@@ -176,14 +174,14 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for RoutedINTF resource attribute:
   # 'encapsulation_dot1q'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def RoutedIntfLib.create_routedintf_manifest_encap_negative()
+  def self.create_routedintf_manifest_encap_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'ethernet1/4':
@@ -196,13 +194,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for RoutedINTF resource attribute 'ipv4_address'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def RoutedIntfLib.create_routedintf_manifest_ipv4addr_negative()
+  def self.create_routedintf_manifest_ipv4addr_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'ethernet1/4':
@@ -214,13 +212,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for RoutedINTF resource attribute 'ipv4_netmask_length'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def RoutedIntfLib.create_routedintf_manifest_ipv4masklen_negative()
+  def self.create_routedintf_manifest_ipv4masklen_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'ethernet1/4':
@@ -232,13 +230,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for RoutedINTF resource attribute 'mtu'.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def RoutedIntfLib.create_routedintf_manifest_mtu_negative()
+  def self.create_routedintf_manifest_mtu_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'ethernet1/4':
@@ -249,13 +247,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for RoutedINTF resource attribute 'shutdown'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def RoutedIntfLib.create_routedintf_manifest_shutdown_negative()
+  def self.create_routedintf_manifest_shutdown_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'ethernet1/4':
@@ -266,14 +264,14 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for RoutedINTF resource attributes:
   # switchport_trunk_allowed_vlan.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def RoutedIntfLib.create_routedintf_manifest_trunk_allowed_negative()
+  def self.create_routedintf_manifest_trunk_allowed_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'ethernet1/4':
@@ -284,14 +282,14 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for RoutedINTF resource attributes:
   # switchport_trunk_native_vlan.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def RoutedIntfLib.create_routedintf_manifest_trunk_native_negative()
+  def self.create_routedintf_manifest_trunk_native_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'ethernet1/4':
@@ -302,13 +300,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for RoutedINTF resource attribute 'ipv4_proxy_arp'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def RoutedIntfLib.create_routedintf_manifest_ipv4proxyarp_negative()
+  def self.create_routedintf_manifest_ipv4proxyarp_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'ethernet1/4':
@@ -319,13 +317,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for RoutedINTF resource attribute 'ipv4_redirects'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def RoutedIntfLib.create_routedintf_manifest_ipv4redir_negative()
+  def self.create_routedintf_manifest_ipv4redir_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'ethernet1/4':
@@ -336,13 +334,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for RoutedINTF resource attribute 'vrf'.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def RoutedIntfLib.create_routedintf_manifest_vrf_negative()
+  def self.create_routedintf_manifest_vrf_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'ethernet1/4':
@@ -353,6 +351,6 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 end

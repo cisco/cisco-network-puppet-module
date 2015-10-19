@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
+
 # TestCase Utility Library:
 # --------------------------
 # utilitylib.rb
@@ -34,8 +35,6 @@
 # raise fail_test exceptions for failed pattern matches in the output.
 # D. Method to raise pass_test or fail_test exception based on testcase
 # result.
-###############################################################################
-
 module UtilityLib
   # Group of constants for use by the Beaker::TestCase instances.
   # Sleep time of 10 seconds to release any pending puppet agent locks.
@@ -96,7 +95,7 @@ module UtilityLib
   # @param hash [hash] Comma-separated list of key/value pairs.
   # @result regexparr [Array] Array of RegExp literals.
   def self.hash_to_patterns(hash)
-    regexparr = Array[]
+    regexparr = []
     hash.each do |key, value|
       regexparr << Regexp.new("#{key}\s+=>\s+'?#{value}'?")
     end
@@ -117,8 +116,11 @@ module UtilityLib
     patarr = UtilityLib.hash_to_patterns(patarr) if patarr.instance_of?(Hash)
     patarr.each do |pattern|
       inverse ? (match = (output !~ pattern)) : (match = (output =~ pattern))
-      (match) ? logger.debug("TestStep :: Match #{pattern} :: PASS") : \
+      if match
+        logger.debug("TestStep :: Match #{pattern} :: PASS")
+      else
         testcase.fail_test("TestStep :: Match #{pattern} :: FAIL")
+      end
     end
   end
 
@@ -133,9 +135,11 @@ module UtilityLib
   # @param logger [Logger] A default instance of Beaker::Logger.
   # @result none [None] Returns no object.
   def self.raise_passfail_exception(testresult, message, testcase, logger)
-    (testresult == 'PASS') ? \
-      testcase.pass_test("\nTestCase :: #{message} :: PASS") : \
+    if (testresult == 'PASS')
+      testcase.pass_test("\nTestCase :: #{message} :: PASS")
+    else
       testcase.fail_test("\nTestCase :: #{message} :: FAIL")
+    end
   rescue Beaker::DSL::Outcomes::PassTest
     logger.success("TestCase :: #{message} :: PASS")
   rescue Beaker::DSL::Outcomes::FailTest
@@ -221,7 +225,7 @@ def test_manifest(tests, id)
     on(tests[:master], tests[id][:manifest])
     code = tests[id][:code] ? tests[id][:code] : [2]
     logger.debug('test_manifest :: check puppet agent cmd')
-    on(tests[:agent], puppet_agent_cmd, :acceptable_exit_codes => code)
+    on(tests[:agent], puppet_agent_cmd, acceptable_exit_codes: code)
   end
   logger.info("#{stepinfo} :: PASS")
   tests[id].delete(:log_desc)
@@ -242,10 +246,11 @@ def test_resource(tests, id)
 end
 
 # Wrapper for config pattern-match tests
-def test_show_cmd(tests, id, state = false)
+def test_show_cmd(tests, id, state=false)
   stepinfo = format_stepinfo(tests, id, 'SHOW CMD')
   show_cmd = UtilityLib.get_vshell_cmd(tests[:show_cmd])
   step "TestStep :: #{stepinfo}" do
+    logger.debug('test_show_cmd :: BEGIN')
     on(tests[:agent], show_cmd) do
       logger.debug("test_show_cmd :: cmd:\n#{show_cmd}")
       logger.debug("test_show_cmd :: pattern:\n#{tests[id][:show_pattern]}")
@@ -261,7 +266,8 @@ end
 def test_idempotence(tests, id)
   stepinfo = format_stepinfo(tests, id, 'IDEMPOTENCE')
   step "TestStep :: #{stepinfo}" do
-    on(tests[:agent], puppet_agent_cmd, :acceptable_exit_codes => [0])
+    logger.debug('test_idempotence :: BEGIN')
+    on(tests[:agent], puppet_agent_cmd, acceptable_exit_codes: [0])
     logger.info("#{stepinfo} :: PASS")
     tests[id].delete(:log_desc)
   end
@@ -270,19 +276,23 @@ end
 # Method to clean up a feature on the test node
 # @param agent [String] the agent that is going to run the test
 # @param feature [String] the feature name that will be cleaned up
-def node_feature_cleanup(agent, feature, stepinfo='feature cleanup')
+def node_feature_cleanup(agent, feature, stepinfo='feature cleanup',
+                         enable=true)
   step "TestStep :: #{stepinfo}" do
+    logger.debug("#{stepinfo} disable feature")
     clean = UtilityLib.get_vshell_cmd("conf t ; no feature #{feature}")
-    on(agent, clean, :acceptable_exit_codes => [0, 2])
-    show_cmd = UtilityLib.get_vshell_cmd('show running-config')
+    on(agent, clean, acceptable_exit_codes: [0, 2])
+    show_cmd = UtilityLib.get_vshell_cmd('show running-config section feature')
     on(agent, show_cmd) do
       UtilityLib.search_pattern_in_output(stdout, [/feature #{feature}/],
                                           true, self, logger)
     end
 
+    return unless enable
+    logger.debug("#{stepinfo} re-enable feature")
     clean = UtilityLib.get_vshell_cmd("conf t ; feature #{feature}")
-    on(agent, clean, :acceptable_exit_codes => [0, 2])
-    show_cmd = UtilityLib.get_vshell_cmd('show running-config')
+    on(agent, clean, acceptable_exit_codes: [0, 2])
+    show_cmd = UtilityLib.get_vshell_cmd('show running-config section feature')
     on(agent, show_cmd) do
       UtilityLib.search_pattern_in_output(stdout, [/feature #{feature}/],
                                           false, self, logger)

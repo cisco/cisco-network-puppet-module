@@ -89,29 +89,30 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   # Parse out the title to fill in the attributes in these patterns. These
   # attributes can be overwritten later.
 
+  # rubocop:disable Metrics/MethodLength
   def self.title_patterns
     identity = ->(x) { x }
     [
       [
         /^(\d+|\d+\.\d+)$/,
         [
-          [:asn, identity]
-        ]
+          [:asn, identity],
+        ],
       ],
       [
         /^(\d+|\d+\.\d+) (\S+)$/,
         [
           [:asn, identity],
-          [:vrf, identity]
-        ]
+          [:vrf, identity],
+        ],
       ],
       [
         /^(\d+|\d+\.\d+) (\S+) (\S+)$/,
         [
           [:asn, identity],
           [:vrf, identity],
-          [:afi, identity]
-        ]
+          [:afi, identity],
+        ],
       ],
       [
         /^(\d+|\d+\.\d+) (\S+) (\S+) (\S+)$/,
@@ -119,17 +120,18 @@ Puppet::Type.newtype(:cisco_bgp_af) do
           [:asn, identity],
           [:vrf, identity],
           [:afi, identity],
-          [:safi, identity]
-        ]
+          [:safi, identity],
+        ],
       ],
       [
         /^(\S+)$/,
         [
-          [:name, identity]
-        ]
-      ]
+          [:name, identity],
+        ],
+      ],
     ]
   end
+  # rubocop:enable Metrics/MethodLength
 
   ##############
   # Parameters #
@@ -141,7 +143,7 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   newparam(:name) do
   end
 
-  newparam(:asn, :namevar => true) do
+  newparam(:asn, namevar: true) do
     desc "BGP autonomous system number.  Valid values are String, Integer in
           ASPLAIN or ASDOT notation"
     validate do |value|
@@ -161,12 +163,12 @@ Puppet::Type.newtype(:cisco_bgp_af) do
     newvalues(/^\S+$/)
   end
 
-  newparam(:afi, :namevar => true) do
+  newparam(:afi, namevar: true) do
     desc 'BGP Address-family AFI (ipv4|ipv6). Valid values are string.'
     newvalues(:ipv4, :ipv6)
   end
 
-  newparam(:safi, :namevar => true) do
+  newparam(:safi, namevar: true) do
     desc 'BGP Address-family SAFI (unicast|multicast). Valid values are string.'
     newvalues(:unicast, :multicast)
   end

@@ -49,6 +49,7 @@
 # instance attributes to verify resource properties.
 #
 ###############################################################################
+# rubocop:disable Style/HashSyntax
 
 # Require UtilityLib.rb and BgpNeighborLib.rb paths.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
@@ -59,7 +60,7 @@ testheader = 'BGP Neighbor Resource :: Negative Value Test'
 UtilityLib.set_manifest_path(master, self)
 tests = {
   :master => master,
-  :agent => agent,
+  :agent  => agent,
 }
 
 test_name "TestCase :: #{testheader}" do
@@ -71,20 +72,20 @@ test_name "TestCase :: #{testheader}" do
   id = 'test_green'
 
   tests[id] = {
-    :desc => '1.1 Apply id pattern of resource name',
-    :code => [1],
+    :desc           => '1.1 Apply id pattern of resource name',
+    :code           => [1],
     :manifest_props => { :ensure => :present },
-    :resource => { 'ensure' => 'present' },
+    :resource       => { 'ensure' => 'present' },
   }
   create_bgpneighbor_manifest(tests, id)
   test_manifest(tests, id)
 
   tests[id] = {
-    :desc => '1.2 Apply a manifest that misses asn',
-    :code => [1],
+    :desc           => '1.2 Apply a manifest that misses asn',
+    :code           => [1],
     :manifest_props => {
-      :ensure => :present,
-      :vrf => vrf,
+      :ensure   => :present,
+      :vrf      => vrf,
       :neighbor => '1.1.1.1',
     },
   }
@@ -93,20 +94,20 @@ test_name "TestCase :: #{testheader}" do
 
   id = "#{asn} #{vrf}"
   tests[id] = {
-    :desc => "1.3 Apply id pattern of 'asn vrf', missing neighbor",
-    :code => [1],
+    :desc           => "1.3 Apply id pattern of 'asn vrf', missing neighbor",
+    :code           => [1],
     :manifest_props => { :ensure => :present },
   }
   create_bgpneighbor_manifest(tests, id)
   test_manifest(tests, id)
 
   tests[id] = {
-    :desc => '1.4 Apply invalid asn',
-    :code => [1],
+    :desc           => '1.4 Apply invalid asn',
+    :code           => [1],
     :manifest_props => {
-      :ensure => :present,
-      :asn => '5 12',
-      :vrf => vrf,
+      :ensure   => :present,
+      :asn      => '5 12',
+      :vrf      => vrf,
       :neighbor => '1.1.1.1',
     },
   }
@@ -118,32 +119,32 @@ test_name "TestCase :: #{testheader}" do
 
   id = "#{asn} #{vrf} 1.1.1.1"
   tests[id] = {
-    :desc => '2.1 Apply invalid local_as',
-    :code => [1],
+    :desc           => '2.1 Apply invalid local_as',
+    :code           => [1],
     :manifest_props => {
-      :ensure => :present,
-      :local_as => '5 12'
+      :ensure   => :present,
+      :local_as => '5 12',
     },
   }
   create_bgpneighbor_manifest(tests, id)
   test_manifest(tests, id)
 
   tests[id] = {
-    :desc => '2.2 Apply invalid remote_as',
-    :code => [1],
+    :desc           => '2.2 Apply invalid remote_as',
+    :code           => [1],
     :manifest_props => {
-      :ensure => :present,
-      :remote_as => '5 12'
+      :ensure    => :present,
+      :remote_as => '5 12',
     },
   }
   create_bgpneighbor_manifest(tests, id)
   test_manifest(tests, id)
 
   tests[id] = {
-    :desc => '2.3 Apply invalid ebgp_multihop value',
-    :code => [1],
+    :desc           => '2.3 Apply invalid ebgp_multihop value',
+    :code           => [1],
     :manifest_props => {
-      :ensure => :present,
+      :ensure        => :present,
       :ebgp_multihop => 256,
     },
   }
@@ -151,10 +152,10 @@ test_name "TestCase :: #{testheader}" do
   test_manifest(tests, id)
 
   tests[id] = {
-    :desc => '2.4 Apply maximum_peers when it is not allowed',
-    :code => [1],
+    :desc           => '2.4 Apply maximum_peers when it is not allowed',
+    :code           => [1],
     :manifest_props => {
-      :ensure => :present,
+      :ensure        => :present,
       :maximum_peers => 2,
     },
   }
@@ -163,10 +164,10 @@ test_name "TestCase :: #{testheader}" do
 
   id = "#{asn} #{vrf} 1.1.1.0/24"
   tests[id] = {
-    :desc => '2.5 Apply invalid maximum_peers number',
-    :code => [1],
+    :desc           => '2.5 Apply invalid maximum_peers number',
+    :code           => [1],
     :manifest_props => {
-      :ensure => :present,
+      :ensure        => :present,
       :maximum_peers => 1001,
     },
   }
@@ -174,22 +175,22 @@ test_name "TestCase :: #{testheader}" do
   test_manifest(tests, id)
 
   tests[id] = {
-    :desc => '2.6 Apply invalid password',
-    :code => [1],
+    :desc           => '2.6 Apply invalid password',
+    :code           => [1],
     :manifest_props => {
-      :ensure => :present,
+      :ensure        => :present,
       :password_type => default,
-      :password => 32,
+      :password      => 32,
     },
   }
   create_bgpneighbor_manifest(tests, id)
   test_manifest(tests, id)
 
   tests[id] = {
-    :desc => '2.7 Apply invalid keepalive timer',
-    :code => [1],
+    :desc           => '2.7 Apply invalid keepalive timer',
+    :code           => [1],
     :manifest_props => {
-      :ensure => :present,
+      :ensure           => :present,
       :timers_keepalive => 3700,
     },
   }
@@ -197,10 +198,10 @@ test_name "TestCase :: #{testheader}" do
   test_manifest(tests, id)
 
   tests[id] = {
-    :desc => '2.8 Apply invalid holdtime timer',
-    :code => [1],
+    :desc           => '2.8 Apply invalid holdtime timer',
+    :code           => [1],
     :manifest_props => {
-      :ensure => :present,
+      :ensure          => :present,
       :timers_holdtime => 3700,
     },
   }
@@ -208,10 +209,10 @@ test_name "TestCase :: #{testheader}" do
   test_manifest(tests, id)
 
   tests[id] = {
-    :desc => '2.9 Apply transport_passive_only when it is not allowed',
-    :code => [1],
+    :desc           => '2.9 Apply transport_passive_only when it is not allowed',
+    :code           => [1],
     :manifest_props => {
-      :ensure => :present,
+      :ensure                 => :present,
       :transport_passive_only => true,
     },
   }
@@ -219,10 +220,10 @@ test_name "TestCase :: #{testheader}" do
   test_manifest(tests, id)
 
   tests[id] = {
-    :desc => '2.10 Apply invalid update_source',
-    :code => [1],
+    :desc           => '2.10 Apply invalid update_source',
+    :code           => [1],
     :manifest_props => {
-      :ensure => :present,
+      :ensure        => :present,
       :update_source => 15,
     },
   }
@@ -230,10 +231,10 @@ test_name "TestCase :: #{testheader}" do
   test_manifest(tests, id)
 
   tests[id] = {
-    :desc => '2.11 Validate password type must be present if password is configured',
-    :code => [1],
+    :desc           => '2.11 Validate password type must be present if password is configured',
+    :code           => [1],
     :manifest_props => {
-      :ensure => :present,
+      :ensure   => :present,
       :password => 'test',
     },
   }
@@ -241,10 +242,10 @@ test_name "TestCase :: #{testheader}" do
   test_manifest(tests, id)
 
   tests[id] = {
-    :desc => '2.12 Validate password type must be present if password is configured',
-    :code => [1],
+    :desc           => '2.12 Validate password type must be present if password is configured',
+    :code           => [1],
     :manifest_props => {
-      :ensure => :present,
+      :ensure        => :present,
       :password_type => :cleartext,
     },
   }

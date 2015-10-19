@@ -73,17 +73,17 @@ Puppet::Type.newtype(:cisco_command_config) do
   # Parse out the title to fill in the attributes in these
   # patterns. These attributes can be overwritten later.
   def self.title_patterns
-    identity = lambda { |x| x }
+    identity = ->(x) { x }
     patterns = []
 
     # Below pattern matches the instance name.
     patterns << [
       /^(\S+)$/,
       [
-        [:name, identity]
-      ]
+        [:name, identity],
+      ],
     ]
-    return patterns
+    patterns
   end
 
   newparam(:name) do
@@ -99,12 +99,11 @@ Puppet::Type.newtype(:cisco_command_config) do
 
     munge do |value|
       # split off into validate function
-      fail("Unrecognized input format.") unless value.class == String
+      fail('Unrecognized input format.') unless value.class == String
       value << "\n"
       value.gsub!(/^\s*$\n/, '')
       indent_level = value.match(/\A\s*/)
-      value.gsub!(/^(#{indent_level})/, "") # remove extra indentation
+      value.gsub!(/^(#{indent_level})/, '') # remove extra indentation
     end # validate
   end # property command
 end # Puppet::Type.newtype
-

@@ -135,9 +135,9 @@ class ciscopuppet::demo_bgp {
     ensure                                 => present,
 
     # Properties
+    additional_paths_receive               => 'enable',
+    additional_paths_send                  => 'disable',
     allowas_in_max                         => 5,
-    cap_add_paths_receive_disable          => false,
-    cap_add_paths_send_disable             => true,
     default_originate_route_map            => 'my_def_map',
     disable_peer_as_check                  => true,
     max_prefix_limit                       => 100,
@@ -146,8 +146,7 @@ class ciscopuppet::demo_bgp {
     next_hop_self                          => true,
     next_hop_third_party                   => false,
     send_community                         => 'extended',
-    soft_reconfiguration_in                => true,
-    soft_reconfiguration_in_always         => true,
+    soft_reconfiguration_in                => 'always',
     soo                                    => '3:3',
     suppress_inactive                      => true,
     unsuppress_map                         => 'unsup_map',

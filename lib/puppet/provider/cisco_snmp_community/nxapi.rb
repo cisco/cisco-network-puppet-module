@@ -20,10 +20,10 @@
 require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
 
 Puppet::Type.type(:cisco_snmp_community).provide(:nxapi) do
-  desc "The NXAPI provider for cisco_snmp_community"
+  desc 'The NXAPI provider for cisco_snmp_community'
 
-  confine :feature => :cisco_node_utils
-  defaultfor :operatingsystem => :nexus
+  confine feature: :cisco_node_utils
+  defaultfor operatingsystem: :nexus
 
   mk_resource_methods
 
@@ -31,25 +31,25 @@ Puppet::Type.type(:cisco_snmp_community).provide(:nxapi) do
     super(value)
     @snmp_community = Cisco::SnmpCommunity.communities[@property_hash[:name]]
     @property_flush = {}
-    debug "Created provider instance of cisco_snmp_community"
+    debug 'Created provider instance of cisco_snmp_community'
   end
 
   def self.instances
     instances = []
-    Cisco::SnmpCommunity.communities.each { |id, snmpc|
+    Cisco::SnmpCommunity.communities.each do |id, snmpc|
       debug "Checking instance of #{id}"
       instances << new(
-        :name => id,
-        :community => id,
-        :ensure => :present,
-        :group => snmpc.group,
-        :acl => snmpc.acl)
-    }
-    return instances
+        name:      id,
+        community: id,
+        ensure:    :present,
+        group:     snmpc.group,
+        acl:       snmpc.acl)
+    end
+    instances
   end
 
   def self.prefetch(resources)
-    communities = self.instances
+    communities = instances
     resources.keys.each do |id|
       provider = communities.find { |snmpc| snmpc.community == id }
       resources[id].provider = provider unless provider.nil?
@@ -75,7 +75,7 @@ Puppet::Type.type(:cisco_snmp_community).provide(:nxapi) do
   def group
     value = @snmp_community.group
     value = :default if
-      @resource[:group] == :default and
+      @resource[:group] == :default &&
       value == Cisco::SnmpCommunity.default_group
     @property_hash[:group] = value
   end
@@ -90,7 +90,7 @@ Puppet::Type.type(:cisco_snmp_community).provide(:nxapi) do
   def acl
     value = @snmp_community.acl
     value = :default if
-      @resource[:acl] == :default and value == Cisco::SnmpCommunity.default_acl
+      @resource[:acl] == :default && value == Cisco::SnmpCommunity.default_acl
     @property_hash[:acl] = value
   end
 
@@ -109,7 +109,7 @@ Puppet::Type.type(:cisco_snmp_community).provide(:nxapi) do
       @snmp_community = Cisco::SnmpCommunity.new(@resource[:community],
                                                  @resource[:group])
 
-      self.acl = @resource[:acl] unless @resource[:acl] == self.acl
+      self.acl = @resource[:acl] unless @resource[:acl] == acl
       @property_hash[:group] = @resource[:group]
       @property_hash[:community] = @resource[:community]
 
@@ -121,9 +121,9 @@ Puppet::Type.type(:cisco_snmp_community).provide(:nxapi) do
   end
 
   def put_snmp_community
-    debug "Current state:"
+    debug 'Current state:'
     if @snmp_community.nil?
-      debug "No community"
+      debug 'No community'
       return
     end
     debug "

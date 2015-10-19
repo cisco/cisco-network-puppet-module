@@ -19,14 +19,13 @@
 require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
 
 Puppet::Type.type(:cisco_command_config).provide(:nxapi) do
-
-  confine :feature => :cisco_node_utils
-  defaultfor :operatingsystem => :nexus
+  confine feature: :cisco_node_utils
+  defaultfor operatingsystem: :nexus
 
   def initialize(value={})
     super(value)
     @node = Cisco::Node.instance
-    debug "Created provider instance of cisco_command_config."
+    debug 'Created provider instance of cisco_command_config.'
   end
 
   def self.instances
@@ -38,7 +37,7 @@ Puppet::Type.type(:cisco_command_config).provide(:nxapi) do
   end
 
   def command
-    running_config_str = @node.show("show running-config all")
+    running_config_str = @node.show('show running-config all')
 
     # Sanitize configs and create config hashes.
     running_hash  = Cisco::ConfigParser::Configuration.new(running_config_str)
@@ -49,14 +48,14 @@ Puppet::Type.type(:cisco_command_config).provide(:nxapi) do
     debug "Existing:\n>#{existing_str}<"
     manifest_config_str =
       Cisco::ConfigParser::Configuration.config_hash_to_str(
-                                         manifest_hash.configuration)
+        manifest_hash.configuration)
     debug "Manifest:\n>#{manifest_config_str}<"
 
     if existing_str.gsub(/^ *| *$/, '').include?(manifest_config_str)
-      debug "Current running-config already satisfies manifest"
+      debug 'Current running-config already satisfies manifest'
       @property_hash[:command] = @resource[:command]
     else
-      debug "Some or all of the manifest config differs from running-config"
+      debug 'Some or all of the manifest config differs from running-config'
       # Detect the minimum set of changes that need to be applied
       existing_hash = Cisco::ConfigParser::Configuration.new(existing_str)
       min_config_hash =
@@ -67,7 +66,7 @@ Puppet::Type.type(:cisco_command_config).provide(:nxapi) do
         Cisco::ConfigParser::Configuration.config_hash_to_str(min_config_hash)
       debug "Minimum changeset to satisfy manifest:\n>#{@resource[:command]}<"
     end
-    return @property_hash[:command]
+    @property_hash[:command]
   end # command
 
   def command=(cmds)
@@ -80,6 +79,4 @@ Puppet::Type.type(:cisco_command_config).provide(:nxapi) do
     info "Successfully updated:\n#{e.previous.join("\n")}" unless e.previous.empty?
     raise
   end # command=
-
 end # Puppet::Type
-

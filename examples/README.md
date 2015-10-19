@@ -51,20 +51,20 @@ Removed 'puppetlabs-ciscopuppet' (v0.9.0) from /etc/puppetlabs/code/environments
 
 The recommended workflow is to clone the `cisco-ciscopuppet.git` repository on your puppet master.  This allows for easy build and installation of the `puppetlabs-ciscopuppet` module.
 
-#### Clone the `cisco-ciscopuppet.git` repo on your puppet master
+#### Clone the `cisco-network-puppet-module.git` repo on your puppet master
 
 ```bash
-puppetmaster:# git clone https://github.com/puppetlabs/cisco-ciscopuppet.git
+puppetmaster:# git clone https://github.com/cisco/cisco-network-puppet-module.git
 ```
 
 #### Build the `puppetlabs-ciscopuppet` module on your puppet master
 
-Issue the following command one layer **above** the `cisco-ciscopuppet` directory on your puppet master.
+Issue the following command one layer **above** the `cisco-network-puppet-module` directory on your puppet master.
 
 ```bash
-puppetmaster:# puppet module build cisco-ciscopuppet/
-Notice: Building /githubpuppet/cisco-ciscopuppet for release
-Module built: /githubpuppet/cisco-ciscopuppet/pkg/puppetlabs-ciscopuppet-0.9.0.tar.gz
+puppetmaster:# puppet module build cisco-network-puppet-module/
+Notice: Building /githubpuppet/cisco-network-puppet-module for release
+Module built: /githubpuppet/cisco-network-puppet-module/pkg/puppetlabs-ciscopuppet-0.9.0.tar.gz
 ```
 
 #### Install the `puppetlabs-ciscopuppet` module on your puppet master

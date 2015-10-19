@@ -1,34 +1,82 @@
 # Rubocop configuration
 
-# Initial setup. Final rules TBD.
+AllCops:
+  Exclude:
+    - 'pkg/**/*'
+    - 'vendor/**/*'
 
+# Baseline code complexity metrics - we should try and reduce these over time
 Metrics/AbcSize:
-  Enabled: false
+  Max: 41
 
 Metrics/CyclomaticComplexity:
-  Enabled: false
+  Max: 16
 
 Metrics/LineLength:
-  Enabled: false
+  Max: 167
 
 Metrics/MethodLength:
-  Enabled: false
+  Max: 38
+
+Metrics/ModuleLength:
+  Max: 245
 
 Metrics/PerceivedComplexity:
+  Max: 20
+
+
+# We like table alignment for readability
+Style/AlignHash:
+  EnforcedHashRocketStyle: table
+  EnforcedColonStyle: table
+
+# Template files have wildcard strings in class names
+Style/ClassAndModuleCamelCase:
+  Exclude:
+    - 'docs/*.rb'
+
+# Permit is_a? and kind_of? interchangeably
+Style/ClassCheck:
   Enabled: false
 
-Style/Documentation:
-  Enabled: false
+# Template files have atypical file names on purpose
+Style/FileName:
+  Exclude:
+    - 'docs/*.rb'
 
+# As a team we like 'sprintf' rather than 'format'
+Style/FormatString:
+  EnforcedStyle: sprintf
+
+# The Beaker installer script uses a number of global variables.
+# This is OK for now since it's a standalone script.
+Style/GlobalVars:
+  Exclude:
+    - 'utilities/installer/install_puppet.rb'
+
+# Mixed keys are ugly. Use one or the other as needed
 Style/HashSyntax:
-  Enabled: false
+  EnforcedStyle: ruby19_no_mixed_keys
 
-Style/Lambda:
-  Enabled: false
+# Template files have wildcard strings in method names
+Style/MethodName:
+  Exclude:
+    - 'docs/*.rb'
 
-Style/MultilineTernaryOperator:
-  Enabled: false
+# "def foo(bar=baz)" not "def foo(bar = baz)"
+Style/SpaceAroundEqualsInParameterDefault:
+  EnforcedStyle: no_space
 
+# Template file has atypical variable name that rubocop doesn't like
+Style/SpaceAroundOperators:
+  Exclude:
+    - 'docs/template-__PROVIDER__-ensurabilitytest.rb'
+
+# Make it neater to extend multi-line arrays and hashes
 Style/TrailingComma:
-  Enabled: false
+  EnforcedStyleForMultiline: comma
 
+# Template files have atypical variable names on purpose
+Style/VariableName:
+  Exclude:
+    - 'docs/*.rb'

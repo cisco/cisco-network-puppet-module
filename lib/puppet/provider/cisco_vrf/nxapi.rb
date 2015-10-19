@@ -27,10 +27,10 @@ rescue LoadError # seen on master, not on agent
 end
 
 Puppet::Type.type(:cisco_vrf).provide(:nxapi) do
-  desc "The NXAPI provider for cisco_vrf."
+  desc 'The NXAPI provider for cisco_vrf.'
 
-  confine :feature => :cisco_node_utils
-  defaultfor :operatingsystem => :nexus
+  confine feature: :cisco_node_utils
+  defaultfor operatingsystem: :nexus
 
   mk_resource_methods
 
@@ -44,9 +44,9 @@ Puppet::Type.type(:cisco_vrf).provide(:nxapi) do
   ]
   VRF_ALL_PROPS = VRF_NON_BOOL_PROPS + VRF_BOOL_PROPS
 
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, "@vrf",
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@vrf',
                                             VRF_NON_BOOL_PROPS)
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, "@vrf",
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@vrf',
                                             VRF_BOOL_PROPS)
 
   def initialize(value={})
@@ -55,25 +55,25 @@ Puppet::Type.type(:cisco_vrf).provide(:nxapi) do
     @property_flush = {}
   end
 
-  def self.get_properties(vrf_name, vrf)
+  def self.properties_get(vrf_name, vrf)
     debug "Checking VRF #{vrf_name}."
     current_state = {
-      :name => vrf_name,
-      :ensure => :present,
+      name:   vrf_name,
+      ensure: :present,
     }
     # Call node_utils getter for each property
-    VRF_ALL_PROPS.each { |prop|
+    VRF_ALL_PROPS.each do |prop|
       current_state[prop] = vrf.send(prop)
-    }
+    end
     new(current_state)
-  end # self.get_properties
+  end # self.properties_get
 
   def self.instances
     vrfs = []
-    Cisco::Vrf.vrfs.each { | vrf_name, vrf |
-      vrfs << get_properties(vrf_name, vrf)
-    }
-    return vrfs
+    Cisco::Vrf.vrfs.each do |vrf_name, vrf|
+      vrfs << properties_get(vrf_name, vrf)
+    end
+    vrfs
   end # self.instances
 
   def self.prefetch(resources)
@@ -85,7 +85,7 @@ Puppet::Type.type(:cisco_vrf).provide(:nxapi) do
   end # self.prefetch
 
   def exists?
-    return (@property_hash[:ensure] == :present)
+    (@property_hash[:ensure] == :present)
   end
 
   def create
@@ -96,23 +96,21 @@ Puppet::Type.type(:cisco_vrf).provide(:nxapi) do
     @property_flush[:ensure] = :absent
   end
 
-  def set_properties(new_vrf=false)
-    VRF_ALL_PROPS.each { |prop|
-      # if the manifest defined the property value, we 
+  def properties_set(new_vrf=false)
+    VRF_ALL_PROPS.each do |prop|
+      # if the manifest defined the property value, we
       # need to update using the setter accordingly.
-      if @resource[prop]
-        if new_vrf
-          # set property_flush for the new object
-          self.send("#{prop}=", @resource[prop])
-        end
-        unless @property_flush[prop].nil?
-          # calling setters of the node utility gem using
-          # values in property_flush
-          @vrf.send("#{prop}=", @property_flush[prop]) if
-            @vrf.respond_to?("#{prop}=")
-        end
+      next unless @resource[prop]
+      if new_vrf
+        # set property_flush for the new object
+        send("#{prop}=", @resource[prop])
       end
-    }
+      next if @property_flush[prop].nil?
+      # calling setters of the node utility gem using
+      # values in property_flush
+      @vrf.send("#{prop}=", @property_flush[prop]) if
+      @vrf.respond_to?("#{prop}=")
+    end
   end
 
   def flush
@@ -125,7 +123,7 @@ Puppet::Type.type(:cisco_vrf).provide(:nxapi) do
         new_vrf = true
         @vrf = Cisco::Vrf.new(@resource[:name])
       end
-      set_properties(new_vrf)
+      properties_set(new_vrf)
     end
     puts_config
   end
@@ -137,11 +135,10 @@ Puppet::Type.type(:cisco_vrf).provide(:nxapi) do
     end
 
     # Dump all current properties for this interface
-    current = sprintf("\n%30s: %s", "VRF", @vrf.name)
-    VRF_ALL_PROPS.each { |prop|
+    current = sprintf("\n%30s: %s", 'VRF', @vrf.name)
+    VRF_ALL_PROPS.each do |prop|
       current.concat(sprintf("\n%30s: %s", prop, @vrf.send(prop)))
-    }
+    end
     debug current
   end # puts_config
-end #Puppet::Type
-
+end # Puppet::Type
