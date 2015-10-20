@@ -90,6 +90,7 @@ expected_default_values = {
   'bestpath_cost_community_ignore'         => 'false',
   'bestpath_med_confed'                    => 'false',
   'bestpath_med_non_deterministic'         => 'false',
+  'enforce_first_as'                       => 'true',
   'graceful_restart'                       => 'true',
   'graceful_restart_timers_restart'        => '120',
   'graceful_restart_timers_stalepath_time' => '300',
@@ -163,6 +164,8 @@ test_name "TestCase :: #{testheader}" do
 
   context = "vrf #{BgpLib::VRF1}"
 
+  # enforce_first_as only in default_vrf
+  expected_default_values.delete('enforce_first_as')
   stepinfo = "Apply resource ensure => present manifest (#{context})"
   step "TestStep :: #{stepinfo}" do
     on(master, BgpLib.create_bgp_manifest_present_vrf1)
