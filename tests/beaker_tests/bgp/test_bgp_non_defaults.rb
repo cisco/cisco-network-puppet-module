@@ -85,6 +85,7 @@ expected_values = {
   'cluster_id'                             => '10.0.0.1',
   'confederation_id'                       => '99',
   'confederation_peers'                    => '55 23.4 88 200.1',
+  'enforce_first_as'                       => 'true',
   'shutdown'                               => 'true',
   'suppress_fib_pending'                   => 'true',
   'log_neighbor_changes'                   => 'true',
