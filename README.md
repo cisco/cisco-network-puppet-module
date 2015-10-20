@@ -296,6 +296,11 @@ Enable/Disable enforcement of bestpath to do a MED comparison only between
 paths originated within a confederation. Valid values are 'true', 'false',
 and 'default'
 
+##### `bestpath_med_missing_as_worst`
+Enable/Disable assigns the value of infinity to received routes that do not
+carry the MED attribute, making these routes the least desirable. Valid values
+are 'true', 'false', and 'default'.
+
 ##### `bestpath_med_non_deterministic`
 Enable/Disable deterministic selection of the best MED path from among
 the paths from the same autonomous system. Valid values are 'true', 'false',

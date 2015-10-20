@@ -55,6 +55,7 @@ Puppet::Type.type(:cisco_bgp).provide(:nxapi) do
     :bestpath_compare_routerid,
     :bestpath_cost_community_ignore,
     :bestpath_med_confed,
+    :bestpath_med_missing_as_worst,
     :bestpath_med_non_deterministic,
     :graceful_restart,
     :graceful_restart_helper,

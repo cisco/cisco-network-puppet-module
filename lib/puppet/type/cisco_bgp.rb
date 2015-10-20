@@ -51,6 +51,7 @@ Puppet::Type.newtype(:cisco_bgp) do
       bestpath_compare_routerid              => true,
       bestpath_cost_community_ignore         => true,
       bestpath_med_confed                    => false,
+      bestpath_med_missing_as_worst          => true,
       bestpath_med_non_deterministic         => true,
       timer_bestpath_limit                   => 250,
       timer_bestpath_limit_always            => false,
@@ -302,6 +303,13 @@ Puppet::Type.newtype(:cisco_bgp) do
 
     newvalues(:true, :false, :default)
   end # property bestpath_med_confed
+
+  newproperty(:bestpath_med_missing_as_worst) do
+    desc 'Enable/Disable assigns the value of infinity to received routes that do not' \
+         'carry the MED attribute, making these routes the least desirable.'
+
+    newvalues(:true, :false, :default)
+  end # property bestpath_med_missing_as_worst
 
   newproperty(:bestpath_med_non_deterministic) do
     desc "Enable/Disable deterministic selection of the best MED path from among
