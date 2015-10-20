@@ -27,7 +27,13 @@ Cisco Network Elements support a rich set of features to make networks robust, e
 * Submit a pull request for commit approval to the "develop" branch.
 * A core team consisting of Cisco and Puppet Labs employees will looks at Pull Request and provide feedback.
 * After feedback has been given we expect responses within two weeks. After two weeks we may close the pull request if it isn't showing any activity.
+* All code commits must be associated with your github account and email address. Before committing any code use the following commands to update your workspace with your credentials:
 
+```bash
+git config --global user.name "John Doe"
+git config --global user.email johndoe@example.com
+```
+ 
 # Additional Resources
 
 * [General GitHub documentation](http://help.github.com/)
