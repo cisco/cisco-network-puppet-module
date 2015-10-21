@@ -36,9 +36,7 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 # A library to assist testing domain_name resource
 module DomainNameLib
   # Group of Constants used in negative tests for domain_name provider.
-  ENSURE_NEGATIVE = 'unknown'
-  NAME_VALID      = 'test.xyz'
-  NAME_INVALID    = 'a.b.c'
+  NAME_VALID = 'test.xyz'
 
   # A. Methods to create manifests for domain_name Puppet provider test cases.
 
@@ -66,36 +64,6 @@ EOF"
 node default {
   domain_name {'#{DomainNameLib::NAME_VALID}':
     ensure => absent,
-  }
-}
-EOF"
-    manifest_str
-  end
-
-  # Method to create a manifest for domain_name resource attribute 'ensure'
-  # where 'ensure' is set to unknown.
-  # @param none [None] No input parameters exist.
-  # @result none [None] Returns no object.
-  def self.create_domain_name_manifest_negative
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
-node default {
-  domain_name {'#{DomainNameLib::NAME_VALID}':
-    ensure => #{DomainNameLib::ENSURE_NEGATIVE},
-  }
-}
-EOF"
-    manifest_str
-  end
-
-  # Method to create a manifest for domain_name resource attribute 'name'
-  # where 'name' is set to invalid parameter.
-  # @param none [None] No input parameters exist.
-  # @result none [None] Returns no object.
-  def self.create_domain_name_manifest_name_invalid
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
-node default {
-  domain_name {'#{DomainNameLib::NAME_INVALID}':
-    ensure => present,
   }
 }
 EOF"
