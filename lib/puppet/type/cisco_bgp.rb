@@ -40,6 +40,7 @@ Puppet::Type.newtype(:cisco_bgp) do
       cluster_id                             => '55',
       confederation_id                       => '77.6',
       confederation_peers                    => '77.6 88 99.4 200'
+      enforce_first_as                       => true,
       shutdown                               => false,
 
       supress_fib_pending                    => true,
@@ -255,6 +256,13 @@ Puppet::Type.newtype(:cisco_bgp) do
 
     newvalues(:true, :false, :default)
   end # property shutdown
+
+  newproperty(:enforce_first_as) do
+    desc 'Enable/Disable enforces the neighbor autonomous system ' \
+         'to be the first AS number listed in the AS_path attribute for eBGP'
+
+    newvalues(:true, :false, :default)
+  end # property enforce_first_as
 
   newproperty(:suppress_fib_pending) do
     desc "Enable/Disable advertise only routes that are programmed

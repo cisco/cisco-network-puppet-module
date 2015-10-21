@@ -27,6 +27,7 @@ class ciscopuppet::demo_bgp {
     cluster_id                             => '55',
     confederation_id                       => '33',
     confederation_peers                    => '99 88 200.1',
+    enforce_first_as                       => false,
     suppress_fib_pending                   => false,
     log_neighbor_changes                   => false,
 

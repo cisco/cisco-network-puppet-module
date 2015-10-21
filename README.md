@@ -263,6 +263,10 @@ Routing domain confederation AS. Valid values are String, keyword 'default'.
 ##### `confederation_peers`
 AS confederation parameters. Valid values are String, keyword 'default'.
 
+##### `enforce_first_as`
+Enable/Disable enforces the neighbor autonomous system to be the first AS number 
+listed in the AS path attribute for eBGP.Valid values are 'present' and 'absent'.
+
 ##### `shutdown`
 Administratively shutdown the BGP protocol. Valid values are 'true', 'false',
 and 'default'.
