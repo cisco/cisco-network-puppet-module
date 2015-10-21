@@ -35,7 +35,7 @@ Puppet::Type.type(:domain_name).provide(:nxapi) do
 
   def initialize(value={})
     super(value)
-    @domain = Cisco::DomainName.domainnames[@property_hash[:name]]
+    @domain = Cisco::DomainName.domainnames[@property_hash[:name].to_s]
     @property_flush = {}
   end
 
@@ -54,7 +54,7 @@ Puppet::Type.type(:domain_name).provide(:nxapi) do
   def self.prefetch(resources)
     domains = instances
     resources.keys.each do |name|
-      provider = domains.find { |domain| domain.name == name }
+      provider = domains.find { |domain| domain.name == name.to_s }
       resources[name].provider = provider unless provider.nil?
     end
   end # self.prefetch
@@ -71,21 +71,13 @@ Puppet::Type.type(:domain_name).provide(:nxapi) do
     @property_flush[:ensure] = :absent
   end
 
-  def validate
-    # A general check to make sure the provided string resembles a valid domain name.
-    # Reference: Regular Expressions Cookbook, 2nd Edition, Section 8.15
-    fail ArgumentError, 'Invalid domain_name provided.' unless @resource[:name] =~ /^([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}$/
-  end
-
   def flush
-    validate
-
     if @property_flush[:ensure] == :absent
       @domain.destroy
       @domain = nil
       @property_hash[:ensure] = :absent
     else
-      @domain = Cisco::DomainName.new(@resource[:name])
+      @domain = Cisco::DomainName.new(@resource[:name].to_s)
       @property_hash[:ensure] = :present
     end
   end
