@@ -89,6 +89,7 @@ expected_default_values = {
   'bestpath_compare_routerid'              => 'false',
   'bestpath_cost_community_ignore'         => 'false',
   'bestpath_med_confed'                    => 'false',
+  'bestpath_med_missing_as_worst'          => 'false',
   'bestpath_med_non_deterministic'         => 'false',
   'enforce_first_as'                       => 'true',
   'graceful_restart'                       => 'true',

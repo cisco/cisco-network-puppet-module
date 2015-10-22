@@ -37,6 +37,7 @@ class ciscopuppet::demo_bgp {
     bestpath_compare_routerid              => true,
     bestpath_cost_community_ignore         => true,
     bestpath_med_confed                    => true,
+    bestpath_med_missing_as_worst          => true,
     bestpath_med_non_deterministic         => true,
     timer_bestpath_limit                   => '255',
     timer_bestpath_limit_always            => true,
