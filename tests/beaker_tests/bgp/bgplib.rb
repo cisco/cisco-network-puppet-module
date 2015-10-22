@@ -46,6 +46,7 @@ module BgpLib
         confederation_id                       => 'default',
         confederation_peers                    => 'default',
         enforce_first_as                       => 'default',
+        maxas_limit                            => 'default',
         shutdown                               => 'default',
 
         suppress_fib_pending                   => 'default',
@@ -90,6 +91,7 @@ module BgpLib
         cluster_id                             => 'default',
         confederation_id                       => 'default',
         confederation_peers                    => 'default',
+        maxas_limit                            => 'default',
         shutdown                               => 'default',
 
         suppress_fib_pending                   => 'default',
@@ -134,6 +136,7 @@ module BgpLib
         cluster_id                             => 'default',
         confederation_id                       => 'default',
         confederation_peers                    => 'default',
+        maxas_limit                            => 'default',
         shutdown                               => 'default',
 
         suppress_fib_pending                   => 'default',
@@ -178,6 +181,7 @@ module BgpLib
         confederation_id                       => '99',
         confederation_peers                    => '55 23.4 88 200.1',
         enforce_first_as                       => 'true',
+        maxas_limit                            => '50',
         shutdown                               => 'true',
 
         suppress_fib_pending                   => 'true',
@@ -222,6 +226,7 @@ module BgpLib
         cluster_id                             => '55',
         confederation_id                       => '33',
         confederation_peers                    => '99 88 200.1',
+        maxas_limit                            => '55',
 
         suppress_fib_pending                   => 'false',
         log_neighbor_changes                   => 'false',
@@ -265,6 +270,7 @@ module BgpLib
         cluster_id                             => '10.0.0.2',
         confederation_id                       => '32.88',
         confederation_peers                    => '55 23.4 88 200.1',
+        maxas_limit                            => '60',
 
         suppress_fib_pending                   => 'false',
         log_neighbor_changes                   => 'false',

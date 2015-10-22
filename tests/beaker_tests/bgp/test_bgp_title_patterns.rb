@@ -82,6 +82,7 @@ resource_asdot = UtilityLib.get_namespace_cmd(agent,
 expected_default_values = {
   'ensure'                                 => 'present',
   'enforce_first_as'                       => 'true',
+  'maxas_limit'                            => '0',
   'shutdown'                               => 'false',
   'suppress_fib_pending'                   => 'false',
   'log_neighbor_changes'                   => 'false',
