@@ -269,7 +269,7 @@ listed in the AS path attribute for eBGP. Valid values are 'true', 'false', and 
 
 ##### `maxas_limit`
 Specify Maximum number of AS numbers allowed in the AS-path attribute.
-Valid values are integers between 1 and 2000, or keyword 'default' to disable this property.
+Valid values are integers between 1 and 512, or keyword 'default' to disable this property.
 
 ##### `shutdown`
 Administratively shutdown the BGP protocol. Valid values are 'true', 'false',

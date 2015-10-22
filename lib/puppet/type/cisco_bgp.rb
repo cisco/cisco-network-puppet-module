@@ -274,8 +274,8 @@ Puppet::Type.newtype(:cisco_bgp) do
       value = :default if value == 'default'
       unless value == :default
         value = value.to_i
-        fail 'maxas_limit value should be between 1 and 2000' unless
-          value.between?(1, 2000)
+        fail 'maxas_limit value should be between 1 and 512' unless
+          value.between?(1, 512)
       end
       value
     end
