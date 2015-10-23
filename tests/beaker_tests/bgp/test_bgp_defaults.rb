@@ -84,6 +84,7 @@ expected_default_values = {
   'shutdown'                               => 'false',
   'suppress_fib_pending'                   => 'false',
   'log_neighbor_changes'                   => 'false',
+  'maxas_limit'                            => '0',
   'bestpath_always_compare_med'            => 'false',
   'bestpath_aspath_multipath_relax'        => 'false',
   'bestpath_compare_routerid'              => 'false',

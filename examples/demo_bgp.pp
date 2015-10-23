@@ -28,6 +28,7 @@ class ciscopuppet::demo_bgp {
     confederation_id                       => '33',
     confederation_peers                    => '99 88 200.1',
     enforce_first_as                       => false,
+    maxas_limit                            => '50',
     suppress_fib_pending                   => false,
     log_neighbor_changes                   => false,
 

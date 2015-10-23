@@ -41,6 +41,7 @@ Puppet::Type.newtype(:cisco_bgp) do
       confederation_id                       => '77.6',
       confederation_peers                    => '77.6 88 99.4 200'
       enforce_first_as                       => true,
+      maxas_limit                            => '50',
       shutdown                               => false,
 
       supress_fib_pending                    => true,
@@ -264,6 +265,21 @@ Puppet::Type.newtype(:cisco_bgp) do
 
     newvalues(:true, :false, :default)
   end # property enforce_first_as
+
+  newproperty(:maxas_limit) do
+    desc "Specify Maximum number of AS numbers allowed in the AS-path attribute.
+          Valid values are integers between 1 and 2000, or keyword 'default' to
+          disable this property"
+    munge do |value|
+      value = :default if value == 'default'
+      unless value == :default
+        value = value.to_i
+        fail 'maxas_limit value should be between 1 and 512' unless
+          value.between?(1, 512)
+      end
+      value
+    end
+  end
 
   newproperty(:suppress_fib_pending) do
     desc "Enable/Disable advertise only routes that are programmed

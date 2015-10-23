@@ -265,7 +265,11 @@ AS confederation parameters. Valid values are String, keyword 'default'.
 
 ##### `enforce_first_as`
 Enable/Disable enforces the neighbor autonomous system to be the first AS number 
-listed in the AS path attribute for eBGP.Valid values are 'present' and 'absent'.
+listed in the AS path attribute for eBGP. Valid values are 'true', 'false', and 'default'.
+
+##### `maxas_limit`
+Specify Maximum number of AS numbers allowed in the AS-path attribute.
+Valid values are integers between 1 and 512, or keyword 'default' to disable this property.
 
 ##### `shutdown`
 Administratively shutdown the BGP protocol. Valid values are 'true', 'false',

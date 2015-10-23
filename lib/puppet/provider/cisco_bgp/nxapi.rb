@@ -44,6 +44,7 @@ Puppet::Type.type(:cisco_bgp).provide(:nxapi) do
     :confederation_peers,
     :graceful_restart_timers_restart,
     :graceful_restart_timers_stalepath_time,
+    :maxas_limit,
     :router_id,
     :timer_bestpath_limit,
     :timer_bgp_keepalive,
