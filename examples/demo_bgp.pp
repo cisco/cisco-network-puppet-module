@@ -66,6 +66,8 @@ class ciscopuppet::demo_bgp {
     # Properties
     client_to_client                       => false,
     default_information_originate          => false,
+    maximum_paths                          => '7',
+    maximum_paths_ibgp                     => '7',
     next_hop_route_map                     => 'RouteMap',
   }
 
@@ -82,6 +84,8 @@ class ciscopuppet::demo_bgp {
     # Properties
     client_to_client                       => false,
     default_information_originate          => false,
+    maximum_paths                          => '7',
+    maximum_paths_ibgp                     => '7',
     next_hop_route_map                     => 'RouteMap',
   }
 
@@ -98,6 +102,8 @@ class ciscopuppet::demo_bgp {
     # Properties
     client_to_client                       => false,
     default_information_originate          => false,
+    maximum_paths                          => '7',
+    maximum_paths_ibgp                     => '7',
     next_hop_route_map                     => 'RouteMap',
   }
 

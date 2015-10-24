@@ -41,6 +41,8 @@ Puppet::Type.newtype(:cisco_bgp_af) do
 
       client_to_client                       => 'true',
       default_information_originate          => 'true',
+      maximum_paths                          => '7',
+      maximum_paths_ibgp                     => '7',
       next_hop_route_map                     => 'Default_Route_Map',
     }
   ~~~
@@ -195,6 +197,34 @@ Puppet::Type.newtype(:cisco_bgp_af) do
 
     newvalues(:true, :false, :default)
   end # property :default_information_originate
+
+  newproperty(:maximum_paths) do
+    desc "Configures the maximum number of equal-cost paths for load sharing.
+          Valid values are integers between 1 and 64, default value is 1."
+    munge do |value|
+      value = :default if value == 'default'
+      unless value == :default
+        value = value.to_i
+        fail 'maximum_paths value should be between 1 and 64' unless
+          value.between?(1, 64)
+      end
+      value
+    end
+  end# property :maximum_paths
+
+  newproperty(:maximum_paths_ibgp) do
+    desc "Configures the maximum number of equal-cost paths for load sharing.
+          Valid values are integers between 1 and 64, default value is 1."
+    munge do |value|
+      value = :default if value == 'default'
+      unless value == :default
+        value = value.to_i
+        fail 'maximum_paths_ibgp value should be between 1 and 64' unless
+          value.between?(1, 64)
+      end
+      value
+    end
+  end# property :maximum_paths_ibgp
 
   newproperty(:next_hop_route_map) do
     desc ':next_hop_route_map in state. Valid values are a string ' \
