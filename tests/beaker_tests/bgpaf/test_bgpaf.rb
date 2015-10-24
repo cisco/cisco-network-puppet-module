@@ -167,9 +167,9 @@ tests['non_default_properties_M'] = {
   ",
 
   :resource_props => {
-    'ensure'                        => 'present',
-    'maximum_paths'                 => '9',
-    'maximum_paths_ibgp'            => '9',
+    'ensure'             => 'present',
+    'maximum_paths'      => '9',
+    'maximum_paths_ibgp' => '9',
   },
 }
 

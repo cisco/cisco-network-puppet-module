@@ -210,7 +210,7 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       end
       value
     end
-  end# property :maximum_paths
+  end # property :maximum_paths
 
   newproperty(:maximum_paths_ibgp) do
     desc "Configures the maximum number of equal-cost paths for load sharing.
@@ -224,7 +224,7 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       end
       value
     end
-  end# property :maximum_paths_ibgp
+  end # property :maximum_paths_ibgp
 
   newproperty(:next_hop_route_map) do
     desc ':next_hop_route_map in state. Valid values are a string ' \
