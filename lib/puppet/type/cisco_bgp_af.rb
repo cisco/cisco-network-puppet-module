@@ -200,12 +200,12 @@ Puppet::Type.newtype(:cisco_bgp_af) do
 
   newproperty(:maximum_paths) do
     desc "Configures the maximum number of equal-cost paths for load sharing.
-          Valid values are integers between 1 and 64, default value is 1."
+          Valid values are integers in the range 1 - 64, default value is 1."
     munge do |value|
       value = :default if value == 'default'
       unless value == :default
         value = value.to_i
-        fail 'maximum_paths value should be between 1 and 64' unless
+        fail 'maximum_paths value should be in the range 1 - 64' unless
           value.between?(1, 64)
       end
       value
@@ -213,13 +213,13 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   end # property :maximum_paths
 
   newproperty(:maximum_paths_ibgp) do
-    desc "Configures the maximum number of equal-cost paths for load sharing.
-          Valid values are integers between 1 and 64, default value is 1."
+    desc "Configures the maximum number of ibgp equal-cost paths for load sharing.
+          Valid values are integers in the range 1 - 64, default value is 1."
     munge do |value|
       value = :default if value == 'default'
       unless value == :default
         value = value.to_i
-        fail 'maximum_paths_ibgp value should be between 1 and 64' unless
+        fail 'maximum_paths_ibgp value should be in the range of 1 - 64' unless
           value.between?(1, 64)
       end
       value
