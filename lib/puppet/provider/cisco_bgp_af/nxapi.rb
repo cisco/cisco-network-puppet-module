@@ -39,6 +39,8 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
   # one property per line.
   BGP_AF_NON_BOOL_PROPS = [
     :next_hop_route_map,
+    :maximum_paths,
+    :maximum_paths_ibgp,
   ]
 
   BGP_AF_BOOL_PROPS = [

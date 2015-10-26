@@ -119,11 +119,15 @@ tests['default_properties'] = {
   :manifest_props => "
     client_to_client              => 'default',
     default_information_originate => 'default',
+    maximum_paths                 => 'default',
+    maximum_paths_ibgp            => 'default',
     ",
 
   :resource_props => {
     'client_to_client'              => 'false',
     'default_information_originate' => 'false',
+    'maximum_paths'                 => '1',
+    'maximum_paths_ibgp'            => '1',
   },
 }
 
@@ -154,8 +158,23 @@ tests['non_default_properties_D'] = {
   },
 }
 
+tests['non_default_properties_M'] = {
+  :desc           => "2.3 Non Default Properties: 'M' commands",
+  :title_pattern  => '2 blue ipv4 unicast',
+  :manifest_props => "
+    maximum_paths                   => 9,
+    maximum_paths_ibgp              => 9,
+  ",
+
+  :resource_props => {
+    'ensure'             => 'present',
+    'maximum_paths'      => '9',
+    'maximum_paths_ibgp' => '9',
+  },
+}
+
 tests['non_default_properties_N'] = {
-  :desc           => "2.3 Non Default Properties: 'N' commands",
+  :desc           => "2.4 Non Default Properties: 'N' commands",
   :title_pattern  => '2 blue ipv4 unicast',
   :manifest_props => "
     next_hop_route_map              => 'RouteMap',
@@ -252,6 +271,7 @@ test_name "TestCase :: #{testheader}" do
 
   test_harness_bgp_af(tests, 'non_default_properties_C')
   test_harness_bgp_af(tests, 'non_default_properties_D')
+  test_harness_bgp_af(tests, 'non_default_properties_M')
   test_harness_bgp_af(tests, 'non_default_properties_N')
 
   # -------------------------------------------------------------------

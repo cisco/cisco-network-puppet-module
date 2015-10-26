@@ -373,6 +373,14 @@ Sub Address Family Identifier (SAFI). Required. Valid values are `unicast` and `
 ##### `default_information_originate`
 `default-information originate`. Valid values are true and false.
 
+##### `maximum_path`
+Configures the maximum number of equal-cost paths for load sharing. Valid value is an integer in the range 1-64.
+Default value is 1.
+
+##### `maximum_paths_ibgp`
+Configures the maximum number of ibgp equal-cost paths for load sharing. Valid value is an integer in the range 1-64.
+Default value is 1.
+
 ##### `next_hop_route_map`
 `nexthop route-map`. Valid values are a string defining a route-map.
 
