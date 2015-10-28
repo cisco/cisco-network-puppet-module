@@ -31,6 +31,7 @@ Puppet::Type.newtype(:cisco_bgp_af) do
 
   Example:
 
+  $network_list = [['192.168.5.0/24', 'rtmap1'], ['192.168.10.0/24']]
   ~~~puppet
     cisco_bgp_af { 'raleigh':
       ensure                                 => present,
@@ -38,12 +39,23 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       vrf                                    => 'default',
       afi                                    => 'ipv4',
       safi                                   => 'unicast',
-
+      additional_paths_install               => 'true',
+      additional_paths_receive               => 'true',
+      additional_paths_selection             => 'Route_Map',
+      additional_paths_send                  => 'true',
       client_to_client                       => 'true',
+      dampen_igp_metric                      => 200,
+      dampening_state                        => 'true',
+      dampening_half_time                    => 5,
+      dampening_max_suppress_time            => 200,
+      dampening_reuse_time                   => 10,
+      dampening_routemap                     => 'Dampening_Route_Map',
+      dampening_suppress_time                => 15,
       default_information_originate          => 'true',
       maximum_paths                          => '7',
       maximum_paths_ibgp                     => '7',
       next_hop_route_map                     => 'Default_Route_Map',
+      network                                => $network_list,
     }
   ~~~
 
@@ -154,7 +166,7 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       end
     end
 
-    munge { |value| Cisco::RouterBgp.process_asnum(value) }
+    munge { |value| Cisco::RouterBgp.process_asnum(value.to_s) }
   end
 
   newparam(:vrf, namevar: true) do
@@ -179,28 +191,162 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   # Properties #
   ##############
 
-  validate do
-    fail("The 'asn' parameter must be set in the manifest.") if self[:asn].nil?
-    fail("The 'afi' parameter must be set in the manifest.") if self[:afi].nil?
-    fail("The 'safi' parameter must be set in the manifest.") if self[:safi].nil?
-  end
+  newproperty(:additional_paths_install) do
+    desc 'install a backup path into the forwarding table and provide prefix ' \
+         'independent convergence (PIC) in case of a PE-CE link failure. ' \
+         "Valid values are true, false, or 'default'"
+
+    newvalues(:true, :false, :default)
+  end # property additional_paths_install
+
+  newproperty(:additional_paths_receive) do
+    desc 'Enables the receive capability of additional paths for all' \
+      'of the neighbors under this address family for which the ' \
+      'capability has not been disabled. ' \
+      "Valid values are true, false, or 'default'"
+
+    newvalues(:true, :false, :default)
+  end # property additional_paths_receive
+
+  newproperty(:additional_paths_selection) do
+    desc 'Configures the capability of selecting additional paths for a prefix. ' \
+      'Valid values are a string defining the name of the route-map.'
+
+    validate do |value|
+      fail("'additional_paths_selection' value must be a string") unless
+        value.is_a? String
+    end
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property additional_paths_selection
+
+  newproperty(:additional_paths_send) do
+    desc 'Enables the send capability of additional paths for all of the ' \
+      'neighbors under this address family for which the capability has ' \
+      "not been disabled. Valid values are true, false, or 'default'"
+
+    newvalues(:true, :false, :default)
+  end # property additional_paths_send
 
   newproperty(:client_to_client) do
-    desc "client_to_client. Valid values are true, false, or 'default'"
+    desc 'Configure client-to-client route reflection. Valid values are ' \
+         "true, false, or 'default'"
 
     newvalues(:true, :false, :default)
   end # property client_to_client
 
+  newproperty(:dampen_igp_metric) do
+    desc 'Specify dampen value for IGP metric-related changes, in seconds. ' \
+          "Valid values are Integer, keyword 'default'."
+
+    munge do |value|
+      begin
+        value = :default if value == 'default'
+        value = Integer(value) unless value == :default
+      rescue
+        raise "'dampen_igp_metric' must be an Integer."
+      end # rescue
+      value
+    end
+  end # property dampen_igp_metric
+
+  newproperty(:dampening_state) do
+    desc 'Enable/disable route-flap dampening. ' \
+          "Valid values are true, false or 'default'."
+
+    newvalues(:true, :false, :default)
+  end # property dampening
+
+  newproperty(:dampening_half_time) do
+    desc 'Specify decay half-life in minutes for route-flap dampening. ' \
+          "Valid values are Integer, keyword 'default'."
+
+    munge do |value|
+      begin
+        value = :default if value == 'default'
+        value = Integer(value) unless value == :default
+      rescue
+        raise "'dampening_half_time' must be an Integer."
+      end # rescue
+      value
+    end
+  end # property dampening_half_time
+
+  newproperty(:dampening_max_suppress_time) do
+    desc 'Specify max suppress time for route-flap dampening stable route. ' \
+          "Valid values are Integer, keyword 'default'."
+
+    munge do |value|
+      begin
+        value = :default if value == 'default'
+        value = Integer(value) unless value == :default
+      rescue
+        raise "'dampening_max_suppress_time' must be an Integer."
+      end # rescue
+      value
+    end
+  end # property dampening_max_suppress_time
+
+  newproperty(:dampening_reuse_time) do
+    desc 'Specify route reuse time for route-flap dampening. ' \
+          "Valid values are Integer, keyword 'default'."
+
+    munge do |value|
+      begin
+        value = :default if value == 'default'
+        value = Integer(value) unless value == :default
+      rescue
+        raise "'dampening_reuse_time' must be an Integer."
+      end # rescue
+      value
+    end
+  end # property dampening_reuse_time
+
+  newproperty(:dampening_routemap) do
+    desc 'Specify routemap for route-flap dampening. ' \
+          'Valid values are a string defining the name of the route-map.'
+
+    validate do |value|
+      fail("'dampening_routemap' value must be a string") unless
+        value.is_a? String
+    end
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property dampening_routemap
+
+  newproperty(:dampening_suppress_time) do
+    desc 'Specify route suppress time for route-flap dampening. ' \
+          "Valid values are Integer, keyword 'default'."
+
+    munge do |value|
+      begin
+        value = :default if value == 'default'
+        value = Integer(value) unless value == :default
+      rescue
+        raise "'dampening_suppress_time' must be an Integer."
+      end # rescue
+      value
+    end
+  end # property dampening_suppress_time
+
   newproperty(:default_information_originate) do
-    desc ':default_information_originate. Valid values are true, ' \
-      "false, or 'default'"
+    desc 'Control distribution of default information. Valid values are, ' \
+      "true, false, or 'default'"
 
     newvalues(:true, :false, :default)
   end # property :default_information_originate
 
   newproperty(:maximum_paths) do
-    desc "Configures the maximum number of equal-cost paths for load sharing.
-          Valid values are integers in the range 1 - 64, default value is 1."
+    desc 'Configures the maximum number of equal-cost paths for load ' \
+          'sharing. Valid values are integers in the range 1 - 64, ' \
+          'default value is 1.'
+
     munge do |value|
       value = :default if value == 'default'
       unless value == :default
@@ -213,8 +359,10 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   end # property :maximum_paths
 
   newproperty(:maximum_paths_ibgp) do
-    desc "Configures the maximum number of ibgp equal-cost paths for load sharing.
-          Valid values are integers in the range 1 - 64, default value is 1."
+    desc 'Configures the maximum number of ibgp equal-cost paths for load ' \
+         'sharing. Valid values are integers in the range 1 - 64, default ' \
+         'value is 1.'
+
     munge do |value|
       value = :default if value == 'default'
       unless value == :default
@@ -227,12 +375,83 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   end # property :maximum_paths_ibgp
 
   newproperty(:next_hop_route_map) do
-    desc ':next_hop_route_map in state. Valid values are a string ' \
+    desc 'Configure route map for valid nexthops. Valid values are a string ' \
       "defining the name of the route-map'."
+
+    validate do |value|
+      fail("'next_hop_route_map' value must be a string") unless
+        value.is_a? String
+    end
 
     munge do |value|
       value = :default if value == 'default'
       value
     end
   end # property next_hop_route_map
+
+  newproperty(:networks, array_matching: :all) do
+    format = "[['network string'], ['routemap string]]"
+    desc "Networks to configure. Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        if Cisco::Utils.process_network_mask(value[0]).split('/')[1].nil?
+          fail("Must supply network mask for #{value[0]}")
+        end
+        value
+      end
+    end
+  end # property networks
+
+  # Make sure dampening parameters are set properly in the manifest.
+  validate do
+    fail("The 'asn' parameter must be set in the manifest.") if self[:asn].nil?
+    fail("The 'afi' parameter must be set in the manifest.") if self[:afi].nil?
+    fail("The 'safi' parameter must be set in the manifest.") if self[:safi].nil?
+
+    # Don't need to process remaining checks if ensure => absent.
+    return if self[:ensure] == :absent
+
+    def route_flap_properties?
+      self[:dampening_half_time] || self[:dampening_reuse_time] ||
+        self[:dampening_suppress_time] || self[:dampening_max_suppress_time]
+    end
+
+    def all_properties?
+      self[:dampening_half_time] || self[:dampening_reuse_time] ||
+        self[:dampening_suppress_time] || self[:dampening_max_suppress_time] ||
+        self[:dampening_routemap]
+    end
+    properties = [
+      :dampening_half_time,
+      :dampening_reuse_time,
+      :dampening_suppress_time,
+      :dampening_max_suppress_time,
+      :dampening_routemap,
+    ]
+    if all_properties? && self[:dampening_state] == :false
+      fail(":dampening_state cannot be 'false' when #{properties} are set")
+    end
+    # If any of these properties are set, then all of them must be.
+    if route_flap_properties?
+      properties.delete(:dampening_routemap)
+      properties.each do |prop|
+        if self[prop].nil?
+          fail("Must set all or none of the following properties #{properties}")
+        end
+      end
+      if self[:dampening_routemap]
+        fail(":dampening_routemap should not be set when #{properties} are set")
+      end
+    end
+  end
 end

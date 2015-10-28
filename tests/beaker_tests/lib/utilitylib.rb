@@ -97,6 +97,14 @@ module UtilityLib
   def self.hash_to_patterns(hash)
     regexparr = []
     hash.each do |key, value|
+      # Need to escape '[', ']', '"' characters for nested array of arrays.
+      # Example:
+      #   [["192.168.5.0/24", "nrtemap1"], ["192.168.6.0/32"]]
+      # Becomes:
+      #   \[\['192.168.5.0\/24', 'nrtemap1'\], \['192.168.6.0\/32'\]\]
+      if /^\[.*\]$/.match(value)
+        value.gsub!(/[\[\]]/) { |s| '\\' + "#{s}" }.gsub!(/\"/) { |_s| '\'' }
+      end
       regexparr << Regexp.new("#{key}\s+=>\s+'?#{value}'?")
     end
     regexparr
