@@ -32,6 +32,7 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   Example:
 
   $network_list = [['192.168.5.0/24', 'rtmap1'], ['192.168.10.0/24']]
+  $redistribute = [['eigrp 1', 'e_rtmap_29'], ['ospf 3',  'o_rtmap']]
   ~~~puppet
     cisco_bgp_af { 'raleigh':
       ensure                                 => present,
@@ -56,6 +57,7 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       maximum_paths_ibgp                     => '7',
       next_hop_route_map                     => 'Default_Route_Map',
       network                                => $network_list,
+      redistribute                           => $redistribute,
     }
   ~~~
 
@@ -453,5 +455,6 @@ Puppet::Type.newtype(:cisco_bgp_af) do
         fail(":dampening_routemap should not be set when #{properties} are set")
       end
     end
+
   end
 end

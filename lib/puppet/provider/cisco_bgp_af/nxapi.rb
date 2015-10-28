@@ -45,10 +45,11 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
     :dampening_reuse_time,
     :dampening_routemap,
     :dampening_suppress_time,
-    :networks,
-    :next_hop_route_map,
     :maximum_paths,
     :maximum_paths_ibgp,
+    :networks,
+    :next_hop_route_map,
+    :redistribute,
   ]
 
   BGP_AF_BOOL_PROPS = [
@@ -96,8 +97,9 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
       val = obj.send(prop)
       current_state[prop] = val.nil? ? nil : val.to_s.to_sym
     end
-    # Call custom networks getter.
+    # networks/redistribute use nested arrays, thus require special handling
     current_state[:networks] = obj.networks
+    current_state[:redistribute] = obj.redistribute
     new(current_state)
   end # self.properties_get
 
@@ -245,6 +247,22 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
   def networks=(should_list)
     should_list = @af.default_networks if should_list[0] == :default
     @property_flush[:networks] = should_list
+  end
+
+  # redistribute uses a nested array, thus requires special handling
+  def redistribute
+    return @property_hash[:redistribute] if @resource[:redistribute].nil?
+    if @resource[:redistribute][0] == :default &&
+       @property_hash[:redistribute] == @af.default_redistribute
+      return [:default]
+    else
+      @property_hash[:redistribute]
+    end
+  end
+
+  def redistribute=(should_list)
+    should_list = @af.default_redistribute if should_list[0] == :default
+    @property_flush[:redistribute] = should_list
   end
 
   def flush

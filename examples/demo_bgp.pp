@@ -58,7 +58,8 @@ class ciscopuppet::demo_bgp {
   # Configure Address Family IPv4 Unicast                                     #
   # --------------------------------------------------------------------------#
   $ipv4_networks = [['192.168.5.0/24', 'nrtemap1'], ['192.168.6.0/32']]
-  #$networks = []
+  $ipv4_redistribute = [['eigrp 1', 'e_rtmap_29'], ['ospf 3',  'o_rtmap']]
+
   cisco_bgp_af { 'default':
     ensure                        => present,
     asn                           => 55.77,
@@ -77,7 +78,6 @@ class ciscopuppet::demo_bgp {
     additional_paths_selection    => 'RouteMap',
     additional_paths_send         => true,
     dampen_igp_metric             => 55,
-    networks                      => $ipv4_networks,
 
     # dampening_routemap is mutually exclusive with
     # dampening_half_time, reuse_time, suppress_time
@@ -89,12 +89,16 @@ class ciscopuppet::demo_bgp {
     dampening_suppress_time       => 3,
     dampening_max_suppress_time   => 4,
     #dampening_routemap            => default,
+
+    networks                      => $ipv4_networks,
+    redistribute                  => $ipv4_redistribute,
   }
 
   # --------------------------------------------------------------------------#
   # Configure Address Family IPv6 Unicast                                     #
   # --------------------------------------------------------------------------#
   $ipv6_networks = [['192:168::5:0/64', 'nrtemap1'], ['192:168::6:0/64']]
+  $ipv6_redistribute = [['eigrp 1', 'e_v6'], ['ospfv3 3',  'o_v6']]
   cisco_bgp_af { 'ipv6_default':
     ensure                        => present,
     asn                           => 55.77,
@@ -112,7 +116,6 @@ class ciscopuppet::demo_bgp {
     additional_paths_selection    => 'RouteMap',
     additional_paths_send         => true,
     dampen_igp_metric             => 55,
-    networks                      => $ipv6_networks,
 
     # dampening_routemap is mutually exclusive with
     # dampening_half_time, reuse_time, suppress_time
@@ -124,6 +127,9 @@ class ciscopuppet::demo_bgp {
     #dampening_suppress_time       => 3,
     #dampening_max_suppress_time   => 4,
     dampening_routemap            => 'RouteMap',
+
+    networks                      => $ipv6_networks,
+    redistribute                  => $ipv6_redistribute,
   }
 
   #---------------------------------------------------------------------------#
