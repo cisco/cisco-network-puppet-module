@@ -239,8 +239,8 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   end # property client_to_client
 
   newproperty(:dampen_igp_metric) do
-    desc "Specify dampen value for IGP metric-related changes, in seconds.
-          Valid values are Integer, keyword 'default'."
+    desc 'Specify dampen value for IGP metric-related changes, in seconds. ' \
+          "Valid values are Integer, keyword 'default'."
 
     munge do |value|
       begin
@@ -254,15 +254,15 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   end # property dampen_igp_metric
 
   newproperty(:dampening_state) do
-    desc "Enable/disable route-flap dampening.
-          Valid values are true, false or 'default'"
+    desc 'Enable/disable route-flap dampening. ' \
+          "Valid values are true, false or 'default'."
 
     newvalues(:true, :false, :default)
   end # property dampening
 
   newproperty(:dampening_half_time) do
-    desc "Specify decay half-life in minutes for route-flap dampening.
-          Valid values are Integer, keyword 'default'."
+    desc 'Specify decay half-life in minutes for route-flap dampening. ' \
+          "Valid values are Integer, keyword 'default'."
 
     munge do |value|
       begin
@@ -276,8 +276,8 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   end # property dampening_half_time
 
   newproperty(:dampening_max_suppress_time) do
-    desc "Specify max suppress time for route-flap dampening stable route.
-          Valid values are Integer, keyword 'default'."
+    desc 'Specify max suppress time for route-flap dampening stable route. ' \
+          "Valid values are Integer, keyword 'default'."
 
     munge do |value|
       begin
@@ -291,8 +291,8 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   end # property dampening_max_suppress_time
 
   newproperty(:dampening_reuse_time) do
-    desc "Specify route reuse time for route-flap dampening.
-          Valid values are Integer, keyword 'default'."
+    desc 'Specify route reuse time for route-flap dampening. ' \
+          "Valid values are Integer, keyword 'default'."
 
     munge do |value|
       begin
@@ -306,8 +306,8 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   end # property dampening_reuse_time
 
   newproperty(:dampening_routemap) do
-    desc "Specify routemap for route-flap dampening.
-          Valid values are a string defining the name of the route-map."
+    desc 'Specify routemap for route-flap dampening. ' \
+          'Valid values are a string defining the name of the route-map.'
 
     validate do |value|
       fail("'dampening_routemap' value must be a string") unless
@@ -321,8 +321,8 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   end # property dampening_routemap
 
   newproperty(:dampening_suppress_time) do
-    desc "Specify route suppress time for route-flap dampening.
-          Valid values are Integer, keyword 'default'."
+    desc 'Specify route suppress time for route-flap dampening. ' \
+          "Valid values are Integer, keyword 'default'."
 
     munge do |value|
       begin
@@ -343,8 +343,10 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   end # property :default_information_originate
 
   newproperty(:maximum_paths) do
-    desc "Configures the maximum number of equal-cost paths for load sharing.
-          Valid values are integers in the range 1 - 64, default value is 1."
+    desc 'Configures the maximum number of equal-cost paths for load ' \
+          'sharing. Valid values are integers in the range 1 - 64, ' \
+          'default value is 1.'
+
     munge do |value|
       value = :default if value == 'default'
       unless value == :default
@@ -357,8 +359,10 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   end # property :maximum_paths
 
   newproperty(:maximum_paths_ibgp) do
-    desc "Configures the maximum number of ibgp equal-cost paths for load sharing.
-          Valid values are integers in the range 1 - 64, default value is 1."
+    desc 'Configures the maximum number of ibgp equal-cost paths for load ' \
+         'sharing. Valid values are integers in the range 1 - 64, default ' \
+         'value is 1.'
+
     munge do |value|
       value = :default if value == 'default'
       unless value == :default

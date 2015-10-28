@@ -78,15 +78,16 @@ class ciscopuppet::demo_bgp {
     additional_paths_send         => true,
     dampen_igp_metric             => 55,
     networks                      => $ipv4_networks,
+
+    # dampening_routemap is mutually exclusive with
+    # dampening_half_time, reuse_time, suppress_time
+    # and max_suppress_time.
+    #
     dampening_state               => true,
     dampening_half_time           => 1,
     dampening_reuse_time          => 2,
     dampening_suppress_time       => 3,
     dampening_max_suppress_time   => 4,
-    # dampening_routemap is mutually exclusive with
-    # dampening_half_time, reuse_time, suppress_time
-    # and max_suppress_time.
-    #
     #dampening_routemap            => default,
   }
 
@@ -94,7 +95,6 @@ class ciscopuppet::demo_bgp {
   # Configure Address Family IPv6 Unicast                                     #
   # --------------------------------------------------------------------------#
   $ipv6_networks = [['192:168::5:0/64', 'nrtemap1'], ['192:168::6:0/64']]
-  #$networks = []
   cisco_bgp_af { 'ipv6_default':
     ensure                        => present,
     asn                           => 55.77,
@@ -113,15 +113,16 @@ class ciscopuppet::demo_bgp {
     additional_paths_send         => true,
     dampen_igp_metric             => 55,
     networks                      => $ipv6_networks,
+
+    # dampening_routemap is mutually exclusive with
+    # dampening_half_time, reuse_time, suppress_time
+    # and max_suppress_time.
+    #
     dampening_state               => true,
     #dampening_half_time           => 1,
     #dampening_reuse_time          => 2,
     #dampening_suppress_time       => 3,
     #dampening_max_suppress_time   => 4,
-    # dampening_routemap is mutually exclusive with
-    # dampening_half_time, reuse_time, suppress_time
-    # and max_suppress_time.
-    #
     dampening_routemap            => 'RouteMap',
   }
 

@@ -40,8 +40,8 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
   BGP_AF_NON_BOOL_PROPS = [
     :additional_paths_selection,
     :dampen_igp_metric,
-    :dampening_max_suppress_time,
     :dampening_half_time,
+    :dampening_max_suppress_time,
     :dampening_reuse_time,
     :dampening_routemap,
     :dampening_suppress_time,
@@ -96,6 +96,7 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
       val = obj.send(prop)
       current_state[prop] = val.nil? ? nil : val.to_s.to_sym
     end
+    # Call custom networks getter.
     current_state[:networks] = obj.networks
     new(current_state)
   end # self.properties_get
@@ -226,6 +227,11 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
     end
   end
 
+  # Networks requires a custom getter and setter because we are
+  # working with arrays.  When the manifest entry is set to default,
+  # puppet creates an array with the symbol default. [:default].
+  # The net result is the getter needs to return [:default] and
+  # the setter must check the array for symbol :default.
   def networks
     return @property_hash[:networks] if @resource[:networks].nil?
     if @resource[:networks][0] == :default &&
