@@ -205,7 +205,7 @@ test_name "TestCase :: #{testheader}" do
       'connected_check'        => 'false',
       'capability_negotiation' => 'false',
       'dynamic_capability'     => 'false',
-      'ebgp_multihop'          => '1',
+      'ebgp_multihop'          => 'false',
       'local_as'               => '1.1',
       'log_neighbor_changes'   => 'disable',
       'low_memory_exempt'      => 'false',
