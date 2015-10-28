@@ -367,22 +367,74 @@ Address Family Identifier (AFI). Required. Valid values are `ipv4` and `ipv6`.
 ##### `safi`
 Sub Address Family Identifier (SAFI). Required. Valid values are `unicast` and `multicast`.
 
+##### `additional_paths_install`
+install a backup path into the forwarding table and provide prefix
+'independent convergence (PIC) in case of a PE-CE link failure.
+Valid values are true, false, or 'default'
+
+##### `additional_paths_receive`
+Enables the receive capability of additional paths for all of the
+neighbors under this address family for which the capability has
+not been disabled.  Valid values are true, false, or 'default'
+
+##### `additional_paths_selection`
+Configures the capability of selecting additional paths for a prefix.
+Valid values are a string defining the name of the route-map.
+
+##### `additional_paths_send`
+Enables the send capability of additional paths for all of the
+neighbors under this address family for which the capability has
+not been disabled. Valid values are true, false, or 'default'
+
 ##### `client_to_client`
-`client-to-client reflection`. Valid values are true and false.
+Configure client-to-client route reflection. Valid values are true and false.
+
+##### `dampen_igp_metric`
+Specify dampen value for IGP metric-related changes, in seconds.
+Valid values are Integer, keyword 'default'.
+
+##### `dampening_state`
+Enable/disable route-flap dampening. Valid values are true, false or 'default'
+
+##### `dampening_half_time`
+Specify decay half-life in minutes for route-flap dampening.
+Valid values are Integer, keyword 'default'.
+
+##### `dampening_max_suppress_time`
+Specify max suppress time for route-flap dampening stable route.
+Valid values are Integer, keyword 'default'.
+
+##### `dampening_reuse_time`
+Specify route reuse time for route-flap dampening.
+Valid values are Integer, keyword 'default'.
+
+##### `dampening_routemap`
+Specify routemap for route-flap dampening.
+Valid values are a string defining the name of the route-map.
+
+##### `dampening_suppress_time`
+Specify route suppress time for route-flap dampening.
+Valid values are Integer, keyword 'default'.
 
 ##### `default_information_originate`
 `default-information originate`. Valid values are true and false.
 
-##### `maximum_path`
-Configures the maximum number of equal-cost paths for load sharing. Valid value is an integer in the range 1-64.
-Default value is 1.
+##### `maximum_paths`
+Configures the maximum number of equal-cost paths for load sharing. Valid value
+is an integer in the range 1-64. Default value is 1.
 
 ##### `maximum_paths_ibgp`
-Configures the maximum number of ibgp equal-cost paths for load sharing. Valid value is an integer in the range 1-64.
+Configures the maximum number of ibgp equal-cost paths for load
+sharing. Valid value is an integer in the range 1-64.
 Default value is 1.
 
 ##### `next_hop_route_map`
-`nexthop route-map`. Valid values are a string defining a route-map.
+Configure route map for valid nexthops. Valid values are a string
+defining the name of the route-map'.
+
+##### `next_hop_route_map`
+Networks to configure. Valid values match the following format.
+[['IPv4|IPv6 Address','Optional Routemap']]
 
 --
 ### Type: cisco_bgp_neighbor
