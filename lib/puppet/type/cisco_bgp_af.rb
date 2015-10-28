@@ -455,6 +455,30 @@ Puppet::Type.newtype(:cisco_bgp_af) do
         fail(":dampening_routemap should not be set when #{properties} are set")
       end
     end
-
   end
+
+  newproperty(:redistribute, array_matching: :all) do
+    format = "[['protocol'], ['route-map string]]"
+    desc 'A list of redistribute directives. Multiple redistribute entries ' \
+         'are allowed. The list must be in the form of a nested array: the ' \
+         'first entry of each array defines the source-protocol to ' \
+         'redistribute from; the second entry defines a route-map name. ' \
+         'A route-map is highly advised but may be optional on some ' \
+         'platforms, in which case it may be omitted from the array list.'
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property :redistribute
 end
