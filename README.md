@@ -422,7 +422,7 @@ A list of redistribute directives. Multiple redistribute entries are allowed. Th
 
 Example: Platform requiring route-maps
 
-```
+```ruby
 redistribute => [['direct',  'rm_direct'],
                  ['lisp',    'rm_lisp'],
                  ['static',  'rm_static'],
@@ -433,7 +433,7 @@ redistribute => [['direct',  'rm_direct'],
 ```
 Example: Platform with optional route-maps
 
-```
+```ruby
 redistribute => [['direct'],
                  ['lisp',    'rm_lisp'],
                  ['static'],
