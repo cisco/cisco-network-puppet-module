@@ -337,50 +337,6 @@ Puppet::Type.newtype(:cisco_bgp_af) do
     end
   end # property dampening_suppress_time
 
-  # dampening validation
-  # Make sure dampening parameters are set properly in the manifest.
-  validate do
-    fail("The 'asn' parameter must be set in the manifest.") if self[:asn].nil?
-    fail("The 'afi' parameter must be set in the manifest.") if self[:afi].nil?
-    fail("The 'safi' parameter must be set in the manifest.") if self[:safi].nil?
-
-    # Don't need to process remaining checks if ensure => absent.
-    return if self[:ensure] == :absent
-
-    def route_flap_properties?
-      self[:dampening_half_time] || self[:dampening_reuse_time] ||
-        self[:dampening_suppress_time] || self[:dampening_max_suppress_time]
-    end
-
-    def all_properties?
-      self[:dampening_half_time] || self[:dampening_reuse_time] ||
-        self[:dampening_suppress_time] || self[:dampening_max_suppress_time] ||
-        self[:dampening_routemap]
-    end
-    properties = [
-      :dampening_half_time,
-      :dampening_reuse_time,
-      :dampening_suppress_time,
-      :dampening_max_suppress_time,
-      :dampening_routemap,
-    ]
-    if all_properties? && self[:dampening_state] == :false
-      fail(":dampening_state cannot be 'false' when #{properties} are set")
-    end
-    # If any of these properties are set, then all of them must be.
-    if route_flap_properties?
-      properties.delete(:dampening_routemap)
-      properties.each do |prop|
-        if self[prop].nil?
-          fail("Must set all or none of the following properties #{properties}")
-        end
-      end
-      if self[:dampening_routemap]
-        fail(":dampening_routemap should not be set when #{properties} are set")
-      end
-    end
-  end
-
   newproperty(:default_information_originate) do
     desc 'Control distribution of default information. Valid values are, ' \
       "true, false, or 'default'"
@@ -482,4 +438,50 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       end
     end
   end # property :redistribute
+
+  #
+  # VALIDATIONS
+  #
+  validate do
+    fail("The 'asn' parameter must be set in the manifest.") if self[:asn].nil?
+    fail("The 'afi' parameter must be set in the manifest.") if self[:afi].nil?
+    fail("The 'safi' parameter must be set in the manifest.") if self[:safi].nil?
+
+    # Don't need to process remaining checks if ensure => absent.
+    return if self[:ensure] == :absent
+
+    def route_flap_properties?
+      self[:dampening_half_time] || self[:dampening_reuse_time] ||
+        self[:dampening_suppress_time] || self[:dampening_max_suppress_time]
+    end
+
+    def all_properties?
+      self[:dampening_half_time] || self[:dampening_reuse_time] ||
+        self[:dampening_suppress_time] || self[:dampening_max_suppress_time] ||
+        self[:dampening_routemap]
+    end
+    properties = [
+      :dampening_half_time,
+      :dampening_reuse_time,
+      :dampening_suppress_time,
+      :dampening_max_suppress_time,
+      :dampening_routemap,
+    ]
+    if all_properties? && self[:dampening_state] == :false
+      fail(":dampening_state cannot be 'false' when #{properties} are set")
+    end
+    # If any of these properties are set, then all of them must be.
+    if route_flap_properties?
+      properties.delete(:dampening_routemap)
+      properties.each do |prop|
+        if self[prop].nil?
+          fail("Must set all or none of the following properties #{properties}")
+        end
+      end
+      if self[:dampening_routemap]
+        fail(":dampening_routemap should not be set when #{properties} are set")
+      end
+    end
+  end
+
 end
