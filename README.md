@@ -417,6 +417,31 @@ Example: IPv6 Networks Array
 ]
 ```
 
+##### `redistribute`
+A list of redistribute directives. Multiple redistribute entries are allowed. The list must be in the form of a nested array: the first entry of each array defines the source-protocol to redistribute from; the second entry defines a route-map/route-policy name. A route-map/route-policy is highly advised but may be optional on some platforms, in which case it may be omitted from the array list.
+
+Example: Platform requiring route-maps
+
+```ruby
+redistribute => [['direct',  'rm_direct'],
+                 ['lisp',    'rm_lisp'],
+                 ['static',  'rm_static'],
+                 ['eigrp 1', 'rm_eigrp'],
+                 ['isis 2',  'rm_isis'],
+                 ['ospf 3',  'rm_ospf'],
+                 ['rip 4',   'rm_rip']]
+```
+Example: Platform with optional route-maps
+
+```ruby
+redistribute => [['direct'],
+                 ['lisp',    'rm_lisp'],
+                 ['static'],
+                 ['eigrp 1', 'rm_eigrp'],
+                 ['isis 2',  'rm_isis'],
+                 ['ospf 3',  'rm_ospf'],
+                 ['rip 4']]
+```
 --
 ### Type: cisco_bgp_neighbor
 

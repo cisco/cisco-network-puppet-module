@@ -32,6 +32,7 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   Example:
 
   $network_list = [['192.168.5.0/24', 'rtmap1'], ['192.168.10.0/24']]
+  $redistribute = [['eigrp 1', 'e_rtmap_29'], ['ospf 3',  'o_rtmap']]
   ~~~puppet
     cisco_bgp_af { 'raleigh':
       ensure                                 => present,
@@ -56,6 +57,7 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       maximum_paths_ibgp                     => '7',
       next_hop_route_map                     => 'Default_Route_Map',
       network                                => $network_list,
+      redistribute                           => $redistribute,
     }
   ~~~
 
@@ -454,4 +456,29 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       end
     end
   end
+
+  newproperty(:redistribute, array_matching: :all) do
+    format = "[['protocol'], ['route-map string]]"
+    desc 'A list of redistribute directives. Multiple redistribute entries ' \
+         'are allowed. The list must be in the form of a nested array: the ' \
+         'first entry of each array defines the source-protocol to ' \
+         'redistribute from; the second entry defines a route-map name. ' \
+         'A route-map is highly advised but may be optional on some ' \
+         'platforms, in which case it may be omitted from the array list.'
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property :redistribute
 end

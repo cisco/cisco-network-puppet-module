@@ -131,6 +131,7 @@ tests['default_properties'] = {
     maximum_paths_ibgp            => 'default',
     next_hop_route_map            => 'default',
     networks                      => 'default',
+    redistribute                  => 'default',
     ",
 
   :resource_props => {
@@ -296,6 +297,19 @@ tests['non_default_properties_N'] = {
   },
 }
 
+redistribute = [['static', 's_rmap'], ['eigrp 1', 'e_rmap']] # rubocop:disable Style/WordArray
+tests['non_default_properties_R'] = {
+  :desc           => "2.6 Non Default Properties: 'R' commands",
+  :title_pattern  => '2 blue ipv4 unicast',
+  :manifest_props => "
+    redistribute => #{redistribute},
+  ",
+
+  :resource_props => {
+    'redistribute' => "#{redistribute}",
+  },
+}
+
 tests['title_patterns'] = {
   :manifest_props => '',
   :resource_props => { 'ensure' => 'present' },
@@ -389,6 +403,7 @@ test_name "TestCase :: #{testheader}" do
   test_harness_bgp_af(tests, 'non_default_properties_Dampening_false')
   test_harness_bgp_af(tests, 'non_default_properties_M')
   test_harness_bgp_af(tests, 'non_default_properties_N')
+  test_harness_bgp_af(tests, 'non_default_properties_R')
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
