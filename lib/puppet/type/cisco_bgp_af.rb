@@ -483,5 +483,4 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       end
     end
   end
-
 end
