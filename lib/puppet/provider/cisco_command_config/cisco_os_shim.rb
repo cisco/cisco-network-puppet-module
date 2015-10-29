@@ -20,7 +20,7 @@ require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
 
 Puppet::Type.type(:cisco_command_config).provide(:cisco_os_shim) do
   confine feature: :cisco_node_utils
-  defaultfor operatingsystem: :nexus
+  defaultfor operatingsystem: [:ios_xr, :nexus]
 
   def initialize(value={})
     super(value)
