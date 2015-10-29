@@ -297,7 +297,7 @@ tests['non_default_properties_N'] = {
   },
 }
 
-redistribute = [['static', 's_rmap'], ['eigrp 1', 'e_rmap']]
+redistribute = [['static', 's_rmap'], ['eigrp 1', 'e_rmap']] # rubocop:disable Style/WordArray
 tests['non_default_properties_R'] = {
   :desc           => "2.6 Non Default Properties: 'R' commands",
   :title_pattern  => '2 blue ipv4 unicast',
