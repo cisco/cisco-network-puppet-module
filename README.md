@@ -367,6 +367,9 @@ Address Family Identifier (AFI). Required. Valid values are `ipv4` and `ipv6`.
 ##### `safi`
 Sub Address Family Identifier (SAFI). Required. Valid values are `unicast` and `multicast`.
 
+##### `advertise_l2vpn_evpn`
+advertise evpn routes. Valid values are true and false.
+
 ##### `client_to_client`
 `client-to-client reflection`. Valid values are true and false.
 

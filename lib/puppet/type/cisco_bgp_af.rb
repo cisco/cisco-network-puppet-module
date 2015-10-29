@@ -39,6 +39,7 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       afi                                    => 'ipv4',
       safi                                   => 'unicast',
 
+      advertise_l2vpn_evpn                   => 'true',
       client_to_client                       => 'true',
       default_information_originate          => 'true',
       maximum_paths                          => '7',
@@ -184,6 +185,12 @@ Puppet::Type.newtype(:cisco_bgp_af) do
     fail("The 'afi' parameter must be set in the manifest.") if self[:afi].nil?
     fail("The 'safi' parameter must be set in the manifest.") if self[:safi].nil?
   end
+
+  newproperty(:advertise_l2vpn_evpn) do
+    desc "advertise EVPN routes. Valid values are true, false, or 'default'"
+
+    newvalues(:true, :false, :default)
+  end # property advertise_l2vpn_evpn
 
   newproperty(:client_to_client) do
     desc "client_to_client. Valid values are true, false, or 'default'"

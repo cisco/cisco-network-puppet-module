@@ -44,6 +44,7 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
   ]
 
   BGP_AF_BOOL_PROPS = [
+    :advertise_l2vpn_evpn,
     :client_to_client,
     :default_information_originate,
   ]

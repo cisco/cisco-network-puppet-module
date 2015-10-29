@@ -117,6 +117,7 @@ tests['default_properties'] = {
   :desc           => '1.1 Default Properties',
   :title_pattern  => '2 blue ipv4 unicast',
   :manifest_props => "
+    advertise_l2vpn_evpn          => 'default',
     client_to_client              => 'default',
     default_information_originate => 'default',
     maximum_paths                 => 'default',
@@ -124,6 +125,7 @@ tests['default_properties'] = {
     ",
 
   :resource_props => {
+    'advertise_l2vpn_evpn'          => 'false',
     'client_to_client'              => 'false',
     'default_information_originate' => 'false',
     'maximum_paths'                 => '1',
@@ -134,8 +136,19 @@ tests['default_properties'] = {
 #
 # non_default_properties
 #
+tests['non_default_properties_A'] = {
+  :desc           => "2.1 Non Default Properties: 'A' commands",
+  :title_pattern  => '2 blue ipv4 unicast',
+  :manifest_props => "
+    advertise_l2vpn_evpn                => false,
+  ",
+
+  :resource_props => {
+    'advertise_l2vpn_evpn'              => 'false',
+  },
+}
 tests['non_default_properties_C'] = {
-  :desc           => "2.1 Non Default Properties: 'C' commands",
+  :desc           => "2.2 Non Default Properties: 'C' commands",
   :title_pattern  => '2 blue ipv4 unicast',
   :manifest_props => "
     client_to_client                => false,
@@ -147,7 +160,7 @@ tests['non_default_properties_C'] = {
 }
 
 tests['non_default_properties_D'] = {
-  :desc           => "2.2 Non Default Properties: 'D' commands",
+  :desc           => "2.3 Non Default Properties: 'D' commands",
   :title_pattern  => '2 blue ipv4 unicast',
   :manifest_props => "
     default_information_originate   => true,
@@ -159,7 +172,7 @@ tests['non_default_properties_D'] = {
 }
 
 tests['non_default_properties_M'] = {
-  :desc           => "2.3 Non Default Properties: 'M' commands",
+  :desc           => "2.4 Non Default Properties: 'M' commands",
   :title_pattern  => '2 blue ipv4 unicast',
   :manifest_props => "
     maximum_paths                   => 9,
@@ -174,7 +187,7 @@ tests['non_default_properties_M'] = {
 }
 
 tests['non_default_properties_N'] = {
-  :desc           => "2.4 Non Default Properties: 'N' commands",
+  :desc           => "2.5 Non Default Properties: 'N' commands",
   :title_pattern  => '2 blue ipv4 unicast',
   :manifest_props => "
     next_hop_route_map              => 'RouteMap',
@@ -269,6 +282,7 @@ test_name "TestCase :: #{testheader}" do
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   node_feature_cleanup(agent, 'bgp')
 
+  test_harness_bgp_af(tests, 'non_default_properties_A')
   test_harness_bgp_af(tests, 'non_default_properties_C')
   test_harness_bgp_af(tests, 'non_default_properties_D')
   test_harness_bgp_af(tests, 'non_default_properties_M')
