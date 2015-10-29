@@ -376,21 +376,6 @@ Puppet::Type.newtype(:cisco_bgp_af) do
     end
   end # property :maximum_paths_ibgp
 
-  newproperty(:next_hop_route_map) do
-    desc 'Configure route map for valid nexthops. Valid values are a string ' \
-      "defining the name of the route-map'."
-
-    validate do |value|
-      fail("'next_hop_route_map' value must be a string") unless
-        value.is_a? String
-    end
-
-    munge do |value|
-      value = :default if value == 'default'
-      value
-    end
-  end # property next_hop_route_map
-
   newproperty(:networks, array_matching: :all) do
     format = "[['network string'], ['routemap string]]"
     desc "Networks to configure. Valid values match format #{format}."
@@ -414,7 +399,49 @@ Puppet::Type.newtype(:cisco_bgp_af) do
     end
   end # property networks
 
-  # Make sure dampening parameters are set properly in the manifest.
+  newproperty(:next_hop_route_map) do
+    desc 'Configure route map for valid nexthops. Valid values are a string ' \
+      "defining the name of the route-map'."
+
+    validate do |value|
+      fail("'next_hop_route_map' value must be a string") unless
+        value.is_a? String
+    end
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property next_hop_route_map
+
+  newproperty(:redistribute, array_matching: :all) do
+    format = "[['protocol'], ['route-map string]]"
+    desc 'A list of redistribute directives. Multiple redistribute entries ' \
+         'are allowed. The list must be in the form of a nested array: the ' \
+         'first entry of each array defines the source-protocol to ' \
+         'redistribute from; the second entry defines a route-map name. ' \
+         'A route-map is highly advised but may be optional on some ' \
+         'platforms, in which case it may be omitted from the array list.'
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property :redistribute
+
+  #
+  # VALIDATIONS
+  #
   validate do
     fail("The 'asn' parameter must be set in the manifest.") if self[:asn].nil?
     fail("The 'afi' parameter must be set in the manifest.") if self[:afi].nil?
@@ -456,29 +483,4 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       end
     end
   end
-
-  newproperty(:redistribute, array_matching: :all) do
-    format = "[['protocol'], ['route-map string]]"
-    desc 'A list of redistribute directives. Multiple redistribute entries ' \
-         'are allowed. The list must be in the form of a nested array: the ' \
-         'first entry of each array defines the source-protocol to ' \
-         'redistribute from; the second entry defines a route-map name. ' \
-         'A route-map is highly advised but may be optional on some ' \
-         'platforms, in which case it may be omitted from the array list.'
-
-    # Override puppet's insync method, which checks whether current value is
-    # equal to value specified in manifest.  Make sure puppet considers
-    # 2 arrays with same elements but in different order as equal.
-    def insync?(is)
-      (is.size == should.size && is.sort == should.sort)
-    end
-
-    munge do |value|
-      begin
-        return value = :default if value == 'default'
-        fail("Value must match format #{format}") unless value.is_a?(Array)
-        value
-      end
-    end
-  end # property :redistribute
 end

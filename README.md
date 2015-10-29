@@ -390,9 +390,6 @@ Configures the maximum number of equal-cost paths for load sharing. Valid value 
 ##### `maximum_paths_ibgp`
 Configures the maximum number of ibgp equal-cost paths for load sharing. Valid value is an integer in the range 1-64. Default value is 1.
 
-##### `next_hop_route_map`
-Configure route map for valid nexthops. Valid values are a string defining the name of the route-map.
-
 ##### `networks`
 Networks to configure. Valid value is a list of network prefixes to advertise.  The list must be in the form of an array.  Each entry in the array must include a prefix address and an optional route-map.
 
@@ -416,6 +413,9 @@ Example: IPv6 Networks Array
  ['192:168::/32]
 ]
 ```
+
+##### `next_hop_route_map`
+Configure route map for valid nexthops. Valid values are a string defining the name of the route-map.
 
 ##### `redistribute`
 A list of redistribute directives. Multiple redistribute entries are allowed. The list must be in the form of a nested array: the first entry of each array defines the source-protocol to redistribute from; the second entry defines a route-map/route-policy name. A route-map/route-policy is highly advised but may be optional on some platforms, in which case it may be omitted from the array list.
