@@ -287,13 +287,13 @@ tests['non_default_properties_N'] = {
   :desc           => "2.5 Non Default Properties: 'N' commands",
   :title_pattern  => '2 blue ipv4 unicast',
   :manifest_props => "
-    next_hop_route_map              => 'RouteMap',
     networks                        => #{networks},
+    next_hop_route_map              => 'RouteMap',
   ",
 
   :resource_props => {
-    'next_hop_route_map' => 'RouteMap',
     'networks'           => "#{networks}",
+    'next_hop_route_map' => 'RouteMap',
   },
 }
 

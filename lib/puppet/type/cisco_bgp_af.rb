@@ -337,83 +337,7 @@ Puppet::Type.newtype(:cisco_bgp_af) do
     end
   end # property dampening_suppress_time
 
-  newproperty(:default_information_originate) do
-    desc 'Control distribution of default information. Valid values are, ' \
-      "true, false, or 'default'"
-
-    newvalues(:true, :false, :default)
-  end # property :default_information_originate
-
-  newproperty(:maximum_paths) do
-    desc 'Configures the maximum number of equal-cost paths for load ' \
-          'sharing. Valid values are integers in the range 1 - 64, ' \
-          'default value is 1.'
-
-    munge do |value|
-      value = :default if value == 'default'
-      unless value == :default
-        value = value.to_i
-        fail 'maximum_paths value should be in the range 1 - 64' unless
-          value.between?(1, 64)
-      end
-      value
-    end
-  end # property :maximum_paths
-
-  newproperty(:maximum_paths_ibgp) do
-    desc 'Configures the maximum number of ibgp equal-cost paths for load ' \
-         'sharing. Valid values are integers in the range 1 - 64, default ' \
-         'value is 1.'
-
-    munge do |value|
-      value = :default if value == 'default'
-      unless value == :default
-        value = value.to_i
-        fail 'maximum_paths_ibgp value should be in the range of 1 - 64' unless
-          value.between?(1, 64)
-      end
-      value
-    end
-  end # property :maximum_paths_ibgp
-
-  newproperty(:next_hop_route_map) do
-    desc 'Configure route map for valid nexthops. Valid values are a string ' \
-      "defining the name of the route-map'."
-
-    validate do |value|
-      fail("'next_hop_route_map' value must be a string") unless
-        value.is_a? String
-    end
-
-    munge do |value|
-      value = :default if value == 'default'
-      value
-    end
-  end # property next_hop_route_map
-
-  newproperty(:networks, array_matching: :all) do
-    format = "[['network string'], ['routemap string]]"
-    desc "Networks to configure. Valid values match format #{format}."
-
-    # Override puppet's insync method, which checks whether current value is
-    # equal to value specified in manifest.  Make sure puppet considers
-    # 2 arrays with same elements but in different order as equal.
-    def insync?(is)
-      (is.size == should.size && is.sort == should.sort)
-    end
-
-    munge do |value|
-      begin
-        return value = :default if value == 'default'
-        fail("Value must match format #{format}") unless value.is_a?(Array)
-        if Cisco::Utils.process_network_mask(value[0]).split('/')[1].nil?
-          fail("Must supply network mask for #{value[0]}")
-        end
-        value
-      end
-    end
-  end # property networks
-
+  # dampening validation
   # Make sure dampening parameters are set properly in the manifest.
   validate do
     fail("The 'asn' parameter must be set in the manifest.") if self[:asn].nil?
@@ -456,6 +380,83 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       end
     end
   end
+
+  newproperty(:default_information_originate) do
+    desc 'Control distribution of default information. Valid values are, ' \
+      "true, false, or 'default'"
+
+    newvalues(:true, :false, :default)
+  end # property :default_information_originate
+
+  newproperty(:maximum_paths) do
+    desc 'Configures the maximum number of equal-cost paths for load ' \
+          'sharing. Valid values are integers in the range 1 - 64, ' \
+          'default value is 1.'
+
+    munge do |value|
+      value = :default if value == 'default'
+      unless value == :default
+        value = value.to_i
+        fail 'maximum_paths value should be in the range 1 - 64' unless
+          value.between?(1, 64)
+      end
+      value
+    end
+  end # property :maximum_paths
+
+  newproperty(:maximum_paths_ibgp) do
+    desc 'Configures the maximum number of ibgp equal-cost paths for load ' \
+         'sharing. Valid values are integers in the range 1 - 64, default ' \
+         'value is 1.'
+
+    munge do |value|
+      value = :default if value == 'default'
+      unless value == :default
+        value = value.to_i
+        fail 'maximum_paths_ibgp value should be in the range of 1 - 64' unless
+          value.between?(1, 64)
+      end
+      value
+    end
+  end # property :maximum_paths_ibgp
+
+  newproperty(:networks, array_matching: :all) do
+    format = "[['network string'], ['routemap string]]"
+    desc "Networks to configure. Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        if Cisco::Utils.process_network_mask(value[0]).split('/')[1].nil?
+          fail("Must supply network mask for #{value[0]}")
+        end
+        value
+      end
+    end
+  end # property networks
+
+  newproperty(:next_hop_route_map) do
+    desc 'Configure route map for valid nexthops. Valid values are a string ' \
+      "defining the name of the route-map'."
+
+    validate do |value|
+      fail("'next_hop_route_map' value must be a string") unless
+        value.is_a? String
+    end
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property next_hop_route_map
 
   newproperty(:redistribute, array_matching: :all) do
     format = "[['protocol'], ['route-map string]]"
