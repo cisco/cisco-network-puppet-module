@@ -21,7 +21,7 @@ class ciscopuppet::demo_interface {
     description         => 'managed by puppet',
     ipv4_address        => '192.168.55.55',
     ipv4_netmask_length => 24,
-    mtu                 => 1448,
+    mtu                 => 1600,
     vrf                 => 'test',
   }
 
