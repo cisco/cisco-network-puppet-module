@@ -28,11 +28,13 @@ class ciscopuppet::demo_all {
 
   include ciscopuppet::demo_patching
   include ciscopuppet::demo_command_config
+  include ciscopuppet::demo_bgp
   include ciscopuppet::demo_interface
   include ciscopuppet::demo_vlan
   include ciscopuppet::demo_ospf
   include ciscopuppet::demo_tacacs_server
   include ciscopuppet::demo_tacacs_server_host
+  include ciscopuppet::demo_vrf
   include ciscopuppet::demo_vtp
   include ciscopuppet::demo_snmp
 }
