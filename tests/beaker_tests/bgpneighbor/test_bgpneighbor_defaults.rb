@@ -85,7 +85,7 @@ def create_bgp_neighbor_defaults(tests, id, title, string=false)
 
   tests[id][:resource] = {
     'ensure'                 => 'present',
-    'ebgp_multihop'          => '1',
+    'ebgp_multihop'          => 'false',
     'local_as'               => '0',
     'low_memory_exempt'      => 'false',
     'maximum_peers'          => '0',

@@ -38,15 +38,28 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
   # NOTE: For maintainability please keep this list in alphabetical order and
   # one property per line.
   BGP_AF_NON_BOOL_PROPS = [
-    :next_hop_route_map,
+    :additional_paths_selection,
+    :dampen_igp_metric,
+    :dampening_half_time,
+    :dampening_max_suppress_time,
+    :dampening_reuse_time,
+    :dampening_routemap,
+    :dampening_suppress_time,
     :maximum_paths,
     :maximum_paths_ibgp,
+    :networks,
+    :next_hop_route_map,
+    :redistribute,
   ]
 
   BGP_AF_BOOL_PROPS = [
     :advertise_l2vpn_evpn,
+    :additional_paths_install,
+    :additional_paths_receive,
+    :additional_paths_send,
     :client_to_client,
     :default_information_originate,
+    :dampening_state,
   ]
 
   BGP_AF_ALL_PROPS = BGP_AF_NON_BOOL_PROPS + BGP_AF_BOOL_PROPS
@@ -85,6 +98,9 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
       val = obj.send(prop)
       current_state[prop] = val.nil? ? nil : val.to_s.to_sym
     end
+    # networks/redistribute use nested arrays, thus require special handling
+    current_state[:networks] = obj.networks
+    current_state[:redistribute] = obj.redistribute
     new(current_state)
   end # self.properties_get
 
@@ -137,6 +153,117 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
       @af.send("#{prop}=", @property_flush[prop]) if
         @af.respond_to?("#{prop}=")
     end
+    # Custom set methods
+    dampening_set
+  end
+
+  # Property 'dampening' helper and custom setter methods
+  def dampening_enable
+    @af.dampening = '' unless dampening_properties?
+  end
+
+  def dampening_disable
+    @af.dampening = nil
+    @property_flush[:dampening_half_time] = nil
+    @property_flush[:dampening_reuse_time] = nil
+    @property_flush[:dampening_suppress_time] = nil
+    @property_flush[:dampening_max_suppress_time] = nil
+    @property_flush[:dampening_dampening_routemap] = nil
+  end
+
+  def dampening_properties?
+    @property_flush[:dampening_half_time] ||
+      @property_flush[:dampening_reuse_time] ||
+      @property_flush[:dampening_suppress_time] ||
+      @property_flush[:dampening_max_suppress_time] ||
+      @property_flush[:dampening_routemap]
+  end
+
+  def dampening_properties_set
+    if @property_flush[:dampening_half_time]
+      half = @property_flush[:dampening_half_time]
+    else
+      half = @af.dampening_half_time
+    end
+
+    if @property_flush[:dampening_reuse_time]
+      reuse = @property_flush[:dampening_reuse_time]
+    else
+      reuse = @af.dampening_reuse_time
+    end
+
+    if @property_flush[:dampening_suppress_time]
+      suppress = @property_flush[:dampening_suppress_time]
+    else
+      suppress = @af.dampening_suppress_time
+    end
+
+    if @property_flush[:dampening_max_suppress_time]
+      max_suppress = @property_flush[:dampening_max_suppress_time]
+    else
+      max_suppress = @af.dampening_max_suppress_time
+    end
+    @af.dampening = [half, reuse, suppress, max_suppress]
+  end
+
+  def dampening_routemap_set
+    if @property_flush[:dampening_routemap]
+      rtmap = @property_flush[:dampening_routemap]
+    else
+      rtmap = @af.dampening_routemap
+    end
+
+    @af.dampening = rtmap
+  end
+
+  def dampening_set
+    dampening_disable if @property_flush[:dampening_state].to_s == 'false'
+    dampening_enable if @property_flush[:dampening_state].to_s == 'true'
+
+    return if @resource[:dampening_state].to_s == 'false'
+    return unless dampening_properties?
+
+    if @property_flush[:dampening_routemap]
+      dampening_routemap_set
+    else
+      dampening_properties_set
+    end
+  end
+
+  # Networks requires a custom getter and setter because we are
+  # working with arrays.  When the manifest entry is set to default,
+  # puppet creates an array with the symbol default. [:default].
+  # The net result is the getter needs to return [:default] and
+  # the setter must check the array for symbol :default.
+  def networks
+    return @property_hash[:networks] if @resource[:networks].nil?
+    if @resource[:networks][0] == :default &&
+       @property_hash[:networks] == @af.default_networks
+      return [:default]
+    else
+      @property_hash[:networks]
+    end
+  end
+
+  def networks=(should_list)
+    should_list = @af.default_networks if should_list[0] == :default
+    @property_flush[:networks] = should_list
+  end
+
+  # redistribute uses a nested array, thus requires special handling
+  def redistribute
+    return @property_hash[:redistribute] if @resource[:redistribute].nil?
+    if @resource[:redistribute][0] == :default &&
+       @property_hash[:redistribute] == @af.default_redistribute
+      return [:default]
+    else
+      @property_hash[:redistribute]
+    end
+  end
+
+  def redistribute=(should_list)
+    should_list = @af.default_redistribute if should_list[0] == :default
+    @property_flush[:redistribute] = should_list
   end
 
   def flush

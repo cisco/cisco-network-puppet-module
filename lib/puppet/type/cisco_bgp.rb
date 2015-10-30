@@ -136,29 +136,12 @@ Puppet::Type.newtype(:cisco_bgp) do
     desc "BGP autonomous system number.  Valid values are String, Integer in
           ASPLAIN or ASDOT notation"
     validate do |value|
-      unless /^\d+.\d+$/.match(value.to_s) || /^\d+$/.match(value.to_s)
+      unless /^(\d+|\d+\.\d+)$/.match(value.to_s)
         fail("BGP asn #{value} must be specified in ASPLAIN or ASDOT notation")
       end
     end
 
-    # Convert BGP ASN ASDOT+ to ASPLAIN
-    def dot_to_big(dot_str)
-      fail ArgumentError unless dot_str.is_a? String
-      return dot_str unless /\d+\.\d+/.match(dot_str)
-      mask = 0b1111111111111111
-      high = dot_str.to_i
-      low = 0
-      low_match = dot_str.match(/\.(\d+)/)
-      low = low_match[1].to_i if low_match
-      high_bits = (mask & high) << 16
-      low_bits = mask & low
-      high_bits + low_bits
-    end
-    munge do |value|
-      value = :default if value == 'default'
-      value = dot_to_big(String(value)) unless value == :default
-      value
-    end
+    munge { |value| Cisco::RouterBgp.process_asnum(value.to_s) }
   end # param asn
 
   newparam(:vrf, namevar: true) do

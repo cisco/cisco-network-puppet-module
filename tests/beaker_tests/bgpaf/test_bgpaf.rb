@@ -111,25 +111,63 @@ tests = {
 
 # default_properties
 #
-# client_to_client (default is no client-to-client reflection)
-# default_information_originate
 tests['default_properties'] = {
   :desc           => '1.1 Default Properties',
   :title_pattern  => '2 blue ipv4 unicast',
   :manifest_props => "
     advertise_l2vpn_evpn          => 'default',
+    additional_paths_install      => 'default',
+    additional_paths_receive      => 'default',
+    additional_paths_selection    => 'default',
+    additional_paths_send         => 'default',
     client_to_client              => 'default',
+    dampen_igp_metric             => 'default',
+    dampening_state               => 'default',
+    dampening_half_time           => 'default',
+    dampening_max_suppress_time   => 'default',
+    dampening_reuse_time          => 'default',
+    dampening_suppress_time       => 'default',
     default_information_originate => 'default',
     maximum_paths                 => 'default',
     maximum_paths_ibgp            => 'default',
+    next_hop_route_map            => 'default',
+    networks                      => 'default',
+    redistribute                  => 'default',
     ",
 
   :resource_props => {
     'advertise_l2vpn_evpn'          => 'false',
-    'client_to_client'              => 'false',
+    'additional_paths_install'      => 'false',
+    'additional_paths_receive'      => 'false',
+    'additional_paths_send'         => 'false',
+    'client_to_client'              => 'true',
+    'dampen_igp_metric'             => '600',
+    'dampening_state'               => 'true',
+    'dampening_half_time'           => '15',
+    'dampening_max_suppress_time'   => '45',
+    'dampening_reuse_time'          => '750',
+    'dampening_suppress_time'       => '2000',
     'default_information_originate' => 'false',
     'maximum_paths'                 => '1',
     'maximum_paths_ibgp'            => '1',
+  },
+}
+
+# Special case: When dampening_routemap is set to default
+# it means that dampening is enabled without routemap.
+tests['default_dampening_routemap'] = {
+  :desc           => '1.2 Default dampening_routemap',
+  :title_pattern  => '2 blue ipv4 unicast',
+  :manifest_props => "
+    dampening_routemap            => 'default',
+    ",
+
+  :resource_props => {
+    'dampening_state'             => 'true',
+    'dampening_half_time'         => '15',
+    'dampening_max_suppress_time' => '45',
+    'dampening_reuse_time'        => '750',
+    'dampening_suppress_time'     => '2000',
   },
 }
 
@@ -140,13 +178,23 @@ tests['non_default_properties_A'] = {
   :desc           => "2.1 Non Default Properties: 'A' commands",
   :title_pattern  => '2 blue ipv4 unicast',
   :manifest_props => "
-    advertise_l2vpn_evpn                => false,
+    advertise_l2vpn_evpn            => false,
+    additional_paths_install        => true,
+    additional_paths_receive        => true,
+    additional_paths_selection      => 'RouteMap',
+    additional_paths_send           => true,
   ",
 
   :resource_props => {
-    'advertise_l2vpn_evpn'              => 'false',
+    'advertise_l2vpn_evpn'       => 'false',
+    'additional_paths_install'   => 'true',
+    'additional_paths_receive'   => 'true',
+    'additional_paths_selection' => 'RouteMap',
+    'additional_paths_send'      => 'true',
+    'advertise_l2vpn_evpn'       => 'false',
   },
 }
+
 tests['non_default_properties_C'] = {
   :desc           => "2.2 Non Default Properties: 'C' commands",
   :title_pattern  => '2 blue ipv4 unicast',
@@ -163,11 +211,64 @@ tests['non_default_properties_D'] = {
   :desc           => "2.3 Non Default Properties: 'D' commands",
   :title_pattern  => '2 blue ipv4 unicast',
   :manifest_props => "
+    dampen_igp_metric               => 200,
+    dampening_half_time             => 1,
+    dampening_max_suppress_time     => 4,
+    dampening_reuse_time            => 2,
+    dampening_suppress_time         => 3,
     default_information_originate   => true,
   ",
 
   :resource_props => {
+    'dampen_igp_metric'             => '200',
+    'dampening_half_time'           => '1',
+    'dampening_max_suppress_time'   => '4',
+    'dampening_reuse_time'          => '2',
+    'dampening_suppress_time'       => '3',
     'default_information_originate' => 'true',
+  },
+}
+
+# Special case: Just dampening_state, no properties.
+tests['non_default_properties_Dampening_true'] = {
+  :desc           => '2.3.1 Non-Default dampening true',
+  :title_pattern  => '2 blue ipv4 unicast',
+  :manifest_props => "
+    dampening_state               => 'true',
+    ",
+
+  :resource_props => {
+    'dampening_state'             => 'true',
+    'dampening_half_time'         => '15',
+    'dampening_max_suppress_time' => '45',
+    'dampening_reuse_time'        => '750',
+    'dampening_suppress_time'     => '2000',
+  },
+}
+
+tests['non_default_properties_Dampening_false'] = {
+  :desc           => '2.3.2 Non-Default dampening false',
+  :title_pattern  => '2 blue ipv4 unicast',
+  :manifest_props => "
+    dampening_state               => 'false',
+    ",
+
+  :resource_props => {
+    'dampening_state' => 'false',
+  },
+}
+
+# Special case: When dampening_routemap is mutually exclusive
+# with other dampening properties.
+tests['non_default_properties_Dampening_routemap'] = {
+  :desc           => '2.3.3 Non-Default dampening_routemap',
+  :title_pattern  => '2 blue ipv4 unicast',
+  :manifest_props => "
+    dampening_routemap              => 'RouteMap',
+    ",
+
+  :resource_props => {
+    'dampening_routemap'            => 'RouteMap',
   },
 }
 
@@ -186,15 +287,31 @@ tests['non_default_properties_M'] = {
   },
 }
 
+networks = [['192.168.5.0/24', 'nrtemap1'], ['192.168.6.0/32']]
 tests['non_default_properties_N'] = {
   :desc           => "2.5 Non Default Properties: 'N' commands",
   :title_pattern  => '2 blue ipv4 unicast',
   :manifest_props => "
+    networks                        => #{networks},
     next_hop_route_map              => 'RouteMap',
   ",
 
   :resource_props => {
-    'next_hop_route_map'            => 'RouteMap',
+    'networks'           => "#{networks}",
+    'next_hop_route_map' => 'RouteMap',
+  },
+}
+
+redistribute = [['static', 's_rmap'], ['eigrp 1', 'e_rmap']] # rubocop:disable Style/WordArray
+tests['non_default_properties_R'] = {
+  :desc           => "2.6 Non Default Properties: 'R' commands",
+  :title_pattern  => '2 blue ipv4 unicast',
+  :manifest_props => "
+    redistribute => #{redistribute},
+  ",
+
+  :resource_props => {
+    'redistribute' => "#{redistribute}",
   },
 }
 
@@ -278,6 +395,7 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:ensure] = :absent
   test_harness_bgp_af(tests, id)
 
+  test_harness_bgp_af(tests, 'default_dampening_routemap')
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   node_feature_cleanup(agent, 'bgp')
@@ -285,8 +403,13 @@ test_name "TestCase :: #{testheader}" do
   test_harness_bgp_af(tests, 'non_default_properties_A')
   test_harness_bgp_af(tests, 'non_default_properties_C')
   test_harness_bgp_af(tests, 'non_default_properties_D')
+  test_harness_bgp_af(tests, 'non_default_properties_Dampening_routemap')
+  node_feature_cleanup(agent, 'bgp')
+  test_harness_bgp_af(tests, 'non_default_properties_Dampening_true')
+  test_harness_bgp_af(tests, 'non_default_properties_Dampening_false')
   test_harness_bgp_af(tests, 'non_default_properties_M')
   test_harness_bgp_af(tests, 'non_default_properties_N')
+  test_harness_bgp_af(tests, 'non_default_properties_R')
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")

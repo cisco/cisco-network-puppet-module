@@ -239,20 +239,16 @@ Manages configuration of a BGP instance.
 #### Parameters
 
 ##### `ensure`
-Determines whether the config should be present or not on the device. Valid
-values are 'present' and 'absent'.
+Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
 
 ##### `asn`
-BGP autonomous system number.  Valid values are String, Integer in ASPLAIN or
-ASDOT notation.
+BGP autonomous system number.  Valid values are String, Integer in ASPLAIN or ASDOT notation.
 
 ##### `vrf`
-Name of the resource instance. Valid values are string. The name 'default' is
-a valid VRF representing the global bgp.
+Name of the resource instance. Valid values are string. The name 'default' is a valid VRF representing the global bgp.
 
 ##### `router_id`
-Router Identifier (ID) of the BGP router VRF instance.
-Valid values are string, and keyword 'default'.
+Router Identifier (ID) of the BGP router VRF instance. Valid values are string, and keyword 'default'.
 
 ##### `cluster_id`
 Route Reflector Cluster-ID. Valid values are String, keyword 'default'.
@@ -264,78 +260,58 @@ Routing domain confederation AS. Valid values are String, keyword 'default'.
 AS confederation parameters. Valid values are String, keyword 'default'.
 
 ##### `enforce_first_as`
-Enable/Disable enforces the neighbor autonomous system to be the first AS number 
-listed in the AS path attribute for eBGP. Valid values are 'true', 'false', and 'default'.
+Enable/Disable enforces the neighbor autonomous system to be the first AS number listed in the AS path attribute for eBGP. Valid values are 'true', 'false', and 'default'.
 
 ##### `maxas_limit`
-Specify Maximum number of AS numbers allowed in the AS-path attribute.
-Valid values are integers between 1 and 512, or keyword 'default' to disable this property.
+Specify Maximum number of AS numbers allowed in the AS-path attribute. Valid values are integers between 1 and 512, or keyword 'default' to disable this property.
 
 ##### `shutdown`
-Administratively shutdown the BGP protocol. Valid values are 'true', 'false',
-and 'default'.
+Administratively shutdown the BGP protocol. Valid values are 'true', 'false', and 'default'.
 
 ##### `supress_fib_pending`
-Enable/Disable advertise only routes that are programmed in hardware to peers.
-Valid values are 'true', 'false', and 'default'
+Enable/Disable advertise only routes programmed in hardware to peers. Valid values are 'true', 'false', and 'default'
 
 ##### `log_neighbor_changes`
-Enable/Disable message logging for neighbor up/down event.
-Valid values are 'true', 'false', and 'default'
+Enable/Disable message logging for neighbor up/down event. Valid values are 'true', 'false', and 'default'
 
 ##### `bestpath_always_compare_med`
-Enable/Disable MED comparison on paths from different autonomous systems.
-Valid values are 'true', 'false', and 'default'.
+Enable/Disable MED comparison on paths from different autonomous systems. Valid values are 'true', 'false', and 'default'.
 
 ##### `bestpath_aspath_multipath_relax`
-Enable/Disable load sharing across the providers with different
-(but equal-length) AS paths. Valid values are 'true', 'false', and 'default'
+Enable/Disable load sharing across the providers with different (but equal-length) AS paths. Valid values are 'true', 'false', and 'default'
 
 ##### `bestpath_compare_routerid`
-Enable/Disable comparison of router IDs for identical eBGP paths.
-Valid values are 'true', 'false', and 'default'
+Enable/Disable comparison of router IDs for identical eBGP paths. Valid values are 'true', 'false', and 'default'
 
 ##### `bestpath_cost_community_ignore`
-Enable/Disable Ignores the cost community for BGP best-path calculations.
-Valid values are 'true', 'false', and 'default'
+Enable/Disable Ignores the cost community for BGP best-path calculations. Valid values are 'true', 'false', and 'default'
 
 ##### `bestpath_med_confed`
-Enable/Disable enforcement of bestpath to do a MED comparison only between
-paths originated within a confederation. Valid values are 'true', 'false',
-and 'default'
+Enable/Disable enforcement of bestpath to do a MED comparison only between paths originated within a confederation. Valid values are 'true', 'false', and 'default'
 
 ##### `bestpath_med_missing_as_worst`
-Enable/Disable assigns the value of infinity to received routes that do not
-carry the MED attribute, making these routes the least desirable. Valid values
-are 'true', 'false', and 'default'.
+Enable/Disable assigns the value of infinity to received routes that do not carry the MED attribute, making these routes the least desirable. Valid values are 'true', 'false', and 'default'.
 
 ##### `bestpath_med_non_deterministic`
-Enable/Disable deterministic selection of the best MED path from among
-the paths from the same autonomous system. Valid values are 'true', 'false',
-and 'default'
+Enable/Disable deterministic selection of the best MED path from among the paths from the same autonomous system. Valid values are 'true', 'false', and 'default'
 
 ##### `timer_bestpath_limit`
-Specify timeout for the first best path after a restart, in seconds.
-Valid values are Integer, keyword 'default'.
+Specify timeout for the first best path after a restart, in seconds. Valid values are Integer, keyword 'default'.
 
 ##### `timer_bestpath_limit_always`
-Enable/Disable update-delay-always option. Valid values are 'true', 'false',
-and 'default'
+Enable/Disable update-delay-always option. Valid values are 'true', 'false', and 'default'
 
 ##### `graceful_restart`
 Enable/Disable graceful restart. Valid values are 'true', 'false', and 'default'
 
 ##### `graceful_restart_helper`
-Enable/Disable graceful restart helper mode. Valid values are 'true', 'false',
-and 'default'
+Enable/Disable graceful restart helper mode. Valid values are 'true', 'false', and 'default'
 
 ##### `graceful_restart_timers_restart`
-Set maximum time for a restart sent to the BGP peer. Valid values are Integer,
-keyword 'default'.
+Set maximum time for a restart sent to the BGP peer. Valid values are Integer, keyword 'default'.
 
 ##### `graceful_restart_timers_stalepath_time`
-Set maximum time that BGP keeps the stale routes from the restarting BGP peer.
-Valid values are Integer, keyword 'default'.
+Set maximum time that BGP keeps the stale routes from the restarting BGP peer. Valid values are Integer, keyword 'default'.
 
 ##### `timer_bgp_keepalive`
 Set bgp keepalive timer. Valid values are Integer, keyword 'default'.
@@ -355,8 +331,7 @@ Determine whether the interface config should be present or not. Valid values
  are 'present' and 'absent'.
 
 ##### `asn`
-BGP autonomous system number. Required. Valid values are String, Integer in ASPLAIN or
-ASDOT notation.
+BGP autonomous system number. Required. Valid values are String, Integer in ASPLAIN or ASDOT notation.
 
 ##### `vrf`
 VRF name. Required. Valid values are string. The name 'default' is a valid VRF representing the global bgp.
@@ -367,26 +342,111 @@ Address Family Identifier (AFI). Required. Valid values are `ipv4` and `ipv6`.
 ##### `safi`
 Sub Address Family Identifier (SAFI). Required. Valid values are `unicast` and `multicast`.
 
+<<<<<<< HEAD
 ##### `advertise_l2vpn_evpn`
 advertise evpn routes. Valid values are true and false.
+=======
+##### `additional_paths_install`
+install a backup path into the forwarding table and provide prefix 'independent convergence (PIC) in case of a PE-CE link failure. Valid values are true, false, or 'default'
+
+##### `additional_paths_receive`
+Enables the receive capability of additional paths for all of the neighbors under this address family for which the capability has not been disabled.  Valid values are true, false, or 'default'
+
+##### `additional_paths_selection`
+Configures the capability of selecting additional paths for a prefix. Valid values are a string defining the name of the route-map.
+
+##### `additional_paths_send`
+Enables the send capability of additional paths for all of the neighbors under this address family for which the capability has not been disabled. Valid values are true, false, or 'default'
+>>>>>>> upstream/feature/bgp
 
 ##### `client_to_client`
-`client-to-client reflection`. Valid values are true and false.
+Configure client-to-client route reflection. Valid values are true and false.
+
+##### `dampen_igp_metric`
+Specify dampen value for IGP metric-related changes, in seconds. Valid values are Integer, keyword 'default'.
+
+##### `dampening_state`
+Enable/disable route-flap dampening. Valid values are true, false or 'default'
+
+##### `dampening_half_time`
+Specify decay half-life in minutes for route-flap dampening. Valid values are Integer, keyword 'default'.
+
+##### `dampening_max_suppress_time`
+Specify max suppress time for route-flap dampening stable route. Valid values are Integer, keyword 'default'.
+
+##### `dampening_reuse_time`
+Specify route reuse time for route-flap dampening. Valid values are Integer, keyword 'default'.
+
+##### `dampening_routemap`
+Specify route-map for route-flap dampening. Valid values are a string defining the name of the route-map.
+
+##### `dampening_suppress_time`
+Specify route suppress time for route-flap dampening. Valid values are Integer, keyword 'default'.
+
+##### Dampening Properties
+Note: dampening_routemap is mutually exclusive with dampening_half_time, reuse_time, suppress_time and max_suppress_time.
 
 ##### `default_information_originate`
 `default-information originate`. Valid values are true and false.
 
-##### `maximum_path`
-Configures the maximum number of equal-cost paths for load sharing. Valid value is an integer in the range 1-64.
-Default value is 1.
+##### `maximum_paths`
+Configures the maximum number of equal-cost paths for load sharing. Valid value is an integer in the range 1-64. Default value is 1.
 
 ##### `maximum_paths_ibgp`
-Configures the maximum number of ibgp equal-cost paths for load sharing. Valid value is an integer in the range 1-64.
-Default value is 1.
+Configures the maximum number of ibgp equal-cost paths for load sharing. Valid value is an integer in the range 1-64. Default value is 1.
+
+##### `networks`
+Networks to configure. Valid value is a list of network prefixes to advertise.  The list must be in the form of an array.  Each entry in the array must include a prefix address and an optional route-map.
+
+Example: IPv4 Networks Array
+
+```ruby
+[
+ ['10.0.0.0/16', 'routemap_LA'],
+ ['192.168.1.1', 'Chicago'],
+ ['192.168.2.0/24],
+ ['192.168.3.0/24', 'routemap_NYC']
+]
+```
+
+Example: IPv6 Networks Array
+
+```ruby
+[
+ ['10::0/64', 'routemap_LA'],
+ ['192:168::1', 'Chicago'],
+ ['192:168::/32]
+]
+```
 
 ##### `next_hop_route_map`
-`nexthop route-map`. Valid values are a string defining a route-map.
+Configure route map for valid nexthops. Valid values are a string defining the name of the route-map.
 
+##### `redistribute`
+A list of redistribute directives. Multiple redistribute entries are allowed. The list must be in the form of a nested array: the first entry of each array defines the source-protocol to redistribute from; the second entry defines a route-map/route-policy name. A route-map/route-policy is highly advised but may be optional on some platforms, in which case it may be omitted from the array list.
+
+Example: Platform requiring route-maps
+
+```ruby
+redistribute => [['direct',  'rm_direct'],
+                 ['lisp',    'rm_lisp'],
+                 ['static',  'rm_static'],
+                 ['eigrp 1', 'rm_eigrp'],
+                 ['isis 2',  'rm_isis'],
+                 ['ospf 3',  'rm_ospf'],
+                 ['rip 4',   'rm_rip']]
+```
+Example: Platform with optional route-maps
+
+```ruby
+redistribute => [['direct'],
+                 ['lisp',    'rm_lisp'],
+                 ['static'],
+                 ['eigrp 1', 'rm_eigrp'],
+                 ['isis 2',  'rm_isis'],
+                 ['ospf 3',  'rm_ospf'],
+                 ['rip 4']]
+```
 --
 ### Type: cisco_bgp_neighbor
 
@@ -395,104 +455,73 @@ Manages configuration of a BGP Neighbor.
 #### Parameters
 
 ###### `ensure`
-Determine whether the neighbor config should be present or not. Valid values 
-are 'present' and 'absent'.
+Determine whether the neighbor config should be present or not. Valid values are 'present' and 'absent'.
 
 ##### `asn`
-BGP autonomous system number. Required. Valid values are String, Integer in 
-ASPLAIN or ASDOT notation.
+BGP autonomous system number. Required. Valid values are String, Integer in  ASPLAIN or ASDOT notation.
 
 ##### `vrf`
-VRF name. Required. Valid values are string. The name 'default' is a valid
-VRF representing the global bgp.
+VRF name. Required. Valid values are string. The name 'default' is a valid VRF representing the global bgp.
 
 ##### `neighbor`
-Neighbor Identifier. Required. Valid values are string. Neighbors may use
-IPv4 or IPv6 notation, with or without prefix length.
+Neighbor Identifier. Required. Valid values are string. Neighbors may use IPv4 or IPv6 notation, with or without prefix length.
 
 ##### `description`
 Description of the neighbor. Valid value is string.
 
 ##### `connected_check`
-Configure whether or not to check for directly connected peer. Valid values are 
-true and false.
+Configure whether or not to check for directly connected peer. Valid values are true and false.
 
 ##### `capability_negotiation`
-Configure whether or not to negotiate capability with this neighbor. Valid 
-values are true and false.
+Configure whether or not to negotiate capability with this neighbor. Valid  values are true and false.
 
 ##### `dynamic_capability`
-Configure whether or not to enable dynamic capability. Valid values are true
-and false.
+Configure whether or not to enable dynamic capability. Valid values are true and false.
 
 ##### `ebgp_multihop`
-Specify multihop TTL for a remote peer. Valid values are integers between 2 
-and 255, or keyword 'default' to disable this property.
+Specify multihop TTL for a remote peer. Valid values are integers between 2  and 255, or keyword 'default' to disable this property.
 
 ##### `local_as`
-Specify the local-as number for the eBGP neighbor. Valid values are String or
-Integer in ASPLAIN or ASDOT notation, or 'default', which means not to 
-configure it.
+Specify the local-as number for the eBGP neighbor. Valid values are String or Integer in ASPLAIN or ASDOT notation, or 'default', which means not to configure it.
 
 ##### `log_neighbor_changes`
-Specify wether or not to enable log messages for neighbor up/down event. Valid 
-values are 'enable', to enable it, 'disable' to disable it, or 'inherit' to use
-the configuration in the cisco_bgp type.
+Specify wether or not to enable log messages for neighbor up/down event. Valid values are 'enable', to enable it, 'disable' to disable it, or 'inherit' to use the configuration in the cisco_bgp type.
 
 ##### `low_memory_exempt`
-Specify whether or not to shut down this neighbor under memory pressue. Valid
-values are 'true' to exempt the neighbor from being shutdown, 'false' to shut it 
-down, or 'default' to perform the default shutdown behavior"
+Specify whether or not to shut down this neighbor under memory pressure. Valid values are 'true' to exempt the neighbor from being shutdown, 'false' to shut it down, or 'default' to perform the default shutdown behavior"
 
 ##### `maximum_peers`
-Specify Maximum number of peers for this neighbor prefix. Valid values are 
-between 1 and 1000, or 'default', which does not impose the limit. This 
-attribute can only be configured if neighbor is in 'ip/prefix' format.
+Specify Maximum number of peers for this neighbor prefix. Valid values are between 1 and 1000, or 'default', which does not impose the limit. This  attribute can only be configured if neighbor is in 'ip/prefix' format.
 
 ##### `password`
 Specify the password for neighbor. Valid value is string.
 
 ##### `password_type`
-Specify the encryption type the password will use. Valid values are 
-'cleartext', '3des' or 'cisco_type_7' encryption, and 'default', which
-defaults to 'cleartext'.
+Specify the encryption type the password will use. Valid values are 'cleartext', '3des' or 'cisco_type_7' encryption, and 'default',which defaults to 'cleartext'.
 
 ##### `remote_as`
-Specify Autonomous System Number of the neighbor. Valid values are String or 
-Integer in ASPLAIN or ASDOT notation, or 'default', which means not to
-configure it. 
+Specify Autonomous System Number of the neighbor. Valid values are String or Integer in ASPLAIN or ASDOT notation, or 'default', which means not to configure it. 
 
 ##### `remove_private_as`
-Specify the config to remove private AS number from outbound updates. Valid 
-values are 'enable' to enable this config, 'disable' to disable this config,
-'all' to remove all private AS number, or 'replace-as', to replace the 
-private AS number.
+Specify the config to remove private AS number from outbound updates. Valid  values are 'enable' to enable this config, 'disable' to disable this config, 'all' to remove all private AS number, or 'replace-as', to replace the private AS number.
 
 ##### `shutdown`
-Configure to administratively shutdown this neighbor. Valid values are true
-and false.
+Configure to administratively shutdown this neighbor. Valid values are true and false.
 
 ##### `suppress_4_byte_as`
-Configure to suppress 4-byte AS Capability. Valid values are 'true', 'false',
-and 'default', which sets to the default 'false' value.
+Configure to suppress 4-byte AS Capability. Valid values are 'true', 'false', and 'default', which sets to the default 'false' value.
 
 ##### `timers_keepalive`
-Specify keepalive timer value. Valid values are integers between 0 and 3600
-in terms of seconds, or 'default', which is 60.
+Specify keepalive timer value. Valid values are integers between 0 and 3600 in terms of seconds, or 'default', which is 60.
 
 ##### `timers_holdtime`
-Specify holdtime timer value. Valid values are integers between 0 and 3600 in
-terms of seconds, or 'default', which is 180.
+Specify holdtime timer value. Valid values are integers between 0 and 3600 in terms of seconds, or 'default', which is 180.
 
 ##### `transport_passive_only`
-Configure whether or not to only allow passive connection setup. Valid values
-are 'true', 'false', and 'default', which defaults to 'false'. This attribute
-can only be configured when the neighbor is in 'ip' address format without
-prefix length.
+Configure whether or not to only allow passive connection setup. Valid values are 'true', 'false', and 'default', which defaults to 'false'. This attribute can only be configured when the neighbor is in 'ip' address format without prefix length.
 
 ##### `update_source`
-Specify source interface of BGP session and updates. Valid value is a string
-of the interface name.
+Specify source interface of BGP session and updates. Valid value is a string of the interface name.
 
 --
 ### Type: cisco_bgp_neighbor_af

@@ -57,139 +57,163 @@ class ciscopuppet::demo_bgp {
   # --------------------------------------------------------------------------#
   # Configure Address Family IPv4 Unicast                                     #
   # --------------------------------------------------------------------------#
+  $ipv4_networks = [['192.168.5.0/24', 'nrtemap1'], ['192.168.6.0/32']]
+  $ipv4_redistribute = [['eigrp 1', 'e_rtmap_29'], ['ospf 3',  'o_rtmap']]
+
   cisco_bgp_af { 'default':
-    ensure                                 => present,
-    asn                                    => 55.77,
-    vrf                                    => 'blue',
-    afi                                    => 'ipv4',
-    safi                                   => 'unicast',
+    ensure                        => present,
+    asn                           => 55.77,
+    vrf                           => 'blue',
+    afi                           => 'ipv4',
+    safi                          => 'unicast',
 
     # Properties
-    client_to_client                       => false,
-    default_information_originate          => false,
-    maximum_paths                          => '7',
-    maximum_paths_ibgp                     => '7',
-    next_hop_route_map                     => 'RouteMap',
-  }
+    client_to_client              => false,
+    default_information_originate => true,
+    maximum_paths                 => '7',
+    maximum_paths_ibgp            => '7',
+    next_hop_route_map            => 'RouteMap',
+    additional_paths_install      => true,
+    additional_paths_receive      => true,
+    additional_paths_selection    => 'RouteMap',
+    additional_paths_send         => true,
+    dampen_igp_metric             => 55,
 
-  # --------------------------------------------------------------------------#
-  # Configure Address Family IPv4 Multicast                                   #
-  # --------------------------------------------------------------------------#
-  cisco_bgp_af { 'default':
-    ensure                                 => present,
-    asn                                    => 55.77,
-    vrf                                    => 'blue',
-    afi                                    => 'ipv4',
-    safi                                   => 'multicast',
+    # dampening_routemap is mutually exclusive with
+    # dampening_half_time, reuse_time, suppress_time
+    # and max_suppress_time.
+    #
+    dampening_state               => true,
+    dampening_half_time           => 1,
+    dampening_reuse_time          => 2,
+    dampening_suppress_time       => 3,
+    dampening_max_suppress_time   => 4,
+    #dampening_routemap            => default,
 
-    # Properties
-    client_to_client                       => false,
-    default_information_originate          => false,
-    maximum_paths                          => '7',
-    maximum_paths_ibgp                     => '7',
-    next_hop_route_map                     => 'RouteMap',
+    networks                      => $ipv4_networks,
+    redistribute                  => $ipv4_redistribute,
   }
 
   # --------------------------------------------------------------------------#
   # Configure Address Family IPv6 Unicast                                     #
   # --------------------------------------------------------------------------#
-  cisco_bgp_af { 'default':
-    ensure                                 => present,
-    asn                                    => 55.77,
-    vrf                                    => 'blue',
-    afi                                    => 'ipv6',
-    safi                                   => 'unicast',
+  $ipv6_networks = [['192:168::5:0/64', 'nrtemap1'], ['192:168::6:0/64']]
+  $ipv6_redistribute = [['eigrp 1', 'e_v6'], ['ospfv3 3',  'o_v6']]
+  cisco_bgp_af { 'ipv6_default':
+    ensure                        => present,
+    asn                           => 55.77,
+    vrf                           => 'blue',
+    afi                           => 'ipv6',
+    safi                          => 'unicast',
 
     # Properties
-    client_to_client                       => false,
-    default_information_originate          => false,
-    maximum_paths                          => '7',
-    maximum_paths_ibgp                     => '7',
-    next_hop_route_map                     => 'RouteMap',
+    client_to_client              => false,
+    default_information_originate => true,
+    maximum_paths                 => '7',
+    maximum_paths_ibgp            => '7',
+    next_hop_route_map            => 'RouteMap',
+    additional_paths_receive      => true,
+    additional_paths_selection    => 'RouteMap',
+    additional_paths_send         => true,
+    dampen_igp_metric             => 55,
+
+    # dampening_routemap is mutually exclusive with
+    # dampening_half_time, reuse_time, suppress_time
+    # and max_suppress_time.
+    #
+    dampening_state               => true,
+    #dampening_half_time           => 1,
+    #dampening_reuse_time          => 2,
+    #dampening_suppress_time       => 3,
+    #dampening_max_suppress_time   => 4,
+    dampening_routemap            => 'RouteMap',
+
+    networks                      => $ipv6_networks,
+    redistribute                  => $ipv6_redistribute,
   }
 
   #---------------------------------------------------------------------------#
   # Configure A BGP Neighbor
   #---------------------------------------------------------------------------#
   cisco_bgp_neighbor {'default':
-    ensure                                 => present,
-    asn                                    => 55.77,
-    vrf                                    => 'blue',
-    neighbor                               => '1.1.1.1',
+    ensure                 => present,
+    asn                    => 55.77,
+    vrf                    => 'blue',
+    neighbor               => '1.1.1.1',
 
     #Properties
-    description                            => 'my description',
-    connected_check                        => true,
-    capability_negotiation                 => true,
-    dynamic_capability                     => true,
-    ebgp_multihop                          => 2,
-    local_as                               => 55.77,
-    log_neighbor_changes                   => disable,
-    low_memory_exempt                      => false,
-    remote_as                              => 12,
-    remove_private_as                      => 'all',
-    shutdown                               => true,
-    suppress_4_byte_as                     => true,
-    timers_keepalive                       => 90,
-    timers_holdtime                        => 270,
-    update_source                          => 'ethernet1/1',
-    transport_passive_only                 => false,
+    description            => 'my description',
+    connected_check        => true,
+    capability_negotiation => true,
+    dynamic_capability     => true,
+    ebgp_multihop          => 2,
+    local_as               => 55.77,
+    log_neighbor_changes   => disable,
+    low_memory_exempt      => false,
+    remote_as              => 12,
+    remove_private_as      => 'all',
+    shutdown               => true,
+    suppress_4_byte_as     => true,
+    timers_keepalive       => 90,
+    timers_holdtime        => 270,
+    update_source          => 'ethernet1/1',
+    transport_passive_only => false,
   }
 
   # --------------------------------------------------------------------------#
   # Configure Neighbor-level Address Family IPv4 Unicast
   # --------------------------------------------------------------------------#
   cisco_bgp_neighbor_af { '55.77 blue 1.1.1.1 ipv4 unicast':
-    ensure                                 => present,
+    ensure                      => present,
 
     # Properties
-    additional_paths_receive               => 'enable',
-    additional_paths_send                  => 'disable',
-    allowas_in_max                         => 5,
-    default_originate_route_map            => 'my_def_map',
-    disable_peer_as_check                  => true,
-    filter_list_in                         => 'flin',
-    filter_list_out                        => 'flout',
-    max_prefix_limit                       => 100,
-    max_prefix_threshold                   => 50,
-    max_prefix_interval                    => 30,
-    next_hop_self                          => true,
-    next_hop_third_party                   => false,
-    prefix_list_in                         => 'pfx_in',
-    prefix_list_out                        => 'pfx_out',
-    route_map_in                           => 'rm_in',
-    route_map_out                          => 'rm_out',
-    send_community                         => 'extended',
-    soft_reconfiguration_in                => 'always',
-    soo                                    => '3:3',
-    suppress_inactive                      => true,
-    unsuppress_map                         => 'unsup_map',
-    weight                                 => 30,
+    additional_paths_receive    => 'enable',
+    additional_paths_send       => 'disable',
+    allowas_in_max              => 5,
+    default_originate_route_map => 'my_def_map',
+    disable_peer_as_check       => true,
+    filter_list_in              => 'flin',
+    filter_list_out             => 'flout',
+    max_prefix_limit            => 100,
+    max_prefix_threshold        => 50,
+    max_prefix_interval         => 30,
+    next_hop_self               => true,
+    next_hop_third_party        => false,
+    prefix_list_in              => 'pfx_in',
+    prefix_list_out             => 'pfx_out',
+    route_map_in                => 'rm_in',
+    route_map_out               => 'rm_out',
+    send_community              => 'extended',
+    soft_reconfiguration_in     => 'always',
+    soo                         => '3:3',
+    suppress_inactive           => true,
+    unsuppress_map              => 'unsup_map',
+    weight                      => 30,
   }
 
   # --------------------------------------------------------------------------#
   # Configure A BGP Neighbor using title pattern
   # --------------------------------------------------------------------------#
   cisco_bgp_neighbor { '55.77 blue2 2.2.2.0/24':
-    ensure                                 => present,
+    ensure                 => present,
 
     #Properties
-    description                            => 'my description',
-    connected_check                        => true,
-    capability_negotiation                 => true,
-    dynamic_capability                     => true,
-    ebgp_multihop                          => 2,
-    local_as                               => 55.77,
-    log_neighbor_changes                   => disable,
-    low_memory_exempt                      => false,
-    remote_as                              => 12,
-    remove_private_as                      => 'all',
-    shutdown                               => true,
-    suppress_4_byte_as                     => true,
-    timers_keepalive                       => 90,
-    timers_holdtime                        => 270,
-    update_source                          => 'ethernet1/1',
-    maximum_peers                          => 2,
+    description            => 'my description',
+    connected_check        => true,
+    capability_negotiation => true,
+    dynamic_capability     => true,
+    ebgp_multihop          => 2,
+    local_as               => 55.77,
+    log_neighbor_changes   => disable,
+    low_memory_exempt      => false,
+    remote_as              => 12,
+    remove_private_as      => 'all',
+    shutdown               => true,
+    suppress_4_byte_as     => true,
+    timers_keepalive       => 90,
+    timers_holdtime        => 270,
+    update_source          => 'ethernet1/1',
+    maximum_peers          => 2,
   }
 
   # TBD: The following manifests need cisco_bgp_neighbor to define remote-as ***
