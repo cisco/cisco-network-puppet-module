@@ -191,7 +191,6 @@ tests['non_default_properties_A'] = {
     'additional_paths_receive'   => 'true',
     'additional_paths_selection' => 'RouteMap',
     'additional_paths_send'      => 'true',
-    'advertise_l2vpn_evpn'       => 'false',
   },
 }
 
