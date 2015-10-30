@@ -178,7 +178,7 @@ tests['non_default_properties_A'] = {
   :desc           => "2.1 Non Default Properties: 'A' commands",
   :title_pattern  => '2 blue ipv4 unicast',
   :manifest_props => "
-    advertise_l2vpn_evpn            => false,
+    advertise_l2vpn_evpn            => true,
     additional_paths_install        => true,
     additional_paths_receive        => true,
     additional_paths_selection      => 'RouteMap',
@@ -186,7 +186,7 @@ tests['non_default_properties_A'] = {
   ",
 
   :resource_props => {
-    'advertise_l2vpn_evpn'       => 'false',
+    'advertise_l2vpn_evpn'       => 'true',
     'additional_paths_install'   => 'true',
     'additional_paths_receive'   => 'true',
     'additional_paths_selection' => 'RouteMap',
