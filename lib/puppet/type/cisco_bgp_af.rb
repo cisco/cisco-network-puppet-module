@@ -40,6 +40,8 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       vrf                                    => 'default',
       afi                                    => 'ipv4',
       safi                                   => 'unicast',
+
+      advertise_l2vpn_evpn                   => 'true',
       additional_paths_install               => 'true',
       additional_paths_receive               => 'true',
       additional_paths_selection             => 'Route_Map',
@@ -232,6 +234,12 @@ Puppet::Type.newtype(:cisco_bgp_af) do
 
     newvalues(:true, :false, :default)
   end # property additional_paths_send
+
+  newproperty(:advertise_l2vpn_evpn) do
+    desc "advertise EVPN routes. Valid values are true, false, or 'default'"
+
+    newvalues(:true, :false, :default)
+  end # property advertise_l2vpn_evpn
 
   newproperty(:client_to_client) do
     desc 'Configure client-to-client route reflection. Valid values are ' \
