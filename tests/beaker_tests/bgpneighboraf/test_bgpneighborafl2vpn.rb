@@ -7,7 +7,7 @@
 #
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
-# Unless required by applicable law or agreed to in writing, software
+# Unless requidefault by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
@@ -39,11 +39,11 @@
 # > 0 - failed command execution.
 #
 # Puppet Commands:
-# 0 - no changes have occurred
-# 1 - errors have occurred,
-# 2 - changes have occurred
-# 4 - failures have occurred and
-# 6 - changes and failures have occurred.
+# 0 - no changes have occurdefault
+# 1 - errors have occurdefault,
+# 2 - changes have occurdefault
+# 4 - failures have occurdefault and
+# 6 - changes and failures have occurdefault.
 #
 # NOTE: 0 is the default exit_code checked in Beaker::DSL::Helpers::on() method.
 #
@@ -109,46 +109,32 @@ tests = {
 #
 tests['default_properties'] = {
   :desc           => '1.1 Default Properties',
-  :title_pattern  => '2 default 1.1.1.1 ipv4 unicast',
+  :title_pattern  => '2 default 1.1.1.1 l2vpn evpn',
   :manifest_props => "
     allowas_in                  => 'default',
     allowas_in_max              => 'default',
-    default_originate           => 'default',
-    default_originate_route_map => 'default',
     disable_peer_as_check       => 'default',
     max_prefix_limit            => 'default',
     max_prefix_threshold        => 'default',
     max_prefix_interval         => 'default',
-    next_hop_self               => 'default',
-    next_hop_third_party        => 'default',
     route_reflector_client      => 'default',
     send_community              => 'default',
-    suppress_inactive           => 'default',
-    unsuppress_map              => 'default',
-    weight                      => 'default',
     ",
 
   # default_properties
   :resource_props => {
-    'additional_paths_receive' => 'inherit',
-    'additional_paths_send'    => 'inherit',
     'allowas_in'               => 'false',
     'allowas_in_max'           => '3',
-    'as_override'              => 'false',
-    'default_originate'        => 'false',
     'disable_peer_as_check'    => 'false',
-    'next_hop_self'            => 'false',
-    'next_hop_third_party'     => 'true',
     'route_reflector_client'   => 'false',
     'send_community'           => 'none',
     'soft_reconfiguration_in'  => 'inherit',
-    'suppress_inactive'        => 'false',
   },
 }
 
 tests['non_default_properties_A1'] = {
   :desc           => "2.1.1 Non Default Properties: 'A1' commands",
-  :title_pattern  => '2 blue 1.1.1.1 ipv4 unicast',
+  :title_pattern  => '2 default 1.1.1.1 l2vpn evpn',
   :manifest_props => "
     allowas_in     => true,
     allowas_in_max => 5,
@@ -160,53 +146,9 @@ tests['non_default_properties_A1'] = {
   },
 }
 
-tests['non_default_properties_A2'] = {
-  :desc           => "2.1.2 Non Default Properties: 'A2' commands",
-  :title_pattern  => '2 blue 1.1.1.1 ipv4 unicast',
-  :manifest_props => "
-    additional_paths_receive => 'disable',
-    additional_paths_send    => 'disable',
-  ",
-  :resource_props => {
-    'ensure'                   => 'present',
-    'additional_paths_receive' => 'disable',
-    'additional_paths_send'    => 'disable',
-  },
-}
-
-tests['non_default_properties_A3'] = {
-  :desc           => "2.1.3 Non Default Properties: 'A3' commands",
-  :title_pattern  => '2 blue 1.1.1.1 ipv4 unicast',
-  :manifest_props => "
-    additional_paths_receive => 'enable',
-    additional_paths_send    => 'enable',
-  ",
-  :resource_props => {
-    'ensure'                   => 'present',
-    'additional_paths_receive' => 'enable',
-    'additional_paths_send'    => 'enable',
-  },
-}
-
-tests['non_default_properties_D'] = {
-  :desc           => "2.3 Non Default Properties: 'D' commands",
-  :title_pattern  => '2 blue 1.1.1.1 ipv4 unicast',
-  :manifest_props => "
-    default_originate           => true,
-    default_originate_route_map => 'my_def_map',
-    disable_peer_as_check       => true,
-  ",
-  :resource_props => {
-    'ensure'                      => 'present',
-    'default_originate'           => 'true',
-    'default_originate_route_map' => 'my_def_map',
-    'disable_peer_as_check'       => 'true',
-  },
-}
-
 tests['non_default_properties_M'] = {
   :desc           => "2.4 Non Default Properties: 'M' commands",
-  :title_pattern  => '2 blue 1.1.1.1 ipv4 unicast',
+  :title_pattern  => '2 default 1.1.1.1 l2vpn evpn',
   :manifest_props => "
     max_prefix_limit     => 100,
     max_prefix_threshold => 50,
@@ -220,39 +162,21 @@ tests['non_default_properties_M'] = {
   },
 }
 
-tests['non_default_properties_N'] = {
-  :desc           => "2.5 Non Default Properties: 'N' commands",
-  :title_pattern  => '2 blue 1.1.1.1 ipv4 unicast',
-  :manifest_props => "
-    next_hop_self        => true,
-    next_hop_third_party => false,
-  ",
-  :resource_props => {
-    'ensure'               => 'present',
-    'next_hop_self'        => 'true',
-    'next_hop_third_party' => 'false',
-  },
-}
-
 tests['non_default_properties_S1'] = {
   :desc           => "2.6.1 Non Default Properties: 'S1' commands",
-  :title_pattern  => '2 blue 1.1.1.1 ipv4 unicast',
+  :title_pattern  => '2 default 1.1.1.1 l2vpn evpn',
   :manifest_props => "
     send_community    => 'extended',
-    suppress_inactive => true,
-    unsuppress_map    => 'unsup_map',
   ",
   :resource_props => {
     'ensure'            => 'present',
     'send_community'    => 'extended',
-    'suppress_inactive' => 'true',
-    'unsuppress_map'    => 'unsup_map',
   },
 }
 
 tests['non_default_properties_S2'] = {
   :desc           => "2.6.2 Non Default Properties: 'S2' commands",
-  :title_pattern  => '2 blue 1.1.1.1 ipv4 unicast',
+  :title_pattern  => '2 default 1.1.1.1 l2vpn evpn',
   :manifest_props => "
     soft_reconfiguration_in => 'always',
   ",
@@ -264,7 +188,7 @@ tests['non_default_properties_S2'] = {
 
 tests['non_default_properties_S3'] = {
   :desc           => "2.6.3 Non Default Properties: 'S3' commands",
-  :title_pattern  => '2 blue 1.1.1.1 ipv4 unicast',
+  :title_pattern  => '2 default 1.1.1.1 l2vpn evpn',
   :manifest_props => "
     soft_reconfiguration_in => 'enable',
   ",
@@ -274,34 +198,10 @@ tests['non_default_properties_S3'] = {
   },
 }
 
-tests['non_default_properties_W'] = {
-  :desc           => "2.7 Non Default Properties: 'W' commands",
-  :title_pattern  => '2 blue 1.1.1.1 ipv4 unicast',
-  :manifest_props => "
-    weight => 30,
-  ",
-  :resource_props => {
-    'ensure' => 'present',
-    'weight' => '30',
-  },
-}
-
-tests['non_default_properties_ebgp_only'] = {
-  :desc           => "2.9 Non Default Properties: 'ebgp' commands",
-  :title_pattern  => '2 yellow 3.3.3.3 ipv4 unicast',
-  :remote_as      => '2 yellow  3.3.3.3 3',
-  :manifest_props => "
-    as_override => true,
-  ",
-  :resource_props => {
-    'as_override' => 'true',
-  },
-}
-
 tests['non_default_properties_ibgp_only'] = {
   :desc           => "2.10 Non Default Properties: 'ibgp' commands",
-  :title_pattern  => '2 green 2.2.2.2 ipv4 unicast',
-  :remote_as      => '2 green  2.2.2.2 2',
+  :title_pattern  => '2 default 2.2.2.2 l2vpn evpn',
+  :remote_as      => '2 default  2.2.2.2 2',
   :manifest_props => "
     route_reflector_client => true,
   ",
@@ -310,22 +210,10 @@ tests['non_default_properties_ibgp_only'] = {
   },
 }
 
-tests['non_default_properties_vrf_only'] = {
-  :desc           => "2.11 Non Default Properties: 'vrf only' commands",
-  :title_pattern  => '2 purple 4.4.4.4 ipv4 unicast',
-  :manifest_props => "
-    soo => '3:3',
-  ",
-  :resource_props => {
-    'soo' => '3:3',
-  },
-}
-
 tests['non_default_misc_maps_part_1'] = {
   :desc           => '2.12.1 Non Default Misc Map commands Part 1',
-  :title_pattern  => '2 default 1.1.1.1 ipv4 unicast',
+  :title_pattern  => '2 default 1.1.1.1 l2vpn evpn',
   :manifest_props => "
-    advertise_map_exist => ['admap', 'exist_map'],
     filter_list_in      => 'flin',
     filter_list_out     => 'flout',
     prefix_list_in      => 'pfx_in',
@@ -334,7 +222,6 @@ tests['non_default_misc_maps_part_1'] = {
     route_map_out       => 'rm_out',
   ",
   :resource_props => {
-    'advertise_map_exist' => '..admap., .exist_map..',
     'filter_list_in'      => 'flin',
     'filter_list_out'     => 'flout',
     'prefix_list_in'      => 'pfx_in',
@@ -450,9 +337,7 @@ test_name "TestCase :: #{testheader}" do
   test_harness_bgp_nbr_af(tests, 'non_default_properties_S3')
 
   # Special Cases
-  test_harness_bgp_nbr_af(tests, 'non_default_properties_ebgp_only')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_ibgp_only')
-  test_harness_bgp_nbr_af(tests, 'non_default_properties_vrf_only')
   test_harness_bgp_nbr_af(tests, 'non_default_misc_maps_part_1')
 
   # -------------------------------------------------------------------
@@ -463,31 +348,31 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:desc] = '3.1 Title Patterns'
   tests[id][:title_pattern] = '2'
   tests[id][:af] = { :neighbor => '1.1.1.1',
-                     :afi => 'ipv4', :safi => 'unicast' }
+                     :afi => 'l2vpn', :safi => 'evpn' }
   test_harness_bgp_nbr_af(tests, id)
 
   # -----------------------------------
   tests[id][:desc] = '3.2 Title Patterns'
-  tests[id][:title_pattern] = '2 blue'
-  tests[id][:af] = { :neighbor => '2.2.2.2', :afi => 'ipv4',
-                     :safi => 'unicast' }
+  tests[id][:title_pattern] = '2 default'
+  tests[id][:af] = { :neighbor => '2.2.2.2', :afi => 'l2vpn',
+                     :safi => 'evpn' }
   test_harness_bgp_nbr_af(tests, id)
 
   # -----------------------------------
   tests[id][:desc] = '3.3 Title Patterns'
-  tests[id][:title_pattern] = '2 green 3.3.3.3'
-  tests[id][:af] = { :afi => 'ipv4', :safi => 'unicast' }
+  tests[id][:title_pattern] = '2 default 3.3.3.3'
+  tests[id][:af] = { :afi => 'l2vpn', :safi => 'evpn' }
   test_harness_bgp_nbr_af(tests, id)
 
   # -----------------------------------
   tests[id][:desc] = '3.4 Title Patterns'
-  tests[id][:title_pattern] = '2 red 4.4.4.4 ipv4'
-  tests[id][:af] = { :safi => 'unicast' }
+  tests[id][:title_pattern] = '2 default 4.4.4.4 l2vpn'
+  tests[id][:af] = { :safi => 'evpn' }
   test_harness_bgp_nbr_af(tests, id)
 
   # -----------------------------------
   tests[id][:desc] = '3.5 Title Patterns'
-  tests[id][:title_pattern] = '2 yellow 5.5.5.5 ipv4 unicast'
+  tests[id][:title_pattern] = '2 default 5.5.5.5 l2vpn evpn'
   tests[id].delete(:af)
   test_harness_bgp_nbr_af(tests, id)
 end
