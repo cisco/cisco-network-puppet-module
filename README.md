@@ -342,6 +342,10 @@ Address Family Identifier (AFI). Required. Valid values are `ipv4` and `ipv6`.
 ##### `safi`
 Sub Address Family Identifier (SAFI). Required. Valid values are `unicast` and `multicast`.
 
+<<<<<<< HEAD
+##### `advertise_l2vpn_evpn`
+advertise evpn routes. Valid values are true and false.
+=======
 ##### `additional_paths_install`
 install a backup path into the forwarding table and provide prefix 'independent convergence (PIC) in case of a PE-CE link failure. Valid values are true, false, or 'default'
 
@@ -353,6 +357,7 @@ Configures the capability of selecting additional paths for a prefix. Valid valu
 
 ##### `additional_paths_send`
 Enables the send capability of additional paths for all of the neighbors under this address family for which the capability has not been disabled. Valid values are true, false, or 'default'
+>>>>>>> upstream/feature/bgp
 
 ##### `client_to_client`
 Configure client-to-client route reflection. Valid values are true and false.
