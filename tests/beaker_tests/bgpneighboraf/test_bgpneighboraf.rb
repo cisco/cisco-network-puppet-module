@@ -344,6 +344,17 @@ tests['non_default_misc_maps_part_1'] = {
   },
 }
 
+tests['non_default_misc_maps_part_2'] = {
+  :desc           => '2.12.2 Non Default Misc Map commands Part 2',
+  :title_pattern  => '2 default 2.2.2.2 ipv4 unicast',
+  :manifest_props => "
+    advertise_map_non_exist => ['admap', 'non_exist_map'],
+  ",
+  :resource_props => {
+    'advertise_map_non_exist' => '..admap., .non_exist_map..',
+  },
+}
+
 tests['title_patterns'] = {
   :manifest_props => '',
   :resource_props => { 'ensure' => 'present' },
@@ -444,16 +455,22 @@ test_name "TestCase :: #{testheader}" do
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   node_feature_cleanup(agent, 'bgp')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_A1')
+  test_harness_bgp_nbr_af(tests, 'non_default_properties_A2')
+  test_harness_bgp_nbr_af(tests, 'non_default_properties_A3')
+  test_harness_bgp_nbr_af(tests, 'non_default_properties_D')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_M')
+  test_harness_bgp_nbr_af(tests, 'non_default_properties_N')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_S1')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_S2')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_S3')
+  test_harness_bgp_nbr_af(tests, 'non_default_properties_W')
 
   # Special Cases
   test_harness_bgp_nbr_af(tests, 'non_default_properties_ebgp_only')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_ibgp_only')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_vrf_only')
   test_harness_bgp_nbr_af(tests, 'non_default_misc_maps_part_1')
+  test_harness_bgp_nbr_af(tests, 'non_default_misc_maps_part_2')
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")

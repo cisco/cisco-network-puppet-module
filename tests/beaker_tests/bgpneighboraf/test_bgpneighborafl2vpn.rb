@@ -123,12 +123,12 @@ tests['default_properties'] = {
 
   # default_properties
   :resource_props => {
-    'allowas_in'               => 'false',
-    'allowas_in_max'           => '3',
-    'disable_peer_as_check'    => 'false',
-    'route_reflector_client'   => 'false',
-    'send_community'           => 'none',
-    'soft_reconfiguration_in'  => 'inherit',
+    'allowas_in'              => 'false',
+    'allowas_in_max'          => '3',
+    'disable_peer_as_check'   => 'false',
+    'route_reflector_client'  => 'false',
+    'send_community'          => 'none',
+    'soft_reconfiguration_in' => 'inherit',
   },
 }
 
@@ -169,8 +169,8 @@ tests['non_default_properties_S1'] = {
     send_community    => 'extended',
   ",
   :resource_props => {
-    'ensure'            => 'present',
-    'send_community'    => 'extended',
+    'ensure'         => 'present',
+    'send_community' => 'extended',
   },
 }
 
@@ -222,12 +222,12 @@ tests['non_default_misc_maps_part_1'] = {
     route_map_out       => 'rm_out',
   ",
   :resource_props => {
-    'filter_list_in'      => 'flin',
-    'filter_list_out'     => 'flout',
-    'prefix_list_in'      => 'pfx_in',
-    'prefix_list_out'     => 'pfx_out',
-    'route_map_in'        => 'rm_in',
-    'route_map_out'       => 'rm_out',
+    'filter_list_in'  => 'flin',
+    'filter_list_out' => 'flout',
+    'prefix_list_in'  => 'pfx_in',
+    'prefix_list_out' => 'pfx_out',
+    'route_map_in'    => 'rm_in',
+    'route_map_out'   => 'rm_out',
   },
 }
 
