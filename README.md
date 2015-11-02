@@ -140,7 +140,7 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 }
 ~~~
 
-## Resource Reference
+## <a name ="resource-reference">Resource Reference<a>
 
 ### <a name="resource-by-tech">Resource Type Catalog (by Technology)<a>
 
@@ -154,9 +154,18 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
   * [`cisco_bgp_neighbor`](#type-cisco_bgp_neighbor)
   * [`cisco_bgp_neighbor_af`](#type-cisco_bgp_neighbor_af)
 
+* Domain Types (netdev_stdlib)
+  * [`domain_name`](#type-domain_name)
+  * [`name_server`](#type-name_server)
+  * [`network_dns`](#type-network_dns)
+
 * Interface Types
   * [`cisco_interface`](#type-cisco_interface)
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
+
+* NTP Types (netdev_stdlib)
+  * [`ntp_config`](#type-ntp_config)
+  * [`ntp_server`](#type-ntp_server)
 
 * OSPF Types
   * [`cisco_vrf`](#type-cisco_vrf)
@@ -164,11 +173,21 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
   * [`cisco_ospf_vrf`](#type-cisco_ospf_vrf)
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 
+* RADIUS Types (netdev_stdlib)
+  * [`radius`](#type-radius)
+  * [`radius_global`](#type-radius_global)
+  * [`radius_server`](#type-radius_server)
+
 * SNMP Types
   * [`cisco_snmp_community`](#type-cisco_snmp_community)
   * [`cisco_snmp_group`](#type-cisco_snmp_group)
   * [`cisco_snmp_server`](#type-cisco_snmp_server)
   * [`cisco_snmp_user`](#type-cisco_snmp_user)
+  * [`network_snmp (netdev_stdlib)`](#type-network_snmp)
+
+* SYSLOG Types (netdev_stdlib)
+  * [`syslog_server`](#type-syslog_server)
+  * [`syslog_setting`](#type-syslog_setting)
 
 * TACACS Types
   * [`cisco_tacacs_server`](#type-cisco_tacacs_server)
@@ -182,7 +201,7 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
   * [`cisco_vrf`](#type-cisco_vrf)
 
 --
-### <a name="resource-by-name">Resource Type Catalog (by Name)<a>
+### <a name="resource-by-name">Cisco Resource Type Catalog (by Name)<a>
 
 * [`cisco_command_config`](#type-cisco_command_config)
 * [`cisco_bgp`](#type-cisco_bgp)
@@ -203,8 +222,22 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 * [`cisco_vrf`](#type-cisco_vrf)
 * [`cisco_vtp`](#type-cisco_vtp)
 
+### <a name="resource-by-name-netdev">NetDev Resource Type Catalog (by Name)<a>
+
+* [`domain_name`](#type-domain_name)
+* [`name_server`](#type-name_server)
+* [`network_dns`](#type-network_dns)
+* [`network_snmp`](#type-network_snmp)
+* [`ntp_config`](#type-ntp_config)
+* [`ntp_server`](#type-ntp_server)
+* [`radius`](#type-radius)
+* [`radius_global`](#type-radius_global)
+* [`radius_server`](#type-radius_server)
+* [`syslog_server`](#type-syslog_server)
+* [`syslog_setting`](#type-syslog_setting)
+
 --
-### Resource Type Details
+### Cisco Resource Type Details
 
 The following resources are listed alphabetically.
 
@@ -1094,6 +1127,192 @@ VTP file name. Valid values are a string or the keyword 'default'.
 
 ##### `password`
 Password for the VTP domain. Valid values are a string or the keyword 'default'.
+
+--
+### NetDev Resource Type Details
+
+The following resources are listed alphabetically.
+
+--
+
+### Type: domain_name
+
+Configure the domain name of the device
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'. Default value is 'present'.
+
+##### `name`
+Domain name of the device. Valid value is a string.
+
+### Type: name_server
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'. Default value is 'present'.
+
+##### `name`
+Hostname or address of the DNS server.  Valid value is a string.
+
+### Type: network_dns
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid
+values are 'present' and 'absent'. Default value is 'present'.
+
+##### `name`
+Name, generally "settings", not used to manage the resource.  Valid value is a string.
+
+##### `domain`
+Default domain name to append to the device hostname.  Valid value is a string.
+
+##### `search`
+Array of DNS suffixes to search for FQDN entries.  Valid value is an array of strings.
+
+##### `servers`
+Array of DNS servers to use for name resolution.  Valid value is an array of strings.
+
+### Type: network_snmp
+
+#### Parameters
+
+##### `name`
+Name of the Puppet resource, not used to manage the device.  Valid value is a string.
+
+##### `enable`
+Enable or disable SNMP functionality.  Valid values are 'true' or 'false'.
+
+##### `contact`
+Contact name for this device.  Valid value is a string.
+
+##### `location`
+Location of this device.  Valid value is a string.
+
+### Type: ntp_config
+
+#### Parameters
+
+##### `ensure - Check this one.  Really ensureable?`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'. Default value is 'present'.
+
+##### `name`
+Resource name, not used to configure the device.  Valid value is a string.
+
+##### `source_interface`
+Source interface for the NTP system.  Valid value is a string.
+
+### Type: ntp_server
+
+#### Parameters
+
+##### `ensure - Check this one.  Really ensureable?`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'. Default value is 'present'.
+
+##### `name`
+Hostname or address of the NTP server.  Valid value is a string.
+
+### Type: radius
+
+#### Parameters
+
+##### `name`
+Resource name, not used to manage the device.  Valid value is a string.
+
+##### `enable`
+Enable or disable radius functionality.  Valid values are 'true' or 'false'.
+
+### Type: radius_global
+
+#### Parameters
+
+##### `ensure - Check this one.  Really ensureable?`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'. Default value is 'present'.
+
+##### `enable`
+**There is an enable property, but it's not implemented in the nxapi provider!**
+
+##### `name`
+Resource identifier, not used to manage the device.  Valid value is a string.
+
+##### `timeout`
+Number of seconds before the timeout period ends.  Valid value is an integer.
+
+##### `retransmit_count`
+Number of times to retransmit.  Valid value is an integer.
+
+##### `key`
+Encryption key (plaintext or in hash form depending on key_format).  Valid value is a string.
+
+##### `key_format`
+Encryption key format [0-7].  Valid value is an integer.
+
+### Type: radius_server
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'. Default value is 'present'.
+
+##### `name`
+Name of the radius server.  Valid value is a string.
+
+##### `auth_port`
+Port number to use for authentication.  Valid value is an integer.
+
+##### `acct_port`
+Port number to use for accounting.  Valid value is an integer.
+
+##### `timeout`
+Number of seconds before the timeout period ends.  Valid value is an integer.
+
+##### `retransmit_count`
+Number of times to retransmit.  Valid value is an integer.
+
+##### `accouting_only`
+Enable this server for accounting only.  Valid values are 'true' or 'false'.
+
+##### `authentication_only`
+Enable this server for authentication only.  Valid values are 'true' or 'false'.
+
+##### `key`
+Encryption key (plaintext or in hash form depending on key_format).  Valid value is a string.
+
+##### `key_format`
+Encryption key format [0-7].  Valid value is an integer.
+
+### Type: syslog_server
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'. Default value is 'present'.
+
+##### `name`
+Hostname or address of the Syslog server.  Valid value is a string.
+
+##### `serverity_level`
+Syslog severity level to log.  Valid value is an integer.
+
+##### `vrf`
+Interface to send syslog data from, e.g. "management".  Valid value is a string.
+
+### Type: syslog_settings
+
+#### Parameters
+
+##### `ensure - Check this one.  Really ensureable?`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'. Default value is 'present'.
+
+##### `name`
+Hostname or address of the Syslog server.  Valid value is a string.
+
+##### `time_stamp_units`
+The unit to log time values in.  Valid values are 'seconds' and 'milliseconds'.
 
 ## Limitations
 
