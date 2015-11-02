@@ -187,7 +187,7 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 
 * SYSLOG Types (netdev_stdlib)
   * [`syslog_server`](#type-syslog_server)
-  * [`syslog_setting`](#type-syslog_setting)
+  * [`syslog_settings`](#type-syslog_settings)
 
 * TACACS Types
   * [`cisco_tacacs_server`](#type-cisco_tacacs_server)
@@ -234,7 +234,7 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 * [`radius_global`](#type-radius_global)
 * [`radius_server`](#type-radius_server)
 * [`syslog_server`](#type-syslog_server)
-* [`syslog_setting`](#type-syslog_setting)
+* [`syslog_settings`](#type-syslog_settings)
 
 --
 ### Cisco Resource Type Details
