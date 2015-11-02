@@ -313,8 +313,8 @@ def interface_ip_cleanup(agent, stepinfo='Pre Clean:')
   logger.debug("#{stepinfo} Interface IP cleanup")
   show_cmd = UtilityLib.get_vshell_cmd('show ip interface brief')
 
-  # Find the interfaces with IP addresses from which to build a cleanup
-  # configuration (mgmt will not appear).
+  # Find the interfaces with IP addresses; build a removal config.
+  # Note mgmt0 will not appear in the show cmd output.
   on(agent, show_cmd)
   clean = stdout.split("\n").map do |line|
     "interface #{Regexp.last_match[:intf]} ; no ip addr" if
@@ -323,6 +323,7 @@ def interface_ip_cleanup(agent, stepinfo='Pre Clean:')
   return if clean.empty?
   clean = clean.join(' ; ').prepend('conf t ; ')
   logger.debug("#{stepinfo} Clean string:\n#{clean}")
+  # exit codes: 0 = no changes, 2 = changes have occurred
   on(agent, UtilityLib.get_vshell_cmd(clean), acceptable_exit_codes: [0, 2])
 end
 
