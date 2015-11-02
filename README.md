@@ -142,6 +142,8 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 
 ## <a name ="resource-reference">Resource Reference<a>
 
+The following resources include cisco types and providers along with cisco provider support for netdev stdlib types.  Installing the `ciscopuppet` module will install both the `ciscopuppet` and `netdev_stdlib` modules. 
+
 ### <a name="resource-by-tech">Resource Type Catalog (by Technology)<a>
 
 * Miscellaneous Types
@@ -154,18 +156,18 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
   * [`cisco_bgp_neighbor`](#type-cisco_bgp_neighbor)
   * [`cisco_bgp_neighbor_af`](#type-cisco_bgp_neighbor_af)
 
-* Domain Types (netdev_stdlib)
-  * [`domain_name`](#type-domain_name)
-  * [`name_server`](#type-name_server)
-  * [`network_dns`](#type-network_dns)
+* Domain Types
+  * [`domain_name (netdev_stdlib)`](#type-domain_name)
+  * [`name_server (netdev_stdlib)`](#type-name_server)
+  * [`network_dns (netdev_stdlib)`](#type-network_dns)
 
 * Interface Types
   * [`cisco_interface`](#type-cisco_interface)
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 
-* NTP Types (netdev_stdlib)
-  * [`ntp_config`](#type-ntp_config)
-  * [`ntp_server`](#type-ntp_server)
+* NTP Types
+  * [`ntp_config (netdev_stdlib)`](#type-ntp_config)
+  * [`ntp_server (netdev_stdlib)`](#type-ntp_server)
 
 * OSPF Types
   * [`cisco_vrf`](#type-cisco_vrf)
@@ -173,10 +175,10 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
   * [`cisco_ospf_vrf`](#type-cisco_ospf_vrf)
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 
-* RADIUS Types (netdev_stdlib)
-  * [`radius`](#type-radius)
-  * [`radius_global`](#type-radius_global)
-  * [`radius_server`](#type-radius_server)
+* RADIUS Types
+  * [`radius (netdev_stdlib)`](#type-radius)
+  * [`radius_global (netdev_stdlib)`](#type-radius_global)
+  * [`radius_server (netdev_stdlib)`](#type-radius_server)
 
 * SNMP Types
   * [`cisco_snmp_community`](#type-cisco_snmp_community)
@@ -185,9 +187,9 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
   * [`cisco_snmp_user`](#type-cisco_snmp_user)
   * [`network_snmp (netdev_stdlib)`](#type-network_snmp)
 
-* SYSLOG Types (netdev_stdlib)
-  * [`syslog_server`](#type-syslog_server)
-  * [`syslog_settings`](#type-syslog_settings)
+* SYSLOG Types
+  * [`syslog_server (netdev_stdlib)`](#type-syslog_server)
+  * [`syslog_setting (netdev_stdlib)`](#type-syslog_setting)
 
 * TACACS Types
   * [`cisco_tacacs_server`](#type-cisco_tacacs_server)
@@ -222,7 +224,7 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 * [`cisco_vrf`](#type-cisco_vrf)
 * [`cisco_vtp`](#type-cisco_vtp)
 
-### <a name="resource-by-name-netdev">NetDev Resource Type Catalog (by Name)<a>
+### <a name="resource-by-name-netdev">NetDev StdLib Resource Type Catalog (by Name)<a>
 
 * [`domain_name`](#type-domain_name)
 * [`name_server`](#type-name_server)
@@ -234,7 +236,7 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 * [`radius_global`](#type-radius_global)
 * [`radius_server`](#type-radius_server)
 * [`syslog_server`](#type-syslog_server)
-* [`syslog_settings`](#type-syslog_settings)
+* [`syslog_setting`](#type-syslog_setting)
 
 --
 ### Cisco Resource Type Details
@@ -1129,7 +1131,7 @@ VTP file name. Valid values are a string or the keyword 'default'.
 Password for the VTP domain. Valid values are a string or the keyword 'default'.
 
 --
-### NetDev Resource Type Details
+### NetDev StdLib Resource Type Details
 
 The following resources are listed alphabetically.
 
