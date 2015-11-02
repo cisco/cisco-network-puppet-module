@@ -1206,7 +1206,7 @@ Determines whether or not the config should be present on the device. Valid valu
 Resource name, not used to configure the device.  Valid value is a string.
 
 ##### `source_interface`
-Source interface for the NTP system.  Valid value is a string.
+Source interface for the NTP server.  Valid value is a string.
 
 ### Type: ntp_server
 
@@ -1314,7 +1314,7 @@ Determines whether or not the config should be present on the device. Valid valu
 Hostname or address of the Syslog server.  Valid value is a string.
 
 ##### `time_stamp_units`
-The unit to log time values in.  Valid values are 'seconds' and 'milliseconds'.
+The unit of measurement for log time values.  Valid values are 'seconds' and 'milliseconds'.
 
 ## Limitations
 
