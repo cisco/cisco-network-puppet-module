@@ -197,6 +197,7 @@ The following resources include cisco types and providers along with cisco provi
   * [`tacacs_server_group (netdev_stdlib)`](#type-cisco_tacacs_server_group)
   * [`cisco_tacacs_server_host`](#type-cisco_tacacs_server_host)
   * [`tacacs (netdev_stdlib)`](#type-tacacs)
+  * [`tacacs_global (netdev_stdlib)`](#type-tacacs_global)
   * [`tacacs_server (netdev_stdlib)`](#type-tacacs_server)
   * [`tacacs_server_group (netdev_stdlib)`](#type-tacacs_server_group)
 
@@ -244,6 +245,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`syslog_server`](#type-syslog_server)
 * [`syslog_setting`](#type-syslog_setting)
 * [`tacacs`](#type-tacacs)
+* [`tacacs_global`](#type-tacacs_global)
 * [`tacacs_server_group`](#type-cisco_tacacs_server_group)
 * [`tacacs_server`](#type-tacacs_server)
 
@@ -1348,6 +1350,27 @@ The unit of measurement for log time values.  Valid values are 'seconds' and 'mi
 ### Type: tacacs
 
 #### Parameters
+
+##### `enable`
+Enable or disable radius functionality [true|false]
+
+### Type: tacacs_global
+
+#### Parameters
+
+##### `enable`
+Enable or disable radius functionality [true|false]
+
+##### `key`
+Encryption key (plaintext or in hash form depending on key_format)
+
+##### `key_format`
+Encryption key format [0-7]
+
+##### `timeout`
+Number of seconds before the timeout period ends
+
+### Type: tacacs_server
 
 ##### `enable`
 Enable or disable tacacs functionality [true|false]
