@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-
 # Require UtilityLib.rb path.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
@@ -26,10 +25,8 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 # library is implemented as a module with related methods and constants defined
 # inside it for use as a namespace. All of the methods are defined as module
 # methods.
-#
 # Every Beaker ROUTEDINTF test case that runs an instance of Beaker::TestCase
 # requires RoutedIntfLib module.
-#
 # The module has a single set of methods:
 # A. Methods to create manifests for cisco_interface Puppet provider test cases.
 module RoutedIntfLib
@@ -46,7 +43,6 @@ module RoutedIntfLib
   VRF_NEGATIVE                 = '~'
 
   # A. Methods to create manifests for cisco_interface Puppet provider test cases.
-
   # Method to create a manifest for RoutedINTF resource attribute 'ensure' where
   # 'ensure' is set to present and 'switchport_mode' is set to disabled.
   # @param none [None] No input parameters exist.
@@ -64,11 +60,12 @@ node default {
       ipv4_proxy_arp               => 'default',
       ipv4_redirects               => 'default',
       mtu                          => 'default',
+      speed                        => 'auto',
+      duplex                       => 'auto',
       switchport_autostate_exclude => 'default',
       switchport_vtp               => 'default',
       vrf                          => 'default',
-  }
-}
+  }}
 EOF"
     manifest_str
   end
@@ -85,8 +82,7 @@ node default {
       description                  => 'default',
       shutdown                     => false,
       switchport_mode              => access,
-    }
-}
+    }}
 EOF"
     manifest_str
   end
@@ -105,8 +101,7 @@ node default {
       switchport_mode               => trunk,
       switchport_trunk_allowed_vlan => 'default',
       switchport_trunk_native_vlan  => 'default',
-    }
-}
+    }}
 EOF"
     manifest_str
   end
@@ -125,8 +120,7 @@ node default {
       switchport_mode               => trunk,
       switchport_trunk_allowed_vlan => '30, 40',
       switchport_trunk_native_vlan  => 20,
-    }
-}
+    }}
 EOF"
     manifest_str
   end
@@ -149,11 +143,12 @@ node default {
       ipv4_proxy_arp               => true,
       ipv4_redirects               => false,
       mtu                          => 1556,
+      speed                        => 100,
+      duplex                       => full,
       switchport_autostate_exclude => false,
       switchport_vtp               => false,
       vrf                          => 'test1',
-    }
-}
+    }}
 EOF"
     manifest_str
   end
@@ -171,8 +166,7 @@ node default {
     cisco_interface { 'ethernet1/4.1':
       ensure              => present,
       encapsulation_dot1q => 30,
-    }
-}
+    }}
 EOF"
     manifest_str
   end
@@ -191,8 +185,7 @@ node default {
     cisco_interface { 'ethernet1/4.1':
       ensure              => present,
       encapsulation_dot1q => #{RoutedIntfLib::ENCAP_DOT1Q_NEGATIVE},
-    }
-}
+    }}
 EOF"
     manifest_str
   end

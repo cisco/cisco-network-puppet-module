@@ -123,6 +123,18 @@ Puppet::Type.newtype(:cisco_interface) do
     munge { |value| value == 'default' ? :default : value.to_i }
   end # property mtu
 
+  newproperty(:speed) do
+    desc "Configure the speed between interfaces. Default value is 'auto'."
+
+    newvalues(:auto, 10, 100, 1000, 10_000, 1_000_000, 40_000)
+  end # property speed
+
+  newproperty(:duplex) do
+    desc "Configure duplex between interfaces. Default value is 'auto'."
+
+    newvalues(:auto, :full)
+  end # property duplex
+
   newproperty(:shutdown) do
     desc 'Shutdown state of the interface.'
 

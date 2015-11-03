@@ -15,8 +15,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Extended cisco_interface with the following attributes:
   - encapsulation dot1q
   - mtu
+  - speed
+  - duplex
   - switchport trunk allowed VLANs
   - switchport trunk native VLAN
+- Added support for network_interface from puppets netdev_stdlib
 - Rubocop enabled and passes (@robert-w-gries)
 - Gemfile now requires puppet version 4.0 or higher
 - Gemfile.lock added to gitignore
