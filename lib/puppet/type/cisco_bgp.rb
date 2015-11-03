@@ -208,7 +208,7 @@ Puppet::Type.newtype(:cisco_bgp) do
 
     validate do |id|
       begin
-        if /^\d+\.\d+$/.match(id) || /^\d+$/.match(id)
+        if /^(\d+|\d+\.\d+)$/.match(id)
           String(id) unless id == :default || id.empty? || id == 'default'
         end
       rescue
@@ -231,7 +231,7 @@ Puppet::Type.newtype(:cisco_bgp) do
       list = peers.split(' ')
       list.each do |value|
         fail "Confederation peer value '#{value}' #{match_error}" unless
-          /^\d+$/.match(value) || /^\d+\.\d+$/.match(value) ||
+          /^(\d+|\d+\.\d+)$/.match(value) ||
           peers == 'default' || peers == :default
       end
     end

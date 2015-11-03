@@ -161,7 +161,6 @@ class ciscopuppet::demo_bgp {
     capability_negotiation => true,
     dynamic_capability     => true,
     ebgp_multihop          => 2,
-    local_as               => 55.77,
     log_neighbor_changes   => disable,
     low_memory_exempt      => false,
     remote_as              => 12,
