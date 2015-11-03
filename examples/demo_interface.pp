@@ -48,4 +48,10 @@ class ciscopuppet::demo_interface {
     svi_autostate  => false,
     svi_management => true,
   }
+
+  network_interface { 'ethernet1/9':
+    description => 'default',
+    duplex      => 'auto',
+    speed       => '100m',
+  }
 }
