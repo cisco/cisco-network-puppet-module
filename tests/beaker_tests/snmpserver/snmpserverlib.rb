@@ -64,6 +64,30 @@ EOF"
     manifest_str
   end
 
+  # Helper method for comparing all of the snmpserver properties against their
+  # expected default settings.
+  def self.match_default_cli(output, testcase, logger)
+    # Match strings
+    ['snmp-server aaa-user cache-timeout 3600',
+     'snmp-server aaa-user cache-timeout 3600',
+     'snmp-server packetsize 1500',
+     'snmp-server protocol enable',
+     'snmp-server tcp-session auth',
+     'snmp-server globalEnforcePriv',
+    ].each do |pattern|
+      UtilityLib.search_pattern_in_output(output, [/#{Regexp.quote(pattern)}/],
+                                          false, testcase, logger)
+    end
+
+    # Refute strings
+    ['snmp-server contact',
+     'snmp-server location',
+    ].each do |pattern|
+      UtilityLib.search_pattern_in_output(output, [/#{Regexp.quote(pattern)}/],
+                                          true, testcase, logger)
+    end
+  end
+
   # Method to create a manifest for SNMPSERVER resource attributes:
   # aaa_user_cache_timeout, global_enforce_priv, packet_size,
   # protocol, tcp_session_auth, contact and location.
