@@ -66,7 +66,7 @@ EOF"
 
   # Helper method for comparing all of the snmpserver properties against their
   # expected default settings.
-  def self.match_default_cli(output, logger)
+  def self.match_default_cli(output, testcase, logger)
     # Match strings
     ['snmp-server aaa-user cache-timeout 3600',
      'snmp-server aaa-user cache-timeout 3600',
@@ -76,7 +76,7 @@ EOF"
      'snmp-server globalEnforcePriv',
     ].each do |pattern|
       UtilityLib.search_pattern_in_output(output, [/#{Regexp.quote(pattern)}/],
-                                          false, self, logger)
+                                          false, testcase, logger)
     end
 
     # Refute strings
@@ -84,7 +84,7 @@ EOF"
      'snmp-server location',
     ].each do |pattern|
       UtilityLib.search_pattern_in_output(output, [/#{Regexp.quote(pattern)}/],
-                                          true, self, logger)
+                                          true, testcase, logger)
     end
   end
 

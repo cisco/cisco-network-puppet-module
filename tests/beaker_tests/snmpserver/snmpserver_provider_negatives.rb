@@ -80,7 +80,7 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp all')
     on(agent, cmd_str) do
-      SnmpServerLib.match_default_cli(stdout, logger)
+      SnmpServerLib.match_default_cli(stdout, self, logger)
     end
 
     logger.info("Setup switch for provider test :: #{result}")
