@@ -186,6 +186,13 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
 
   ensurable
 
+  # Overwrites the name method which by default returns only
+  # self[:name].
+  def name
+    "#{self[:asn]} #{self[:vrf]} #{self[:neighbor]} #{self[:afi]} " \
+    "#{self[:safi]}"
+  end
+
   # Only needed to satisfy name parameter.
   newparam(:name) do
   end
