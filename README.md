@@ -157,7 +157,7 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 * Interface Types
   * [`cisco_interface`](#type-cisco_interface)
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
-  * [network_interface (netdev_stdlib)](#type-network_interface)
+  * [`network_interface (netdev_stdlib)`](#type-network_interface)
 
 * OSPF Types
   * [`cisco_vrf`](#type-cisco_vrf)
@@ -203,7 +203,7 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 * [`cisco_vlan`](#type-cisco_vlan)
 * [`cisco_vrf`](#type-cisco_vrf)
 * [`cisco_vtp`](#type-cisco_vtp)
-* [`network_interface`](#type-network_interface)
+* [`network_interface (netdev_stdlib)`](#type-network_interface)
 
 --
 ### Resource Type Details
@@ -726,7 +726,7 @@ Enable/Disable management on the SVI interface. Valid values are 'true', 'false'
 
 --
 
-### Type: network_interface
+### Type: `network_interface`
 
 Manages a puppet netdev_stdlib Network Interface. Any resource dependency should be run before the interface resource.
 
