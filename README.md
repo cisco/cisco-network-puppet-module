@@ -157,6 +157,7 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 * Interface Types
   * [`cisco_interface`](#type-cisco_interface)
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
+  * [network_interface (netdev_stdlib)](#type-network_interface)
 
 * OSPF Types
   * [`cisco_vrf`](#type-cisco_vrf)
@@ -202,6 +203,7 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 * [`cisco_vlan`](#type-cisco_vlan)
 * [`cisco_vrf`](#type-cisco_vrf)
 * [`cisco_vtp`](#type-cisco_vtp)
+* [`network_interface`](#type-network_interface)
 
 --
 ### Resource Type Details
@@ -721,6 +723,30 @@ Enable/Disable autostate on the SVI interface. Valid values are 'true',
 
 ###### `svi_management`
 Enable/Disable management on the SVI interface. Valid values are 'true', 'false', and 'default'.
+
+--
+
+### Type: network_interface
+
+Manages a puppet netdev_stdlib Network Interface. Any resource dependency should be run before the interface resource.
+
+#### Parameters
+
+###### `name`
+Name of the interface on the network element. Valid value is a string.
+
+###### `description`
+Description of the interface. Valid values are a string or the keyword 'default'.
+
+###### `duplex`
+Duplex of the interface. Valid values are 'full', and 'auto'.
+
+###### `speed`
+Speed of the interface. Valid values are 100m, 1g, 10g, 40g, 100g, and 'auto'.
+
+##### `mtu`
+Maximum Trasnmission Unit size for frames received and sent on the specified
+interface. Valid value is an integer.
 
 --
 ### Type: cisco_interface_ospf
