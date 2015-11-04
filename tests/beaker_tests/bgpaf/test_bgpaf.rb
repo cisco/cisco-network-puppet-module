@@ -115,11 +115,11 @@ tests['default_properties'] = {
   :desc           => '1.1 Default Properties',
   :title_pattern  => '2 blue ipv4 unicast',
   :manifest_props => "
-    advertise_l2vpn_evpn          => 'default',
     additional_paths_install      => 'default',
     additional_paths_receive      => 'default',
     additional_paths_selection    => 'default',
     additional_paths_send         => 'default',
+    advertise_l2vpn_evpn          => 'default',
     client_to_client              => 'default',
     dampen_igp_metric             => 'default',
     dampening_state               => 'default',
@@ -136,10 +136,10 @@ tests['default_properties'] = {
     ",
 
   :resource_props => {
-    'advertise_l2vpn_evpn'          => 'false',
     'additional_paths_install'      => 'false',
     'additional_paths_receive'      => 'false',
     'additional_paths_send'         => 'false',
+    'advertise_l2vpn_evpn'          => 'false',
     'client_to_client'              => 'true',
     'dampen_igp_metric'             => '600',
     'dampening_state'               => 'true',
@@ -178,19 +178,19 @@ tests['non_default_properties_A'] = {
   :desc           => "2.1 Non Default Properties: 'A' commands",
   :title_pattern  => '2 blue ipv4 unicast',
   :manifest_props => "
-    advertise_l2vpn_evpn            => true,
     additional_paths_install        => true,
     additional_paths_receive        => true,
     additional_paths_selection      => 'RouteMap',
     additional_paths_send           => true,
+    advertise_l2vpn_evpn            => true,
   ",
 
   :resource_props => {
-    'advertise_l2vpn_evpn'       => 'true',
     'additional_paths_install'   => 'true',
     'additional_paths_receive'   => 'true',
     'additional_paths_selection' => 'RouteMap',
     'additional_paths_send'      => 'true',
+    'advertise_l2vpn_evpn'       => 'true',
   },
 }
 
