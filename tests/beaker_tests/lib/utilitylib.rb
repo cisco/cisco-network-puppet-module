@@ -311,8 +311,8 @@ end
 # bgp neighbor remote-as configuration helper
 def bgp_nbr_remote_as(agent, remote_as)
   asn, vrf, nbr, remote = remote_as.split
-  vrf = (vrf == 'default') ? '' : "vrf #{vrf}"
-  cfg_str = "conf t ; router bgp #{asn} ; #{vrf} ; " \
+  vrf = (vrf == 'default') ? '' : "vrf #{vrf} ;"
+  cfg_str = "conf t ; router bgp #{asn} ; #{vrf} " \
             "neighbor #{nbr} ; remote-as #{remote}"
   on(agent, UtilityLib.get_vshell_cmd(cfg_str))
 end

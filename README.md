@@ -356,6 +356,9 @@ Configures the capability of selecting additional paths for a prefix. Valid valu
 ##### `additional_paths_send`
 Enables the send capability of additional paths for all of the neighbors under this address family for which the capability has not been disabled. Valid values are true, false, or 'default'
 
+##### `advertise_l2vpn_evpn`
+advertise evpn routes. Valid values are true and false.
+
 ##### `client_to_client`
 Configure client-to-client route reflection. Valid values are true and false.
 
