@@ -1301,9 +1301,6 @@ Interface to send syslog data from, e.g. "management".  Valid value is a string.
 
 #### Parameters
 
-##### `ensure - Check this one.  Really ensureable?`
-Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'. Default value is 'present'.
-
 ##### `name`
 Hostname or address of the Syslog server.  Valid value is a string.
 
