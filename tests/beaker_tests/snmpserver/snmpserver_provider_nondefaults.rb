@@ -110,7 +110,7 @@ test_name "TestCase :: #{testheader}" do
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
                                           { 'aaa_user_cache_timeout' => '1000',
-                                            'global_enforce_priv'    => 'false',
+                                            'global_enforce_priv'    => 'true',
                                             'packet_size'            => '2500',
                                             'protocol'               => 'false',
                                             'tcp_session_auth'       => 'false',
@@ -161,7 +161,7 @@ test_name "TestCase :: #{testheader}" do
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
                                           { 'aaa_user_cache_timeout' => '3600',
-                                            'global_enforce_priv'    => 'true',
+                                            'global_enforce_priv'    => 'false',
                                             'packet_size'            => '1500',
                                             'protocol'               => 'true',
                                             'tcp_session_auth'       => 'true' },
@@ -178,8 +178,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
-                                          [/snmp-server packetsize 1500/,
-                                           /snmp-server globalEnforcePriv/],
+                                          [/snmp-server packetsize 1500/],
                                           false, self, logger)
     end
 
