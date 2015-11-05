@@ -101,7 +101,7 @@ node default {
       aaa_user_cache_timeout => 1000,
       tcp_session_auth       => false,
       protocol               => false,
-      global_enforce_priv    => false,
+      global_enforce_priv    => true,
       contact                => 'user1',
       location               => 'rtp',
     }
