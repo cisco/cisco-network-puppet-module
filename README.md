@@ -1144,7 +1144,7 @@ Configure the domain name of the device
 #### Parameters
 
 ##### `ensure`
-Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'. Default value is 'present'.
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
 
 ##### `name`
 Domain name of the device. Valid value is a string.
@@ -1154,7 +1154,7 @@ Domain name of the device. Valid value is a string.
 #### Parameters
 
 ##### `ensure`
-Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'. Default value is 'present'.
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
 
 ##### `name`
 Hostname or address of the DNS server.  Valid value is a string.
@@ -1164,8 +1164,7 @@ Hostname or address of the DNS server.  Valid value is a string.
 #### Parameters
 
 ##### `ensure`
-Determines whether or not the config should be present on the device. Valid
-values are 'present' and 'absent'. Default value is 'present'.
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
 
 ##### `name`
 Name, generally "settings", not used to manage the resource.  Valid value is a string.
@@ -1229,9 +1228,6 @@ Enable or disable radius functionality.  Valid values are 'true' or 'false'.
 
 #### Parameters
 
-##### `enable`
-**There is an enable property, but it's not implemented in the nxapi provider!**
-
 ##### `name`
 Resource identifier, not used to manage the device.  Valid value is a string.
 
@@ -1252,7 +1248,7 @@ Encryption key format [0-7].  Valid value is an integer.
 #### Parameters
 
 ##### `ensure`
-Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'. Default value is 'present'.
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
 
 ##### `name`
 Name of the radius server.  Valid value is a string.
@@ -1286,7 +1282,7 @@ Encryption key format [0-7].  Valid value is an integer.
 #### Parameters
 
 ##### `ensure`
-Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'. Default value is 'present'.
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
 
 ##### `name`
 Hostname or address of the Syslog server.  Valid value is a string.
@@ -1297,7 +1293,7 @@ Syslog severity level to log.  Valid value is an integer.
 ##### `vrf`
 Interface to send syslog data from, e.g. "management".  Valid value is a string.
 
-### Type: syslog_settings
+### Type: syslog_setting
 
 #### Parameters
 
