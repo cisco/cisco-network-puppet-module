@@ -73,7 +73,7 @@ test_name "TestCase :: #{testheader}" do
                                         'no ip domain-list test.net ; ' \
                                         'no ip name-server 8.8.8.8 ; ' \
                                         'no ip name-server 2001:4860:4860::8888')
-    on(agent, cmd_str)
+    on(agent, cmd_str, acceptable_exit_codes: [0 , 2])
 
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
@@ -90,7 +90,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a bash shell cmd.
     on(master, NetworkDnsLib.create_network_dns_manifest('switch1.test.com',
                                                          ['test.com', 'test.net'],
-                                                         ['8.8.8.8', '2001:4860:4860::8888'],
+                                                         ['2001:4860:4860::8888', '8.8.8.8'],
                                                         ))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
@@ -112,7 +112,7 @@ test_name "TestCase :: #{testheader}" do
                                           { 'ensure'  => 'present',
                                             'domain'  => 'switch1.test.com',
                                             'search'  => "\\['test.com', 'test.net'\\]",
-                                            'servers' => "\\['8.8.8.8', '2001:4860:4860::8888'\\]" },
+                                            'servers' => "\\['2001:4860:4860::8888', '8.8.8.8'\\]" },
                                           false, self, logger)
     end
 
@@ -130,7 +130,7 @@ test_name "TestCase :: #{testheader}" do
                                             /ip domain-name switch1\.test\.com/,
                                             /ip domain-list test\.com/,
                                             /ip domain-list test\.net/,
-                                            /ip name-server 8\.8\.8\.8 2001:4860:4860::8888/,
+                                            /ip name-server 2001:4860:4860::8888 8\.8\.8\.8/,
                                           ],
                                           false, self, logger)
     end
@@ -143,7 +143,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a bash shell cmd.
     on(master, NetworkDnsLib.create_network_dns_manifest('switch2.test.com',
                                                          ['test.net'],
-                                                         ['8.8.4.4', '2001:4860:4860::8888'],
+                                                         ['2001:4860:4860::8888', '8.8.4.4'],
                                                         ))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
