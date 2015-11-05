@@ -1199,9 +1199,6 @@ Location of this device.  Valid value is a string.
 
 #### Parameters
 
-##### `ensure - Check this one.  Really ensureable?`
-Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'. Default value is 'present'.
-
 ##### `name`
 Resource name, not used to configure the device.  Valid value is a string.
 
@@ -1212,8 +1209,8 @@ Source interface for the NTP server.  Valid value is a string.
 
 #### Parameters
 
-##### `ensure - Check this one.  Really ensureable?`
-Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'. Default value is 'present'.
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
 
 ##### `name`
 Hostname or address of the NTP server.  Valid value is a string.
@@ -1231,9 +1228,6 @@ Enable or disable radius functionality.  Valid values are 'true' or 'false'.
 ### Type: radius_global
 
 #### Parameters
-
-##### `ensure - Check this one.  Really ensureable?`
-Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'. Default value is 'present'.
 
 ##### `enable`
 **There is an enable property, but it's not implemented in the nxapi provider!**
