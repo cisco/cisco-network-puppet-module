@@ -194,6 +194,7 @@ The following resources include cisco types and providers along with cisco provi
 
 * TACACS Types
   * [`cisco_tacacs_server`](#type-cisco_tacacs_server)
+  * [`tacacs_server_group (netdev_stdlib)`](#type-cisco_tacacs_server_group)
   * [`cisco_tacacs_server_host`](#type-cisco_tacacs_server_host)
 
 * VLAN Types
@@ -239,6 +240,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`radius_server`](#type-radius_server)
 * [`syslog_server`](#type-syslog_server)
 * [`syslog_setting`](#type-syslog_setting)
+* [`tacacs_server_group`](#type-cisco_tacacs_server_group)
 
 --
 ### Cisco Resource Type Details
@@ -1337,6 +1339,16 @@ Hostname or address of the Syslog server.  Valid value is a string.
 
 ##### `time_stamp_units`
 The unit of measurement for log time values.  Valid values are 'seconds' and 'milliseconds'.
+
+### Type: tacacs_server_group
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `servers`
+Array of servers associated with this group.
 
 ## Limitations
 
