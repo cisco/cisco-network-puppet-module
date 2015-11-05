@@ -644,7 +644,7 @@ test_name "TestCase :: #{testheader}" do
   test_harness_bgp_nbr_af(tests, id)
 
   # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 5.L2VPN  Non Default Property Testing")
+  logger.info("\n#{'-' * 60}\nSection 5. L2VPN  Non Default Property Testing")
   node_feature_cleanup(agent, 'bgp')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_A1_l2vpn')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_M_l2vpn')
@@ -657,7 +657,7 @@ test_name "TestCase :: #{testheader}" do
   test_harness_bgp_nbr_af(tests, 'non_default_misc_maps_part_1_l2vpn')
 
   # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 6.L2VPN Title Pattern Testing")
+  logger.info("\n#{'-' * 60}\nSection 6. L2VPN Title Pattern Testing")
   node_feature_cleanup(agent, 'bgp')
 
   id = 'title_patterns'
