@@ -73,7 +73,7 @@ test_name "TestCase :: #{testheader}" do
                                         'no ip domain-list test.net ; ' \
                                         'no ip name-server 8.8.8.8 ; ' \
                                         'no ip name-server 2001:4860:4860::8888')
-    on(agent, cmd_str, acceptable_exit_codes: [0 , 2])
+    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
