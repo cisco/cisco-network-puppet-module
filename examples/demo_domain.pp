@@ -1,6 +1,6 @@
-# Manifest to demo cisco_snmp* providers
+# Manifest to demo domain providers
 #
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2015 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,32 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet::demo_snmp {
-  cisco_snmp_server { 'default':
-    aaa_user_cache_timeout => 200,
-    global_enforce_priv    => true,
-  }
-
-  cisco_snmp_group { 'network-admin':
+class ciscopuppet::demo_domain {
+  domain_name { 'demo.cisco.com':
     ensure => present,
   }
 
-  cisco_snmp_community { 'setcom':
+  name_server { '8.8.8.8':
     ensure => present,
-    group  => 'network-admin',
-    acl    => 'testcomacl',
   }
 
-  cisco_snmp_user { 'v3test':
-    ensure => present,
-    groups => ['network-admin'],
-  }
-
-  # netdev network_snmp
-  network_snmp {'default':
-    enable   => true,
-    location => 'UK',
-    contact  => 'SysAdmin',
+  network_dns { 'settings':
+    domain  => 'demo.cisco.com',
+    search  => ['test.com', 'test.net'],
+    servers => ['8.8.8.8', '2001:4860:4860::8888'],
   }
 
 }
