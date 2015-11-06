@@ -78,7 +78,7 @@ Notice: Installing -- do not interrupt ...
 /etc/puppetlabs/code/environments/production/modules
 |
 +-- puppetlabs-ciscopuppet (v1.1.0)
-+-- puppetlabs-netdev_stdlib (v0.10.0)
++-- puppetlabs-netdev_stdlib (v0.11.0)
 ```
 
 **Note:** Optionally, restart your puppet server following the install.
