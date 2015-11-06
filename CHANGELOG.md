@@ -2,14 +2,24 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## feature/bgp
+- Added support for cisco_vrf provider.
+- Added support for cisco_bgp provider.
+- Added support for cisco_bgp_af provider.
+- Added support for cisco_bgp_neighbor provider.
+- Added support for cisco_bgp_neighbor_af provider.
+
 ## Unreleased
 ### Added
 - New documentation for developing beaker testcases: README-develop-beaker-scripts.md
 - Extended cisco_interface with the following attributes:
   - encapsulation dot1q
   - mtu
+  - speed
+  - duplex
   - switchport trunk allowed VLANs
   - switchport trunk native VLAN
+- Added support for network_interface from puppets netdev_stdlib
 - Rubocop enabled and passes (@robert-w-gries)
 - Gemfile now requires puppet version 4.0 or higher
 - Gemfile.lock added to gitignore

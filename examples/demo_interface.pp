@@ -21,7 +21,9 @@ class ciscopuppet::demo_interface {
     description         => 'managed by puppet',
     ipv4_address        => '192.168.55.55',
     ipv4_netmask_length => 24,
-    mtu                 => 1448,
+    mtu                 => 1600,
+    speed               => 100,
+    duplex              => 'full',
     vrf                 => 'test',
   }
 
@@ -45,5 +47,11 @@ class ciscopuppet::demo_interface {
   cisco_interface { 'Vlan22':
     svi_autostate  => false,
     svi_management => true,
+  }
+
+  network_interface { 'ethernet1/9':
+    description => 'default',
+    duplex      => 'auto',
+    speed       => '100m',
   }
 }

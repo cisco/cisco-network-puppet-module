@@ -116,6 +116,8 @@ test_name "TestCase :: #{testheader}" do
                                             'ipv4_proxy_arp'               => 'false',
                                             'ipv4_redirects'               => 'true',
                                             'mtu'                          => '1500',
+                                            'speed'                        => 'auto',
+                                            'duplex'                       => 'auto',
                                             'shutdown'                     => 'false',
                                             'switchport_autostate_exclude' => 'false',
                                             'switchport_mode'              => 'disabled',
@@ -136,6 +138,8 @@ test_name "TestCase :: #{testheader}" do
                                           [
                                             %r{ip address 192.168.1.1/16},
                                             /mtu 1500/,
+                                            /speed auto/,
+                                            /duplex auto/,
                                             /no switchport/,
                                             /no shutdown/,
                                           ],

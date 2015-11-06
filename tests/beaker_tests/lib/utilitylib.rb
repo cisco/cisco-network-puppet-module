@@ -97,6 +97,14 @@ module UtilityLib
   def self.hash_to_patterns(hash)
     regexparr = []
     hash.each do |key, value|
+      # Need to escape '[', ']', '"' characters for nested array of arrays.
+      # Example:
+      #   [["192.168.5.0/24", "nrtemap1"], ["192.168.6.0/32"]]
+      # Becomes:
+      #   \[\['192.168.5.0\/24', 'nrtemap1'\], \['192.168.6.0\/32'\]\]
+      if /^\[.*\]$/.match(value)
+        value.gsub!(/[\[\]]/) { |s| '\\' + "#{s}" }.gsub!(/\"/) { |_s| '\'' }
+      end
       regexparr << Regexp.new("#{key}\s+=>\s+'?#{value}'?")
     end
     regexparr
@@ -116,7 +124,11 @@ module UtilityLib
     patarr = UtilityLib.hash_to_patterns(patarr) if patarr.instance_of?(Hash)
     patarr.each do |pattern|
       inverse ? (match = (output !~ pattern)) : (match = (output =~ pattern))
-      (match) ? logger.debug("TestStep :: Match #{pattern} :: PASS") : testcase.fail_test("TestStep :: Match #{pattern} :: FAIL")
+      if match
+        logger.debug("TestStep :: Match #{pattern} :: PASS")
+      else
+        testcase.fail_test("TestStep :: Match #{pattern} :: FAIL")
+      end
     end
   end
 
@@ -131,7 +143,11 @@ module UtilityLib
   # @param logger [Logger] A default instance of Beaker::Logger.
   # @result none [None] Returns no object.
   def self.raise_passfail_exception(testresult, message, testcase, logger)
-    (testresult == 'PASS') ? testcase.pass_test("\nTestCase :: #{message} :: PASS") : testcase.fail_test("\nTestCase :: #{message} :: FAIL")
+    if (testresult == 'PASS')
+      testcase.pass_test("\nTestCase :: #{message} :: PASS")
+    else
+      testcase.fail_test("\nTestCase :: #{message} :: FAIL")
+    end
   rescue Beaker::DSL::Outcomes::PassTest
     logger.success("TestCase :: #{message} :: PASS")
   rescue Beaker::DSL::Outcomes::FailTest
@@ -295,8 +311,8 @@ end
 # bgp neighbor remote-as configuration helper
 def bgp_nbr_remote_as(agent, remote_as)
   asn, vrf, nbr, remote = remote_as.split
-  vrf = (vrf == 'default') ? '' : "vrf #{vrf}"
-  cfg_str = "conf t ; router bgp #{asn} ; #{vrf} ; " \
+  vrf = (vrf == 'default') ? '' : "vrf #{vrf} ;"
+  cfg_str = "conf t ; router bgp #{asn} ; #{vrf} " \
             "neighbor #{nbr} ; remote-as #{remote}"
   on(agent, UtilityLib.get_vshell_cmd(cfg_str))
 end
