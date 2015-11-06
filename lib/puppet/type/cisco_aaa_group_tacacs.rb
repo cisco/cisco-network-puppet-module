@@ -91,7 +91,7 @@ Puppet::Type.newtype(:cisco_aaa_group_tacacs) do
 
   newproperty(:server_hosts, array_matching: :all) do
     desc "An array of TACACS+ server hosts associated with this TACACS+ server
-          group. Valid values are string, an array or the keyword 'default'."
+          group. Valid values are an array, or the keyword 'default'."
 
     validate do |value|
       fail "server_host #{value} must be a String" unless
