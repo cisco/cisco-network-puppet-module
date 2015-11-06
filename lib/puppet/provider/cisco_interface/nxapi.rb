@@ -48,8 +48,9 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     :ipv4_address,
     :ipv4_netmask_length,
     :mtu,
-    :speed,
-    :duplex,
+    # TODO: handle these excluded properties in YAML
+#    :speed,
+#    :duplex,
     :switchport_trunk_allowed_vlan,
     :switchport_trunk_native_vlan,
   ]

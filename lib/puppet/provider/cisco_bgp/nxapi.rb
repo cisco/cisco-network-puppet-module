@@ -62,7 +62,8 @@ Puppet::Type.type(:cisco_bgp).provide(:nxapi) do
     :graceful_restart,
     :graceful_restart_helper,
     :log_neighbor_changes,
-    :shutdown,
+    # TODO: handle this using YAML
+    #:shutdown,
     :suppress_fib_pending,
     :timer_bestpath_limit_always,
   ]
