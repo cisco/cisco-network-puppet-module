@@ -88,13 +88,16 @@ node default {
     cisco_tacacs_server_host { 'testhost':
       ensure                 => present,
   }
+    cisco_tacacs_server_host { '1.1.1.1':
+      ensure                 => present,
+  }
     cisco_aaa_group_tacacs { 'test':
       ensure                 => present,
       deadtime               => '30',
       vrf_name               => 'blue',
       source_interface       => 'Ethernet1/1',
-      server_hosts           => ['testhost'],
-      require                => Cisco_tacacs_server_host['testhost']
+      server_hosts           => ['testhost', '1.1.1.1'],
+      require                => Cisco_tacacs_server_host['testhost', '1.1.1.1'],
   }
 }
 EOF"

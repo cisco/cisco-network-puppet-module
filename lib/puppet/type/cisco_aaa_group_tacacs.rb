@@ -29,9 +29,9 @@ Puppet::Type.newtype(:cisco_aaa_group_tacacs) do
     cisco_aaa_group_tacacs {\"testgroup1\":
       ensure           => present,
       deadtime         => 30,
-      vrf_name         => \"blue\",
-      source_interface => 'Ethernet1/2',
       server_hosts     => ['13.13.13.13', 'host1.cisco.com'],
+      source_interface => 'Ethernet1/2',
+      vrf_name         => \"blue\",
     }"
 
   ensurable

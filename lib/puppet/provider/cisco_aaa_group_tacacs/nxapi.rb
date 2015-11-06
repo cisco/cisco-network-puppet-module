@@ -116,16 +116,19 @@ Puppet::Type.type(:cisco_aaa_group_tacacs).provide(:nxapi) do
     @property_flush[:deadtime] = set_value
   end
 
-  def vrf_name
-    return :default if @resource[:vrf_name] == :default &&
-                       @property_hash[:vrf_name] ==
-                       Cisco::AaaServerGroup.default_vrf
-    @property_hash[:vrf_name]
+  def server_hosts
+    return [:default] if @resource[:server_hosts] &&
+                         @resource[:server_hosts][0] == :default &&
+                         @property_hash[:server_hosts] ==
+                         Cisco::AaaServerGroup.default_servers
+    @property_hash[:server_hosts]
   end
 
-  def vrf_name=(set_value)
-    set_value = Cisco::AaaServerGroup.default_vrf if set_value == :default
-    @property_flush[:vrf_name] = set_value
+  def server_hosts=(set_value)
+    if set_value.is_a?(Array) && set_value[0] == :default
+      set_value = Cisco::AaaServerGroup.default_servers
+    end
+    @property_flush[:server_hosts] = set_value
   end
 
   def source_interface
@@ -142,19 +145,16 @@ Puppet::Type.type(:cisco_aaa_group_tacacs).provide(:nxapi) do
     @property_flush[:source_interface] = set_value
   end
 
-  def server_hosts
-    return [:default] if @resource[:server_hosts] &&
-                         @resource[:server_hosts][0] == :default &&
-                         @property_hash[:server_hosts] ==
-                         Cisco::AaaServerGroup.default_servers
-    @property_hash[:server_hosts]
+  def vrf_name
+    return :default if @resource[:vrf_name] == :default &&
+                       @property_hash[:vrf_name] ==
+                       Cisco::AaaServerGroup.default_vrf
+    @property_hash[:vrf_name]
   end
 
-  def server_hosts=(set_value)
-    if set_value.is_a?(Array) && set_value[0] == :default
-      set_value = Cisco::AaaServerGroup.default_servers
-    end
-    @property_flush[:server_hosts] = set_value
+  def vrf_name=(set_value)
+    set_value = Cisco::AaaServerGroup.default_vrf if set_value == :default
+    @property_flush[:vrf_name] = set_value
   end
 
   def flush

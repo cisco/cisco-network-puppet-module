@@ -127,7 +127,7 @@ test_name "TestCase :: #{testheader}" do
   end
 
   # @step [Step] Checks aaagroup instance on agent using switch show cli cmds.
-  step 'TestStep :: Check aaagroup instance absence on agent' do
+  step 'TestStep :: Check cisco_aaa_group instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs all')
@@ -139,7 +139,7 @@ test_name "TestCase :: #{testheader}" do
         true, self, logger)
     end
 
-    logger.info("Check aaagroup instance absence on agent :: #{result}")
+    logger.info("Check cisco_aaa_group instance absence on agent :: #{result}")
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
@@ -172,7 +172,7 @@ test_name "TestCase :: #{testheader}" do
   end
 
   # @step [Step] Checks aaagroup instance on agent using switch show cli cmds.
-  step 'TestStep :: Check aaagroup instance absence on agent' do
+  step 'TestStep :: Check cisco_aaa_group instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs all')
@@ -184,7 +184,7 @@ test_name "TestCase :: #{testheader}" do
         true, self, logger)
     end
 
-    logger.info("Check aaagroup instance absence on agent :: #{result}")
+    logger.info("Check cisco_aaa_group instance absence on agent :: #{result}")
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
@@ -218,7 +218,7 @@ test_name "TestCase :: #{testheader}" do
   end
 
   # @step [Step] Checks aaagroup instance on agent using switch show cli cmds.
-  step 'TestStep :: Check aaagroup instance absence on agent' do
+  step 'TestStep :: Check cisco_aaa_group instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs all')
@@ -230,7 +230,7 @@ test_name "TestCase :: #{testheader}" do
         true, self, logger)
     end
 
-    logger.info("Check aaagroup instance absence on agent :: #{result}")
+    logger.info("Check cisco_aaa_group instance absence on agent :: #{result}")
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
@@ -264,7 +264,7 @@ test_name "TestCase :: #{testheader}" do
   end
 
   # @step [Step] Checks aaagroup instance on agent using switch show cli cmds.
-  step 'TestStep :: Check aaagroup instance absence on agent' do
+  step 'TestStep :: Check cisco_aaa_group instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs all')
@@ -276,7 +276,7 @@ test_name "TestCase :: #{testheader}" do
         true, self, logger)
     end
 
-    logger.info("Check aaagroup instance absence on agent :: #{result}")
+    logger.info("Check cisco_aaa_group instance absence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.

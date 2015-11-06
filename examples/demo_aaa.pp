@@ -21,9 +21,9 @@ class ciscopuppet::demo_aaa {
     cisco_aaa_group_tacacs { 'test':
       ensure                 => present,
       deadtime               => '30',
-      vrf_name               => 'blue',
-      source_interface       => 'Ethernet1/1',
       server_hosts           => ['testhost'],
+      source_interface       => 'Ethernet1/1',
+      vrf_name               => 'blue',
       require                => Cisco_tacacs_server_host['testhost']
   }
 }
