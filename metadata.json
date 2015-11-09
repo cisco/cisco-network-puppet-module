@@ -13,11 +13,11 @@
   "requirements": [
     {
       "name": "pe",
-      "version_requirement": "~> 2015.2.x"
+      "version_requirement": "2015.2.x"
     },
     {
       "name": "puppet",
-      "version_requirement": "~> 4.x"
+      "version_requirement": "4.x"
     }
   ],
   "tags": [
