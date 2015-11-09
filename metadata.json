@@ -8,16 +8,16 @@
   "project_page": "https://github.com/cisco/cisco-network-puppet-module",
   "issues_url": "https://github.com/cisco/cisco-network-puppet-module/issues",
   "dependencies": [
-    { "name": "puppetlabs/netdev_stdlib", "version_requirement": ">=0.10.0" }
+    { "name": "puppetlabs/netdev_stdlib", "version_requirement": ">=0.11.0" }
   ],
   "requirements": [
     {
       "name": "pe",
-      "version_requirement": "~> 2015.2"
+      "version_requirement": "~> 2015.2.x"
     },
     {
       "name": "puppet",
-      "version_requirement": "~> 4.0"
+      "version_requirement": "~> 4.x"
     }
   ],
   "tags": [

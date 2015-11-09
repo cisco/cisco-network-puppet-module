@@ -247,15 +247,6 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
   # Properties #
   ##############
 
-  validate do
-    fail("The 'asn' parameter must be set in the manifest.") if self[:asn].nil?
-    fail("The 'vrf' parameter must be set in the manifest.") if self[:vrf].nil?
-    fail("The 'neighbor' parameter must be set in the manifest.") if
-      self[:neighbor].nil?
-    fail("The 'afi' parameter must be set in the manifest.") if self[:afi].nil?
-    fail("The 'safi' parameter must be set in the manifest.") if self[:safi].nil?
-  end
-
   newproperty(:advertise_map_exist, array_matching: :all) do
     desc 'advertise_map_exist state. Valid values are an array specifying' \
          " both the advertise-map name and the exist-map name, or 'default'."
@@ -487,5 +478,14 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
       value = :default if value == 'default'
       value
     end
+  end
+
+  validate do
+    fail("The 'asn' parameter must be set in the manifest.") if self[:asn].nil?
+    fail("The 'vrf' parameter must be set in the manifest.") if self[:vrf].nil?
+    fail("The 'neighbor' parameter must be set in the manifest.") if
+      self[:neighbor].nil?
+    fail("The 'afi' parameter must be set in the manifest.") if self[:afi].nil?
+    fail("The 'safi' parameter must be set in the manifest.") if self[:safi].nil?
   end
 end

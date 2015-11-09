@@ -10,6 +10,9 @@ Guidelines for the core maintainers of the ciscopuppet project - above and beyon
 * Are new Beaker tests added? Do they provide sufficient coverage and consistent results?
 * Are the example manifests updated appropriately? Does puppet-lint pass? (TODO - add to CI)
 * Do tests pass on both N9K and N3K? (In particular, N3048 often has unique behavior.)
+* Review the Gemfile
+  * Is the data still relevant?
+  * Do the version dependencies need to be updated? (e.g. rubocop)
 
 ## Setting up git-flow
 
