@@ -116,7 +116,7 @@ test_name "TestCase :: #{testheader}" do
         { 'ensure'           => 'present',
           'deadtime'         => '30',
           'vrf_name'         => 'blue',
-          'source_interface' => 'Ethernet1/1',
+          'source_interface' => 'ethernet1/1',
           'server_hosts'     => "\\['testhost', '1.1.1.1'\\]" },
         false, self, logger)
     end
@@ -163,7 +163,7 @@ test_name "TestCase :: #{testheader}" do
         { 'ensure'           => 'present',
           'deadtime'         => '30',
           'vrf_name'         => 'blue',
-          'source_interface' => 'Ethernet1/1',
+          'source_interface' => 'ethernet1/1',
           'server_hosts'     => "\\['testhost', '1.1.1.1'\\]" },
         true, self, logger)
     end
