@@ -78,11 +78,9 @@ test_name "TestCase :: #{testheader}" do
 
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
+    cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp all')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/snmp-server user admin network-admin auth md5/],
-                                          false, self, logger)
+      SnmpServerLib.match_default_cli(stdout, self, logger)
     end
 
     logger.info("Setup switch for provider test :: #{result}")

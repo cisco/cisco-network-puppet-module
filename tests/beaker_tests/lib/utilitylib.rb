@@ -308,6 +308,25 @@ def node_feature_cleanup(agent, feature, stepinfo='feature cleanup',
   end
 end
 
+# Helper to remove all IP address configs from interfaces
+def interface_ip_cleanup(agent, stepinfo='Pre Clean:')
+  logger.debug("#{stepinfo} Interface IP cleanup")
+  show_cmd = UtilityLib.get_vshell_cmd('show ip interface brief')
+
+  # Find the interfaces with IP addresses; build a removal config.
+  # Note mgmt0 will not appear in the show cmd output.
+  on(agent, show_cmd)
+  clean = stdout.split("\n").map do |line|
+    "interface #{Regexp.last_match[:intf]} ; no ip addr" if
+      line[/^(?<intf>\S+)\s+\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/]
+  end.compact
+  return if clean.empty?
+  clean = clean.join(' ; ').prepend('conf t ; ')
+  logger.debug("#{stepinfo} Clean string:\n#{clean}")
+  # exit codes: 0 = no changes, 2 = changes have occurred
+  on(agent, UtilityLib.get_vshell_cmd(clean), acceptable_exit_codes: [0, 2])
+end
+
 # bgp neighbor remote-as configuration helper
 def bgp_nbr_remote_as(agent, remote_as)
   asn, vrf, nbr, remote = remote_as.split
