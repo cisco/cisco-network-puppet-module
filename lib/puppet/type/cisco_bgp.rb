@@ -17,6 +17,13 @@
 # limitations under the License.
 
 require 'ipaddr'
+begin
+  require 'puppet_x/cisco/cmnutils'
+rescue LoadError # seen on master, not on agent
+  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..',
+                                     'puppet_x', 'cisco', 'cmnutils.rb'))
+end
 
 Puppet::Type.newtype(:cisco_bgp) do
   @doc = "Manages BGP global and vrf configuration.
@@ -147,7 +154,7 @@ Puppet::Type.newtype(:cisco_bgp) do
       end
     end
 
-    munge { |value| Cisco::RouterBgp.process_asnum(value.to_s) }
+    munge { |value| PuppetX::Cisco::BgpUtils.process_asnum(value.to_s) }
   end # param asn
 
   newparam(:vrf, namevar: true) do
