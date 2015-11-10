@@ -17,7 +17,13 @@
 # limitations under the License.
 
 require 'ipaddr'
-require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
+begin
+  require 'puppet_x/cisco/cmnutils'
+rescue LoadError # seen on master, not on agent
+  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..',
+                                     'puppet_x', 'cisco', 'cmnutils.rb'))
+end
 
 Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
   @doc = "Manages BGP Neighbor Address-Family configuration.
@@ -207,7 +213,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     end
 
     munge do |value|
-      value = Cisco::RouterBgp.process_asnum(value)
+      value = PuppetX::Cisco::BgpUtils.process_asnum(value.to_s)
       value
     end
   end
@@ -225,7 +231,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
 
     munge do |value|
       begin
-        value = Cisco::Utils.process_network_mask(value.to_s)
+        value = PuppetX::Cisco::Utils.process_network_mask(value.to_s)
         value
       rescue
         raise "'neighbor' must be a valid ipv4 or ipv6 address (mask optional)"
