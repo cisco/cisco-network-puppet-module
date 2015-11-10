@@ -13,28 +13,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-# LOOPBACKINTF Utility Library: 
-# -----------------------------
-# loopbackintflib.rb
-#  
-# This is the utility library for the LOOPBACKINTF provider Beaker test cases that
-# contains the common methods used across the LOOPBACKINTF testsuite's cases. The 
-# library is implemented as a module with related methods and constants defined
-# inside it for use as a namespace. All of the methods are defined as module 
-# methods.
-#
-# Every Beaker LOOPBACKINTF test case that runs an instance of Beaker::TestCase 
-# requires LoopbackIntfLib module.
-# 
-# The module has a single set of methods:
-# A. Methods to create manifests for cisco_interface Puppet provider test cases.
-###############################################################################
 
 # Require UtilityLib.rb path.
-require File.expand_path("../../lib/utilitylib.rb", __FILE__)
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
+# LOOPBACKINTF Utility Library:
+# -----------------------------
+# loopbackintflib.rb
+#
+# This is the utility library for the LOOPBACKINTF provider Beaker test cases that
+# contains the common methods used across the LOOPBACKINTF testsuite's cases. The
+# library is implemented as a module with related methods and constants defined
+# inside it for use as a namespace. All of the methods are defined as module
+# methods.
+#
+# Every Beaker LOOPBACKINTF test case that runs an instance of Beaker::TestCase
+# requires LoopbackIntfLib module.
+#
+# The module has a single set of methods:
+# A. Methods to create manifests for cisco_interface Puppet provider test cases.
 module LoopbackIntfLib
-
   # Group of Constants used in negative tests for LOOPBACKINTF provider.
   IPV4ADDRESS_NEGATIVE         = '-1.-1.-1.-1'
   IPV4MASKLEN_NEGATIVE         = '-1'
@@ -47,9 +45,9 @@ module LoopbackIntfLib
 
   # Method to create a manifest for LoopbackINTF resource attribute 'ensure' where
   # 'ensure' is set to present.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def LoopbackIntfLib.create_loopbackintf_manifest_present()
+  def self.create_loopbackintf_manifest_present
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'loopback1':
@@ -62,14 +60,14 @@ node default {
   }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for LoopbackINTF resource attribute 'ensure' where
   # 'ensure' is set to absent.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def LoopbackIntfLib.create_loopbackintf_manifest_absent()
+  def self.create_loopbackintf_manifest_absent
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'loopback1':
@@ -77,15 +75,15 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for LoopbackINTF resource attributes:
-  # description, shutdown, ipv4_address and 
-  # and ipv4_netmask_length.  
-  # @param none [None] No input parameters exist. 
+  # description, shutdown, ipv4_address and
+  # and ipv4_netmask_length.
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def LoopbackIntfLib.create_loopbackintf_manifest_nondefaults()
+  def self.create_loopbackintf_manifest_nondefaults
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'loopback1':
@@ -98,13 +96,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for LoopbackINTF resource attribute 'ipv4_address'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def LoopbackIntfLib.create_loopbackintf_manifest_ipv4addr_negative()
+  def self.create_loopbackintf_manifest_ipv4addr_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'loopback1':
@@ -114,13 +112,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for LoopbackINTF resource attribute 'ipv4_netmask_length'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def LoopbackIntfLib.create_loopbackintf_manifest_ipv4masklen_negative()
+  def self.create_loopbackintf_manifest_ipv4masklen_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'loopback1':
@@ -131,13 +129,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for LoopbackINTF resource attribute 'shutdown'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def LoopbackIntfLib.create_loopbackintf_manifest_shutdown_negative()
+  def self.create_loopbackintf_manifest_shutdown_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'loopback1':
@@ -147,13 +145,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for LoopbackINTF resource attribute 'ipv4_proxy_arp'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def LoopbackIntfLib.create_loopbackintf_manifest_ipv4proxyarp_negative()
+  def self.create_loopbackintf_manifest_ipv4proxyarp_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'loopback1':
@@ -163,13 +161,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for LoopbackINTF resource attribute 'ipv4_redirects'.
-  # @param none [None] No input parameters exist. 
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def LoopbackIntfLib.create_loopbackintf_manifest_ipv4redir_negative()
+  def self.create_loopbackintf_manifest_ipv4redir_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'loopback1':
@@ -179,13 +177,13 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 
   # Method to create a manifest for LoopbackINTF resource attribute 'vrf'.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def LoopbackIntfLib.create_loopbackintf_manifest_vrf_negative()
+  def self.create_loopbackintf_manifest_vrf_negative
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'loopback1':
@@ -195,6 +193,6 @@ node default {
     }
 }
 EOF"
-    return manifest_str
+    manifest_str
   end
 end

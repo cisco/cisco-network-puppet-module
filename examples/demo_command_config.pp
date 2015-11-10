@@ -19,28 +19,13 @@ class ciscopuppet::demo_command_config {
   cisco_command_config { 'loop42':
     command => "
       interface loopback42
-        description Peering for AS 42
+        description configured by puppet 
         ip address 192.168.1.42/24
     "
   }
 
   cisco_command_config { 'system-switchport-default':
     command => 'no system default switchport'
-  }
-
-  cisco_command_config { 'feature_bgp':
-    command => ' feature bgp',
-    before  => Cisco_command_config['router_bgp_42'],
-  }
-
-  cisco_command_config { 'router_bgp_42':
-    command => "
-    router bgp 42
-      router-id 192.168.1.42
-      address-family ipv4 unicast
-        network 10.0.0.0/8
-        redistribute static route-map bgp-statics
-    "
   }
 
   cisco_command_config { 'route42':

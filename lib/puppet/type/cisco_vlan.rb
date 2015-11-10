@@ -40,33 +40,33 @@ Puppet::Type.newtype(:cisco_vlan) do
   # Parse out the title to fill in the attributes in these
   # patterns. These attributes can be overwritten later.
   def self.title_patterns
-    identity = lambda { |x| x }
+    identity = ->(x) { x }
     patterns = []
 
     # Below pattern matches both parts of the full composite name.
     patterns << [
       /^(\d+)$/,
       [
-        [:vlan, identity]
-      ]
+        [:vlan, identity],
+      ],
     ]
-    return patterns
+    patterns
   end
 
-  newparam(:vlan, :namevar => true) do
-    desc "ID of the Virtual LAN. Valid values are integer."
+  newparam(:vlan, namevar: true) do
+    desc 'ID of the Virtual LAN. Valid values are integer.'
 
-    validate { |id|
+    validate do |id|
       range = *(2..4093)
       internal = *(3968..4047)
       valid_ids = range - internal
 
       if id.to_i == 1
-        warning("Cannot make changes to the default VLAN.")
-      elsif !valid_ids.include?(id.to_i) 
-        fail("ID is not in the valid range.")
+        warning('Cannot make changes to the default VLAN.')
+      elsif !valid_ids.include?(id.to_i)
+        fail('ID is not in the valid range.')
       end # if
-    }
+    end
   end # param id
 
   ##############
@@ -78,36 +78,32 @@ Puppet::Type.newtype(:cisco_vlan) do
   newproperty(:vlan_name) do
     desc "The name of the VLAN. Valid values are string, keyword 'default'."
 
-    munge { |value|
+    munge do |value|
       begin
         value = :default if value == 'default'
         value = String(value) unless value == :default
       rescue
-        fail "Name is not a valid string."
+        raise 'Name is not a valid string.'
       end # rescue
       value
-    }
+    end
   end # property name
 
   newproperty(:state) do
-    desc "State of the VLAN."
+    desc 'State of the VLAN.'
 
     newvalues(
       :active,
       :suspend,
       :default)
-
   end # property state
 
   newproperty(:shutdown) do
-     desc "whether or not the vlan is shutdown"
+    desc 'whether or not the vlan is shutdown'
 
-     newvalues(
-       :true,
-       :false,
-       :default)
-  
-  end #property shutdown
-
+    newvalues(
+      :true,
+      :false,
+      :default)
+  end # property shutdown
 end # Puppet::Type.newtype
-

@@ -63,8 +63,8 @@ end
 The following commands should be run on your Beaker workstation.
 
 ~~~
-$ git clone https://github.com/cisco/cisco-network-puppet-module.git 
-$ cd cisco-network-puppet-module/utilities/installer/ 
+$ git clone https://github.com/cisco/cisco-network-puppet-module.git
+$ cd cisco-network-puppet-module/utilities/installer/
 ~~~
 
 ### Copy and modify the SAMPLE* configuration files.

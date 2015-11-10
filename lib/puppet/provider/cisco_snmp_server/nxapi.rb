@@ -1,6 +1,6 @@
 # The NXAPI (cisco_snmp_server) provider.
 #
-# December, 2013 
+# December, 2013
 #
 # Copyright (c) 2013-2015 Cisco and/or its affiliates.
 #
@@ -19,17 +19,17 @@
 require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
 
 Puppet::Type.type(:cisco_snmp_server).provide(:nxapi) do
-  desc "The nxapi provider."
+  desc 'The nxapi provider.'
 
-  confine :feature => :cisco_node_utils
-  defaultfor :operatingsystem => :nexus
+  confine feature: :cisco_node_utils
+  defaultfor operatingsystem: :nexus
 
   mk_resource_methods
 
   def initialize(value={})
     super(value)
     @snmp_server = Cisco::SnmpServer.new
-    debug "Created provider instance of cisco_snmp_server."
+    debug 'Created provider instance of cisco_snmp_server.'
   end
 
   def self.instances
@@ -37,17 +37,17 @@ Puppet::Type.type(:cisco_snmp_server).provide(:nxapi) do
     server = Cisco::SnmpServer.new
 
     snmp_servers << new(
-      :ensure                 => :present,
-      :name                   => "default", # necessary for puppet resource cmd
-      :location               => server.location,
-      :contact                => server.contact,
-      :aaa_user_cache_timeout => server.aaa_user_cache_timeout,
-      :packet_size            => server.packet_size,
-      :global_enforce_priv    => server.global_enforce_priv? ? :true : :false,
-      :protocol               => server.protocol? ? :true : :false,
-      :tcp_session_auth       => server.tcp_session_auth? ? :true : :false)
-    debug "Created new resource type cisco_snmp_server"
-    return snmp_servers
+      ensure:                 :present,
+      name:                   'default', # necessary for puppet resource cmd
+      location:               server.location,
+      contact:                server.contact,
+      aaa_user_cache_timeout: server.aaa_user_cache_timeout,
+      packet_size:            server.packet_size,
+      global_enforce_priv:    server.global_enforce_priv? ? :true : :false,
+      protocol:               server.protocol? ? :true : :false,
+      tcp_session_auth:       server.tcp_session_auth? ? :true : :false)
+    debug 'Created new resource type cisco_snmp_server'
+    snmp_servers
   end
 
   def self.prefetch(resources)
@@ -57,7 +57,7 @@ Puppet::Type.type(:cisco_snmp_server).provide(:nxapi) do
   def location
     value = @snmp_server.location
     value = :default if
-      @resource[:location] == :default and
+      @resource[:location] == :default &&
       value == @snmp_server.default_location
     @property_hash[:location] = value
   end
@@ -71,7 +71,7 @@ Puppet::Type.type(:cisco_snmp_server).provide(:nxapi) do
   def contact
     value = @snmp_server.contact
     value = :default if
-      @resource[:contact] == :default and value == @snmp_server.default_contact
+      @resource[:contact] == :default && value == @snmp_server.default_contact
     @property_hash[:contact] = value
   end
 
@@ -85,7 +85,7 @@ Puppet::Type.type(:cisco_snmp_server).provide(:nxapi) do
   def aaa_user_cache_timeout
     value = @snmp_server.aaa_user_cache_timeout
     value = :default if
-      @resource[:aaa_user_cache_timeout] == :default and
+      @resource[:aaa_user_cache_timeout] == :default &&
       value == @snmp_server.default_aaa_user_cache_timeout
     @property_hash[:aaa_user_cache_timeout] = value
   end
@@ -101,7 +101,7 @@ Puppet::Type.type(:cisco_snmp_server).provide(:nxapi) do
   def packet_size
     value = @snmp_server.packet_size
     value = :default if
-      @resource[:packet_size] == :default and
+      @resource[:packet_size] == :default &&
       value == @snmp_server.default_packet_size
     @property_hash[:packet_size] = value
   end
@@ -115,8 +115,8 @@ Puppet::Type.type(:cisco_snmp_server).provide(:nxapi) do
 
   def global_enforce_priv
     value = @snmp_server.global_enforce_priv?
-    if (value == @snmp_server.default_global_enforce_priv) and
-      (@resource[:global_enforce_priv] == :default)
+    if (value == @snmp_server.default_global_enforce_priv) &&
+       (@resource[:global_enforce_priv] == :default)
       value = :default
     else
       value = value ? :true : :false
@@ -135,8 +135,8 @@ Puppet::Type.type(:cisco_snmp_server).provide(:nxapi) do
 
   def protocol
     value = @snmp_server.protocol?
-    if (value == @snmp_server.default_protocol) and
-        (@resource[:protocol] == :default)
+    if (value == @snmp_server.default_protocol) &&
+       (@resource[:protocol] == :default)
       value = :default
     else
       value = value ? :true : :false
@@ -155,8 +155,8 @@ Puppet::Type.type(:cisco_snmp_server).provide(:nxapi) do
 
   def tcp_session_auth
     value = @snmp_server.tcp_session_auth?
-    if (value == @snmp_server.default_tcp_session_auth) and
-        (@resource[:tcp_session_auth] == :default)
+    if (value == @snmp_server.default_tcp_session_auth) &&
+       (@resource[:tcp_session_auth] == :default)
       value = :default
     else
       value = value ? :true : :false
@@ -178,10 +178,8 @@ Puppet::Type.type(:cisco_snmp_server).provide(:nxapi) do
   end
 
   def put_snmp_server
-    debug "Current state:"
-    if @snmp_server.nil?
-      return
-    end
+    debug 'Current state:'
+    return if @snmp_server.nil?
 
     debug "
                Location: #{@snmp_server.location}

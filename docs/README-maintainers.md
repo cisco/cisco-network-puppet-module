@@ -5,11 +5,14 @@ Guidelines for the core maintainers of the ciscopuppet project - above and beyon
 ## Accepting Pull Requests
 
 * Is the pull request correctly submitted against the `develop` branch?
-* (TODO - not yet) Does `rubocop` pass? (TODO - this will be part of our CI integration to run automatically)
+* Does `rubocop` pass? (This is checked automatically by Travis-CI)
 * Is `CHANGELOG.md` updated appropriately?
 * Are new Beaker tests added? Do they provide sufficient coverage and consistent results?
 * Are the example manifests updated appropriately? Does puppet-lint pass? (TODO - add to CI)
 * Do tests pass on both N9K and N3K? (In particular, N3048 often has unique behavior.)
+* Review the Gemfile
+  * Is the data still relevant?
+  * Do the version dependencies need to be updated? (e.g. rubocop)
 
 ## Setting up git-flow
 
@@ -31,13 +34,35 @@ Either run `git flow init` from the repository root directory, or manually edit 
 
 Most of these are default for git-flow except for the `versiontag` setting.
 
+## Release Checklist
+
+When we are considering publishing a new release, all of the following steps must be carried out (using the latest code base in `develop`):
+
+1. With the latest released `cisco_node_utils` gem (no development code!
+released only! Do a new gem release first if needed!), run Beaker tests and
+demo manifests against all supported platforms running latest OS release or
+release candidate:
+  * N30xx
+  * N31xx
+  * N9xxx
+
+2. Triage any test failures.
+
+3. Make sure CHANGELOG.md accurately reflects all changes since the last release.
+  * Add any significant changes that weren't documented in the changelog
+  * Clean up any entries that are overly verbose, unclear, or otherwise could be improved.
+
 ## Release Process
 
-When we agree as a team that a new release should be published, the process is as follows:
+When the release checklist above has been fully completed, the process for publishing a new release is as follows:
+
 
 1. Ensure that tests have been executed against released Gem versions (release a new version if necessary!) and do not have dependencies on unreleased Gem code.
 
-2. Create a release branch. Follow [semantic versioning](http://semver.org) - a bugfix release is a 0.0.x version bump, a new feature is a 0.x.0 bump, and a backward-incompatible change is a new x.0.0 version. 
+2. Create a release branch. Follow [semantic versioning](http://semver.org):
+    * 0.0.x - a bugfix release
+    * 0.x.0 - new feature(s)
+    * x.0.0 - backward-incompatible change (only if unavoidable!)
 
     ```
     git flow release start 1.0.1
@@ -78,3 +103,5 @@ When we agree as a team that a new release should be published, the process is a
     ```
 
 6. Add release notes on GitHub, for example `https://github.com/cisco/cisco-network-puppet-module/releases/new?tag=v1.0.1`. Usually this will just be a copy-and-paste of the relevant section of the `CHANGELOG.md`.
+
+7. Reach out to PuppetLabs to publish the new module version to PuppetForge.

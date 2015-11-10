@@ -21,10 +21,10 @@
 require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
 
 Puppet::Type.type(:cisco_tacacs_server_host).provide(:nxapi) do
-  desc "The NXAPI provider."
+  desc 'The NXAPI provider.'
 
-  confine :feature => :cisco_node_utils
-  defaultfor :operatingsystem => :nexus
+  confine feature: :cisco_node_utils
+  defaultfor operatingsystem: :nexus
 
   mk_resource_methods
 
@@ -37,30 +37,30 @@ Puppet::Type.type(:cisco_tacacs_server_host).provide(:nxapi) do
 
   def self.instances
     tacacs_server_hosts = []
-    Cisco::TacacsServerHost.hosts.each { | host_name, tacacs_server_host |
+    Cisco::TacacsServerHost.hosts.each do |host_name, tacacs_server_host|
       tacacs_server_hosts << new(
-        :host    => host_name,
-        :name    => host_name,
-        :ensure  => :present,
-        :port    => tacacs_server_host.port,
-        :timeout => tacacs_server_host.timeout,
-        :encryption_type => tacacs_server_host.encryption_type,
-        :encryption_password  => tacacs_server_host.encryption_password)
-    }
-    return tacacs_server_hosts
+        host:                host_name,
+        name:                host_name,
+        ensure:              :present,
+        port:                tacacs_server_host.port,
+        timeout:             tacacs_server_host.timeout,
+        encryption_type:     tacacs_server_host.encryption_type,
+        encryption_password: tacacs_server_host.encryption_password)
+    end
+    tacacs_server_hosts
   end
 
   def self.prefetch(resources)
     ts_hosts = instances
 
-    resources.keys.each do | name |
-      provider = ts_hosts.find { | ts_host | ts_host.name == name }
+    resources.keys.each do |name|
+      provider = ts_hosts.find { |ts_host| ts_host.name == name }
       resources[name].provider = provider unless provider.nil?
     end
   end
 
   def exists?
-    return (@property_hash[:ensure] == :present)
+    (@property_hash[:ensure] == :present)
   end
 
   def create
@@ -72,7 +72,7 @@ Puppet::Type.type(:cisco_tacacs_server_host).provide(:nxapi) do
   end
 
   def port
-    if @resource[:port] == :default and
+    if @resource[:port] == :default &&
        @property_hash[:port] == Cisco::TacacsServerHost.default_port
       port = :default
     else
@@ -91,7 +91,7 @@ Puppet::Type.type(:cisco_tacacs_server_host).provide(:nxapi) do
   end
 
   def timeout
-    if @resource[:timeout] == :default and
+    if @resource[:timeout] == :default &&
        @property_hash[:timeout] == Cisco::TacacsServerHost.default_timeout
       timeout = :default
     else
@@ -114,8 +114,8 @@ Puppet::Type.type(:cisco_tacacs_server_host).provide(:nxapi) do
     if @resource[:encryption_type] == :default
       encryption_type_value = Cisco::TacacsServerHost.default_encryption_type
     else
-      if resource[:encryption_type] and
-        resource[:encryption_type] != @property_hash[:encryption_type]
+      if resource[:encryption_type] &&
+         resource[:encryption_type] != @property_hash[:encryption_type]
         # If manifest has updated value and it is not default
         encryption_type_value = @resource[:encryption_type]
       else
@@ -138,19 +138,17 @@ Puppet::Type.type(:cisco_tacacs_server_host).provide(:nxapi) do
     end
 
     # call the setter
-    if encryption_pw_value
-      debug "type #{encryption_type_value}, value #{encryption_pw_value}"
-      @tacacs_server_host.encryption_key_set(encryption_type_value,
-                                             encryption_pw_value)
-    end
+    return unless encryption_pw_value
+    debug "type #{encryption_type_value}, value #{encryption_pw_value}"
+    @tacacs_server_host.encryption_key_set(encryption_type_value,
+                                           encryption_pw_value)
   end
 
   def update_port_or_timeout_attribute(attribute)
-    if @resource[attribute] and @resource[attribute] != :default
-      # The attribute is specified in the manifest and not the default.
-      # Default values are no-op when creating a new host.
-      @property_flush[attribute] = @resource[attribute]
-    end
+    return unless @resource[attribute] && @resource[attribute] != :default
+    # The attribute is specified in the manifest and not the default.
+    # Default values are no-op when creating a new host.
+    @property_flush[attribute] = @resource[attribute]
   end
 
   def flush

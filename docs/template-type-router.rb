@@ -16,7 +16,6 @@
 # limitations under the License.
 
 Puppet::Type.newtype(:cisco_X__RESOURCE_NAME__X) do
-
   # ---------------------------------------------------------------
   # STEP 1. Create a @doc entry to describe the resource and usage
   # ---------------------------------------------------------------
@@ -52,21 +51,21 @@ Puppet::Type.newtype(:cisco_X__RESOURCE_NAME__X) do
   # Parse the title to populate the attributes in these patterns.
   # These attributes may be overwritten later.
   def self.title_patterns
-    identity = lambda { |x| x }
+    identity = ->(x) { x }
     patterns = []
 
     # Below pattern matches the resource name.
     patterns << [
       /^(\S+)$/,
       [
-        [:name, identity]
-      ]
+        [:name, identity],
+      ],
     ]
-    return patterns
+    patterns
   end
 
-  newparam(:name, :namevar => true) do
-    desc "Name of the X__RESOURCE_NAME__X instance. Valid values are string."
+  newparam(:name, namevar: true) do
+    desc 'Name of the X__RESOURCE_NAME__X instance. Valid values are string.'
   end
 
   # ---------------------------------------------------------------
@@ -79,24 +78,23 @@ Puppet::Type.newtype(:cisco_X__RESOURCE_NAME__X) do
   newproperty(:X__PROPERTY_INT__X) do
     desc " xxxxxxxxx.  Valid values are integer, keyword 'default'."
 
-    munge { |value|
+    munge do |value|
       value = :default if value == 'default'
       begin
         value = Integer(value) unless value == :default
       rescue
-        fail "X__PROPERTY_INT__X must be a valid integer, or default."
+        raise 'X__PROPERTY_INT__X must be a valid integer, or default.'
       end
       value
-    }
+    end
   end
 
   # -------------------------
   # EXAMPLE. BOOLEAN PROPERTY
   # -------------------------
   newproperty(:X__PROPERTY_BOOL__X) do
-    desc "X__PROPERTY_BOOL__X state of the interface."
+    desc 'X__PROPERTY_BOOL__X state of the interface.'
 
     newvalues(:true, :false, :default)
   end
-
 end

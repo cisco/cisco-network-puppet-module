@@ -21,7 +21,12 @@ class ciscopuppet::demo_interface {
     description         => 'managed by puppet',
     ipv4_address        => '192.168.55.55',
     ipv4_netmask_length => 24,
+    mtu                 => 1600,
     vrf                 => 'test',
+  }
+
+  cisco_interface { 'Ethernet1/1.1':
+    encapsulation_dot1q => 20,
   }
 
   cisco_interface { 'Ethernet1/2':
@@ -29,6 +34,12 @@ class ciscopuppet::demo_interface {
     shutdown        => 'default',
     access_vlan     => 'default',
     switchport_mode => access,
+  }
+
+  cisco_interface { 'Ethernet1/3':
+    switchport_mode               => trunk,
+    switchport_trunk_allowed_vlan => '20, 30',
+    switchport_trunk_native_vlan  => 40,
   }
 
   cisco_interface { 'Vlan22':

@@ -18,8 +18,7 @@
 require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
 
 Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:nxapi) do
-
-  confine :feature => :cisco_node_utils
+  confine feature: :cisco_node_utils
 
   mk_resource_methods
 
@@ -31,9 +30,9 @@ Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:nxapi) do
   def self.instances
     inst = []
     return inst unless Cisco::X__CLASS_NAME__X.feature_enabled
-    current_state = { :name => 'default', :ensure => :present}
+    current_state = { name: 'default', ensure: :present }
     inst << new(current_state)
-    return inst
+    inst
   end
 
   def self.prefetch(resources)
@@ -61,5 +60,4 @@ Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:nxapi) do
       Cisco::X__CLASS_NAME__X.new.feature_disable
     end
   end
-
 end

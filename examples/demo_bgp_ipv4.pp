@@ -107,6 +107,7 @@ class ciscopuppet::demo_bgp_ipv4 {
   # Configure IPv4 Neighbor                                                   #
   #  Requires: cisco_bgp (Global BGP)                                         #
   # --------------------------------------------------------------------------#
+  # NOTE: password below is expected to be non-idempotent.
   cisco_command_config { 'cisco_bgp_neighbor':
   command   => "
     router bgp 55

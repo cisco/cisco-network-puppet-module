@@ -20,7 +20,7 @@ This document describes how to use the example demo manifest files contained wit
 * `demo_bgp_[ipv4|ipv6]_site.pp`
   * Provides sample manifests to configure bgp using the `cisco_command_config` provider.
 
-**Note:** Before following the steps in this guide make sure the puppet agent is [installed and configured.](../docs/README-AGENT-INSTALL.md)
+**Note:** Before following the steps in this guide make sure the puppet agent is [installed and configured.](../docs/README-agent-install.md)
 
 ## <a name="setup">Initial Setup</a>
 
@@ -31,10 +31,10 @@ If your puppet master has an older version of the `puppetlabs-ciscopuppet` modul
 #### List Current Module
 
 ```bash
-puppetmaster:# puppet module list
+puppetmaster# puppet module list
 /etc/puppetlabs/code/environments/production/modules
 |
-+-- puppetlabs-ciscopuppet (v0.9.0)
++-- puppetlabs-ciscopuppet (v1.0.1)
 /etc/puppetlabs/code/modules (no modules installed)
 /opt/puppetlabs/puppet/modules (no modules installed)
 ```
@@ -44,27 +44,27 @@ puppetmaster:# puppet module list
 ```bash
 puppetmaster:# puppet module uninstall puppetlabs-ciscopuppet
 Notice: Preparing to uninstall 'puppetlabs-ciscopuppet' ...
-Removed 'puppetlabs-ciscopuppet' (v0.9.0) from /etc/puppetlabs/code/environments/production/modules
+Removed 'puppetlabs-ciscopuppet' (v1.0.1) from /etc/puppetlabs/code/environments/production/modules
 ```
 
 ### Build and Install `puppetlabs-ciscopuppet` Module.
 
 The recommended workflow is to clone the `cisco-ciscopuppet.git` repository on your puppet master.  This allows for easy build and installation of the `puppetlabs-ciscopuppet` module.
 
-#### Clone the `cisco-ciscopuppet.git` repo on your puppet master
+#### Clone the `cisco-network-puppet-module.git` repo on your puppet master
 
 ```bash
-puppetmaster:# git clone https://github.com/puppetlabs/cisco-ciscopuppet.git
+puppetmaster:# git clone https://github.com/cisco/cisco-network-puppet-module.git
 ```
 
 #### Build the `puppetlabs-ciscopuppet` module on your puppet master
 
-Issue the following command one layer **above** the `cisco-ciscopuppet` directory on your puppet master.
+Issue the following command one layer **above** the `cisco-network-puppet-module` directory on your puppet master.
 
 ```bash
-puppetmaster:# puppet module build cisco-ciscopuppet/
-Notice: Building /githubpuppet/cisco-ciscopuppet for release
-Module built: /githubpuppet/cisco-ciscopuppet/pkg/puppetlabs-ciscopuppet-0.9.0.tar.gz
+puppetmaster:# puppet module build cisco-network-puppet-module/
+Notice: Building /githubpuppet/cisco-network-puppet-module for release
+Module built: /githubpuppet/cisco-network-puppet-module/pkg/puppetlabs-ciscopuppet-1.1.0.tar.gz
 ```
 
 #### Install the `puppetlabs-ciscopuppet` module on your puppet master
@@ -77,7 +77,8 @@ Notice: Downloading from https://forgeapi.puppetlabs.com ...
 Notice: Installing -- do not interrupt ...
 /etc/puppetlabs/code/environments/production/modules
 |
-+-- puppetlabs-ciscopuppet (v0.9.0)
++-- puppetlabs-ciscopuppet (v1.1.0)
++-- puppetlabs-netdev_stdlib (v0.11.0)
 ```
 
 **Note:** Optionally, restart your puppet server following the install.

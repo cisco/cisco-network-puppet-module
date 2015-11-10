@@ -1,0 +1,10 @@
+# Use Docker infrastructure
+sudo: false
+
+language: ruby
+cache: bundler
+
+rvm:
+  - 2.2.2
+  - 2.1.6
+  - 2.0.0

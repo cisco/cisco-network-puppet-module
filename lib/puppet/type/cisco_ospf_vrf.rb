@@ -51,7 +51,7 @@ Puppet::Type.newtype(:cisco_ospf_vrf) do
   # Parse out the title to fill in the attributes in these
   # patterns. These attributes can be overwritten later.
   def self.title_patterns
-    identity = lambda { |x| x }
+    identity = ->(x) { x }
     patterns = []
 
     # Below pattern matches both parts of the full composite name.
@@ -59,30 +59,30 @@ Puppet::Type.newtype(:cisco_ospf_vrf) do
       /^(\S+) (\S+)$/,
       [
         [:ospf, identity],
-        [:vrf, identity]
-      ]
+        [:vrf, identity],
+      ],
     ]
-    return patterns
+    patterns
   end
 
   # Overwrites name method. Original method simply returns self[:name],
   # which is no longer valid or complete.
   # Would not have failed, but just return nothing useful.
   def name
-    return "#{self[:ospf]} #{self[:vrf]}"
+    "#{self[:ospf]} #{self[:vrf]}"
   end
 
   newparam(:name) do
-    desc "Name of cisco_ospf_vrf, not used, but needed for puppet"
+    desc 'Name of cisco_ospf_vrf, not used, but needed for puppet'
   end
 
-  newparam(:vrf, :namevar => true) do
+  newparam(:vrf, namevar: true) do
     desc "Name of the resource instance. Valid values are string. The
           name 'default' is a valid VRF."
   end # param vrf
 
-  newparam(:ospf, :namevar => true) do
-    desc "Name of the ospf instance. Valid values are string."
+  newparam(:ospf, namevar: true) do
+    desc 'Name of the ospf instance. Valid values are string.'
   end # param ospf
 
   ##############
@@ -93,38 +93,37 @@ Puppet::Type.newtype(:cisco_ospf_vrf) do
     desc "Router Identifier (ID) of the OSPF router VRF instance. Valid
           values are string, keyword 'default'."
 
-    validate { |id|
+    validate do |id|
       begin
-        IPAddr.new(id) unless id == :default or id.empty? or id == 'default'
+        IPAddr.new(id) unless id == :default || id.empty? || id == 'default'
       rescue
-        fail "Router ID is not a valid IP address."
+        raise 'Router ID is not a valid IP address.'
       end
-    }
+    end
 
-    munge { |id|
+    munge do |id|
       begin
         id = :default if id == 'default'
       rescue
-        fail "Munge for default of router_id property failed"
+        raise 'Munge for default of router_id property failed'
       end
       id
-    }
-
+    end
   end # property router id
 
   newproperty(:default_metric) do
     desc "Specify the default Metric value. Valid values are integer,
           keyword 'default'."
 
-    munge { |value|
+    munge do |value|
       begin
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
       rescue
-        fail "Metric value is not a number."
+        raise 'Metric value is not a number.'
       end # rescue
       value
-    }
+    end
   end # property default metric
 
   newproperty(:log_adjacency) do
@@ -143,15 +142,15 @@ Puppet::Type.newtype(:cisco_ospf_vrf) do
           Advertisement (LSA) generation. Valid values are integer, in
           milliseconds, keyword 'default'."
 
-    munge { |value|
+    munge do |value|
       begin
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
       rescue
-        fail "LSA start value is not a number."
+        raise 'LSA start value is not a number.'
       end # rescue
       value
-    }
+    end
   end # property lsa start
 
   newproperty(:timer_throttle_lsa_hold) do
@@ -159,15 +158,15 @@ Puppet::Type.newtype(:cisco_ospf_vrf) do
           Advertisement (LSA) generation. Valid values are integer, in
           milliseconds, keyword 'default'."
 
-    munge { |value|
+    munge do |value|
       begin
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
       rescue
-        fail "LSA hold value is not a number."
+        raise 'LSA hold value is not a number.'
       end # rescue
       value
-    }
+    end
   end # property lsa hold
 
   newproperty(:timer_throttle_lsa_max) do
@@ -175,30 +174,30 @@ Puppet::Type.newtype(:cisco_ospf_vrf) do
           Advertisement (LSA) generation. Valid values are integer, in
           milliseconds, keyword 'default'."
 
-    munge { |value|
+    munge do |value|
       begin
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
       rescue
-        fail "LSA max value is not a number."
+        raise 'LSA max value is not a number.'
       end # rescue
       value
-    }
+    end
   end # property lsa max
 
   newproperty(:timer_throttle_spf_start) do
     desc "Specify initial Shortest Path First (SPF) schedule
           delay. Valid values are integer, in milliseconds, keyword 'default'."
 
-    munge { |value|
+    munge do |value|
       begin
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
       rescue
-        fail "SPF start value is not a number."
+        raise 'SPF start value is not a number.'
       end # rescue
       value
-    }
+    end
   end # property spf start
 
   newproperty(:timer_throttle_spf_hold) do
@@ -206,15 +205,15 @@ Puppet::Type.newtype(:cisco_ospf_vrf) do
           calculations. Valid values are integer, in milliseconds,
           keyword 'default'."
 
-    munge { |value|
+    munge do |value|
       begin
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
       rescue
-        fail "SPF hold value is not a number."
+        raise 'SPF hold value is not a number.'
       end # rescue
       value
-    }
+    end
   end # property spf hold
 
   newproperty(:timer_throttle_spf_max) do
@@ -222,30 +221,29 @@ Puppet::Type.newtype(:cisco_ospf_vrf) do
           (SPF) calculations. Valid values are integer, in milliseconds,
           keyword 'default'."
 
-    munge { |value|
+    munge do |value|
       begin
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
       rescue
-        fail "SPF max value is not a number."
+        raise 'SPF max value is not a number.'
       end # rescue
       value
-    }
+    end
   end # property spf max
 
   newproperty(:auto_cost) do
     desc "Specifies the reference bandwidth used to assign OSPF
           cost. Valid values are integer, in Mbps, keyword 'default'."
 
-    munge { |value|
+    munge do |value|
       begin
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
       rescue
-        fail "Cost value is not a number."
+        raise 'Cost value is not a number.'
       end # rescue
       value
-    }
+    end
   end # property auto cost
-
 end # Type

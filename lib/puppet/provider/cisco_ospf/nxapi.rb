@@ -19,24 +19,24 @@
 require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
 
 Puppet::Type.type(:cisco_ospf).provide(:nxapi) do
-  desc "The NXAPI provider."
+  desc 'The NXAPI provider.'
 
-  confine :feature => :cisco_node_utils
-  defaultfor :operatingsystem => :nexus
+  confine feature: :cisco_node_utils
+  defaultfor operatingsystem: :nexus
 
   mk_resource_methods
 
   def self.instances
     ospf_instances = []
-    Cisco::RouterOspf.routers.each { |name, ospf_instance|
+    Cisco::RouterOspf.routers.each do |name, ospf_instance|
       debug "Checking resource OSPF #{name}"
       ospf_instances << new(
-        :name => name,
-        :ospf => ospf_instance,
-        :ensure => :present)
-    }
+        name:   name,
+        ospf:   ospf_instance,
+        ensure: :present)
+    end
 
-    return ospf_instances
+    ospf_instances
   end # self.instances
 
   def self.prefetch(resources)
@@ -74,5 +74,4 @@ Puppet::Type.type(:cisco_ospf).provide(:nxapi) do
       @ospf.destroy
     end
   end
-
 end

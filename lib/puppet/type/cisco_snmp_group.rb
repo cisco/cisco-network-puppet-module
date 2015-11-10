@@ -43,7 +43,7 @@ Puppet::Type.newtype(:cisco_snmp_group) do
   # Parse out the title to fill in the attributes in these patterns.
   # These attributes can be overwritten later.
   def self.title_patterns
-    identity = lambda { |x| x }
+    identity = ->(x) { x }
     patterns = []
 
     # Below pattern matches both parts of the full composite name.
@@ -51,18 +51,17 @@ Puppet::Type.newtype(:cisco_snmp_group) do
       /^(\S+)$/,
       [
         [:group, identity],
-      ]
+      ],
     ]
-    return patterns
+    patterns
   end
 
   # Overwrites default name method.
   def name
-    return "#{self[:group]}"
+    "#{self[:group]}"
   end
 
-  newparam(:group, :namevar => true) do
-    desc "Name of the snmp group. Valid values are string."
+  newparam(:group, namevar: true) do
+    desc 'Name of the snmp group. Valid values are string.'
   end
-
 end
