@@ -119,6 +119,7 @@ tests['default_properties'] = {
     additional_paths_receive      => 'default',
     additional_paths_selection    => 'default',
     additional_paths_send         => 'default',
+    advertise_l2vpn_evpn          => 'default',
     client_to_client              => 'default',
     dampen_igp_metric             => 'default',
     dampening_state               => 'default',
@@ -138,6 +139,7 @@ tests['default_properties'] = {
     'additional_paths_install'      => 'false',
     'additional_paths_receive'      => 'false',
     'additional_paths_send'         => 'false',
+    'advertise_l2vpn_evpn'          => 'false',
     'client_to_client'              => 'true',
     'dampen_igp_metric'             => '600',
     'dampening_state'               => 'true',
@@ -180,6 +182,7 @@ tests['non_default_properties_A'] = {
     additional_paths_receive        => true,
     additional_paths_selection      => 'RouteMap',
     additional_paths_send           => true,
+    advertise_l2vpn_evpn            => true,
   ",
 
   :resource_props => {
@@ -187,6 +190,7 @@ tests['non_default_properties_A'] = {
     'additional_paths_receive'   => 'true',
     'additional_paths_selection' => 'RouteMap',
     'additional_paths_send'      => 'true',
+    'advertise_l2vpn_evpn'       => 'true',
   },
 }
 
@@ -395,6 +399,7 @@ test_name "TestCase :: #{testheader}" do
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   node_feature_cleanup(agent, 'bgp')
 
+  test_harness_bgp_af(tests, 'non_default_properties_A')
   test_harness_bgp_af(tests, 'non_default_properties_C')
   test_harness_bgp_af(tests, 'non_default_properties_D')
   test_harness_bgp_af(tests, 'non_default_properties_Dampening_routemap')

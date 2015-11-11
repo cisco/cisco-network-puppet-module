@@ -16,7 +16,13 @@
 # limitations under the License.
 
 require 'ipaddr'
-require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
+begin
+  require 'puppet_x/cisco/cmnutils'
+rescue LoadError # seen on master, not on agent
+  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..',
+                                     'puppet_x', 'cisco', 'cmnutils.rb'))
+end
 
 Puppet::Type.newtype(:cisco_bgp_af) do
   @doc = "Manages BGP Address-Family configuration.
@@ -40,10 +46,12 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       vrf                                    => 'default',
       afi                                    => 'ipv4',
       safi                                   => 'unicast',
+
       additional_paths_install               => 'true',
       additional_paths_receive               => 'true',
       additional_paths_selection             => 'Route_Map',
       additional_paths_send                  => 'true',
+      advertise_l2vpn_evpn                   => 'true',
       client_to_client                       => 'true',
       dampen_igp_metric                      => 200,
       dampening_state                        => 'true',
@@ -155,6 +163,12 @@ Puppet::Type.newtype(:cisco_bgp_af) do
 
   ensurable
 
+  # Overwrites the name method which by default returns only
+  # self[:name].
+  def name
+    "#{self[:asn]} #{self[:vrf]} #{self[:afi]} #{self[:safi]}"
+  end
+
   # Only needed to satisfy name parameter.
   newparam(:name) do
   end
@@ -168,7 +182,7 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       end
     end
 
-    munge { |value| Cisco::RouterBgp.process_asnum(value.to_s) }
+    munge { |value| PuppetX::Cisco::BgpUtils.process_asnum(value.to_s) }
   end
 
   newparam(:vrf, namevar: true) do
@@ -232,6 +246,12 @@ Puppet::Type.newtype(:cisco_bgp_af) do
 
     newvalues(:true, :false, :default)
   end # property additional_paths_send
+
+  newproperty(:advertise_l2vpn_evpn) do
+    desc "Advertise EVPN routes. Valid values are true, false, or 'default'"
+
+    newvalues(:true, :false, :default)
+  end # property advertise_l2vpn_evpn
 
   newproperty(:client_to_client) do
     desc 'Configure client-to-client route reflection. Valid values are ' \
@@ -391,7 +411,7 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       begin
         return value = :default if value == 'default'
         fail("Value must match format #{format}") unless value.is_a?(Array)
-        if Cisco::Utils.process_network_mask(value[0]).split('/')[1].nil?
+        if PuppetX::Cisco::Utils.process_network_mask(value[0]).split('/')[1].nil?
           fail("Must supply network mask for #{value[0]}")
         end
         value

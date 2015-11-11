@@ -41,6 +41,6 @@ node 'n9k-internal-switch' {
 }
 
 node 'n3k-internal-switch' {
-  include demo_role::internal_switch
+  include ciscopuppet::demo_role::internal_switch
 }
 

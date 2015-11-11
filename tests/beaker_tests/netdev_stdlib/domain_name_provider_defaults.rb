@@ -73,7 +73,7 @@ test_name "TestCase :: #{testheader}" do
                                         'no ip domain-name test.abc ;' \
                                         'no ip domain-name test.xyz ;' \
                                         'no vrf context test')
-    on(agent, cmd_str)
+    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
