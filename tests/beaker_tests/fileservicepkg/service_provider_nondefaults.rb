@@ -117,6 +117,8 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
+    logger.info('Pause 5 seconds to allow state transition')
+    sleep 5
 
     logger.info("Get resource stopped manifest from master :: #{result}")
   end

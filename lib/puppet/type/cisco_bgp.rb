@@ -17,6 +17,13 @@
 # limitations under the License.
 
 require 'ipaddr'
+begin
+  require 'puppet_x/cisco/cmnutils'
+rescue LoadError # seen on master, not on agent
+  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..',
+                                     'puppet_x', 'cisco', 'cmnutils.rb'))
+end
 
 Puppet::Type.newtype(:cisco_bgp) do
   @doc = "Manages BGP global and vrf configuration.
@@ -128,6 +135,12 @@ Puppet::Type.newtype(:cisco_bgp) do
 
   ensurable
 
+  # Overwrites the name method which by default returns only
+  # self[:name].
+  def name
+    "#{self[:asn]} #{self[:vrf]}"
+  end
+
   # Only needed to satisfy name parameter.
   newparam(:name) do
   end
@@ -141,7 +154,7 @@ Puppet::Type.newtype(:cisco_bgp) do
       end
     end
 
-    munge { |value| Cisco::RouterBgp.process_asnum(value.to_s) }
+    munge { |value| PuppetX::Cisco::BgpUtils.process_asnum(value.to_s) }
   end # param asn
 
   newparam(:vrf, namevar: true) do
@@ -202,7 +215,7 @@ Puppet::Type.newtype(:cisco_bgp) do
 
     validate do |id|
       begin
-        if /^\d+\.\d+$/.match(id) || /^\d+$/.match(id)
+        if /^(\d+|\d+\.\d+)$/.match(id)
           String(id) unless id == :default || id.empty? || id == 'default'
         end
       rescue
@@ -225,7 +238,7 @@ Puppet::Type.newtype(:cisco_bgp) do
       list = peers.split(' ')
       list.each do |value|
         fail "Confederation peer value '#{value}' #{match_error}" unless
-          /^\d+$/.match(value) || /^\d+\.\d+$/.match(value) ||
+          /^(\d+|\d+\.\d+)$/.match(value) ||
           peers == 'default' || peers == :default
       end
     end
