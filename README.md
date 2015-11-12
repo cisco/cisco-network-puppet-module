@@ -196,6 +196,7 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_tacacs_server`](#type-cisco_tacacs_server)
   * [`tacacs_server_group (netdev_stdlib)`](#type-cisco_tacacs_server_group)
   * [`cisco_tacacs_server_host`](#type-cisco_tacacs_server_host)
+  * [`tacacs_server (netdev_stdlib)`](#type-tacacs_server)
 
 * VLAN Types
   * [`cisco_vlan`](#type-cisco_vlan)
@@ -241,6 +242,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`syslog_server`](#type-syslog_server)
 * [`syslog_setting`](#type-syslog_setting)
 * [`tacacs_server_group`](#type-cisco_tacacs_server_group)
+* [`tacacs_server`](#type-tacacs_server)
 
 --
 ### Cisco Resource Type Details
@@ -1340,15 +1342,36 @@ Hostname or address of the Syslog server.  Valid value is a string.
 ##### `time_stamp_units`
 The unit of measurement for log time values.  Valid values are 'seconds' and 'milliseconds'.
 
+<<<<<<< HEAD
 ### Type: tacacs_server_group
+=======
+### Type: tacacs_server
+>>>>>>> Added NXOS provider for tacacs_server
 
 #### Parameters
 
 ##### `ensure`
 Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
 
+<<<<<<< HEAD
 ##### `servers`
 Array of servers associated with this group.
+=======
+##### `key`
+Encryption key (plaintext or in hash form depending on key_format)
+
+##### `key_format`
+Encryption key format [0-7]
+
+##### `name`
+Hostname or IP address of the Syslog server.  Valid value is a string.
+
+##### `port`
+The port of the tacacs server.
+
+##### `timeout`
+Number of seconds before the timeout period ends
+>>>>>>> Added NXOS provider for tacacs_server
 
 ## Limitations
 
