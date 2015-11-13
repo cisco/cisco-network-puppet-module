@@ -103,7 +103,7 @@ Puppet::Type.newtype(:cisco_bgp) do
       [
         /^(\d+|\d+\.\d+)$/,
         [
-          [:asn, identity],
+          [:asn, identity]
         ],
       ],
       [
@@ -116,7 +116,7 @@ Puppet::Type.newtype(:cisco_bgp) do
       [
         /^(\S+)$/,
         [
-          [:name, identity],
+          [:name, identity]
         ],
       ],
     ]
@@ -216,22 +216,25 @@ Puppet::Type.newtype(:cisco_bgp) do
     end
   end # property confederation_id
 
-  newproperty(:confederation_peers) do
-    desc "AS confederation parameters. Valid values are String,
+  newproperty(:confederation_peers, array_matching: :all) do
+  #newproperty(:confederation_peers) do
+    desc "AS confederation parameters. Valid values are String, Array
           keyword 'default'."
 
     match_error = 'must be specified in ASPLAIN or ASDOT notation'
     validate do |peers|
+      puts "DEBUG1 class/structure: #{peers.class}/#{peers}"
       list = peers.split(' ')
       list.each do |value|
-        fail "Confederation peer value '#{value}' #{match_error}" unless
-          /^\d+$/.match(value) || /^\d+\.\d+$/.match(value) ||
-          peers == 'default' || peers == :default
+          puts "DEBUG class/value: #{value.class}/#{value}"
+          fail "Confederation peer value '#{value}' #{match_error}" unless
+            /^\d+$/.match(value) || /^\d+\.\d+$/.match(value) ||
+            peers == 'default' || peers == :default
+        end
       end
-    end
-
     munge do |peers|
       peers = :default if peers == 'default'
+      peers = peers.split(' ') if peers.is_a? String # munge to array
       peers
     end
   end # property confederation_peers
@@ -421,3 +424,4 @@ Puppet::Type.newtype(:cisco_bgp) do
     fail("The 'asn' parameter must be set in the manifest.") if self[:asn].nil?
   end
 end
+
