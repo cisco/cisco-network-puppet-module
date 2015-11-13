@@ -187,6 +187,7 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_snmp_server`](#type-cisco_snmp_server)
   * [`cisco_snmp_user`](#type-cisco_snmp_user)
   * [`network_snmp (netdev_stdlib)`](#type-network_snmp)
+  * [`snmp_community (netdev_stdlib)`](#type-snmp_community)
 
 * SYSLOG Types
   * [`syslog_server (netdev_stdlib)`](#type-syslog_server)
@@ -241,6 +242,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`radius`](#type-radius)
 * [`radius_global`](#type-radius_global)
 * [`radius_server`](#type-radius_server)
+* [`snmp_community`](#type-snmp_community)
 * [`syslog_server`](#type-syslog_server)
 * [`syslog_setting`](#type-syslog_setting)
 * [`tacacs`](#type-tacacs)
@@ -1318,6 +1320,23 @@ Encryption key (plaintext or in hash form depending on key_format).  Valid value
 
 ##### `key_format`
 Encryption key format [0-7].  Valid value is an integer.
+
+### Type: snmp_community
+Manages an SNMP community on a Cisco SNMP server.
+
+#### Parameters
+
+##### `ensure`
+Determine whether the config should be present or not on the device. Valid
+values are 'present' and 'absent'.
+
+##### `group`
+Group that the SNMP community belongs to. Valid values are a string or the
+keyword 'default'.
+
+##### `acl`
+Assigns an Access Control List (ACL) to an SNMP community to filter SNMP
+requests. Valid values are a string or the keyword 'default'.
 
 ### Type: syslog_server
 
