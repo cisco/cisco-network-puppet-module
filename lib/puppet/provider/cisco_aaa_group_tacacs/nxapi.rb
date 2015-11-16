@@ -18,6 +18,12 @@
 # limitations under the License.
 
 require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
+begin
+  require 'puppet_x/cisco/autogen'
+rescue LoadError
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..',
+                                     'puppet_x', 'cisco', 'autogen.rb'))
+end
 
 Puppet::Type.type(:cisco_aaa_group_tacacs).provide(:nxapi) do
   desc 'The NXAPI provider for cisco_aaa_group_tacacs'
@@ -27,23 +33,27 @@ Puppet::Type.type(:cisco_aaa_group_tacacs).provide(:nxapi) do
 
   mk_resource_methods
 
+  AAA_GROUP_PROPS = [:deadtime, :source_interface]
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@aaa_group',
+                                            AAA_GROUP_PROPS)
+
   def initialize(value={})
     super(value)
-    @aaa_group = Cisco::AaaServerGroup.groups(:tacacs)[@property_hash[:name]]
+    @aaa_group = Cisco::TacacsServerGroup.groups[@property_hash[:name]]
     @property_flush = {}
     debug 'Created provider instance of cisco_aaa_group_tacacs'
   end
 
   def self.instances
     instances = []
-    Cisco::AaaServerGroup.groups(:tacacs).each do |name, group|
+    Cisco::TacacsServerGroup.groups.each do |name, group|
       debug "Checking instance of #{name}"
       instances << new(
         ensure:           :present,
         name:             name,
         deadtime:         group.deadtime,
         vrf_name:         group.vrf,
-        source_interface: group.source_interface,
+        source_interface: group.source_interface.downcase,
         server_hosts:     group.servers.keys)
     end
     instances
@@ -75,7 +85,7 @@ Puppet::Type.type(:cisco_aaa_group_tacacs).provide(:nxapi) do
 
   # rubocop:disable GuardClause
   def properties_set(new_aaa_group=false)
-    %i(deadtime source_interface).each do |prop|
+    AAA_GROUP_PROPS.each do |prop|
       next unless @resource[prop]
       send("#{prop}=", @resource[prop]) if new_aaa_group
       unless @property_flush[prop].nil?
@@ -91,7 +101,7 @@ Puppet::Type.type(:cisco_aaa_group_tacacs).provide(:nxapi) do
         @aaa_group.vrf = @property_flush[:vrf_name]
       end
     end
-    # node utils is named server= instead of server_hosts=
+    # node utils is named servers= instead of server_hosts=
     if @resource[:server_hosts]
       self.server_hosts = @resource[:server_hosts] if new_aaa_group
       unless @property_flush[:server_hosts].nil?
@@ -101,59 +111,32 @@ Puppet::Type.type(:cisco_aaa_group_tacacs).provide(:nxapi) do
   end
   # rubocop:enable GuardClause
 
-  # can't autogen getters and setters because the default_<prop>
-  # functions are class functions
-  def deadtime
-    return :default if @resource[:deadtime] == :default &&
-                       @property_hash[:deadtime] ==
-                       Cisco::AaaServerGroup.default_deadtime
-    @property_hash[:deadtime]
-  end
-
-  def deadtime=(set_value)
-    set_value = Cisco::AaaServerGroup.default_deadtime if
-      set_value == :default
-    @property_flush[:deadtime] = set_value
-  end
-
+  # can't autogen server_hosts, special array handling
   def server_hosts
     return [:default] if @resource[:server_hosts] &&
                          @resource[:server_hosts][0] == :default &&
                          @property_hash[:server_hosts] ==
-                         Cisco::AaaServerGroup.default_servers
+                         @aaa_group.default_servers
     @property_hash[:server_hosts]
   end
 
   def server_hosts=(set_value)
     if set_value.is_a?(Array) && set_value[0] == :default
-      set_value = Cisco::AaaServerGroup.default_servers
+      set_value = @aaa_group.default_servers
     end
     @property_flush[:server_hosts] = set_value
   end
 
-  def source_interface
-    return :default if @resource[:source_interface] == :default &&
-                       @property_hash[:source_interface] ==
-                       Cisco::AaaServerGroup.default_source_interface
-    @property_hash[:source_interface]
-  end
-
-  def source_interface=(set_value)
-    if set_value == :default
-      set_value = Cisco::AaaServerGroup.default_source_interface
-    end
-    @property_flush[:source_interface] = set_value
-  end
-
+  # can't autogen because named 'vrf', not 'vrf_name' in node utils
   def vrf_name
     return :default if @resource[:vrf_name] == :default &&
                        @property_hash[:vrf_name] ==
-                       Cisco::AaaServerGroup.default_vrf
+                       @aaa_group.default_vrf
     @property_hash[:vrf_name]
   end
 
   def vrf_name=(set_value)
-    set_value = Cisco::AaaServerGroup.default_vrf if set_value == :default
+    set_value = @aaa_group.default_vrf if set_value == :default
     @property_flush[:vrf_name] = set_value
   end
 
@@ -164,7 +147,7 @@ Puppet::Type.type(:cisco_aaa_group_tacacs).provide(:nxapi) do
     else
       if @aaa_group.nil?
         new_aaa_group = true
-        @aaa_group = Cisco::AaaServerGroup.new(@resource[:name], :tacacs)
+        @aaa_group = Cisco::TacacsServerGroup.new(@resource[:name])
       end
       properties_set(new_aaa_group)
     end
