@@ -93,22 +93,14 @@ Puppet::Type.type(:cisco_bgp).provide(:nxapi) do
     }
     # Call node_utils getter for each property
     BGP_NON_BOOL_PROPS.each do |prop|
-      begin
-        current_state[prop] = instance.send(prop)
-      rescue Cisco::UnsupportedError
-        current_state[prop] = nil
-      end
+      current_state[prop] = instance.send(prop)
     end
     BGP_BOOL_PROPS.each do |prop|
-      begin
-        val = instance.send(prop)
-        if val.nil?
-          current_state[prop] = nil
-        else
-          current_state[prop] = val ? :true : :false
-        end
-      rescue Cisco::UnsupportedError
+      val = instance.send(prop)
+      if val.nil?
         current_state[prop] = nil
+      else
+        current_state[prop] = val ? :true : :false
       end
     end
     debug current_state
@@ -232,11 +224,7 @@ Puppet::Type.type(:cisco_bgp).provide(:nxapi) do
     current = sprintf("\n%30s: %s", 'asn', @bgp_vrf.asnum)
     current.concat(sprintf("\n%30s: %s", 'vrf', @bgp_vrf.vrf))
     BGP_ALL_PROPS.each do |prop|
-      begin
-          current.concat(sprintf("\n%30s: %s", prop, @bgp_vrf.send(prop)))
-        rescue Cisco::UnsupportedError
-          nil
-        end
+      current.concat(sprintf("\n%30s: %s", prop, @bgp_vrf.send(prop)))
     end
     debug current
   end # puts_config
