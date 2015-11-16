@@ -26,6 +26,7 @@ class ciscopuppet::demo_all {
   #   proxy => 'http://proxy.domain.com:8080',
   # }
 
+  include ciscopuppet::demo_aaa
   include ciscopuppet::demo_bgp
   include ciscopuppet::demo_command_config
   include ciscopuppet::demo_domain
@@ -41,4 +42,5 @@ class ciscopuppet::demo_all {
   include ciscopuppet::demo_vlan
   include ciscopuppet::demo_vrf
   include ciscopuppet::demo_vtp
+  include ciscopuppet::demo_snmp
 }
