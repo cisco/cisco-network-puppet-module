@@ -217,8 +217,8 @@ Puppet::Type.newtype(:cisco_bgp) do
   end # property confederation_id
 
   newproperty(:confederation_peers, array_matching: :all) do
-    desc "AS confederation parameters. Valid values are String,
-          keyword 'default' or Array."
+    desc "AS confederation parameters. Valid values are Array, String,
+          keyword 'default'"
 
     match_error = 'must be specified in ASPLAIN or ASDOT notation'
 
@@ -233,7 +233,6 @@ Puppet::Type.newtype(:cisco_bgp) do
           /^(\d+|\d+\.\d+)$/.match(value) ||
           peers_array == 'default' || peers_array == :default
       end
-      peers
     end
 
     munge do |peers|
@@ -247,7 +246,7 @@ Puppet::Type.newtype(:cisco_bgp) do
     end
 
     def insync?(is)
-      (is.size == should.flatten.size && is.sort == should.flatten.sort) if is.any?
+      (is.size == should.flatten.size && is.sort == should.flatten.sort)
     end
 
   end # confederation_peers
