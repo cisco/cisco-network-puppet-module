@@ -19,6 +19,11 @@ class ciscopuppet::demo_domain {
     ensure => present,
   }
 
+  # Functionally equivalent to domain_name
+  domain_name { 'demo.cisco.com':
+    ensure => present,
+  }
+
   name_server { '8.8.8.8':
     ensure => present,
   }
