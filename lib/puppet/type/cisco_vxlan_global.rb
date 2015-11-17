@@ -1,4 +1,4 @@
-# Manages the VXLAN global config of a Cisco Device. It includes 
+# Manages the VXLAN global config of a Cisco Device. It includes
 # Duplicate host IP address detection, duplicate host mac address
 # detection and configuring anycast gateway mac address.
 #
@@ -33,7 +33,7 @@ Puppet::Type.newtype(:cisco_vxlan_global) do
       dup_host_ip_addr_detection_timeout	=> 20,
       anycast_gateway_mac  			=> '1223.3445.5668',
       dup_host_mac_detection_host_moves  	=> 100,
-      dup_host_mac_detection_timeout		=> 10,      
+      dup_host_mac_detection_timeout		=> 10,
     }
   "
 
@@ -53,9 +53,9 @@ Puppet::Type.newtype(:cisco_vxlan_global) do
   ensurable
 
   newproperty(:dup_host_ip_addr_detection_host_moves) do
-    desc 'The number of host moves allowed in n seconds. Valid values are Integer, keyword 'default'.'
- 
-    munge do |value|	    
+    desc "The number of host moves allowed in n seconds. Valid values are Integer, keyword 'default'."
+
+    munge do |value|
       begin
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
@@ -68,9 +68,9 @@ Puppet::Type.newtype(:cisco_vxlan_global) do
 
   newproperty(:dup_host_ip_addr_detection_timeout) do
     desc "The duplicate detection timeout in seconds for the number of host moves.
-	  Valid values are Integer, keyword 'default'."
- 
-    munge do |value|	    
+          Valid values are Integer, keyword 'default'."
+
+    munge do |value|
       begin
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
@@ -83,17 +83,16 @@ Puppet::Type.newtype(:cisco_vxlan_global) do
 
   newproperty(:anycast_gateway_mac) do
     desc 'Distributed gateway virtual MAC address. Valid values are string.'
- 
+
     validate do |anycast_gateway_mac|
       fail 'Mac Address is not a string.' unless anycast_gateway_mac.is_a? String
     end
   end # property anycast gateway mac address
 
-
   newproperty(:dup_host_mac_detection_host_moves) do
-    desc 'The number of host moves allowed in n seconds. Valid values are Integer, keyword 'default'.'
- 
-    munge do |value|	    
+    desc "The number of host moves allowed in n seconds. Valid values are Integer, keyword 'default'."
+
+    munge do |value|
       begin
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
@@ -106,8 +105,8 @@ Puppet::Type.newtype(:cisco_vxlan_global) do
 
   newproperty(:dup_host_mac_detection_timeout) do
     desc "The duplicate detection timeout in seconds for the number of host moves.
-          Valid values are Integer, keyword 'default'." 
-    munge do |value|	    
+          Valid values are Integer, keyword 'default'."
+    munge do |value|
       begin
         value = :default if value == 'default'
         value = Integer(value) unless value == :default

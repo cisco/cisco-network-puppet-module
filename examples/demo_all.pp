@@ -35,4 +35,5 @@ class ciscopuppet::demo_all {
   include ciscopuppet::demo_tacacs_server_host
   include ciscopuppet::demo_vtp
   include ciscopuppet::demo_snmp
+  include ciscopuppet::demo_vxlan_global
 }
