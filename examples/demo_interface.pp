@@ -15,43 +15,60 @@
 # limitations under the License.
 
 class ciscopuppet::demo_interface {
-  cisco_interface { 'Ethernet1/1' :
-    shutdown            => true,
-    switchport_mode     => disabled,
-    description         => 'managed by puppet',
-    ipv4_address        => '192.168.55.55',
-    ipv4_netmask_length => 24,
-    mtu                 => 1600,
-    speed               => 100,
-    duplex              => 'full',
-    vrf                 => 'test',
-  }
+  if $operatingsystem == 'nexus' {
+    cisco_interface { 'Ethernet1/1' :
+      shutdown            => true,
+      switchport_mode     => disabled,
+      description         => 'managed by puppet',
+      ipv4_address        => '192.168.55.55',
+      ipv4_netmask_length => 24,
+      mtu                 => 1600,
+      speed               => 100,
+      duplex              => 'full',
+      vrf                 => 'test',
+    }
 
-  cisco_interface { 'Ethernet1/1.1':
-    encapsulation_dot1q => 20,
-  }
+    cisco_interface { 'Ethernet1/1.1':
+      encapsulation_dot1q => 20,
+    }
 
-  cisco_interface { 'Ethernet1/2':
-    description     => 'default',
-    shutdown        => 'default',
-    access_vlan     => 'default',
-    switchport_mode => access,
-  }
+    cisco_interface { 'Ethernet1/2':
+      description     => 'default',
+      shutdown        => 'default',
+      access_vlan     => 'default',
+      switchport_mode => access,
+    }
 
-  cisco_interface { 'Ethernet1/3':
-    switchport_mode               => trunk,
-    switchport_trunk_allowed_vlan => '20, 30',
-    switchport_trunk_native_vlan  => 40,
-  }
+    cisco_interface { 'Ethernet1/3':
+      switchport_mode               => trunk,
+      switchport_trunk_allowed_vlan => '20, 30',
+      switchport_trunk_native_vlan  => 40,
+    }
 
-  cisco_interface { 'Vlan22':
-    svi_autostate  => false,
-    svi_management => true,
-  }
+    cisco_interface { 'Vlan22':
+      svi_autostate  => false,
+      svi_management => true,
+    }
 
-  network_interface { 'ethernet1/9':
-    description => 'default',
-    duplex      => 'auto',
-    speed       => '100m',
+    network_interface { 'ethernet1/9':
+       description     => 'default',
+       duplex      => 'auto',
+       speed       => '100m',
+    }
+  }
+  elsif $operatingsystem == 'ios_xr' {
+    cisco_interface { 'GigabitEthernet0/0/0/1' :
+      shutdown            => true,
+      description         => 'managed by puppet',
+      ipv4_address        => '192.168.55.55',
+      ipv4_netmask_length => 24,
+      mtu                 => 1600,
+      vrf                 => 'test',
+    }
+
+    cisco_interface { 'GigabitEthernet0/0/0/2':
+      description     => 'default',
+      shutdown        => 'default',
+    }
   }
 }
