@@ -160,6 +160,7 @@ The following resources include cisco types and providers along with cisco provi
   * [`domain_name (netdev_stdlib)`](#type-domain_name)
   * [`name_server (netdev_stdlib)`](#type-name_server)
   * [`network_dns (netdev_stdlib)`](#type-network_dns)
+  * [`search_domain (netdev_stdlib)`](#type-search_domain)
 
 * Interface Types
   * [`cisco_interface`](#type-cisco_interface)
@@ -243,6 +244,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`radius`](#type-radius)
 * [`radius_global`](#type-radius_global)
 * [`radius_server`](#type-radius_server)
+* [`search_domain`](#type-search_domain)
 * [`snmp_community`](#type-snmp_community)
 * [`syslog_server`](#type-syslog_server)
 * [`syslog_setting`](#type-syslog_setting)
@@ -1322,6 +1324,19 @@ Encryption key (plaintext or in hash form depending on key_format).  Valid value
 
 ##### `key_format`
 Encryption key format [0-7].  Valid value is an integer.
+
+### Type: search_domain
+
+Configure the search domain of the device. Note that this type is functionally equivalent to 
+the netdev_stdlib domain_name type.
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `name`
+Search domain of the device. Valid value is a string.
 
 ### Type: snmp_community
 Manages an SNMP community on a Cisco SNMP server.
