@@ -103,7 +103,7 @@ Puppet::Type.newtype(:cisco_bgp) do
       [
         /^(\d+|\d+\.\d+)$/,
         [
-          [:asn, identity],
+          [:asn, identity]
         ],
       ],
       [
@@ -116,7 +116,7 @@ Puppet::Type.newtype(:cisco_bgp) do
       [
         /^(\S+)$/,
         [
-          [:name, identity],
+          [:name, identity]
         ],
       ],
     ]
@@ -216,25 +216,40 @@ Puppet::Type.newtype(:cisco_bgp) do
     end
   end # property confederation_id
 
-  newproperty(:confederation_peers) do
-    desc "AS confederation parameters. Valid values are String,
-          keyword 'default'."
+  newproperty(:confederation_peers, array_matching: :all) do
+    desc "AS confederation parameters. Valid values are Array, String,
+          keyword 'default'"
 
     match_error = 'must be specified in ASPLAIN or ASDOT notation'
+
     validate do |peers|
-      list = peers.split(' ')
-      list.each do |value|
+      if peers.is_a? String
+        peers_array = peers.split(' ')
+      else
+        peers_array = peers
+      end
+      peers_array.each do |value|
         fail "Confederation peer value '#{value}' #{match_error}" unless
-          /^\d+$/.match(value) || /^\d+\.\d+$/.match(value) ||
-          peers == 'default' || peers == :default
+          /^(\d+|\d+\.\d+)$/.match(value) ||
+          peers_array == 'default' || peers_array == :default
       end
     end
 
     munge do |peers|
-      peers = :default if peers == 'default'
-      peers
+      if peers.is_a? String
+        if peers == 'default'
+          peers = :default
+        else
+          peers = peers.split(' ')
+        end
+      end
     end
-  end # property confederation_peers
+
+    def insync?(is)
+      (is.size == should.flatten.size && is.sort == should.flatten.sort)
+    end
+
+  end # confederation_peers
 
   newproperty(:shutdown) do
     desc 'Administratively shutdown the BGP protocol'
