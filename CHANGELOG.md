@@ -4,7 +4,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-### Changed
+### New feature support
+#### NetDev Resources.
+- search_domain provider.
 
 ### Added
 
@@ -31,7 +33,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - radius global provider.
 - syslog_server provider.
 - syslog_setting provider.
-- search_domain provider.
 
 ### Added
 - New documentation for developing beaker testcases: README-develop-beaker-scripts.md
