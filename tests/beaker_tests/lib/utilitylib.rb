@@ -60,6 +60,7 @@ module UtilityLib
       if grpc_port.nil?
         return "sudo ip netns exec #{agentvrf} " + cmdstr
       else
+        # TODO: remove this workaround when we have grpc UDS support
         node_var = "export NODE=\"127.0.0.1:#{grpc_port} root lab\""
         return "#{node_var} && ip netns exec #{agentvrf} " + cmdstr
       end
