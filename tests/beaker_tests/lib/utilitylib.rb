@@ -57,8 +57,12 @@ module UtilityLib
     when /cisco/
       agentvrf = options[:HOSTS][host.to_s.to_sym]['vrf']
       grpc_port = options[:HOSTS][host.to_s.to_sym]['grpc_port']
-      node_var = "export NODE=\"127.0.0.1:#{grpc_port} root lab\""
-      return "#{node_var} && ip netns exec #{agentvrf} " + cmdstr
+      if grpc_port.nil?
+        return "sudo ip netns exec #{agentvrf} " + cmdstr
+      else
+        node_var = "export NODE=\"127.0.0.1:#{grpc_port} root lab\""
+        return "#{node_var} && ip netns exec #{agentvrf} " + cmdstr
+      end
     else
       return cmdstr
     end
