@@ -52,6 +52,14 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     :duplex,
     :switchport_trunk_allowed_vlan,
     :switchport_trunk_native_vlan,
+    :bandwidth,
+    :delay,
+    :flowcontrol_receive,
+    :flowcontrol_send,
+    :port_channel,
+    :spanning_tree_cost,
+    :spanning_tree_link_type,
+    :spanning_tree_port_priority,
   ]
   INTF_BOOL_PROPS = [
     :shutdown, :negotiate_auto, :ipv4_redirects, :ipv4_proxy_arp,

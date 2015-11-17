@@ -75,7 +75,7 @@ Puppet::Type.newtype(:cisco_interface) do
     patterns << [
       /^(\S+)/,
       [
-        [:interface, identity],
+        [:interface, identity]
       ],
     ]
     patterns
@@ -319,4 +319,81 @@ Puppet::Type.newtype(:cisco_interface) do
     reqs << rel_catalog.catalog.resource('Cisco_vtp')
     reqs # return
   end # autorequire vtp
+
+  ###########################
+  # Port-Channel attributes #
+  ###########################
+
+  newproperty(:bandwidth) do
+    desc "Bandwidth in kilobits. Valid values are 1-100000000
+          and default is 100000."
+
+    munge { |value| value == 'default' ? :default : value.to_i }
+  end # property bandwidth
+
+  newproperty(:delay) do
+    desc "Throughput delay in tens of microseconds. Valid values
+          are 1-16777215 and default is 1."
+
+    munge { |value| value == 'default' ? :default : value.to_i }
+  end # property delay
+
+  newproperty(:flowcontrol_receive) do
+    desc "Configure interface flowcontrol receive pause frames.
+          Default value is 'off'."
+
+    newvalues(:desired, :off, :on, :default)
+  end # property flowcontrol_receive
+
+  newproperty(:flowcontrol_send) do
+    desc "Configure interface flowcontrol send pause frames.
+          Default value is 'off'."
+
+    newvalues(:desired, :off, :on, :default)
+  end # property flowcontrol_send
+
+  newproperty(:port_channel) do
+    desc "Port channel is an aggregation of multiple physical interfaces
+          that creates a logical interface. Valid values are 1 to 4096."
+
+    munge { |value| value }
+    #    munge do |value|
+    #      begin
+    #        value = Integer(value) unless value.empty?
+    #      rescue
+    #        raise "#{value} is not a valid port_channel."
+    #      end
+    #      value
+    #    end
+  end # property port_channel
+
+  newproperty(:spanning_tree_cost) do
+    desc "Change an interface's spanning tree port path cost.
+          Valid values are 1 to 200000000 or auto.
+          Default value is 'auto'."
+
+    munge do |value|
+      value = :default if value == 'default'
+      begin
+        value = Integer(value) unless value == :default || value == 'auto'
+      rescue
+        raise 'spanning_tree_cost must be a valid integer, or default or auto'
+      end
+      value
+    end
+  end # property spanning_tree_cost
+
+  newproperty(:spanning_tree_link_type) do
+    desc "Change an interface's spanning tree link type.
+          Default value is 'auto'."
+
+    newvalues(:default, :auto, :'point-to-point', :shared)
+  end # property spanning_tree_link_type
+
+  newproperty(:spanning_tree_port_priotity) do
+    desc "Change an interface's spanning tree port priority.
+          Default value is '128'."
+
+    newvalues(:default, 0, 32, 64, 96, 128, 160, 192, 224)
+  end # property spanning_tree_port_priotity
 end # Puppet::Type.newtype
