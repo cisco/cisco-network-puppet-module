@@ -11,18 +11,18 @@ import sys
 # parameter is not needed simply set it to ''. Example: VRF = ''
 
 # Mandatory Parameters:
-DOMAIN        = 'insieme.local'
-RPM_URI       = 'ftp://x.x.x.x/'
-RPM_NAME      = 'http://yum.puppetlabs.com/puppetlabs-release-pc1-nxos-5.noarch.rpm'
-PUPPET_MASTER = 'puppet-server101.' + DOMAIN
+DOMAIN        = 'cisco.com'
+RPM_URI       = 'ftp://10.122.84.225/'
+RPM_NAME      = 'puppet-agent-1.1.0.227.g1d8334c-1.nxos5.x86_64.rpm'
+PUPPET_MASTER = 'rtp-puppetmaster2.' + DOMAIN
 
 # Optional Parameters:
 VRF           = 'management'
 PROXY         = 'http://proxy.esl.cisco.com:8080'
 PROXY_SECURE  = 'https://proxy.esl.cisco.com:8080'
-DNS           = {'nameserver1': 'x.x.x.x',
-                 'nameserver2': 'x.x.x.x',
-                 'nameserver3': 'x.x.x.x',
+DNS           = {'nameserver1': '64.102.6.247',
+                 'nameserver2': '72.163.131.10',
+                 'nameserver3': '173.36.131.10',
                  'domain': DOMAIN, 'search': DOMAIN}
 
 # ------------------------------------------------------------------------#
@@ -33,23 +33,15 @@ PUPPET_BINARY = '/opt/puppetlabs/puppet/bin/puppet'
 PUPPET_CONFIG_CMD = 'agent --configprint config'
 
 # Build String to prepend to commands executed on the puppet agent.
-PUP_PREPEND_CMD = ' PATH=$PATH:/opt/puppetlabs/puppet/bin/:/opt/puppetlabs/puppet/lib/  https_proxy=https://proxy.esl.cisco.com:8080  http_proxy=http://proxy.esl.cisco.com:8080 sudo ip netns exec management puppet agent -t '
 PREPEND_CMD = ' sudo'
-
 if 'VRF' in globals() and VRF:
     PREPEND_CMD += ' ' + 'ip netns exec ' + VRF
-    #PREPEND_CMD += ' PATH=$PATH:/opt/puppetlabs/puppet/bin/:/opt/puppetlabs/puppet/lib/ ' 
-    #PREPEND_CMD += ' https_proxy=https://proxy.esl.cisco.com:8080 ' 
-    #PREPEND_CMD += ' http_proxy=http://proxy.esl.cisco.com:8080 '
+
 # Set PROXY environment variables
 if 'PROXY' in globals() and PROXY:
     os.environ['http_proxy'] = PROXY
 if 'PROXY_SECURE' in globals() and PROXY_SECURE:
     os.environ['https_proxy'] = PROXY_SECURE
-#bashcommand1 = 'export http_proxy=http://proxy.esl.cisco.com:8080'
-#os.system(bashcommand1)
-#bashcommand2 = 'export https_proxy=https://proxy.esl.cisco.com:8080'
-#os.system(bashcommand2)
 
 #setup logging
 log_filename = "/bootflash/puppet_agent_install.log"
@@ -74,7 +66,7 @@ def logClose():
 def process_cmd(cmd):
     """Process native bash or guestshell command"""
 
-    print '\n@@Processing CMD: ' + cmd + '\n'
+    #print '\n@@Processing CMD: ' + cmd + '\n'
     args = shlex.split(cmd)
     p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output,error = p.communicate()
@@ -89,7 +81,7 @@ def process_cmd(cmd):
 
 def resolver_configure():
     """Configure /etc/resolv.conf on the agent"""
-
+    
     ns, d, s, = 'nameserver ', 'domain ', 'search '
     rpath = '/etc/resolv.conf'
     temp_rpath = '/bootflash/resolv.conf'
@@ -107,14 +99,9 @@ def resolver_configure():
         if k.find('search') == 0:
             f.write(s + v + '\n')
     f.close()
-   
+
     process_cmd('sudo cp ' + temp_rpath + ' ' + rpath)
     process_cmd('sudo rm ' + temp_rpath)
-    
-    temp_rpath = '/etc/hosts'
-    f = open(temp_rpath, 'r+')
-    f.write('172.31.219.1    puppet-server101 puppet-server101.insieme.local' '\n')
-    f.close()
 
 def networking_verify():
     """Verify network reachability"""
@@ -128,12 +115,12 @@ def networking_verify():
         exit(0)
 
     # Verify reachability to RPM repo
-    #cmd = PREPEND_CMD + ' wget ' + RPM_URI
-    #result = process_cmd(cmd)
-    #if result.find('FAIL') == 0:
-    #    msg = "Failed to contact RPM repo"
-    #    logIt(msg)
-    #    exit(0)
+    cmd = PREPEND_CMD + ' wget ' + RPM_URI
+    result = process_cmd(cmd)
+    if result.find('FAIL') == 0:
+        msg = "Failed to contact RPM repo"
+        logIt(msg)
+        exit(0)
 
 def gpg_keys_process():
     """Import GPG keys and copy to /etc/pki/rpm-gpg"""
@@ -143,14 +130,12 @@ def gpg_keys_process():
 def yum_install():
     """Install the puppet rpm"""
 
-    cmd = PREPEND_CMD + ' yum install -y ' + RPM_NAME
-    process_cmd(cmd)
-    cmd = PREPEND_CMD + ' yum install puppet -y '
+    cmd = PREPEND_CMD + ' yum install -y ' + RPM_URI + RPM_NAME
     process_cmd(cmd)
 
 def puppet_configure():
     """Add master server and SSL certificate to puppet.conf"""
-
+    
     cmd = 'sudo ' + PUPPET_BINARY + ' ' + PUPPET_CONFIG_CMD
     pcfpath = process_cmd(cmd)
     temp_pcfpath = '/bootflash/puppet.conf'
@@ -163,33 +148,17 @@ def puppet_configure():
     f.write('[main]\n')
     f.write('certname=' + hostname + '.' + DOMAIN + '\n')
     f.write('server=' + PUPPET_MASTER + '\n')
-    f.write('[agent]\n')
-    f.write('  pluginsync=true\n')
-    f.write('  ignorecache=true\n')
-    f.write('  logdir=/tmp/\n')
     f.close()
 
     process_cmd('sudo cp ' + temp_pcfpath + ' ' + pcfpath)
-    #process_cmd('sudo rm ' + temp_pcfpath)
+    process_cmd('sudo rm ' + temp_pcfpath)
 
 def puppet_kickstart():
     """Kickstart the puppet agent"""
-    #cmd = PUP_PREPEND_CMD 
-    #os.system(cmd)
-    #cmd = ' sudo ip netns exec management ' + ' ' + PUPPET_BINARY + ' agent -t '
-    #process_cmd(cmd)
 
-    #cmd = ' sudo mv /bootflash/run-puppet.sh /tmp/ '
-    #process_cmd(cmd)
-
-    #cmd = ' sudo chmod 777 /tmp/run-puppet.sh'
-    #process_cmd(cmd)
-
-    #cmd = ' sudo ip netns exec management /tmp/run-puppet.sh '
-    #process_cmd(cmd)
- 
-    cmd = PREPEND_CMD + ' ' + PUPPET_BINARY + ' agent -t '
+    cmd = PREPEND_CMD + ' ' + PUPPET_BINARY + ' agent -t'
     process_cmd(cmd)
+
 
 resolver_configure()
 networking_verify()
