@@ -29,7 +29,7 @@ Puppet::Type.newtype(:cisco_vxlan_global) do
 
   There can only be one instance of the cisco_vtp.
   Example:
-  
+
   ~~~puppet
     cisco_vxlan_global { default:
       ensure                                    => present,
