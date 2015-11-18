@@ -50,6 +50,7 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
     :networks,
     :next_hop_route_map,
     :redistribute,
+    :route_target_import,
   ]
 
   BGP_AF_BOOL_PROPS = [
@@ -60,6 +61,8 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
     :client_to_client,
     :default_information_originate,
     :dampening_state,
+    :route_target_both_auto,
+    :route_target_both_auto_evpn,
   ]
 
   BGP_AF_ALL_PROPS = BGP_AF_NON_BOOL_PROPS + BGP_AF_BOOL_PROPS
@@ -101,6 +104,7 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
     # networks/redistribute use nested arrays, thus require special handling
     current_state[:networks] = obj.networks
     current_state[:redistribute] = obj.redistribute
+    current_state[:route_target_import] = obj.route_target_import
     new(current_state)
   end # self.properties_get
 
@@ -264,6 +268,22 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
   def redistribute=(should_list)
     should_list = @af.default_redistribute if should_list[0] == :default
     @property_flush[:redistribute] = should_list
+  end
+
+  #route target import uses array of string
+  def route_target_import
+    return @property_hash[:route_target_import] if @resource[:route_target_import].nil?
+    if @resource[:route_target_import][0] == :default &&
+       @property_hash[:route_target_import] == @af.default_route_target_import
+      return [:default]
+    else
+      @property_hash[:route_target_import]
+    end
+  end
+
+  def route_target_import=(should_list)
+    should_list = @af.default_route_target_import if should_list[0] == :default
+    @property_flush[:route_target_import] = should_list
   end
 
   def flush
