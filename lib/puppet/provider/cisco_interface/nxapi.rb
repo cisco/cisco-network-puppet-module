@@ -56,6 +56,8 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     :delay,
     :flowcontrol_receive,
     :flowcontrol_send,
+    :lacp_max_bundle,
+    :lacp_min_links,
     :per_port_hash_distribution,
     :port_channel,
     :spanning_tree_cost,
@@ -63,7 +65,8 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     :spanning_tree_port_priority,
   ]
   INTF_BOOL_PROPS = [
-    :bandwidth_inherit, :shutdown, :negotiate_auto, :ipv4_redirects, :ipv4_proxy_arp,
+    :bandwidth_inherit, :lacp_graceful_convergence, :lacp_suspend_individual,
+    :per_port_hash_distribution, :shutdown, :negotiate_auto, :ipv4_redirects, :ipv4_proxy_arp,
     :snmp_trap_link_status, :switchport_vtp, :switchport_autostate_exclude,
     :svi_autostate, :svi_management
   ]

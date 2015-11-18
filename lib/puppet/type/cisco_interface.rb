@@ -364,6 +364,38 @@ Puppet::Type.newtype(:cisco_interface) do
     newvalues(:desired, :off, :on, :default)
   end # property flowcontrol_send
 
+  newproperty(:lacp_graceful_convergence) do
+    desc 'Configure port-channel lacp graceful convergence.'
+
+    newvalues(:true, :false)
+  end # property lacp_graceful_convergence
+
+  newproperty(:lacp_max_bundle) do
+    desc "Configure the port-channel max-bundle. Valid values
+          are 1-16 and default is 16."
+
+    munge { |value| value == 'default' ? :default : value.to_i }
+  end # property lacp_max_bundle
+
+  newproperty(:lacp_min_links) do
+    desc "Configure the port-channel min-links. Valid values
+          are 1-16 and default is 1."
+
+    munge { |value| value == 'default' ? :default : value.to_i }
+  end # property lacp_min_links
+
+  newproperty(:lacp_suspend_individual) do
+    desc 'Configure lacp port-channel state.'
+
+    newvalues(:true, :false)
+  end # property lacp_suspend_individual
+
+  newproperty(:per_port_load_defer) do
+    desc 'Configure lacp port-channel load-defer.'
+
+    newvalues(:true, :false)
+  end # property per_port_load_defer
+
   newproperty(:per_port_hash_distribution) do
     desc "Configure hash distribution at the port channel level.
           Default value is no form of command"
@@ -376,14 +408,6 @@ Puppet::Type.newtype(:cisco_interface) do
           that creates a logical interface. Valid values are 1 to 4096."
 
     munge { |value| value }
-    #    munge do |value|
-    #      begin
-    #        value = Integer(value) unless value.empty?
-    #      rescue
-    #        raise "#{value} is not a valid port_channel."
-    #      end
-    #      value
-    #    end
   end # property port_channel
 
   newproperty(:spanning_tree_cost) do
