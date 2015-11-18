@@ -62,8 +62,8 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     :spanning_tree_port_priority,
   ]
   INTF_BOOL_PROPS = [
-    :shutdown, :negotiate_auto, :ipv4_redirects, :ipv4_proxy_arp,
-    :switchport_vtp, :switchport_autostate_exclude,
+    :bandwidth_inherit, :shutdown, :negotiate_auto, :ipv4_redirects, :ipv4_proxy_arp,
+    :snmp_trap_link_status, :switchport_vtp, :switchport_autostate_exclude,
     :svi_autostate, :svi_management
   ]
   INTF_ALL_PROPS = INTF_NON_BOOL_PROPS + INTF_BOOL_PROPS

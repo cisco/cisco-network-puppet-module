@@ -141,6 +141,12 @@ Puppet::Type.newtype(:cisco_interface) do
     newvalues(:true, :false, :default)
   end # property shutdown
 
+  newproperty(:snmp_trap_link_status) do
+    desc 'Allow SNMP LINKUP and LINKDOWN traps.'
+
+    newvalues(:true, :false)
+  end # property snmp_trap_link_status
+
   newproperty(:switchport_mode) do
     desc "Switchport mode of the interface. To make an interface L3, set
           switchport_mode to 'disabled'. "
@@ -330,6 +336,12 @@ Puppet::Type.newtype(:cisco_interface) do
 
     munge { |value| value == 'default' ? :default : value.to_i }
   end # property bandwidth
+
+  newproperty(:bandwidth_inherit) do
+    desc 'Specify that bandwidth is inherited.'
+
+    newvalues(:true, :false)
+  end # property bandwidth_inherit
 
   newproperty(:delay) do
     desc "Throughput delay in tens of microseconds. Valid values
