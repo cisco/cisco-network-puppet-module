@@ -56,6 +56,7 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     :delay,
     :flowcontrol_receive,
     :flowcontrol_send,
+    :per_port_hash_distribution,
     :port_channel,
     :spanning_tree_cost,
     :spanning_tree_link_type,

@@ -364,6 +364,13 @@ Puppet::Type.newtype(:cisco_interface) do
     newvalues(:desired, :off, :on, :default)
   end # property flowcontrol_send
 
+  newproperty(:per_port_hash_distribution) do
+    desc "Configure hash distribution at the port channel level.
+          Default value is no form of command"
+
+    newvalues(:fixed, :adaptive, :default)
+  end # property per_port_hash_distribution
+
   newproperty(:port_channel) do
     desc "Port channel is an aggregation of multiple physical interfaces
           that creates a logical interface. Valid values are 1 to 4096."
