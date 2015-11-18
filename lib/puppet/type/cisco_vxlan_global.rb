@@ -21,20 +21,25 @@
 Puppet::Type.newtype(:cisco_vxlan_global) do
   @doc = "Manages the vxlan global configuration of a Cisco device.
 
+  ~~~puppet
   cisco_vxlan_global { <title>:
     ..attributes..
   }
+  ~~~
 
   There can only be one instance of the cisco_vtp.
   Example:
+  
+  ~~~puppet
     cisco_vxlan_global { default:
-      ensure   					=> present,
+      ensure                                    => present,
       dup_host_ip_addr_detection_host_moves  	=> 200,
-      dup_host_ip_addr_detection_timeout	=> 20,
-      anycast_gateway_mac  			=> '1223.3445.5668',
-      dup_host_mac_detection_host_moves  	=> 100,
-      dup_host_mac_detection_timeout		=> 10,
+      dup_host_ip_addr_detection_timeout        => 20,
+      anycast_gateway_mac                       => '1223.3445.5668',
+      dup_host_mac_detection_host_moves         => 100,
+      dup_host_mac_detection_timeout            => 10,
     }
+  ~~~
   "
 
   newparam(:name, namevar: :true) do
@@ -60,7 +65,7 @@ Puppet::Type.newtype(:cisco_vxlan_global) do
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
       rescue
-        raise 'Dup IP Addr host_moves must be an integer.'
+        raise 'dup_host_ip_addr_detection_host_moves must be an integer.'
       end
       value
     end
@@ -75,17 +80,20 @@ Puppet::Type.newtype(:cisco_vxlan_global) do
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
       rescue
-        raise 'Dup IP Addr timeout must be an integer.'
+        raise 'dup_host_ip_addr_detection_timeout timeout must be an integer.'
       end
       value
     end
   end # property dup IP addr timeout
 
   newproperty(:anycast_gateway_mac) do
-    desc 'Distributed gateway virtual MAC address. Valid values are string.'
+    desc "Distributed gateway virtual MAC address. Valid values are string, keyword 'default'."
 
-    validate do |anycast_gateway_mac|
-      fail 'Mac Address is not a string.' unless anycast_gateway_mac.is_a? String
+    munge do |anycast_gateway_mac|
+      anycast_gateway_mac = :default if anycast_gateway_mac == 'default'
+      fail 'anycast_gateway_mac is not a string.' unless
+        anycast_gateway_mac == :default || anycast_gateway_mac.is_a?(String)
+      anycast_gateway_mac
     end
   end # property anycast gateway mac address
 
@@ -97,7 +105,7 @@ Puppet::Type.newtype(:cisco_vxlan_global) do
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
       rescue
-        raise 'Dup mac detection host_moves must be an integer.'
+        raise 'dup_host_mac_detection_host_moves must be an integer.'
       end
       value
     end
@@ -111,7 +119,7 @@ Puppet::Type.newtype(:cisco_vxlan_global) do
         value = :default if value == 'default'
         value = Integer(value) unless value == :default
       rescue
-        raise 'Dup host mac detection timeout must be an integer.'
+        raise 'dup_host_mac_detection_timeout must be an integer.'
       end
       value
     end
