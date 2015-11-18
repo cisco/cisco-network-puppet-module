@@ -74,6 +74,8 @@ $ cd cisco-network-puppet-module/tests/beaker_tests/
 
 Under the `beaker_tests` directory, create file named `host.cfg` and add the following content.
 
+Note: If running puppet on XR, specify the gRPC port number configured on the switch.
+
 Replace the `< >` markers with specific information.
 
 ```bash
@@ -83,6 +85,7 @@ HOSTS:
             - agent
         platform: cisco-7-x86_64
         ip: <fully qualified domain name>
+        grpc_port <grpc port number for XR switch>
         vrf: <vrf used for beaker workstation and puppet master ip reachability>
         ssh:
           auth_methods: ["password"]
@@ -126,6 +129,18 @@ HOSTS:
           auth_methods: ["password"]
           user: devops
           password: devopspassword
+
+    xr-agent:
+        roles:
+            - agent
+        platform: cisco-7-x86_64
+        ip: xr_agent.domain.com
+        vrf: tpnns
+        grpc_port: 57777
+        ssh:
+          auth_methods: ["password"]
+          user: root
+          password: password
 
     puppetmaster1:
         roles:
