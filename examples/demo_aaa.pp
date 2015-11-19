@@ -26,4 +26,11 @@ class ciscopuppet::demo_aaa {
       vrf_name               => 'blue',
       require                => Cisco_tacacs_server_host['testhost']
   }
+    cisco_aaa_authentication_login { 'default':
+      ascii_authentication => 'true',
+      chap                 => 'false',
+      error_display        => 'true',
+      mschap               => 'false',
+      mschapv2             => 'false',
+  }
 }
