@@ -48,7 +48,7 @@
 # instance attributes to verify resource properties.
 #
 ###############################################################################
-# rubocop:disable Style/HashSyntax,Style/ExtraSpacing,Metrics/MethodLength
+# rubocop:disable Style/HashSyntax
 
 # Require UtilityLib.rb and aaaauthelogin.rb paths.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)

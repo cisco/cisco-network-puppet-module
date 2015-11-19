@@ -120,7 +120,7 @@ module UtilityLib
   # @param logger [Logger] A default instance of Beaker::Logger.
   # @result none [None] Returns no object.
   def self.search_pattern_in_output(output, patarr, inverse, testcase,\
-    logger)
+                                    logger)
     patarr = UtilityLib.hash_to_patterns(patarr) if patarr.instance_of?(Hash)
     patarr.each do |pattern|
       inverse ? (match = (output !~ pattern)) : (match = (output =~ pattern))
@@ -143,7 +143,7 @@ module UtilityLib
   # @param logger [Logger] A default instance of Beaker::Logger.
   # @result none [None] Returns no object.
   def self.raise_passfail_exception(testresult, message, testcase, logger)
-    if (testresult == 'PASS')
+    if testresult == 'PASS'
       testcase.pass_test("\nTestCase :: #{message} :: PASS")
     else
       testcase.fail_test("\nTestCase :: #{message} :: FAIL")
@@ -241,7 +241,7 @@ def test_manifest(tests, id, find_pattern=nil)
         if stdout =~ find_pattern || stderr =~ find_pattern
           logger.debug("TestStep :: Match #{find_pattern} :: PASS")
         else
-          self.fail_test("TestStep :: Match #{find_pattern} :: FAIL")
+          fail_test("TestStep :: Match #{find_pattern} :: FAIL")
         end
       end
     end

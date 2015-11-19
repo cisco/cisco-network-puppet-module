@@ -48,7 +48,7 @@
 # instance attributes to verify resource properties.
 #
 ###############################################################################
-# rubocop:disable Style/HashSyntax,Style/ExtraSpacing
+# rubocop:disable Style/HashSyntax
 
 # Require UtilityLib.rb and AaaAutheLogin.rb paths.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
@@ -75,18 +75,18 @@ test_name "TestCase :: #{testheader}" do
 
     tests[id] = {
       :manifest_props => {
-        :ascii_authentication   => ascii,
-        :chap                   => chap,
-        :error_display          => :true,
-        :mschap                 => mschap,
-        :mschapv2               => mschapv2,
+        :ascii_authentication => ascii,
+        :chap                 => chap,
+        :error_display        => :true,
+        :mschap               => mschap,
+        :mschapv2             => mschapv2,
       },
       :resource       => {
-        'ascii_authentication'   => ascii.to_s,
-        'chap'                   => chap.to_s,
-        'error_display'          => 'true',
-        'mschap'                 => mschap.to_s,
-        'mschapv2'               => mschapv2.to_s,
+        'ascii_authentication' => ascii.to_s,
+        'chap'                 => chap.to_s,
+        'error_display'        => 'true',
+        'mschap'               => mschap.to_s,
+        'mschapv2'             => mschapv2.to_s,
       },
     }
     resource_cmd_str =
@@ -104,14 +104,14 @@ test_name "TestCase :: #{testheader}" do
     tests[id][:desc] =
       '1.2 Apply manifest with string format non-default attributes'
     tests[id][:manifest_props] = {
-        :ascii_authentication   => ascii.to_s,
-        :chap                   => chap.to_s,
-        :error_display          => 'true',
-        :mschap                 => mschap.to_s,
-        :mschapv2               => mschapv2.to_s,
+      :ascii_authentication => ascii.to_s,
+      :chap                 => chap.to_s,
+      :error_display        => 'true',
+      :mschap               => mschap.to_s,
+      :mschapv2             => mschapv2.to_s,
     }
     create_aaaauthelogin_manifest(tests, id)
-    tests[id][:show_cmd] = "show run aaa all | section login"
+    tests[id][:show_cmd] = 'show run aaa all | section login'
     # this will check existence of each prop enablement in turn
     tests[id][:show_pattern] = [/^aaa authentication login #{prop} enable/]
     tests[id][:state] = true

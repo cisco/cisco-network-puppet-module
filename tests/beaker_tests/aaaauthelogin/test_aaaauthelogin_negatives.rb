@@ -94,7 +94,7 @@ test_name "TestCase :: #{testheader}" do
       :desc           => "1.3 Apply non-bool value to #{prop} property",
       :code           => [1],
       :manifest_props => {
-        prop => 42,
+        prop => 42
       },
     }
     create_aaaauthelogin_manifest(tests, id)
@@ -104,7 +104,7 @@ test_name "TestCase :: #{testheader}" do
       :desc           => "1.3 Apply invalid symbol to #{prop} property",
       :code           => [1],
       :manifest_props => {
-        prop => :invalid,
+        prop => :invalid
       },
     }
     create_aaaauthelogin_manifest(tests, id)
