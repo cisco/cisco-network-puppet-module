@@ -29,7 +29,7 @@
 #
 # TestCase:
 # ---------
-# This X__RESOURCE_NAME__X resource test verifies default values for all properties.
+# This X__RESOURCE_NAME__X resource test verifies all properties.
 #
 # The following exit_codes are validated for Puppet and Bash shell commands.
 #
