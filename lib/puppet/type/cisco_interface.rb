@@ -364,6 +364,12 @@ Puppet::Type.newtype(:cisco_interface) do
     newvalues(:desired, :off, :on, :default)
   end # property flowcontrol_send
 
+  newproperty(:hash_modulo) do
+    desc 'Configure port-channel load-balance hash-modulo'
+
+    newvalues(:true, :false)
+  end # property hash_modulo
+
   newproperty(:lacp_graceful_convergence) do
     desc 'Configure port-channel lacp graceful convergence.'
 
