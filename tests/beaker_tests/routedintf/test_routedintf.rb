@@ -29,7 +29,7 @@
 #
 # TestCase:
 # ---------
-# This Tunnel resource test verifies default values for all properties.
+# This cisco_interface resource test verifies all properties.
 #
 # The following exit_codes are validated for Puppet, and Bash shell commands.
 #
@@ -216,8 +216,22 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
     )
   end
 
+  if platform == 'nexus'
+    tests['non_default_properties_E'] = {
+      desc:           "2.2 Non Default Properties 'E' commands",
+      # encapsulation requires a subinterface
+      title_pattern:  interface_name + '.1',
+      manifest_props: "
+        encapsulation_dot1q => 30,
+      ",
+      resource_props: {
+        'encapsulation_dot1q' => '30',
+      },
+    }
+  end
+
   tests['non_default_properties_I'] = {
-    desc:           "2.2 Non Default Properties 'I' commands",
+    desc:           "2.3 Non Default Properties 'I' commands",
     title_pattern:  interface_name,
     manifest_props: "
       ipv4_address        => '192.168.1.1',
@@ -235,7 +249,7 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
 
   if platform == 'nexus'
     tests['non_default_properties_M'] = {
-      desc:           "2.3 Non Default Properties 'M' commands",
+      desc:           "2.4 Non Default Properties 'M' commands",
       title_pattern:  interface_name,
       manifest_props: "
         mtu => 1556,
@@ -247,7 +261,7 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
   end
 
   tests['non_default_properties_S'] = {
-    desc:           "2.4 Non Default Properties 'S' commands",
+    desc:           "2.5 Non Default Properties 'S' commands",
     title_pattern:  interface_name,
     manifest_props: "
       shutdown => 'true',
@@ -272,7 +286,7 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
   end
 
   tests['non_default_properties_V'] = {
-    desc:           "2.5 Non Default Properties 'V' commands",
+    desc:           "2.6 Non Default Properties 'V' commands",
     title_pattern:  interface_name,
     manifest_props: "
       vrf => 'test1',
@@ -382,6 +396,9 @@ test_name "TestCase :: #{testheader}" do
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
   test_harness_interface(tests, 'non_default_properties_D')
+  if tests['non_default_properties_E']
+    test_harness_interface(tests, 'non_default_properties_E')
+  end
   test_harness_interface(tests, 'non_default_properties_I')
   if tests['non_default_properties_M']
     test_harness_interface(tests, 'non_default_properties_M')
