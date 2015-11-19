@@ -53,13 +53,13 @@ Puppet::Type.type(:cisco_aaa_authentication_login).provide(:nxapi) do
     authe_login = Cisco::AaaAuthenticationLogin
 
     inst << new(
-      ensure:                 :present,
-      name:                   'default', # necessary for puppet resource cmd
-      ascii_authentication:   authe_login.ascii_authentication ? :true : :false,
-      chap:                   authe_login.chap ? :true : :false,
-      error_display:          authe_login.error_display ? :true : :false,
-      mschap:                 authe_login.mschap ? :true : :false,
-      mschapv2:               authe_login.mschapv2 ? :true : :false)
+      ensure:               :present,
+      name:                 'default', # necessary for puppet resource cmd
+      ascii_authentication: authe_login.ascii_authentication ? :true : :false,
+      chap:                 authe_login.chap ? :true : :false,
+      error_display:        authe_login.error_display ? :true : :false,
+      mschap:               authe_login.mschap ? :true : :false,
+      mschapv2:             authe_login.mschapv2 ? :true : :false)
     debug 'Created new resource type cisco_aaa_authentication_login'
     inst
   end
