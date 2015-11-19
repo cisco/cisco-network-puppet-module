@@ -15,7 +15,7 @@
 ###############################################################################
 # TestCase Name:
 # -------------
-# test-X__RESOURCE_NAME__X.rb
+# test_X__RESOURCE_NAME__X.rb
 #
 # TestCase Prerequisites:
 # -----------------------

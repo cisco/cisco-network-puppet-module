@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2015 Cisco and/or its affiliates.
+# Copyright (c) 2014-2015 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,21 +15,22 @@
 ###############################################################################
 # TestCase Name:
 # -------------
-# test_X__RESOURCE_NAME__X.rb
+# test_switchport_access.rb
 #
 # TestCase Prerequisites:
 # -----------------------
-# This is a Puppet X__RESOURCE_NAME__X resource testcase for Puppet Agent on
+# This is a Puppet interface resource testcase for Puppet Agent on
 # Nexus and IOS XR devices.
 # The test case assumes the following prerequisites are already satisfied:
 #   - Host configuration file contains agent and master information.
-#   - SSH is enabled on the Agent.
+#   - SSH is enabled on the agent node.
 #   - Puppet master/server is started.
 #   - Puppet agent certificate has been signed on the Puppet master/server.
 #
 # TestCase:
 # ---------
-# This X__RESOURCE_NAME__X resource test verifies all properties.
+# This cisco_interface resource test verifies all properties on an Ethernet
+# interface configured as a switchport access port.
 #
 # The following exit_codes are validated for Puppet and Bash shell commands.
 #
@@ -56,7 +57,7 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 # -----------------------------
 # Common settings and variables
 # -----------------------------
-testheader = 'Resource cisco_X__RESOURCE_NAME__X'
+testheader = 'Resource cisco_interface (switchport access)'
 
 # Define PUPPETMASTER_MANIFESTPATH.
 UtilityLib.set_manifest_path(master, self)
@@ -69,10 +70,13 @@ def generate_tests_hash(agent)
   # Top-level keys set by caller:
   # tests[:master] - the master object
   # tests[:agent] - the agent object
+  #
   tests = {
     master: master,
     agent:  agent,
   }
+
+  interface_name = 'ethernet1/4'
 
   # tests[id] keys set by caller and used by test_harness_common:
   #
@@ -80,49 +84,56 @@ def generate_tests_hash(agent)
   # tests[id][:desc] - a string to use with logs & debugs
   # tests[id][:manifest] - the complete manifest, as used by test_harness_common
   # tests[id][:resource] - a hash of expected states, used by test_resource
-  # tests[id][:resource_cmd] - 'puppet resource' command to use with test_resource
+  # tests[id][:resource_cmd] - 'puppet resource' cmd to use with test_resource
   # tests[id][:ensure] - (Optional) set to :present or :absent before calling
   # tests[id][:code] - (Optional) override the default exit code in some tests.
   #
   # These keys are local use only and not used by test_harness_common:
   #
   # tests[id][:manifest_props] - This is essentially a master list of properties
-  #   that permits re-use of the properties for both :present and :absent testing
+  #   that permits re-use of the properties for both :present and :absent tests
   #   without destroying the list
   # tests[id][:resource_props] - This is essentially a master hash of properties
-  #   that permits re-use of the properties for both :present and :absent testing
+  #   that permits re-use of the properties for both :present and :absent tests
   #   without destroying the hash
   # tests[id][:title_pattern] - (Optional) defines the manifest title.
-  #   Can be used with :af for mixed title/af testing. If mixing, :af values will
+  #   Can be used w/ :af for mixed title/af testing. If mixing, :af values will
   #   be merged with title values and override any duplicates. If omitted,
   #   :title_pattern will be set to 'id'.
+  # tests[id][:af] - (Optional) defines the address-family values.
+  #   Must use :title_pattern if :af is not specified. Useful for testing mixed
+  #   title/af manifests
+  #
   tests['preclean'] = {
-    ensure:         :absent,
-    manifest_props: '',
-    resource_props: {},
+    title_pattern:  interface_name,
+    manifest_props: "
+      switchport_mode        => 'disabled',
+    ",
     code:           [0, 2],
+    resource_props: {},
   }
 
   tests['default_properties'] = {
-    # PLEASE NOTE: The feature template has no additional properties so these
-    # hash entries are intentionally commented out and included here solely
-    # as an example of where properties would be defined.
+    title_pattern:  interface_name,
     manifest_props: "
-      # bar                            => 'default',
+      access_vlan                   => 'default',
+      description                   => 'default',
+      shutdown                      => false,
+      switchport_autostate_exclude  => 'default',
+      switchport_mode               => access,
+      switchport_vtp                => 'default',
     ",
     resource_props: {
-      # 'bar'                          => 'default',
+      'access_vlan'                  => '1',
+      'switchport_mode'              => 'access',
+      'switchport_autostate_exclude' => 'false',
+      'switchport_vtp'               => 'false',
     },
   }
 
-  tests['non_default_properties'] = {
-    manifest_props: "
-      # bar                            => true,
-    ",
-    resource_props: {
-      # 'bar'                          => 'true',
-    },
-  }
+  # TODO: no non-default tests for access yet?
+
+  # tests['non_default_properties_S'] = { }
 
   tests
 end
@@ -133,15 +144,14 @@ end
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = UtilityLib::PUPPET_BINPATH + 'resource cisco_X__RESOURCE_NAME__X'
+  cmd = UtilityLib::PUPPET_BINPATH + 'resource cisco_interface'
   UtilityLib.get_namespace_cmd(agent, cmd, options)
 end
 
-def build_manifest_X__RESOURCE_NAME__X(tests, id)
+def build_manifest_interface(tests, id)
   if tests[id][:ensure] == :absent
     state = 'ensure => absent,'
-    manifest = ''
-    tests[id][:resource] = { 'ensure' => 'absent' }
+    tests[id][:resource] = {}
   else
     state = 'ensure => present,'
     manifest = tests[id][:manifest_props]
@@ -149,11 +159,11 @@ def build_manifest_X__RESOURCE_NAME__X(tests, id)
   end
 
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
-  logger.debug("build_manifest_X__RESOURCE_NAME__X :: title_pattern:\n" +
+  logger.debug("build_manifest_interface :: title_pattern:\n" +
                tests[id][:title_pattern])
   tests[id][:manifest] = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
   node 'default' {
-    cisco_X__RESOURCE_NAME__X { '#{tests[id][:title_pattern]}':
+    cisco_interface { '#{tests[id][:title_pattern]}':
       #{state}
       #{manifest}
     }
@@ -161,18 +171,19 @@ def build_manifest_X__RESOURCE_NAME__X(tests, id)
 EOF"
 end
 
-def test_harness_X__RESOURCE_NAME__X(tests, id)
+def test_harness_interface(tests, id)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:resource_cmd] = puppet_resource_cmd
   tests[id][:desc] += " [ensure => #{tests[id][:ensure]}]"
 
   # Build the manifest for this test
-  build_manifest_X__RESOURCE_NAME__X(tests, id)
+  build_manifest_interface(tests, id)
 
-  # For full test support of properties use test_harness_common; as an
-  # alternative use direct calls to individual test_* wrapper methods:
+  # FUTURE
   # test_harness_common(tests, id)
+
   test_manifest(tests, id)
+  test_resource(tests, id)
   test_idempotence(tests, id)
 
   tests[id][:ensure] = nil
@@ -182,28 +193,49 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
-  # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
+  if fact_on(agent, 'os.name') == 'ios_xr'
+    skip_test('switchport is not supported on this platform')
+  end
   tests = generate_tests_hash(agent)
+
+  # -------------
   id = 'preclean'
   tests[id][:desc] = 'Preclean'
-  test_harness_X__RESOURCE_NAME__X(tests, id)
+  test_harness_interface(tests, id)
 
-  # -----------------------------------
+  # ---------------------------------------------------------------
+  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
+
   id = 'default_properties'
   tests[id][:desc] = '1.1 Default Properties'
-  test_harness_X__RESOURCE_NAME__X(tests, id)
+  test_harness_interface(tests, id)
 
   tests[id][:desc] = '1.2 Default Properties'
   tests[id][:ensure] = :absent
-  test_harness_X__RESOURCE_NAME__X(tests, id)
+  test_harness_interface(tests, id)
 
   # -------------------------------------------------------------------
-  # FUTURE:
+  # TODO: add non-default tests for access port
   # logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  # node_feature_cleanup(agent, 'X__RESOURCE_NAME__X', 'disable feature', false)
-  # tests[id][:desc] = "2.1 Non Default Properties"
-  # test_harness_X__RESOURCE_NAME__X(tests, 'non_default_properties')
+
+  # test_harness_interface(tests, 'non_default_properties_S')
+
+  # -------------------------------------------------------------------
+  # FUTURE
+  # logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
+  # node_feature_cleanup(agent, 'interface')
+
+  # id = 'title_patterns'
+  # tests[id][:desc] = '3.1 Title Patterns'
+  # tests[id][:title_pattern] = '2'
+  # tests[id][:af] = { :vrf => 'default', :afi => 'ipv4', :safi => 'unicast' }
+  # test_harness_interface(tests, id)
+
+  # id = 'title_patterns'
+  # tests[id][:desc] = '3.2 Title Patterns'
+  # tests[id][:title_pattern] = '2 blue'
+  # tests[id][:af] = { :afi => 'ipv4', :safi => 'unicast' }
+  # test_harness_interface(tests, id)
 end
 
-logger.info("TestCase :: #{testheader} :: End")
+logger.info('TestCase :: # {testheader} :: End')

@@ -15,7 +15,7 @@
 ###############################################################################
 # TestCase Name:
 # -------------
-# test-interface.rb
+# test_l3_ethernet.rb
 #
 # TestCase Prerequisites:
 # -----------------------
@@ -29,9 +29,10 @@
 #
 # TestCase:
 # ---------
-# This cisco_interface resource test verifies all properties.
+# This cisco_interface resource test verifies all properties on an Ethernet
+# interface configured for layer 3 routing.
 #
-# The following exit_codes are validated for Puppet, and Bash shell commands.
+# The following exit_codes are validated for Puppet and Bash shell commands.
 #
 # Bash Shell Commands:
 # 0   - successful command execution
@@ -56,7 +57,7 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 # -----------------------------
 # Common settings and variables
 # -----------------------------
-testheader = 'Resource cisco_interface (routed)'
+testheader = 'Resource cisco_interface (ethernet, routed)'
 
 # Define PUPPETMASTER_MANIFESTPATH.
 UtilityLib.set_manifest_path(master, self)
@@ -88,20 +89,20 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
   # tests[id][:desc] - a string to use with logs & debugs
   # tests[id][:manifest] - the complete manifest, as used by test_harness_common
   # tests[id][:resource] - a hash of expected states, used by test_resource
-  # tests[id][:resource_cmd] - 'puppet resource' command to use with test_resource
+  # tests[id][:resource_cmd] - 'puppet resource' cmd to use with test_resource
   # tests[id][:ensure] - (Optional) set to :present or :absent before calling
   # tests[id][:code] - (Optional) override the default exit code in some tests.
   #
   # These keys are local use only and not used by test_harness_common:
   #
   # tests[id][:manifest_props] - This is essentially a master list of properties
-  #   that permits re-use of the properties for both :present and :absent testing
+  #   that permits re-use of the properties for both :present and :absent tests
   #   without destroying the list
   # tests[id][:resource_props] - This is essentially a master hash of properties
-  #   that permits re-use of the properties for both :present and :absent testing
+  #   that permits re-use of the properties for both :present and :absent tests
   #   without destroying the hash
   # tests[id][:title_pattern] - (Optional) defines the manifest title.
-  #   Can be used with :af for mixed title/af testing. If mixing, :af values will
+  #   Can be used w/ :af for mixed title/af testing. If mixing, :af values will
   #   be merged with title values and override any duplicates. If omitted,
   #   :title_pattern will be set to 'id'.
   # tests[id][:af] - (Optional) defines the address-family values.
@@ -117,7 +118,7 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
     resource_props: {},
   }
 
-  tests['l3_defaults'] = {
+  tests['default_properties'] = {
     title_pattern:  interface_name,
     manifest_props: "
       description                  => 'default',
@@ -143,58 +144,18 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
 
   if platform == 'nexus'
     # speed and duplex don't support 'default' as a valid option
-    tests['l3_defaults'][:manifest_props] += "
+    tests['default_properties'][:manifest_props] += "
       speed                        => 'auto',
       duplex                       => 'auto',
       switchport_mode              => disabled,
     "
-    tests['l3_defaults'][:resource_props].merge!(
+    tests['default_properties'][:resource_props].merge!(
       'speed'                        => 'auto',
       'duplex'                       => 'auto',
       'switchport_autostate_exclude' => 'false',
       'switchport_mode'              => 'disabled',
       'switchport_vtp'               => 'false',
     )
-  end
-
-  if platform == 'nexus'
-    tests['l2_trunk_defaults'] = {
-      title_pattern:  interface_name,
-      manifest_props: "
-        ensure                        => present,
-        description                   => 'default',
-        shutdown                      => false,
-        switchport_mode               => trunk,
-        switchport_trunk_allowed_vlan => 'default',
-        switchport_trunk_native_vlan  => 'default',
-      ",
-      resource_props: {
-        'ensure'                        => 'present',
-        'switchport_mode'               => 'trunk',
-        'switchport_trunk_allowed_vlan' => '1-4094',
-        'switchport_trunk_native_vlan'  => '1',
-      },
-    }
-
-    tests['l2_access_defaults'] = {
-      title_pattern:  interface_name,
-      manifest_props: "
-        ensure                       => present,
-        description                  => 'default',
-        shutdown                     => false,
-        switchport_mode              => access,
-      ",
-      resource_props: {
-        'ensure'                       => 'present',
-        'access_vlan'                  => '1',
-        'ipv4_proxy_arp'               => 'false',
-        'ipv4_redirects'               => 'true',
-        'shutdown'                     => 'false',
-        'switchport_autostate_exclude' => 'false',
-        'switchport_mode'              => 'access',
-        'switchport_vtp'               => 'false',
-      },
-    }
   end
 
   tests['non_default_properties_D'] = {
@@ -364,33 +325,13 @@ test_name "TestCase :: #{testheader}" do
   # ---------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
-  id = 'l3_defaults'
-  tests[id][:desc] = '1.1 Default Properties for L3 interface'
+  id = 'default_properties'
+  tests[id][:desc] = '1.1 Default Properties'
   test_harness_interface(tests, id)
 
-  tests[id][:desc] = '1.2 Default Properties for L3 interface'
+  tests[id][:desc] = '1.2 Default Properties'
   tests[id][:ensure] = :absent
   test_harness_interface(tests, id)
-
-  id = 'l2_trunk_defaults'
-  if tests[id]
-    tests[id][:desc] = '1.3 Default Properties for switchport trunk'
-    test_harness_interface(tests, id)
-
-    tests[id][:desc] = '1.4 Default Properties for switchport trunk'
-    tests[id][:ensure] = :absent
-    test_harness_interface(tests, id)
-  end
-
-  id = 'l2_access_defaults'
-  if tests[id]
-    tests[id][:desc] = '1.5 Default Properties for switchport access'
-    test_harness_interface(tests, id)
-
-    tests[id][:desc] = '1.6 Default Properties for switchport access'
-    tests[id][:ensure] = :absent
-    test_harness_interface(tests, id)
-  end
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
