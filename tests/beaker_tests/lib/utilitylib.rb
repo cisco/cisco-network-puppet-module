@@ -226,14 +226,25 @@ end
 
 # Wrapper for manifest tests
 # Pass code = [0], as an alternative to 'test_idempotence'
-def test_manifest(tests, id)
+# If the user passes in a find_patern, search for it in the output
+def test_manifest(tests, id, find_pattern=nil)
   stepinfo = format_stepinfo(tests, id, 'MANIFEST')
   step "TestStep :: #{stepinfo}" do
     logger.debug("test_manifest :: manifest:\n#{tests[id][:manifest]}")
     on(tests[:master], tests[id][:manifest])
     code = tests[id][:code] ? tests[id][:code] : [2]
     logger.debug('test_manifest :: check puppet agent cmd')
-    on(tests[:agent], puppet_agent_cmd, acceptable_exit_codes: code)
+    if find_pattern.nil?
+      on(tests[:agent], puppet_agent_cmd, acceptable_exit_codes: code)
+    else
+      on(tests[:agent], puppet_agent_cmd, acceptable_exit_codes: code) do
+        if stdout =~ find_pattern || stderr =~ find_pattern
+          logger.debug("TestStep :: Match #{find_pattern} :: PASS")
+        else
+          self.fail_test("TestStep :: Match #{find_pattern} :: FAIL")
+        end
+      end
+    end
   end
   logger.info("#{stepinfo} :: PASS")
   tests[id].delete(:log_desc)
