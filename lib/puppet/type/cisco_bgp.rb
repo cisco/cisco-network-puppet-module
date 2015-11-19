@@ -223,32 +223,24 @@ Puppet::Type.newtype(:cisco_bgp) do
     match_error = 'must be specified in ASPLAIN or ASDOT notation'
 
     validate do |peers|
-      if peers.is_a? String
-        peers_array = peers.split(' ')
-      else
-        peers_array = peers
-      end
-      peers_array.each do |value|
+      peers.split.each do |value|
         fail "Confederation peer value '#{value}' #{match_error}" unless
           /^(\d+|\d+\.\d+)$/.match(value) ||
-          peers_array == 'default' || peers_array == :default
+          value == 'default' || value == :default
       end
     end
 
     munge do |peers|
-      if peers.is_a? String
-        if peers == 'default'
-          peers = :default
-        else
-          peers = peers.split(' ')
-        end
+      if peers == 'default'
+        peers = :default
+      else
+        peers = peers.split
       end
     end
 
     def insync?(is)
       (is.size == should.flatten.size && is.sort == should.flatten.sort)
     end
-
   end # confederation_peers
 
   newproperty(:shutdown) do
