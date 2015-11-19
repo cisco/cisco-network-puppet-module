@@ -231,11 +231,7 @@ Puppet::Type.newtype(:cisco_bgp) do
     end
 
     munge do |peers|
-      if peers == 'default'
-        peers = :default
-      else
-        peers = peers.split
-      end
+      peers == 'default' ? :default : peers.split
     end
 
     def insync?(is)
