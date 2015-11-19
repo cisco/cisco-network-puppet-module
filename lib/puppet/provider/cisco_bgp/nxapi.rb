@@ -201,7 +201,7 @@ Puppet::Type.type(:cisco_bgp).provide(:nxapi) do
 
   def confederation_peers=(should_list)
     should_list = @bgp_vrf.default_confederation_peers if should_list[0] == :default
-    @property_flush[:confederation_peers] = should_list
+    @property_flush[:confederation_peers] = should_list.flatten
   end
 
   def flush
