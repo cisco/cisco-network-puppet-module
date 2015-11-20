@@ -51,6 +51,9 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
     :next_hop_route_map,
     :redistribute,
     :route_target_import,
+    :route_target_import_evpn,
+    :route_target_export,
+    :route_target_export_evpn,
   ]
 
   BGP_AF_BOOL_PROPS = [
@@ -104,7 +107,6 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
     # networks/redistribute use nested arrays, thus require special handling
     current_state[:networks] = obj.networks
     current_state[:redistribute] = obj.redistribute
-    current_state[:route_target_import] = obj.route_target_import
     new(current_state)
   end # self.properties_get
 
@@ -270,7 +272,6 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
     @property_flush[:redistribute] = should_list
   end
 
-  #route target import uses array of string
   def route_target_import
     return @property_hash[:route_target_import] if @resource[:route_target_import].nil?
     if @resource[:route_target_import][0] == :default &&
@@ -281,9 +282,70 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
     end
   end
 
+  # route_target setters: These properties expect a flat array but optionally
+  # support a string of space-separated values in the manifest; however,
+  # munge will transform the string into a nested array, hence the flatten.
   def route_target_import=(should_list)
+    puts "setter: #{should_list}"
     should_list = @af.default_route_target_import if should_list[0] == :default
-    @property_flush[:route_target_import] = should_list
+    @property_flush[:route_target_import] = should_list.flatten
+  end
+
+  def route_target_import_evpn
+    return @property_hash[:route_target_import_evpn] if @resource[:route_target_import].nil?
+    if @resource[:route_target_import_evpn][0] == :default &&
+       @property_hash[:route_target_import_evpn] == @af.default_route_target_import
+      return [:default]
+    else
+      @property_hash[:route_target_import_evpn]
+    end
+  end
+
+  # route_target setters: These properties expect a flat array but optionally
+  # support a string of space-separated values in the manifest; however,
+  # munge will transform the string into a nested array, hence the flatten.
+  def route_target_import_evpn=(should_list)
+    puts "setter: #{should_list}"
+    should_list = @af.default_route_target_import_evpn if should_list[0] == :default
+    @property_flush[:route_target_import_evpn] = should_list.flatten
+  end
+
+  def route_target_export
+    return @property_hash[:route_target_export] if @resource[:route_target_import].nil?
+    if @resource[:route_target_export][0] == :default &&
+       @property_hash[:route_target_export] == @af.default_route_target_import
+      return [:default]
+    else
+      @property_hash[:route_target_export]
+    end
+  end
+
+  # route_target setters: These properties expect a flat array but optionally
+  # support a string of space-separated values in the manifest; however,
+  # munge will transform the string into a nested array, hence the flatten.
+  def route_target_export=(should_list)
+    puts "setter: #{should_list}"
+    should_list = @af.default_route_target_export if should_list[0] == :default
+    @property_flush[:route_target_export] = should_list.flatten
+  end
+
+  def route_target_export_evpn
+    return @property_hash[:route_target_export_evpn] if @resource[:route_target_import].nil?
+    if @resource[:route_target_export_evpn][0] == :default &&
+       @property_hash[:route_target_export_evpn] == @af.default_route_target_import
+      return [:default]
+    else
+      @property_hash[:route_target_export_evpn]
+    end
+  end
+
+  # route_target setters: These properties expect a flat array but optionally
+  # support a string of space-separated values in the manifest; however,
+  # munge will transform the string into a nested array, hence the flatten.
+  def route_target_export_evpn=(should_list)
+    puts "setter: #{should_list}"
+    should_list = @af.default_route_target_export_evpn if should_list[0] == :default
+    @property_flush[:route_target_export_evpn] = should_list.flatten
   end
 
   def flush

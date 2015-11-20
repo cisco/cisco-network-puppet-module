@@ -284,6 +284,9 @@ BGP autonomous system number.  Valid values are String, Integer in ASPLAIN or AS
 ##### `vrf`
 Name of the resource instance. Valid values are string. The name 'default' is a valid VRF representing the global bgp.
 
+##### `route_distinguisher`
+Route Distinguisher (RD) is combined with the IPv4 or IPv6 prefix learned by the PE router to create a globally unique address. Valid values are String, keyword 'default'.
+
 ##### `router_id`
 Router Identifier (ID) of the BGP router VRF instance. Valid values are string, and keyword 'default'.
 
@@ -482,6 +485,31 @@ redistribute => [['direct'],
                  ['ospf 3',  'rm_ospf'],
                  ['rip 4']]
 ```
+
+##### `route target both auto`
+Enable/Disable route target both auto only for IBGP. Valid values are true, false, or 'default'.
+
+##### `route target both auto evpn`
+Enable/Disable route target both auto evpn only for IBGP. Valid values are true, false, or 'default'.
+
+##### `route target import`
+Set route target import extended communities. Valid values are Array, String, keyword 'default'.
+
+##### `route target import evpn`
+Set route target import evpn extended communities. Valid values are Array, String, keyword 'default'.
+
+##### `route target export`
+Set route target export extended communities. Valid values are Array, String, keyword 'default'.
+
+##### `route target export evpn`
+Set route target export evpn extended communities. Valid values are Array, String, keyword 'default'.
+
+Example: route target array
+
+```ruby
+route_target_import => ['1.2.3.4:5', '33:55']
+```
+
 --
 ### Type: cisco_bgp_neighbor
 

@@ -38,7 +38,10 @@ Puppet::Type.newtype(:cisco_bgp_af) do
 
   $network_list = [['192.168.5.0/24', 'rtmap1'], ['192.168.10.0/24']]
   $redistribute = [['eigrp 1', 'e_rtmap_29'], ['ospf 3',  'o_rtmap']]
-  $routetargetimport = ['102:33', '1.2.3.4:55']
+  $routetargetimport = ['1.2.3.4:55', '102:33']
+  $routetargetimportepvn = ['1.2.3.4:55', '102:33']
+  $routetargetexport = ['1.2.3.4:55', '102:33']
+  $routetargetexportevpn = ['1.2.3.4:55', '102:33']
   ~~~puppet
     cisco_bgp_af { 'raleigh':
       ensure                                 => present,
@@ -66,9 +69,12 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       next_hop_route_map                     => 'Default_Route_Map',
       network                                => $network_list,
       redistribute                           => $redistribute,
-      route_target_import                    => $routetargetimport,
       route_target_both_auto                 => 'true',
       route_target_both_auto_evpn            => 'true',
+      route_target_import                    => $routetargetimport,
+      route_target_import_evpn               => $routetargetimportevpn,
+      route_target_export                    => $routetargetexport,
+      route_target_export_evpn               => $routetargetexportevpn,
     }
   ~~~
 
@@ -463,30 +469,27 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   end # property :redistribute
 
   newproperty(:route_target_both_auto) do
-    desc "Advertise EVPN routes. Valid values are true, false, or 'default'"
+    desc "Enable/Disable route target both auto only for IBGP.
+          Valid values are true, false, or 'default'"
 
     newvalues(:true, :false, :default)
   end # property route_target_both_auto
 
   newproperty(:route_target_both_auto_evpn) do
-    desc "Advertise EVPN routes. Valid values are true, false, or 'default'"
+    desc "Enable/Disable route target both auto evpn only for IBGP.
+          Valid values are true, false, or 'default'"
 
     newvalues(:true, :false, :default)
   end # property route_target_both_auto_evpn
 
   newproperty(:route_target_import, array_matching: :all) do
-    desc "Route target import. Valid values are Array, String,
-          keyword 'default'"
+    desc "Set route target import extended communities.
+          Valid values are Array, String, keyword 'default'"
 
     match_error = 'must be specified in AS:nn or IPv4:nn notation'
 
     validate do |community|
-      if community.is_a? String
-        community_array = community.split(' ')
-      else
-        community_array = community
-      end
-      community_array.each do |value|
+      community.split.each do |value|
         fail "Confederation peer value '#{value}' #{match_error}" unless
           /^(?:\d+\.\d+\.\d+\.)?\d+.\d+$/.match(value) ||
           value == 'default' || value == :default
@@ -494,20 +497,83 @@ Puppet::Type.newtype(:cisco_bgp_af) do
     end
 
     munge do |community|
-      if community.is_a? String
-        if community == 'default'
-          community = :default
-        else
-          community = community.split(' ')
-        end
-      end
+      community == 'default' ? :default : community.split
     end
 
     def insync?(is)
       (is.size == should.flatten.size && is.sort == should.flatten.sort)
     end
-
   end # route_target_import
+
+  newproperty(:route_target_import_evpn, array_matching: :all) do
+    desc "Set route target import evpn extended communities.
+          Valid values are Array, String, keyword 'default'"
+
+    match_error = 'must be specified in AS:nn or IPv4:nn notation'
+
+    validate do |community|
+      community.split.each do |value|
+        fail "Confederation peer value '#{value}' #{match_error}" unless
+          /^(?:\d+\.\d+\.\d+\.)?\d+.\d+$/.match(value) ||
+          value == 'default' || value == :default
+      end
+    end
+
+    munge do |community|
+      community == 'default' ? :default : community.split
+    end
+
+    def insync?(is)
+      (is.size == should.flatten.size && is.sort == should.flatten.sort)
+    end
+  end # route_target_import_evpn
+
+  newproperty(:route_target_export, array_matching: :all) do
+    desc "Set route target import evpn extended communities.
+          Valid values are Array, String, keyword 'default'"
+
+    match_error = 'must be specified in AS:nn or IPv4:nn notation'
+
+    validate do |community|
+      community.split.each do |value|
+        fail "Confederation peer value '#{value}' #{match_error}" unless
+          /^(?:\d+\.\d+\.\d+\.)?\d+.\d+$/.match(value) ||
+          value == 'default' || value == :default
+      end
+    end
+
+    munge do |community|
+      community == 'default' ? :default : community.split
+    end
+
+    def insync?(is)
+      (is.size == should.flatten.size && is.sort == should.flatten.sort)
+    end
+  end # route_target_export
+
+  newproperty(:route_target_export_evpn, array_matching: :all) do
+    desc "Set route target import evpn extended communities.
+          Valid values are Array, String, keyword 'default'"
+
+    match_error = 'must be specified in AS:nn or IPv4:nn notation'
+
+    validate do |community|
+      community.split.each do |value|
+        fail "Confederation peer value '#{value}' #{match_error}" unless
+          /^(?:\d+\.\d+\.\d+\.)?\d+.\d+$/.match(value) ||
+          value == 'default' || value == :default
+      end
+    end
+
+    munge do |community|
+      community == 'default' ? :default : community.split
+    end
+
+    def insync?(is)
+      (is.size == should.flatten.size && is.sort == should.flatten.sort)
+    end
+  end # route_target_export_evpn
+
   #
   # VALIDATIONS
   #
@@ -553,5 +619,3 @@ Puppet::Type.newtype(:cisco_bgp_af) do
     end
   end
 end
-
- 

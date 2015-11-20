@@ -135,6 +135,9 @@ tests['default_properties'] = {
     route_target_both_auto        => 'default',
     route_target_both_auto_evpn   => 'default',
     route_target_import           => 'default',
+    route_target_import_evpn      => 'default',
+    route_target_export           => 'default',
+    route_target_export_evpn      => 'default',
     ",
 
   :resource_props => {
@@ -306,7 +309,10 @@ tests['non_default_properties_N'] = {
 }
 
 redistribute = [['static', 's_rmap'], ['eigrp 1', 'e_rmap']] # rubocop:disable Style/WordArray
-routetargetimport = ['102:33', '1.2.3.4:55']
+routetargetimport = ['1.2.3.4:55', '102:33']
+routetargetimportevpn = ['1.2.3.4:55', '102:33']
+routetargetexport = ['1.2.3.4:55', '102:33']
+routetargetexportevpn = ['1.2.3.4:55', '102:33']
 tests['non_default_properties_R'] = {
   :desc           => "2.6 Non Default Properties: 'R' commands",
   :title_pattern  => '2 blue ipv4 unicast',
@@ -315,6 +321,9 @@ tests['non_default_properties_R'] = {
     route_target_both_auto      => true,
     route_target_both_auto_evpn => true,
     route_target_import         => #{routetargetimport},
+    route_target_import_evpn    => #{routetargetimportevpn},
+    route_target_export         => #{routetargetexport},
+    route_target_export_evpn    => #{routetargetexportevpn},
   ",
 
   :resource_props => {
@@ -322,6 +331,9 @@ tests['non_default_properties_R'] = {
     'route_target_both_auto'      => 'true',
     'route_target_both_auto_evpn' => 'true',
     'route_target_import'         => "#{routetargetimport}",
+    'route_target_import_evpn'    => "#{routetargetimportevpn}",
+    'route_target_export'         => "#{routetargetexport}",
+    'route_target_export_evpn'    => "#{routetargetexportevpn}",
   },
 }
 
@@ -410,15 +422,15 @@ test_name "TestCase :: #{testheader}" do
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   node_feature_cleanup(agent, 'bgp')
 
-#  test_harness_bgp_af(tests, 'non_default_properties_A')
-#  test_harness_bgp_af(tests, 'non_default_properties_C')
-#  test_harness_bgp_af(tests, 'non_default_properties_D')
-#  test_harness_bgp_af(tests, 'non_default_properties_Dampening_routemap')
-#  node_feature_cleanup(agent, 'bgp')
-#  test_harness_bgp_af(tests, 'non_default_properties_Dampening_true')
-#  test_harness_bgp_af(tests, 'non_default_properties_Dampening_false')
-#  test_harness_bgp_af(tests, 'non_default_properties_M')
-#  test_harness_bgp_af(tests, 'non_default_properties_N')
+  test_harness_bgp_af(tests, 'non_default_properties_A')
+  test_harness_bgp_af(tests, 'non_default_properties_C')
+  test_harness_bgp_af(tests, 'non_default_properties_D')
+  test_harness_bgp_af(tests, 'non_default_properties_Dampening_routemap')
+  node_feature_cleanup(agent, 'bgp')
+  test_harness_bgp_af(tests, 'non_default_properties_Dampening_true')
+  test_harness_bgp_af(tests, 'non_default_properties_Dampening_false')
+  test_harness_bgp_af(tests, 'non_default_properties_M')
+  test_harness_bgp_af(tests, 'non_default_properties_N')
   test_harness_bgp_af(tests, 'non_default_properties_R')
 
   # -------------------------------------------------------------------
