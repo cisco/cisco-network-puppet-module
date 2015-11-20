@@ -445,4 +445,29 @@ Puppet::Type.newtype(:cisco_interface) do
 
     newvalues(:default, 0, 32, 64, 96, 128, 160, 192, 224)
   end # property spanning_tree_port_priotity
+
+  newproperty(:system_port_channel_load_balance_asymmetric) do
+    desc 'Configure port-channel load-balance asymmetric.'
+
+    newvalues(:true, :false)
+  end # property system_port_channel_load_balance_asymmetric
+
+  newproperty(:system_port_channel_load_balance_bundle_hash) do
+    desc 'Configure port-channel load-balance bndl_hash.'
+
+    newvalues(:default, :ip, :'ip-l4port', :'ip-l4port-vlan', :'ip-vlan', :l4port, :mac)
+  end # property system_port_channel_load_balance_bundle_hash
+
+  newproperty(:system_port_channel_load_balance_bundle_select) do
+    desc 'Configure port-channel load-balance bndl_sel.'
+
+    newvalues(:default, :src, :'src-dst', :dst)
+  end # property system_port_channel_load_balance_bundle_select
+
+  newproperty(:system_port_channel_load_balance_rotate) do
+    desc 'Configure port-channel load-balance rotate
+          Valid values are from 0 to 15'
+
+    munge { |value| value == 'default' ? :default : value.to_i }
+  end # property system_port_channel_load_balance_rotate
 end # Puppet::Type.newtype

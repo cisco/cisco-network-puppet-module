@@ -56,6 +56,9 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     :lacp_min_links,
     :per_port_hash_distribution,
     :port_channel,
+    :system_port_channel_load_balance_bundle_hash,
+    :system_port_channel_load_balance_bundle_select,
+    :system_port_channel_load_balance_rotate,
   ]
   INTF_BOOL_PROPS = [
     :bandwidth_inherit,
@@ -65,7 +68,8 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     :lacp_graceful_convergence,
     :lacp_suspend_individual,
     :per_port_load_defer,
-    :hash_modulo
+    :hash_modulo,
+    :system_port_channel_load_balance_asymmetric,
   ]
   INTF_PORT_CHAN_NON_BOOL = [
     :per_port_hash_distribution,
@@ -98,7 +102,7 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     # Call node_utils getter for each property
     INTF_NON_BOOL_PROPS.each do |prop|
       if INTF_PORT_CHAN_NON_BOOL.include?(prop)
-        if interface_name.start_with?('port-channel')
+        if interface_name.start_with?("port-channel")
           current_state[prop] = intf.send(prop)
         end
       else
@@ -107,8 +111,7 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     end
     INTF_BOOL_PROPS.each do |prop|
       if INTF_PORT_CHAN_BOOL.include?(prop)
-        if interface_name.start_with?('port-channel')
-          debug "sai1 #{interface_name} #{prop}"
+        if interface_name.start_with?("port-channel")
           val = intf.send(prop)
           if val.nil?
             current_state[prop] = nil
@@ -117,7 +120,6 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
           end
         end
       else
-        debug "sai2 #{interface_name} #{prop}"
         val = intf.send(prop)
         if val.nil?
           current_state[prop] = nil
@@ -167,7 +169,6 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
 
   def properties_set(new_interface=false)
     INTF_ALL_PROPS.each do |prop|
-      debug 'sai3'
       next unless @resource[prop]
       send("#{prop}=", @resource[prop]) if new_interface
       unless @property_flush[prop].nil?
@@ -239,7 +240,6 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     # Dump all current properties for this interface
     current = sprintf("\n%30s: %s", 'interface', @interface.name)
     INTF_ALL_PROPS.each do |prop|
-      debug 'sai4'
       current.concat(sprintf("\n%30s: %s", prop, @interface.send(prop)))
     end
     debug current
