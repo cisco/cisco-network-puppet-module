@@ -199,6 +199,11 @@ Puppet::Type.type(:cisco_bgp).provide(:nxapi) do
     @bgp_vrf.timer_bestpath_limit_set(limit, always)
   end
 
+  def confederation_peers=(should_list)
+    should_list = @bgp_vrf.default_confederation_peers if should_list[0] == :default
+    @property_flush[:confederation_peers] = should_list.flatten
+  end
+
   def flush
     if @property_flush[:ensure] == :absent
       @bgp_vrf.destroy
