@@ -120,7 +120,7 @@ module UtilityLib
   # @param logger [Logger] A default instance of Beaker::Logger.
   # @result none [None] Returns no object.
   def self.search_pattern_in_output(output, patarr, inverse, testcase,\
-    logger)
+                                    logger)
     patarr = UtilityLib.hash_to_patterns(patarr) if patarr.instance_of?(Hash)
     patarr.each do |pattern|
       inverse ? (match = (output !~ pattern)) : (match = (output =~ pattern))
@@ -143,7 +143,7 @@ module UtilityLib
   # @param logger [Logger] A default instance of Beaker::Logger.
   # @result none [None] Returns no object.
   def self.raise_passfail_exception(testresult, message, testcase, logger)
-    if (testresult == 'PASS')
+    if testresult == 'PASS'
       testcase.pass_test("\nTestCase :: #{message} :: PASS")
     else
       testcase.fail_test("\nTestCase :: #{message} :: FAIL")
@@ -224,6 +224,15 @@ def format_stepinfo(tests, id, test_str)
   tests[id][:log_desc] + sprintf(' :: %-12s', test_str)
 end
 
+# helper to match stderr buffer against :stderr_pattern
+def test_stderr(tests, id)
+  if stderr =~ tests[id][:stderr_pattern]
+    logger.debug("TestStep :: Match #{tests[id][:stderr_pattern]} :: PASS")
+  else
+    fail_test("TestStep :: Match #{tests[id][:stderr_pattern]} :: FAIL")
+  end
+end
+
 # Wrapper for manifest tests
 # Pass code = [0], as an alternative to 'test_idempotence'
 def test_manifest(tests, id)
@@ -234,6 +243,7 @@ def test_manifest(tests, id)
     code = tests[id][:code] ? tests[id][:code] : [2]
     logger.debug('test_manifest :: check puppet agent cmd')
     on(tests[:agent], puppet_agent_cmd, acceptable_exit_codes: code)
+    test_stderr(tests, id) if tests[id][:stderr_pattern]
   end
   logger.info("#{stepinfo} :: PASS")
   tests[id].delete(:log_desc)
