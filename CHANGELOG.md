@@ -9,6 +9,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - search_domain provider.
 
 ### Added
+- Extended cisco_bgp with the following attributes:
+  - route_distinguisher
+- Extended cisco_bgp_af with the following attributes:
+  - route_target_both_auto, route_target_both_auto_evpn
+  - route_target_import, route_target_import_evpn
+  - route_target_export, route_target_export_evpn
 
 ### Removed
 

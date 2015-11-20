@@ -297,6 +297,9 @@ BGP autonomous system number.  Valid values are String, Integer in ASPLAIN or AS
 ##### `vrf`
 Name of the resource instance. Valid values are string. The name 'default' is a valid VRF representing the global bgp.
 
+##### `route_distinguisher`
+VPN Route Distinguisher (RD). The RD is combined with the IPv4 or IPv6 prefix learned by the PE router to create a globally unique address. Valid values are a String in one of the route-distinguisher formats (ASN2:NN, ASN4:NN, or IPV4:NN); the keyword 'auto', or the keyword 'default'.
+
 ##### `router_id`
 Router Identifier (ID) of the BGP router VRF instance. Valid values are string, and keyword 'default'.
 
@@ -495,6 +498,33 @@ redistribute => [['direct'],
                  ['ospf 3',  'rm_ospf'],
                  ['rip 4']]
 ```
+
+##### `route target both auto`
+(iBGP only) Enable/Disable the route-target 'auto' setting for both import and export target communities. Valid values are true, false, or 'default'.
+
+##### `route target both auto evpn`
+(iBGP only, EVPN only) Enable/Disable the EVPN route-target 'auto' setting for both import and export target communities. Valid values are true, false, or 'default'.
+
+##### `route_target_import`
+Sets the route-target import extended communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
+Examples:
+
+~~puppet
+route_target_import => ['1.2.3.4:5', '33:55']
+route_target_export => '4:4 66:66'
+route_target_export_evpn => '5:5'
+\~~~
+
+##### `route_target_import_evpn`
+(EVPN only) Sets the route-target import extended communities for EVPN. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
+##### `route_target_export`
+Sets the route-target export extended communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
+##### `route_target_export_evpn`
+(EVPN only) Sets the route-target export extended communities for EVPN. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
 --
 ### Type: cisco_bgp_neighbor
 
