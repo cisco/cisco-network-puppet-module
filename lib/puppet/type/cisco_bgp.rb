@@ -171,9 +171,11 @@ Puppet::Type.newtype(:cisco_bgp) do
   ##############
 
   newproperty(:route_distinguisher) do
-    desc "Route Distinguisher (RD) is combined with the IPv4 or IPv6 prefix
-          learned by the PE router to create a globally unique address.
-          Valid values are String, keyword 'default'."
+    desc "VPN Route Distinguisher (RD). The RD is combined with the IPv4
+          or IPv6 prefix learned by the PE router to create a globally
+          unique address. Valid values are a String in one of the
+          route-distinguisher formats (ASN2:NN, ASN4:NN, or IPV4:NN);
+          the keyword 'auto', or the keyword 'default'."
 
     validate do |rd|
       fail "Route Distinguisher '#{value}' #{match_error}" unless

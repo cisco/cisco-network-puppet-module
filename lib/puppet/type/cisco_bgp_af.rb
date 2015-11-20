@@ -470,29 +470,32 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   end # property :redistribute
 
   newproperty(:route_target_both_auto) do
-    desc "Enable/Disable route target both auto only for IBGP.
-          Valid values are true, false, or 'default'"
+    desc "(iBGP only) Enable/Disable the route-target 'auto' setting for
+          both import and export target communities. Valid values are
+          true, false, or 'default'."
 
     newvalues(:true, :false, :default)
   end # property route_target_both_auto
 
   newproperty(:route_target_both_auto_evpn) do
-    desc "Enable/Disable route target both auto evpn only for IBGP.
-          Valid values are true, false, or 'default'"
+    desc "(iBGP only, EVPN only) Enable/Disable the EVPN route-target
+          'auto' setting for both import and export target communities.
+           Valid values are true, false, or 'default'."
 
     newvalues(:true, :false, :default)
   end # property route_target_both_auto_evpn
 
   newproperty(:route_target_import, array_matching: :all) do
-    desc "Set route target import extended communities.
-          Valid values are Array, String, keyword 'default'"
+    desc "Sets the route-target import extended communities. Valid
+          values are an Array or space-separated String of extended
+          communities, or the keyword 'default'."
 
     match_error = 'must be specified in AS:nn or IPv4:nn notation'
 
     validate do |community|
       community.split.each do |value|
         fail "Confederation peer value '#{value}' #{match_error}" unless
-          /^(?:\d+\.\d+\.\d+\.)?\d+.\d+$/.match(value) ||
+          /^(?:\d+\.\d+\.\d+\.)?\d+:\d+$/.match(value) ||
           value == 'default' || value == :default
       end
     end
@@ -507,15 +510,16 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   end # route_target_import
 
   newproperty(:route_target_import_evpn, array_matching: :all) do
-    desc "Set route target import evpn extended communities.
-          Valid values are Array, String, keyword 'default'"
+    desc "(EVPN only) Sets the route-target import extended communities
+          for EVPN. Valid values are an Array or space-separated String
+          of extended communities, or the keyword 'default'."
 
     match_error = 'must be specified in AS:nn or IPv4:nn notation'
 
     validate do |community|
       community.split.each do |value|
         fail "Confederation peer value '#{value}' #{match_error}" unless
-          /^(?:\d+\.\d+\.\d+\.)?\d+.\d+$/.match(value) ||
+          /^(?:\d+\.\d+\.\d+\.)?\d+:\d+$/.match(value) ||
           value == 'default' || value == :default
       end
     end
@@ -530,15 +534,16 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   end # route_target_import_evpn
 
   newproperty(:route_target_export, array_matching: :all) do
-    desc "Set route target import evpn extended communities.
-          Valid values are Array, String, keyword 'default'"
+    desc "Sets the route-target export extended communities. Valid
+         values are an Array or space-separated String of extended
+         communities, or the keyword 'default'."
 
     match_error = 'must be specified in AS:nn or IPv4:nn notation'
 
     validate do |community|
       community.split.each do |value|
         fail "Confederation peer value '#{value}' #{match_error}" unless
-          /^(?:\d+\.\d+\.\d+\.)?\d+.\d+$/.match(value) ||
+          /^(?:\d+\.\d+\.\d+\.)?\d+:\d+$/.match(value) ||
           value == 'default' || value == :default
       end
     end
@@ -553,15 +558,16 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   end # route_target_export
 
   newproperty(:route_target_export_evpn, array_matching: :all) do
-    desc "Set route target import evpn extended communities.
-          Valid values are Array, String, keyword 'default'"
+    desc "(EVPN only) Sets the route-target export extended communities
+         for EVPN. Valid values are an Array or space-separated String
+         of extended communities, or the keyword 'default'."
 
     match_error = 'must be specified in AS:nn or IPv4:nn notation'
 
     validate do |community|
       community.split.each do |value|
         fail "Confederation peer value '#{value}' #{match_error}" unless
-          /^(?:\d+\.\d+\.\d+\.)?\d+.\d+$/.match(value) ||
+          /^(?:\d+\.\d+\.\d+\.)?\d+:\d+$/.match(value) ||
           value == 'default' || value == :default
       end
     end
