@@ -81,7 +81,7 @@ test_name "TestCase :: #{testheader}" do
         :mschap               => mschap,
         :mschapv2             => mschapv2,
       },
-      :resource       => {
+      :resource => { # rubocop:disable Style/AlignHash
         'ascii_authentication' => ascii.to_s,
         'chap'                 => chap.to_s,
         'error_display'        => 'true',

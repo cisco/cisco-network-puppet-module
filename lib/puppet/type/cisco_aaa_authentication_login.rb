@@ -23,7 +23,7 @@ Puppet::Type.newtype(:cisco_aaa_authentication_login) do
   cisco_aaa_authentication_login {\"default\":
     ..attributes..
   }
-\~~~
+~~~
 
   There can only be one instance of the cisco_aaa_authentication_login.
 
@@ -36,7 +36,7 @@ Puppet::Type.newtype(:cisco_aaa_authentication_login) do
       mschap                 => false,
       mschapv2               => false,
     }
-\~~~"
+~~~"
 
   ###################
   # Resource Naming #
