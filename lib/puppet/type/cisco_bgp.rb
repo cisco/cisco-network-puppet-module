@@ -162,6 +162,7 @@ Puppet::Type.newtype(:cisco_bgp) do
     desc "Name of the resource instance. Valid values are string. The
           name 'default' is a valid VRF."
 
+    defaultto('default')
     newvalues(/^\S+$/)
   end # param vrf
 

@@ -34,8 +34,9 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   ~~~
 
   `<title>` is the title of the bgp_af resource.
-
-
+  
+  Example:
+  
   $network_list = [['192.168.5.0/24', 'rtmap1'], ['192.168.10.0/24']]
   $redistribute = [['eigrp 1', 'e_rtmap_29'], ['ospf 3',  'o_rtmap']]
   $routetargetimport = ['1.2.3.4:55', '102:33']
