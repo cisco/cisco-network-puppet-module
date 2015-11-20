@@ -105,8 +105,8 @@ tests = {
 # tests[id][:af] - (Optional) defines the address-family values.
 #   Must use :title_pattern if :af is not specified. Useful for testing mixed
 #   title/af manifests
-
-#
+# tests[id][:remote_as] - (Optional) allows explicit remote-as configuration
+#   for some ebgp/ibgp-only testing
 
 # default_properties
 #
