@@ -70,7 +70,7 @@ Puppet::Type.type(:cisco_aaa_authentication_login).provide(:nxapi) do
 
   def properties_set
     # any current method of authentication must be turned off before a new
-    # indended method can be turned on, so configuration order is important
+    # intended method can be turned on, so configuration order is important
     off_props = AAA_AUTHE_PROPS.select do |prop|
       @resource[prop] && @property_flush[prop] == false
     end

@@ -73,7 +73,8 @@ test_name "TestCase :: #{testheader}" do
   }
   create_aaaauthelogin_manifest(tests, id)
   # search for error pattern in puppet agent cmd output
-  test_manifest(tests, id, /only 'default' is accepted as a valid name/)
+  tests[id][:stderr_pattern] = /only 'default' is accepted as a valid name/
+  test_manifest(tests, id)
 
   id = 'default'
   # setting 2 authentication methods at once should fail

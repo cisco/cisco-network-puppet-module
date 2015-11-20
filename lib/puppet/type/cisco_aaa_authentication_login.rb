@@ -19,20 +19,24 @@
 Puppet::Type.newtype(:cisco_aaa_authentication_login) do
   @doc = "Manages AAA Authentication Login configuration.
 
+~~~puppet
   cisco_aaa_authentication_login {\"default\":
     ..attributes..
   }
+\~~~
 
   There can only be one instance of the cisco_aaa_authentication_login.
 
   Example:
+~~~puppet
     cisco_aaa_authentication_login {\"default\":
       ascii_authentication   => true,
       chap                   => false,
       error_display          => true,
       mschap                 => false,
       mschapv2               => false,
-    }"
+    }
+\~~~"
 
   ###################
   # Resource Naming #
@@ -68,7 +72,8 @@ Puppet::Type.newtype(:cisco_aaa_authentication_login) do
   end # property name
 
   newproperty(:ascii_authentication) do
-    desc 'Enable/disable ascii_authentication for AAA Authentication Login.'
+    desc 'Enable/disable ascii_authentication for AAA Authentication Login.' \
+         "Valid values are true, false, keyword 'default'"
 
     newvalues(:true, :false, :default)
   end

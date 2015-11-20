@@ -224,27 +224,26 @@ def format_stepinfo(tests, id, test_str)
   tests[id][:log_desc] + sprintf(' :: %-12s', test_str)
 end
 
+# helper to match stderr buffer against :stderr_pattern
+def test_stderr(tests, id)
+  if stderr =~ tests[id][:stderr_pattern]
+    logger.debug("TestStep :: Match #{tests[id][:stderr_pattern]} :: PASS")
+  else
+    fail_test("TestStep :: Match #{tests[id][:stderr_pattern]} :: FAIL")
+  end
+end
+
 # Wrapper for manifest tests
 # Pass code = [0], as an alternative to 'test_idempotence'
-# If the user passes in a find_patern, search for it in the output
-def test_manifest(tests, id, find_pattern=nil)
+def test_manifest(tests, id)
   stepinfo = format_stepinfo(tests, id, 'MANIFEST')
   step "TestStep :: #{stepinfo}" do
     logger.debug("test_manifest :: manifest:\n#{tests[id][:manifest]}")
     on(tests[:master], tests[id][:manifest])
     code = tests[id][:code] ? tests[id][:code] : [2]
     logger.debug('test_manifest :: check puppet agent cmd')
-    if find_pattern.nil?
-      on(tests[:agent], puppet_agent_cmd, acceptable_exit_codes: code)
-    else
-      on(tests[:agent], puppet_agent_cmd, acceptable_exit_codes: code) do
-        if stdout =~ find_pattern || stderr =~ find_pattern
-          logger.debug("TestStep :: Match #{find_pattern} :: PASS")
-        else
-          fail_test("TestStep :: Match #{find_pattern} :: FAIL")
-        end
-      end
-    end
+    on(tests[:agent], puppet_agent_cmd, acceptable_exit_codes: code)
+    test_stderr(tests, id) if tests[id][:stderr_pattern]
   end
   logger.info("#{stepinfo} :: PASS")
   tests[id].delete(:log_desc)
