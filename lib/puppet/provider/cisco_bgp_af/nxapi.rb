@@ -50,6 +50,10 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
     :networks,
     :next_hop_route_map,
     :redistribute,
+    :route_target_import,
+    :route_target_import_evpn,
+    :route_target_export,
+    :route_target_export_evpn,
   ]
 
   BGP_AF_BOOL_PROPS = [
@@ -60,6 +64,8 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
     :client_to_client,
     :default_information_originate,
     :dampening_state,
+    :route_target_both_auto,
+    :route_target_both_auto_evpn,
   ]
 
   BGP_AF_ALL_PROPS = BGP_AF_NON_BOOL_PROPS + BGP_AF_BOOL_PROPS
@@ -264,6 +270,82 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
   def redistribute=(should_list)
     should_list = @af.default_redistribute if should_list[0] == :default
     @property_flush[:redistribute] = should_list
+  end
+
+  def route_target_import
+    return @property_hash[:route_target_import] if @resource[:route_target_import].nil?
+    if @resource[:route_target_import][0] == :default &&
+       @property_hash[:route_target_import] == @af.default_route_target_import
+      return [:default]
+    else
+      @property_hash[:route_target_import]
+    end
+  end
+
+  # route_target setters: These properties expect a flat array but optionally
+  # support a string of space-separated values in the manifest; however,
+  # munge will transform the string into a nested array, hence the flatten.
+  def route_target_import=(should_list)
+    puts "setter: #{should_list}"
+    should_list = @af.default_route_target_import if should_list[0] == :default
+    @property_flush[:route_target_import] = should_list.flatten
+  end
+
+  def route_target_import_evpn
+    return @property_hash[:route_target_import_evpn] if @resource[:route_target_import].nil?
+    if @resource[:route_target_import_evpn][0] == :default &&
+       @property_hash[:route_target_import_evpn] == @af.default_route_target_import
+      return [:default]
+    else
+      @property_hash[:route_target_import_evpn]
+    end
+  end
+
+  # route_target setters: These properties expect a flat array but optionally
+  # support a string of space-separated values in the manifest; however,
+  # munge will transform the string into a nested array, hence the flatten.
+  def route_target_import_evpn=(should_list)
+    puts "setter: #{should_list}"
+    should_list = @af.default_route_target_import_evpn if should_list[0] == :default
+    @property_flush[:route_target_import_evpn] = should_list.flatten
+  end
+
+  def route_target_export
+    return @property_hash[:route_target_export] if @resource[:route_target_import].nil?
+    if @resource[:route_target_export][0] == :default &&
+       @property_hash[:route_target_export] == @af.default_route_target_import
+      return [:default]
+    else
+      @property_hash[:route_target_export]
+    end
+  end
+
+  # route_target setters: These properties expect a flat array but optionally
+  # support a string of space-separated values in the manifest; however,
+  # munge will transform the string into a nested array, hence the flatten.
+  def route_target_export=(should_list)
+    puts "setter: #{should_list}"
+    should_list = @af.default_route_target_export if should_list[0] == :default
+    @property_flush[:route_target_export] = should_list.flatten
+  end
+
+  def route_target_export_evpn
+    return @property_hash[:route_target_export_evpn] if @resource[:route_target_import].nil?
+    if @resource[:route_target_export_evpn][0] == :default &&
+       @property_hash[:route_target_export_evpn] == @af.default_route_target_import
+      return [:default]
+    else
+      @property_hash[:route_target_export_evpn]
+    end
+  end
+
+  # route_target setters: These properties expect a flat array but optionally
+  # support a string of space-separated values in the manifest; however,
+  # munge will transform the string into a nested array, hence the flatten.
+  def route_target_export_evpn=(should_list)
+    puts "setter: #{should_list}"
+    should_list = @af.default_route_target_export_evpn if should_list[0] == :default
+    @property_flush[:route_target_export_evpn] = should_list.flatten
   end
 
   def flush

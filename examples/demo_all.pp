@@ -26,14 +26,20 @@ class ciscopuppet::demo_all {
   #   proxy => 'http://proxy.domain.com:8080',
   # }
 
-  include ciscopuppet::demo_patching
-  include ciscopuppet::demo_command_config
+  include ciscopuppet::demo_aaa
   include ciscopuppet::demo_bgp
+  include ciscopuppet::demo_command_config
+  include ciscopuppet::demo_domain
   include ciscopuppet::demo_interface
-  include ciscopuppet::demo_vlan
+  include ciscopuppet::demo_ntp
   include ciscopuppet::demo_ospf
+  include ciscopuppet::demo_patching
+  include ciscopuppet::demo_radius
+  include ciscopuppet::demo_snmp
+  include ciscopuppet::demo_syslog
   include ciscopuppet::demo_tacacs_server
   include ciscopuppet::demo_tacacs_server_host
+  include ciscopuppet::demo_vlan
   include ciscopuppet::demo_vrf
   include ciscopuppet::demo_vtp
   include ciscopuppet::demo_snmp

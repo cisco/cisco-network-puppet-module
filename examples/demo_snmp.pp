@@ -34,4 +34,12 @@ class ciscopuppet::demo_snmp {
     ensure => present,
     groups => ['network-admin'],
   }
+
+  # netdev network_snmp
+  network_snmp {'default':
+    enable   => true,
+    location => 'UK',
+    contact  => 'SysAdmin',
+  }
+
 }
