@@ -43,11 +43,11 @@ Puppet::Type.newtype(:cisco_bgp) do
       ensure                                 => present,
       asn                                    => '39317'
       vrf                                    => 'green',
-      route_distinguisher                    => 'auto'
+      route_distinguisher                    => 'auto',
       router_id                              => '10.0.0.1',
       cluster_id                             => '55',
       confederation_id                       => '77.6',
-      confederation_peers                    => '77.6 88 99.4 200'
+      confederation_peers                    => '77.6 88 99.4 200',
       enforce_first_as                       => true,
       maxas_limit                            => '50',
       shutdown                               => false,
@@ -83,7 +83,7 @@ Puppet::Type.newtype(:cisco_bgp) do
   ~~~puppet
     cisco_bgp { 'new_york':
       ensure                                 => present,
-      asn                                    => '39317'
+      asn                                    => '39317',
       vrf                                    => 'green',
   ~~~
 
