@@ -43,6 +43,7 @@ Puppet::Type.newtype(:cisco_bgp) do
       ensure                                 => present,
       asn                                    => '39317'
       vrf                                    => 'green',
+      route_distinguisher                    => 'auto'
       router_id                              => '10.0.0.1',
       cluster_id                             => '55',
       confederation_id                       => '77.6',
@@ -168,6 +169,25 @@ Puppet::Type.newtype(:cisco_bgp) do
   ##############
   # Properties #
   ##############
+
+  newproperty(:route_distinguisher) do
+    desc "VPN Route Distinguisher (RD). The RD is combined with the IPv4
+          or IPv6 prefix learned by the PE router to create a globally
+          unique address. Valid values are a String in one of the
+          route-distinguisher formats (ASN2:NN, ASN4:NN, or IPV4:NN);
+          the keyword 'auto', or the keyword 'default'."
+
+    validate do |rd|
+      fail "Route Distinguisher '#{value}' #{match_error}" unless
+        /^(?:\d+\.\d+\.\d+\.)?\d+:\d+$/.match(rd) || rd == 'auto' ||
+        rd == 'default' || rd == :default
+    end
+
+    munge do |rd|
+      rd = :default if rd == 'default'
+      rd
+    end
+  end # property router_distinguisher
 
   newproperty(:router_id) do
     desc "Router Identifier (ID) of the BGP router instance. Valid
