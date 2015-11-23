@@ -141,12 +141,6 @@ Puppet::Type.newtype(:cisco_interface) do
     newvalues(:true, :false, :default)
   end # property shutdown
 
-  newproperty(:snmp_trap_link_status) do
-    desc 'Allow SNMP LINKUP and LINKDOWN traps.'
-
-    newvalues(:true, :false)
-  end # property snmp_trap_link_status
-
   newproperty(:switchport_mode) do
     desc "Switchport mode of the interface. To make an interface L3, set
           switchport_mode to 'disabled'. "
@@ -330,144 +324,10 @@ Puppet::Type.newtype(:cisco_interface) do
   # Port-Channel attributes #
   ###########################
 
-  newproperty(:bandwidth) do
-    desc "Bandwidth in kilobits. Valid values are 1-100000000
-          and default is 100000."
-
-    munge { |value| value == 'default' ? :default : value.to_i }
-  end # property bandwidth
-
-  newproperty(:bandwidth_inherit) do
-    desc 'Specify that bandwidth is inherited.'
-
-    newvalues(:true, :false)
-  end # property bandwidth_inherit
-
-  newproperty(:delay) do
-    desc "Throughput delay in tens of microseconds. Valid values
-          are 1-16777215 and default is 1."
-
-    munge { |value| value == 'default' ? :default : value.to_i }
-  end # property delay
-
-  newproperty(:flowcontrol_receive) do
-    desc "Configure interface flowcontrol receive pause frames.
-          Default value is 'off'."
-
-    newvalues(:desired, :off, :on, :default)
-  end # property flowcontrol_receive
-
-  newproperty(:flowcontrol_send) do
-    desc "Configure interface flowcontrol send pause frames.
-          Default value is 'off'."
-
-    newvalues(:desired, :off, :on, :default)
-  end # property flowcontrol_send
-
-  newproperty(:hash_modulo) do
-    desc 'Configure port-channel load-balance hash-modulo'
-
-    newvalues(:true, :false)
-  end # property hash_modulo
-
-  newproperty(:lacp_graceful_convergence) do
-    desc 'Configure port-channel lacp graceful convergence.'
-
-    newvalues(:true, :false)
-  end # property lacp_graceful_convergence
-
-  newproperty(:lacp_max_bundle) do
-    desc "Configure the port-channel max-bundle. Valid values
-          are 1-16 and default is 16."
-
-    munge { |value| value == 'default' ? :default : value.to_i }
-  end # property lacp_max_bundle
-
-  newproperty(:lacp_min_links) do
-    desc "Configure the port-channel min-links. Valid values
-          are 1-16 and default is 1."
-
-    munge { |value| value == 'default' ? :default : value.to_i }
-  end # property lacp_min_links
-
-  newproperty(:lacp_suspend_individual) do
-    desc 'Configure lacp port-channel state.'
-
-    newvalues(:true, :false)
-  end # property lacp_suspend_individual
-
-  newproperty(:per_port_load_defer) do
-    desc 'Configure lacp port-channel load-defer.'
-
-    newvalues(:true, :false)
-  end # property per_port_load_defer
-
-  newproperty(:per_port_hash_distribution) do
-    desc "Configure hash distribution at the port channel level.
-          Default value is no form of command"
-
-    newvalues(:fixed, :adaptive, :default)
-  end # property per_port_hash_distribution
-
   newproperty(:port_channel) do
     desc "Port channel is an aggregation of multiple physical interfaces
           that creates a logical interface. Valid values are 1 to 4096."
 
     munge { |value| value }
   end # property port_channel
-
-  newproperty(:spanning_tree_cost) do
-    desc "Change an interface's spanning tree port path cost.
-          Valid values are 1 to 200000000 or auto.
-          Default value is 'auto'."
-
-    munge do |value|
-      value = :default if value == 'default'
-      begin
-        value = Integer(value) unless value == :default || value == 'auto'
-      rescue
-        raise 'spanning_tree_cost must be a valid integer, or default or auto'
-      end
-      value
-    end
-  end # property spanning_tree_cost
-
-  newproperty(:spanning_tree_link_type) do
-    desc "Change an interface's spanning tree link type.
-          Default value is 'auto'."
-
-    newvalues(:default, :auto, :'point-to-point', :shared)
-  end # property spanning_tree_link_type
-
-  newproperty(:spanning_tree_port_priotity) do
-    desc "Change an interface's spanning tree port priority.
-          Default value is '128'."
-
-    newvalues(:default, 0, 32, 64, 96, 128, 160, 192, 224)
-  end # property spanning_tree_port_priotity
-
-  newproperty(:system_port_channel_load_balance_asymmetric) do
-    desc 'Configure port-channel load-balance asymmetric.'
-
-    newvalues(:true, :false)
-  end # property system_port_channel_load_balance_asymmetric
-
-  newproperty(:system_port_channel_load_balance_bundle_hash) do
-    desc 'Configure port-channel load-balance bndl_hash.'
-
-    newvalues(:default, :ip, :'ip-l4port', :'ip-l4port-vlan', :'ip-vlan', :l4port, :mac)
-  end # property system_port_channel_load_balance_bundle_hash
-
-  newproperty(:system_port_channel_load_balance_bundle_select) do
-    desc 'Configure port-channel load-balance bndl_sel.'
-
-    newvalues(:default, :src, :'src-dst', :dst)
-  end # property system_port_channel_load_balance_bundle_select
-
-  newproperty(:system_port_channel_load_balance_rotate) do
-    desc 'Configure port-channel load-balance rotate
-          Valid values are from 0 to 15'
-
-    munge { |value| value == 'default' ? :default : value.to_i }
-  end # property system_port_channel_load_balance_rotate
 end # Puppet::Type.newtype

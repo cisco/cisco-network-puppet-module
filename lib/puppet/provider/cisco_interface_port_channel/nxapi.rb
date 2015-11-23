@@ -1,5 +1,5 @@
 #
-# The NXAPI provider for cisco_interface.
+# The NXAPI provider for cisco_interface_port_channel
 #
 # May 2015
 #
@@ -26,8 +26,8 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
-Puppet::Type.type(:cisco_interface).provide(:nxapi) do
-  desc 'The NXAPI provider for cisco_interface.'
+Puppet::Type.type(:cisco_interface_port_channel).provide(:nxapi) do
+  desc 'The NXAPI provider for cisco_interface_port_channel.'
 
   confine feature: :cisco_node_utils
   defaultfor operatingsystem: :nexus
@@ -40,35 +40,31 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
   # Note: vrf should be the first L3 property to process.  The AutoGen vrf
   # setting is not used.
   INTF_NON_BOOL_PROPS = [
-    :switchport_mode,
-    :vrf,
-    :access_vlan,
-    :description,
-    :encapsulation_dot1q,
-    :ipv4_address,
-    :ipv4_netmask_length,
-    :mtu,
-    :speed,
-    :duplex,
-    :switchport_trunk_allowed_vlan,
-    :switchport_trunk_native_vlan,
+    :lacp_max_bundle,
+    :lacp_min_links,
+    :per_port_hash_distribution,
     :port_channel,
+    :system_port_channel_load_balance_bundle_hash,
+    :system_port_channel_load_balance_bundle_select,
+    :system_port_channel_load_balance_rotate,
   ]
   INTF_BOOL_PROPS = [
-    :shutdown, :negotiate_auto, :ipv4_redirects, :ipv4_proxy_arp,
-    :switchport_vtp, :switchport_autostate_exclude,
-    :svi_autostate, :svi_management
+    :lacp_graceful_convergence,
+    :lacp_suspend_individual,
+    :per_port_load_defer,
+    :system_hash_modulo,
+    :system_port_channel_load_balance_asymmetric,
   ]
   INTF_ALL_PROPS = INTF_NON_BOOL_PROPS + INTF_BOOL_PROPS
 
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@interface',
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@interface_port_channel',
                                             INTF_NON_BOOL_PROPS)
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@interface',
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@interface_port_channel',
                                             INTF_BOOL_PROPS)
 
   def initialize(value={})
     super(value)
-    @interface = Cisco::Interface.interfaces[@property_hash[:name]]
+    @interface_port_channel = Cisco::InterfacePortChannel.interfaces[@property_hash[:name]]
     @property_flush = {}
   end
 
@@ -96,10 +92,8 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
 
   def self.instances
     interfaces = []
-    Cisco::Interface.interfaces.each do |interface_name, intf|
+    Cisco::InterfacePortChannel.interfaces.each do |interface_name, intf|
       begin
-        # Not allowed to create an interface for mgmt0
-        next if interface_name.match(/mgmt0/)
         interfaces << properties_get(interface_name, intf)
       end
     end
@@ -135,59 +129,21 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
       next unless @resource[prop]
       send("#{prop}=", @resource[prop]) if new_interface
       unless @property_flush[prop].nil?
-        @interface.send("#{prop}=", @property_flush[prop]) if
-          @interface.respond_to?("#{prop}=")
-      end
-    end
-    ipv4_addr_mask_set
-  end
-
-  def ipv4_addr_mask_set
-    # Combo property: ipv4 address/mask
-    return unless @property_flush[:ipv4_address] ||
-                  @property_flush[:ipv4_netmask_length] ||
-                  @resource[:ipv4_address] == :default
-
-    if @resource[:ipv4_address] == :default
-      addr = @interface.default_ipv4_address
-    else
-      addr = @resource[:ipv4_address]
-    end
-
-    if @resource[:ipv4_netmask_length] == :default
-      mask = @interface.default_ipv4_netmask_length
-    else
-      mask = @resource[:ipv4_netmask_length]
-    end
-    @interface.ipv4_addr_mask_set(addr, mask)
-  end
-
-  # override vrf setter
-  def vrf=(val)
-    val = @interface.default_vrf if val == :default
-    @property_flush[:vrf] = val
-
-    # flush other L3 properties because vrf will wipe them out
-    l3_props = [
-      :ipv4_proxy_arp, :ipv4_redirects,
-      :ipv4_address, :ipv4_netmask_length
-    ]
-    l3_props.each do |prop|
-      if @property_flush[prop].nil?
-        @property_flush[prop] = @property_hash[prop] unless @property_hash[prop].nil?
+        @interface_port_channel.send("#{prop}=", @property_flush[prop]) if
+          @interface_port_channel.respond_to?("#{prop}=")
       end
     end
   end
 
   def flush
     if @property_flush[:ensure] == :absent
-      @interface.destroy
-      @interface = nil
+      @interface_port_channel.destroy
+      @interface_port_channel = nil
     else
       # Create/Update
-      if @interface.nil?
+      if @interface_port_channel.nil?
         new_interface = true
-        @interface = Cisco::Interface.new(@resource[:interface])
+        @interface_port_channel = Cisco::InterfacePortChannel.new(@resource[:interface])
       end
       properties_set(new_interface)
     end
@@ -195,15 +151,15 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
   end
 
   def puts_config
-    if @interface.nil?
+    if @interface_port_channel.nil?
       info "Interface=#{@resource[:interface]} is absent."
       return
     end
 
     # Dump all current properties for this interface
-    current = sprintf("\n%30s: %s", 'interface', @interface.name)
+    current = sprintf("\n%30s: %s", 'interface', @interface_port_channel.name)
     INTF_ALL_PROPS.each do |prop|
-      current.concat(sprintf("\n%30s: %s", prop, @interface.send(prop)))
+      current.concat(sprintf("\n%30s: %s", prop, @interface_port_channel.send(prop)))
     end
     debug current
   end # puts_config
