@@ -46,7 +46,7 @@ Puppet::Type.type(:cisco_vxlan_global).provide(:nxapi) do
 
   def initialize(value={})
     super(value)
-    @vxlan_global = Cisco::VxlanGlobal.new
+    @vxlan_global = Cisco::VxlanGlobal.new if Cisco::VxlanGlobal.enabled
     @property_flush = {}
   end
 
