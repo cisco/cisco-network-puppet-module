@@ -19,5 +19,6 @@ class ciscopuppet::demo_vrf {
     ensure      => present,
     description => 'test vrf for puppet',
     shutdown    => false,
+    vrf         => 4096,
   }
 }

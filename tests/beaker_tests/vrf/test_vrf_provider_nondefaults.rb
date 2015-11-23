@@ -88,10 +88,11 @@ test_name "TestCase :: #{testheader}" do
   stepinfo = 'Get resource nondefault manifest from master and apply on agent'
   description = 'tested by beaker'
   shutdown = true
+  vni = 4096
   step "TestStep :: #{stepinfo}" do
     # Expected exit_code is 0 since this is a bash shell cmd.
     on(master, VrfLib.create_vrf_manifest_nondefaults(vrf_name, description,
-                                                      shutdown))
+                                                      shutdown, vni))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     on(agent, puppet_agent_cmd, acceptable_exit_codes: [2])
@@ -106,7 +107,8 @@ test_name "TestCase :: #{testheader}" do
       UtilityLib.search_pattern_in_output(stdout,
                                           { 'ensure'      => 'present',
                                             'description' => "#{description}",
-                                            'shutdown'    => "#{shutdown}" },
+                                            'shutdown'    => "#{shutdown}",
+                                            'vni'         => "#{vni}" },
                                           test[:present], self, logger)
     end
 
@@ -118,7 +120,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     on(agent, show_vrf_cmd) do
       UtilityLib.search_pattern_in_output(stdout, [/vrf context #{vrf_name}/,
-                                                   /description #{description}/, /shutdown/],
+                                                   /description #{description}/, /shutdown/, /vni #{vni}/],
                                           test[:present], self, logger)
     end
 
@@ -140,7 +142,8 @@ test_name "TestCase :: #{testheader}" do
       UtilityLib.search_pattern_in_output(stdout,
                                           { 'ensure'      => 'present',
                                             'description' => "#{description}",
-                                            'shutdown'    => "#{shutdown}" },
+                                            'shutdown'    => "#{shutdown}",
+                                            'vni'         => "#{vni}" },
                                           test[:present], self, logger)
     end
 
@@ -152,7 +155,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     on(agent, show_vrf_cmd) do
       UtilityLib.search_pattern_in_output(stdout, [/vrf context #{vrf_name}/,
-                                                   /description #{description}/, /shutdown/],
+                                                   /description #{description}/, /shutdown/, /vni #{vni}/],
                                           test[:present], self, logger)
     end
 
@@ -162,10 +165,11 @@ test_name "TestCase :: #{testheader}" do
   stepinfo = 'Get vrf update manifest from master and apply on agent'
   description = 'updated by beaker'
   shutdown = false
+  vni = 'default'
   step "TestStep :: #{stepinfo}" do
     # Expected exit_code is 0 since this is a bash shell cmd.
     on(master, VrfLib.create_vrf_manifest_nondefaults(vrf_name,
-                                                      description, shutdown))
+                                                      description, shutdown, vni))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     on(agent, puppet_agent_cmd, acceptable_exit_codes: [2])
@@ -179,7 +183,8 @@ test_name "TestCase :: #{testheader}" do
       UtilityLib.search_pattern_in_output(stdout,
                                           { 'ensure'      => 'present',
                                             'description' => "#{description}",
-                                            'shutdown'    => "#{shutdown}" },
+                                            'shutdown'    => "#{shutdown}",
+                                            'vni'         => 'false' },
                                           test[:present], self, logger)
     end
 
@@ -196,6 +201,8 @@ test_name "TestCase :: #{testheader}" do
       # when shutdown is false, show cli should not have a line containing
       # "shutdown"
       UtilityLib.search_pattern_in_output(stdout, [/shutdown/],
+                                          test[:absent], self, logger)
+      UtilityLib.search_pattern_in_output(stdout, [/vni/],
                                           test[:absent], self, logger)
     end
 
@@ -245,10 +252,11 @@ test_name "TestCase :: #{testheader}" do
   stepinfo = 'Get vrf manifest that swaps cases in title and apply on agent'
   description = "update using #{vrf_name.swapcase}"
   shutdown = true
+  vni = 4096
   step "TestStep :: #{stepinfo}" do
     # Expected exit_code is 0 since this is a bash shell cmd.
     on(master, VrfLib.create_vrf_manifest_nondefaults(vrf_name.swapcase,
-                                                      description, shutdown))
+                                                      description, shutdown, vni))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     on(agent, puppet_agent_cmd, acceptable_exit_codes: [2])
@@ -263,7 +271,8 @@ test_name "TestCase :: #{testheader}" do
       UtilityLib.search_pattern_in_output(stdout,
                                           { 'ensure'      => 'present',
                                             'description' => "#{description}",
-                                            'shutdown'    => "#{shutdown}" },
+                                            'shutdown'    => "#{shutdown}",
+                                            'vni'         => "#{vni}" },
                                           test[:present], self, logger)
     end
 
@@ -275,7 +284,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     on(agent, show_vrf_cmd) do
       UtilityLib.search_pattern_in_output(stdout, [/vrf context #{vrf_name}/,
-                                                   /#{description}/, /shutdown/],
+                                                   /#{description}/, /shutdown/, /vni #{vni}/],
                                           test[:present], self, logger)
     end
 
@@ -285,10 +294,11 @@ test_name "TestCase :: #{testheader}" do
   stepinfo = 'Get vrf manifest that uses name attribute and apply on agent'
   description = 'update using name attribute'
   shutdown = true
+  vni = 4096
   step "TestStep :: #{stepinfo}" do
     # Expected exit_code is 0 since this is a bash shell cmd.
     on(master, VrfLib.update_vrf_manifest_by_name_attribute(vrf_name,
-                                                            description, shutdown))
+                                                            description, shutdown, vni))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     on(agent, puppet_agent_cmd, acceptable_exit_codes: [2])
@@ -303,7 +313,8 @@ test_name "TestCase :: #{testheader}" do
       UtilityLib.search_pattern_in_output(stdout,
                                           { 'ensure'      => 'present',
                                             'description' => "#{description}",
-                                            'shutdown'    => "#{shutdown}" },
+                                            'shutdown'    => "#{shutdown}",
+                                            'vni'         => "#{vni}" },
                                           test[:present], self, logger)
     end
 
@@ -315,7 +326,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     on(agent, show_vrf_cmd) do
       UtilityLib.search_pattern_in_output(stdout, [/vrf context #{vrf_name}/,
-                                                   /#{description}/, /shutdown/],
+                                                   /#{description}/, /shutdown/, /vni #{vni}/],
                                           test[:present], self, logger)
     end
 

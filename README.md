@@ -1181,6 +1181,10 @@ Description of the VRF. Valid value is string.
 ##### `shutdown`
 Shutdown state of the VRF. Valid values are 'true' and 'false'.
 
+##### `vni`
+Specify virtual network identifier. Valid values are integers between 4096
+and 16777215, or keyword 'default' to disable this property.
+
 --
 ### Type: cisco_vtp
 

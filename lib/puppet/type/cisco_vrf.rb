@@ -32,6 +32,7 @@ Puppet::Type.newtype(:cisco_vrf) do
      ensure                       => present,
      shutdown                     => false,
      description                  => 'vrf red',
+     vni                          => 4096,
     }
   ~~~
   "
@@ -78,4 +79,19 @@ Puppet::Type.newtype(:cisco_vrf) do
     desc 'Shutdown state of the VRF.'
     newvalues(:true, :false)
   end # property shutdown
+
+  newproperty(:vni) do
+    desc "Specify virtual network identifier. Valid values are
+          integers between 4096 and 16777215, or keyword
+          'default' to disable this property"
+    munge do |value|
+      value = :default if value == 'default'
+      unless value == :default
+        value = value.to_i
+        fail 'vni value should be between 4096 and 16777215' unless
+          value.between?(4096, 167_772_15)
+      end
+      value
+    end
+  end
 end # Puppet::Type.newtype
