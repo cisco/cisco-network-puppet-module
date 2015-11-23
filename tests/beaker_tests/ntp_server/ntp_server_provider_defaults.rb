@@ -64,6 +64,12 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Setup switch for provider test' do
     # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
     UtilityLib.set_manifest_path(master, self)
+
+    # Cleanup before starting test.
+    on(master, NtpServerLib.create_ntp_server_manifest_absent)
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+                                           'agent -t', options)
+    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
   end
 
   # @step [Step] Requests manifest from the master server to the agent.

@@ -68,9 +68,9 @@ test_name "TestCase :: #{testheader}" do
     # Let's check and make sure that an expected default group/role is present
     # and an unexpected non-default group/role is absent
 
-    # Expected exit_code is 0 since this is a vegas shell cmd.
+    # Exit codes: 2 if config existed prior, 0 if nothing changed
     cmd_str = UtilityLib.get_vshell_cmd('conf t ; no ip name-server 7.7.7.7')
-    on(agent, cmd_str)
+    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.

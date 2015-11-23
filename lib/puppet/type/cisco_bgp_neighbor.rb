@@ -17,6 +17,13 @@
 # limitations under the License.
 
 require 'ipaddr'
+begin
+  require 'puppet_x/cisco/cmnutils'
+rescue LoadError # seen on master, not on agent
+  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..',
+                                     'puppet_x', 'cisco', 'cmnutils.rb'))
+end
 
 Puppet::Type.newtype(:cisco_bgp_neighbor) do
   @doc = "Manages BGP Neighbor configuration.
@@ -134,6 +141,12 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
 
   ensurable
 
+  # Overwrites the name method which by default returns only
+  # self[:name].
+  def name
+    "#{self[:asn]} #{self[:vrf]} #{self[:neighbor]}"
+  end
+
   # Only needed to satisfy name parameter.
   newparam(:name) do
   end
@@ -143,7 +156,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
           or ASDOT notation or Integer"
     munge do |value|
       begin
-        value = Cisco::RouterBgp.process_asnum(value.to_s)
+        value = PuppetX::Cisco::BgpUtils.process_asnum(value.to_s)
         value.to_s
       rescue
         raise("BGP asn #{value} must be specified in ASPLAIN or ASDOT notation")
@@ -164,7 +177,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
           ipv4/prefix length, ipv6, or ipv6/prefix length'
     munge do |value|
       begin
-        value = Cisco::Utils.process_network_mask(value) unless value.nil?
+        value = PuppetX::Cisco::Utils.process_network_mask(value) unless value.nil?
         value
       rescue
         raise "neighbor must be in valid ipv4/v6 address or address/length
@@ -218,7 +231,8 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
           means not to configure it"
     validate do |value|
       begin
-        Cisco::RouterBgp.process_asnum(value.to_s) unless value.to_s.to_sym == :default
+        PuppetX::Cisco::BgpUtils.process_asnum(value.to_s) unless
+          value.to_s.to_sym == :default
       rescue
         raise("BGP asn #{value} must be specified in ASPLAIN or ASDOT notation")
       end
@@ -296,7 +310,8 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
           means not to configure it"
     validate do |value|
       begin
-        Cisco::RouterBgp.process_asnum(value.to_s) unless value.to_s.to_sym == :default
+        PuppetX::Cisco::BgpUtils.process_asnum(value.to_s) unless
+          value.to_s.to_sym == :default
       rescue
         raise("BGP asn #{value} must be specified in ASPLAIN or ASDOT notation")
       end

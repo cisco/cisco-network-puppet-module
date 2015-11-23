@@ -140,7 +140,9 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 }
 ~~~
 
-## Resource Reference
+## <a name ="resource-reference">Resource Reference<a>
+
+The following resources include cisco types and providers along with cisco provider support for netdev stdlib types.  Installing the `ciscopuppet` module will install both the `ciscopuppet` and `netdev_stdlib` modules. 
 
 ### <a name="resource-by-tech">Resource Type Catalog (by Technology)<a>
 
@@ -154,10 +156,20 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
   * [`cisco_bgp_neighbor`](#type-cisco_bgp_neighbor)
   * [`cisco_bgp_neighbor_af`](#type-cisco_bgp_neighbor_af)
 
+* Domain Types
+  * [`domain_name (netdev_stdlib)`](#type-domain_name)
+  * [`name_server (netdev_stdlib)`](#type-name_server)
+  * [`network_dns (netdev_stdlib)`](#type-network_dns)
+  * [`search_domain (netdev_stdlib)`](#type-search_domain)
+
 * Interface Types
   * [`cisco_interface`](#type-cisco_interface)
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
   * [`network_interface (netdev_stdlib)`](#type-network_interface)
+
+* NTP Types
+  * [`ntp_config (netdev_stdlib)`](#type-ntp_config)
+  * [`ntp_server (netdev_stdlib)`](#type-ntp_server)
 
 * OSPF Types
   * [`cisco_vrf`](#type-cisco_vrf)
@@ -165,15 +177,31 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
   * [`cisco_ospf_vrf`](#type-cisco_ospf_vrf)
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 
+* RADIUS Types
+  * [`radius (netdev_stdlib)`](#type-radius)
+  * [`radius_global (netdev_stdlib)`](#type-radius_global)
+  * [`radius_server (netdev_stdlib)`](#type-radius_server)
+
 * SNMP Types
   * [`cisco_snmp_community`](#type-cisco_snmp_community)
   * [`cisco_snmp_group`](#type-cisco_snmp_group)
   * [`cisco_snmp_server`](#type-cisco_snmp_server)
   * [`cisco_snmp_user`](#type-cisco_snmp_user)
+  * [`network_snmp (netdev_stdlib)`](#type-network_snmp)
+  * [`snmp_community (netdev_stdlib)`](#type-snmp_community)
+
+* SYSLOG Types
+  * [`syslog_server (netdev_stdlib)`](#type-syslog_server)
+  * [`syslog_setting (netdev_stdlib)`](#type-syslog_setting)
 
 * TACACS Types
   * [`cisco_tacacs_server`](#type-cisco_tacacs_server)
+  * [`tacacs_server_group (netdev_stdlib)`](#type-cisco_tacacs_server_group)
   * [`cisco_tacacs_server_host`](#type-cisco_tacacs_server_host)
+  * [`tacacs (netdev_stdlib)`](#type-tacacs)
+  * [`tacacs_global (netdev_stdlib)`](#type-tacacs_global)
+  * [`tacacs_server (netdev_stdlib)`](#type-tacacs_server)
+  * [`tacacs_server_group (netdev_stdlib)`](#type-tacacs_server_group)
 
 * VLAN Types
   * [`cisco_vlan`](#type-cisco_vlan)
@@ -183,7 +211,7 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
   * [`cisco_vrf`](#type-cisco_vrf)
 
 --
-### <a name="resource-by-name">Resource Type Catalog (by Name)<a>
+### <a name="resource-by-name">Cisco Resource Type Catalog (by Name)<a>
 
 * [`cisco_command_config`](#type-cisco_command_config)
 * [`cisco_bgp`](#type-cisco_bgp)
@@ -205,8 +233,28 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 * [`cisco_vtp`](#type-cisco_vtp)
 * [`network_interface (netdev_stdlib)`](#type-network_interface)
 
+### <a name="resource-by-name-netdev">NetDev StdLib Resource Type Catalog (by Name)<a>
+
+* [`domain_name`](#type-domain_name)
+* [`name_server`](#type-name_server)
+* [`network_dns`](#type-network_dns)
+* [`network_snmp`](#type-network_snmp)
+* [`ntp_config`](#type-ntp_config)
+* [`ntp_server`](#type-ntp_server)
+* [`radius`](#type-radius)
+* [`radius_global`](#type-radius_global)
+* [`radius_server`](#type-radius_server)
+* [`search_domain`](#type-search_domain)
+* [`snmp_community`](#type-snmp_community)
+* [`syslog_server`](#type-syslog_server)
+* [`syslog_setting`](#type-syslog_setting)
+* [`tacacs`](#type-tacacs)
+* [`tacacs_global`](#type-tacacs_global)
+* [`tacacs_server_group`](#type-cisco_tacacs_server_group)
+* [`tacacs_server`](#type-tacacs_server)
+
 --
-### Resource Type Details
+### Cisco Resource Type Details
 
 The following resources are listed alphabetically.
 
@@ -248,6 +296,9 @@ BGP autonomous system number.  Valid values are String, Integer in ASPLAIN or AS
 
 ##### `vrf`
 Name of the resource instance. Valid values are string. The name 'default' is a valid VRF representing the global bgp.
+
+##### `route_distinguisher`
+VPN Route Distinguisher (RD). The RD is combined with the IPv4 or IPv6 prefix learned by the PE router to create a globally unique address. Valid values are a String in one of the route-distinguisher formats (ASN2:NN, ASN4:NN, or IPV4:NN); the keyword 'auto', or the keyword 'default'.
 
 ##### `router_id`
 Router Identifier (ID) of the BGP router VRF instance. Valid values are string, and keyword 'default'.
@@ -447,6 +498,33 @@ redistribute => [['direct'],
                  ['ospf 3',  'rm_ospf'],
                  ['rip 4']]
 ```
+
+##### `route target both auto`
+(iBGP only) Enable/Disable the route-target 'auto' setting for both import and export target communities. Valid values are true, false, or 'default'.
+
+##### `route target both auto evpn`
+(iBGP only, EVPN only) Enable/Disable the EVPN route-target 'auto' setting for both import and export target communities. Valid values are true, false, or 'default'.
+
+##### `route_target_import`
+Sets the route-target import extended communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
+Examples:
+
+~~puppet
+route_target_import => ['1.2.3.4:5', '33:55']
+route_target_export => '4:4 66:66'
+route_target_export_evpn => '5:5'
+\~~~
+
+##### `route_target_import_evpn`
+(EVPN only) Sets the route-target import extended communities for EVPN. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
+##### `route_target_export`
+Sets the route-target export extended communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
+##### `route_target_export_evpn`
+(EVPN only) Sets the route-target export extended communities for EVPN. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
 --
 ### Type: cisco_bgp_neighbor
 
@@ -1129,6 +1207,264 @@ VTP file name. Valid values are a string or the keyword 'default'.
 
 ##### `password`
 Password for the VTP domain. Valid values are a string or the keyword 'default'.
+
+--
+### NetDev StdLib Resource Type Details
+
+The following resources are listed alphabetically.
+
+--
+
+### Type: domain_name
+
+Configure the domain name of the device
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `name`
+Domain name of the device. Valid value is a string.
+
+### Type: name_server
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `name`
+Hostname or address of the DNS server.  Valid value is a string.
+
+### Type: network_dns
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `name`
+Name, generally "settings", not used to manage the resource.  Valid value is a string.
+
+##### `domain`
+Default domain name to append to the device hostname.  Valid value is a string.
+
+##### `search`
+Array of DNS suffixes to search for FQDN entries.  Valid value is an array of strings.
+
+##### `servers`
+Array of DNS servers to use for name resolution.  Valid value is an array of strings.
+
+### Type: network_snmp
+
+#### Parameters
+
+##### `name`
+Name of the Puppet resource, not used to manage the device.  Valid value is a string.
+
+##### `enable`
+Enable or disable SNMP functionality.  Valid values are 'true' or 'false'.
+
+##### `contact`
+Contact name for this device.  Valid value is a string.
+
+##### `location`
+Location of this device.  Valid value is a string.
+
+### Type: ntp_config
+
+#### Parameters
+
+##### `name`
+Resource name, not used to configure the device.  Valid value is a string.
+
+##### `source_interface`
+Source interface for the NTP server.  Valid value is a string.
+
+### Type: ntp_server
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `name`
+Hostname or address of the NTP server.  Valid value is a string.
+
+### Type: radius
+
+#### Parameters
+
+##### `name`
+Resource name, not used to manage the device.  Valid value is a string.
+
+##### `enable`
+Enable or disable radius functionality.  Valid values are 'true' or 'false'.
+
+### Type: radius_global
+
+#### Parameters
+
+##### `name`
+Resource identifier, not used to manage the device.  Valid value is a string.
+
+##### `timeout`
+Number of seconds before the timeout period ends.  Valid value is an integer.
+
+##### `retransmit_count`
+Number of times to retransmit.  Valid value is an integer.
+
+##### `key`
+Encryption key (plaintext or in hash form depending on key_format).  Valid value is a string.
+
+##### `key_format`
+Encryption key format [0-7].  Valid value is an integer.
+
+### Type: radius_server
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `name`
+Name of the radius server.  Valid value is a string.
+
+##### `auth_port`
+Port number to use for authentication.  Valid value is an integer.
+
+##### `acct_port`
+Port number to use for accounting.  Valid value is an integer.
+
+##### `timeout`
+Number of seconds before the timeout period ends.  Valid value is an integer.
+
+##### `retransmit_count`
+Number of times to retransmit.  Valid value is an integer.
+
+##### `accouting_only`
+Enable this server for accounting only.  Valid values are 'true' or 'false'.
+
+##### `authentication_only`
+Enable this server for authentication only.  Valid values are 'true' or 'false'.
+
+##### `key`
+Encryption key (plaintext or in hash form depending on key_format).  Valid value is a string.
+
+##### `key_format`
+Encryption key format [0-7].  Valid value is an integer.
+
+### Type: search_domain
+
+Configure the search domain of the device. Note that this type is functionally equivalent to 
+the netdev_stdlib domain_name type.
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `name`
+Search domain of the device. Valid value is a string.
+
+### Type: snmp_community
+Manages an SNMP community on a Cisco SNMP server.
+
+#### Parameters
+
+##### `ensure`
+Determine whether the config should be present or not on the device. Valid
+values are 'present' and 'absent'.
+
+##### `group`
+Group that the SNMP community belongs to. Valid values are a string or the
+keyword 'default'.
+
+##### `acl`
+Assigns an Access Control List (ACL) to an SNMP community to filter SNMP
+requests. Valid values are a string or the keyword 'default'.
+
+### Type: syslog_server
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `name`
+Hostname or address of the Syslog server.  Valid value is a string.
+
+##### `serverity_level`
+Syslog severity level to log.  Valid value is an integer.
+
+##### `vrf`
+Interface to send syslog data from, e.g. "management".  Valid value is a string.
+
+### Type: syslog_setting
+
+#### Parameters
+
+##### `name`
+Hostname or address of the Syslog server.  Valid value is a string.
+
+##### `time_stamp_units`
+The unit of measurement for log time values.  Valid values are 'seconds' and 'milliseconds'.
+
+### Type: tacacs
+
+#### Parameters
+
+##### `enable`
+Enable or disable radius functionality [true|false]
+
+### Type: tacacs_global
+
+#### Parameters
+
+##### `enable`
+Enable or disable radius functionality [true|false]
+
+##### `key`
+Encryption key (plaintext or in hash form depending on key_format)
+
+##### `key_format`
+Encryption key format [0-7]
+
+##### `timeout`
+Number of seconds before the timeout period ends
+
+### Type: tacacs_server
+
+##### `enable`
+Enable or disable tacacs functionality [true|false]
+
+### Type: tacacs_server
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `key`
+Encryption key (plaintext or in hash form depending on key_format)
+
+##### `key_format`
+Encryption key format [0-7]
+
+##### `name`
+Hostname or IP address of the Syslog server.  Valid value is a string.
+
+##### `port`
+The port of the tacacs server.
+
+##### `timeout`
+Number of seconds before the timeout period ends
+
+### Type: tacacs_server_group
+
+#### Parameters
+
+##### `servers`
+Array of servers associated with this group.
 
 ## Limitations
 
