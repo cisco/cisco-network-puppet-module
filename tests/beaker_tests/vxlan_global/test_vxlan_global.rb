@@ -154,6 +154,9 @@ end
 def build_manifest_vxlan_global(tests, id)
   if tests[id][:ensure] == :absent
     state = 'ensure => absent,'
+    # No need to check for 'ensure' => 'absent' here as vxlan_global doesn't
+    # have instances and puppet resource command is issued with no specific
+    # resource name.
     tests[id][:resource] = {}
   else
     state = 'ensure => present,'
@@ -199,6 +202,7 @@ test_name "TestCase :: #{testheader}" do
   # -------------
   id = 'preclean'
   tests[id][:desc] = 'Preclean'
+  tests[id][:ensure] = :absent
   test_harness_vxlan_global(tests, id)
 
   # -------------------------------------------------------------------
