@@ -120,7 +120,8 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     on(agent, show_vrf_cmd) do
       UtilityLib.search_pattern_in_output(stdout, [/vrf context #{vrf_name}/,
-                                                   /description #{description}/, /shutdown/, /vni #{vni}/],
+                                                   /description #{description}/, /shutdown/,
+                                                   /vni #{vni}/],
                                           test[:present], self, logger)
     end
 
@@ -155,7 +156,8 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     on(agent, show_vrf_cmd) do
       UtilityLib.search_pattern_in_output(stdout, [/vrf context #{vrf_name}/,
-                                                   /description #{description}/, /shutdown/, /vni #{vni}/],
+                                                   /description #{description}/, /shutdown/,
+                                                   /vni #{vni}/],
                                           test[:present], self, logger)
     end
 
@@ -284,7 +286,8 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     on(agent, show_vrf_cmd) do
       UtilityLib.search_pattern_in_output(stdout, [/vrf context #{vrf_name}/,
-                                                   /#{description}/, /shutdown/, /vni #{vni}/],
+                                                   /#{description}/, /shutdown/,
+                                                   /vni #{vni}/],
                                           test[:present], self, logger)
     end
 
@@ -326,7 +329,8 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     on(agent, show_vrf_cmd) do
       UtilityLib.search_pattern_in_output(stdout, [/vrf context #{vrf_name}/,
-                                                   /#{description}/, /shutdown/, /vni #{vni}/],
+                                                   /#{description}/, /shutdown/,
+                                                   /vni #{vni}/],
                                           test[:present], self, logger)
     end
 
