@@ -210,7 +210,7 @@ The following resources include cisco types and providers along with cisco provi
 * VRF Type
   * [`cisco_vrf`](#type-cisco_vrf)
   
-* VXLAN Type
+* VXLAN Types
   * [`cisco_vxlan_global`](#type-cisco_vxlan_global)
 
 --
@@ -1469,6 +1469,35 @@ Number of seconds before the timeout period ends
 
 ##### `servers`
 Array of servers associated with this group.
+
+--
+### Type: cisco_vxlan_global
+Handles the detection of duplicate IP or MAC addresses based on the number of moves in a given time-interval (seconds).
+Also configures anycast gateway MAC of the switch.
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid
+values are 'present' and 'absent'.
+
+##### `name`
+Instance of vxlan_global, only allow the value 'default'
+
+##### `anycast_gateway_mac`
+Anycast gateway mac of the switch
+
+##### `dup_host_ip_addr_detection_host_moves`
+The number of host moves allowed in n seconds. The range is 1 to 1000 moves; default is 5 moves.
+
+##### `dup_host_ip_addr_detection_timeout`
+The duplicate detection timeout in seconds for the number of host moves. The range is 2 to 36000 seconds; default is 180 seconds.
+
+##### `dup_host_mac_detection_host_moves`
+The number of host moves allowed in n seconds. The range is 1 to 1000 moves; default is 5 moves.
+
+##### `dup_host_mac_detection_timeout`
+The duplicate detection timeout in seconds for the number of host moves. The range is 2 to 36000 seconds; default is 180 seconds.
 
 ## Limitations
 
