@@ -82,7 +82,7 @@ Puppet::Type.newtype(:cisco_vrf) do
 
   newproperty(:vni) do
     desc "Specify virtual network identifier. Valid values are
-          integers or keyword 'default' to disable this property"
+          Integer or keyword 'default'"
     munge do |value|
       value == 'default' ? :default : value.to_i
     end
