@@ -38,6 +38,7 @@ Puppet::Type.type(:cisco_vrf).provide(:nxapi) do
   # because the boolean-based methods are processed slightly different.
   VRF_NON_BOOL_PROPS = [
     :description,
+    :vni,
   ]
   VRF_BOOL_PROPS = [
     :shutdown,
