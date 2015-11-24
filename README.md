@@ -196,7 +196,6 @@ The following resources include cisco types and providers along with cisco provi
 
 * TACACS Types
   * [`cisco_tacacs_server`](#type-cisco_tacacs_server)
-  * [`tacacs_server_group (netdev_stdlib)`](#type-cisco_tacacs_server_group)
   * [`cisco_tacacs_server_host`](#type-cisco_tacacs_server_host)
   * [`tacacs (netdev_stdlib)`](#type-tacacs)
   * [`tacacs_global (netdev_stdlib)`](#type-tacacs_global)
@@ -231,13 +230,13 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_vlan`](#type-cisco_vlan)
 * [`cisco_vrf`](#type-cisco_vrf)
 * [`cisco_vtp`](#type-cisco_vtp)
-* [`network_interface (netdev_stdlib)`](#type-network_interface)
 
 ### <a name="resource-by-name-netdev">NetDev StdLib Resource Type Catalog (by Name)<a>
 
 * [`domain_name`](#type-domain_name)
 * [`name_server`](#type-name_server)
 * [`network_dns`](#type-network_dns)
+* [`network_interface`](#type-network_interface)
 * [`network_snmp`](#type-network_snmp)
 * [`ntp_config`](#type-ntp_config)
 * [`ntp_server`](#type-ntp_server)
@@ -250,7 +249,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`syslog_setting`](#type-syslog_setting)
 * [`tacacs`](#type-tacacs)
 * [`tacacs_global`](#type-tacacs_global)
-* [`tacacs_server_group`](#type-cisco_tacacs_server_group)
+* [`tacacs_server_group`](#type-tacacs_server_group)
 * [`tacacs_server`](#type-tacacs_server)
 
 --
