@@ -209,6 +209,9 @@ The following resources include cisco types and providers along with cisco provi
 
 * VRF Type
   * [`cisco_vrf`](#type-cisco_vrf)
+  
+* VXLAN Type
+  * [`cisco_vxlan_global`](#type-cisco_vxlan_global)
 
 --
 ### <a name="resource-by-name">Cisco Resource Type Catalog (by Name)<a>
@@ -232,6 +235,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_vrf`](#type-cisco_vrf)
 * [`cisco_vtp`](#type-cisco_vtp)
 * [`network_interface (netdev_stdlib)`](#type-network_interface)
+* [`cisco_vxlan_global`](#type-cisco_vxlan_global)
 
 ### <a name="resource-by-name-netdev">NetDev StdLib Resource Type Catalog (by Name)<a>
 
