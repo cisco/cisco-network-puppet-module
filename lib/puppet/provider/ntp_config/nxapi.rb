@@ -34,7 +34,7 @@ Puppet::Type.type(:ntp_config).provide(:nxapi) do
   mk_resource_methods
 
   NTP_CONFIG_PROPS = {
-    source_interface: :source_interface,
+    source_interface: :source_interface
   }
 
   def initialize(value={})

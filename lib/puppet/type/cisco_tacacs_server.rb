@@ -53,7 +53,7 @@ Puppet::Type.newtype(:cisco_tacacs_server) do
     patterns << [
       /^(\S+)$/,
       [
-        [:name, identity],
+        [:name, identity]
       ],
     ]
     patterns

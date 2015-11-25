@@ -82,7 +82,7 @@ Puppet::Type.type(:cisco_snmp_community).provide(:nxapi) do
 
   def group=(set_value)
     return if set_value.nil?
-    set_value = Cisco::SnmpCommunity.default_group if (set_value == :default)
+    set_value = Cisco::SnmpCommunity.default_group if set_value == :default
     @snmp_community.group = set_value
     @property_hash[:group] = set_value
   end
@@ -96,7 +96,7 @@ Puppet::Type.type(:cisco_snmp_community).provide(:nxapi) do
 
   def acl=(set_value)
     return if set_value.nil?
-    set_value = Cisco::SnmpCommunity.default_acl if (set_value == :default)
+    set_value = Cisco::SnmpCommunity.default_acl if set_value == :default
     @snmp_community.acl = set_value
     @property_hash[:acl] = set_value
   end
