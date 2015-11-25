@@ -319,6 +319,12 @@ Puppet::Type.newtype(:cisco_bgp) do
     end
   end
 
+  newproperty(:neighbor_fib_down_accelerate) do
+    desc 'Enable/Disable handle BGP neighbor down event, due to various reasons'
+
+    newvalues(:true, :false, :default)
+  end # property neighbor_fib_down_accelerate
+
   newproperty(:suppress_fib_pending) do
     desc "Enable/Disable advertise only routes that are programmed
           in hardware to peers"

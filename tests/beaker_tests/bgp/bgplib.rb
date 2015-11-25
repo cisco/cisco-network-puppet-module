@@ -50,6 +50,7 @@ module BgpLib
         flush_routes                           => 'default',
         isolate                                => 'default',
         maxas_limit                            => 'default',
+        neighbor_fib_down_accelerate           => 'default',
         shutdown                               => 'default',
 
         suppress_fib_pending                   => 'default',
@@ -96,6 +97,7 @@ module BgpLib
         confederation_id                       => 'default',
         confederation_peers                    => 'default',
         maxas_limit                            => 'default',
+        neighbor_fib_down_accelerate           => 'default',
         shutdown                               => 'default',
 
         suppress_fib_pending                   => 'default',
@@ -142,6 +144,7 @@ module BgpLib
         confederation_id                       => 'default',
         confederation_peers                    => 'default',
         maxas_limit                            => 'default',
+        neighbor_fib_down_accelerate           => 'default',
         shutdown                               => 'default',
 
         suppress_fib_pending                   => 'default',
@@ -190,6 +193,7 @@ module BgpLib
         flush_routes                           => 'true',
         isolate                                => 'true',
         maxas_limit                            => '50',
+        neighbor_fib_down_accelerate           => 'true',
         shutdown                               => 'true',
 
         suppress_fib_pending                   => 'true',
@@ -236,6 +240,7 @@ module BgpLib
         confederation_id                       => '33',
         confederation_peers                    => '99 88 200.1',
         maxas_limit                            => '55',
+        neighbor_fib_down_accelerate           => 'true',
 
         suppress_fib_pending                   => 'false',
         log_neighbor_changes                   => 'false',
@@ -281,6 +286,7 @@ module BgpLib
         confederation_id                       => '32.88',
         confederation_peers                    => '55 23.4 88 200.1',
         maxas_limit                            => '60',
+        neighbor_fib_down_accelerate           => 'true',
 
         suppress_fib_pending                   => 'false',
         log_neighbor_changes                   => 'false',

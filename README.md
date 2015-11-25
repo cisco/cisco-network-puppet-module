@@ -326,6 +326,9 @@ Enable/Disable isolate this router from BGP perspective. Valid values are 'true'
 ##### `maxas_limit`
 Specify Maximum number of AS numbers allowed in the AS-path attribute. Valid values are integers between 1 and 512, or keyword 'default' to disable this property.
 
+##### `neighbor_fib_down_accelerate`
+Enable/Disable handle BGP neighbor down event, due to various reasons. Valid values are 'true', 'false', and 'default'.
+ 
 ##### `shutdown`
 Administratively shutdown the BGP protocol. Valid values are 'true', 'false', and 'default'.
 

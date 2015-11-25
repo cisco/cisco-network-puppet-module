@@ -16,8 +16,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - route_target_import, route_target_import_evpn
   - route_target_export, route_target_export_evpn
 - Extended cisco_vrf with `vni`
-- Extended cisco_bgp with `fast_external_fallover`, `flush_routes`, `isolate`
-
+- Extended cisco_bgp with `fast_external_fallover`, `flush_routes`, `isolate`, `neighbor_fib_down_accelerate`
+  
 ### Removed
 
 ## [1.1.0] - 2015-11-02
