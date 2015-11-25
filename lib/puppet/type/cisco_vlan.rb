@@ -47,7 +47,7 @@ Puppet::Type.newtype(:cisco_vlan) do
     patterns << [
       /^(\d+)$/,
       [
-        [:vlan, identity],
+        [:vlan, identity]
       ],
     ]
     patterns

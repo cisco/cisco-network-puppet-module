@@ -48,7 +48,7 @@
 # instance attributes to verify resource properties.
 #
 ###############################################################################
-# rubocop:disable Style/HashSyntax,Style/ExtraSpacing
+# rubocop:disable Style/HashSyntax
 
 # Require UtilityLib.rb and BgpNeighborLib.rb paths.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
@@ -81,7 +81,7 @@ test_name "TestCase :: #{testheader}" do
         :neighbor => neighbor,
       },
       :resource       => {
-        'ensure' => 'present',
+        'ensure' => 'present'
       },
     }
     resource_cmd_str =
@@ -143,7 +143,7 @@ test_name "TestCase :: #{testheader}" do
       :desc           => "1.5 Apply title pattern of 'asn vrf neighbor'",
       :code           => [0],
       :manifest_props => {
-        :ensure => :present,
+        :ensure => :present
       },
     }
     create_bgpneighbor_manifest(tests, id)
@@ -154,7 +154,7 @@ test_name "TestCase :: #{testheader}" do
       :desc           => '1.6 Test neighbor munge function',
       :code           => [0],
       :manifest_props => {
-        :ensure => :present,
+        :ensure => :present
       },
     }
     create_bgpneighbor_manifest(tests, id)

@@ -124,7 +124,7 @@ tests['non_default_properties_M'] = {
     maximum_paths => '5',
   ",
   resource_props: {
-    'maximum_paths' => '5',
+    'maximum_paths' => '5'
   },
 }
 
@@ -135,7 +135,7 @@ tests['non_default_properties_S'] = {
     shutdown => 'true',
   ",
   resource_props: {
-    'shutdown' => 'true',
+    'shutdown' => 'true'
   },
 }
 

@@ -75,7 +75,7 @@ Puppet::Type.newtype(:cisco_interface) do
     patterns << [
       /^(\S+)/,
       [
-        [:interface, identity],
+        [:interface, identity]
       ],
     ]
     patterns
