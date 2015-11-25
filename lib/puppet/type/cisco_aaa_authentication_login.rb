@@ -52,7 +52,7 @@ Puppet::Type.newtype(:cisco_aaa_authentication_login) do
     patterns << [
       /^(\S+)$/,
       [
-        [:name, identity],
+        [:name, identity]
       ],
     ]
     patterns

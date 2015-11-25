@@ -205,11 +205,11 @@ tests['non_default_properties_C'] = {
   :desc           => "2.2 Non Default Properties: 'C' commands",
   :title_pattern  => '2 blue ipv4 unicast',
   :manifest_props => "
-    client_to_client                => false,
+    client_to_client => false,
   ",
 
   :resource_props => {
-    'client_to_client'              => 'false',
+    'client_to_client' => 'false'
   },
 }
 
@@ -260,7 +260,7 @@ tests['non_default_properties_Dampening_false'] = {
     ",
 
   :resource_props => {
-    'dampening_state' => 'false',
+    'dampening_state' => 'false'
   },
 }
 
@@ -270,11 +270,11 @@ tests['non_default_properties_Dampening_routemap'] = {
   :desc           => '2.3.3 Non-Default dampening_routemap',
   :title_pattern  => '2 blue ipv4 unicast',
   :manifest_props => "
-    dampening_routemap              => 'RouteMap',
+    dampening_routemap => 'RouteMap',
     ",
 
   :resource_props => {
-    'dampening_routemap'            => 'RouteMap',
+    'dampening_routemap' => 'RouteMap'
   },
 }
 

@@ -385,7 +385,7 @@ tests['non_default_properties_ebgp_only'] = {
     as_override => true,
   ",
   :resource_props => {
-    'as_override' => 'true',
+    'as_override' => 'true'
   },
 }
 
@@ -397,7 +397,7 @@ tests['non_default_properties_ibgp_only'] = {
     route_reflector_client => true,
   ",
   :resource_props => {
-    'route_reflector_client' => 'true',
+    'route_reflector_client' => 'true'
   },
 }
 
@@ -409,7 +409,7 @@ tests['non_default_properties_ibgp_only_l2vpn'] = {
     route_reflector_client => true,
   ",
   :resource_props => {
-    'route_reflector_client' => 'true',
+    'route_reflector_client' => 'true'
   },
 }
 
@@ -420,7 +420,7 @@ tests['non_default_properties_vrf_only'] = {
     soo => '3:3',
   ",
   :resource_props => {
-    'soo' => '3:3',
+    'soo' => '3:3'
   },
 }
 
@@ -475,7 +475,7 @@ tests['non_default_misc_maps_part_2'] = {
     advertise_map_non_exist => ['admap', 'non_exist_map'],
   ",
   :resource_props => {
-    'advertise_map_non_exist' => '..admap., .non_exist_map..',
+    'advertise_map_non_exist' => '..admap., .non_exist_map..'
   },
 }
 
