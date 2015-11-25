@@ -314,6 +314,15 @@ AS confederation parameters. Valid values are String, keyword 'default'.
 ##### `enforce_first_as`
 Enable/Disable enforces the neighbor autonomous system to be the first AS number listed in the AS path attribute for eBGP. Valid values are 'true', 'false', and 'default'.
 
+##### `fast_external_fallover`
+Enable/Disable immediately reset the session if the link to a directly connected BGP peer goes down. Valid values are 'true', 'false', and 'default'.
+
+##### `flush_routes`
+Enable/Disable flush routes in RIB upon controlled restart. Valid values are 'true', 'false', and 'default'.
+
+##### `isolate`
+Enable/Disable isolate this router from BGP perspective. Valid values are 'true', 'false', and 'default'.
+
 ##### `maxas_limit`
 Specify Maximum number of AS numbers allowed in the AS-path attribute. Valid values are integers between 1 and 512, or keyword 'default' to disable this property.
 

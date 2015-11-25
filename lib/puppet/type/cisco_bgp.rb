@@ -49,6 +49,9 @@ Puppet::Type.newtype(:cisco_bgp) do
       confederation_id                       => '77.6',
       confederation_peers                    => '77.6 88 99.4 200'
       enforce_first_as                       => true,
+      fast_external_fallover                 => true,
+      flush_routes                           => false,
+      isolate                                => false,
       maxas_limit                            => '50',
       shutdown                               => false,
 
@@ -281,6 +284,25 @@ Puppet::Type.newtype(:cisco_bgp) do
 
     newvalues(:true, :false, :default)
   end # property enforce_first_as
+
+  newproperty(:fast_external_fallover) do
+    desc 'Enable/Disable immediately reset the session if the link ' \
+         'to a directly connected BGP peer goes down'
+
+    newvalues(:true, :false, :default)
+  end # property fast_external_fallover
+
+  newproperty(:flush_routes) do
+    desc 'Enable/Disable flush routes in RIB upon controlled restart'
+
+    newvalues(:true, :false, :default)
+  end # property flush_routes
+
+  newproperty(:isolate) do
+    desc 'Enable/Disable isolate this router from BGP perspective'
+
+    newvalues(:true, :false, :default)
+  end # property isolate
 
   newproperty(:maxas_limit) do
     desc "Specify Maximum number of AS numbers allowed in the AS-path attribute.

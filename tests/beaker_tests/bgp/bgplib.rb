@@ -46,6 +46,9 @@ module BgpLib
         confederation_id                       => 'default',
         confederation_peers                    => 'default',
         enforce_first_as                       => 'default',
+        fast_external_fallover                 => 'default',
+        flush_routes                           => 'default',
+        isolate                                => 'default',
         maxas_limit                            => 'default',
         shutdown                               => 'default',
 
@@ -183,6 +186,9 @@ module BgpLib
         confederation_id                       => '99',
         confederation_peers                    => '55 23.4 88 200.1',
         enforce_first_as                       => 'true',
+        fast_external_fallover                 => 'false',
+        flush_routes                           => 'true',
+        isolate                                => 'true',
         maxas_limit                            => '50',
         shutdown                               => 'true',
 
