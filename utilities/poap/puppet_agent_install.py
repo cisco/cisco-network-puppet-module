@@ -10,7 +10,7 @@
 #
 
 import os
-import time
+from datetime import datetime
 import subprocess
 import shlex
 import sys
@@ -67,7 +67,7 @@ domain cisco.com
 
 # Script initializations. Note: os.environ vars always win over script vars
 PUPPET_BINARY = '/opt/puppetlabs/puppet/bin/puppet'
-PUPPET_CONFIGPRINT = 'sudo ' + PUPPET_BINARY + 'agent --configprint config'
+PUPPET_CONFIGPRINT = 'sudo ' + PUPPET_BINARY + ' agent --configprint config'
 
 # Check for required vars
 reqd_vars = ['RPM_NAME', 'RPM_URI', 'PUPPET_SERVER']
@@ -76,11 +76,26 @@ for v in reqd_vars:
         raise ValueError("Required parameter '%s' is not set" % v)
 
 # Build PREPEND_CMD to specify both sudo and optional vrf (namespace)
-PREPEND_CMD = ' sudo'
+PREPEND_CMD = 'sudo'
 if os.environ.get('VRF'):
     PREPEND_CMD += ' ip netns exec ' + os.environ['VRF']
 elif 'VRF' in globals() and len(VRF):
     PREPEND_CMD += ' ip netns exec ' + VRF
+
+# Optional DNS
+if os.environ.get('DNS'):
+    DNS = os.environ['DNS']
+elif 'DNS' not in globals():
+    DNS = ''
+
+DNS = DNS.strip()
+# Optional DOMAIN
+if os.environ.get('DOMAIN'):
+    DOMAIN = os.environ['DOMAIN']
+elif 'DOMAIN' not in globals():
+    DOMAIN = ''
+
+DOMAIN = DOMAIN.strip()
 
 # Optionally set os.environ proxies
 proxies = ['HTTP_PROXY', 'HTTPS_PROXY', 'NO_PROXY']
@@ -90,62 +105,64 @@ for p in proxies:
             os.environ[p] = globals()[p]
 
 # Create a logfile
-logfile = "/bootflash/puppet_agent_install.log"
-t = time.localtime()
-now = "%d.%d.%d" % (t.tm_hour, t.tm_min, t.tm_sec)
-try:
-    logfile = "%s.%s" % (logfile, now)
-except Exception as e:
-    print e
-puppet_install_log = open(logfile, "w+")
+log_prefix = datetime.now().strftime('/bootflash/puppet_agent_install.%Y%H%M%S')
+log_handle = open('%s.log' % log_prefix, "w+")
 
-# Do it!
-configure_nameserver()
-verify_reachability()
-install_puppet()
-configure_puppet()
-run_puppet_agent()
-
-puppet_install_log.close()
-exit(0)
-
+# Temporary wget html (deleted by script)
+wget_html = '%s.wget' % log_prefix
 
 ###############################################################################
 # METHODS
 ###############################################################################
 
 def log_it(text):
-    puppet_install_log.write(text + "\n")
-    puppet_install_log.flush()
-    print "puppet_install_log:\n" + text
+    print text
+    log_handle.write('\n' + text)
+    log_handle.flush()
     sys.stdout.flush()
+
+def log_it_step(text):
+    text = '\n--------\n [STEP]: %s' % text
+    print text
+    log_handle.write('\n' + text)
+    log_handle.flush()
+    sys.stdout.flush()
+
+def log_globals():
+    """Log all global variables"""
+
+    all_vars = 'PUPPET_BINARY PUPPET_CONFIGPRINT RPM_NAME RPM_URI \
+                PUPPET_SERVER PREPEND_CMD DNS VRF DOMAIN \
+                HTTP_PROXY HTTPS_PROXY NO_PROXY'
+    buf = ''
+    for v in all_vars.split():
+        buf += '\n%20s = %s' % (v, globals().get(v))
+    log_it('--------\nGlobal Variables:\n' + buf)
 
 def process_cmd(cmd):
     """Process native bash or guestshell command"""
 
-    log_it('\n@@Processing CMD: ' + cmd + '\n')
+    log_it('\ncommand: ' + cmd)
     args = shlex.split(cmd)
     p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output,error = p.communicate()
+    log_it('\n stdout: ' + output)
+    if error:
+        log_it('\n stderr: ' + error)
     if p.returncode == 0:
-        if output:
-            log_it(output)
         return output.rstrip()
     else:
-        msg="FAIL: {0}{1}".format(output, error)
-        log_it(msg)
-        return msg
+        return "FAIL: {0}{1}".format(output, error)
 
 def configure_nameserver():
     """Create /etc/resolv.conf in the agent environment"""
 
-    if os.environ['DNS']:
-        DNS = os.environ['DNS']
-    elif 'DNS' not in globals():
-	return
-
+    if not DNS:
+        return
     resolv = '/etc/resolv.conf'
-    process_cmd('sudo rm ' + resolv)
+    log_it_step('Create config for %s' % resolv)
+    process_cmd('sudo rm -f ' + resolv)
+    log_it('\ncommand: (Write config to %s)' % resolv)
     with open(resolv, 'w') as f:
         f.write(DNS)
     process_cmd('sudo chmod 666 ' + resolv)
@@ -153,50 +170,45 @@ def configure_nameserver():
 def verify_reachability():
     """Verify network reachability to puppet master and rpm repo """
 
-    # Verify reachability to puppet master
+    log_it_step('Verify reachability to puppet master')
     cmd = PREPEND_CMD + ' ping -c 5 ' + PUPPET_SERVER
     result = process_cmd(cmd)
     if result.find('FAIL') == 0:
-        msg = "Failed to ping puppet master"
-        log_it(msg)
+        log_it('Failed to ping puppet master')
         exit(0)
 
-    # Verify reachability to RPM repo
-    cmd = PREPEND_CMD + ' wget ' + RPM_URI
+    log_it_step('Verify reachability to RPM repo (wget writes to stderr)')
+    cmd = '%s wget %s -O %s' % (PREPEND_CMD, RPM_URI, wget_html)
     result = process_cmd(cmd)
     if result.find('FAIL') == 0:
-        msg = "Failed to contact RPM repo"
-        log_it(msg)
+        log_it("Failed to reach RPM repo")
         exit(0)
+    cmd = 'sudo rm %s' % wget_html
+    result = process_cmd(cmd)
 
 def install_puppet():
     """Install the puppet release rpm and agent rpm"""
 
-    # First install the release rpm
+    log_it_step('RPM Install Part 1. Install puppet release rpm + gpg keys')
     cmd = PREPEND_CMD + ' yum install -y ' + RPM_URI + RPM_NAME
     process_cmd(cmd)
-    # CVH: Add check for return code?
-    
-    # now install agent rpm
-    cmd = PREPEND_CMD + ' yum install -y '
+
+    log_it_step('RPM Install Part 2. Install puppet agent rpm')
+    cmd = PREPEND_CMD + ' yum install puppet -y '
     process_cmd(cmd)
 
 def configure_puppet():
     """Configure puppet.conf"""
 
-    if os.environ['DOMAIN']:
-        DOMAIN = os.environ['DOMAIN']
-    elif 'DOMAIN' not in globals():
-	DOMAIN = ''
-
+    log_it_step('Create config for puppet.conf')
+    conf_file = process_cmd(PUPPET_CONFIGPRINT)
+    process_cmd('sudo rm -f ' + conf_file)
     conf = '''
     [main]
     certname = %s
     server = %s
     ''' % (process_cmd('hostname') + DOMAIN, PUPPET_SERVER)
-
-    conf_file = process_cmd(PUPPET_CONFIGPRINT)
-    process_cmd('sudo rm ' + conf_file)
+    log_it('\ncommand: (Write config to %s)' % conf_file)
     with open(conf_file, 'w') as f:
         f.write(conf)
     process_cmd('sudo chmod 666 ' + conf_file)
@@ -204,6 +216,18 @@ def configure_puppet():
 def run_puppet_agent():
     """Kickstart the puppet agent"""
 
-    cmd = PREPEND_CMD + ' ' + PUPPET_BINARY + ' agent -t'
-    process_cmd(cmd)
+    log_it_step('Run puppet agent -t to generate ssl certificate')
+    process_cmd('%s %s agent -t' % (PREPEND_CMD, PUPPET_BINARY))
 
+# Main
+log_it_step('Script Start')
+log_globals()
+configure_nameserver()
+verify_reachability()
+install_puppet()
+configure_puppet()
+run_puppet_agent()
+
+log_it_step('Script Complete')
+log_handle.close()
+exit(0)
