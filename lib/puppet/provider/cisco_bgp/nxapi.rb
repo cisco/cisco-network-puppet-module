@@ -66,7 +66,7 @@ Puppet::Type.type(:cisco_bgp).provide(:nxapi) do
     :graceful_restart_helper,
     :isolate,
     :log_neighbor_changes,
-    :neighbor_fib_down_accelerate,
+    :neighbor_down_fib_accelerate,
     :shutdown,
     :suppress_fib_pending,
     :timer_bestpath_limit_always,
