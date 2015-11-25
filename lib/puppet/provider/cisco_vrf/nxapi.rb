@@ -41,7 +41,7 @@ Puppet::Type.type(:cisco_vrf).provide(:nxapi) do
     :vni,
   ]
   VRF_BOOL_PROPS = [
-    :shutdown,
+    :shutdown
   ]
   VRF_ALL_PROPS = VRF_NON_BOOL_PROPS + VRF_BOOL_PROPS
 

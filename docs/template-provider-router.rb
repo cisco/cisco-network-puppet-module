@@ -41,10 +41,10 @@ Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:nxapi) do
   # Property symbol arrays for method auto-generation. There are separate arrays
   # because the boolean-based methods are processed slightly different.
   X__CONSTANT_NAME__X_NON_BOOL_PROPS = [
-    :X__PROPERTY_INT__X,
+    :X__PROPERTY_INT__X
   ]
   X__CONSTANT_NAME__X_BOOL_PROPS = [
-    :X__PROPERTY_BOOL__X,
+    :X__PROPERTY_BOOL__X
   ]
   X__CONSTANT_NAME__X_ALL_PROPS =
     X__CONSTANT_NAME__X_NON_BOOL_PROPS + X__CONSTANT_NAME__X_BOOL_PROPS

@@ -51,7 +51,7 @@ Puppet::Type.newtype(:cisco_vrf) do
     patterns << [
       /^(\S+)$/,
       [
-        [:name, identity],
+        [:name, identity]
       ],
     ]
     patterns
