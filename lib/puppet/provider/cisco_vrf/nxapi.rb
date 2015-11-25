@@ -37,7 +37,7 @@ Puppet::Type.type(:cisco_vrf).provide(:nxapi) do
   # Property symbol arrays for method auto-generation. There are separate arrays
   # because the boolean-based methods are processed slightly different.
   VRF_NON_BOOL_PROPS = [
-    :description,
+    :description
   ]
   VRF_BOOL_PROPS = [
     :shutdown
