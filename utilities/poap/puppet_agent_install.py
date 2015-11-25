@@ -22,9 +22,13 @@ import sys
 ###############################################################################
 
 # (Required) RPM_NAME = The puppet agent release RPM
-#  bash shell: 'puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm'
-#  guestshell: 'puppetlabs-release-pc1-el-7.noarch.rpm'
-RPM_NAME = 'puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm'
+# **************************************************************
+# *** IMPORTANT: CHOOSE THE RIGHT RPM FOR YOUR ENVIRONMENT! ****
+# **************************************************************
+bash_shell_rpm = 'puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm'
+guestshell_rpm = 'puppetlabs-release-pc1-el-7.noarch.rpm'
+RPM_NAME = bash_shell_rpm
+
 
 # (Required) RPM_URI = The download URI for the RPM
 # RPM_URI = 'ftp://1.2.3.4/'
@@ -48,11 +52,11 @@ DOMAIN = 'cisco.com'
 
 # (Optional) DNS = The DNS configuration to use for /etc/resolv.conf
 # Use triple-quote syntax for multiple lines:
-#  DNS = '''\
+#  DNS = '''\n
 #  nameserver 1.2.3.4
 #  domain cisco.com
 #  '''
-DNS = '''\
+DNS = '''\n
 nameserver 64.102.6.247
 nameserver 72.163.131.10
 nameserver 173.36.131.10
@@ -122,7 +126,7 @@ def log_it(text):
     sys.stdout.flush()
 
 def log_it_step(text):
-    text = '\n--------\n [STEP]: %s' % text
+    text = '\n--------\n [STEP] %s' % text
     print text
     log_handle.write('\n' + text)
     log_handle.flush()
@@ -142,13 +146,13 @@ def log_globals():
 def process_cmd(cmd):
     """Process native bash or guestshell command"""
 
-    log_it('\ncommand: ' + cmd)
+    log_it('\ncommand> ' + cmd)
     args = shlex.split(cmd)
     p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     output,error = p.communicate()
-    log_it('\n stdout: ' + output)
+    log_it('\n stdout> ' + output)
     if error:
-        log_it('\n stderr: ' + error)
+        log_it('\n stderr> ' + error)
     if p.returncode == 0:
         return output.rstrip()
     else:
@@ -162,7 +166,7 @@ def configure_nameserver():
     resolv = '/etc/resolv.conf'
     log_it_step('Create config for %s' % resolv)
     process_cmd('sudo rm -f ' + resolv)
-    log_it('\ncommand: (Write config to %s)' % resolv)
+    log_it('\ncommand> (Write config to %s)' % resolv)
     with open(resolv, 'w') as f:
         f.write(DNS)
     process_cmd('sudo chmod 666 ' + resolv)
@@ -203,12 +207,14 @@ def configure_puppet():
     log_it_step('Create config for puppet.conf')
     conf_file = process_cmd(PUPPET_CONFIGPRINT)
     process_cmd('sudo rm -f ' + conf_file)
-    conf = '''
-    [main]
-    certname = %s
-    server = %s
-    ''' % (process_cmd('hostname') + DOMAIN, PUPPET_SERVER)
-    log_it('\ncommand: (Write config to %s)' % conf_file)
+    if DOMAIN:
+        domain = '.' + DOMAIN
+    conf = '''\n
+[main]
+certname = %s
+server = %s\n''' % (process_cmd('hostname') + domain, PUPPET_SERVER)
+    log_it('\ncommand> (Write config to %s)\n%s' % (conf_file, conf))
+
     with open(conf_file, 'w') as f:
         f.write(conf)
     process_cmd('sudo chmod 666 ' + conf_file)
