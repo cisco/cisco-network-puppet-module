@@ -50,7 +50,7 @@ Puppet::Type.newtype(:cisco_aaa_group_tacacs) do
     patterns << [
       /^(\S+)$/,
       [
-        [:group, identity],
+        [:group, identity]
       ],
     ]
     patterns

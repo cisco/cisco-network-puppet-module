@@ -64,7 +64,7 @@ Puppet::Type.type(:cisco_snmp_server).provide(:nxapi) do
 
   def location=(set_value)
     return if set_value.nil?
-    set_value = @snmp_server.default_location if (set_value == :default)
+    set_value = @snmp_server.default_location if set_value == :default
     @snmp_server.location = set_value
   end
 
@@ -77,7 +77,7 @@ Puppet::Type.type(:cisco_snmp_server).provide(:nxapi) do
 
   def contact=(set_value)
     return if set_value.nil?
-    set_value = @snmp_server.default_contact if (set_value == :default)
+    set_value = @snmp_server.default_contact if set_value == :default
     @snmp_server.contact = set_value
     @property_hash[:contact] = set_value
   end
@@ -93,7 +93,7 @@ Puppet::Type.type(:cisco_snmp_server).provide(:nxapi) do
   def aaa_user_cache_timeout=(set_value)
     return if set_value.nil?
     set_value = @snmp_server.default_aaa_user_cache_timeout if
-      (set_value == :default)
+      set_value == :default
     @snmp_server.aaa_user_cache_timeout = set_value
     @property_hash[:aaa_user_cache_timeout] = set_value
   end
@@ -108,7 +108,7 @@ Puppet::Type.type(:cisco_snmp_server).provide(:nxapi) do
 
   def packet_size=(set_value)
     return if set_value.nil?
-    set_value = @snmp_server.default_packet_size if (set_value == :default)
+    set_value = @snmp_server.default_packet_size if set_value == :default
     @snmp_server.packet_size = set_value
     @property_hash[:packet_size] = set_value
   end
@@ -126,7 +126,7 @@ Puppet::Type.type(:cisco_snmp_server).provide(:nxapi) do
 
   def global_enforce_priv=(set_value)
     @property_hash[:global_enforce_priv] = set_value
-    if (set_value == :default)
+    if set_value == :default
       @snmp_server.global_enforce_priv = @snmp_server.default_global_enforce_priv
     else
       @snmp_server.global_enforce_priv = (set_value == :true)
@@ -146,7 +146,7 @@ Puppet::Type.type(:cisco_snmp_server).provide(:nxapi) do
 
   def protocol=(set_value)
     @property_hash[:protocol] = set_value
-    if (set_value == :default)
+    if set_value == :default
       @snmp_server.protocol = @snmp_server.default_protocol
     else
       @snmp_server.protocol = (set_value == :true)
@@ -166,7 +166,7 @@ Puppet::Type.type(:cisco_snmp_server).provide(:nxapi) do
 
   def tcp_session_auth=(set_value)
     @property_hash[:tcp_session_auth] = set_value
-    if (set_value == :default)
+    if set_value == :default
       @snmp_server.tcp_session_auth = @snmp_server.default_tcp_session_auth
     else
       @snmp_server.tcp_session_auth = (set_value == :true)

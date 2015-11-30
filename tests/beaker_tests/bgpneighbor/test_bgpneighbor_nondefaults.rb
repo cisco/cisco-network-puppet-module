@@ -50,7 +50,7 @@
 # instance attributes to verify resource properties.
 #
 ###############################################################################
-# rubocop:disable Style/HashSyntax,Style/ExtraSpacing
+# rubocop:disable Style/HashSyntax
 
 # Require UtilityLib.rb and BgpNeighborLib.rb paths.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)

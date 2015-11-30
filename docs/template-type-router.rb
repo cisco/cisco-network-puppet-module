@@ -58,7 +58,7 @@ Puppet::Type.newtype(:cisco_X__RESOURCE_NAME__X) do
     patterns << [
       /^(\S+)$/,
       [
-        [:name, identity],
+        [:name, identity]
       ],
     ]
     patterns
