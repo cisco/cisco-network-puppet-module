@@ -16,14 +16,14 @@ Automated installation is achieved with a python script that performs the follow
 
 1. Set up basic networking and verify reachability
 1. Install the Puppet Agent RPM
-1. Configure `puppet.conf`
+1. Set up the `puppet.conf` file
 1. Execute an initial puppet agent run to generate SSL certificates
 
 ## <a name="pre-install">Pre-Install Tasks</a>
 
 **Platform Requirements**
 
-Please reference the **Pre-Install Tasks** section of the [README-agent-install.md](README-agent-install.md) document for a list of minimum platform and software requirements.
+Please reference the **Pre-Install Tasks** section of the [README-agent-install.md][agent doc] document for a list of minimum platform and software requirements.
 
 **POAP Infrastructure**
 
@@ -53,7 +53,7 @@ f=puppet_agent_install.py ; cat $f | sed '/^#md5sum/d' > $f.md5 ; sed -i "s/^#md
 
 ##### Required Parameters
 
-* `RPM_NAME` This is the puppet agent release RPM. Specify the RPM required by your environment:
+* `RPM_NAME` This is the puppet agent release RPM, specific to the agent environment (bash shell or guestshell environment). The following RPM names are shown as examples, please check http://yum.puppetlabs.com for the latest rpm names.
   * *bash shell*: `RPM_NAME = 'puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm'`
   * *guestshell*: `RPM_NAME = 'puppetlabs-release-pc1-el-7.noarch.rpm'`
 
@@ -61,7 +61,7 @@ f=puppet_agent_install.py ; cat $f | sed '/^#md5sum/d' > $f.md5 ; sed -i "s/^#md
   * *Example*: `RPM_URI = 'http://yum.puppetlabs.com/'`
   * *Example*: `RPM_URI = 'ftp://1.2.3.4/'`
 
-* `PUPPET_SERVER` Specify is the DNS name or IP address of the agent's puppet server.
+* `PUPPET_SERVER` Specify the DNS name or IP address of the agent's puppet server.
   * *Example*: `PUPPET_SERVER = 'mypuppetsrvr.mycompany.com'`
 
 ##### Optional Parameters
@@ -100,20 +100,21 @@ python puppet_agent_install.py
 
 ## <a name="nonpoap">Non-POAP Installation Methods</a>
 
-[Manual](README-agent-install.md) - Manual installation and configuration of Puppet Agent
+[Manual][agent doc] - Manual installation and configuration of Puppet Agent
 
-[Beaker](README-beaker-agent-install.md) - Installing and Configuring Puppet Agent Using the Beaker Tool
+[Beaker](../../docs/README-beaker-agent-install.md) - Installing and Configuring Puppet Agent Using the Beaker Tool
 
 ## <a name="references">References</a>
 
 [Using PowerOn Auto Provisioning][poap doc] - How to deploy and use POAP
-[poap doc]:(http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus3000/sw/fundamentals/503_U3_1/b_Nexus_3000_Fundamentals_Guide_Release_503_U3_1/using_power_on_auto_provisioning.pdf)
 
-[Cisco Nexus Puppet Modules](../README.md) - Types, Providers, Utilities
+[Cisco Nexus Puppet Modules](../../README.md) - Types, Providers, Utilities
 
 [Cisco Nexus Programmability Guide](http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/6-x/programmability/guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_chapter_01010.html) - Guestshell Documentation
 
 
+[agent doc]: ../../docs/README-agent-install.md
+[poap doc]: http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus3000/sw/fundamentals/503_U3_1/b_Nexus_3000_Fundamentals_Guide_Release_503_U3_1/using_power_on_auto_provisioning.pdf
 ----
 ~~~
 Copyright (c) 2014-2015 Cisco and/or its affiliates.
