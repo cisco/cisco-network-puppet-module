@@ -76,6 +76,13 @@ class ciscopuppet::demo_bgp {
     additional_paths_selection    => 'RouteMap',
     additional_paths_send         => true,
     dampen_igp_metric             => 55,
+    default_metric                => 50,
+    distance_ebgp                 => 30,
+    distance_ibgp                 => 60,
+    distance_local                => 90,
+    suppress_inactive             => true,
+    table_map                     => 'TableMap',
+    table_map_filter              => true,
 
     # dampening_routemap is mutually exclusive with
     # dampening_half_time, reuse_time, suppress_time
@@ -111,6 +118,13 @@ class ciscopuppet::demo_bgp {
     additional_paths_selection    => 'RouteMap',
     additional_paths_send         => true,
     dampen_igp_metric             => 55,
+    default_metric                => 50,
+    distance_ebgp                 => 30,
+    distance_ibgp                 => 60,
+    distance_local                => 90,
+    suppress_inactive             => true,
+    table_map                     => 'TableMap',
+    table_map_filter              => true,
 
     # dampening_routemap is mutually exclusive with
     # dampening_half_time, reuse_time, suppress_time

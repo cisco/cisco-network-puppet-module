@@ -65,6 +65,10 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       dampening_routemap                     => 'Dampening_Route_Map',
       dampening_suppress_time                => 15,
       default_information_originate          => 'true',
+      default_metric                         => 50,
+      distance_ebgp                          => 20,
+      distance_ibgp                          => 40,
+      distance_local                         => 60,
       maximum_paths                          => '7',
       maximum_paths_ibgp                     => '7',
       next_hop_route_map                     => 'Default_Route_Map',
@@ -76,6 +80,9 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       route_target_import_evpn               => $routetargetimportevpn,
       route_target_export                    => $routetargetexport,
       route_target_export_evpn               => $routetargetexportevpn,
+      suppress_inactive                      => 'true',
+      table_map                              => 'sjc',
+      table_map_filter                       => 'true',
     }
   ~~~
 
@@ -130,7 +137,7 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       [
         /^(\d+|\d+\.\d+)$/,
         [
-          [:asn, identity]
+          [:asn, identity],
         ],
       ],
       [
@@ -160,7 +167,7 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       [
         /^(\S+)$/,
         [
-          [:name, identity]
+          [:name, identity],
         ],
       ],
     ]
@@ -374,6 +381,38 @@ Puppet::Type.newtype(:cisco_bgp_af) do
     newvalues(:true, :false, :default)
   end # property :default_information_originate
 
+  newproperty(:default_metric) do
+    desc "Sets the default metrics for routes redistributed into BGP.
+          Valid values are Integer or keyword 'default'"
+    munge do |value|
+      value == 'default' ? :default : value.to_i
+    end
+  end # property :default_metric
+
+  newproperty(:distance_ebgp) do
+    desc "Sets the administrative distance for BGP.
+          Valid values are Integer or keyword 'default'"
+    munge do |value|
+      value == 'default' ? :default : value.to_i
+    end
+  end # property :distance_ebgp
+
+  newproperty(:distance_ibgp) do
+    desc "Sets the administrative distance for BGP.
+          Valid values are Integer or keyword 'default'"
+    munge do |value|
+      value == 'default' ? :default : value.to_i
+    end
+  end # property :distance_ibgp
+
+  newproperty(:distance_local) do
+    desc "Sets the administrative distance for BGP.
+          Valid values are Integer or keyword 'default'"
+    munge do |value|
+      value == 'default' ? :default : value.to_i
+    end
+  end # property :distance_local
+
   newproperty(:maximum_paths) do
     desc 'Configures the maximum number of equal-cost paths for load ' \
           'sharing. Valid values are integers in the range 1 - 64, ' \
@@ -580,6 +619,35 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       (is.size == should.flatten.size && is.sort == should.flatten.sort)
     end
   end # route_target_export_evpn
+
+  newproperty(:suppress_inactive) do
+    desc "Advertises only active routes to peersy
+          Valid values are true, false, or 'default'"
+
+    newvalues(:true, :false, :default)
+  end # property suppress_inactive
+
+  newproperty(:table_map) do
+    desc "Apply table-map to filter routes downloaded into URIB
+          Valid values are a string"
+
+    validate do |value|
+      fail("'table_map' value must be a string") unless
+        value.is_a? String
+    end
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property table_map
+
+  newproperty(:table_map_filter) do
+    desc "Filters routes rejected by the route map and does not download
+          them to the RIB. Valid values are true, false, or 'default'"
+
+    newvalues(:true, :false, :default)
+  end # property table_map_filter
 
   #
   # VALIDATIONS

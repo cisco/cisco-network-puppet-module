@@ -15,6 +15,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - route_target_both_auto, route_target_both_auto_evpn
   - route_target_import, route_target_import_evpn
   - route_target_export, route_target_export_evpn
+  - default_metric, suppress_inactive
+  - distance_ebgp, distance_ibgp, distance_local
+  - table_map, table_map_filter
 - Extended cisco_vrf with `vni`
 
 ### Removed
