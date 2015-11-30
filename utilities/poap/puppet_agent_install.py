@@ -35,7 +35,7 @@ RPM_NAME = bash_shell_rpm
 RPM_URI = 'http://yum.puppetlabs.com/'
 
 # (required) PUPPET_SERVER = The DNS name or IP address of the agent's puppet server
-PUPPET_SERVER = 'puppet-cvh.cisco.com'
+PUPPET_SERVER = 'my_puppet.my_company.com'
 
 # (Optional) VRF = The agent's VRF to use for the RPM install
 VRF = 'management'
@@ -43,26 +43,20 @@ VRF = 'management'
 # (Optional) HTTP_PROXY = local http proxy server
 # (Optional) HTTPS_PROXY = local https proxy server
 # (Optional) NO_PROXY = proxy exclusions
-HTTP_PROXY = 'http://proxy.esl.cisco.com:8080'
-HTTPS_PROXY = 'https://proxy.esl.cisco.com:8080'
-NO_PROXY = ''
+#HTTP_PROXY = 'http://proxy.my_company.com:8080'
+#HTTPS_PROXY = 'https://proxy.my_company.com:8080'
+#NO_PROXY = ''
 
 # (optional) DOMAIN = The domain name to use with the agent node
-DOMAIN = 'cisco.com'
+#DOMAIN = 'my_company.com'
 
 # (Optional) DNS = The DNS configuration to use for /etc/resolv.conf
 # Use triple-quote syntax for multiple lines:
-#  DNS = '''\n
-#  nameserver 1.2.3.4
-#  domain cisco.com
-#  '''
-DNS = '''\n
-nameserver 64.102.6.247
-nameserver 72.163.131.10
-nameserver 173.36.131.10
-search cisco.com
-domain cisco.com
-'''
+#DNS = '''\n
+#nameserver 1.2.3.4
+#domain my_company.com
+#search my_company.com
+#'''
 
 ###############################################################################
 # End OF USER-CONFIGURABLE PARAMETERS
@@ -109,7 +103,7 @@ for p in proxies:
             os.environ[p] = globals()[p]
 
 # Create a logfile
-log_prefix = datetime.now().strftime('/bootflash/puppet_agent_install.%Y%H%M%S')
+log_prefix = datetime.now().strftime('/bootflash/puppet_agent_install.%Y%m%d-%H%M%S')
 log_handle = open('%s.log' % log_prefix, "w+")
 
 # Temporary wget html (deleted by script)
@@ -179,14 +173,14 @@ def verify_reachability():
     result = process_cmd(cmd)
     if result.find('FAIL') == 0:
         log_it('Failed to ping puppet master')
-        exit(0)
+        exit(-1)
 
     log_it_step('Verify reachability to RPM repo (wget writes to stderr)')
     cmd = '%s wget %s -O %s' % (PREPEND_CMD, RPM_URI, wget_html)
     result = process_cmd(cmd)
     if result.find('FAIL') == 0:
         log_it("Failed to reach RPM repo")
-        exit(0)
+        exit(-1)
     cmd = 'sudo rm %s' % wget_html
     result = process_cmd(cmd)
 
