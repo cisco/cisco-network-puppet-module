@@ -109,6 +109,7 @@ expected_values = {
 
 expected_values_vrf1 = {
   'ensure'                                 => 'present',
+  'route_distinguisher'                    => 'auto',
   'router_id'                              => '192.168.0.66',
   'cluster_id'                             => '55',
   'confederation_id'                       => '33',
@@ -136,6 +137,7 @@ expected_values_vrf1 = {
 
 expected_values_vrf2 = {
   'ensure'                                 => 'present',
+  'route_distinguisher'                    => '1.1.1.1:1',
   'router_id'                              => '192.168.0.77',
   'cluster_id'                             => '10.0.0.2',
   'confederation_id'                       => '32.88',

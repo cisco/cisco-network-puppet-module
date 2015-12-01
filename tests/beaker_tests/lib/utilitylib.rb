@@ -127,7 +127,7 @@ module UtilityLib
   # @param logger [Logger] A default instance of Beaker::Logger.
   # @result none [None] Returns no object.
   def self.search_pattern_in_output(output, patarr, inverse, testcase,\
-    logger)
+                                    logger)
     patarr = UtilityLib.hash_to_patterns(patarr) if patarr.instance_of?(Hash)
     patarr.each do |pattern|
       inverse ? (match = (output !~ pattern)) : (match = (output =~ pattern))
@@ -150,7 +150,7 @@ module UtilityLib
   # @param logger [Logger] A default instance of Beaker::Logger.
   # @result none [None] Returns no object.
   def self.raise_passfail_exception(testresult, message, testcase, logger)
-    if (testresult == 'PASS')
+    if testresult == 'PASS'
       testcase.pass_test("\nTestCase :: #{message} :: PASS")
     else
       testcase.fail_test("\nTestCase :: #{message} :: FAIL")
@@ -231,6 +231,15 @@ def format_stepinfo(tests, id, test_str)
   tests[id][:log_desc] + sprintf(' :: %-12s', test_str)
 end
 
+# helper to match stderr buffer against :stderr_pattern
+def test_stderr(tests, id)
+  if stderr =~ tests[id][:stderr_pattern]
+    logger.debug("TestStep :: Match #{tests[id][:stderr_pattern]} :: PASS")
+  else
+    fail_test("TestStep :: Match #{tests[id][:stderr_pattern]} :: FAIL")
+  end
+end
+
 # Wrapper for manifest tests
 # Pass code = [0], as an alternative to 'test_idempotence'
 def test_manifest(tests, id)
@@ -241,6 +250,7 @@ def test_manifest(tests, id)
     code = tests[id][:code] ? tests[id][:code] : [2]
     logger.debug('test_manifest :: check puppet agent cmd')
     on(tests[:agent], puppet_agent_cmd, acceptable_exit_codes: code)
+    test_stderr(tests, id) if tests[id][:stderr_pattern]
   end
   logger.info("#{stepinfo} :: PASS")
   tests[id].delete(:log_desc)
@@ -313,6 +323,25 @@ def node_feature_cleanup(agent, feature, stepinfo='feature cleanup',
                                           false, self, logger)
     end
   end
+end
+
+# Helper to remove all IP address configs from interfaces
+def interface_ip_cleanup(agent, stepinfo='Pre Clean:')
+  logger.debug("#{stepinfo} Interface IP cleanup")
+  show_cmd = UtilityLib.get_vshell_cmd('show ip interface brief')
+
+  # Find the interfaces with IP addresses; build a removal config.
+  # Note mgmt0 will not appear in the show cmd output.
+  on(agent, show_cmd)
+  clean = stdout.split("\n").map do |line|
+    "interface #{Regexp.last_match[:intf]} ; no ip addr" if
+      line[/^(?<intf>\S+)\s+\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/]
+  end.compact
+  return if clean.empty?
+  clean = clean.join(' ; ').prepend('conf t ; ')
+  logger.debug("#{stepinfo} Clean string:\n#{clean}")
+  # exit codes: 0 = no changes, 2 = changes have occurred
+  on(agent, UtilityLib.get_vshell_cmd(clean), acceptable_exit_codes: [0, 2])
 end
 
 # bgp neighbor remote-as configuration helper

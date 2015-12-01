@@ -17,7 +17,13 @@
 # limitations under the License.
 
 require 'ipaddr'
-require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
+begin
+  require 'puppet_x/cisco/cmnutils'
+rescue LoadError # seen on master, not on agent
+  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..',
+                                     'puppet_x', 'cisco', 'cmnutils.rb'))
+end
 
 Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
   @doc = "Manages BGP Neighbor Address-Family configuration.
@@ -133,7 +139,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
       [
         /^(\d+|\d+\.\d+)$/,
         [
-          [:asn, identity],
+          [:asn, identity]
         ],
       ],
       [
@@ -173,7 +179,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
       [
         /^(\S+)$/,
         [
-          [:name, identity],
+          [:name, identity]
         ],
       ],
     ]
@@ -185,6 +191,13 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
   ##############
 
   ensurable
+
+  # Overwrites the name method which by default returns only
+  # self[:name].
+  def name
+    "#{self[:asn]} #{self[:vrf]} #{self[:neighbor]} #{self[:afi]} " \
+    "#{self[:safi]}"
+  end
 
   # Only needed to satisfy name parameter.
   newparam(:name) do
@@ -200,7 +213,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     end
 
     munge do |value|
-      value = Cisco::RouterBgp.process_asnum(value)
+      value = PuppetX::Cisco::BgpUtils.process_asnum(value.to_s)
       value
     end
   end
@@ -218,7 +231,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
 
     munge do |value|
       begin
-        value = Cisco::Utils.process_network_mask(value.to_s)
+        value = PuppetX::Cisco::Utils.process_network_mask(value.to_s)
         value
       rescue
         raise "'neighbor' must be a valid ipv4 or ipv6 address (mask optional)"
@@ -239,15 +252,6 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
   ##############
   # Properties #
   ##############
-
-  validate do
-    fail("The 'asn' parameter must be set in the manifest.") if self[:asn].nil?
-    fail("The 'vrf' parameter must be set in the manifest.") if self[:vrf].nil?
-    fail("The 'neighbor' parameter must be set in the manifest.") if
-      self[:neighbor].nil?
-    fail("The 'afi' parameter must be set in the manifest.") if self[:afi].nil?
-    fail("The 'safi' parameter must be set in the manifest.") if self[:safi].nil?
-  end
 
   newproperty(:advertise_map_exist, array_matching: :all) do
     desc 'advertise_map_exist state. Valid values are an array specifying' \
@@ -480,5 +484,14 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
       value = :default if value == 'default'
       value
     end
+  end
+
+  validate do
+    fail("The 'asn' parameter must be set in the manifest.") if self[:asn].nil?
+    fail("The 'vrf' parameter must be set in the manifest.") if self[:vrf].nil?
+    fail("The 'neighbor' parameter must be set in the manifest.") if
+      self[:neighbor].nil?
+    fail("The 'afi' parameter must be set in the manifest.") if self[:afi].nil?
+    fail("The 'safi' parameter must be set in the manifest.") if self[:safi].nil?
   end
 end

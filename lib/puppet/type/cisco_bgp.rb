@@ -17,6 +17,13 @@
 # limitations under the License.
 
 require 'ipaddr'
+begin
+  require 'puppet_x/cisco/cmnutils'
+rescue LoadError # seen on master, not on agent
+  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..',
+                                     'puppet_x', 'cisco', 'cmnutils.rb'))
+end
 
 Puppet::Type.newtype(:cisco_bgp) do
   @doc = "Manages BGP global and vrf configuration.
@@ -36,10 +43,11 @@ Puppet::Type.newtype(:cisco_bgp) do
       ensure                                 => present,
       asn                                    => '39317'
       vrf                                    => 'green',
+      route_distinguisher                    => 'auto',
       router_id                              => '10.0.0.1',
       cluster_id                             => '55',
       confederation_id                       => '77.6',
-      confederation_peers                    => '77.6 88 99.4 200'
+      confederation_peers                    => '77.6 88 99.4 200',
       enforce_first_as                       => true,
       maxas_limit                            => '50',
       shutdown                               => false,
@@ -75,7 +83,7 @@ Puppet::Type.newtype(:cisco_bgp) do
   ~~~puppet
     cisco_bgp { 'new_york':
       ensure                                 => present,
-      asn                                    => '39317'
+      asn                                    => '39317',
       vrf                                    => 'green',
   ~~~
 
@@ -128,6 +136,12 @@ Puppet::Type.newtype(:cisco_bgp) do
 
   ensurable
 
+  # Overwrites the name method which by default returns only
+  # self[:name].
+  def name
+    "#{self[:asn]} #{self[:vrf]}"
+  end
+
   # Only needed to satisfy name parameter.
   newparam(:name) do
   end
@@ -141,7 +155,7 @@ Puppet::Type.newtype(:cisco_bgp) do
       end
     end
 
-    munge { |value| Cisco::RouterBgp.process_asnum(value.to_s) }
+    munge { |value| PuppetX::Cisco::BgpUtils.process_asnum(value.to_s) }
   end # param asn
 
   newparam(:vrf, namevar: true) do
@@ -155,6 +169,25 @@ Puppet::Type.newtype(:cisco_bgp) do
   ##############
   # Properties #
   ##############
+
+  newproperty(:route_distinguisher) do
+    desc "VPN Route Distinguisher (RD). The RD is combined with the IPv4
+          or IPv6 prefix learned by the PE router to create a globally
+          unique address. Valid values are a String in one of the
+          route-distinguisher formats (ASN2:NN, ASN4:NN, or IPV4:NN);
+          the keyword 'auto', or the keyword 'default'."
+
+    validate do |rd|
+      fail "Route Distinguisher '#{value}' #{match_error}" unless
+        /^(?:\d+\.\d+\.\d+\.)?\d+:\d+$/.match(rd) || rd == 'auto' ||
+        rd == 'default' || rd == :default
+    end
+
+    munge do |rd|
+      rd = :default if rd == 'default'
+      rd
+    end
+  end # property router_distinguisher
 
   newproperty(:router_id) do
     desc "Router Identifier (ID) of the BGP router instance. Valid
@@ -202,7 +235,7 @@ Puppet::Type.newtype(:cisco_bgp) do
 
     validate do |id|
       begin
-        if /^\d+\.\d+$/.match(id) || /^\d+$/.match(id)
+        if /^(\d+|\d+\.\d+)$/.match(id)
           String(id) unless id == :default || id.empty? || id == 'default'
         end
       rescue
@@ -223,32 +256,20 @@ Puppet::Type.newtype(:cisco_bgp) do
     match_error = 'must be specified in ASPLAIN or ASDOT notation'
 
     validate do |peers|
-      if peers.is_a? String
-        peers_array = peers.split(' ')
-      else
-        peers_array = peers
-      end
-      peers_array.each do |value|
+      peers.split.each do |value|
         fail "Confederation peer value '#{value}' #{match_error}" unless
           /^(\d+|\d+\.\d+)$/.match(value) ||
-          peers_array == 'default' || peers_array == :default
+          value == 'default' || value == :default
       end
     end
 
     munge do |peers|
-      if peers.is_a? String
-        if peers == 'default'
-          peers = :default
-        else
-          peers = peers.split(' ')
-        end
-      end
+      peers == 'default' ? :default : peers.split
     end
 
     def insync?(is)
       (is.size == should.flatten.size && is.sort == should.flatten.sort)
     end
-
   end # confederation_peers
 
   newproperty(:shutdown) do

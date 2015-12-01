@@ -66,6 +66,9 @@ testheader = 'LOOPBACKINTF Resource :: All Attributes NonDefaults'
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
+    # Remove any stale interface IP addresses from testbed.
+    interface_ip_cleanup(agent)
+
     # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
     UtilityLib.set_manifest_path(master, self)
 

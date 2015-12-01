@@ -98,7 +98,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
-      "resource service 'syslog'", options)
+      "resource service '#{FileSvcPkgLib::TEST_SERVICE}'", options)
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
                                           { 'ensure' => 'running' },
@@ -117,6 +117,8 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
+    logger.info('Pause 5 seconds to allow state transition')
+    sleep 5
 
     logger.info("Get resource stopped manifest from master :: #{result}")
   end
@@ -126,7 +128,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
-      "resource service 'syslog'", options)
+      "resource service '#{FileSvcPkgLib::TEST_SERVICE}'", options)
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout,
                                           { 'ensure' => 'running' },

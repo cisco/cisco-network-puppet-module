@@ -45,6 +45,7 @@ Puppet::Type.type(:cisco_bgp).provide(:nxapi) do
     :graceful_restart_timers_restart,
     :graceful_restart_timers_stalepath_time,
     :maxas_limit,
+    :route_distinguisher,
     :router_id,
     :timer_bestpath_limit,
     :timer_bgp_keepalive,
@@ -197,6 +198,11 @@ Puppet::Type.type(:cisco_bgp).provide(:nxapi) do
       always = @bgp_vrf.timer_bestpath_limit_always
     end
     @bgp_vrf.timer_bestpath_limit_set(limit, always)
+  end
+
+  def confederation_peers=(should_list)
+    should_list = @bgp_vrf.default_confederation_peers if should_list[0] == :default
+    @property_flush[:confederation_peers] = should_list.flatten
   end
 
   def flush
