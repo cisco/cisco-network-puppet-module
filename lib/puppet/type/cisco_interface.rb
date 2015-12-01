@@ -330,13 +330,8 @@ Puppet::Type.newtype(:cisco_interface) do
 
     munge do |value|
       value = :default if value == 'default'
-      begin
-        value = String(value) unless value == :default
-      rescue
-        raise 'channel_group must be a valid integer.'
-      end
       fail('channel_group must be an integer between 1 and 4096') if
-           (value != :default) && (value.to_i < 1 || value.to_i> 4096)
+           (value != :default) && (value < 1 || value > 4096)
       value
     end
   end # property channel_group
