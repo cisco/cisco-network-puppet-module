@@ -324,10 +324,20 @@ Puppet::Type.newtype(:cisco_interface) do
   # Port-Channel attributes #
   ###########################
 
-  newproperty(:port_channel) do
-    desc "Port channel is an aggregation of multiple physical interfaces
+  newproperty(:channel_group) do
+    desc "channel_group is an aggregation of multiple physical interfaces
           that creates a logical interface. Valid values are 1 to 4096."
 
-    munge { |value| value }
-  end # property port_channel
+    munge do |value|
+      value = :default if value == 'default'
+      begin
+        value = String(value) unless value == :default
+      rescue
+        raise 'channel_group must be a valid integer.'
+      end
+      fail('channel_group must be an integer between 1 and 4096') if
+           (value != :default) && (value.to_i < 1 || value.to_i> 4096)
+      value
+    end
+  end # property channel_group
 end # Puppet::Type.newtype
