@@ -205,6 +205,7 @@ The following resources include cisco types and providers along with cisco provi
 * VLAN Types
   * [`cisco_vlan`](#type-cisco_vlan)
   * [`cisco_vtp`](#type-cisco_vtp)
+  * [`network_trunk (netdev_stdlib)`](#type-network_trunk)
 
 * VRF Type
   * [`cisco_vrf`](#type-cisco_vrf)
@@ -237,6 +238,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`name_server`](#type-name_server)
 * [`network_dns`](#type-network_dns)
 * [`network_interface`](#type-network_interface)
+* [`network_trunk`](#type-network_trunk)
 * [`network_snmp`](#type-network_snmp)
 * [`ntp_config`](#type-ntp_config)
 * [`ntp_server`](#type-ntp_server)
@@ -827,6 +829,31 @@ Speed of the interface. Valid values are 100m, 1g, 10g, 40g, 100g, and 'auto'.
 ##### `mtu`
 Maximum Trasnmission Unit size for frames received and sent on the specified
 interface. Valid value is an integer.
+
+--
+### Type: `network_trunk`
+
+Manages a puppet netdev_stdlib Network Trunk. It should be noted that while the NetDev stdlib has certain specified accepted parameters these may not be applicable to different network devices. For example, certain Cisco devices only use dot1q encapsulation, and therefore other values will cause errors.
+
+#### Parameters
+
+###### `name`
+The switch interface name. Valid value is a string.
+
+###### `encapsulation`
+The vlan-tagging encapsulation protocol, usually dot1q. Valid values are 'dot1q', 'isl', 'negotiate' and 'none'. Cisco devices use dot1q encapsulation.
+
+###### `mode`
+The L2 interface mode, enables or disables trunking. Valid values are 'access', 'trunk', 'dynamic_auto', and 'dynamic_desirable'. The mode on a Cisco device will always be 'trunk'.
+
+###### `untagged_vlan`
+VLAN used for untagged VLAN traffic. a.k.a Native VLAN. Values must be in range of 1 to 4095.
+
+###### `tagged_vlans`
+Array of VLAN names used for tagged packets. Values must be in range of 1 to 4095.
+
+###### `pruned_vlans`
+Array of VLAN ID numbers used for VLAN pruning. Values must be in range of 1 to 4095. Cisco do not implement the concept of pruned vlans.
 
 --
 ### Type: cisco_interface_ospf
