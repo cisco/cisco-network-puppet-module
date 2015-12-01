@@ -831,31 +831,6 @@ Maximum Trasnmission Unit size for frames received and sent on the specified
 interface. Valid value is an integer.
 
 --
-### Type: `network_trunk`
-
-Manages a puppet netdev_stdlib Network Trunk. It should be noted that while the NetDev stdlib has certain specified accepted parameters these may not be applicable to different network devices. For example, certain Cisco devices only use dot1q encapsulation, and therefore other values will cause errors.
-
-#### Parameters
-
-###### `name`
-The switch interface name. Valid value is a string.
-
-###### `encapsulation`
-The vlan-tagging encapsulation protocol, usually dot1q. Valid values are 'dot1q', 'isl', 'negotiate' and 'none'. Cisco devices use dot1q encapsulation.
-
-###### `mode`
-The L2 interface mode, enables or disables trunking. Valid values are 'access', 'trunk', 'dynamic_auto', and 'dynamic_desirable'. The mode on a Cisco device will always be 'trunk'.
-
-###### `untagged_vlan`
-VLAN used for untagged VLAN traffic. a.k.a Native VLAN. Values must be in range of 1 to 4095.
-
-###### `tagged_vlans`
-Array of VLAN names used for tagged packets. Values must be in range of 1 to 4095.
-
-###### `pruned_vlans`
-Array of VLAN ID numbers used for VLAN pruning. Values must be in range of 1 to 4095. Cisco do not implement the concept of pruned vlans.
-
---
 ### Type: cisco_interface_ospf
 Manages configuration of an OSPF interface instance.
 
@@ -1300,6 +1275,30 @@ Contact name for this device.  Valid value is a string.
 
 ##### `location`
 Location of this device.  Valid value is a string.
+
+### Type: `network_trunk`
+
+Manages a puppet netdev_stdlib Network Trunk. It should be noted that while the NetDev stdlib has certain specified accepted parameters these may not be applicable to different network devices. For example, certain Cisco devices only use dot1q encapsulation, and therefore other values will cause errors.
+
+#### Parameters
+
+###### `name`
+The switch interface name. Valid value is a string.
+
+###### `encapsulation`
+The vlan-tagging encapsulation protocol, usually dot1q. Valid values are 'dot1q', 'isl', 'negotiate' and 'none'. Cisco devices use dot1q encapsulation.
+
+###### `mode`
+The L2 interface mode, enables or disables trunking. Valid values are 'access', 'trunk', 'dynamic_auto', and 'dynamic_desirable'. The mode on a Cisco device will always be 'trunk'.
+
+###### `untagged_vlan`
+VLAN used for untagged VLAN traffic. a.k.a Native VLAN. Values must be in range of 1 to 4095.
+
+###### `tagged_vlans`
+Array of VLAN names used for tagged packets. Values must be in range of 1 to 4095.
+
+###### `pruned_vlans`
+Array of VLAN ID numbers used for VLAN pruning. Values must be in range of 1 to 4095. Cisco do not implement the concept of pruned vlans.
 
 ### Type: ntp_config
 
