@@ -125,15 +125,6 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
     manifest_props: '',
   }
 
-  if platform == 'nexus'
-    tests['encapsulation_dot1q'] = {
-      title_pattern:  interface_name + '.1',
-      manifest_props: "
-        encapsulation_dot1q => invalid,
-      ",
-    }
-  end
-
   tests['ipv4_address'] = {
     title_pattern:  interface_name,
     manifest_props: "
@@ -150,12 +141,61 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
     ",
   }
 
+  tests['ipv4_proxy_arp'] = {
+    title_pattern:  interface_name,
+    manifest_props: "
+      ipv4_proxy_arp => 'invalid',
+    ",
+  }
+
+  tests['ipv4_redirects'] = {
+    title_pattern:  interface_name,
+    manifest_props: "
+      ipv4_redirects => 'invalid',
+    ",
+  }
+
   tests['mtu'] = {
     title_pattern:  interface_name,
     manifest_props: "
       mtu => -1,
     ",
   }
+
+  tests['shutdown'] = {
+    title_pattern:  interface_name,
+    manifest_props: "
+      shutdown => 'invalid',
+    ",
+  }
+
+  tests['vrf'] = {
+    title_pattern:  interface_name,
+    manifest_props: "
+      vrf => '~',
+    ",
+  }
+
+  if platform == 'nexus'
+    tests['encapsulation_dot1q'] = {
+      title_pattern:  interface_name + '.1',
+      manifest_props: "
+        encapsulation_dot1q => invalid,
+      ",
+    }
+    tests['switchport_trunk_allowed_vlan'] = {
+      title_pattern:  interface_name,
+      manifest_props: "
+        switchport_trunk_allowed_vlan => 'invalid',
+      ",
+    }
+    tests['switchport_trunk_native_vlan'] = {
+      title_pattern:  interface_name,
+      manifest_props: "
+        switchport_trunk_native_vlan => 'invalid',
+      ",
+    }
+  end
 
   tests
 end
@@ -231,7 +271,7 @@ test_name "TestCase :: #{testheader}" do
     tests[k][:desc] = "1.#{counter}. #{k} negative test"
     counter += 1
     tests[k][:ensure] = :present
-    tests[k][:code] = [1]
+    tests[k][:code] = [1, 6]
     build_manifest_interface(tests, k)
     test_manifest(tests, k)
   end
