@@ -150,12 +150,12 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
     ",
   }
 
-  # tests['mtu'] = {
-  #   title_pattern:  interface_name,
-  #   manifest_props: "
-  #     mtu => -1,
-  #   ",
-  # }
+  tests['mtu'] = {
+    title_pattern:  interface_name,
+    manifest_props: "
+      mtu => -1,
+    ",
+  }
 
   tests
 end

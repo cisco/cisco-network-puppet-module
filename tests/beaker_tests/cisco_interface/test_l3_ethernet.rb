@@ -165,7 +165,7 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
       description => 'Configured with Puppet',
     ",
     resource_props: {
-      'description' => 'Configured with Puppet',
+      'description' => 'Configured with Puppet'
     },
   }
   if platform == 'nexus'
@@ -186,7 +186,7 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
         encapsulation_dot1q => 30,
       ",
       resource_props: {
-        'encapsulation_dot1q' => '30',
+        'encapsulation_dot1q' => '30'
       },
     }
   end
@@ -216,7 +216,7 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
         mtu => 1556,
       ",
       resource_props: {
-        'mtu' => '1556',
+        'mtu' => '1556'
       },
     }
   end
@@ -228,7 +228,7 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
       shutdown => 'true',
     ",
     resource_props: {
-      'shutdown' => 'true',
+      'shutdown' => 'true'
     },
   }
   if platform == 'nexus'
@@ -253,7 +253,7 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
       vrf => 'test1',
     ",
     resource_props: {
-      'vrf' => 'test1',
+      'vrf' => 'test1'
     },
   }
 

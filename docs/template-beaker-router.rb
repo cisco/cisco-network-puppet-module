@@ -126,7 +126,7 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
       maximum_paths => '5',
     ",
     resource_props: {
-      'maximum_paths' => '5',
+      'maximum_paths' => '5'
     },
   }
 
@@ -137,7 +137,7 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
       shutdown => 'true',
     ",
     resource_props: {
-      'shutdown' => 'true',
+      'shutdown' => 'true'
     },
   }
 
