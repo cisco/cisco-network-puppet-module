@@ -119,14 +119,13 @@ test_name "TestCase :: #{testheader}" do
                                             'ipv4_proxy_arp'               => 'true',
                                             'ipv4_redirects'               => 'false',
                                             'mtu'                          => '1556',
-                                            'speed'                        => '100',
+                                            'speed'                        => '10000',
                                             'duplex'                       => 'full',
                                             'shutdown'                     => 'true',
                                             'switchport_autostate_exclude' => 'false',
                                             'switchport_mode'              => 'disabled',
                                             'switchport_vtp'               => 'false',
                                             'vrf'                          => 'test1',
-                                            'channel_group'                => 200 },
                                           false, self, logger)
     end
 
@@ -146,10 +145,9 @@ test_name "TestCase :: #{testheader}" do
                                             /no ip redirects/,
                                             /ip proxy-arp/,
                                             /mtu 1556/,
-                                            /speed 100/,
+                                            /speed 10000/,
                                             /duplex full/,
                                             /vrf member test1/,
-                                            /channel-group 200/,
                                           ],
                                           false, self, logger)
     end
