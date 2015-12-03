@@ -240,25 +240,15 @@ test_name "TestCase :: #{testheader}" do
       tests[id][:resource]['remove_private_as'] = 'disable'
     end
 
+    # when description is empty string, puppet resource will not return
+    # its value, we have to check for its absence.
     tests[id][:code] = nil
-    if platform == 'ios_xr'
-      create_bgpneighbor_manifest(tests, id)
-      test_manifest(tests, id)
-
-      stash_resource = tests[id][:resource]
-      # Check for the absence of a description
-      tests[id][:resource] = { 'description' => UtilityLib::IGNORE_VALUE }
-      test_resource(tests, id, true)
-      tests[id][:resource] = stash_resource # restore
-    else
-      tests[id][:show_cmd] = "show run bgp all | section #{neighbor}"
-      # when description is empty string, puppet resource will not return
-      # its value, we have to use show command to verify its removal
-      tests[id][:show_pattern] = [/description/]
-      tests[id][:state] = true
-      create_bgpneighbor_manifest(tests, id)
-      test_harness_common(tests, id)
-    end
+    create_bgpneighbor_manifest(tests, id)
+    test_manifest(tests, id)
+    stash_resource = tests[id][:resource]
+    tests[id][:resource] = { 'description' => UtilityLib::IGNORE_VALUE }
+    test_resource(tests, id, true)
+    tests[id][:resource] = stash_resource # restore
 
     tests[id][:desc] =
       '1.4 Change format of local_as and remote_as, and verify idempotent'
