@@ -17,7 +17,7 @@
 # limitations under the License.
 
 Puppet::Type.newtype(:cisco_fabricpath_global) do
-  @doc =%q{
+  @doc = %q(
     Manages the Cisco Fabricpath Global configuration resource.
 
     cisco_fabricpath_global {"default":
@@ -46,7 +46,7 @@ Puppet::Type.newtype(:cisco_fabricpath_global) do
       ttl_unicast                    => 32,
       ttl_multicast                  => 32,
     }
-  }
+  )
   ###################
   # Resource Naming #
   ###################
@@ -88,11 +88,11 @@ Puppet::Type.newtype(:cisco_fabricpath_global) do
   end
 
   newproperty(:allocate_delay) do
-    desc 'Fabricpath Timers Allocate Delay. Valid values are Integer from 
+    desc 'Fabricpath Timers Allocate Delay. Valid values are Integer from
           1..1200 seconds or default'
     validate do |value|
       if value != 'default'
-        fail("allocate_delay should be a value in the range 1..1200") unless 
+        fail('allocate_delay should be a value in the range 1..1200') unless
           value.to_i.between?(1, 1200)
       end
     end
@@ -106,11 +106,11 @@ Puppet::Type.newtype(:cisco_fabricpath_global) do
   end
 
   newproperty(:linkup_delay) do
-    desc 'Fabricpath Timers Link-up Delay. Valid values are Integer from 
+    desc 'Fabricpath Timers Link-up Delay. Valid values are Integer from
           1..1200 seconds or string default'
     validate do |value|
       if value != 'default'
-        fail("linkup should be a value in the range 1..1200") unless 
+        fail('linkup should be a value in the range 1..1200') unless
           value.to_i.between?(1, 1200)
       end
     end
@@ -118,31 +118,31 @@ Puppet::Type.newtype(:cisco_fabricpath_global) do
   end # property linkup_delay
 
   newproperty(:loadbalance_multicast_has_vlan) do
-    desc 'Multicast Loadbalance flow parameters includes vlan or not. 
+    desc 'Multicast Loadbalance flow parameters includes vlan or not.
           Valid values are true or false'
     newvalues(:true, :false, :default)
-  end # property 
+  end # property
 
   newproperty(:loadbalance_multicast_rotate) do
-    desc 'Multicast Loadbalance flow parameters: rotate amount in bytes . 
+    desc 'Multicast Loadbalance flow parameters: rotate amount in bytes .
           Valid values are Integer in range 0..15'
     validate do |value|
       if value != 'default'
-        fail("rotate amount should be a value in the range 0..15") unless 
+        fail('rotate amount should be a value in the range 0..15') unless
           value.to_i.between?(0, 15)
       end
     end
     munge { |value| value == 'default' ? :default : value }
-  end # loadbalance_multicast_rotate 
+  end # loadbalance_multicast_rotate
 
   newproperty(:loadbalance_unicast_has_vlan) do
-    desc 'Unicast Loadbalance flow parameters includes vlan or not. 
+    desc 'Unicast Loadbalance flow parameters includes vlan or not.
           Valid values are true or false'
     newvalues(:true, :false, :default)
-  end # property 
+  end # property
 
   newproperty(:loadbalance_unicast_layer) do
-    desc 'Unicast Loadbalance flow parameters layer. 
+    desc 'Unicast Loadbalance flow parameters layer.
           Valid values string'
     newvalues('default',
               'layer2',
@@ -150,19 +150,19 @@ Puppet::Type.newtype(:cisco_fabricpath_global) do
               'layer4',
               'mixed')
     munge { |value| value == 'default' ? :default : value }
-  end # property 
+  end # property
 
   newproperty(:loadbalance_unicast_rotate) do
-    desc 'Multicast Loadbalance flow parameters: rotate amount in bytes . 
+    desc 'Multicast Loadbalance flow parameters: rotate amount in bytes .
           Valid values are Integer in range 0..15'
     validate do |value|
       if value != 'default'
-        fail("rotate amount should be a value in the range 0..15") unless 
+        fail('rotate amount should be a value in the range 0..15') unless
           value.between?(0, 15)
       end
     end
     munge { |value| value == 'default' ? :default : value }
-  end # loadbalance_unicast_rotate 
+  end # loadbalance_unicast_rotate
 
   newproperty(:linkup_delay_always) do
     desc 'Fabricpath Timers Link-up delay always. Valid values are true/false'
@@ -181,21 +181,21 @@ Puppet::Type.newtype(:cisco_fabricpath_global) do
   end
 
   newproperty(:switch_id) do
-    desc "The fabricpath switch_id. Valid values are Integer from 1..4094"
-    
+    desc 'The fabricpath switch_id. Valid values are Integer from 1..4094'
+
     validate do |value|
-      fail("Switch ID should be a value in the range 1..4094") unless 
+      fail('Switch ID should be a value in the range 1..4094') unless
         value.to_i.between?(1, 4094)
     end
     munge { |value| value == 'default' ? :default : value.to_i }
   end # property name
 
   newproperty(:transition_delay) do
-    desc 'Fabricpath Timers Transition Delay. Valid values are Integer from 
+    desc 'Fabricpath Timers Transition Delay. Valid values are Integer from
           1..1200 seconds or default'
     validate do |value|
       if value != 'default'
-        fail("allocate_delay should be a value in the range 1..1200") unless 
+        fail('allocate_delay should be a value in the range 1..1200') unless
           value.to_i.between?(1, 1200)
       end
     end
@@ -207,7 +207,7 @@ Puppet::Type.newtype(:cisco_fabricpath_global) do
           or string default'
     validate do |value|
       if value != 'default'
-        fail("TTL should be a value in the range 1..64") unless 
+        fail('TTL should be a value in the range 1..64') unless
           value.to_i.between?(1, 64)
       end
     end
@@ -219,11 +219,10 @@ Puppet::Type.newtype(:cisco_fabricpath_global) do
           or default'
     validate do |value|
       if value != 'default'
-        fail("TTL should be a value in the range 1..64") unless 
+        fail('TTL should be a value in the range 1..64') unless
           value.to_i.between?(1, 64)
       end
     end
     munge { |value| value == 'default' ? :default : value.to_i }
   end # property ttl_unicast
-
 end # Puppet::Type.newtype

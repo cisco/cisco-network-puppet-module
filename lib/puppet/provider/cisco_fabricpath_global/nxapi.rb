@@ -34,24 +34,24 @@ Puppet::Type.type(:cisco_fabricpath_global).provide(:nxapi) do
   mk_resource_methods
 
   FP_GLOBAL_NON_BOOL_PROPS = [
-    :allocate_delay, 
-    :graceful_merge, 
+    :allocate_delay,
+    :graceful_merge,
     :linkup_delay,
     :loadbalance_multicast_rotate,
     :loadbalance_unicast_layer,
     :loadbalance_unicast_rotate,
     :mode,
-    :switch_id, 
-    :transition_delay, 
-    :ttl_unicast, 
+    :switch_id,
+    :transition_delay,
+    :ttl_unicast,
     :ttl_multicast,
   ]
   FP_GLOBAL_BOOL_PROPS = [
-   :aggregate_multicast_routes, 
-   :linkup_delay_always,
-   :linkup_delay_enable,
-   :loadbalance_multicast_has_vlan,
-   :loadbalance_unicast_has_vlan,
+    :aggregate_multicast_routes,
+    :linkup_delay_always,
+    :linkup_delay_enable,
+    :loadbalance_multicast_has_vlan,
+    :loadbalance_unicast_has_vlan,
   ]
   FP_GLOBAL_ALL_PROPS = FP_GLOBAL_NON_BOOL_PROPS + FP_GLOBAL_BOOL_PROPS
 
@@ -134,7 +134,6 @@ Puppet::Type.type(:cisco_fabricpath_global).provide(:nxapi) do
     # custom setters which require one-shot multi-param setters
     loadbalance_multicast_set
     loadbalance_unicast_set
-
   end
 
   def loadbalance_multicast_prop_any?
@@ -212,5 +211,4 @@ Puppet::Type.type(:cisco_fabricpath_global).provide(:nxapi) do
     end
     debug current
   end # puts_config
-
 end   # Puppet::Type

@@ -259,8 +259,9 @@ test_name "TestCase :: #{testheader}" do
 #  tests[id][:desc] = '1.0 Cleanup using absent'
 #  tests[id][:ensure] = :absent
 #  test_harness_fabricpath_global(tests, id)
-  device = device_type(agent)
-  logger.info("#{device} is the device #####")
+  device = device_type
+  logger.info("#### This device is of type: #{device} #####")
+  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   node_featureset_cleanup(agent, 'fabricpath', 'cleanup', false)
 
   # -----------------------------------
@@ -285,8 +286,8 @@ test_name "TestCase :: #{testheader}" do
     tests[id][:ensure] = :absent
     test_harness_fabricpath_global(tests, id)
   else 
-    logger.info("\n#{'-' * 60}\n\
-                Skipping for #{device} Section 2. Default Property exclusive")
+    logger.info("\n#{'-' * 60}\n"\
+                "Skipping for #{device} Section 2. Default Property exclusive")
   end
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Non Default Property Testing")
@@ -313,8 +314,8 @@ test_name "TestCase :: #{testheader}" do
     tests[id][:ensure] = :absent
     test_harness_fabricpath_global(tests, id)
   else
-    logger.info("\n#{'-' * 60}\n\
-                Skipping for #{device} Section 4. Non Default Property excl")
+    logger.info("\n#{'-' * 60}\n"\
+                "Skipping for #{device} Section 4. Non Default Property excl")
   end
 
   # -------------------------------------------------------------------
