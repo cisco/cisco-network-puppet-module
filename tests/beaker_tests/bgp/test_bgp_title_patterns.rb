@@ -81,8 +81,12 @@ resource_asdot = UtilityLib.get_namespace_cmd(agent,
 # Define expected default values for cisco_bgp resource
 expected_default_values = {
   'ensure'                                 => 'present',
+  'fast_external_fallover'                 => 'true',
+  'flush_routes'                           => 'false',
+  'isolate'                                => 'false',
   'enforce_first_as'                       => 'true',
   'maxas_limit'                            => 'false',
+  'neighbor_down_fib_accelerate'           => 'false',
   'shutdown'                               => 'false',
   'suppress_fib_pending'                   => 'false',
   'log_neighbor_changes'                   => 'false',

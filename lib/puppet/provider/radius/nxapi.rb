@@ -41,7 +41,7 @@ Puppet::Type.type(:radius).provide(:nxapi) do
     debug "Checking instance, Radius #{name}"
 
     current_state = {
-      name:   'default',
+      name: 'default'
     }
 
     new(current_state)

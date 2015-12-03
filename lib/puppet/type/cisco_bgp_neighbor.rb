@@ -108,7 +108,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
       [
         /^(\d+|\d+\.\d+)$/,
         [
-          [:asn, identity],
+          [:asn, identity]
         ],
       ],
       [
@@ -129,7 +129,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
       [
         /^(\S+)$/,
         [
-          [:name, identity],
+          [:name, identity]
         ],
       ],
     ]
