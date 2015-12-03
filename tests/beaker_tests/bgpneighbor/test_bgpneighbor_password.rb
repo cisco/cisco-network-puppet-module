@@ -64,54 +64,71 @@ tests = {
 }
 
 test_name "TestCase :: #{testheader}" do
+  tests[id] = {}
+  init_bgp(tests, id) # clean slate
   stepinfo = 'Setup switch for provider test'
-  node_feature_cleanup(agent, 'bgp', stepinfo)
   logger.info("TestStep :: #{stepinfo} :: #{result}")
 
-  asn = 42
+  platform = fact_on(agent, 'os.name')
   vrf = 'red'
-  tests[id] = {}
   neighbor = '1.1.1.1'
+  encr_pw = '386c0565965f89de'
   passwords = { :default    => 'test',
                 'default'   => 'test',
                 :cleartext  => 'test',
                 'cleartext' => 'test',
               }
+
+  if platform == 'ios_xr'
+    passwords[:md5]  = encr_pw
+    passwords['md5'] = encr_pw
+  else
+    # don't try symbol since it starts with a number
+    passwords['3des']  = encr_pw
+  end
+
   passwords.each do |type, password|
     tests[id] = {
       :manifest_props => { :ensure        => :present,
-                           :asn           => asn,
+                           :asn           => BgpLib::ASN,
                            :vrf           => vrf,
                            :neighbor      => neighbor,
+                           :remote_as     => 99,
                            :password_type => type,
                            :password      => password,
                    },
       :resource       => {
-        'ensure'   => 'present',
-        'password' => '386c0565965f89de',
+        'ensure' => 'present'
       },
     }
+
+    if platform == 'ios_xr'
+      # for XR, just make sure a password is there for types other than md5
+      if type == :md5 || type == 'md5'
+        tests[id][:resource]['password'] = encr_pw
+      else
+        tests[id][:resource]['password'] = UtilityLib::IGNORE_VALUE
+      end
+    else
+      tests[id][:resource]['password'] = encr_pw
+    end
+
     resource_cmd_str =
       UtilityLib::PUPPET_BINPATH +
-      'resource cisco_bgp_neighbor ' + "'#{asn} #{vrf} #{neighbor}'"
+      'resource cisco_bgp_neighbor ' + "'#{BgpLib::ASN} #{vrf} #{neighbor}'"
     tests[id][:resource_cmd] =
       UtilityLib.get_namespace_cmd(agent, resource_cmd_str, options)
-    tests[id][:desc] = '1.1 Apply manifest with password attributes'
+    tests[id][:desc] = "1.1 Apply manifest with password attributes (#{type})"
     create_bgpneighbor_manifest(tests, id)
     test_manifest(tests, id)
 
     tests[id][:desc] = '1.2 Verify puppet resource'
     test_resource(tests, id)
 
-    tests[id][:desc] = '1.3 Verify password has been configured on the box'
-    tests[:show_cmd] = "show run bgp all | section #{neighbor}"
-    tests[id][:show_pattern] = [/password/]
-    test_show_cmd(tests, id)
-
-    tests[id][:desc] = '1.4 Test removing the password'
+    tests[id][:desc] = '1.3 Test removing the password'
     tests[id][:manifest_props] = {
       :ensure   => :present,
-      :asn      => asn,
+      :asn      => BgpLib::ASN,
       :vrf      => vrf,
       :neighbor => neighbor,
       :password => '',
@@ -119,9 +136,13 @@ test_name "TestCase :: #{testheader}" do
     create_bgpneighbor_manifest(tests, id)
     test_manifest(tests, id)
 
-    tests[id][:desc] = '1.5 Verify password has been removed on the box'
-    test_show_cmd(tests, id, true)
+    tests[id][:desc] = '1.4 Verify password has been removed on the box'
+    tests[id][:resource] = { 'password' => UtilityLib::IGNORE_VALUE }
+    test_resource(tests, id, true)
   end
+
+  cleanup_bgp(tests, id)
+
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   UtilityLib.raise_passfail_exception(result, testheader, self, logger)
 end
