@@ -41,6 +41,7 @@ module RoutedIntfLib
   TRUNK_ALLOWED_NEGATIVE       = 'invalid'
   TRUNK_NATIVE_NEGATIVE        = 'invalid'
   VRF_NEGATIVE                 = '~'
+  CHANNEL_GROUP_NEGATIVE       = '-1'
 
   # A. Methods to create manifests for cisco_interface Puppet provider test cases.
   # Method to create a manifest for RoutedINTF resource attribute 'ensure' where
@@ -65,6 +66,7 @@ node default {
       switchport_autostate_exclude => 'default',
       switchport_vtp               => 'default',
       vrf                          => 'default',
+      channel_group                => 'default',
   }}
 EOF"
     manifest_str
@@ -148,6 +150,7 @@ node default {
       switchport_autostate_exclude => false,
       switchport_vtp               => false,
       vrf                          => 'test1',
+      channel_group                => '200',
     }}
 EOF"
     manifest_str
@@ -341,6 +344,21 @@ node default {
       shutdown                     => false,
       switchport_mode              => disabled,
       vrf                          => #{RoutedIntfLib::VRF_NEGATIVE},
+    }
+}
+EOF"
+    manifest_str
+  end
+
+  # Method to create a manifest for RoutedINTF resource attribute 'channel-group'.
+  # @param none [None] No input parameters exist.
+  # @result none [None] Returns no object.
+  def self.create_routedintf_manifest_channel_group_negative
+    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+node default {
+    cisco_interface { 'ethernet1/4':
+      ensure                       => present,
+      channel_group                => #{RoutedIntfLib::CHANNEL_GROUP_NEGATIVE},
     }
 }
 EOF"
