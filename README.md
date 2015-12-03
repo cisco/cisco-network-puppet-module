@@ -160,6 +160,7 @@ The following resources include cisco types and providers along with cisco provi
   * [`domain_name (netdev_stdlib)`](#type-domain_name)
   * [`name_server (netdev_stdlib)`](#type-name_server)
   * [`network_dns (netdev_stdlib)`](#type-network_dns)
+  * [`search_domain (netdev_stdlib)`](#type-search_domain)
 
 * Interface Types
   * [`cisco_interface`](#type-cisco_interface)
@@ -187,6 +188,8 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_snmp_server`](#type-cisco_snmp_server)
   * [`cisco_snmp_user`](#type-cisco_snmp_user)
   * [`network_snmp (netdev_stdlib)`](#type-network_snmp)
+  * [`snmp_community (netdev_stdlib)`](#type-snmp_community)
+  * [`snmp_user (netdev_stdlib)`](#type-snmp_user)
 
 * SYSLOG Types
   * [`syslog_server (netdev_stdlib)`](#type-syslog_server)
@@ -194,15 +197,16 @@ The following resources include cisco types and providers along with cisco provi
 
 * TACACS Types
   * [`cisco_tacacs_server`](#type-cisco_tacacs_server)
-  * [`tacacs_server_group (netdev_stdlib)`](#type-cisco_tacacs_server_group)
   * [`cisco_tacacs_server_host`](#type-cisco_tacacs_server_host)
   * [`tacacs (netdev_stdlib)`](#type-tacacs)
+  * [`tacacs_global (netdev_stdlib)`](#type-tacacs_global)
   * [`tacacs_server (netdev_stdlib)`](#type-tacacs_server)
   * [`tacacs_server_group (netdev_stdlib)`](#type-tacacs_server_group)
 
 * VLAN Types
   * [`cisco_vlan`](#type-cisco_vlan)
   * [`cisco_vtp`](#type-cisco_vtp)
+  * [`network_trunk (netdev_stdlib)`](#type-network_trunk)
 
 * VRF Type
   * [`cisco_vrf`](#type-cisco_vrf)
@@ -228,23 +232,28 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_vlan`](#type-cisco_vlan)
 * [`cisco_vrf`](#type-cisco_vrf)
 * [`cisco_vtp`](#type-cisco_vtp)
-* [`network_interface (netdev_stdlib)`](#type-network_interface)
 
 ### <a name="resource-by-name-netdev">NetDev StdLib Resource Type Catalog (by Name)<a>
 
 * [`domain_name`](#type-domain_name)
 * [`name_server`](#type-name_server)
 * [`network_dns`](#type-network_dns)
+* [`network_interface`](#type-network_interface)
+* [`network_trunk`](#type-network_trunk)
 * [`network_snmp`](#type-network_snmp)
 * [`ntp_config`](#type-ntp_config)
 * [`ntp_server`](#type-ntp_server)
 * [`radius`](#type-radius)
 * [`radius_global`](#type-radius_global)
 * [`radius_server`](#type-radius_server)
+* [`search_domain`](#type-search_domain)
+* [`snmp_community`](#type-snmp_community)
+* [`snmp_user`](#type-snmp_user)
 * [`syslog_server`](#type-syslog_server)
 * [`syslog_setting`](#type-syslog_setting)
 * [`tacacs`](#type-tacacs)
-* [`tacacs_server_group`](#type-cisco_tacacs_server_group)
+* [`tacacs_global`](#type-tacacs_global)
+* [`tacacs_server_group`](#type-tacacs_server_group)
 * [`tacacs_server`](#type-tacacs_server)
 
 --
@@ -291,6 +300,9 @@ BGP autonomous system number.  Valid values are String, Integer in ASPLAIN or AS
 ##### `vrf`
 Name of the resource instance. Valid values are string. The name 'default' is a valid VRF representing the global bgp.
 
+##### `route_distinguisher`
+VPN Route Distinguisher (RD). The RD is combined with the IPv4 or IPv6 prefix learned by the PE router to create a globally unique address. Valid values are a String in one of the route-distinguisher formats (ASN2:NN, ASN4:NN, or IPV4:NN); the keyword 'auto', or the keyword 'default'.
+
 ##### `router_id`
 Router Identifier (ID) of the BGP router VRF instance. Valid values are string, and keyword 'default'.
 
@@ -306,9 +318,21 @@ AS confederation parameters. Valid values are String, keyword 'default'.
 ##### `enforce_first_as`
 Enable/Disable enforces the neighbor autonomous system to be the first AS number listed in the AS path attribute for eBGP. Valid values are 'true', 'false', and 'default'.
 
+##### `fast_external_fallover`
+Enable/Disable immediately reset the session if the link to a directly connected BGP peer goes down. Valid values are 'true', 'false', and 'default'.
+
+##### `flush_routes`
+Enable/Disable flush routes in RIB upon controlled restart. Valid values are 'true', 'false', and 'default'.
+
+##### `isolate`
+Enable/Disable isolate this router from BGP perspective. Valid values are 'true', 'false', and 'default'.
+
 ##### `maxas_limit`
 Specify Maximum number of AS numbers allowed in the AS-path attribute. Valid values are integers between 1 and 512, or keyword 'default' to disable this property.
 
+##### `neighbor_down_fib_accelerate`
+Enable/Disable handle BGP neighbor down event, due to various reasons. Valid values are 'true', 'false', and 'default'.
+ 
 ##### `shutdown`
 Administratively shutdown the BGP protocol. Valid values are 'true', 'false', and 'default'.
 
@@ -489,6 +513,33 @@ redistribute => [['direct'],
                  ['ospf 3',  'rm_ospf'],
                  ['rip 4']]
 ```
+
+##### `route target both auto`
+(iBGP only) Enable/Disable the route-target 'auto' setting for both import and export target communities. Valid values are true, false, or 'default'.
+
+##### `route target both auto evpn`
+(iBGP only, EVPN only) Enable/Disable the EVPN route-target 'auto' setting for both import and export target communities. Valid values are true, false, or 'default'.
+
+##### `route_target_import`
+Sets the route-target import extended communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
+Examples:
+
+~~puppet
+route_target_import => ['1.2.3.4:5', '33:55']
+route_target_export => '4:4 66:66'
+route_target_export_evpn => '5:5'
+\~~~
+
+##### `route_target_import_evpn`
+(EVPN only) Sets the route-target import extended communities for EVPN. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
+##### `route_target_export`
+Sets the route-target export extended communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
+##### `route_target_export_evpn`
+(EVPN only) Sets the route-target export extended communities for EVPN. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
 --
 ### Type: cisco_bgp_neighbor
 
@@ -1145,6 +1196,9 @@ Description of the VRF. Valid value is string.
 ##### `shutdown`
 Shutdown state of the VRF. Valid values are 'true' and 'false'.
 
+##### `vni`
+Specify virtual network identifier. Valid values are Integer or keyword 'default'.
+
 --
 ### Type: cisco_vtp
 
@@ -1236,6 +1290,30 @@ Contact name for this device.  Valid value is a string.
 ##### `location`
 Location of this device.  Valid value is a string.
 
+### Type: `network_trunk`
+
+Manages a puppet netdev_stdlib Network Trunk. It should be noted that while the NetDev stdlib has certain specified accepted parameters these may not be applicable to different network devices. For example, certain Cisco devices only use dot1q encapsulation, and therefore other values will cause errors.
+
+#### Parameters
+
+###### `name`
+The switch interface name. Valid value is a string.
+
+###### `encapsulation`
+The vlan-tagging encapsulation protocol, usually dot1q. Valid values are 'dot1q', 'isl', 'negotiate' and 'none'. Cisco devices use dot1q encapsulation.
+
+###### `mode`
+The L2 interface mode, enables or disables trunking. Valid values are 'access', 'trunk', 'dynamic_auto', and 'dynamic_desirable'. The mode on a Cisco device will always be 'trunk'.
+
+###### `untagged_vlan`
+VLAN used for untagged VLAN traffic. a.k.a Native VLAN. Values must be in range of 1 to 4095.
+
+###### `tagged_vlans`
+Array of VLAN names used for tagged packets. Values must be in range of 1 to 4095.
+
+###### `pruned_vlans`
+Array of VLAN ID numbers used for VLAN pruning. Values must be in range of 1 to 4095. Cisco do not implement the concept of pruned vlans.
+
 ### Type: ntp_config
 
 #### Parameters
@@ -1319,6 +1397,72 @@ Encryption key (plaintext or in hash form depending on key_format).  Valid value
 ##### `key_format`
 Encryption key format [0-7].  Valid value is an integer.
 
+### Type: search_domain
+
+Configure the search domain of the device. Note that this type is functionally equivalent to 
+the netdev_stdlib domain_name type.
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `name`
+Search domain of the device. Valid value is a string.
+
+### Type: snmp_community
+Manages an SNMP community on a Cisco SNMP server.
+
+#### Parameters
+
+##### `ensure`
+Determine whether the config should be present or not on the device. Valid
+values are 'present' and 'absent'.
+
+##### `group`
+Group that the SNMP community belongs to. Valid values are a string or the
+keyword 'default'.
+
+##### `acl`
+Assigns an Access Control List (ACL) to an SNMP community to filter SNMP
+requests. Valid values are a string or the keyword 'default'.
+
+### Type: snmp_user
+
+Manages an SNMP user on an cisco SNMP server.
+
+#### Parameters
+
+##### `ensure`
+Determines whether the config should be present or not on the device. Valid
+values are 'present', and 'absent'.
+
+##### `name`
+Name of the SNMP user. Valid value is a string.
+
+##### `engine_id`
+Engine ID of the SNMP user. Valid values are empty string or 5 to 32 octets
+seprated by colon.
+
+##### `roles`
+Groups that the SNMP user belongs to. Valid value is a string.
+
+##### `auth`
+Authentication protocol for the SNMP user. Valid values are 'md5' and 'sha'.
+
+##### `password`
+Authentication password for the SNMP user. Valid value is string.
+
+##### `privacy`
+Privacy protocol for the SNMP user. Valid values are 'aes128' and 'des'.
+
+##### `private_key`
+Privacy password for SNMP user. Valid value is a string.
+
+##### `localized_key`
+Specifies whether the passwords specified in manifest are in localized key
+format (in case of true) or cleartext (in case of false). Valid values are 'true', and 'false'.
+
 ### Type: syslog_server
 
 #### Parameters
@@ -1348,6 +1492,27 @@ The unit of measurement for log time values.  Valid values are 'seconds' and 'mi
 ### Type: tacacs
 
 #### Parameters
+
+##### `enable`
+Enable or disable radius functionality [true|false]
+
+### Type: tacacs_global
+
+#### Parameters
+
+##### `enable`
+Enable or disable radius functionality [true|false]
+
+##### `key`
+Encryption key (plaintext or in hash form depending on key_format)
+
+##### `key_format`
+Encryption key format [0-7]
+
+##### `timeout`
+Number of seconds before the timeout period ends
+
+### Type: tacacs_server
 
 ##### `enable`
 Enable or disable tacacs functionality [true|false]

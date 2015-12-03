@@ -43,11 +43,15 @@ Puppet::Type.newtype(:cisco_bgp) do
       ensure                                 => present,
       asn                                    => '39317'
       vrf                                    => 'green',
+      route_distinguisher                    => 'auto'
       router_id                              => '10.0.0.1',
       cluster_id                             => '55',
       confederation_id                       => '77.6',
       confederation_peers                    => '77.6 88 99.4 200'
       enforce_first_as                       => true,
+      fast_external_fallover                 => true,
+      flush_routes                           => false,
+      isolate                                => false,
       maxas_limit                            => '50',
       shutdown                               => false,
 
@@ -110,7 +114,7 @@ Puppet::Type.newtype(:cisco_bgp) do
       [
         /^(\d+|\d+\.\d+)$/,
         [
-          [:asn, identity],
+          [:asn, identity]
         ],
       ],
       [
@@ -123,7 +127,7 @@ Puppet::Type.newtype(:cisco_bgp) do
       [
         /^(\S+)$/,
         [
-          [:name, identity],
+          [:name, identity]
         ],
       ],
     ]
@@ -168,6 +172,25 @@ Puppet::Type.newtype(:cisco_bgp) do
   ##############
   # Properties #
   ##############
+
+  newproperty(:route_distinguisher) do
+    desc "VPN Route Distinguisher (RD). The RD is combined with the IPv4
+          or IPv6 prefix learned by the PE router to create a globally
+          unique address. Valid values are a String in one of the
+          route-distinguisher formats (ASN2:NN, ASN4:NN, or IPV4:NN);
+          the keyword 'auto', or the keyword 'default'."
+
+    validate do |rd|
+      fail "Route Distinguisher '#{value}' #{match_error}" unless
+        /^(?:\d+\.\d+\.\d+\.)?\d+:\d+$/.match(rd) || rd == 'auto' ||
+        rd == 'default' || rd == :default
+    end
+
+    munge do |rd|
+      rd = :default if rd == 'default'
+      rd
+    end
+  end # property router_distinguisher
 
   newproperty(:router_id) do
     desc "Router Identifier (ID) of the BGP router instance. Valid
@@ -262,6 +285,25 @@ Puppet::Type.newtype(:cisco_bgp) do
     newvalues(:true, :false, :default)
   end # property enforce_first_as
 
+  newproperty(:fast_external_fallover) do
+    desc 'Enable/Disable immediately reset the session if the link ' \
+         'to a directly connected BGP peer goes down'
+
+    newvalues(:true, :false, :default)
+  end # property fast_external_fallover
+
+  newproperty(:flush_routes) do
+    desc 'Enable/Disable flush routes in RIB upon controlled restart'
+
+    newvalues(:true, :false, :default)
+  end # property flush_routes
+
+  newproperty(:isolate) do
+    desc 'Enable/Disable isolate this router from BGP perspective'
+
+    newvalues(:true, :false, :default)
+  end # property isolate
+
   newproperty(:maxas_limit) do
     desc "Specify Maximum number of AS numbers allowed in the AS-path attribute.
           Valid values are integers between 1 and 2000, or keyword 'default' to
@@ -276,6 +318,12 @@ Puppet::Type.newtype(:cisco_bgp) do
       value
     end
   end
+
+  newproperty(:neighbor_down_fib_accelerate) do
+    desc 'Enable/Disable handle BGP neighbor down event, due to various reasons'
+
+    newvalues(:true, :false, :default)
+  end # property neighbor_down_fib_accelerate
 
   newproperty(:suppress_fib_pending) do
     desc "Enable/Disable advertise only routes that are programmed

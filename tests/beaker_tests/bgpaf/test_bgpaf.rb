@@ -107,7 +107,6 @@ tests = {
 #   title/af manifests
 # tests[id][:remote_as] - (Optional) allows explicit remote-as configuration
 #   for some ebgp/ibgp-only testing
-#
 
 # default_properties
 #
@@ -133,6 +132,12 @@ tests['default_properties'] = {
     next_hop_route_map            => 'default',
     networks                      => 'default',
     redistribute                  => 'default',
+    route_target_both_auto        => 'default',
+    route_target_both_auto_evpn   => 'default',
+    route_target_import           => 'default',
+    route_target_import_evpn      => 'default',
+    route_target_export           => 'default',
+    route_target_export_evpn      => 'default',
     ",
 
   :resource_props => {
@@ -150,6 +155,8 @@ tests['default_properties'] = {
     'default_information_originate' => 'false',
     'maximum_paths'                 => '1',
     'maximum_paths_ibgp'            => '1',
+    'route_target_both_auto'        => 'false',
+    'route_target_both_auto_evpn'   => 'false',
   },
 }
 
@@ -198,11 +205,11 @@ tests['non_default_properties_C'] = {
   :desc           => "2.2 Non Default Properties: 'C' commands",
   :title_pattern  => '2 blue ipv4 unicast',
   :manifest_props => "
-    client_to_client                => false,
+    client_to_client => false,
   ",
 
   :resource_props => {
-    'client_to_client'              => 'false',
+    'client_to_client' => 'false'
   },
 }
 
@@ -253,7 +260,7 @@ tests['non_default_properties_Dampening_false'] = {
     ",
 
   :resource_props => {
-    'dampening_state' => 'false',
+    'dampening_state' => 'false'
   },
 }
 
@@ -263,11 +270,11 @@ tests['non_default_properties_Dampening_routemap'] = {
   :desc           => '2.3.3 Non-Default dampening_routemap',
   :title_pattern  => '2 blue ipv4 unicast',
   :manifest_props => "
-    dampening_routemap              => 'RouteMap',
+    dampening_routemap => 'RouteMap',
     ",
 
   :resource_props => {
-    'dampening_routemap'            => 'RouteMap',
+    'dampening_routemap' => 'RouteMap'
   },
 }
 
@@ -302,15 +309,31 @@ tests['non_default_properties_N'] = {
 }
 
 redistribute = [['static', 's_rmap'], ['eigrp 1', 'e_rmap']] # rubocop:disable Style/WordArray
+routetargetimport = ['1.2.3.4:55', '102:33']
+routetargetimportevpn = ['1.2.3.4:55', '102:33']
+routetargetexport = ['1.2.3.4:55', '102:33']
+routetargetexportevpn = ['1.2.3.4:55', '102:33']
 tests['non_default_properties_R'] = {
   :desc           => "2.6 Non Default Properties: 'R' commands",
   :title_pattern  => '2 blue ipv4 unicast',
   :manifest_props => "
-    redistribute => #{redistribute},
+    redistribute                => #{redistribute},
+    route_target_both_auto      => true,
+    route_target_both_auto_evpn => true,
+    route_target_import         => #{routetargetimport},
+    route_target_import_evpn    => #{routetargetimportevpn},
+    route_target_export         => #{routetargetexport},
+    route_target_export_evpn    => #{routetargetexportevpn},
   ",
 
   :resource_props => {
-    'redistribute' => "#{redistribute}",
+    'redistribute'                => "#{redistribute}",
+    'route_target_both_auto'      => 'true',
+    'route_target_both_auto_evpn' => 'true',
+    'route_target_import'         => "#{routetargetimport}",
+    'route_target_import_evpn'    => "#{routetargetimportevpn}",
+    'route_target_export'         => "#{routetargetexport}",
+    'route_target_export_evpn'    => "#{routetargetexportevpn}",
   },
 }
 

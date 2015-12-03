@@ -34,7 +34,7 @@ Puppet::Type.type(:syslog_settings).provide(:nxapi) do
   mk_resource_methods
 
   SYSLOG_SETTINGS_PROPS = {
-    time_stamp_units: :timestamp,
+    time_stamp_units: :timestamp
   }
 
   def initialize(value={})
