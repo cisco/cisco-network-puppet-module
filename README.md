@@ -760,6 +760,13 @@ Shutdown state of the interface. Valid values are 'true', 'false', and
 Switchport mode of the interface. To make an interface Layer 3, set
 `switchport_mode` to 'disabled'. Valid values are 'disabled', 'access', 'tunnel', 'fex_fabric', 'trunk', and 'default'.
 
+###### `channel_group`
+channel_group is an aggregation of multiple physical interfaces
+that creates a logical interface. Valid values are 1 to 4096 and 'default'
+When we delete channel_group from an interface, the port-channel interface
+will not be removed. If this needs to be removed, use the
+interface destroy method on the port-channel
+
 ##### L2 interface config attributes
 
 ###### `access_vlan`
