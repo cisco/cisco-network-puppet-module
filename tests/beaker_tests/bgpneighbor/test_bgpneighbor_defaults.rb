@@ -53,7 +53,6 @@
 # Require UtilityLib.rb and BgpNeighborLib.rb paths.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 require File.expand_path('../bgpneighborlib.rb', __FILE__)
-require File.expand_path('../../bgp/bgplib.rb', __FILE__)
 
 UtilityLib.set_manifest_path(master, self)
 result = 'PASS'

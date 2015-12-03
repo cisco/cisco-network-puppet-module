@@ -55,7 +55,6 @@
 # Require UtilityLib.rb and BgpNeighborLib.rb paths.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 require File.expand_path('../bgpneighborlib.rb', __FILE__)
-require File.expand_path('../../bgp/bgplib.rb', __FILE__)
 
 result = 'PASS'
 testheader = 'BGP Neighbor Resource :: Attribute Non-defaults'
