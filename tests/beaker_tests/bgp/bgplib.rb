@@ -306,12 +306,12 @@ module BgpLib
   end
 
   # Create manifest ensure => absent
-  def self.create_bgp_manifest_absent
+  def self.create_bgp_manifest_absent(asn=BgpLib::ASN)
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'default':
         ensure                                 => absent,
-        asn                                    => #{BgpLib::ASN},
+        asn                                    => #{asn},
         vrf                                    => 'default',
       }
     }

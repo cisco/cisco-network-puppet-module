@@ -55,6 +55,7 @@
 # Require UtilityLib.rb and BgpNeighborLib.rb paths.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 require File.expand_path('../bgpneighborlib.rb', __FILE__)
+require File.expand_path('../../bgp/bgplib.rb', __FILE__)
 
 result = 'PASS'
 testheader = 'BGP Neighbor Resource :: Attribute Non-defaults'
@@ -66,74 +67,85 @@ tests = {
 }
 
 test_name "TestCase :: #{testheader}" do
+  tests[id] = {}
+  init_bgp(tests, id)
   stepinfo = 'Setup switch for provider test'
-  node_feature_cleanup(agent, 'bgp', stepinfo)
   logger.info("TestStep :: #{stepinfo} :: #{result}")
 
-  asn = 42
+  platform = fact_on(agent, 'os.name')
+
   vrf = 'red'
-  tests[id] = {}
-  ['1.1.1.1', '2.2.2.0/24'].each do |neighbor|
+  addrs = ['1.1.1.1', '2000::2']
+  update_source = 'fastethernet1/1/1/1'
+  if platform != 'ios_xr'
+    addrs << '2.2.2.0/24'
+    update_source = 'ethernet1/1'
+  end
+  addrs.each do |neighbor|
     tests[id] = {
       :manifest_props => {
-        :ensure                 => :present,
-        :asn                    => asn,
-        :vrf                    => vrf,
-        :neighbor               => neighbor,
-        :description            => 'tested by beaker',
-        :connected_check        => :true,
-        :capability_negotiation => :true,
-        :dynamic_capability     => :true,
-        :ebgp_multihop          => 2,
-        :local_as               => 42,
-        :log_neighbor_changes   => :enable,
-        :low_memory_exempt      => :true,
-        :remote_as              => 12.1,
-        :remove_private_as      => :all,
-        :shutdown               => :true,
-        :suppress_4_byte_as     => :true,
-        :timers_keepalive       => 90,
-        :timers_holdtime        => 270,
-        :update_source          => 'Ethernet1/1',
+        :ensure             => :present,
+        :asn                => BgpLib::ASN,
+        :vrf                => vrf,
+        :neighbor           => neighbor,
+        :description        => 'tested by beaker',
+        :connected_check    => :true,
+        :ebgp_multihop      => 2,
+        :local_as           => 43,
+        :remote_as          => 12.1,
+        :shutdown           => :true,
+        :suppress_4_byte_as => :true,
+        :timers_keepalive   => 90,
+        :timers_holdtime    => 270,
+        :update_source      => update_source,
       },
       :resource       => {
-        'ensure'                 => 'present',
-        'description'            => 'tested by beaker',
-        'connected_check'        => 'true',
-        'capability_negotiation' => 'true',
-        'dynamic_capability'     => 'true',
-        'ebgp_multihop'          => '2',
-        'local_as'               => '42',
-        'log_neighbor_changes'   => 'enable',
-        'low_memory_exempt'      => 'true',
-        'remote_as'              => '12.1',
-        'remove_private_as'      => 'all',
-        'shutdown'               => 'true',
-        'suppress_4_byte_as'     => 'true',
-        'timers_keepalive'       => '90',
-        'timers_holdtime'        => '270',
-        'update_source'          => 'ethernet1/1',
+        'ensure'             => 'present',
+        'description'        => 'tested by beaker',
+        'connected_check'    => 'true',
+        'ebgp_multihop'      => '2',
+        'local_as'           => '43',
+        'remote_as'          => '12.1',
+        'shutdown'           => 'true',
+        'suppress_4_byte_as' => 'true',
+        'timers_keepalive'   => '90',
+        'timers_holdtime'    => '270',
+        'update_source'      => update_source,
       },
     }
+
+    if platform != 'ios_xr' # add properties not supported on XR
+      tests[id][:manifest_props][:capability_negotiation] = :true
+      tests[id][:manifest_props][:dynamic_capability] = :true
+      tests[id][:manifest_props][:log_neighbor_changes] = :enable
+      tests[id][:manifest_props][:low_memory_exempt] = :true
+      tests[id][:manifest_props][:remove_private_as] = :all
+      tests[id][:resource]['capability_negotiation'] = 'true'
+      tests[id][:resource]['dynamic_capability'] = 'true'
+      tests[id][:resource]['log_neighbor_changes'] = 'enable'
+      tests[id][:resource]['low_memory_exempt'] = 'true'
+      tests[id][:resource]['remove_private_as'] = 'all'
+      # maximum_peers handled below
+    end
+
     resource_cmd_str =
       UtilityLib::PUPPET_BINPATH +
-      "resource cisco_bgp_neighbor '#{asn} #{vrf} #{neighbor}'"
+      "resource cisco_bgp_neighbor '#{BgpLib::ASN} #{vrf} #{neighbor}'"
     tests[id][:resource_cmd] =
       UtilityLib.get_namespace_cmd(agent, resource_cmd_str, options)
     # transport_passive_only attribute is only available in neighbor ip address
     # format, maximum_peers option is only available in neighbor ip/prefix
     # format.
-    if neighbor == '1.1.1.1'
+    if neighbor.split('/')[1].nil?
       tests[id][:manifest_props][:transport_passive_only] = :true
       tests[id][:resource]['transport_passive_only'] = 'true'
       tests[id][:manifest_props][:maximum_peers] = nil
-      tests[id][:resource]['maximum_peers'] = '0'
+      tests[id][:resource]['maximum_peers'] = '0' if platform != 'ios_xr'
     else
       tests[id][:manifest_props][:transport_passive_only] = nil
-      tests[id][:resource]['transport_passive_only'] =
-        'false'
-      tests[id][:manifest_props][:maximum_peers] = 2
-      tests[id][:resource]['maximum_peers'] = '2'
+      tests[id][:resource]['transport_passive_only'] = 'false'
+      tests[id][:manifest_props][:maximum_peers] = 2 if platform != 'ios_xr'
+      tests[id][:resource]['maximum_peers'] = '2' if platform != 'ios_xr'
     end
 
     tests[id][:desc] =
@@ -144,32 +156,37 @@ test_name "TestCase :: #{testheader}" do
     tests[id][:desc] =
       '1.2 Apply manifest with string format non-default attributes'
     tests[id][:manifest_props] = {
-      :ensure                 => :present,
-      :asn                    => asn,
-      :vrf                    => vrf,
-      :neighbor               => neighbor,
-      :description            => 'tested by beaker',
-      :connected_check        => 'true',
-      :capability_negotiation => 'true',
-      :dynamic_capability     => 'true',
-      :ebgp_multihop          => '2',
-      :local_as               => '42',
-      :log_neighbor_changes   => 'enable',
-      :low_memory_exempt      => 'true',
-      :remote_as              => '12.1',
-      :remove_private_as      => 'all',
-      :shutdown               => 'true',
-      :suppress_4_byte_as     => 'true',
-      :timers_keepalive       => '90',
-      :timers_holdtime        => '270',
-      :update_source          => 'ethernet1/1',
+      :ensure             => :present,
+      :asn                => BgpLib::ASN,
+      :vrf                => vrf,
+      :neighbor           => neighbor,
+      :description        => 'tested by beaker',
+      :connected_check    => 'true',
+      :ebgp_multihop      => '2',
+      :local_as           => '43',
+      :remote_as          => '12.1',
+      :shutdown           => 'true',
+      :suppress_4_byte_as => 'true',
+      :timers_keepalive   => '90',
+      :timers_holdtime    => '270',
+      :update_source      => update_source,
     }
-    if neighbor == '1.1.1.1'
+
+    if platform != 'ios_xr' # add properties not supported on XR
+      tests[id][:manifest_props][:capability_negotiation] = 'true'
+      tests[id][:manifest_props][:dynamic_capability] = 'true'
+      tests[id][:manifest_props][:log_neighbor_changes] = 'enable'
+      tests[id][:manifest_props][:low_memory_exempt] = 'true'
+      tests[id][:manifest_props][:remove_private_as] = 'all'
+      # maximum_peers handled below
+    end
+
+    if neighbor.split('/')[1].nil?
       tests[id][:manifest_props][:transport_passive_only] = 'true'
-      tests[id][:manifest_props][:maximum_peers] = nil
+      tests[id][:manifest_props][:maximum_peers] = nil if platform != 'ios_xr'
     else
       tests[id][:manifest_props][:transport_passive_only] = nil
-      tests[id][:manifest_props][:maximum_peers] = '2'
+      tests[id][:manifest_props][:maximum_peers] = '2' if platform != 'ios_xr'
     end
 
     create_bgpneighbor_manifest(tests, id)
@@ -177,63 +194,84 @@ test_name "TestCase :: #{testheader}" do
     tests[id][:code] = [0]
     test_manifest(tests, id)
 
+    update_source = 'ethernet1/2'
+    update_source = 'fastethernet1/2/1/1' if platform == 'ios_xr'
+
     tests[id][:desc] =
       '1.3 Update manifest and test harness'
     tests[id][:manifest_props] = {
-      :ensure                 => :present,
-      :asn                    => asn,
-      :vrf                    => vrf,
-      :neighbor               => neighbor,
-      :description            => '',
-      :connected_check        => 'false',
-      :capability_negotiation => 'false',
-      :dynamic_capability     => 'false',
-      :ebgp_multihop          => 'default',
-      :local_as               => 1.1,
-      :log_neighbor_changes   => 'disable',
-      :low_memory_exempt      => 'false',
-      :remote_as              => 1.1,
-      :remove_private_as      => 'disable',
-      :shutdown               => 'false',
-      :suppress_4_byte_as     => 'false',
-      :timers_keepalive       => '30',
-      :timers_holdtime        => '90',
-      :update_source          => 'ethernet1/2',
+      :ensure             => :present,
+      :asn                => BgpLib::ASN,
+      :vrf                => vrf,
+      :neighbor           => neighbor,
+      :description        => '',
+      :connected_check    => 'false',
+      :ebgp_multihop      => 'default',
+      :local_as           => 1.1,
+      :remote_as          => 1.2,
+      :shutdown           => 'false',
+      :suppress_4_byte_as => 'false',
+      :timers_keepalive   => '30',
+      :timers_holdtime    => '90',
+      :update_source      => update_source,
     }
     tests[id][:resource] = {
-      'ensure'                 => :present,
-      'connected_check'        => 'false',
-      'capability_negotiation' => 'false',
-      'dynamic_capability'     => 'false',
-      'ebgp_multihop'          => 'false',
-      'local_as'               => '1.1',
-      'log_neighbor_changes'   => 'disable',
-      'low_memory_exempt'      => 'false',
-      'remote_as'              => '1.1',
-      'remove_private_as'      => 'disable',
-      'shutdown'               => 'false',
-      'suppress_4_byte_as'     => 'false',
-      'timers_keepalive'       => '30',
-      'timers_holdtime'        => '90',
-      'update_source'          => 'ethernet1/2',
+      'ensure'             => :present,
+      'connected_check'    => 'false',
+      'ebgp_multihop'      => 'false',
+      'local_as'           => '1.1',
+      'remote_as'          => '1.2',
+      'shutdown'           => 'false',
+      'suppress_4_byte_as' => 'false',
+      'timers_keepalive'   => '30',
+      'timers_holdtime'    => '90',
+      'update_source'      => update_source,
     }
-    tests[id][:show_cmd] = "show run bgp all | section #{neighbor}"
-    # when description is empty string, puppet resource will not return
-    # its value, we have to use show command to verify its removal
-    tests[id][:show_pattern] = [/description/]
-    tests[id][:state] = true
+
+    if platform != 'ios_xr' # add properties not supported on XR
+      tests[id][:manifest_props][:capability_negotiation] = 'false'
+      tests[id][:manifest_props][:dynamic_capability] = 'false'
+      tests[id][:manifest_props][:log_neighbor_changes] = 'disable'
+      tests[id][:manifest_props][:low_memory_exempt] = 'false'
+      tests[id][:manifest_props][:remove_private_as] = 'disable'
+      tests[id][:resource]['capability_negotiation'] = 'false'
+      tests[id][:resource]['dynamic_capability'] = 'false'
+      tests[id][:resource]['log_neighbor_changes'] = 'disable'
+      tests[id][:resource]['low_memory_exempt'] = 'false'
+      tests[id][:resource]['remove_private_as'] = 'disable'
+    end
+
     tests[id][:code] = nil
-    create_bgpneighbor_manifest(tests, id)
-    test_harness_common(tests, id)
+    if platform == 'ios_xr'
+      create_bgpneighbor_manifest(tests, id)
+      test_manifest(tests, id)
+
+      stash_resource = tests[id][:resource]
+      # Check for the absence of a description
+      tests[id][:resource] = { 'description' => UtilityLib::IGNORE_VALUE }
+      test_resource(tests, id, true)
+      tests[id][:resource] = stash_resource # restore
+    else
+      tests[id][:show_cmd] = "show run bgp all | section #{neighbor}"
+      # when description is empty string, puppet resource will not return
+      # its value, we have to use show command to verify its removal
+      tests[id][:show_pattern] = [/description/]
+      tests[id][:state] = true
+      create_bgpneighbor_manifest(tests, id)
+      test_harness_common(tests, id)
+    end
 
     tests[id][:desc] =
       '1.4 Change format of local_as and remote_as, and verify idempotent'
     tests[id][:manifest_props][:local_as] = 65_537
-    tests[id][:manifest_props][:remote_as] = 65_537
+    tests[id][:manifest_props][:remote_as] = 65_538
     tests[id][:code] = [0]
     create_bgpneighbor_manifest(tests, id)
     test_manifest(tests, id)
   end
+
+  cleanup_bgp(tests, id)
+
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   UtilityLib.raise_passfail_exception(result, testheader, self, logger)
 end
