@@ -474,7 +474,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get negative test resource manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, RoutedIntfLib.create_routedintf_manifest_vrf_cg_negative)
+    on(master, RoutedIntfLib.create_routedintf_manifest_vrf_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
