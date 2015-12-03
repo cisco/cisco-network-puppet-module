@@ -144,7 +144,7 @@ node default {
       ipv4_proxy_arp               => true,
       ipv4_redirects               => false,
       mtu                          => 1556,
-      speed                        => 10000,
+      speed                        => 100,
       duplex                       => full,
       switchport_autostate_exclude => false,
       switchport_vtp               => false,

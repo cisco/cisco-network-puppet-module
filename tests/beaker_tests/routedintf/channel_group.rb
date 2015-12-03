@@ -110,7 +110,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a bash shell cmd.
     on(master, RoutedIntfLib.create_channel_group_manifest_default)
 
-    # Expected exit_code is 1 since this is a puppet agent cmd with change
+    # Expected exit_code is 2 since this is a puppet agent cmd with change
     cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
