@@ -65,7 +65,7 @@ module UtilityLib
   # Method to return the Vegas shell command string for a NXOS CLI command.
   # @param nxosclistr [String] The NXOS CLI command string to execute on host.
   # @result vshellcmd [String] Returns 'vsh -c <cmd>' command string.
-  def self.get_vshell(nxosclistr)
+  def self.get_vshell_cmd(nxosclistr)
     "/isan/bin/vsh -c '#{nxosclistr}'"
   end
 
@@ -379,7 +379,6 @@ def node_featureset_cleanup(agent, feature, stepinfo='feature-set cleanup',
   end
 end
 
-
 # Helper to remove all IP address configs from interfaces
 def interface_ip_cleanup(agent, stepinfo='Pre Clean:')
   logger.debug("#{stepinfo} Interface IP cleanup")
@@ -431,4 +430,3 @@ def bgp_title_pattern_munge(tests, id, provider=nil)
   t[:vrf] = 'default' if t[:vrf].nil?
   t
 end
-

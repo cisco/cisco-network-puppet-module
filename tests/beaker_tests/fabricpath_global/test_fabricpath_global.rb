@@ -151,7 +151,6 @@ tests['default_properties_exclusive'] = {
   },
 }
 
-
 tests['non_default_properties'] = {
   title_pattern:  'default',
   manifest_props: "
@@ -255,10 +254,10 @@ end
 #################################################################
 test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
-#  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-#  tests[id][:desc] = '1.0 Cleanup using absent'
-#  tests[id][:ensure] = :absent
-#  test_harness_fabricpath_global(tests, id)
+  #  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
+  #  tests[id][:desc] = '1.0 Cleanup using absent'
+  #  tests[id][:ensure] = :absent
+  #  test_harness_fabricpath_global(tests, id)
   device = device_type
   logger.info("#### This device is of type: #{device} #####")
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
@@ -285,7 +284,7 @@ test_name "TestCase :: #{testheader}" do
     tests[id][:desc] = '2.2 Default Properties exclusive to Platform (absent)'
     tests[id][:ensure] = :absent
     test_harness_fabricpath_global(tests, id)
-  else 
+  else
     logger.info("\n#{'-' * 60}\n"\
                 "Skipping for #{device} Section 2. Default Property exclusive")
   end
