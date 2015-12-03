@@ -120,41 +120,38 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
 
   tests['default_properties'] = {
     title_pattern:  interface_name,
+    default_values: {
+      'description'         => nil,
+      'ipv4_proxy_arp'      => 'false',
+      'ipv4_redirects'      => platform == 'nexus' ? 'true' : 'false',
+      'mtu'                 => platform == 'nexus' ? '1500' : '1514',
+      'vrf'                 => nil,
+    },
     manifest_props: "
-      description                  => 'default',
-      shutdown                     => false,
       ipv4_address                 => '192.168.1.1',
       ipv4_netmask_length          => 16,
-      ipv4_proxy_arp               => 'default',
-      ipv4_redirects               => 'default',
-      mtu                          => 'default',
-      switchport_autostate_exclude => 'default',
-      switchport_vtp               => 'default',
-      vrf                          => 'default',
+      shutdown                     => false,
     ",
     resource_props: {
       'ipv4_address'        => '192.168.1.1',
       'ipv4_netmask_length' => '16',
-      'ipv4_proxy_arp'      => 'false',
-      'ipv4_redirects'      => platform == 'nexus' ? 'true' : 'false',
-      'mtu'                 => platform == 'nexus' ? '1500' : '1514',
       'shutdown'            => 'false',
     },
   }
 
   if platform == 'nexus'
-    # speed and duplex don't support 'default' as a valid option
     tests['default_properties'][:manifest_props] += "
-      speed                        => 'auto',
-      duplex                       => 'auto',
       switchport_mode              => disabled,
     "
     tests['default_properties'][:resource_props].merge!(
-      'speed'                        => 'auto',
-      'duplex'                       => 'auto',
-      'switchport_autostate_exclude' => 'false',
-      'switchport_mode'              => 'disabled',
-      'switchport_vtp'               => 'false',
+      'switchport_mode' => 'disabled',
+    )
+    tests['default_properties'][:default_values].merge!(
+      # TODO: add 'default' as valid value for these props
+      #'speed'                         => 'auto',
+      #'duplex'                        => 'auto',
+      'switchport_autostate_exclude'  => 'false',
+      'switchport_vtp'                => 'false',
     )
   end
 
@@ -270,24 +267,34 @@ def puppet_resource_cmd
   UtilityLib.get_namespace_cmd(agent, cmd, options)
 end
 
+def build_default_values(testcase)
+  testcase[:default_values].each do |key, value|
+    testcase[:manifest_props] += "\n#{key} => 'default',"
+    # remove key if no corresponding resource_prop
+    testcase[:default_values].delete(key) if value == nil
+  end
+  testcase[:resource_props].merge!(testcase[:default_values])
+end
+
 def build_manifest_interface(tests, id)
-  if tests[id][:ensure] == :absent
+  testcase = tests[id]
+  if testcase[:ensure] == :absent
     state = 'ensure => absent,'
-    tests[id][:resource] = {}
+    testcase[:resource] = {}
   else
     state = 'ensure => present,'
-    manifest = tests[id][:manifest_props]
-    tests[id][:resource] = tests[id][:resource_props]
+    build_default_values(testcase) unless testcase[:default_values].nil?
+    testcase[:resource] = testcase[:resource_props]
   end
 
-  tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
+  testcase[:title_pattern] = id if testcase[:title_pattern].nil?
   logger.debug("build_manifest_interface :: title_pattern:\n" +
-               tests[id][:title_pattern])
-  tests[id][:manifest] = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+               testcase[:title_pattern])
+  testcase[:manifest] = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
   node 'default' {
-    cisco_interface { '#{tests[id][:title_pattern]}':
+    cisco_interface { '#{testcase[:title_pattern]}':
       #{state}
-      #{manifest}
+      #{testcase[:manifest_props]}
     }
   }
 EOF"
