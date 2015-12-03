@@ -54,6 +54,8 @@ module UtilityLib
   # command string for 'cisco' platform.
   def self.get_namespace_cmd(host, cmdstr, options)
     case host['platform']
+    when /cisco-oac/
+      return cmdstr
     when /cisco/
       agentvrf = options[:HOSTS][host.to_s.to_sym]['vrf']
       return "sudo ip netns exec #{agentvrf} " + cmdstr
@@ -65,8 +67,13 @@ module UtilityLib
   # Method to return the Vegas shell command string for a NXOS CLI command.
   # @param nxosclistr [String] The NXOS CLI command string to execute on host.
   # @result vshellcmd [String] Returns 'vsh -c <cmd>' command string.
-  def self.get_vshell_cmd(nxosclistr)
-    "/isan/bin/vsh -c '#{nxosclistr}'"
+  def self.get_vshell_cmd(host, nxosclistr)
+    case host['platform']
+    when /cisco-oac/
+      "dohost '#{nxosclistr}'"
+    when /cisco/
+      "/isan/bin/vsh -c '#{nxosclistr}'"
+    end
   end
 
   # B. Method to define PUPPETMASTER_MANIFESTPATH constant using puppet

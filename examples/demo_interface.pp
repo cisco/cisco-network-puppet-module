@@ -36,6 +36,7 @@ class ciscopuppet::demo_interface {
     shutdown        => 'default',
     access_vlan     => 'default',
     switchport_mode => access,
+    channel_group   => 200,
   }
 
   cisco_interface { 'Ethernet1/3':

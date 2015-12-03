@@ -125,7 +125,8 @@ test_name "TestCase :: #{testheader}" do
                                             'switchport_autostate_exclude' => 'false',
                                             'switchport_mode'              => 'disabled',
                                             'switchport_vtp'               => 'false',
-                                            'vrf'                          => 'test1' },
+                                            'vrf'                          => 'test1',
+                                            'channel_group'                => 200 },
                                           false, self, logger)
     end
 
@@ -148,6 +149,7 @@ test_name "TestCase :: #{testheader}" do
                                             /speed 100/,
                                             /duplex full/,
                                             /vrf member test1/,
+                                            /channel-group 200/,
                                           ],
                                           false, self, logger)
     end
