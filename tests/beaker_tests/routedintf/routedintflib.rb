@@ -66,6 +66,7 @@ node default {
       switchport_autostate_exclude => 'default',
       switchport_vtp               => 'default',
       vrf                          => 'default',
+      channel_group                => 'default',
   }}
 EOF"
     manifest_str
@@ -149,6 +150,7 @@ node default {
       switchport_autostate_exclude => false,
       switchport_vtp               => false,
       vrf                          => 'test1',
+      channel_group                => 200,
     }}
 EOF"
     manifest_str
@@ -344,34 +346,6 @@ node default {
       vrf                          => #{RoutedIntfLib::VRF_NEGATIVE},
     }
 }
-EOF"
-    manifest_str
-  end
-
-  # Method to create a manifest for channel_group resource:
-  # @param none [None] No input parameters exist.
-  # @result none [None] Returns no object.
-  def self.create_channel_group_manifest_nondefault
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
-node default {
-    cisco_interface { 'ethernet1/4':
-      ensure                       => present,
-      channel_group                => 200,
-    }}
-EOF"
-    manifest_str
-  end
-
-  # Method to create a manifest for channel_group resource default:
-  # @param none [None] No input parameters exist.
-  # @result none [None] Returns no object.
-  def self.create_channel_group_manifest_default
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
-node default {
-    cisco_interface { 'ethernet1/4':
-      ensure                       => present,
-      channel_group                => 'default',
-  }}
 EOF"
     manifest_str
   end
