@@ -60,6 +60,8 @@ test_name "TestCase :: #{testheader}" do
     # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
     UtilityLib.set_manifest_path(master, self)
 
+    cmd_str = UtilityLib.get_vshell_cmd("conf t ; interface eth1/4 ; no channel-group")
+    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
     logger.info("Setup switch for provider test :: #{result}")
   end
 
