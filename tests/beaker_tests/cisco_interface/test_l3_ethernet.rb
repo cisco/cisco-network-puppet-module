@@ -121,11 +121,11 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
   tests['default_properties'] = {
     title_pattern:  interface_name,
     default_values: {
-      'description'         => nil,
-      'ipv4_proxy_arp'      => 'false',
-      'ipv4_redirects'      => platform == 'nexus' ? 'true' : 'false',
-      'mtu'                 => platform == 'nexus' ? '1500' : '1514',
-      'vrf'                 => nil,
+      'description'    => nil,
+      'ipv4_proxy_arp' => 'false',
+      'ipv4_redirects' => platform == 'nexus' ? 'true' : 'false',
+      'mtu'            => platform == 'nexus' ? '1500' : '1514',
+      'vrf'            => nil,
     },
     manifest_props: "
       ipv4_address                 => '192.168.1.1',
@@ -148,10 +148,10 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
     )
     tests['default_properties'][:default_values].merge!(
       # TODO: add 'default' as valid value for these props
-      #'speed'                         => 'auto',
-      #'duplex'                        => 'auto',
-      'switchport_autostate_exclude'  => 'false',
-      'switchport_vtp'                => 'false',
+      # 'speed'                        => 'auto',
+      # 'duplex'                       => 'auto',
+      'switchport_autostate_exclude' => 'false',
+      'switchport_vtp'               => 'false',
     )
   end
 
@@ -271,7 +271,7 @@ def build_default_values(testcase)
   testcase[:default_values].each do |key, value|
     testcase[:manifest_props] += "\n#{key} => 'default',"
     # remove key if no corresponding resource_prop
-    testcase[:default_values].delete(key) if value == nil
+    testcase[:default_values].delete(key) if value.nil?
   end
   testcase[:resource_props].merge!(testcase[:default_values])
 end
