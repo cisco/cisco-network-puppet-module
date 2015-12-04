@@ -141,15 +141,14 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
 
   if platform == 'nexus'
     tests['default_properties'][:manifest_props] += "
-      switchport_mode              => disabled,
+      switchport_mode => disabled,
     "
     tests['default_properties'][:resource_props].merge!(
       'switchport_mode' => 'disabled',
     )
     tests['default_properties'][:default_values].merge!(
-      # TODO: add 'default' as valid value for these props
-      # 'speed'                        => 'auto',
-      # 'duplex'                       => 'auto',
+      'speed'                        => 'auto',
+      'duplex'                       => 'auto',
       'switchport_autostate_exclude' => 'false',
       'switchport_vtp'               => 'false',
     )
