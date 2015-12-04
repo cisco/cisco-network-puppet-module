@@ -76,7 +76,6 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
     agent:  agent,
   }
 
-  platform = fact_on(agent, 'os.name')
   if platform == 'nexus'
     mgmt_name = 'mgmt0'
     interface_name = 'ethernet1/4'
@@ -231,6 +230,10 @@ def build_manifest_interface(tests, id)
     }
   }
 EOF"
+end
+
+def platform
+  fact_on(agent, 'os.name')
 end
 
 def test_harness_interface(tests, id)

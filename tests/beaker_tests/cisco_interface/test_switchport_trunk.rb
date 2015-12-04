@@ -114,32 +114,21 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
   }
 
   tests['default_properties'] = {
-    title_pattern:  interface_name,
-    manifest_props: "
-      ensure                        => present,
-      description                   => 'default',
-      shutdown                      => false,
-      switchport_mode               => trunk,
-      switchport_trunk_allowed_vlan => 'default',
-      switchport_trunk_native_vlan  => 'default',
-    ",
-    resource_props: {
-      'ensure'                        => 'present',
-      'switchport_mode'               => 'trunk',
+    title_pattern:      interface_name,
+    default_values:     {
       'switchport_trunk_allowed_vlan' => '1-4094',
-      'switchport_trunk_native_vlan'  => '1',
+      'switchport_trunk_native_vlan'  => 1,
+    },
+    non_default_values: {
+      'switchport_mode' => 'trunk'
     },
   }
 
   tests['non_default_properties_S'] = {
-    desc:           "2.1 Non Default Properties 'S' commands",
-    title_pattern:  interface_name,
-    manifest_props: "
-      switchport_mode               => trunk,
-      switchport_trunk_allowed_vlan => '30, 40',
-      switchport_trunk_native_vlan  => 20,
-    ",
-    resource_props: {
+    desc:               "2.1 Non Default Properties 'S' commands",
+    title_pattern:      interface_name,
+    non_default_values: {
+      'switchport_mode'               => 'trunk',
       'switchport_trunk_allowed_vlan' => '30, 40',
       'switchport_trunk_native_vlan'  => '20',
     },
@@ -158,27 +147,55 @@ def puppet_resource_cmd
   UtilityLib.get_namespace_cmd(agent, cmd, options)
 end
 
+def build_default_values(testcase)
+  testcase[:default_values].each do |key, value|
+    testcase[:manifest_props] += "\n#{key} => 'default',"
+    value_s = value.is_a?(String) ? "'#{value}'" : value.to_s
+    testcase[:default_values][key] = value_s
+    # remove key if no corresponding resource_prop
+    testcase[:default_values].delete(key) if value.nil?
+  end
+  testcase[:resource].merge!(testcase[:default_values])
+end
+
+def build_non_default_values(testcase)
+  testcase[:non_default_values].each do |key, value|
+    value_s = value.is_a?(String) ? "'#{value}'" : value.to_s
+    testcase[:non_default_values][key] = value_s
+    testcase[:manifest_props] += "\n#{key} => #{value_s},"
+  end
+  testcase[:resource].merge!(testcase[:non_default_values])
+end
+
 def build_manifest_interface(tests, id)
-  if tests[id][:ensure] == :absent
+  testcase = tests[id]
+  testcase[:resource] = {}
+  testcase[:manifest_props] = '' if testcase[:manifest_props].nil?
+  if testcase[:ensure] == :absent
     state = 'ensure => absent,'
-    tests[id][:resource] = {}
   else
     state = 'ensure => present,'
-    manifest = tests[id][:manifest_props]
-    tests[id][:resource] = tests[id][:resource_props]
+    res_props = testcase[:resource_props]
+    testcase[:resource].merge!(res_props) unless res_props.nil?
+    build_default_values(testcase) unless testcase[:default_values].nil?
+    build_non_default_values(testcase) unless testcase[:non_default_values].nil?
   end
 
-  tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
+  testcase[:title_pattern] = id if testcase[:title_pattern].nil?
   logger.debug("build_manifest_interface :: title_pattern:\n" +
-               tests[id][:title_pattern])
-  tests[id][:manifest] = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+               testcase[:title_pattern])
+  testcase[:manifest] = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
   node 'default' {
-    cisco_interface { '#{tests[id][:title_pattern]}':
+    cisco_interface { '#{testcase[:title_pattern]}':
       #{state}
-      #{manifest}
+      #{testcase[:manifest_props]}
     }
   }
 EOF"
+end
+
+def platform
+  fact_on(agent, 'os.name')
 end
 
 def test_harness_interface(tests, id)
