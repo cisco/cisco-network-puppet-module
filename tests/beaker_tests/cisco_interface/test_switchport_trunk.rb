@@ -65,7 +65,7 @@ UtilityLib.set_manifest_path(master, self)
 # The 'tests' hash is used to define all of the test data values and expected
 # results. It is also used to pass optional flags to the test methods when
 # necessary.
-def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
+def generate_tests_hash(agent)
   # 'tests' hash
   # Top-level keys set by caller:
   # tests[:master] - the master object
