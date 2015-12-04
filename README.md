@@ -542,7 +542,7 @@ BGP autonomous system number. Required. Valid values are String, Integer in  ASP
 VRF name. Required. Valid values are string. The name 'default' is a valid VRF representing the global bgp.
 
 ##### `neighbor`
-Neighbor Identifier. Required. Valid values are string. Neighbors may use IPv4 or IPv6 notation, with or without prefix length.
+Neighbor Identifier. Required. Valid values are string. Neighbors may use IPv4 or IPv6 notation, with or without prefix length. Specifying ip/prefix format is not supported on IOS XR.
 
 ##### `description`
 Description of the neighbor. Valid value is string.
@@ -551,37 +551,37 @@ Description of the neighbor. Valid value is string.
 Configure whether or not to check for directly connected peer. Valid values are true and false.
 
 ##### `capability_negotiation`
-Configure whether or not to negotiate capability with this neighbor. Valid  values are true and false.
+Configure whether or not to negotiate capability with this neighbor. Valid values are true and false. This property is not supported on IOS XR.
 
 ##### `dynamic_capability`
-Configure whether or not to enable dynamic capability. Valid values are true and false.
+Configure whether or not to enable dynamic capability. Valid values are true and false. This property is not supported on IOS XR.
 
 ##### `ebgp_multihop`
-Specify multihop TTL for a remote peer. Valid values are integers between 2  and 255, or keyword 'default' to disable this property.
+Specify multihop TTL for a remote peer. Valid values are integers between 2 and 255, or keyword 'default' to disable this property.
 
 ##### `local_as`
 Specify the local-as number for the eBGP neighbor. Valid values are String or Integer in ASPLAIN or ASDOT notation, or 'default', which means not to configure it.
 
 ##### `log_neighbor_changes`
-Specify wether or not to enable log messages for neighbor up/down event. Valid values are 'enable', to enable it, 'disable' to disable it, or 'inherit' to use the configuration in the cisco_bgp type.
+Specify wether or not to enable log messages for neighbor up/down event. Valid values are 'enable', to enable it, 'disable' to disable it, or 'inherit' to use the configuration in the cisco_bgp type. This property is not supported on IOS XR.
 
 ##### `low_memory_exempt`
-Specify whether or not to shut down this neighbor under memory pressure. Valid values are 'true' to exempt the neighbor from being shutdown, 'false' to shut it down, or 'default' to perform the default shutdown behavior"
+Specify whether or not to shut down this neighbor under memory pressure. Valid values are 'true' to exempt the neighbor from being shutdown, 'false' to shut it down, or 'default' to perform the default shutdown behavior. This property is not supported on IOS XR.
 
 ##### `maximum_peers`
-Specify Maximum number of peers for this neighbor prefix. Valid values are between 1 and 1000, or 'default', which does not impose the limit. This  attribute can only be configured if neighbor is in 'ip/prefix' format.
+Specify Maximum number of peers for this neighbor prefix. Valid values are between 1 and 1000, or 'default', which does not impose the limit. This attribute can only be configured if neighbor is in 'ip/prefix' format, and is therefore not supported on IOS XR.
 
 ##### `password`
 Specify the password for neighbor. Valid value is string.
 
 ##### `password_type`
-Specify the encryption type the password will use. Valid values are 'cleartext', '3des' or 'cisco_type_7' encryption, and 'default',which defaults to 'cleartext'.
+Specify the encryption type the password will use. Valid values are 'cleartext', '3des' or 'cisco_type_7' encryption, and 'default', which defaults to 'cleartext'.  Valid values for IOS XR are 'cleartext', 'md5', and 'default'.
 
 ##### `remote_as`
-Specify Autonomous System Number of the neighbor. Valid values are String or Integer in ASPLAIN or ASDOT notation, or 'default', which means not to configure it. 
+Specify Autonomous System Number of the neighbor. Valid values are String or Integer in ASPLAIN or ASDOT notation, or 'default', which means not to configure it.  This property is required on IOS XR.
 
 ##### `remove_private_as`
-Specify the config to remove private AS number from outbound updates. Valid  values are 'enable' to enable this config, 'disable' to disable this config, 'all' to remove all private AS number, or 'replace-as', to replace the private AS number.
+Specify the config to remove private AS number from outbound updates. Valid values are 'enable' to enable this config, 'disable' to disable this config, 'all' to remove all private AS number, or 'replace-as', to replace the private AS number. This property is not supported on IOS XR.
 
 ##### `shutdown`
 Configure to administratively shutdown this neighbor. Valid values are true and false.
