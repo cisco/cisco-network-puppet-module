@@ -138,8 +138,8 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
       'switchport_mode' => "'disabled'",
     )
     tests['default_properties'][:default_values].merge!(
-      'speed'                        => 'auto',
-      'duplex'                       => 'auto',
+      'speed'                        => "'auto'",
+      'duplex'                       => "'auto'",
       'switchport_autostate_exclude' => 'false',
       'switchport_vtp'               => 'false',
     )
