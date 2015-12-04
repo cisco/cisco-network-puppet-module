@@ -76,7 +76,6 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
     agent:  agent,
   }
 
-  platform = fact_on(agent, 'os.name')
   if platform == 'nexus'
     interface_name = 'ethernet1/4'
   elsif platform == 'ios_xr'
@@ -119,32 +118,24 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
   }
 
   tests['default_properties'] = {
-    title_pattern:  interface_name,
-    default_values: {
+    title_pattern:      interface_name,
+    default_values:     {
       'description'    => nil,
       'ipv4_proxy_arp' => 'false',
       'ipv4_redirects' => platform == 'nexus' ? 'true' : 'false',
       'mtu'            => platform == 'nexus' ? '1500' : '1514',
       'vrf'            => nil,
     },
-    manifest_props: "
-      ipv4_address                 => '192.168.1.1',
-      ipv4_netmask_length          => 16,
-      shutdown                     => false,
-    ",
-    resource_props: {
-      'ipv4_address'        => '192.168.1.1',
-      'ipv4_netmask_length' => '16',
+    non_default_values: {
+      'ipv4_address'        => "'192.168.1.1'",
+      'ipv4_netmask_length' => "'16'",
       'shutdown'            => 'false',
     },
   }
 
   if platform == 'nexus'
-    tests['default_properties'][:manifest_props] += "
-      switchport_mode => disabled,
-    "
-    tests['default_properties'][:resource_props].merge!(
-      'switchport_mode' => 'disabled',
+    tests['default_properties'][:non_default_values].merge!(
+      'switchport_mode' => "'disabled'",
     )
     tests['default_properties'][:default_values].merge!(
       'speed'                        => 'auto',
@@ -155,50 +146,36 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
   end
 
   tests['non_default_properties_D'] = {
-    desc:           "2.1 Non Default Properties 'D' commands",
-    title_pattern:  interface_name,
-    manifest_props: "
-      description => 'Configured with Puppet',
-    ",
-    resource_props: {
-      'description' => 'Configured with Puppet'
+    desc:               "2.1 Non Default Properties 'D' commands",
+    title_pattern:      interface_name,
+    non_default_values: {
+      'description' => "'Configured with Puppet'"
     },
   }
   if platform == 'nexus'
-    tests['non_default_properties_D'][:manifest_props] += "
-      duplex => full,
-    "
-    tests['non_default_properties_D'][:resource_props].merge!(
-      'duplex' => 'full',
+    tests['non_default_properties_D'][:non_default_values].merge!(
+      'duplex' => "'full'",
+      'speed'  => '100', # duplex depends on speed property
     )
   end
 
   if platform == 'nexus'
     tests['non_default_properties_E'] = {
-      desc:           "2.2 Non Default Properties 'E' commands",
+      desc:               "2.2 Non Default Properties 'E' commands",
       # encapsulation requires a subinterface
-      title_pattern:  interface_name + '.1',
-      manifest_props: "
-        encapsulation_dot1q => 30,
-      ",
-      resource_props: {
+      title_pattern:      interface_name + '.1',
+      non_default_values: {
         'encapsulation_dot1q' => '30'
       },
     }
   end
 
   tests['non_default_properties_I'] = {
-    desc:           "2.3 Non Default Properties 'I' commands",
-    title_pattern:  interface_name,
-    manifest_props: "
-      ipv4_address        => '192.168.1.1',
-      ipv4_netmask_length => '16',
-      ipv4_proxy_arp      => true,
-      ipv4_redirects      => " + (platform == 'nexus' ? 'false' : 'true') + "
-    ",
-    resource_props: {
-      'ipv4_address'        => '192.168.1.1',
-      'ipv4_netmask_length' => '16',
+    desc:               "2.3 Non Default Properties 'I' commands",
+    title_pattern:      interface_name,
+    non_default_values: {
+      'ipv4_address'        => "'192.168.1.1'",
+      'ipv4_netmask_length' => "'16'",
       'ipv4_proxy_arp'      => 'true',
       'ipv4_redirects'      => platform == 'nexus' ? 'false' : 'true',
     },
@@ -206,35 +183,23 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
 
   if platform == 'nexus'
     tests['non_default_properties_M'] = {
-      desc:           "2.4 Non Default Properties 'M' commands",
-      title_pattern:  interface_name,
-      manifest_props: "
-        mtu => 1556,
-      ",
-      resource_props: {
+      desc:               "2.4 Non Default Properties 'M' commands",
+      title_pattern:      interface_name,
+      non_default_values: {
         'mtu' => '1556'
       },
     }
   end
 
   tests['non_default_properties_S'] = {
-    desc:           "2.5 Non Default Properties 'S' commands",
-    title_pattern:  interface_name,
-    manifest_props: "
-      shutdown => 'true',
-    ",
-    resource_props: {
+    desc:               "2.5 Non Default Properties 'S' commands",
+    title_pattern:      interface_name,
+    non_default_values: {
       'shutdown' => 'true'
     },
   }
   if platform == 'nexus'
-    tests['non_default_properties_S'][:manifest_props] += "
-      speed                        => 100,
-      switchport_autostate_exclude => false,
-      switchport_mode              => disabled,
-      switchport_vtp               => false,
-    "
-    tests['non_default_properties_S'][:resource_props].merge!(
+    tests['non_default_properties_S'][:non_default_values].merge!(
       'speed'                        => '100',
       'switchport_autostate_exclude' => 'false',
       'switchport_mode'              => 'disabled',
@@ -243,13 +208,10 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
   end
 
   tests['non_default_properties_V'] = {
-    desc:           "2.6 Non Default Properties 'V' commands",
-    title_pattern:  interface_name,
-    manifest_props: "
-      vrf => 'test1',
-    ",
-    resource_props: {
-      'vrf' => 'test1'
+    desc:               "2.6 Non Default Properties 'V' commands",
+    title_pattern:      interface_name,
+    non_default_values: {
+      'vrf' => "'test1'"
     },
   }
 
@@ -272,18 +234,28 @@ def build_default_values(testcase)
     # remove key if no corresponding resource_prop
     testcase[:default_values].delete(key) if value.nil?
   end
-  testcase[:resource_props].merge!(testcase[:default_values])
+  testcase[:resource].merge!(testcase[:default_values])
+end
+
+def build_non_default_values(testcase)
+  testcase[:non_default_values].each do |key, value|
+    testcase[:manifest_props] += "\n#{key} => #{value},"
+  end
+  testcase[:resource].merge!(testcase[:non_default_values])
 end
 
 def build_manifest_interface(tests, id)
   testcase = tests[id]
+  testcase[:resource] = {}
+  testcase[:manifest_props] = '' if testcase[:manifest_props].nil?
   if testcase[:ensure] == :absent
     state = 'ensure => absent,'
-    testcase[:resource] = {}
   else
     state = 'ensure => present,'
+    res_props = testcase[:resource_props]
+    testcase[:resource].merge!(res_props) unless res_props.nil?
     build_default_values(testcase) unless testcase[:default_values].nil?
-    testcase[:resource] = testcase[:resource_props]
+    build_non_default_values(testcase) unless testcase[:non_default_values].nil?
   end
 
   testcase[:title_pattern] = id if testcase[:title_pattern].nil?
@@ -297,6 +269,14 @@ def build_manifest_interface(tests, id)
     }
   }
 EOF"
+end
+
+def invalid_intf?(interface)
+  interface =~ /ethernet/ && platform == 'nexus'
+end
+
+def platform
+  fact_on(agent, 'os.name')
 end
 
 def test_harness_interface(tests, id)
@@ -335,9 +315,11 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:desc] = '1.1 Default Properties'
   test_harness_interface(tests, id)
 
-  tests[id][:desc] = '1.2 Default Properties'
-  tests[id][:ensure] = :absent
-  test_harness_interface(tests, id)
+  unless invalid_intf?(tests[id][:title_pattern])
+    tests[id][:desc] = '1.2 Default Properties'
+    tests[id][:ensure] = :absent
+    test_harness_interface(tests, id)
+  end
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
