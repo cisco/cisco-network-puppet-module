@@ -563,7 +563,7 @@ Specify multihop TTL for a remote peer. Valid values are integers between 2 and 
 Specify the local-as number for the eBGP neighbor. Valid values are String or Integer in ASPLAIN or ASDOT notation, or 'default', which means not to configure it.
 
 ##### `log_neighbor_changes`
-Specify wether or not to enable log messages for neighbor up/down event. Valid values are 'enable', to enable it, 'disable' to disable it, or 'inherit' to use the configuration in the cisco_bgp type. This property is not supported on IOS XR.
+Specify whether or not to enable log messages for neighbor up/down event. Valid values are 'enable', to enable it, 'disable' to disable it, or 'inherit' to use the configuration in the cisco_bgp type. This property is not supported on IOS XR.
 
 ##### `low_memory_exempt`
 Specify whether or not to shut down this neighbor under memory pressure. Valid values are 'true' to exempt the neighbor from being shutdown, 'false' to shut it down, or 'default' to perform the default shutdown behavior. This property is not supported on IOS XR.
@@ -575,7 +575,7 @@ Specify Maximum number of peers for this neighbor prefix. Valid values are betwe
 Specify the password for neighbor. Valid value is string.
 
 ##### `password_type`
-Specify the encryption type the password will use. Valid values are 'cleartext', '3des' or 'cisco_type_7' encryption, and 'default', which defaults to 'cleartext'.  Valid values for IOS XR are 'cleartext', 'md5', and 'default'.
+Specify the encryption type the password will use. Valid values for Nexus are 'cleartext', '3des' or 'cisco_type_7' encryption, and 'default', which defaults to 'cleartext'.  Valid values for IOS XR are 'cleartext', 'md5', and 'default', which also defaults to 'cleartext'.
 
 ##### `remote_as`
 Specify Autonomous System Number of the neighbor. Valid values are String or Integer in ASPLAIN or ASDOT notation, or 'default', which means not to configure it.  This property is required on IOS XR.
@@ -1146,7 +1146,7 @@ Manages a Cisco VLAN.
 ID of the Virtual LAN. Valid value is an integer.
 
 ##### `ensure`
-Determined wether the config should be present or not. Valid values are
+Determined whether the config should be present or not. Valid values are
 'present' and 'absent'.
 
 ##### `vlan_name`
