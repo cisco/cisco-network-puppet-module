@@ -232,10 +232,6 @@ def build_manifest_interface(tests, id)
 EOF"
 end
 
-def platform
-  fact_on(agent, 'os.name')
-end
-
 def test_harness_interface(tests, id)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:resource_cmd] = puppet_resource_cmd

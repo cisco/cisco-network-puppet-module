@@ -165,6 +165,10 @@ end
 ### TBD: The helper methods below live outside the module for now,
 ###      until we solve the 'step' and 'on' references.
 
+def platform
+  fact_on(agent, 'os.name')
+end
+
 # Full command string for puppet agent
 def puppet_agent_cmd
   cmd = UtilityLib::PUPPET_BINPATH + 'agent -t'

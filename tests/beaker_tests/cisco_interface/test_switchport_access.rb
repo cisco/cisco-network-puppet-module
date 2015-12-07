@@ -126,8 +126,8 @@ def generate_tests_hash(agent)
   }
 
   tests['non_default_properties'] = {
-    title_pattern:  interface_name,
-    default_values: {
+    title_pattern:      interface_name,
+    non_default_values: {
       'access_vlan'                  => 100,
       'switchport_mode'              => 'access',
       'switchport_autostate_exclude' => true,
@@ -195,6 +195,10 @@ def build_manifest_interface(tests, id)
 EOF"
 end
 
+def invalid_absent_intf?(interface)
+  interface =~ /ethernet/ && platform == 'nexus'
+end
+
 def test_harness_interface(tests, id)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:resource_cmd] = puppet_resource_cmd
@@ -234,9 +238,11 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:desc] = '1.1 Default Properties'
   test_harness_interface(tests, id)
 
-  tests[id][:desc] = '1.2 Default Properties'
-  tests[id][:ensure] = :absent
-  test_harness_interface(tests, id)
+  unless invalid_absent_intf?(tests[id][:title_pattern])
+    tests[id][:desc] = '1.2 Default Properties'
+    tests[id][:ensure] = :absent
+    test_harness_interface(tests, id)
+  end
 
   # -------------------------------------------------------------------
   # TODO: add non-default tests for access port

@@ -225,6 +225,7 @@ def puppet_resource_cmd
 end
 
 def build_default_values(testcase)
+  return if testcase[:default_values].nil?
   testcase[:default_values].each do |key, value|
     testcase[:manifest_props] += "\n#{key} => 'default',"
     value_s = value.is_a?(String) ? "'#{value}'" : value.to_s
@@ -236,6 +237,7 @@ def build_default_values(testcase)
 end
 
 def build_non_default_values(testcase)
+  return if testcase[:non_default_values].nil?
   testcase[:non_default_values].each do |key, value|
     value_s = value.is_a?(String) ? "'#{value}'" : value.to_s
     testcase[:non_default_values][key] = value_s
@@ -254,8 +256,8 @@ def build_manifest_interface(tests, id)
     state = 'ensure => present,'
     res_props = testcase[:resource_props]
     testcase[:resource].merge!(res_props) unless res_props.nil?
-    build_default_values(testcase) unless testcase[:default_values].nil?
-    build_non_default_values(testcase) unless testcase[:non_default_values].nil?
+    build_default_values(testcase)
+    build_non_default_values(testcase)
   end
 
   testcase[:title_pattern] = id if testcase[:title_pattern].nil?
@@ -273,10 +275,6 @@ end
 
 def invalid_absent_intf?(interface)
   interface =~ /ethernet/ && platform == 'nexus'
-end
-
-def platform
-  fact_on(agent, 'os.name')
 end
 
 def test_harness_interface(tests, id)

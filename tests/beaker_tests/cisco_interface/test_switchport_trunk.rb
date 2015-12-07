@@ -129,7 +129,7 @@ def generate_tests_hash(agent)
     title_pattern:      interface_name,
     non_default_values: {
       'switchport_mode'               => 'trunk',
-      'switchport_trunk_allowed_vlan' => '30, 40',
+      'switchport_trunk_allowed_vlan' => '30,40',
       'switchport_trunk_native_vlan'  => '20',
     },
   }
@@ -194,8 +194,8 @@ def build_manifest_interface(tests, id)
 EOF"
 end
 
-def platform
-  fact_on(agent, 'os.name')
+def invalid_absent_intf?(interface)
+  interface =~ /ethernet/ && platform == 'nexus'
 end
 
 def test_harness_interface(tests, id)
@@ -237,9 +237,11 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:desc] = '1.1 Default Properties'
   test_harness_interface(tests, id)
 
-  tests[id][:desc] = '1.2 Default Properties'
-  tests[id][:ensure] = :absent
-  test_harness_interface(tests, id)
+  unless invalid_absent_intf?(tests[id][:title_pattern])
+    tests[id][:desc] = '1.2 Default Properties'
+    tests[id][:ensure] = :absent
+    test_harness_interface(tests, id)
+  end
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
