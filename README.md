@@ -1146,7 +1146,7 @@ Manages a Cisco VLAN.
 ID of the Virtual LAN. Valid value is an integer.
 
 ##### `ensure`
-Determined whether the config should be present or not. Valid values are
+Determines whether the config should be present or not. Valid values are
 'present' and 'absent'.
 
 ##### `vlan_name`
