@@ -16,13 +16,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Extended cisco_bgp with the following attributes:
   - route_distinguisher
 - Extended cisco_bgp_af with the following attributes:
+  - default_metric
+  - distance_ebgp, distance_ibgp, distance_local
+  - inject_map
   - route_target_both_auto, route_target_both_auto_evpn
   - route_target_import, route_target_import_evpn
   - route_target_export, route_target_export_evpn
-  - default_metric, suppress_inactive
-  - distance_ebgp, distance_ibgp, distance_local
   - table_map, table_map_filter
-  - inject_map
+  - suppress_inactive
 - Extended cisco_vrf with `vni`
 - Extended cisco_bgp with `fast_external_fallover`, `flush_routes`, `isolate`, `neighbor_down_fib_accelerate`
   
