@@ -90,8 +90,8 @@ test_name "TestCase :: #{testheader}" do
                    },
       :resource       => {
         'ensure'                 => 'present',
-        'transport_passive_mode' => mode.to_s
-      }
+        'transport_passive_mode' => mode.to_s,
+      },
     }
 
     resource_cmd_str =
@@ -118,7 +118,7 @@ test_name "TestCase :: #{testheader}" do
   }
   tests[id][:resource] = {
     'ensure'                 => 'present',
-    'transport_passive_mode' => 'none'
+    'transport_passive_mode' => 'none',
   }
   create_bgpneighbor_manifest(tests, id)
   test_manifest(tests, id)
