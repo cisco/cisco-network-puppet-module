@@ -5,6 +5,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 ### New feature support
+#### Cisco Resources.
+- cisco_vxlan_global type and provider.
+
 #### NetDev Resources.
 - search_domain provider.
 - network_trunk provider.
