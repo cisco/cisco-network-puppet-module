@@ -27,13 +27,13 @@ Puppet::Type.newtype(:cisco_vxlan_global) do
   }
   ~~~
 
-  There can only be one instance of the cisco_vtp.
+  There can only be one instance of the cisco_vxlan_global.
   Example:
 
   ~~~puppet
     cisco_vxlan_global { default:
       ensure                                    => present,
-      dup_host_ip_addr_detection_host_moves  	=> 200,
+      dup_host_ip_addr_detection_host_moves  	  => 200,
       dup_host_ip_addr_detection_timeout        => 20,
       anycast_gateway_mac                       => '1223.3445.5668',
       dup_host_mac_detection_host_moves         => 100,
