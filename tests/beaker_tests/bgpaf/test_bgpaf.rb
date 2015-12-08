@@ -145,6 +145,7 @@ tests['default_properties'] = {
     route_target_export_evpn      => 'default',
     suppress_inactive             => 'default',
     table_map                     => 'default',
+    table_map_filter              => 'default',
     ",
 
   :resource_props => {
@@ -168,6 +169,7 @@ tests['default_properties'] = {
     'route_target_both_auto'        => 'false',
     'route_target_both_auto_evpn'   => 'false',
     'suppress_inactive'             => 'false',
+    'table_map_filter'              => 'false',
   },
 }
 
