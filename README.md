@@ -459,6 +459,32 @@ Note: dampening_routemap is mutually exclusive with dampening_half_time, reuse_t
 ##### `default_information_originate`
 `default-information originate`. Valid values are true and false.
 
+##### `default_metric`
+Sets the default metrics for routes redistributed into BGP. Valid values are Integer or keyword 'default'.
+
+##### `distance_ebgp`
+Sets the administrative distance for BGP. Valid values are Integer or keyword 'default'.
+
+##### `distance_ibgp`
+Sets the administrative distance for BGP. Valid values are Integer or keyword 'default'.
+
+##### `distance_local`
+Sets the administrative distance for BGP. Valid values are Integer or keyword 'default'.
+
+##### `inject_map`
+Routemap which specifies prefixes to inject. Each entry in the array must include inject route-map and exist route-map and optional copy-attributes.
+
+Examples:
+
+```ruby
+[
+ ['lax', 'sfo'],
+ ['lax', 'sjc'],
+ ['nyc', 'sfo', 'copy-attributes'],
+ ['sjc', 'nyc', 'copy-attributes']
+]
+```
+
 ##### `maximum_paths`
 Configures the maximum number of equal-cost paths for load sharing. Valid value is an integer in the range 1-64. Default value is 1.
 
@@ -526,6 +552,15 @@ redistribute => [['direct'],
 
 ##### `route_target_import`
 Sets the route-target import extended communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
+##### `suppress_inactive`
+Advertises only active routes to peersy. Valid values are true, false, or 'default'.
+
+##### `table_map`
+Apply table-map to filter routes downloaded into URIB. Valid values are a string.
+
+##### `table_map_filter`
+Filters routes rejected by the route map and does not download them to the RIB. Valid values are true, false, or 'default'.
 
 Examples:
 

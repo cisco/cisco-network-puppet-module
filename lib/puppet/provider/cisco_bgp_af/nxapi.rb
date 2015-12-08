@@ -45,6 +45,11 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
     :dampening_reuse_time,
     :dampening_routemap,
     :dampening_suppress_time,
+    :default_metric,
+    :distance_ebgp,
+    :distance_ibgp,
+    :distance_local,
+    :inject_map,
     :maximum_paths,
     :maximum_paths_ibgp,
     :networks,
@@ -54,6 +59,7 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
     :route_target_import_evpn,
     :route_target_export,
     :route_target_export_evpn,
+    :table_map,
   ]
 
   BGP_AF_BOOL_PROPS = [
@@ -66,6 +72,8 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
     :dampening_state,
     :route_target_both_auto,
     :route_target_both_auto_evpn,
+    :suppress_inactive,
+    :table_map_filter,
   ]
 
   BGP_AF_ALL_PROPS = BGP_AF_NON_BOOL_PROPS + BGP_AF_BOOL_PROPS
@@ -107,6 +115,7 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
     # networks/redistribute use nested arrays, thus require special handling
     current_state[:networks] = obj.networks
     current_state[:redistribute] = obj.redistribute
+    current_state[:inject_map] = obj.inject_map
     new(current_state)
   end # self.properties_get
 
@@ -161,6 +170,8 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
     end
     # Custom set methods
     dampening_set
+    distance_set
+    table_map_set
   end
 
   # Property 'dampening' helper and custom setter methods
@@ -234,6 +245,66 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
     else
       dampening_properties_set
     end
+  end
+
+  def distance_set
+    return unless
+      @property_flush[:distance_ebgp] ||
+      @property_flush[:distance_ibgp] ||
+      @property_flush[:distance_local]
+
+    if @property_flush[:distance_ebgp]
+      ebgp = @property_flush[:distance_ebgp]
+    else
+      ebgp = @af.distance_ebgp
+    end
+
+    if @property_flush[:distance_ibgp]
+      ibgp = @property_flush[:distance_ibgp]
+    else
+      ibgp = @af.distance_ibgp
+    end
+
+    if @property_flush[:distance_local]
+      local = @property_flush[:distance_local]
+    else
+      local = @af.distance_local
+    end
+    @af.distance_set(ebgp, ibgp, local)
+  end
+
+  def table_map_set
+    return unless
+      @property_flush[:table_map] ||
+      @property_flush[:table_map_filter]
+
+    if @property_flush[:table_map]
+      map = @property_flush[:table_map]
+    else
+      map = @af.table_map
+    end
+
+    if @property_flush[:table_map_filter]
+      filter = @property_flush[:table_map_filter]
+    else
+      filter = @af.table_map_filter
+    end
+    @af.table_map_set(map, filter)
+  end
+
+  def inject_map
+    return @property_hash[:inject_map] if @resource[:inject_map].nil?
+    if @resource[:inject_map][0] == :default &&
+       @property_hash[:inject_map] == @af.default_inject_map
+      return [:default]
+    else
+      @property_hash[:inject_map]
+    end
+  end
+
+  def inject_map=(should_list)
+    should_list = @af.default_inject_map if should_list[0] == :default
+    @property_flush[:inject_map] = should_list
   end
 
   # Networks requires a custom getter and setter because we are
