@@ -35,6 +35,7 @@ Puppet::Type.type(:cisco_bgp_neighbor).provide(:nxapi) do
   # Property symbol array for method auto-generation.
   # NOTE: For maintainability please keep this list in alphabetical order.
   BGP_NBR_NON_BOOL_PROPS = [
+    :remote_as, # must be first for XR
     :description,
     :ebgp_multihop,
     :local_as,
@@ -42,10 +43,10 @@ Puppet::Type.type(:cisco_bgp_neighbor).provide(:nxapi) do
     :maximum_peers,
     :password,
     :password_type,
-    :remote_as,
     :remove_private_as,
     :timers_keepalive,
     :timers_holdtime,
+    :transport_passive_mode,
     :update_source,
   ]
   BGP_NBR_BOOL_PROPS = [

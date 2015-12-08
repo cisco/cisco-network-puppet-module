@@ -65,11 +65,11 @@ tests = {
 
 test_name "TestCase :: #{testheader}" do
   logger.info("\n#{'-' * 60}\nSection 1. Title Patterns")
-  node_feature_cleanup(agent, 'bgp', 'Setup switch for provider test')
-
-  asn = 42
-  vrf = 'red'
   id = 'test_green'
+  tests[id] = {}
+  init_bgp(tests, id) # clean slate
+
+  vrf = 'red'
 
   tests[id] = {
     :desc           => '1.1 Apply id pattern of resource name',
@@ -92,7 +92,7 @@ test_name "TestCase :: #{testheader}" do
   create_bgpneighbor_manifest(tests, id)
   test_manifest(tests, id)
 
-  id = "#{asn} #{vrf}"
+  id = "#{BgpLib::ASN} #{vrf}"
   tests[id] = {
     :desc           => "1.3 Apply id pattern of 'asn vrf', missing neighbor",
     :code           => [1],
@@ -117,7 +117,7 @@ test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Properties")
 
-  id = "#{asn} #{vrf} 1.1.1.1"
+  id = "#{BgpLib::ASN} #{vrf} 1.1.1.1"
   tests[id] = {
     :desc           => '2.1 Apply invalid local_as',
     :code           => [1],
@@ -162,7 +162,7 @@ test_name "TestCase :: #{testheader}" do
   create_bgpneighbor_manifest(tests, id)
   test_manifest(tests, id)
 
-  id = "#{asn} #{vrf} 1.1.1.0/24"
+  id = "#{BgpLib::ASN} #{vrf} 1.1.1.0/24"
   tests[id] = {
     :desc           => '2.5 Apply invalid maximum_peers number',
     :code           => [1],
@@ -251,6 +251,8 @@ test_name "TestCase :: #{testheader}" do
   }
   create_bgpneighbor_manifest(tests, id)
   test_manifest(tests, id)
+
+  cleanup_bgp(tests, id)
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   UtilityLib.raise_passfail_exception(result, testheader, self, logger)

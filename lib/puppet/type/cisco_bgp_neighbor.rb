@@ -290,11 +290,13 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
 
   newparam(:password_type) do
     desc "Specify the encryption type that password will use.
-          Valid values are 'cleartext', '3des' or 'cisco_type_7' encryption,
-          and 'default', which defaults to 'cleartext'."
+          Valid values are 'cleartext', '3des', 'md5', or
+          'cisco_type_7' encryption, and 'default',
+          which defaults to 'cleartext'."
 
     newvalues(:cleartext,
               :"3des",
+              :md5,
               :cisco_type_7,
               :default)
 
@@ -372,6 +374,21 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
           value.between?(0, 3600)
       end
       value
+    end
+  end
+
+  newproperty(:transport_passive_mode) do
+    desc "Specify the transport mode. Valid values are 'passive_only',
+          'active_only', 'both', 'none', which clears the property,
+          and 'default' which defaults to 'none'."
+    newvalues(:passive_only,
+              :active_only,
+              :both,
+              :none,
+              :default)
+    munge do |value|
+      value = :none if value.to_sym == :default
+      value.to_sym
     end
   end
 
