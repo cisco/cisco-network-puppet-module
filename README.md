@@ -775,6 +775,11 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 
 ##### Basic interface config attributes
 
+###### `channel_group`
+channel_group is an aggregation of multiple physical interfaces that creates a logical interface. Valid values are 1 to 4096 and 'default'. 
+
+Note: On some platforms, a normal side-effect of adding the channel-group property is that an independent port-channel interface will be created; however, removing the channel-group configuration by itself will not also remove the port-channel interface. Therefore, the port-channel interface itself may be explicitly removed by using the `cisco_interface` provider with `ensure => absent`.
+
 ###### `ensure`
 Determine whether the interface config should be present or not. Valid values
 are 'present' and 'absent'.

@@ -26,6 +26,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - suppress_inactive
 - Extended cisco_vrf with `vni`
 - Extended cisco_bgp with `fast_external_fallover`, `flush_routes`, `isolate`, `neighbor_down_fib_accelerate`
+- Extended cisco_interface with `channel_group`
   
 ### Removed
 
