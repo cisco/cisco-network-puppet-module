@@ -222,7 +222,7 @@ tests['non_default_properties_C'] = {
   ",
 
   :resource_props => {
-    'client_to_client' => 'false',
+    'client_to_client' => 'false'
   },
 }
 
@@ -281,7 +281,7 @@ tests['non_default_properties_Dampening_false'] = {
     ",
 
   :resource_props => {
-    'dampening_state' => 'false',
+    'dampening_state' => 'false'
   },
 }
 
@@ -295,7 +295,7 @@ tests['non_default_properties_Dampening_routemap'] = {
     ",
 
   :resource_props => {
-    'dampening_routemap' => 'RouteMap',
+    'dampening_routemap' => 'RouteMap'
   },
 }
 
@@ -308,7 +308,7 @@ tests['non_default_properties_I'] = {
   ",
 
   :resource_props => {
-    'inject_map' => "#{injectmap}",
+    'inject_map' => "#{injectmap}"
   },
 }
 
@@ -379,7 +379,7 @@ tests['non_default_properties_S'] = {
   ",
 
   :resource_props => {
-    'suppress_inactive' => 'true',
+    'suppress_inactive' => 'true'
   },
 }
 

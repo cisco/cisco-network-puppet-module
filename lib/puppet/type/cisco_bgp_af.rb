@@ -139,7 +139,7 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       [
         /^(\d+|\d+\.\d+)$/,
         [
-          [:asn, identity],
+          [:asn, identity]
         ],
       ],
       [
@@ -169,7 +169,7 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       [
         /^(\S+)$/,
         [
-          [:name, identity],
+          [:name, identity]
         ],
       ],
     ]
