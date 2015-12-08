@@ -23,6 +23,7 @@ class ciscopuppet::demo_bgp {
     ensure                                 => present,
 
     router_id                              => '192.168.0.66',
+    route_distinguisher                    => 'auto',
     cluster_id                             => '55',
     confederation_id                       => '33',
     confederation_peers                    => '99 88 200.1',
@@ -58,6 +59,7 @@ class ciscopuppet::demo_bgp {
   # --------------------------------------------------------------------------#
   $ipv4_networks = [['192.168.5.0/24', 'nrtemap1'], ['192.168.6.0/32']]
   $ipv4_redistribute = [['eigrp 1', 'e_rtmap_29'], ['ospf 3',  'o_rtmap']]
+  $ipv4_injectmap = [['nyc', 'sfo'], ['sjc', 'sfo', 'copy-attributes']]
 
   cisco_bgp_af { '55.77 blue ipv4 unicast':
     ensure                        => present,
@@ -76,6 +78,20 @@ class ciscopuppet::demo_bgp {
     additional_paths_selection    => 'RouteMap',
     additional_paths_send         => true,
     dampen_igp_metric             => 55,
+    default_metric                => 50,
+    distance_ebgp                 => 30,
+    distance_ibgp                 => 60,
+    distance_local                => 90,
+    inject_map                    => $ipv4_injectmap, 
+    suppress_inactive             => true,
+    route_target_import           => ['55:33', '102:33'],
+    route_target_import_evpn      => ['55:33', '102:33'],
+    route_target_export           => ['1.2.3.4:55', '102:33'],
+    route_target_export_evpn      => ['1.2.3.4:55', '102:33'],
+    route_target_both_auto        => false,
+    route_target_both_auto_evpn   => true,
+    table_map                     => 'TableMap',
+    table_map_filter              => true,
 
     # dampening_routemap is mutually exclusive with
     # dampening_half_time, reuse_time, suppress_time
@@ -98,6 +114,8 @@ class ciscopuppet::demo_bgp {
 
   $ipv6_networks = [['192:168::5:0/112', 'nrtemap1'], ['192:168::6:0/112']]
   $ipv6_redistribute = [['eigrp 1', 'e_v6'], ['ospfv3 3',  'o_v6']]
+  $ipv6_injectmap = [['nyc', 'sfo'], ['sjc', 'sfo', 'copy-attributes']]
+
   cisco_bgp_af { '55.77 blue ipv6 unicast':
     ensure                        => present,
 
@@ -111,6 +129,20 @@ class ciscopuppet::demo_bgp {
     additional_paths_selection    => 'RouteMap',
     additional_paths_send         => true,
     dampen_igp_metric             => 55,
+    default_metric                => 50,
+    distance_ebgp                 => 30,
+    distance_ibgp                 => 60,
+    distance_local                => 90,
+    inject_map                    => $ipv6_injectmap, 
+    suppress_inactive             => true,
+    route_target_import           => ['55:33', '102:33'],
+    route_target_import_evpn      => ['55:33', '102:33'],
+    route_target_export           => ['1.2.3.4:55', '102:33'],
+    route_target_export_evpn      => ['1.2.3.4:55', '102:33'],
+    route_target_both_auto        => false,
+    route_target_both_auto_evpn   => true,
+    table_map                     => 'TableMap',
+    table_map_filter              => true,
 
     # dampening_routemap is mutually exclusive with
     # dampening_half_time, reuse_time, suppress_time

@@ -210,6 +210,9 @@ The following resources include cisco types and providers along with cisco provi
 
 * VRF Type
   * [`cisco_vrf`](#type-cisco_vrf)
+  
+* VXLAN Types
+  * [`cisco_vxlan_global`](#type-cisco_vxlan_global)
 
 --
 ### <a name="resource-by-name">Cisco Resource Type Catalog (by Name)<a>
@@ -232,6 +235,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_vlan`](#type-cisco_vlan)
 * [`cisco_vrf`](#type-cisco_vrf)
 * [`cisco_vtp`](#type-cisco_vtp)
+* [`cisco_vxlan_global`](#type-cisco_vxlan_global)
 
 ### <a name="resource-by-name-netdev">NetDev StdLib Resource Type Catalog (by Name)<a>
 
@@ -455,6 +459,31 @@ Note: dampening_routemap is mutually exclusive with dampening_half_time, reuse_t
 ##### `default_information_originate`
 `default-information originate`. Valid values are true and false.
 
+##### `default_metric`
+Sets default metrics for routes redistributed into BGP. Valid values are Integer or keyword 'default'.
+
+##### `distance_ebgp`
+Sets the administrative distance for eBGP routes. Valid values are Integer or keyword 'default'.
+
+##### `distance_ibgp`
+Sets the administrative distance for iBGP routes. Valid values are Integer or keyword 'default'.
+
+##### `distance_local`
+Sets the administrative distance for local BGP routes. Valid values are Integer or keyword 'default'.
+
+##### `inject_map`
+An array of route-map names which will specify prefixes to inject. Each array entry must first specify the inject-map name, secondly an exist-map name, and optionally the `copy-attributes` keyword which indicates that attributes should be copied from the aggregate.
+
+For example, the following array will create three separate inject-maps for `lax_inject_map`, `nyc_inject_map` (with copy-attributes), and `fsd_exist_map`:
+
+```ruby
+[
+ ['lax_inject_map', 'lax_exist_map'],
+ ['nyc_inject_map', 'nyc_exist_map', 'copy-attributes'],
+ ['fsd_inject_map', 'fsd_exist_map']
+]
+```
+
 ##### `maximum_paths`
 Configures the maximum number of equal-cost paths for load sharing. Valid value is an integer in the range 1-64. Default value is 1.
 
@@ -522,6 +551,15 @@ redistribute => [['direct'],
 
 ##### `route_target_import`
 Sets the route-target import extended communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
+##### `suppress_inactive`
+Advertises only active routes to peersy. Valid values are true, false, or 'default'.
+
+##### `table_map`
+Apply table-map to filter routes downloaded into URIB. Valid values are a string.
+
+##### `table_map_filter`
+Filters routes rejected by the route map and does not download them to the RIB. Valid values are true, false, or 'default'.
 
 Examples:
 
@@ -1225,6 +1263,34 @@ VTP file name. Valid values are a string or the keyword 'default'.
 
 ##### `password`
 Password for the VTP domain. Valid values are a string or the keyword 'default'.
+
+--
+### Type: cisco_vxlan_global
+Handles the detection of duplicate IP or MAC addresses based on the number of moves in a given time-interval (seconds).
+Also configures anycast gateway MAC of the switch.
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `name`
+Instance of vxlan_global, only allow the value 'default'
+
+##### `anycast_gateway_mac`
+Anycast gateway mac of the switch
+
+##### `dup_host_ip_addr_detection_host_moves`
+The number of host moves allowed in n seconds. The range is 1 to 1000 moves; default is 5 moves.
+
+##### `dup_host_ip_addr_detection_timeout`
+The duplicate detection timeout in seconds for the number of host moves. The range is 2 to 36000 seconds; default is 180 seconds.
+
+##### `dup_host_mac_detection_host_moves`
+The number of host moves allowed in n seconds. The range is 1 to 1000 moves; default is 5 moves.
+
+##### `dup_host_mac_detection_timeout`
+The duplicate detection timeout in seconds for the number of host moves. The range is 2 to 36000 seconds; default is 180 seconds.
 
 --
 ### NetDev StdLib Resource Type Details
