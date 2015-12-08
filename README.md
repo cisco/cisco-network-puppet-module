@@ -460,28 +460,27 @@ Note: dampening_routemap is mutually exclusive with dampening_half_time, reuse_t
 `default-information originate`. Valid values are true and false.
 
 ##### `default_metric`
-Sets the default metrics for routes redistributed into BGP. Valid values are Integer or keyword 'default'.
+Sets default metrics for routes redistributed into BGP. Valid values are Integer or keyword 'default'.
 
 ##### `distance_ebgp`
-Sets the administrative distance for BGP. Valid values are Integer or keyword 'default'.
+Sets the administrative distance for eBGP routes. Valid values are Integer or keyword 'default'.
 
 ##### `distance_ibgp`
-Sets the administrative distance for BGP. Valid values are Integer or keyword 'default'.
+Sets the administrative distance for iBGP routes. Valid values are Integer or keyword 'default'.
 
 ##### `distance_local`
-Sets the administrative distance for BGP. Valid values are Integer or keyword 'default'.
+Sets the administrative distance for local BGP routes. Valid values are Integer or keyword 'default'.
 
 ##### `inject_map`
-Routemap which specifies prefixes to inject. Each entry in the array must include inject route-map and exist route-map and optional copy-attributes.
+An array of route-map names which will specify prefixes to inject. Each array entry must first specify the inject-map name, secondly an exist-map name, and optionally the `copy-attributes` keyword which indicates that attributes should be copied from the aggregate.
 
-Examples:
+For example, the following array will create three separate inject-maps for `lax_inject_map`, `nyc_inject_map` (with copy-attributes), and `fsd_exist_map`:
 
 ```ruby
 [
- ['lax', 'sfo'],
- ['lax', 'sjc'],
- ['nyc', 'sfo', 'copy-attributes'],
- ['sjc', 'nyc', 'copy-attributes']
+ ['lax_inject_map', 'lax_exist_map'],
+ ['nyc_inject_map', 'nyc_exist_map', 'copy-attributes'],
+ ['fsd_inject_map', 'fsd_exist_map']
 ]
 ```
 
