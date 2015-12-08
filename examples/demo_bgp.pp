@@ -130,148 +130,108 @@ class ciscopuppet::demo_bgp {
   #---------------------------------------------------------------------------#
   # Configure BGP IPv4 Neighbors
   #---------------------------------------------------------------------------#
-  if $operatingsystem == 'nexus' {
-    cisco_bgp_neighbor {'55.77 blue 1.1.1.1':
-      ensure                 => present,
 
-      #Properties
-      description            => 'my description',
-      connected_check        => true,
-      capability_negotiation => true,
-      dynamic_capability     => true,
-      ebgp_multihop          => 2,
-      local_as               => 55.77,
-      log_neighbor_changes   => disable,
-      low_memory_exempt      => false,
-      remote_as              => 12,
-      remove_private_as      => 'all',
-      shutdown               => true,
-      suppress_4_byte_as     => true,
-      timers_keepalive       => 90,
-      timers_holdtime        => 270,
-      update_source          => 'ethernet1/1',
-      transport_passive_only => false,
-    }
-
-    cisco_bgp_neighbor {'55.77 blue 2.2.2.2':
-      ensure                 => present,
-
-      #Properties
-      description            => 'my description',
-      connected_check        => true,
-      capability_negotiation => true,
-      dynamic_capability     => true,
-      ebgp_multihop          => 2,
-      log_neighbor_changes   => disable,
-      low_memory_exempt      => false,
-      remote_as              => 12,
-      remove_private_as      => 'all',
-      shutdown               => true,
-      suppress_4_byte_as     => true,
-      timers_keepalive       => 90,
-      timers_holdtime        => 270,
-      update_source          => 'ethernet1/1',
-      transport_passive_only => false,
-    }
-
-    cisco_bgp_neighbor {'55.77 blue 3.3.3.3':
-      ensure      => present,
-
-      #Properties
-      description => 'config_for_rr_client',
-      remote_as   => 3604557,
-      shutdown    => false,
-    }
+  $capability_negotiation = $operatingsystem ? {
+    'nexus' => true,
+    default => undef
   }
-  elsif $operatingsystem == 'ios_xr' {
-    cisco_bgp_neighbor {'55.77 blue 1.1.1.1':
-      ensure                 => present,
+  $dynamic_capability = $operatingsystem ? {
+    'nexus' => true,
+    default => undef
+  }
+  $log_neighbor_changes = $operatingsystem ? {
+    'nexus' => disable,
+    default => undef
+  }
+  $low_memory_exempt = $operatingsystem ? {
+    'nexus' => false,
+    default => undef
+  }
+  $remove_private_as = $operatingsystem ? {
+    'nexus' => 'all',
+    default => undef
+  }
+  $update_source = $operatingsystem ? {
+    'nexus' => 'ethernet1/1',
+    default => 'fastethernet1/1/1/1'
+  }
 
-      #Properties
-      description            => 'my description',
-      connected_check        => true,
-      ebgp_multihop          => 2,
-      local_as               => 55.88,
-      remote_as              => 12,
-      shutdown               => true,
-      suppress_4_byte_as     => true,
-      timers_keepalive       => 90,
-      timers_holdtime        => 270,
-      update_source          => 'fastethernet1/1/1/1',
-      transport_passive_only => false,
-      password               => '386c0565965f89de',
-      password_type          => md5,
-    }
+  cisco_bgp_neighbor {'55.77 blue 1.1.1.1':
+    ensure                 => present,
 
-    cisco_bgp_neighbor {'55.77 blue 2.2.2.2':
-      ensure                 => present,
+    #Properties
+    description            => 'my description',
+    connected_check        => true,
+    capability_negotiation => $capability_negotiation,
+    dynamic_capability     => $dynamic_capability,
+    ebgp_multihop          => 2,
+    local_as               => 55.88,
+    log_neighbor_changes   => $log_neighbor_changes,
+    low_memory_exempt      => $low_memory_exempt,
+    remote_as              => 12,
+    remove_private_as      => $remove_private_as,
+    shutdown               => true,
+    suppress_4_byte_as     => true,
+    timers_keepalive       => 90,
+    timers_holdtime        => 270,
+    update_source          => $update_source,
+    transport_passive_only => false,
+  }
 
-      #Properties
-      description            => 'my description',
-      connected_check        => true,
-      ebgp_multihop          => 2,
-      remote_as              => 12,
-      shutdown               => true,
-      suppress_4_byte_as     => true,
-      timers_keepalive       => 90,
-      timers_holdtime        => 270,
-      update_source          => 'fastethernet1/1/1/1',
-      transport_passive_only => false,
-    }
+  cisco_bgp_neighbor {'55.77 default 2.2.2.2':
+    ensure                 => present,
 
-    cisco_bgp_neighbor {'55.77 blue 3.3.3.3':
-      ensure      => present,
+    #Properties
+    description            => 'my description',
+    connected_check        => true,
+    capability_negotiation => $capability_negotiation,
+    dynamic_capability     => $dynamic_capability,
+    ebgp_multihop          => 2,
+    log_neighbor_changes   => $log_neighbor_changes,
+    low_memory_exempt      => $low_memory_exempt,
+    remote_as              => 12,
+    remove_private_as      => $remove_private_as,
+    shutdown               => true,
+    suppress_4_byte_as     => true,
+    timers_keepalive       => 90,
+    timers_holdtime        => 270,
+    update_source          => $update_source,
+    transport_passive_only => false,
+  }
 
-      #Properties
-      description => 'config_for_rr_client',
-      remote_as   => 3604557,
-      shutdown    => false,
-    }
+  cisco_bgp_neighbor {'55.77 blue 3.3.3.3':
+    ensure      => present,
+
+    #Properties
+    description => 'config_for_rr_client',
+    remote_as   => 3604557,
+    shutdown    => false,
   }
 
   #---------------------------------------------------------------------------#
   # Configure BGP IPv6 Neighbor
   #---------------------------------------------------------------------------#
-  if $operatingsystem == 'nexus' {
-    cisco_bgp_neighbor {'55.77 blue 1:1::1:1':
-      ensure                 => present,
 
-      #Properties
-      description            => 'my description',
-      connected_check        => true,
-      capability_negotiation => true,
-      dynamic_capability     => true,
-      ebgp_multihop          => 2,
-      local_as               => 55.77,
-      log_neighbor_changes   => disable,
-      low_memory_exempt      => false,
-      remote_as              => 12,
-      remove_private_as      => 'all',
-      shutdown               => true,
-      suppress_4_byte_as     => true,
-      timers_keepalive       => 90,
-      timers_holdtime        => 270,
-      update_source          => 'ethernet1/1',
-      transport_passive_only => false,
-    }
-  }
-  elsif $operatingsystem == 'ios_xr' {
-    cisco_bgp_neighbor {'55.77 blue 1:1::1:1':
-      ensure                 => present,
+  cisco_bgp_neighbor {'55.77 blue 1:1::1:1':
+    ensure                 => present,
 
-      #Properties
-      description            => 'my description',
-      connected_check        => true,
-      ebgp_multihop          => 2,
-      local_as               => 55.88,
-      remote_as              => 12,
-      shutdown               => true,
-      suppress_4_byte_as     => true,
-      timers_keepalive       => 90,
-      timers_holdtime        => 270,
-      update_source          => 'fastethernet1/1/1/1',
-      transport_passive_only => false,
-    }
+    #Properties
+    description            => 'my description',
+    connected_check        => true,
+    capability_negotiation => $capability_negotiation,
+    dynamic_capability     => $dynamic_capability,
+    ebgp_multihop          => 2,
+    local_as               => 55.88,
+    log_neighbor_changes   => $log_neighbor_changes,
+    low_memory_exempt      => $low_memory_exempt,
+    remote_as              => 12,
+    remove_private_as      => $remove_private_as,
+    shutdown               => true,
+    suppress_4_byte_as     => true,
+    timers_keepalive       => 90,
+    timers_holdtime        => 270,
+    update_source          => $update_source,
+    transport_passive_only => false,
   }
 
   # --------------------------------------------------------------------------#
