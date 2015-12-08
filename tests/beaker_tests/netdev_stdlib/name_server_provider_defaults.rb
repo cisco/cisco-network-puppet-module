@@ -74,7 +74,7 @@ test_name "TestCase :: #{testheader}" do
 
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config section name-server')
+    cmd_str = UtilityLib.get_vshell_cmd('show running-config | section name-server')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout, [/name-server 7\.7\.7\.7$/],
                                           true, self, logger)
@@ -114,7 +114,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check name_server instance presence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config section ' \
+    cmd_str = UtilityLib.get_vshell_cmd('show running-config | section ' \
                                         'name-server')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout, [/name-server 7\.7\.7\.7/],
@@ -156,7 +156,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check name_server instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config section ' \
+    cmd_str = UtilityLib.get_vshell_cmd('show running-config | section ' \
                                         'name-server')
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout, [/name-server 7\.7\.7\.7/],
