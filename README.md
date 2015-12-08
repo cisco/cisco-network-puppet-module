@@ -596,10 +596,10 @@ Specify keepalive timer value. Valid values are integers between 0 and 3600 in t
 Specify holdtime timer value. Valid values are integers between 0 and 3600 in terms of seconds, or 'default', which is 180.
 
 ##### `transport_passive_mode`
-Specify whether BGP sessions can be established from incoming or outgoing TCP connection requests (or both). Valid values for IOS XR are 'active_only' (allow outgoing only), 'passive-only' (allow incoming only), 'both', 'clear' (clears this property) and 'default', which defaults to 'clear'. Valid values for Nexus are 'passive-only', 'both', 'clear' and 'default', which defaults to 'clear'.
+Specify whether BGP sessions can be established from incoming or outgoing TCP connection requests (or both). Valid values for IOS XR are 'active_only' (allow outgoing only), 'passive_only' (allow incoming only), 'both', 'clear' (clears this property) and 'default', which defaults to 'clear'. Valid values for Nexus are 'passive_only', 'both', 'clear' and 'default', which defaults to 'clear'.  This property can only be configured when the neighbor is in 'ip' address format without prefix length. This property and the transport_passive_only property are mutually exclusive.
 
 ##### `transport_passive_only`
-Configure whether or not to only allow passive connection setup. Valid values are 'true', 'false', and 'default', which defaults to 'false'. This attribute can only be configured when the neighbor is in 'ip' address format without prefix length.
+Specify whether or not to only allow passive connection setup. Valid values are 'true', 'false', and 'default', which defaults to 'false'. This property can only be configured when the neighbor is in 'ip' address format without prefix length. This property and the transport_passive_mode property are mutually exclusive.
 
 ##### `update_source`
 Specify source interface of BGP session and updates. Valid value is a string of the interface name.
