@@ -37,6 +37,7 @@ Puppet::Type.newtype(:cisco_bgp_af) do
 
   Example:
 
+  $injectmap = [['nyc', 'sfo'], ['sjc', 'sfo', 'copy-attributes']
   $network_list = [['192.168.5.0/24', 'rtmap1'], ['192.168.10.0/24']]
   $redistribute = [['eigrp 1', 'e_rtmap_29'], ['ospf 3',  'o_rtmap']]
   $routetargetimport = ['1.2.3.4:55', '102:33']
@@ -69,6 +70,7 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       distance_ebgp                          => 20,
       distance_ibgp                          => 40,
       distance_local                         => 60,
+      inject_map                             => $injectmap,
       maximum_paths                          => '7',
       maximum_paths_ibgp                     => '7',
       next_hop_route_map                     => 'Default_Route_Map',
@@ -412,6 +414,26 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       value == 'default' ? :default : value.to_i
     end
   end # property :distance_local
+
+  newproperty(:inject_map, array_matching: :all) do
+    format = "[['routemap string'], ['routemap string], ['copy string]]"
+    desc "Routemap which specifies prefixes to inject. Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property inject_map
 
   newproperty(:maximum_paths) do
     desc 'Configures the maximum number of equal-cost paths for load ' \

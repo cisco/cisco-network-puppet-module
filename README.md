@@ -451,6 +451,20 @@ Sets the administrative distance for BGP. Valid values are Integer or keyword 'd
 ##### `distance_local`
 Sets the administrative distance for BGP. Valid values are Integer or keyword 'default'.
 
+##### `inject_map`
+Routemap which specifies prefixes to inject. Each entry in the array must include inject route-map and exist route-map and optional copy-attributes.
+
+Examples:
+
+```ruby
+[
+ ['lax', 'sfo'],
+ ['lax', 'sjc'],
+ ['nyc', 'sfo', 'copy-attributes'],
+ ['sjc', 'nyc', 'copy-attributes']
+]
+```
+
 ##### `maximum_paths`
 Configures the maximum number of equal-cost paths for load sharing. Valid value is an integer in the range 1-64. Default value is 1.
 

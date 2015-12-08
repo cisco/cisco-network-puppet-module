@@ -18,6 +18,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - default_metric, suppress_inactive
   - distance_ebgp, distance_ibgp, distance_local
   - table_map, table_map_filter
+  - inject_map
 - Extended cisco_vrf with `vni`
 
 ### Removed

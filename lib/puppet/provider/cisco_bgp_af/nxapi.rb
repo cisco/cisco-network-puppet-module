@@ -49,6 +49,7 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
     :distance_ebgp,
     :distance_ibgp,
     :distance_local,
+    :inject_map,
     :maximum_paths,
     :maximum_paths_ibgp,
     :networks,
@@ -114,6 +115,7 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
     # networks/redistribute use nested arrays, thus require special handling
     current_state[:networks] = obj.networks
     current_state[:redistribute] = obj.redistribute
+    current_state[:inject_map] = obj.inject_map
     new(current_state)
   end # self.properties_get
 
@@ -288,6 +290,21 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
       filter = @af.table_map_filter
     end
     @af.table_map_set(map, filter)
+  end
+
+  def inject_map
+    return @property_hash[:inject_map] if @resource[:inject_map].nil?
+    if @resource[:inject_map][0] == :default &&
+       @property_hash[:inject_map] == @af.default_inject_map
+      return [:default]
+    else
+      @property_hash[:inject_map]
+    end
+  end
+
+  def inject_map=(should_list)
+    should_list = @af.default_inject_map if should_list[0] == :default
+    @property_flush[:inject_map] = should_list
   end
 
   # Networks requires a custom getter and setter because we are
