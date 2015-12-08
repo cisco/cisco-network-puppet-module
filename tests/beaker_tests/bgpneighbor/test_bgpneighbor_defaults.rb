@@ -66,8 +66,11 @@ tests = {
 def create_bgp_neighbor_defaults(tests, id, title, string=false)
   asn = title[:asn]
   vrf = title[:vrf]
+  remote_as = 94
   neighbor = title[:neighbor]
   val = string ? 'default' : :default
+
+  platform = fact_on(agent, 'os.name')
 
   tests[id][:manifest_props] = {
     :ensure             => :present,
@@ -76,8 +79,7 @@ def create_bgp_neighbor_defaults(tests, id, title, string=false)
     :neighbor           => neighbor,
     :ebgp_multihop      => val,
     :local_as           => val,
-    :low_memory_exempt  => val,
-    :remote_as          => val,
+    :remote_as          => remote_as,
     :suppress_4_byte_as => val,
     :timers_keepalive   => val,
     :timers_holdtime    => val,
@@ -87,14 +89,18 @@ def create_bgp_neighbor_defaults(tests, id, title, string=false)
     'ensure'                 => 'present',
     'ebgp_multihop'          => 'false',
     'local_as'               => '0',
-    'low_memory_exempt'      => 'false',
-    'maximum_peers'          => '0',
-    'remote_as'              => '0',
+    'remote_as'              => remote_as.to_s,
     'suppress_4_byte_as'     => 'false',
     'timers_keepalive'       => '60',
     'timers_holdtime'        => '180',
     'transport_passive_only' => 'false',
   }
+
+  if platform != 'ios_xr' # add properties not supported on XR
+    tests[id][:manifest_props][:low_memory_exempt] = val
+    tests[id][:resource]['low_memory_exempt'] = 'false'
+    # maximum_peers handled below
+  end
 
   if neighbor.split('/')[1].nil?
     # transport_passive_only attribute is only available in neighbor ip address
@@ -104,7 +110,8 @@ def create_bgp_neighbor_defaults(tests, id, title, string=false)
     tests[id][:manifest_props][:maximum_peers] = nil
   else
     tests[id][:manifest_props][:transport_passive_only] = nil
-    tests[id][:manifest_props][:maximum_peers] = val
+    tests[id][:manifest_props][:maximum_peers] = val if platform != 'ios_xr'
+    tests[id][:resource]['maximum_peers'] = '0' if platform != 'ios_xr'
   end
 
   create_bgpneighbor_manifest(tests, id)
@@ -116,16 +123,21 @@ def create_bgp_neighbor_defaults(tests, id, title, string=false)
 end
 
 test_name "TestCase :: #{testheader}" do
+  tests[id] = {}
+  init_bgp(tests, id)  # clean slate
   stepinfo = 'Setup switch for provider test'
-  node_feature_cleanup(agent, 'bgp', stepinfo)
   logger.info("TestStep :: #{stepinfo} :: #{result}")
 
-  tests[id] = {}
-  ['1.1.1.1', '2.2.2.0/24'].each do |neighbor|
-    title = { :asn => 42, :vrf => 'red', :neighbor => neighbor }
+  platform = fact_on(agent, 'os.name')
+
+  addrs = ['1.1.1.1', '2000::2']
+  addrs << '2.2.2.0/24' if platform != 'ios_xr'
+  addrs.each do |neighbor|
+    title = { :asn => BgpLib::ASN, :vrf => 'red', :neighbor => neighbor }
 
     tests[id][:desc] =
-      "1.1 Apply default manifest with 'default' as a string in attributes"
+      "1.1 Apply default manifest with 'default' as a string in attributes"\
+      " (#{neighbor})"
     create_bgp_neighbor_defaults(tests, id, title, true)
     test_manifest(tests, id)
 
@@ -156,6 +168,9 @@ test_name "TestCase :: #{testheader}" do
     tests[id][:desc]  = '1.5 Verify resource absent on agent'
     test_resource(tests, id)
   end
+
+  cleanup_bgp(tests, id)
+
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   UtilityLib.raise_passfail_exception(result, testheader, self, logger)
 end

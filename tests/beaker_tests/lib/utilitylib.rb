@@ -41,6 +41,9 @@ module UtilityLib
   SLEEP_WAIT_TIME = 10
   # Binary executable path for puppet on master and agent.
   PUPPET_BINPATH = '/opt/puppetlabs/bin/puppet '
+  # Indicates that we want to ignore the value when matching (essentially
+  # testing the presence of a key, regardless of value)
+  IGNORE_VALUE = :ignore_value
 
   # A. Methods to get VRF namespace specific command strings and VSH command
   # strings from basic command strings.
@@ -104,15 +107,19 @@ module UtilityLib
   def self.hash_to_patterns(hash)
     regexparr = []
     hash.each do |key, value|
-      # Need to escape '[', ']', '"' characters for nested array of arrays.
-      # Example:
-      #   [["192.168.5.0/24", "nrtemap1"], ["192.168.6.0/32"]]
-      # Becomes:
-      #   \[\['192.168.5.0\/24', 'nrtemap1'\], \['192.168.6.0\/32'\]\]
-      if /^\[.*\]$/.match(value)
-        value.gsub!(/[\[\]]/) { |s| '\\' + "#{s}" }.gsub!(/\"/) { |_s| '\'' }
+      if value == IGNORE_VALUE
+        regexparr << Regexp.new("#{key}\s+=>?")
+      else
+        # Need to escape '[', ']', '"' characters for nested array of arrays.
+        # Example:
+        #   [["192.168.5.0/24", "nrtemap1"], ["192.168.6.0/32"]]
+        # Becomes:
+        #   \[\['192.168.5.0\/24', 'nrtemap1'\], \['192.168.6.0\/32'\]\]
+        if /^\[.*\]$/.match(value)
+          value.gsub!(/[\[\]]/) { |s| '\\' + "#{s}" }.gsub!(/\"/) { |_s| '\'' }
+        end
+        regexparr << Regexp.new("#{key}\s+=>\s+'?#{value}'?")
       end
-      regexparr << Regexp.new("#{key}\s+=>\s+'?#{value}'?")
     end
     regexparr
   end
@@ -131,10 +138,11 @@ module UtilityLib
     patarr = UtilityLib.hash_to_patterns(patarr) if patarr.instance_of?(Hash)
     patarr.each do |pattern|
       inverse ? (match = (output !~ pattern)) : (match = (output =~ pattern))
+      match_kind = inverse ? 'Inverse ' : ''
       if match
-        logger.debug("TestStep :: Match #{pattern} :: PASS")
+        logger.debug("TestStep :: #{match_kind}Match #{pattern} :: PASS")
       else
-        testcase.fail_test("TestStep :: Match #{pattern} :: FAIL")
+        testcase.fail_test("TestStep :: #{match_kind}Match #{pattern} :: FAIL")
       end
     end
   end
@@ -257,13 +265,13 @@ def test_manifest(tests, id)
 end
 
 # Wrapper for 'puppet resource' command tests
-def test_resource(tests, id)
+def test_resource(tests, id, state=false)
   stepinfo = format_stepinfo(tests, id, 'RESOURCE')
   step "TestStep :: #{stepinfo}" do
     logger.debug("test_resource :: cmd:\n#{tests[id][:resource_cmd]}")
     on(tests[:agent], tests[id][:resource_cmd]) do
       UtilityLib.search_pattern_in_output(stdout, tests[id][:resource],
-                                          false, self, logger)
+                                          state, self, logger)
     end
     logger.info("#{stepinfo} :: PASS")
     tests[id].delete(:log_desc)
