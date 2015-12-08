@@ -5,27 +5,31 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 ### New feature support
-#### Cisco Resources.
-- cisco_vxlan_global type and provider.
+#### Cisco Resources
+- `cisco_vxlan_global` type and provider.
 
-#### NetDev Resources.
-- search_domain provider.
-- network_trunk provider.
+#### NetDev Resources
+- `search_domain` provider.
+- `network_trunk` provider.
 
 ### Added
-- Extended cisco_bgp with the following attributes:
-  - route_distinguisher
-- Extended cisco_bgp_af with the following attributes:
-  - default_metric
-  - distance_ebgp, distance_ibgp, distance_local
-  - inject_map
-  - route_target_both_auto, route_target_both_auto_evpn
-  - route_target_import, route_target_import_evpn
-  - route_target_export, route_target_export_evpn
-  - table_map, table_map_filter
-  - suppress_inactive
-- Extended cisco_vrf with `vni`
-- Extended cisco_bgp with `fast_external_fallover`, `flush_routes`, `isolate`, `neighbor_down_fib_accelerate`
+- Extended `cisco_bgp` with the following attributes:
+  - `fast_external_fallover`
+  - `flush_routes`
+  - `isolate`
+  - `neighbor_down_fib_accelerate`
+  - `route_distinguisher`
+- Extended `cisco_bgp_af` with the following attributes:
+  - `default_metric`
+  - `distance_ebgp`, `distance_ibgp`, `distance_local`
+  - `inject_map`
+  - `route_target_both_auto`, `route_target_both_auto_evpn`
+  - `route_target_import`, `route_target_import_evpn`
+  - `route_target_export`, `route_target_export_evpn`
+  - `table_map`, `table_map_filter`
+  - `suppress_inactive`
+- Extended `cisco_vrf` with the following attributes:
+  - `vni`
   
 ### Removed
 
