@@ -1,6 +1,6 @@
-# Manifest to demo cisco_vrf provider
+# Manifest to demo cisco_interface provider
 #
-# Copyright (c) 2015 Cisco and/or its affiliates.
+# Copyright (c) 2014-2015 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,11 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet::demo_vrf {
-  cisco_vrf { 'test_vrf':
-    ensure      => present,
-    description => 'test vrf for puppet',
-    shutdown    => false,
-    vrf         => 4096,
-  }
+class ciscopuppet::demo_netdev_network_trunk {
+  network_trunk { 'ethernet1/4':
+    ensure        => 'present',
+    encapsulation => 'dot1q',
+    mode          => 'trunk',
+    tagged_vlans  => [2, 3, 4, 6, 7, 8],
+    untagged_vlan => '1',
+  } 
 }

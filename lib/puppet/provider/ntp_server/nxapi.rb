@@ -34,7 +34,7 @@ Puppet::Type.type(:ntp_server).provide(:nxapi) do
   mk_resource_methods
 
   NTP_SERVER_ALL_PROPS = [
-    :prefer,
+    :prefer
   ]
 
   def initialize(value={})

@@ -80,7 +80,7 @@ Puppet::Type.newtype(:cisco_command_config) do
     patterns << [
       /^(\S+)$/,
       [
-        [:name, identity],
+        [:name, identity]
       ],
     ]
     patterns
