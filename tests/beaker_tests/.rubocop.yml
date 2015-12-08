@@ -1,0 +1,7 @@
+inherit_from: ../../.rubocop.yml
+
+# Code complexity metrics for the beaker_tests/ directories
+
+# Baseline code complexity metrics - we should try and reduce these over time
+Metrics/ModuleLength:
+  Max: 300
