@@ -73,8 +73,11 @@ test_name "TestCase :: #{testheader}" do
   vrf = 'red'
   neighbor = '1.1.1.1'
 
-  modes = [:active_only, :passive_only, :both]
-  modes << :passive_only if platform == 'ios_xr'
+  modes = [:passive_only]
+  if platform == 'ios_xr'
+    modes << :active_only
+    modes << :both
+  end
 
   modes.each do |mode|
     tests[id] = {
@@ -113,8 +116,13 @@ test_name "TestCase :: #{testheader}" do
     :neighbor               => neighbor,
     :transport_passive_mode => 'none',
   }
+  tests[id][:resource] = {
+    'ensure'                 => 'present',
+    'transport_passive_mode' => 'none'
+  }
   create_bgpneighbor_manifest(tests, id)
   test_manifest(tests, id)
+  test_resource(tests, id)
 
   tests[id][:desc] = '1.4 Verify :default is the same as :none'
   tests[id][:manifest_props] = {
@@ -128,6 +136,7 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:code] = [0]
   create_bgpneighbor_manifest(tests, id)
   test_manifest(tests, id)
+  test_resource(tests, id)
 
   cleanup_bgp(tests, id)
 

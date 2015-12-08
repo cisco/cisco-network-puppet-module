@@ -196,7 +196,7 @@ class ciscopuppet::demo_bgp {
     timers_keepalive       => 90,
     timers_holdtime        => 270,
     update_source          => $update_source,
-    transport_passive_only => false,
+    transport_passive_mode => passive_only,
   }
 
   cisco_bgp_neighbor {'55.77 blue 3.3.3.3':
@@ -211,7 +211,6 @@ class ciscopuppet::demo_bgp {
   #---------------------------------------------------------------------------#
   # Configure BGP IPv6 Neighbor
   #---------------------------------------------------------------------------#
-
   cisco_bgp_neighbor {'55.77 blue 1:1::1:1':
     ensure                 => present,
 
