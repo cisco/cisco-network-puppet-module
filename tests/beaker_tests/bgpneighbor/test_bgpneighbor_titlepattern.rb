@@ -64,19 +64,19 @@ tests = {
 }
 
 test_name "TestCase :: #{testheader}" do
+  tests[id] = {}
+  init_bgp(tests, id) # clean slate
   stepinfo = 'Setup switch for provider test'
-  node_feature_cleanup(agent, 'bgp', stepinfo)
   logger.info("TestStep :: #{stepinfo} :: #{result}")
 
-  asn = 1.1
-  asn_title = 65_537
-  neighbor = '1.1.1.0/24'
+  asn_title = BgpLib::ASN.to_s
+  neighbor = '1.1.1.1'
   ['default', :default, 'red'].each do |vrf|
     tests[id] = {
       :desc           => '1.1 Apply title pattern of resource name and test harness',
       :manifest_props => {
         :ensure   => :present,
-        :asn      => asn,
+        :asn      => BgpLib::ASN,
         :vrf      => vrf,
         :neighbor => neighbor,
       },
@@ -99,7 +99,7 @@ test_name "TestCase :: #{testheader}" do
       test_manifest(tests, id)
     end
 
-    id = "#{asn}"
+    id = "#{BgpLib::ASN}"
     tests[id] = {
       :desc           => '1.2 Apply title pattern of asn',
       :code           => [0],
@@ -126,7 +126,7 @@ test_name "TestCase :: #{testheader}" do
       test_manifest(tests, id)
     end
 
-    id = "#{asn} #{vrf}"
+    id = "#{BgpLib::ASN} #{vrf}"
     tests[id] = {
       :desc           => "1.4 Apply title pattern of 'asn vrf'",
       :code           => [0],
@@ -138,7 +138,7 @@ test_name "TestCase :: #{testheader}" do
     create_bgpneighbor_manifest(tests, id)
     test_manifest(tests, id)
 
-    id = "#{asn} #{vrf} #{neighbor}"
+    id = "#{BgpLib::ASN} #{vrf} #{neighbor}"
     tests[id] = {
       :desc           => "1.5 Apply title pattern of 'asn vrf neighbor'",
       :code           => [0],
@@ -149,7 +149,7 @@ test_name "TestCase :: #{testheader}" do
     create_bgpneighbor_manifest(tests, id)
     test_manifest(tests, id)
 
-    id = "#{asn} #{vrf} 1.1.1.1/24"
+    id = "#{BgpLib::ASN} #{vrf} 1.1.1.1"
     tests[id] = {
       :desc           => '1.6 Test neighbor munge function',
       :code           => [0],
@@ -160,6 +160,9 @@ test_name "TestCase :: #{testheader}" do
     create_bgpneighbor_manifest(tests, id)
     test_manifest(tests, id)
   end
+
+  cleanup_bgp(tests, id)
+
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   UtilityLib.raise_passfail_exception(result, testheader, self, logger)
 end

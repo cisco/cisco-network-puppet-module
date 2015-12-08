@@ -16,12 +16,12 @@
 #
 # TestCase Name:
 # -------------
-# BgpNeighbor-Provider-password.rb
+# test_bgpneighbor_transport_passive_mode.rb
 #
 # TestCase Prerequisites:
 # -----------------------
 # This is a Puppet BGP Neighbor resource testcase for Puppet Agent on Nexus
-# devices.
+# and XR devices.
 # The test case assumes the following prerequisites are already satisfied:
 # A. Host configuration file contains agent and master information.
 # B. SSH is enabled on the Agent.
@@ -30,8 +30,8 @@
 #
 # TestCase:
 # ---------
-# This is a BGP Neighbor resource test that tests for password and type
-# attributes when created with 'ensure' => 'present'.
+# This is a BGP Neighbor resource test that tests valid values for the
+# transport-passive-mode property.
 #
 # The testcode checks for exit_codes from Puppet Agent, Vegas shell and
 # Bash shell command executions. For Vegas shell and Bash shell command
@@ -55,7 +55,7 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 require File.expand_path('../bgpneighborlib.rb', __FILE__)
 
 result = 'PASS'
-testheader = 'BGP Neighbor Resource :: Password and type attributes'
+testheader = 'BGP Neighbor Resource :: transport_passive_mode property'
 id = 'test_green'
 UtilityLib.set_manifest_path(master, self)
 tests = {
@@ -72,74 +72,71 @@ test_name "TestCase :: #{testheader}" do
   platform = fact_on(agent, 'os.name')
   vrf = 'red'
   neighbor = '1.1.1.1'
-  encr_pw = '386c0565965f89de'
-  passwords = { :default    => 'test',
-                'default'   => 'test',
-                :cleartext  => 'test',
-                'cleartext' => 'test',
-              }
 
+  modes = [:passive_only]
   if platform == 'ios_xr'
-    passwords[:md5]  = encr_pw
-    passwords['md5'] = encr_pw
-  else
-    # don't try symbol since it starts with a number
-    passwords['3des']  = encr_pw
+    modes << :active_only
+    modes << :both
   end
 
-  passwords.each do |type, password|
+  modes.each do |mode|
     tests[id] = {
-      :manifest_props => { :ensure        => :present,
-                           :asn           => BgpLib::ASN,
-                           :vrf           => vrf,
-                           :neighbor      => neighbor,
-                           :remote_as     => 99,
-                           :password_type => type,
-                           :password      => password,
+      :manifest_props => { :ensure                 => :present,
+                           :asn                    => BgpLib::ASN,
+                           :vrf                    => vrf,
+                           :neighbor               => neighbor,
+                           :remote_as              => 99,
+                           :transport_passive_mode => mode,
                    },
       :resource       => {
-        'ensure' => 'present'
+        'ensure'                 => 'present',
+        'transport_passive_mode' => mode.to_s,
       },
     }
-
-    if platform == 'ios_xr'
-      # for XR, just make sure a password is there for types other than md5
-      if type == :md5 || type == 'md5'
-        tests[id][:resource]['password'] = encr_pw
-      else
-        tests[id][:resource]['password'] = UtilityLib::IGNORE_VALUE
-      end
-    else
-      tests[id][:resource]['password'] = encr_pw
-    end
 
     resource_cmd_str =
       UtilityLib::PUPPET_BINPATH +
       'resource cisco_bgp_neighbor ' + "'#{BgpLib::ASN} #{vrf} #{neighbor}'"
     tests[id][:resource_cmd] =
       UtilityLib.get_namespace_cmd(agent, resource_cmd_str, options)
-    tests[id][:desc] = "1.1 Apply manifest with password attributes (#{type})"
+    tests[id][:desc] = "1.1 Apply manifest with mode '#{mode}'"
+
     create_bgpneighbor_manifest(tests, id)
     test_manifest(tests, id)
 
     tests[id][:desc] = '1.2 Verify puppet resource'
     test_resource(tests, id)
-
-    tests[id][:desc] = '1.3 Test removing the password'
-    tests[id][:manifest_props] = {
-      :ensure   => :present,
-      :asn      => BgpLib::ASN,
-      :vrf      => vrf,
-      :neighbor => neighbor,
-      :password => '',
-    }
-    create_bgpneighbor_manifest(tests, id)
-    test_manifest(tests, id)
-
-    tests[id][:desc] = '1.4 Verify password has been removed on the box'
-    tests[id][:resource] = { 'password' => UtilityLib::IGNORE_VALUE }
-    test_resource(tests, id, true)
   end
+
+  tests[id][:desc] = '1.3 Test :none'
+  tests[id][:manifest_props] = {
+    :ensure                 => :present,
+    :asn                    => BgpLib::ASN,
+    :vrf                    => vrf,
+    :neighbor               => neighbor,
+    :transport_passive_mode => 'none',
+  }
+  tests[id][:resource] = {
+    'ensure'                 => 'present',
+    'transport_passive_mode' => 'none',
+  }
+  create_bgpneighbor_manifest(tests, id)
+  test_manifest(tests, id)
+  test_resource(tests, id)
+
+  tests[id][:desc] = '1.4 Verify :default is the same as :none'
+  tests[id][:manifest_props] = {
+    :ensure                 => :present,
+    :asn                    => BgpLib::ASN,
+    :vrf                    => vrf,
+    :neighbor               => neighbor,
+    :transport_passive_mode => :default,
+  }
+  # In this case, nothing changed, we would expect the puppet run to return 0.
+  tests[id][:code] = [0]
+  create_bgpneighbor_manifest(tests, id)
+  test_manifest(tests, id)
+  test_resource(tests, id)
 
   cleanup_bgp(tests, id)
 
