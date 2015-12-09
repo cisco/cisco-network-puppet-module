@@ -107,20 +107,27 @@ def generate_tests_hash(agent)
     # PLEASE NOTE: The feature template has no additional properties so these
     # hash entries are intentionally commented out and included here solely
     # as an example of where properties would be defined.
-    manifest_props: "
-      # bar                            => 'default',
-    ",
-    resource_props: {
-      # 'bar'                          => 'default',
+    # Input:  bar => 'default'
+    # Output: bar => true
+    default_values: {
+      # 'bar' => true,
     },
   }
 
   tests['non_default_properties'] = {
+    # Input:  bar => true
+    # Output: bar => true
+    non_default_values: {
+      # 'bar' => true,
+    },
+  }
+
+  tests['non_matching_input_output'] = {
     manifest_props: "
-      # bar                            => true,
-    ",
+      # bar => 'test',
+    "
     resource_props: {
-      # 'bar'                          => 'true',
+      # 'bar' => 'different_value',
     },
   }
 
@@ -137,15 +144,41 @@ def puppet_resource_cmd
   UtilityLib.get_namespace_cmd(agent, cmd, options)
 end
 
+def build_default_values(testcase)
+  return if testcase[:default_values].nil?
+  testcase[:default_values].each do |key, value|
+    testcase[:manifest_props] += "\n#{key} => 'default',"
+    value_s = value.is_a?(String) ? "'#{value}'" : value.to_s
+    testcase[:default_values][key] = value_s
+    # remove key if no corresponding resource_prop
+    testcase[:default_values].delete(key) if value.nil?
+  end
+  testcase[:resource].merge!(testcase[:default_values])
+end
+
+def build_non_default_values(testcase)
+  return if testcase[:non_default_values].nil?
+  testcase[:non_default_values].each do |key, value|
+    value_s = value.is_a?(String) ? "'#{value}'" : value.to_s
+    testcase[:non_default_values][key] = value_s
+    testcase[:manifest_props] += "\n#{key} => #{value_s},"
+  end
+  testcase[:resource].merge!(testcase[:non_default_values])
+end
+
 def build_manifest_X__RESOURCE_NAME__X(tests, id)
+  tests[id][:manifest_props] = '' if tests[id][:manifest_props].nil?
+  tests[id][:resource] = {}
   if tests[id][:ensure] == :absent
     state = 'ensure => absent,'
     manifest = ''
     tests[id][:resource] = { 'ensure' => 'absent' }
   else
     state = 'ensure => present,'
-    manifest = tests[id][:manifest_props]
-    tests[id][:resource] = tests[id][:resource_props]
+    res_props = tests[id][:resource_props]
+    tests[id][:resource] = res_props unless res_props.nil?
+    build_default_values(tests[id])
+    build_non_default_values(tests[id])
   end
 
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
@@ -155,7 +188,7 @@ def build_manifest_X__RESOURCE_NAME__X(tests, id)
   node 'default' {
     cisco_X__RESOURCE_NAME__X { '#{tests[id][:title_pattern]}':
       #{state}
-      #{manifest}
+      #{tests[id][:manifest_props]}
     }
   }
 EOF"
