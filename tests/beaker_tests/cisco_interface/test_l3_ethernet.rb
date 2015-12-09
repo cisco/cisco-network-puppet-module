@@ -215,7 +215,7 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
   }
 
   tests['subif_non_default_properties'] = {
-    desc:               "2.6 Non Default Properties Sub-Interface commands",
+    desc:               '2.6 Non Default Properties Sub-Interface commands',
     # encapsulation requires a subinterface
     title_pattern:      interface_name + '.1',
     non_default_values: {
