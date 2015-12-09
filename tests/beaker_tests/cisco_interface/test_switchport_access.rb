@@ -245,6 +245,13 @@ test_name "TestCase :: #{testheader}" do
   end
 
   # -------------------------------------------------------------------
+  logger.info("\n#{'-' * 60}\nSection 3. Clean up")
+
+  id = 'preclean'
+  tests[id][:desc] = '3.2 Clean up interface'
+  test_harness_interface(tests, id)
+
+  # -------------------------------------------------------------------
   # TODO: add non-default tests for access port
   # logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 

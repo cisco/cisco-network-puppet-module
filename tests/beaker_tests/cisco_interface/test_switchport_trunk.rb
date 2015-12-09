@@ -249,6 +249,13 @@ test_name "TestCase :: #{testheader}" do
   test_harness_interface(tests, 'non_default_properties_S')
 
   # -------------------------------------------------------------------
+  logger.info("\n#{'-' * 60}\nSection 3. Clean up")
+
+  id = 'preclean'
+  tests[id][:desc] = '3.2 Clean up interface'
+  test_harness_interface(tests, id)
+
+  # -------------------------------------------------------------------
   # FUTURE
   # logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
   # node_feature_cleanup(agent, 'interface')

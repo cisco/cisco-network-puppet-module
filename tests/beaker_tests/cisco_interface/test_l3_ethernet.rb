@@ -111,11 +111,25 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
   tests['preclean'] = {
     title_pattern:  interface_name,
     manifest_props: "
-      ipv4_address        => 'default',
+      description     => 'default',
+      ipv4_address    => 'default',
+      ipv4_proxy_arp  => 'default',
+      ipv4_redirects  => 'default',
+      mtu             => 'default',
+      shutdown        => 'default',
+      vrf             => 'default',
     ",
     code:           [0, 2],
     resource_props: {},
   }
+
+  if platform == 'nexus'
+    tests['preclean'][:manifest_props] += "
+      duplex          => 'default',
+      speed           => 'default',
+      switchport_mode => 'disabled',
+    "
+  end
 
   tests['default_properties'] = {
     title_pattern:      interface_name,
@@ -157,19 +171,8 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
     )
   end
 
-  if platform == 'nexus'
-    tests['non_default_properties_E'] = {
-      desc:               "2.2 Non Default Properties 'E' commands",
-      # encapsulation requires a subinterface
-      title_pattern:      interface_name + '.1',
-      non_default_values: {
-        'encapsulation_dot1q' => 30
-      },
-    }
-  end
-
   tests['non_default_properties_I'] = {
-    desc:               "2.3 Non Default Properties 'I' commands",
+    desc:               "2.2 Non Default Properties 'I' commands",
     title_pattern:      interface_name,
     non_default_values: {
       'ipv4_address'        => '192.168.1.1',
@@ -181,7 +184,7 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
 
   if platform == 'nexus'
     tests['non_default_properties_M'] = {
-      desc:               "2.4 Non Default Properties 'M' commands",
+      desc:               "2.3 Non Default Properties 'M' commands",
       title_pattern:      interface_name,
       non_default_values: {
         'mtu' => 1556
@@ -190,7 +193,7 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
   end
 
   tests['non_default_properties_S'] = {
-    desc:               "2.5 Non Default Properties 'S' commands",
+    desc:               "2.4 Non Default Properties 'S' commands",
     title_pattern:      interface_name,
     non_default_values: {
       'shutdown' => true
@@ -204,10 +207,19 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
   end
 
   tests['non_default_properties_V'] = {
-    desc:               "2.6 Non Default Properties 'V' commands",
+    desc:               "2.5 Non Default Properties 'V' commands",
     title_pattern:      interface_name,
     non_default_values: {
       'vrf' => 'test1'
+    },
+  }
+
+  tests['subif_non_default_properties'] = {
+    desc:               "2.6 Non Default Properties Sub-Interface commands",
+    # encapsulation requires a subinterface
+    title_pattern:      interface_name + '.1',
+    non_default_values: {
+      'encapsulation_dot1q' => 30
     },
   }
 
@@ -323,15 +335,25 @@ test_name "TestCase :: #{testheader}" do
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
   test_harness_interface(tests, 'non_default_properties_D')
-  if tests['non_default_properties_E']
-    test_harness_interface(tests, 'non_default_properties_E')
-  end
   test_harness_interface(tests, 'non_default_properties_I')
   if tests['non_default_properties_M']
     test_harness_interface(tests, 'non_default_properties_M')
   end
   test_harness_interface(tests, 'non_default_properties_S')
   test_harness_interface(tests, 'non_default_properties_V')
+  test_harness_interface(tests, 'subif_non_default_properties')
+
+  # -------------------------------------------------------------------
+  logger.info("\n#{'-' * 60}\nSection 3. Clean up")
+
+  id = 'subif_non_default_properties'
+  tests[id][:desc] = '3.1 Clean up sub-interface'
+  tests[id][:ensure] = :absent
+  test_harness_interface(tests, id)
+
+  id = 'preclean'
+  tests[id][:desc] = '3.2 Clean up interface'
+  test_harness_interface(tests, id)
 
   # -------------------------------------------------------------------
   # FUTURE
