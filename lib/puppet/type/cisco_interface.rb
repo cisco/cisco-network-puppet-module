@@ -103,12 +103,7 @@ Puppet::Type.newtype(:cisco_interface) do
     desc "channel_group is an aggregation of multiple physical interfaces
           that creates a logical interface. Valid values are 1 to 4096."
 
-    munge do |value|
-      value = value == 'default' ? :default : value.to_i
-      fail('channel_group must be an integer between 1 and 4096') if
-           (value != :default) && (value < 1 || value > 4096)
-      value
-    end
+    munge { |value| value == 'default' ? :default : value.to_i }
   end # property channel_group
 
   newproperty(:description) do
