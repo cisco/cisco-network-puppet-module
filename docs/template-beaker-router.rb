@@ -109,35 +109,33 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
 
   tests['default_properties'] = {
     title_pattern:  '1',
-    manifest_props: "
-      maximum_paths                  => 'default',
-      shutdown                       => 'default',
-    ",
-    resource_props: {
-      'maximum_paths' => '8',
-      'shutdown'      => 'false',
+    # Input:  maximum_paths => 'default',
+    #         shutdown      => 'default',
+    # Output: maxium_paths  => 8,
+    #         shutdown      => false,
+    default_values: {
+      'maximum_paths' => 8,
+      'shutdown'      => false,
     },
   }
 
   tests['non_default_properties_M'] = {
+    # Input:  maximum_paths => 5,
+    # Output: maxium_paths  => 5,
     desc:           "2.1 Non Default Properties 'M' commands",
     title_pattern:  '1',
-    manifest_props: "
-      maximum_paths => '5',
-    ",
-    resource_props: {
-      'maximum_paths' => '5'
+    non_default_values: {
+      'maximum_paths' => 5
     },
   }
 
   tests['non_default_properties_S'] = {
+    # Input:  shutdown => true,
+    # Output: shutdown => true,
     desc:           "2.2 Non Default Properties 'S' commands",
     title_pattern:  '1',
-    manifest_props: "
-      shutdown => 'true',
-    ",
-    resource_props: {
-      'shutdown' => 'true'
+    non_default_values: {
+      'shutdown' => true
     },
   }
 
@@ -154,14 +152,40 @@ def puppet_resource_cmd
   UtilityLib.get_namespace_cmd(agent, cmd, options)
 end
 
+def build_default_values(testcase)
+  return if testcase[:default_values].nil?
+  testcase[:default_values].each do |key, value|
+    testcase[:manifest_props] += "\n#{key} => 'default',"
+    value_s = value.is_a?(String) ? "'#{value}'" : value.to_s
+    testcase[:default_values][key] = value_s
+    # remove key if no corresponding resource_prop
+    testcase[:default_values].delete(key) if value.nil?
+  end
+  testcase[:resource].merge!(testcase[:default_values])
+end
+
+def build_non_default_values(testcase)
+  return if testcase[:non_default_values].nil?
+  testcase[:non_default_values].each do |key, value|
+    value_s = value.is_a?(String) ? "'#{value}'" : value.to_s
+    testcase[:non_default_values][key] = value_s
+    testcase[:manifest_props] += "\n#{key} => #{value_s},"
+  end
+  testcase[:resource].merge!(testcase[:non_default_values])
+end
+
 def build_manifest_X__RESOURCE_NAME__X(tests, id)
+  tests[id][:manifest_props] = '' if tests[id][:manifest_props].nil?
+  tests[id][:resource] = {}
   if tests[id][:ensure] == :absent
     state = 'ensure => absent,'
-    tests[id][:resource] = {}
+    tests[id][:manifest_props] = ''
   else
     state = 'ensure => present,'
-    manifest = tests[id][:manifest_props]
-    tests[id][:resource] = tests[id][:resource_props]
+    res_props = tests[id][:resource_props]
+    tests[id][:resource] = res_props unless res_props.nil?
+    build_default_values(tests[id])
+    build_non_default_values(tests[id])
   end
 
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
@@ -171,7 +195,7 @@ def build_manifest_X__RESOURCE_NAME__X(tests, id)
   node 'default' {
     cisco_router_X__RESOURCE_NAME__X { '#{tests[id][:title_pattern]}':
       #{state}
-      #{manifest}
+      #{tests[id][:manifest_props]}
     }
   }
 EOF"
