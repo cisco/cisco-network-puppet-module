@@ -111,7 +111,7 @@ def generate_tests_hash(agent)
     # Output: bar => true
     default_values: {
       # 'bar' => true,
-    },
+    }
   }
 
   tests['non_default_properties'] = {
@@ -119,13 +119,13 @@ def generate_tests_hash(agent)
     # Output: bar => true
     non_default_values: {
       # 'bar' => true,
-    },
+    }
   }
 
   tests['non_matching_input_output'] = {
     manifest_props: "
       # bar => 'test',
-    "
+    ",
     resource_props: {
       # 'bar' => 'different_value',
     },
@@ -171,7 +171,7 @@ def build_manifest_X__RESOURCE_NAME__X(tests, id)
   tests[id][:resource] = {}
   if tests[id][:ensure] == :absent
     state = 'ensure => absent,'
-    manifest = ''
+    tests[id][:manifest_props] = ''
     tests[id][:resource] = { 'ensure' => 'absent' }
   else
     state = 'ensure => present,'
