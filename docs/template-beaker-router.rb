@@ -64,7 +64,7 @@ UtilityLib.set_manifest_path(master, self)
 # The 'tests' hash is used to define all of the test data values and expected
 # results. It is also used to pass optional flags to the test methods when
 # necessary.
-def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
+def generate_tests_hash(agent)
   # 'tests' hash
   # Top-level keys set by caller:
   # tests[:master] - the master object
@@ -122,8 +122,8 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
   tests['non_default_properties_M'] = {
     # Input:  maximum_paths => 5,
     # Output: maxium_paths  => 5,
-    desc:           "2.1 Non Default Properties 'M' commands",
-    title_pattern:  '1',
+    desc:               "2.1 Non Default Properties 'M' commands",
+    title_pattern:      '1',
     non_default_values: {
       'maximum_paths' => 5
     },
@@ -132,8 +132,8 @@ def generate_tests_hash(agent) # rubocop:disable Metrics/MethodLength
   tests['non_default_properties_S'] = {
     # Input:  shutdown => true,
     # Output: shutdown => true,
-    desc:           "2.2 Non Default Properties 'S' commands",
-    title_pattern:  '1',
+    desc:               "2.2 Non Default Properties 'S' commands",
+    title_pattern:      '1',
     non_default_values: {
       'shutdown' => true
     },
