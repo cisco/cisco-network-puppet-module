@@ -189,6 +189,7 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_snmp_user`](#type-cisco_snmp_user)
   * [`network_snmp (netdev_stdlib)`](#type-network_snmp)
   * [`snmp_community (netdev_stdlib)`](#type-snmp_community)
+  * [`snmp_notification (netdev_stdlib)`](#type-snmp_notification)
   * [`snmp_user (netdev_stdlib)`](#type-snmp_user)
 
 * SYSLOG Types
@@ -252,6 +253,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`radius_server`](#type-radius_server)
 * [`search_domain`](#type-search_domain)
 * [`snmp_community`](#type-snmp_community)
+* [`snmp_notification`](#type-snmp_notification)
 * [`snmp_user`](#type-snmp_user)
 * [`syslog_server`](#type-syslog_server)
 * [`syslog_setting`](#type-syslog_setting)
@@ -1492,6 +1494,15 @@ keyword 'default'.
 ##### `acl`
 Assigns an Access Control List (ACL) to an SNMP community to filter SNMP
 requests. Valid values are a string or the keyword 'default'.
+
+### Type: snmp_notification
+Manages an SNMP notification on a Cisco SNMP server.
+
+#### Parameters
+
+##### `enable`
+Determine whether the trap should be on or off. Valid
+values are true and false.
 
 ### Type: snmp_user
 
