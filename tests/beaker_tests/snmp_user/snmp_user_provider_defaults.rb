@@ -91,7 +91,7 @@ test_name "TestCase :: #{testheader}" do
     on(agent, cmd_str) do
       UtilityLib.search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                           false, self, logger)
-      UtilityLib.search_pattern_in_output(stdout, { 'roles' => '\[\'network-operator\'\]' },
+      UtilityLib.search_pattern_in_output(stdout, { 'roles' => '\[\[\'network-operator\'\]\]' },
                                           false, self, logger)
       UtilityLib.search_pattern_in_output(stdout, { 'auth' => 'md5' },
                                           false, self, logger)
