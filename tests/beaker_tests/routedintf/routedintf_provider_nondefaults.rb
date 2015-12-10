@@ -88,9 +88,6 @@ test_name "TestCase :: #{testheader}" do
       UtilityLib.search_pattern_in_output(stdout, [/no switchport/],
                                           true, self, logger)
     end
-    # clean up any channel group present on the interface first
-    cmd_str = UtilityLib.get_vshell_cmd('conf t ; interface eth1/4 ; no channel-group')
-    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
     logger.info("Setup switch for provider test :: #{result}")
   end
