@@ -28,6 +28,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `route_target_export`, `route_target_export_evpn`
   - `table_map`, `table_map_filter`
   - `suppress_inactive`
+- Extended `cisco_interface` with the following attributes:
+  - `channel_group`
 - Extended `cisco_vrf` with the following attributes:
   - `vni`
   
