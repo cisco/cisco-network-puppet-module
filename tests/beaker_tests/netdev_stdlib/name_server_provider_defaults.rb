@@ -65,20 +65,14 @@ test_name "TestCase :: #{testheader}" do
     # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
     UtilityLib.set_manifest_path(master, self)
 
-    # Let's check and make sure that an expected default group/role is present
-    # and an unexpected non-default group/role is absent
+    # Make sure name server is not configured before test starts.
+    on(master, NameServerLib.create_name_server_manifest_absent)
 
-    # Exit codes: 2 if config existed prior, 0 if nothing changed
-    cmd_str = UtilityLib.get_vshell_cmd('conf t ; no ip name-server 7.7.7.7')
+    # Expected exit_code is 0,2 since server may or may not be configured.
+    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+      'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config | section name-server')
-    on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [/name-server 7\.7\.7\.7$/],
-                                          true, self, logger)
-    end
     logger.info("Setup switch for provider test :: #{result}")
   end
 
