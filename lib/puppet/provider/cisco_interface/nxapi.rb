@@ -43,6 +43,7 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     :switchport_mode,
     :vrf,
     :access_vlan,
+    :channel_group,
     :description,
     :encapsulation_dot1q,
     :ipv4_address,

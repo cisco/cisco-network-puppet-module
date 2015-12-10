@@ -19,7 +19,7 @@ Metrics/MethodLength:
   Max: 38
 
 Metrics/ModuleLength:
-  Max: 245
+  Enabled: false
 
 Metrics/PerceivedComplexity:
   Max: 20

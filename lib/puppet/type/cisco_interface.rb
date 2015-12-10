@@ -99,6 +99,13 @@ Puppet::Type.newtype(:cisco_interface) do
 
   ensurable
 
+  newproperty(:channel_group) do
+    desc "channel_group is an aggregation of multiple physical interfaces
+          that creates a logical interface. Valid values are 1 to 4096."
+
+    munge { |value| value == 'default' ? :default : value.to_i }
+  end # property channel_group
+
   newproperty(:description) do
     desc "Description of the interface. Valid values are string, keyword
          'default'."
@@ -126,13 +133,13 @@ Puppet::Type.newtype(:cisco_interface) do
   newproperty(:speed) do
     desc "Configure the speed between interfaces. Default value is 'auto'."
 
-    newvalues(:auto, 10, 100, 1000, 10_000, 1_000_000, 40_000)
+    newvalues(:auto, 10, 100, 1000, 10_000, 1_000_000, 40_000, :default)
   end # property speed
 
   newproperty(:duplex) do
     desc "Configure duplex between interfaces. Default value is 'auto'."
 
-    newvalues(:auto, :full)
+    newvalues(:auto, :full, :default)
   end # property duplex
 
   newproperty(:shutdown) do

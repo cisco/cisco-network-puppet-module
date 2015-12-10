@@ -66,7 +66,7 @@ node default {
       switchport_autostate_exclude => 'default',
       switchport_vtp               => 'default',
       vrf                          => 'default',
-      channel_group                => 'default',
+      channel_group                => 200,
   }}
 EOF"
     manifest_str

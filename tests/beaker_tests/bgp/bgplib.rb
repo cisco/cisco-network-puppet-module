@@ -21,8 +21,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# rubocop:disable Metrics/ModuleLength
-# Require UtilityLib.rb path.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 # BgpLib beaker test module for class cisco_bgp
