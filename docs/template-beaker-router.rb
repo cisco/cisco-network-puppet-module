@@ -111,7 +111,7 @@ def generate_tests_hash(agent)
     title_pattern:  '1',
     # Input:  maximum_paths => 'default',
     #         shutdown      => 'default',
-    # Output: maxium_paths  => 8,
+    # Output: maximum_paths  => 8,
     #         shutdown      => false,
     default_values: {
       'maximum_paths' => 8,
@@ -121,7 +121,7 @@ def generate_tests_hash(agent)
 
   tests['non_default_properties_M'] = {
     # Input:  maximum_paths => 5,
-    # Output: maxium_paths  => 5,
+    # Output: maximum_paths  => 5,
     desc:               "2.1 Non Default Properties 'M' commands",
     title_pattern:      '1',
     non_default_values: {
