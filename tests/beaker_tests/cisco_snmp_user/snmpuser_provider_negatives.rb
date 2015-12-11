@@ -68,16 +68,16 @@ test_name "TestCase :: #{testheader}" do
     UtilityLib.set_manifest_path(master, self)
 
     # Expected exit_code is 0 since this is a vegas shell cmd with no change.
-    cmd_str = UtilityLib.get_vshell_cmd('conf t ; no snmp-server user snmpuser1')
+    cmd_str = get_vshell_cmd('conf t ; no snmp-server user snmpuser1')
     on(agent, cmd_str)
 
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
+    cmd_str = get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/snmp-server user snmpuser1 network-operator auth md5/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/snmp-server user snmpuser1 network-operator auth md5/],
+                               true, self, logger)
     end
 
     logger.info("Setup switch for provider test :: #{result}")
@@ -89,7 +89,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SnmpUserLib.create_snmpuser_manifest_authprotocol_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -100,13 +100,13 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_snmp_user resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_snmp_user 'snmpuser1'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'auth_protocol' => 'unknown',
-                                            'auth_password' => '0x[0-9a-fA-F]*' },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'auth_protocol' => 'unknown',
+                                 'auth_password' => '0x[0-9a-fA-F]*' },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_snmp_user resource absence on agent :: #{result}")
@@ -116,11 +116,11 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check snmpuser instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
+    cmd_str = get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/snmp-server user snmpuser1 network-operator auth unknown/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/snmp-server user snmpuser1 network-operator auth unknown/],
+                               true, self, logger)
     end
 
     logger.info("Check snmpuser instance absence on agent :: #{result}")
@@ -132,7 +132,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SnmpUserLib.create_snmpuser_manifest_privprotocol_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -143,13 +143,13 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_snmp_user resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_snmp_user 'snmpuser1'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'priv_protocol' => 'unknown',
-                                            'priv_password' => '0x[0-9a-fA-F]*' },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'priv_protocol' => 'unknown',
+                                 'priv_password' => '0x[0-9a-fA-F]*' },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_snmp_user resource absence on agent :: #{result}")
@@ -159,18 +159,18 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check snmpuser instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
+    cmd_str = get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/snmp-server user snmpuser1 network-operator auth (.*) priv unknown/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/snmp-server user snmpuser1 network-operator auth (.*) priv unknown/],
+                               true, self, logger)
     end
 
     logger.info("Check snmpuser instance absence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

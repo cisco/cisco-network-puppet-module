@@ -55,7 +55,7 @@
 # Require UtilityLib.rb and TacacsServerHostLib.rb paths.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 require File.expand_path('../tacacsserverhostlib.rb', __FILE__)
-require File.expand_path('../../tacacsserver/tacacsserverlib.rb', __FILE__)
+require File.expand_path('../../cisco_tacacs_server/tacacsserverlib.rb', __FILE__)
 
 result = 'PASS'
 testheader = 'TACACSSERVERHOST Resource :: All Attributes Negatives'
@@ -72,17 +72,17 @@ test_name "TestCase :: #{testheader}" do
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no change.
     # Or expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
     # Expected exit_code is 16 since this is a vegas shell cmd with exec error.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs')
+    cmd_str = get_vshell_cmd('show running-config tacacs')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/feature tacacs\+/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/feature tacacs\+/],
+                               true, self, logger)
     end
 
     logger.info("Setup switch for provider test :: #{result}")
@@ -94,7 +94,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, TacacsServerHostLib.create_tacacsserverhost_timeout_negative)
 
     # Expected exit_code is 6 since this is a puppet agent cmd with failure.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [6])
 
@@ -105,12 +105,12 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_tacacs_server_host absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'resource cisco_tacacs_server_host', options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'timeout' => TacacsServerHostLib::TIMEOUT_NEGATIVE },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'timeout' => TacacsServerHostLib::TIMEOUT_NEGATIVE },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_tacacs_server_host absence on agent :: #{result}")
@@ -120,11 +120,11 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check tacacsserverhost instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs')
+    cmd_str = get_vshell_cmd('show running-config tacacs')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/timeout #{TacacsServerHostLib::TIMEOUT_NEGATIVE}/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/timeout #{TacacsServerHostLib::TIMEOUT_NEGATIVE}/],
+                               true, self, logger)
     end
 
     logger.info("Check tacacsserverhost instance absence on agent :: #{result}")
@@ -136,7 +136,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, TacacsServerHostLib.create_tacacsserverhost_port_negative)
 
     # Expected exit_code is 6 since this is a puppet agent cmd with failure.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [6])
 
@@ -147,12 +147,12 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_tacacs_server_host absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'resource cisco_tacacs_server_host', options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'port' => TacacsServerHostLib::PORT_NEGATIVE },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'port' => TacacsServerHostLib::PORT_NEGATIVE },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_tacacs_server_host absence on agent :: #{result}")
@@ -162,11 +162,11 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check tacacsserverhost instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs')
+    cmd_str = get_vshell_cmd('show running-config tacacs')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/port #{TacacsServerHostLib::PORT_NEGATIVE}/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/port #{TacacsServerHostLib::PORT_NEGATIVE}/],
+                               true, self, logger)
     end
 
     logger.info("Check tacacsserverhost instance absence on agent :: #{result}")
@@ -178,7 +178,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, TacacsServerHostLib.create_tacacsserverhost_type_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -189,12 +189,12 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_tacacs_server_host absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'resource cisco_tacacs_server_host', options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'encryption_type' => TacacsServerHostLib::ENCRYPTYPE_NEGATIVE },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'encryption_type' => TacacsServerHostLib::ENCRYPTYPE_NEGATIVE },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_tacacs_server_host absence on agent :: #{result}")
@@ -204,11 +204,11 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check tacacsserverhost instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs')
+    cmd_str = get_vshell_cmd('show running-config tacacs')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/samplehost1 key #{TacacsServerHostLib::ENCRYPTYPE_NEGATIVE}/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/samplehost1 key #{TacacsServerHostLib::ENCRYPTYPE_NEGATIVE}/],
+                               true, self, logger)
     end
 
     logger.info("Check tacacsserverhost instance absence on agent :: #{result}")
@@ -220,7 +220,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, TacacsServerHostLib.create_tacacsserverhost_passwd_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -231,12 +231,12 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_tacacs_server_host absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'resource cisco_tacacs_server_host', options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'encryption_password' => TacacsServerHostLib::ENCRYPPASSWD_NEGATIVE },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'encryption_password' => TacacsServerHostLib::ENCRYPPASSWD_NEGATIVE },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_tacacs_server_host absence on agent :: #{result}")
@@ -246,18 +246,18 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check tacacsserverhost instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs')
+    cmd_str = get_vshell_cmd('show running-config tacacs')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/samplehost1 key 7 #{TacacsServerHostLib::ENCRYPPASSWD_NEGATIVE}/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/samplehost1 key 7 #{TacacsServerHostLib::ENCRYPPASSWD_NEGATIVE}/],
+                               true, self, logger)
     end
 
     logger.info("Check tacacsserverhost instance absence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

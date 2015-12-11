@@ -73,7 +73,7 @@ test_name "TestCase :: #{testheader}" do
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     # Or expected exit_code is 0 since this is a puppet agent cmd with no change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
@@ -86,7 +86,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, FileSvcPkgLib.create_service_manifest_nondefaults)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -97,12 +97,12 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check service resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource service 'syslog'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'ensure' => 'running' },
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'ensure' => 'running' },
+                               false, self, logger)
     end
 
     logger.info("Check service resource presence on agent :: #{result}")
@@ -114,7 +114,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, FileSvcPkgLib.create_service_manifest_stopped)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
     logger.info('Pause 5 seconds to allow state transition')
@@ -127,19 +127,19 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check service resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource service 'syslog'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'ensure' => 'running' },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'ensure' => 'running' },
+                               true, self, logger)
     end
 
     logger.info("Check service resource absence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

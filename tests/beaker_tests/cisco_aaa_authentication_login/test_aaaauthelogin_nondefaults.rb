@@ -93,7 +93,7 @@ test_name "TestCase :: #{testheader}" do
       UtilityLib::PUPPET_BINPATH +
       "resource cisco_aaa_authentication_login 'default'"
     tests[id][:resource_cmd] =
-      UtilityLib.get_namespace_cmd(agent, resource_cmd_str, options)
+      get_namespace_cmd(agent, resource_cmd_str, options)
 
     tests[id][:code] = [0, 2]
     tests[id][:desc] =
@@ -120,7 +120,7 @@ test_name "TestCase :: #{testheader}" do
     test_harness_common(tests, id)
   end
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

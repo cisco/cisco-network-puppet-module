@@ -88,7 +88,7 @@ test_name "TestCase :: #{testheader}" do
       UtilityLib::PUPPET_BINPATH +
       "resource cisco_bgp_neighbor '#{asn_title} #{vrf} #{neighbor}'"
     tests[id][:resource_cmd] =
-      UtilityLib.get_namespace_cmd(agent, resource_cmd_str, options)
+      get_namespace_cmd(agent, resource_cmd_str, options)
     create_bgpneighbor_manifest(tests, id)
     # when the bgp neighbor is first created, we test its harness first
     if vrf == 'default' || vrf == 'red'
@@ -161,7 +161,7 @@ test_name "TestCase :: #{testheader}" do
     test_manifest(tests, id)
   end
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

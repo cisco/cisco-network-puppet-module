@@ -75,16 +75,16 @@ test_name "TestCase :: #{testheader}" do
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no change.
     # Or expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
     # Expected exit_code is 16 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config interface vlan 80')
+    cmd_str = get_vshell_cmd('show running-config interface vlan 80')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
-      UtilityLib.search_pattern_in_output(stdout, [/interface Vlan80/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout, [/interface Vlan80/],
+                               true, self, logger)
     end
 
     logger.info("Setup switch for provider test :: #{result}")
@@ -96,7 +96,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SviIntfLib.create_sviintf_manifest_svimanagement_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -107,12 +107,12 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_interface resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_interface 'vlan80'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'svi_management' => SviIntfLib::SVIMANAGEMENT_NEGATIVE },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'svi_management' => SviIntfLib::SVIMANAGEMENT_NEGATIVE },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_interface resource absence on agent :: #{result}")
@@ -122,11 +122,11 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 16 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config interface vlan 80')
+    cmd_str = get_vshell_cmd('show running-config interface vlan 80')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/management/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/management/],
+                               true, self, logger)
     end
 
     logger.info("Check interface instance absence on agent :: #{result}")
@@ -138,7 +138,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SviIntfLib.create_sviintf_manifest_sviautostate_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -149,12 +149,12 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_interface resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_interface 'vlan80'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'svi_autostate' => SviIntfLib::SVIAUTOSTATE_NEGATIVE },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'svi_autostate' => SviIntfLib::SVIAUTOSTATE_NEGATIVE },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_interface resource absence on agent :: #{result}")
@@ -164,11 +164,11 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 16 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config interface vlan 80')
+    cmd_str = get_vshell_cmd('show running-config interface vlan 80')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/autostate/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/autostate/],
+                               true, self, logger)
     end
 
     logger.info("Check interface instance absence on agent :: #{result}")
@@ -180,7 +180,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SviIntfLib.create_sviintf_manifest_shutdown_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -191,12 +191,12 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_interface resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_interface 'vlan80'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'shutdown' => SviIntfLib::SHUTDOWN_NEGATIVE },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'shutdown' => SviIntfLib::SHUTDOWN_NEGATIVE },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_interface resource absence on agent :: #{result}")
@@ -206,11 +206,11 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 16 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config interface vlan 80')
+    cmd_str = get_vshell_cmd('show running-config interface vlan 80')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/shutdown/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/shutdown/],
+                               true, self, logger)
     end
 
     logger.info("Check interface instance absence on agent :: #{result}")
@@ -222,7 +222,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SviIntfLib.create_sviintf_manifest_ipv4addr_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -233,12 +233,12 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_interface resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_interface 'vlan80'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'ipv4_address' => SviIntfLib::IPV4ADDRESS_NEGATIVE },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'ipv4_address' => SviIntfLib::IPV4ADDRESS_NEGATIVE },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_interface resource absence on agent :: #{result}")
@@ -248,11 +248,11 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 16 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config interface vlan 80')
+    cmd_str = get_vshell_cmd('show running-config interface vlan 80')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/ip address #{SviIntfLib::IPV4ADDRESS_NEGATIVE}/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/ip address #{SviIntfLib::IPV4ADDRESS_NEGATIVE}/],
+                               true, self, logger)
     end
 
     logger.info("Check interface instance absence on agent :: #{result}")
@@ -264,7 +264,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SviIntfLib.create_sviintf_manifest_ipv4masklen_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -275,12 +275,12 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_interface resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_interface 'vlan80'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'ipv4_netmask_length' => SviIntfLib::IPV4MASKLEN_NEGATIVE },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'ipv4_netmask_length' => SviIntfLib::IPV4MASKLEN_NEGATIVE },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_interface resource absence on agent :: #{result}")
@@ -290,18 +290,18 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 16 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config interface vlan 80')
+    cmd_str = get_vshell_cmd('show running-config interface vlan 80')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [%r{ip address 192.168.1.1/#{SviIntfLib::IPV4MASKLEN_NEGATIVE}}],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [%r{ip address 192.168.1.1/#{SviIntfLib::IPV4MASKLEN_NEGATIVE}}],
+                               true, self, logger)
     end
 
     logger.info("Check interface instance absence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

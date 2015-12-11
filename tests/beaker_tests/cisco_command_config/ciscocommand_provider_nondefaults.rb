@@ -75,7 +75,7 @@ test_name "TestCase :: #{testheader}" do
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no change.
     # Or expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
@@ -86,19 +86,19 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check ciscocommand instance presence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config interface ethernet1/2')
+    cmd_str = get_vshell_cmd('show running-config interface ethernet1/2')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/description This is the new interface config/,
-                                           /switchport access vlan 100/],
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               [/description This is the new interface config/,
+                                /switchport access vlan 100/],
+                               false, self, logger)
     end
 
     logger.info("Check ciscocommand instance presence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

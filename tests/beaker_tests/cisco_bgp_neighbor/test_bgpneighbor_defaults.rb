@@ -112,7 +112,7 @@ def create_bgp_neighbor_defaults(tests, id, title, string=false)
     UtilityLib::PUPPET_BINPATH +
     "resource cisco_bgp_neighbor '#{asn} #{vrf} #{neighbor}'"
   tests[id][:resource_cmd] =
-    UtilityLib.get_namespace_cmd(agent, resource_cmd_str, options)
+    get_namespace_cmd(agent, resource_cmd_str, options)
 end
 
 test_name "TestCase :: #{testheader}" do
@@ -157,7 +157,7 @@ test_name "TestCase :: #{testheader}" do
     test_resource(tests, id)
   end
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

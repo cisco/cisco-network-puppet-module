@@ -25,9 +25,9 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 # Full command string for puppet resource with AF
 def puppet_resource_cmd(af)
-  UtilityLib.get_namespace_cmd(agent,
-                               BgpAFLib.resource_cmd(af),
-                               options)
+  get_namespace_cmd(agent,
+                    BgpAFLib.resource_cmd(af),
+                    options)
 end
 
 # Utility module library for cisco_bgp_af puppet provider beaker tests.

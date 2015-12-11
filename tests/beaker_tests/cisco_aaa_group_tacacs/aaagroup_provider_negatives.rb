@@ -56,7 +56,7 @@
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 require File.expand_path('../aaagrouplib.rb', __FILE__)
 # Require TacacsServer because vsh can't enable/disable feature tacacs
-require File.expand_path('../../tacacsserver/tacacsserverlib.rb', __FILE__)
+require File.expand_path('../../cisco_tacacs_server/tacacsserverlib.rb', __FILE__)
 
 result = 'PASS'
 testheader = 'AAAGROUP Resource :: All Attributes Negatives'
@@ -73,24 +73,24 @@ test_name "TestCase :: #{testheader}" do
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no change.
     # Or expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
     # Expected exit_code is 16 since this is a vegas shell cmd with exec error.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs')
+    cmd_str = get_vshell_cmd('show running-config tacacs')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/feature tacacs\+/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/feature tacacs\+/],
+                               true, self, logger)
     end
 
     # Expected exit_code is 0 since this is a bash shell cmd.
     on(master, TacacsServerLib.create_tacacsserver_present)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -103,7 +103,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, AaaGroupLib.create_aaagroup_manifest_deadtime_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -114,10 +114,10 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_aaa_group resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_aaa_group_tacacs 'test'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(
+      search_pattern_in_output(
         stdout,
         { 'deadtime' => AaaGroupLib::DEADTIME_NEGATIVE },
         true, self, logger)
@@ -130,9 +130,9 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_aaa_group instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs all')
+    cmd_str = get_vshell_cmd('show running-config tacacs all')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(
+      search_pattern_in_output(
         stdout,
         [/aaa group server tacacs\+ test/,
          /^\s+deadtime #{AaaGroupLib::DEADTIME_NEGATIVE}/],
@@ -148,7 +148,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, AaaGroupLib.create_aaagroup_manifest_vrf_name_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -159,10 +159,10 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_aaa_group resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_aaa_group_tacacs 'test'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(
+      search_pattern_in_output(
         stdout,
         { 'vrf_name' => AaaGroupLib::VRF_NAME_NEGATIVE },
         true, self, logger)
@@ -175,9 +175,9 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_aaa_group instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs all')
+    cmd_str = get_vshell_cmd('show running-config tacacs all')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(
+      search_pattern_in_output(
         stdout,
         [/aaa group server tacacs\+ test/,
          /^\s+use-vrf #{AaaGroupLib::VRF_NAME_NEGATIVE}/],
@@ -194,7 +194,7 @@ test_name "TestCase :: #{testheader}" do
        AaaGroupLib.create_aaagroup_manifest_source_interface_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -205,10 +205,10 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_aaa_group resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_aaa_group_tacacs 'test'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(
+      search_pattern_in_output(
         stdout,
         { 'source_interface' => AaaGroupLib::SOURCE_INTERFACE_NEGATIVE },
         true, self, logger)
@@ -221,9 +221,9 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_aaa_group instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs all')
+    cmd_str = get_vshell_cmd('show running-config tacacs all')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(
+      search_pattern_in_output(
         stdout,
         [/aaa group server tacacs\+ test/,
          /^\s+source-interface #{AaaGroupLib::SOURCE_INTERFACE_NEGATIVE}/],
@@ -240,7 +240,7 @@ test_name "TestCase :: #{testheader}" do
        AaaGroupLib.create_aaagroup_manifest_server_hosts_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -251,10 +251,10 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_aaa_group resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_aaa_group_tacacs 'test'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(
+      search_pattern_in_output(
         stdout,
         { 'server_hosts' => AaaGroupLib::SERVER_HOSTS_NEGATIVE },
         true, self, logger)
@@ -267,9 +267,9 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_aaa_group instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config tacacs all')
+    cmd_str = get_vshell_cmd('show running-config tacacs all')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(
+      search_pattern_in_output(
         stdout,
         [/aaa group server tacacs\+ test/,
          /^\s+server #{AaaGroupLib::SERVER_HOSTS_NEGATIVE}/],
@@ -280,7 +280,7 @@ test_name "TestCase :: #{testheader}" do
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

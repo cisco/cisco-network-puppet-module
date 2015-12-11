@@ -75,13 +75,13 @@ test_name "TestCase :: #{testheader}" do
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no change.
     # Or expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
     # Expected exit_code is 16 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config interface loopback1')
+    cmd_str = get_vshell_cmd('show running-config interface loopback1')
     on(agent, cmd_str, acceptable_exit_codes: [16])
 
     logger.info("Setup switch for provider test :: #{result}")
@@ -93,7 +93,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, LoopbackIntfLib.create_loopbackintf_manifest_ipv4addr_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -104,12 +104,12 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_interface resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_interface 'loopback1'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'ipv4_address' => LoopbackIntfLib::IPV4ADDRESS_NEGATIVE },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'ipv4_address' => LoopbackIntfLib::IPV4ADDRESS_NEGATIVE },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_interface resource absence on agent :: #{result}")
@@ -119,11 +119,11 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 16 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config interface loopback1')
+    cmd_str = get_vshell_cmd('show running-config interface loopback1')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/ip address #{LoopbackIntfLib::IPV4ADDRESS_NEGATIVE}/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/ip address #{LoopbackIntfLib::IPV4ADDRESS_NEGATIVE}/],
+                               true, self, logger)
     end
 
     logger.info("Check interface instance absence on agent :: #{result}")
@@ -135,7 +135,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, LoopbackIntfLib.create_loopbackintf_manifest_ipv4masklen_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -146,12 +146,12 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_interface resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_interface 'loopback1'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'ipv4_netmask_length' => LoopbackIntfLib::IPV4MASKLEN_NEGATIVE },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'ipv4_netmask_length' => LoopbackIntfLib::IPV4MASKLEN_NEGATIVE },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_interface resource absence on agent :: #{result}")
@@ -161,11 +161,11 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 16 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config interface loopback1')
+    cmd_str = get_vshell_cmd('show running-config interface loopback1')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
-      UtilityLib.search_pattern_in_output(stdout, \
-                                          [%r{ip address 192.168.1.1/#{LoopbackIntfLib::IPV4MASKLEN_NEGATIVE}}],
-                                          true, self, logger)
+      search_pattern_in_output(stdout, \
+                               [%r{ip address 192.168.1.1/#{LoopbackIntfLib::IPV4MASKLEN_NEGATIVE}}],
+                               true, self, logger)
     end
 
     logger.info("Check interface instance absence on agent :: #{result}")
@@ -177,7 +177,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, LoopbackIntfLib.create_loopbackintf_manifest_shutdown_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -188,12 +188,12 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_interface resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_interface 'loopback1'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'shutdown' => LoopbackIntfLib::SHUTDOWN_NEGATIVE },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'shutdown' => LoopbackIntfLib::SHUTDOWN_NEGATIVE },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_interface resource absence on agent :: #{result}")
@@ -203,11 +203,11 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 16 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config interface loopback1')
+    cmd_str = get_vshell_cmd('show running-config interface loopback1')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/shutdown/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/shutdown/],
+                               true, self, logger)
     end
 
     logger.info("Check interface instance absence on agent :: #{result}")
@@ -219,7 +219,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, LoopbackIntfLib.create_loopbackintf_manifest_ipv4proxyarp_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -230,12 +230,12 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_interface resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_interface 'loopback1'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'ipv4_proxy_arp' => LoopbackIntfLib::IPV4PROXYARP_NEGATIVE },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'ipv4_proxy_arp' => LoopbackIntfLib::IPV4PROXYARP_NEGATIVE },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_interface resource absence on agent :: #{result}")
@@ -245,11 +245,11 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 16 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config interface loopback1')
+    cmd_str = get_vshell_cmd('show running-config interface loopback1')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/ip proxy-arp/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/ip proxy-arp/],
+                               true, self, logger)
     end
 
     logger.info("Check interface instance absence on agent :: #{result}")
@@ -261,7 +261,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, LoopbackIntfLib.create_loopbackintf_manifest_ipv4redir_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -272,12 +272,12 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_interface resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_interface 'loopback1'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'ipv4_redirects' => LoopbackIntfLib::IPV4REDIR_NEGATIVE },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'ipv4_redirects' => LoopbackIntfLib::IPV4REDIR_NEGATIVE },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_interface resource absence on agent :: #{result}")
@@ -287,11 +287,11 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 16 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config interface loopback1')
+    cmd_str = get_vshell_cmd('show running-config interface loopback1')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/ip redirects/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/ip redirects/],
+                               true, self, logger)
     end
 
     logger.info("Check interface instance absence on agent :: #{result}")
@@ -303,7 +303,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, LoopbackIntfLib.create_loopbackintf_manifest_vrf_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -314,12 +314,12 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_interface resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_interface 'loopback1'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'vrf' => LoopbackIntfLib::VRF_NEGATIVE },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'vrf' => LoopbackIntfLib::VRF_NEGATIVE },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_interface resource absence on agent :: #{result}")
@@ -329,18 +329,18 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 16 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config interface loopback1')
+    cmd_str = get_vshell_cmd('show running-config interface loopback1')
     on(agent, cmd_str, acceptable_exit_codes: [16]) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/vrf member/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/vrf member/],
+                               true, self, logger)
     end
 
     logger.info("Check interface instance absence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

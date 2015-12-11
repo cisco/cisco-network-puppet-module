@@ -15,7 +15,7 @@
 ###############################################################################
 
 # Require UtilityLib.rb path.
-require File.expand_path('../../lib/utilitylib.rb', __FILE__)
+require File.expand_path('../../../lib/utilitylib.rb', __FILE__)
 
 # VLAN Utility Library:
 # ---------------------

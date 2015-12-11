@@ -89,7 +89,7 @@ def create_aaaauthelogin_defaults(tests, id, string=false)
     UtilityLib::PUPPET_BINPATH +
     "resource cisco_aaa_authentication_login '#{title}'"
   tests[id][:resource_cmd] =
-    UtilityLib.get_namespace_cmd(agent, resource_cmd_str, options)
+    get_namespace_cmd(agent, resource_cmd_str, options)
 end
 
 test_name "TestCase :: #{testheader}" do
@@ -116,7 +116,7 @@ test_name "TestCase :: #{testheader}" do
 
   # aaa authentication login is not ensurable, so no need to test present/absent
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

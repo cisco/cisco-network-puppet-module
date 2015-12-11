@@ -68,16 +68,16 @@ test_name "TestCase :: #{testheader}" do
 
     # Expected exit_code is 252 since this is a vegas shell cmd with no change.
     # Or expected exit_code is 0 since this is a vegas shell cmd with change.
-    cmd_str = UtilityLib.get_vshell_cmd('conf t ; no snmp-server community test')
+    cmd_str = get_vshell_cmd('conf t ; no snmp-server community test')
     on(agent, cmd_str, acceptable_exit_codes: [0, 252])
 
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
+    cmd_str = get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/snmp-server community test group network-operator/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/snmp-server community test group network-operator/],
+                               true, self, logger)
     end
 
     logger.info("Setup switch for provider test :: #{result}")
@@ -89,7 +89,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SnmpCommLib.create_snmpcommunity_manifest_group_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -100,12 +100,12 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_snmp_comm resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_snmp_community 'test'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'group' => SnmpCommLib::GROUP_NEGATIVE },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'group' => SnmpCommLib::GROUP_NEGATIVE },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_snmp_comm resource absence on agent :: #{result}")
@@ -115,11 +115,11 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check snmpcomm instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
+    cmd_str = get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/snmp-server community test group #{SnmpCommLib::GROUP_NEGATIVE}/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/snmp-server community test group #{SnmpCommLib::GROUP_NEGATIVE}/],
+                               true, self, logger)
     end
 
     logger.info("Check snmpcomm instance absence on agent :: #{result}")
@@ -131,7 +131,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SnmpCommLib.create_snmpcommunity_manifest_acl_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -142,12 +142,12 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_snmp_comm resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_snmp_community 'test'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'acl' => SnmpCommLib::ACL_NEGATIVE },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'acl' => SnmpCommLib::ACL_NEGATIVE },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_snmp_comm resource absence on agent :: #{result}")
@@ -157,18 +157,18 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check snmpcomm instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
+    cmd_str = get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/snmp-server community test use-acl #{SnmpCommLib::ACL_NEGATIVE}/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/snmp-server community test use-acl #{SnmpCommLib::ACL_NEGATIVE}/],
+                               true, self, logger)
     end
 
     logger.info("Check snmpcomm instance absence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

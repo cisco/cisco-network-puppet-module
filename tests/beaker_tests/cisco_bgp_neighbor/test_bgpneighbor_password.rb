@@ -95,7 +95,7 @@ test_name "TestCase :: #{testheader}" do
       UtilityLib::PUPPET_BINPATH +
       'resource cisco_bgp_neighbor ' + "'#{asn} #{vrf} #{neighbor}'"
     tests[id][:resource_cmd] =
-      UtilityLib.get_namespace_cmd(agent, resource_cmd_str, options)
+      get_namespace_cmd(agent, resource_cmd_str, options)
     tests[id][:desc] = '1.1 Apply manifest with password attributes'
     create_bgpneighbor_manifest(tests, id)
     test_manifest(tests, id)
@@ -123,7 +123,7 @@ test_name "TestCase :: #{testheader}" do
     test_show_cmd(tests, id, true)
   end
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

@@ -73,21 +73,21 @@ test_name "TestCase :: #{testheader}" do
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no change.
     # Or expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config interface eth1/4 all')
+    cmd_str = get_vshell_cmd('show running-config interface eth1/4 all')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [
-                                            /mtu 1500/,
-                                            /speed auto/,
-                                            /duplex auto/,
-                                          ],
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               [
+                                 /mtu 1500/,
+                                 /speed auto/,
+                                 /duplex auto/,
+                               ],
+                               false, self, logger)
     end
 
     logger.info("Setup switch for provider test :: #{result}")
@@ -99,7 +99,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, NetworkInterfaceLib.create_non_defaults)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -110,15 +110,15 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check network_interface resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource network_interface 'ethernet1/4'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'mtu'         => '1500',
-                                            'speed'       => '100m',
-                                            'description' => 'foo',
-                                            'duplex'      => 'full' },
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'mtu'         => '1500',
+                                 'speed'       => '100m',
+                                 'description' => 'foo',
+                                 'duplex'      => 'full' },
+                               false, self, logger)
     end
 
     logger.info("Check network_interface resource presence on agent :: #{result}")
@@ -127,22 +127,22 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check interface instance presence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config interface eth1/4 all')
+    cmd_str = get_vshell_cmd('show running-config interface eth1/4 all')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [
-                                            /mtu 1500/,
-                                            /speed 100/,
-                                            /duplex full/,
-                                            /description foo/,
-                                          ],
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               [
+                                 /mtu 1500/,
+                                 /speed 100/,
+                                 /duplex full/,
+                                 /description foo/,
+                               ],
+                               false, self, logger)
     end
 
     logger.info("Check interface instance presence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 logger.info("TestCase :: #{testheader} :: End")

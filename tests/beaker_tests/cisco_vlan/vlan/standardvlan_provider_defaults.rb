@@ -56,7 +56,7 @@
 ###############################################################################
 
 # Require UtilityLib.rb and VlanLib.rb paths.
-require File.expand_path('../../lib/utilitylib.rb', __FILE__)
+require File.expand_path('../../../lib/utilitylib.rb', __FILE__)
 require File.expand_path('../vlanlib.rb', __FILE__)
 
 result = 'PASS'
@@ -74,7 +74,7 @@ test_name "TestCase :: #{testheader}" do
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no change.
     # Or expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
@@ -87,7 +87,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, VlanLib.create_stdvlan_manifest_present)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -98,15 +98,15 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_vlan resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_vlan '128'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'ensure'    => 'present',
-                                            'shutdown'  => 'false',
-                                            'state'     => 'active',
-                                            'vlan_name' => 'VLAN0128' },
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'ensure'    => 'present',
+                                 'shutdown'  => 'false',
+                                 'state'     => 'active',
+                                 'vlan_name' => 'VLAN0128' },
+                               false, self, logger)
     end
 
     logger.info("Check cisco_vlan resource presence on agent :: #{result}")
@@ -116,10 +116,10 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check vlan instance presence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config vlan')
+    cmd_str = get_vshell_cmd('show running-config vlan')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [/vlan 1,(.*)128/],
-                                          false, self, logger)
+      search_pattern_in_output(stdout, [/vlan 1,(.*)128/],
+                               false, self, logger)
     end
 
     logger.info("Check vlan instance presence on agent :: #{result}")
@@ -131,7 +131,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, VlanLib.create_stdvlan_manifest_absent)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -142,15 +142,15 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_vlan resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       "resource cisco_vlan '128'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'ensure'    => 'present',
-                                            'shutdown'  => 'false',
-                                            'state'     => 'active',
-                                            'vlan_name' => 'VLAN0128' },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'ensure'    => 'present',
+                                 'shutdown'  => 'false',
+                                 'state'     => 'active',
+                                 'vlan_name' => 'VLAN0128' },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_vlan resource absence on agent :: #{result}")
@@ -160,17 +160,17 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check vlan instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config vlan')
+    cmd_str = get_vshell_cmd('show running-config vlan')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [/vlan 1,(.*)128/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout, [/vlan 1,(.*)128/],
+                               true, self, logger)
     end
 
     logger.info("Check vlan instance absence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

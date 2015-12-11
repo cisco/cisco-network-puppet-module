@@ -148,7 +148,7 @@ tests['non_default_properties'] = {
 # Full command string for puppet resource command
 def puppet_resource_cmd
   cmd = UtilityLib::PUPPET_BINPATH + 'resource cisco_vxlan_global'
-  UtilityLib.get_namespace_cmd(agent, cmd, options)
+  get_namespace_cmd(agent, cmd, options)
 end
 
 def build_manifest_vxlan_global(tests, id)

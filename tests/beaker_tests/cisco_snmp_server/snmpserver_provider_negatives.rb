@@ -72,13 +72,13 @@ test_name "TestCase :: #{testheader}" do
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no change.
     # Or expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp all')
+    cmd_str = get_vshell_cmd('show running-config snmp all')
     on(agent, cmd_str) do
       SnmpServerLib.match_default_cli(stdout, self, logger)
     end
@@ -92,7 +92,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SnmpServerLib.create_snmpserver_manifest_packetsize_negative)
 
     # Expected exit_code is 4 since this is a puppet agent cmd with failure.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [4])
 
@@ -103,12 +103,12 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_snmp_server resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'resource cisco_snmp_server', options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'packet_size' => SnmpServerLib::PACKETSIZE_NEGATIVE },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'packet_size' => SnmpServerLib::PACKETSIZE_NEGATIVE },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_snmp_server resource absence on agent :: #{result}")
@@ -118,11 +118,11 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check snmpserver instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
+    cmd_str = get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/snmp-server packetsize #{SnmpServerLib::PACKETSIZE_NEGATIVE}/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/snmp-server packetsize #{SnmpServerLib::PACKETSIZE_NEGATIVE}/],
+                               true, self, logger)
     end
 
     logger.info("Check snmpserver instance absence on agent :: #{result}")
@@ -134,7 +134,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SnmpServerLib.create_snmpserver_manifest_aaatimeout_negative)
 
     # Expected exit_code is 4 since this is a puppet agent cmd with failure.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [4])
 
@@ -145,12 +145,12 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_snmp_server resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'resource cisco_snmp_server', options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'aaa_user_cache_timeout' => SnmpServerLib::AAATIMEOUT_NEGATIVE },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'aaa_user_cache_timeout' => SnmpServerLib::AAATIMEOUT_NEGATIVE },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_snmp_server resource absence on agent :: #{result}")
@@ -160,11 +160,11 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check snmpserver instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
+    cmd_str = get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/snmp-server aaa-user cache-timeout #{SnmpServerLib::AAATIMEOUT_NEGATIVE}/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/snmp-server aaa-user cache-timeout #{SnmpServerLib::AAATIMEOUT_NEGATIVE}/],
+                               true, self, logger)
     end
 
     logger.info("Check snmpserver instance absence on agent :: #{result}")
@@ -176,7 +176,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SnmpServerLib.create_snmpserver_manifest_tcpauth_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -187,12 +187,12 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_snmp_server resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'resource cisco_snmp_server', options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'tcp_session_auth' => SnmpServerLib::TCPAUTH_NEGATIVE },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'tcp_session_auth' => SnmpServerLib::TCPAUTH_NEGATIVE },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_snmp_server resource absence on agent :: #{result}")
@@ -202,11 +202,11 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check snmpserver instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
+    cmd_str = get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/snmp-server tcp_session_auth #{SnmpServerLib::TCPAUTH_NEGATIVE}/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/snmp-server tcp_session_auth #{SnmpServerLib::TCPAUTH_NEGATIVE}/],
+                               true, self, logger)
     end
 
     logger.info("Check snmpserver instance absence on agent :: #{result}")
@@ -218,7 +218,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SnmpServerLib.create_snmpserver_manifest_protocol_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -229,12 +229,12 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_snmp_server resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'resource cisco_snmp_server', options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'protocol' => SnmpServerLib::PROTOCOL_NEGATIVE },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'protocol' => SnmpServerLib::PROTOCOL_NEGATIVE },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_snmp_server resource absence on agent :: #{result}")
@@ -244,11 +244,11 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check snmpserver instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
+    cmd_str = get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/snmp-server protocol #{SnmpServerLib::PROTOCOL_NEGATIVE}/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/snmp-server protocol #{SnmpServerLib::PROTOCOL_NEGATIVE}/],
+                               true, self, logger)
     end
 
     logger.info("Check snmpserver instance absence on agent :: #{result}")
@@ -260,7 +260,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SnmpServerLib.create_snmpserver_manifest_globalpriv_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -271,12 +271,12 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_snmp_server resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'resource cisco_snmp_server', options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'global_enforce_priv' => SnmpServerLib::GLOBALPRIV_NEGATIVE },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'global_enforce_priv' => SnmpServerLib::GLOBALPRIV_NEGATIVE },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_snmp_server resource absence on agent :: #{result}")
@@ -286,18 +286,18 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check snmpserver instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
+    cmd_str = get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/snmp-server global_enforce_priv #{SnmpServerLib::GLOBALPRIV_NEGATIVE}/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/snmp-server global_enforce_priv #{SnmpServerLib::GLOBALPRIV_NEGATIVE}/],
+                               true, self, logger)
     end
 
     logger.info("Check snmpserver instance absence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

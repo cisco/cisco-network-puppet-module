@@ -74,13 +74,13 @@ test_name "TestCase :: #{testheader}" do
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no change.
     # Or expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp all')
+    cmd_str = get_vshell_cmd('show running-config snmp all')
     on(agent, cmd_str) do
       SnmpServerLib.match_default_cli(stdout, self, logger)
     end
@@ -94,7 +94,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SnmpServerLib.create_snmpserver_manifest_nondefaults)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -105,18 +105,18 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_snmp_server resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'resource cisco_snmp_server', options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'aaa_user_cache_timeout' => '1000',
-                                            'global_enforce_priv'    => 'true',
-                                            'packet_size'            => '2500',
-                                            'protocol'               => 'false',
-                                            'tcp_session_auth'       => 'false',
-                                            'contact'                => 'user1',
-                                            'location'               => 'rtp' },
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'aaa_user_cache_timeout' => '1000',
+                                 'global_enforce_priv'    => 'true',
+                                 'packet_size'            => '2500',
+                                 'protocol'               => 'false',
+                                 'tcp_session_auth'       => 'false',
+                                 'contact'                => 'user1',
+                                 'location'               => 'rtp' },
+                               false, self, logger)
     end
 
     logger.info("Check cisco_snmp_server resource presence on agent :: #{result}")
@@ -126,14 +126,14 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check snmpserver instance presence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
+    cmd_str = get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/snmp-server aaa-user cache-timeout 1000/,
-                                           /snmp-server packetsize 2500/,
-                                           /snmp-server contact user1/,
-                                           /snmp-server location rtp/],
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               [/snmp-server aaa-user cache-timeout 1000/,
+                                /snmp-server packetsize 2500/,
+                                /snmp-server contact user1/,
+                                /snmp-server location rtp/],
+                               false, self, logger)
     end
 
     logger.info("Check snmpserver instance presence on agent :: #{result}")
@@ -145,7 +145,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SnmpServerLib.create_snmpserver_manifest_defaults)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -156,16 +156,16 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_snmp_server resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'resource cisco_snmp_server', options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'aaa_user_cache_timeout' => '3600',
-                                            'global_enforce_priv'    => 'false',
-                                            'packet_size'            => '1500',
-                                            'protocol'               => 'true',
-                                            'tcp_session_auth'       => 'true' },
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'aaa_user_cache_timeout' => '3600',
+                                 'global_enforce_priv'    => 'false',
+                                 'packet_size'            => '1500',
+                                 'protocol'               => 'true',
+                                 'tcp_session_auth'       => 'true' },
+                               false, self, logger)
     end
 
     logger.info("Check cisco_snmp_server resource presence on agent :: #{result}")
@@ -175,18 +175,18 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check snmpserver instance presence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config snmp')
+    cmd_str = get_vshell_cmd('show running-config snmp')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/snmp-server packetsize 1500/],
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               [/snmp-server packetsize 1500/],
+                               false, self, logger)
     end
 
     logger.info("Check snmpserver instance presence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

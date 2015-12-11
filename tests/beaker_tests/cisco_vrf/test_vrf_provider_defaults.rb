@@ -57,13 +57,13 @@ testheader = 'VRF Resource :: All Attributes Defaults'
 vrf_name = 'test_green'
 UtilityLib.set_manifest_path(master, self)
 puppet_agent_cmd =
-  UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+  get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
                                'agent -t', options)
 puppet_resource_cmd =
-  UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+  get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
                                "resource cisco_vrf '#{vrf_name}'", options)
-clear_vrf_cmd = UtilityLib.get_vshell_cmd("conf t ; no vrf context #{vrf_name}")
-show_vrf_cmd = UtilityLib.get_vshell_cmd("show running | section \"vrf context #{vrf_name}\"")
+clear_vrf_cmd = get_vshell_cmd("conf t ; no vrf context #{vrf_name}")
+show_vrf_cmd = get_vshell_cmd("show running | section \"vrf context #{vrf_name}\"")
 # Flag is set to true to check for absence of RegExp pattern in stdout, set
 # to false to check for the present of RegExp
 test = {
@@ -78,8 +78,8 @@ test_name "TestCase :: #{testheader}" do
     on(agent, clear_vrf_cmd, acceptable_exit_codes: [0, 2])
 
     on(agent, show_vrf_cmd) do
-      UtilityLib.search_pattern_in_output(stdout, [/vrf context #{vrf_name}/],
-                                          test[:absent], self, logger)
+      search_pattern_in_output(stdout, [/vrf context #{vrf_name}/],
+                               test[:absent], self, logger)
     end
 
     logger.info("TestStep :: #{stepinfo} :: #{result}")
@@ -100,12 +100,12 @@ test_name "TestCase :: #{testheader}" do
   step "TestStep :: #{stepinfo}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     on(agent, puppet_resource_cmd) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'ensure' => 'present' },
-                                          test[:present], self, logger)
+      search_pattern_in_output(stdout,
+                               { 'ensure' => 'present' },
+                               test[:present], self, logger)
       # default setup won't have description entry in return
-      UtilityLib.search_pattern_in_output(stdout, [/description/],
-                                          test[:absent], self, logger)
+      search_pattern_in_output(stdout, [/description/],
+                               test[:absent], self, logger)
     end
 
     logger.info("TestStep :: #{stepinfo} :: #{result}")
@@ -115,12 +115,12 @@ test_name "TestCase :: #{testheader}" do
   step "TestStep :: #{stepinfo}" do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     on(agent, show_vrf_cmd) do
-      UtilityLib.search_pattern_in_output(stdout, [/vrf context #{vrf_name}/],
-                                          test[:present], self, logger)
+      search_pattern_in_output(stdout, [/vrf context #{vrf_name}/],
+                               test[:present], self, logger)
       # in show output there would be no "description" lines
       # for default vrf creation
-      UtilityLib.search_pattern_in_output(stdout, [/description/],
-                                          test[:absent], self, logger)
+      search_pattern_in_output(stdout, [/description/],
+                               test[:absent], self, logger)
     end
 
     logger.info("TestStep :: #{stepinfo} :: #{result}")
@@ -142,9 +142,9 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     on(agent, puppet_resource_cmd) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'ensure' => 'absent' },
-                                          test[:present], self, logger)
+      search_pattern_in_output(stdout,
+                               { 'ensure' => 'absent' },
+                               test[:present], self, logger)
     end
 
     logger.info("TestStep :: #{stepinfo} :: #{result}")
@@ -154,15 +154,15 @@ test_name "TestCase :: #{testheader}" do
   step "TestStep :: #{stepinfo}" do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     on(agent, show_vrf_cmd) do
-      UtilityLib.search_pattern_in_output(stdout, [/vrf context #{vrf_name}/],
-                                          test[:absent], self, logger)
+      search_pattern_in_output(stdout, [/vrf context #{vrf_name}/],
+                               test[:absent], self, logger)
     end
 
     logger.info("TestStep :: #{stepinfo} :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

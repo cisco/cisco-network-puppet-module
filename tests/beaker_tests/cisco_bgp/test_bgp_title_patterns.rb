@@ -64,19 +64,19 @@ testheader = 'Resource cisco_bgp:: Verify Title Patterns'
 # Define PUPPETMASTER_MANIFESTPATH.
 UtilityLib.set_manifest_path(master, self)
 # Create puppet agent command
-puppet_cmd = UtilityLib.get_namespace_cmd(agent,
-                                          UtilityLib::PUPPET_BINPATH + 'agent -t', options)
+puppet_cmd = get_namespace_cmd(agent,
+                               UtilityLib::PUPPET_BINPATH + 'agent -t', options)
 # Create command to show the bgp running configuration
-show_run_bgp = UtilityLib.get_vshell_cmd('show running-config section bgp')
+show_run_bgp = get_vshell_cmd('show running-config section bgp')
 # Create commands to issue the puppet resource command for cisco_bgp
-resource_default = UtilityLib.get_namespace_cmd(agent,
-                                                UtilityLib::PUPPET_BINPATH + "resource cisco_bgp '#{BgpLib::ASN} default'", options)
-resource_vrf1 = UtilityLib.get_namespace_cmd(agent,
-                                             UtilityLib::PUPPET_BINPATH +
-                                             "resource cisco_bgp '#{BgpLib::ASN} #{BgpLib::VRF1}'", options)
-resource_asdot = UtilityLib.get_namespace_cmd(agent,
-                                              UtilityLib::PUPPET_BINPATH +
-                                              "resource cisco_bgp '#{BgpLib::ASN_ASPLAIN} #{BgpLib::VRF1}'", options)
+resource_default = get_namespace_cmd(agent,
+                                     UtilityLib::PUPPET_BINPATH + "resource cisco_bgp '#{BgpLib::ASN} default'", options)
+resource_vrf1 = get_namespace_cmd(agent,
+                                  UtilityLib::PUPPET_BINPATH +
+                                  "resource cisco_bgp '#{BgpLib::ASN} #{BgpLib::VRF1}'", options)
+resource_asdot = get_namespace_cmd(agent,
+                                   UtilityLib::PUPPET_BINPATH +
+                                   "resource cisco_bgp '#{BgpLib::ASN_ASPLAIN} #{BgpLib::VRF1}'", options)
 
 # Define expected default values for cisco_bgp resource
 expected_default_values = {
@@ -117,12 +117,12 @@ test_name "TestCase :: #{testheader}" do
   stepinfo = 'Setup switch for cisco_bgp provider test'
   step "TestStep :: #{stepinfo}" do
     # Remove feature bgp to put testbed into a clean starting state.
-    cmd_str = UtilityLib.get_vshell_cmd('config t ; no feature bgp')
+    cmd_str = get_vshell_cmd('config t ; no feature bgp')
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
     on(agent, show_run_bgp) do
-      UtilityLib.search_pattern_in_output(stdout, [/feature bgp/],
-                                          test[:absent], self, logger)
+      search_pattern_in_output(stdout, [/feature bgp/],
+                               test[:absent], self, logger)
     end
 
     logger.info("TestStep :: #{stepinfo} :: #{result}")
@@ -155,8 +155,8 @@ test_name "TestCase :: #{testheader}" do
     stepinfo = "Check cisco_bgp resource using 'puppet resource' comand"
     step "TestStep :: #{stepinfo}" do
       on(agent, resource_default) do
-        UtilityLib.search_pattern_in_output(stdout, expected_default_values,
-                                            test[:present], self, logger)
+        search_pattern_in_output(stdout, expected_default_values,
+                                 test[:present], self, logger)
       end
       logger.info("#{stepinfo} :: #{result}")
     end
@@ -171,8 +171,8 @@ test_name "TestCase :: #{testheader}" do
     stepinfo = 'Verify resource is absent using puppet'
     step "TestStep :: #{stepinfo})" do
       on(agent, resource_default) do
-        UtilityLib.search_pattern_in_output(stdout, expected_default_values,
-                                            test[:absent], self, logger)
+        search_pattern_in_output(stdout, expected_default_values,
+                                 test[:absent], self, logger)
       end
       logger.info("#{stepinfo} :: #{result}")
     end
@@ -212,8 +212,8 @@ test_name "TestCase :: #{testheader}" do
     stepinfo = "Check cisco_bgp resource using 'puppet resource' comand"
     step "TestStep :: #{stepinfo}" do
       on(agent, resource_vrf1) do
-        UtilityLib.search_pattern_in_output(stdout, expected_default_values,
-                                            test[:present], self, logger)
+        search_pattern_in_output(stdout, expected_default_values,
+                                 test[:present], self, logger)
       end
       logger.info("#{stepinfo} :: #{result}")
     end
@@ -228,8 +228,8 @@ test_name "TestCase :: #{testheader}" do
     stepinfo = 'Verify resource is absent using puppet'
     step "TestStep :: #{stepinfo})" do
       on(agent, resource_vrf1) do
-        UtilityLib.search_pattern_in_output(stdout, expected_default_values,
-                                            test[:absent], self, logger)
+        search_pattern_in_output(stdout, expected_default_values,
+                                 test[:absent], self, logger)
       end
       logger.info("#{stepinfo} :: #{result}")
     end
@@ -266,8 +266,8 @@ test_name "TestCase :: #{testheader}" do
     stepinfo = "Check cisco_bgp resource using 'puppet resource' comand"
     step "TestStep :: #{stepinfo}" do
       on(agent, resource_asdot) do
-        UtilityLib.search_pattern_in_output(stdout, expected_default_values,
-                                            test[:present], self, logger)
+        search_pattern_in_output(stdout, expected_default_values,
+                                 test[:present], self, logger)
       end
       logger.info("#{stepinfo} :: #{result}")
     end
@@ -282,8 +282,8 @@ test_name "TestCase :: #{testheader}" do
     stepinfo = 'Verify resource is absent using puppet'
     step "TestStep :: #{stepinfo})" do
       on(agent, resource_asdot) do
-        UtilityLib.search_pattern_in_output(stdout, expected_default_values,
-                                            test[:absent], self, logger)
+        search_pattern_in_output(stdout, expected_default_values,
+                                 test[:absent], self, logger)
       end
       logger.info("#{stepinfo} :: #{result}")
     end

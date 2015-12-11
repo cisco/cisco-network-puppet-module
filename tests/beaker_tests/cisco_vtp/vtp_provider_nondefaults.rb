@@ -69,16 +69,16 @@ test_name "TestCase :: #{testheader}" do
     UtilityLib.set_manifest_path(master, self)
 
     # Expected exit_code is 0 since this is a vegas shell cmd with no change.
-    cmd_str = UtilityLib.get_vshell_cmd('conf t ; no feature vtp')
+    cmd_str = get_vshell_cmd('conf t ; no feature vtp')
     on(agent, cmd_str)
 
     # Expected exit_code is 16 since this is a vegas shell cmd with exec error.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config vtp')
+    cmd_str = get_vshell_cmd('show running-config vtp')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/feature vtp/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/feature vtp/],
+                               true, self, logger)
     end
 
     logger.info("Setup switch for provider test :: #{result}")
@@ -90,7 +90,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, VtpLib.create_vtp_manifest_nondefaults)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -101,16 +101,16 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_vtp resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'resource cisco_vtp', options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'ensure'   => 'present',
-                                            'domain'   => 'cisco1234',
-                                            'filename' => 'bootflash:\/vtp.dat',
-                                            'password' => 'cisco12345\$%\^&',
-                                            'version'  => '2' },
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'ensure'   => 'present',
+                                 'domain'   => 'cisco1234',
+                                 'filename' => 'bootflash:\/vtp.dat',
+                                 'password' => 'cisco12345\$%\^&',
+                                 'version'  => '2' },
+                               false, self, logger)
     end
 
     logger.info("Check cisco_vtp resource presence on agent :: #{result}")
@@ -120,13 +120,13 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check vtp instance presence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config vtp')
+    cmd_str = get_vshell_cmd('show running-config vtp')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/feature vtp/,
-                                           /vtp domain cisco1234/,
-                                           %r{vtp file bootflash:/vtp.dat}],
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               [/feature vtp/,
+                                /vtp domain cisco1234/,
+                                %r{vtp file bootflash:/vtp.dat}],
+                               false, self, logger)
     end
 
     logger.info("Check vtp instance presence on agent :: #{result}")
@@ -138,7 +138,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, VtpLib.create_vtp_manifest_absent)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -149,16 +149,16 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_vtp resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'resource cisco_vtp', options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'ensure'   => 'present',
-                                            'domain'   => 'cisco1234',
-                                            'filename' => 'bootflash:\/vtp.dat',
-                                            'password' => 'cisco12345\$%\^&',
-                                            'version'  => '2' },
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'ensure'   => 'present',
+                                 'domain'   => 'cisco1234',
+                                 'filename' => 'bootflash:\/vtp.dat',
+                                 'password' => 'cisco12345\$%\^&',
+                                 'version'  => '2' },
+                               true, self, logger)
     end
 
     logger.info("Check cisco_vtp resource absence on agent :: #{result}")
@@ -168,20 +168,20 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check vtp instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config vtp')
+    cmd_str = get_vshell_cmd('show running-config vtp')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/feature vtp/,
-                                           /vtp domain cisco1234/,
-                                           %r{vtp file bootflash:/vtp.dat}],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/feature vtp/,
+                                /vtp domain cisco1234/,
+                                %r{vtp file bootflash:/vtp.dat}],
+                               true, self, logger)
     end
 
     logger.info("Check vtp instance absence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

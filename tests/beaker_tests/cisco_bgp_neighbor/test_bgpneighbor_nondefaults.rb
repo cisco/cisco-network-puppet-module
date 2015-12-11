@@ -119,7 +119,7 @@ test_name "TestCase :: #{testheader}" do
       UtilityLib::PUPPET_BINPATH +
       "resource cisco_bgp_neighbor '#{asn} #{vrf} #{neighbor}'"
     tests[id][:resource_cmd] =
-      UtilityLib.get_namespace_cmd(agent, resource_cmd_str, options)
+      get_namespace_cmd(agent, resource_cmd_str, options)
     # transport_passive_only attribute is only available in neighbor ip address
     # format, maximum_peers option is only available in neighbor ip/prefix
     # format.
@@ -235,7 +235,7 @@ test_name "TestCase :: #{testheader}" do
     test_manifest(tests, id)
   end
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

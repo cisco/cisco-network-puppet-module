@@ -75,16 +75,16 @@ EOF"
      'snmp-server tcp-session auth',
      'snmp-server globalEnforcePriv',
     ].each do |pattern|
-      UtilityLib.search_pattern_in_output(output, [/#{Regexp.quote(pattern)}/],
-                                          false, testcase, logger)
+      search_pattern_in_output(output, [/#{Regexp.quote(pattern)}/],
+                               false, testcase, logger)
     end
 
     # Refute strings
     ['snmp-server contact',
      'snmp-server location',
     ].each do |pattern|
-      UtilityLib.search_pattern_in_output(output, [/#{Regexp.quote(pattern)}/],
-                                          true, testcase, logger)
+      search_pattern_in_output(output, [/#{Regexp.quote(pattern)}/],
+                               true, testcase, logger)
     end
   end
 

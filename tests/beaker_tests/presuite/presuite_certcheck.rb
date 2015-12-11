@@ -58,15 +58,15 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet cert cmd with no change.
     cmd_str = UtilityLib::PUPPET_BINPATH + 'cert --list ' + puppetagentcert
     on(master, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, \
-                                          [Regexp.new(puppetagentcert)], false, self, logger)
+      search_pattern_in_output(stdout, \
+                               [Regexp.new(puppetagentcert)], false, self, logger)
     end
 
     logger.info("Check for Puppet Agent cert on master :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

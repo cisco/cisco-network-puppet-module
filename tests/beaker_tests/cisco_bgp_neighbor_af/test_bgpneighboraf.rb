@@ -492,7 +492,7 @@ tests['title_patterns'] = {
 def puppet_resource_cmd(af)
   cmd = UtilityLib::PUPPET_BINPATH + \
         "resource cisco_bgp_neighbor_af '#{af.values.join(' ')}'"
-  UtilityLib.get_namespace_cmd(agent, cmd, options)
+  get_namespace_cmd(agent, cmd, options)
 end
 
 # Search pattern for show run config testing

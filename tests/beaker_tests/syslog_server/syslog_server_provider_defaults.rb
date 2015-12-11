@@ -67,7 +67,7 @@ test_name "TestCase :: #{testheader}" do
 
     # Cleanup before test case start.
     on(master, SyslogServerLib.create_syslog_server_manifest_absent)
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
@@ -80,7 +80,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SyslogServerLib.create_syslog_server_manifest_present)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -91,15 +91,15 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check syslog_server resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'resource syslog_server 1.2.3.4', options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, { 'ensure' => 'present' },
-                                          false, self, logger)
-      UtilityLib.search_pattern_in_output(stdout, { 'severity_level' => '2' },
-                                          false, self, logger)
-      UtilityLib.search_pattern_in_output(stdout, { 'vrf' => 'default' },
-                                          false, self, logger)
+      search_pattern_in_output(stdout, { 'ensure' => 'present' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'severity_level' => '2' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'vrf' => 'default' },
+                               false, self, logger)
     end
 
     logger.info("Check syslog_server resource presence on agent :: #{result}")
@@ -111,7 +111,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SyslogServerLib.create_syslog_server_manifest_absent)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -122,18 +122,18 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check syslog_server resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
       'resource syslog_server 1.2.3.4', options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, { 'ensure' => 'present' },
-                                          true, self, logger)
+      search_pattern_in_output(stdout, { 'ensure' => 'present' },
+                               true, self, logger)
     end
 
     logger.info("Check syslog_server resource presence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")
