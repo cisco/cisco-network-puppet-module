@@ -1,0 +1,4 @@
+# Rubocop configuration
+
+Metrics/MethodLength:
+  Max: 42

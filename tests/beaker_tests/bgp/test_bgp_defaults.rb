@@ -64,64 +64,61 @@ testheader = 'Resource cisco_bgp :: All default property values'
 # Define PUPPETMASTER_MANIFESTPATH.
 UtilityLib.set_manifest_path(master, self)
 # Create puppet agent command
-puppet_cmd = UtilityLib.get_namespace_cmd(agent,
-                                          UtilityLib::PUPPET_BINPATH + 'agent -t', options)
-# Create command to show the bgp running configuration
-show_run_bgp = UtilityLib.get_vshell_cmd('show running-config section bgp')
+puppet_cmd = UtilityLib.get_namespace_cmd(
+  agent, UtilityLib::PUPPET_BINPATH + 'agent -t', options)
 # Create commands to issue the puppet resource command for cisco_bgp
-resource_default = UtilityLib.get_namespace_cmd(agent,
-                                                UtilityLib::PUPPET_BINPATH + "resource cisco_bgp '#{BgpLib::ASN} default'", options)
-resource_vrf1 = UtilityLib.get_namespace_cmd(agent,
-                                             UtilityLib::PUPPET_BINPATH +
-                                             "resource cisco_bgp '#{BgpLib::ASN} #{BgpLib::VRF1}'", options)
-resource_vrf2 = UtilityLib.get_namespace_cmd(agent,
-                                             UtilityLib::PUPPET_BINPATH +
-                                             "resource cisco_bgp '#{BgpLib::ASN} #{BgpLib::VRF2}'", options)
+resource_default = UtilityLib.get_namespace_cmd(
+  agent, UtilityLib::PUPPET_BINPATH +
+    "resource cisco_bgp '#{BgpLib::ASN} default'", options)
+resource_vrf1 = UtilityLib.get_namespace_cmd(
+  agent, UtilityLib::PUPPET_BINPATH +
+    "resource cisco_bgp '#{BgpLib::ASN} #{BgpLib::VRF1}'", options)
+resource_vrf2 = UtilityLib.get_namespace_cmd(
+  agent, UtilityLib::PUPPET_BINPATH +
+    "resource cisco_bgp '#{BgpLib::ASN} #{BgpLib::VRF2}'", options)
+platform = fact_on(agent, 'os.name')
 
 # Define expected default values for cisco_bgp resource
 expected_default_values = {
   'ensure'                                 => 'present',
-  'shutdown'                               => 'false',
-  'suppress_fib_pending'                   => 'false',
-  'log_neighbor_changes'                   => 'false',
-  'maxas_limit'                            => 'false',
   'bestpath_always_compare_med'            => 'false',
   'bestpath_aspath_multipath_relax'        => 'false',
   'bestpath_compare_routerid'              => 'false',
   'bestpath_cost_community_ignore'         => 'false',
   'bestpath_med_confed'                    => 'false',
   'bestpath_med_missing_as_worst'          => 'false',
-  'bestpath_med_non_deterministic'         => 'false',
   'enforce_first_as'                       => 'true',
   'graceful_restart'                       => 'true',
   'graceful_restart_timers_restart'        => '120',
   'graceful_restart_timers_stalepath_time' => '300',
-  'graceful_restart_helper'                => 'false',
-  'timer_bgp_keepalive'                    => '60',
+  'log_neighbor_changes'                   => 'true',
   'timer_bgp_holdtime'                     => '180',
-  'timer_bestpath_limit'                   => '300',
-  'timer_bestpath_limit_always'            => 'false',
+  'timer_bgp_keepalive'                    => '60'
 }
+
+if platform != 'ios_xr'
+  expected_default_values['bestpath_med_non_deterministic'] = 'false'
+  expected_default_values['graceful_restart_helper']        = 'false'
+  expected_default_values['log_neighbor_changes']           = 'false'
+  expected_default_values['maxas_limit']                    = 'false'
+  expected_default_values['shutdown']                       = 'false'
+  expected_default_values['suppress_fib_pending']           = 'false'
+  expected_default_values['timer_bestpath_limit']           = '300'
+  expected_default_values['timer_bestpath_limit_always']    = 'false'
+end
 
 # Used to clarify true/false values for UtilityLib args.
 test = {
   present: false,
-  absent:  true,
+  absent:  true
 }
 
 test_name "TestCase :: #{testheader}" do
   stepinfo = 'Setup switch for cisco_bgp provider test'
   step "TestStep :: #{stepinfo}" do
-    # Remove feature bgp to put testbed into a clean starting state.
-    cmd_str = UtilityLib.get_vshell_cmd('config t ; no feature bgp')
-    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
-
-    on(agent, show_run_bgp) do
-      UtilityLib.search_pattern_in_output(stdout, [/feature bgp/],
-                                          test[:absent], self, logger)
-    end
-
-    logger.info("TestStep :: #{stepinfo} :: #{result}")
+    on(master, BgpLib.create_cleanup_bgp)
+    on(agent, puppet_cmd, acceptable_exit_codes: [0, 2, 6])
+    logger.info("#{stepinfo} :: #{result}")
   end
 
   # ----------------------
@@ -130,7 +127,7 @@ test_name "TestCase :: #{testheader}" do
 
   stepinfo = 'Apply resource ensure => present manifest'
   step "TestStep :: #{stepinfo}" do
-    on(master, BgpLib.create_bgp_manifest_present)
+    on(master, BgpLib.create_bgp_manifest_present(platform))
     on(agent, puppet_cmd, acceptable_exit_codes: [2])
     logger.info("#{stepinfo} :: #{result}")
   end
@@ -139,16 +136,6 @@ test_name "TestCase :: #{testheader}" do
   step "TestStep :: #{stepinfo}" do
     on(agent, resource_default) do
       UtilityLib.search_pattern_in_output(stdout, expected_default_values,
-                                          test[:present], self, logger)
-    end
-    logger.info("#{stepinfo} :: #{result}")
-  end
-
-  stepinfo = 'Check bgp instance output on agent'
-  step "TestStep :: #{stepinfo}" do
-    on(agent, show_run_bgp) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/router bgp #{BgpLib::ASN}/],
                                           test[:present], self, logger)
     end
     logger.info("#{stepinfo} :: #{result}")
@@ -163,6 +150,13 @@ test_name "TestCase :: #{testheader}" do
   # --------------------------
   # Non-Default VRF Test Cases
   # --------------------------
+  if platform == 'ios_xr'
+    # XR does not support these properties under a non-default vrf
+    expected_default_values.delete('bestpath_med_confed')
+    expected_default_values.delete('graceful_restart')
+    expected_default_values.delete('graceful_restart_timers_restart')
+    expected_default_values.delete('graceful_restart_timers_stalepath_time')
+  end
 
   context = "vrf #{BgpLib::VRF1}"
 
@@ -170,7 +164,7 @@ test_name "TestCase :: #{testheader}" do
   expected_default_values.delete('enforce_first_as')
   stepinfo = "Apply resource ensure => present manifest (#{context})"
   step "TestStep :: #{stepinfo}" do
-    on(master, BgpLib.create_bgp_manifest_present_vrf1)
+    on(master, BgpLib.create_bgp_manifest_present_vrf1(platform))
     on(agent, puppet_cmd, acceptable_exit_codes: [2])
     logger.info("#{stepinfo} :: #{result}")
   end
@@ -179,16 +173,6 @@ test_name "TestCase :: #{testheader}" do
   step "TestStep :: #{stepinfo})" do
     on(agent, resource_vrf1) do
       UtilityLib.search_pattern_in_output(stdout, expected_default_values,
-                                          test[:present], self, logger)
-    end
-    logger.info("#{stepinfo} :: #{result}")
-  end
-
-  stepinfo = "Check bgp instance output on agent (#{context})"
-  step "TestStep :: #{stepinfo}" do
-    on(agent, show_run_bgp) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/router bgp #{BgpLib::ASN}/, /vrf #{BgpLib::VRF1}/],
                                           test[:present], self, logger)
     end
     logger.info("#{stepinfo} :: #{result}")
@@ -204,7 +188,7 @@ test_name "TestCase :: #{testheader}" do
 
   stepinfo = "Apply resource ensure => present manifest (#{context})"
   step "TestStep :: #{stepinfo}" do
-    on(master, BgpLib.create_bgp_manifest_present_vrf2)
+    on(master, BgpLib.create_bgp_manifest_present_vrf2(platform))
     on(agent, puppet_cmd, acceptable_exit_codes: [2])
     logger.info("#{stepinfo} :: #{result}")
   end
@@ -213,16 +197,6 @@ test_name "TestCase :: #{testheader}" do
   step "TestStep :: #{stepinfo})" do
     on(agent, resource_vrf2) do
       UtilityLib.search_pattern_in_output(stdout, expected_default_values,
-                                          test[:present], self, logger)
-    end
-    logger.info("#{stepinfo} :: #{result}")
-  end
-
-  stepinfo = "Check bgp instance output on agent (#{context})"
-  step "TestStep :: #{stepinfo}" do
-    on(agent, show_run_bgp) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/router bgp #{BgpLib::ASN}/, /vrf #{BgpLib::VRF2}/],
                                           test[:present], self, logger)
     end
     logger.info("#{stepinfo} :: #{result}")
@@ -280,16 +254,6 @@ test_name "TestCase :: #{testheader}" do
   step "TestStep :: #{stepinfo})" do
     on(agent, resource_default) do
       UtilityLib.search_pattern_in_output(stdout, expected_default_values,
-                                          test[:absent], self, logger)
-    end
-    logger.info("#{stepinfo} :: #{result}")
-  end
-
-  stepinfo = 'Check bgp instance removal on agent (all vrfs)'
-  step "TestStep :: #{stepinfo}" do
-    on(agent, show_run_bgp) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/router bgp #{BgpLib::ASN}/],
                                           test[:absent], self, logger)
     end
     logger.info("#{stepinfo} :: #{result}")

@@ -63,8 +63,7 @@ Puppet::Type.type(:cisco_bgp).provide(:nxapi) do
     :graceful_restart,
     :graceful_restart_helper,
     :log_neighbor_changes,
-    # TODO: handle this using YAML
-    #:shutdown,
+    :shutdown,
     :suppress_fib_pending,
     :timer_bestpath_limit_always,
   ]
@@ -200,9 +199,24 @@ Puppet::Type.type(:cisco_bgp).provide(:nxapi) do
     @bgp_vrf.timer_bestpath_limit_set(limit, always)
   end
 
+  # confederation_peers requires a custom getter and setter because we are
+  # working with arrays.  When the manifest entry is set to default,
+  # puppet creates an array with the symbol default. [:default].
+  # The net result is the getter needs to return [:default] and
+  # the setter must check the array for symbol :default.
+  def confederation_peers
+    return @property_hash[:confederation_peers] if @resource[:confederation_peers].nil?
+    if @resource[:confederation_peers][0] == :default &&
+       @property_hash[:confederation_peers] == @bgp_vrf.default_confederation_peers
+      return [:default]
+    else
+      @property_hash[:confederation_peers]
+    end
+  end
+
   def confederation_peers=(should_list)
     should_list = @bgp_vrf.default_confederation_peers if should_list[0] == :default
-    @property_flush[:confederation_peers] = should_list.flatten
+    @property_flush[:confederation_peers] = should_list.nil? ? nil : should_list.flatten
   end
 
   def flush
