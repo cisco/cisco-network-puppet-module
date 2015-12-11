@@ -46,7 +46,7 @@ module SnmpCommunityLib
 node default {
   snmp_community { 'red':
     ensure              => 'present',
-    group               => 'rw',
+    group               => 'network-admin',
     acl                 => 'my_acl'
   }
 }
@@ -63,7 +63,7 @@ EOF"
 node default {
   snmp_community { 'red':
     ensure              => 'present',
-    group               => 'rw',
+    group               => 'network-admin',
     acl                 => 'my_acl2'
   }
 }
