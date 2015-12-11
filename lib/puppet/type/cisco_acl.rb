@@ -32,12 +32,12 @@ Puppet::Type.newtype(:cisco_acl) do
   Example:
 
   ```
-    cisco_acl { 'foo' :
+    cisco_acl { 'ipv4 foo' :
       ensure => present,
-      version => ip,
       stats_per_entry => false,
-      fragments => permit-all,
+      fragments => 'permit'
     }
+
   ```
   "
 
@@ -55,22 +55,30 @@ Puppet::Type.newtype(:cisco_acl) do
 
     # Below pattern matches the resource name.
     patterns << [
-      /^(\S+)$/,
+      /^(\S+)\s+(\S+)$/,
       [
-        [:name, identity]
+        [:afi, identity],
+        [:acl_name, identity]
       ],
     ]
     patterns
   end
 
-  newparam(:name, namevar: true) do
+  newparam(:afi) do
+    desc 'Whether it ACL is ipv4 ACL or ipv6 ACL'
+  end
+
+  newparam(:acl_name, namevar: true) do
     desc 'Name of the acl instance. Valid values are string.'
   end
 
-  newparam(:version) do
-    desc 'Whether it ACL is ip(v4) ACL or ipv6 ACL'
-    defaultto :ip
-    newvalues(:ip, :ipv6)
+  # Overwrites the name method which by default returns only self[:name].
+  def name
+    "#{self[:afi]} #{self[:acl_name]}"
+  end
+
+  # Only needed to satisfy name parameter.
+  newparam(:name) do
   end
 
   # ---------------------------------------------------------------
@@ -84,6 +92,12 @@ Puppet::Type.newtype(:cisco_acl) do
 
   newproperty(:fragments) do
     desc 'fragments permit-all/deny-all state for the acl.'
-    newvalues(:'permit-all', :'deny-all', :none)
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+
+    #newvalues(:permit, :deny, :default)
   end
 end
