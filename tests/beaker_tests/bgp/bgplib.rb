@@ -492,22 +492,4 @@ module BgpLib
       }\nEOF"
     manifest_str
   end
-
-  # Clean up BGP
-  def self.cleanup_bgp(master, agent)
-    id = 'default'
-    tests = {
-      master: master,
-      agent:  agent
-    }
-    tests[id] = {}
-
-    tests[id][:desc] = 'Clean up BGP'
-    tests[id][:manifest] = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
-      node 'default' {
-        resources { cisco_bgp: purge => true }
-      }\nEOF"
-    tests[id][:code] = [0, 2, 6]
-    test_manifest(tests, id)
-  end
 end
