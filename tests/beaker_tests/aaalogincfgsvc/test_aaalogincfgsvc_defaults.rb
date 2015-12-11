@@ -89,7 +89,7 @@ end
 test_name "TestCase :: #{testheader}" do
   stepinfo = 'Setup switch for provider test'
   UtilityLib.set_manifest_path(master, self)
-  manifest_absent_cleanup(agent,
+  resource_absent_cleanup(agent,
                           'cisco_aaa_authorization_login_cfg_svc',
                           stepinfo)
   logger.info("TestStep :: #{stepinfo} :: #{result}")
@@ -99,9 +99,8 @@ test_name "TestCase :: #{testheader}" do
     tests[id][:desc] =
       "1.1 Apply default manifest with 'default' as a string in attributes"
     create_aaalogincfgsvc_defaults(tests, id, title, true)
-    # default auth config should already exist on box, applying default
-    # manifest should have no change, exit code 0
-    tests[id][:code] = [0]
+    # [0, 2] Tacacs server may or may not already be enabled
+    tests[id][:code] = [0, 2]
     test_manifest(tests, id)
 
     tests[id][:desc] =

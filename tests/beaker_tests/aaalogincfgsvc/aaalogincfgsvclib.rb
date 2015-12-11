@@ -27,7 +27,12 @@ def create_aaalogincfgsvc_manifest_simple(tests, name)
   node default {
     cisco_aaa_authorization_login_cfg_svc { '#{name}':
 #{prop_hash_to_manifest(tests[name][:manifest_props])}
-    }\n  }\n EOF"
+    }
+    cisco_tacacs_server { 'default':
+      ensure => present,
+    }
+  }
+EOF"
 end
 
 # Method to create a manifest for aaalogincfgsvc with attributes AND
@@ -40,15 +45,19 @@ def create_aaalogincfgsvc_manifest_full(tests, name)
   # configuration CLI will be locked
   tests[name][:manifest] = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
   node default {
+    cisco_aaa_authorization_login_cfg_svc { '#{name}':
+#{prop_hash_to_manifest(tests[name][:manifest_props])}
+    }
     cisco_tacacs_server { 'default':
       ensure => present,
       encryption_type     => clear,
       encryption_password => 'testing123',
       source_interface    => 'mgmt0',
     }
-    cisco_tacacs_server_host { '10.122.197.197':
+    cisco_tacacs_server_host { '1.1.1.1':
       encryption_type     => 'encrypted',
       encryption_password => 'testing123',
+      require             => Cisco_tacacs_server['default'],
     }
     cisco_aaa_authentication_login { 'default':
       ascii_authentication => true,
@@ -57,9 +66,9 @@ def create_aaalogincfgsvc_manifest_full(tests, name)
       ensure           => present,
       vrf_name         => 'management',
       source_interface => 'mgmt0',
-      server_hosts     => ['10.122.197.197'],
+      server_hosts     => ['1.1.1.1'],
+      require          => Cisco_tacacs_server_host['1.1.1.1'],
     }
-    cisco_aaa_authorization_login_cfg_svc { '#{name}':
-#{prop_hash_to_manifest(tests[name][:manifest_props])}
-    }\n  }\n EOF"
+  }
+EOF"
 end

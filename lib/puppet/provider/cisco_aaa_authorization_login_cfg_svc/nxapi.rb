@@ -38,6 +38,9 @@ Puppet::Type.type(:cisco_aaa_authorization_login_cfg_svc).provide(:nxapi) do
 
   def initialize(value={})
     super(value)
+    # This is a shared node utils object between config and exec services.
+    # The #services method retrieves a hash of all shared services, use the
+    # :config_commands key to get those services relevant to this provider.
     all_cfg_svc = Cisco::AaaAuthorizationService.services[:config_commands]
     @aaa_login_svc = all_cfg_svc ? all_cfg_svc[@property_hash[:name]] : nil
     @property_flush = {}
@@ -45,7 +48,10 @@ Puppet::Type.type(:cisco_aaa_authorization_login_cfg_svc).provide(:nxapi) do
 
   def self.instances
     services = []
-    Cisco::AaaAuthorizationService.services[:config_commands].each do |name, svc|
+    cfg_svcs = Cisco::AaaAuthorizationService.services[:config_commands]
+    return services if cfg_svcs.nil?
+
+    cfg_svcs.each do |name, svc|
       begin
         services << new(ensure: :present,
                         name:   name,
@@ -103,7 +109,7 @@ Puppet::Type.type(:cisco_aaa_authorization_login_cfg_svc).provide(:nxapi) do
     if set_value.is_a?(Array) && set_value[0] == :default
       set_value = @aaa_login_svc.default_groups
     end
-    @property_flush[:groups] = set_value
+    @property_flush[:groups] = set_value.flatten
   end
 
   def flush

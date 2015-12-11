@@ -67,7 +67,7 @@ tests = {
 
 test_name "TestCase :: #{testheader}" do
   stepinfo = 'Setup switch for provider test'
-  manifest_absent_cleanup(agent,
+  resource_absent_cleanup(agent,
                           'cisco_aaa_authorization_login_cfg_svc',
                           stepinfo)
   logger.info("TestStep :: #{stepinfo} :: #{result}")
@@ -119,7 +119,7 @@ test_name "TestCase :: #{testheader}" do
     test_resource(tests, id)
   end
 
-  manifest_absent_cleanup(agent,
+  resource_absent_cleanup(agent,
                           'cisco_aaa_authorization_login_cfg_svc',
                           stepinfo)
 

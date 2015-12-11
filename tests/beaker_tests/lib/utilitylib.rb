@@ -306,21 +306,15 @@ end
 # Method to clean by putting a resource in absent state
 # @param agent [String] the agent that is going to run the test
 # @param res_name [String] the resource name that will be cleaned up
-def manifest_absent_cleanup(agent, res_name, stepinfo='absent clean')
+def resource_absent_cleanup(agent, res_name, stepinfo='absent clean')
   # Don't forget to UtilityLib.set_manifest_path(master, self)
   step "TestStep :: #{stepinfo}" do
-    # create an absent resource for each instance within node default
-    abs_str = ''
+    # set each resource to ensure=absent
     get_current_resource_instances(agent, res_name).each do |title|
-      abs_str << "#{res_name} { '#{title}':\n    ensure => absent,\n  }\n"
+      cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+        "resource #{res_name} '#{title}' ensure=absent", options)
+      on(agent, cmd_str, acceptable_exit_codes: [0])
     end
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}\n" \
-      "node default {\n  #{abs_str}\n}\nEOF"
-
-    on(master, manifest_str)
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
-      'agent -t', options)
-    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
   end
 end
 

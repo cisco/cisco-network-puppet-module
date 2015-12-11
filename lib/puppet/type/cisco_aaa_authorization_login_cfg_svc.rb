@@ -20,7 +20,7 @@ Puppet::Type.newtype(:cisco_aaa_authorization_login_cfg_svc) do
   @doc = "Manages configuration for Authorization Login Config Service.
 
 ~~~puppet
-  cisco_aaa_authorization_login_cfg_svc {\"[console|default]\":
+  cisco_aaa_authorization_login_cfg_svc {'[console|default]':
     ..attributes..
   }
 ~~~
@@ -29,10 +29,10 @@ Puppet::Type.newtype(:cisco_aaa_authorization_login_cfg_svc) do
 
   Example:
 ~~~puppet
-    cisco_aaa_authorization_login_cfg_svc {\"console\":
+    cisco_aaa_authorization_login_cfg_svc {'console':
       ensure    => present,
       groups    => ['group1', 'group2'],
-      method    => \"local\",
+      method    => 'local',
     }
 ~~~"
 
@@ -73,18 +73,19 @@ Puppet::Type.newtype(:cisco_aaa_authorization_login_cfg_svc) do
     desc "Tacacs+ groups configured for this service. Valid values are
           an array of strings, keyword 'default'."
 
-    validate do |value|
-      fail "group #{value} must be a String" unless
-        value.kind_of?(String) || value == :default
+    validate do |val|
+      val.split.each do |group|
+        fail "group #{value} must be a String" unless
+          group.kind_of?(String)
+      end
     end
 
-    munge do |value|
-      value = :default if value == 'default'
-      value
+    munge do |val|
+      val == 'default' ? :default : val.split
     end
 
-    def insync?(is)
-      (is.size == should.size && is.sort == should.sort)
+    def in_sync?(is)
+      (is.size == should.flatten.size && is.sort == should.flatten.sort)
     end
   end
 
@@ -99,11 +100,16 @@ Puppet::Type.newtype(:cisco_aaa_authorization_login_cfg_svc) do
   # Autorequires #
   ################
 
+  # At a minimum, tacacs_server must be enabled to use these features
+  autorequire(:cisco_tacacs_server) do |rel_catalog|
+    rel_catalog.catalog.resource('Cisco_tacacs_server', 'default')
+  end
+
   # Autorequire all cisco_aaa_group_tacacs associated with this service
   autorequire(:cisco_aaa_group_tacacs) do |rel_catalog|
     groups = []
     if self[:groups]
-      self[:groups].each do |group|
+      self[:groups].flatten.each do |group|
         groups << rel_catalog.catalog.resource('Cisco_aaa_group_tacacs',
                                                "#{group}")
       end

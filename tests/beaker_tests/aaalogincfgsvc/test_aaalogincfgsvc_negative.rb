@@ -65,7 +65,7 @@ tests = {
 
 test_name "TestCase :: #{testheader}" do
   logger.info('Test Invalid Title Pattern')
-  manifest_absent_cleanup(agent, 'cisco_aaa_authorization_login_cfg_svc')
+  resource_absent_cleanup(agent, 'cisco_aaa_authorization_login_cfg_svc')
 
   id = 'invalid_name'
   tests[id] = {
