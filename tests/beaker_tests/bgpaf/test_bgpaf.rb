@@ -127,6 +127,11 @@ tests['default_properties'] = {
     dampening_reuse_time          => 'default',
     dampening_suppress_time       => 'default',
     default_information_originate => 'default',
+    default_metric                => 'default',
+    distance_ebgp                 => 'default',
+    distance_ibgp                 => 'default',
+    distance_local                => 'default',
+    inject_map                    => 'default',
     maximum_paths                 => 'default',
     maximum_paths_ibgp            => 'default',
     next_hop_route_map            => 'default',
@@ -138,6 +143,9 @@ tests['default_properties'] = {
     route_target_import_evpn      => 'default',
     route_target_export           => 'default',
     route_target_export_evpn      => 'default',
+    suppress_inactive             => 'default',
+    table_map                     => 'default',
+    table_map_filter              => 'default',
     ",
 
   :resource_props => {
@@ -153,10 +161,15 @@ tests['default_properties'] = {
     'dampening_reuse_time'          => '750',
     'dampening_suppress_time'       => '2000',
     'default_information_originate' => 'false',
+    'distance_ebgp'                 => '20',
+    'distance_ibgp'                 => '200',
+    'distance_local'                => '220',
     'maximum_paths'                 => '1',
     'maximum_paths_ibgp'            => '1',
     'route_target_both_auto'        => 'false',
     'route_target_both_auto_evpn'   => 'false',
+    'suppress_inactive'             => 'false',
+    'table_map_filter'              => 'false',
   },
 }
 
@@ -223,6 +236,10 @@ tests['non_default_properties_D'] = {
     dampening_reuse_time            => 2,
     dampening_suppress_time         => 3,
     default_information_originate   => true,
+    default_metric                  => 50,
+    distance_ebgp                   => 30,
+    distance_ibgp                   => 60,
+    distance_local                  => 90,
   ",
 
   :resource_props => {
@@ -232,6 +249,10 @@ tests['non_default_properties_D'] = {
     'dampening_reuse_time'          => '2',
     'dampening_suppress_time'       => '3',
     'default_information_originate' => 'true',
+    'default_metric'                => '50',
+    'distance_ebgp'                 => '30',
+    'distance_ibgp'                 => '60',
+    'distance_local'                => '90',
   },
 }
 
@@ -278,8 +299,21 @@ tests['non_default_properties_Dampening_routemap'] = {
   },
 }
 
+injectmap = [['nyc', 'sfo'], ['sjc', 'sfo', 'copy-attributes']] # rubocop:disable Style/WordArray
+tests['non_default_properties_I'] = {
+  :desc           => "2.4 Non Default Properties: 'I' commands",
+  :title_pattern  => '2 blue ipv4 unicast',
+  :manifest_props => "
+    inject_map => #{injectmap},
+  ",
+
+  :resource_props => {
+    'inject_map' => "#{injectmap}"
+  },
+}
+
 tests['non_default_properties_M'] = {
-  :desc           => "2.4 Non Default Properties: 'M' commands",
+  :desc           => "2.5 Non Default Properties: 'M' commands",
   :title_pattern  => '2 blue ipv4 unicast',
   :manifest_props => "
     maximum_paths                   => 9,
@@ -295,7 +329,7 @@ tests['non_default_properties_M'] = {
 
 networks = [['192.168.5.0/24', 'nrtemap1'], ['192.168.6.0/32']]
 tests['non_default_properties_N'] = {
-  :desc           => "2.5 Non Default Properties: 'N' commands",
+  :desc           => "2.6 Non Default Properties: 'N' commands",
   :title_pattern  => '2 blue ipv4 unicast',
   :manifest_props => "
     networks                        => #{networks},
@@ -314,7 +348,7 @@ routetargetimportevpn = ['1.2.3.4:55', '102:33']
 routetargetexport = ['1.2.3.4:55', '102:33']
 routetargetexportevpn = ['1.2.3.4:55', '102:33']
 tests['non_default_properties_R'] = {
-  :desc           => "2.6 Non Default Properties: 'R' commands",
+  :desc           => "2.7 Non Default Properties: 'R' commands",
   :title_pattern  => '2 blue ipv4 unicast',
   :manifest_props => "
     redistribute                => #{redistribute},
@@ -334,6 +368,32 @@ tests['non_default_properties_R'] = {
     'route_target_import_evpn'    => "#{routetargetimportevpn}",
     'route_target_export'         => "#{routetargetexport}",
     'route_target_export_evpn'    => "#{routetargetexportevpn}",
+  },
+}
+
+tests['non_default_properties_S'] = {
+  :desc           => "2.8 Non Default Properties: 'S' commands",
+  :title_pattern  => '2 blue ipv4 unicast',
+  :manifest_props => "
+    suppress_inactive    => true,
+  ",
+
+  :resource_props => {
+    'suppress_inactive' => 'true'
+  },
+}
+
+tests['non_default_properties_T'] = {
+  :desc           => "2.9 Non Default Properties: 'T' commands",
+  :title_pattern  => '2 blue ipv4 unicast',
+  :manifest_props => "
+    table_map        => 'sjc',
+    table_map_filter => 'true',
+  ",
+
+  :resource_props => {
+    'table_map'        => 'sjc',
+    'table_map_filter' => 'true',
   },
 }
 
@@ -429,9 +489,12 @@ test_name "TestCase :: #{testheader}" do
   node_feature_cleanup(agent, 'bgp')
   test_harness_bgp_af(tests, 'non_default_properties_Dampening_true')
   test_harness_bgp_af(tests, 'non_default_properties_Dampening_false')
+  test_harness_bgp_af(tests, 'non_default_properties_I')
   test_harness_bgp_af(tests, 'non_default_properties_M')
   test_harness_bgp_af(tests, 'non_default_properties_N')
   test_harness_bgp_af(tests, 'non_default_properties_R')
+  test_harness_bgp_af(tests, 'non_default_properties_S')
+  test_harness_bgp_af(tests, 'non_default_properties_T')
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
