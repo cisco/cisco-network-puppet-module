@@ -321,7 +321,7 @@ Specify Maximum number of AS numbers allowed in the AS-path attribute. Valid val
 ##### `shutdown`
 Administratively shutdown the BGP protocol. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 
-##### `supress_fib_pending`
+##### `suppress_fib_pending`
 Enable/Disable advertise only routes programmed in hardware to peers. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 
 ##### `log_neighbor_changes`
