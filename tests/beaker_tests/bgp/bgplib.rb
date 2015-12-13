@@ -34,7 +34,7 @@ module BgpLib
   VRF2        = 'red'
 
   # Create manifest ensure => present + 'default' property values
-  def self.create_bgp_manifest_present(platform, vrf = 'default')
+  def self.create_bgp_manifest_present(platform, vrf='default')
     conditional_props = ''
     if platform != 'ios_xr'
       conditional_props <<
@@ -248,7 +248,7 @@ module BgpLib
   end
 
   # Create manifest ensure => absent
-  def self.create_bgp_manifest_absent(vrf = 'default', asn = BgpLib::ASN)
+  def self.create_bgp_manifest_absent(vrf='default', asn=BgpLib::ASN)
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'default':

@@ -93,7 +93,7 @@ expected_default_values = {
   'graceful_restart_timers_stalepath_time' => '300',
   'log_neighbor_changes'                   => 'true',
   'timer_bgp_holdtime'                     => '180',
-  'timer_bgp_keepalive'                    => '60'
+  'timer_bgp_keepalive'                    => '60',
 }
 
 if platform != 'ios_xr'
@@ -110,7 +110,7 @@ end
 # Used to clarify true/false values for UtilityLib args.
 test = {
   present: false,
-  absent:  true
+  absent:  true,
 }
 
 test_name "TestCase :: #{testheader}" do

@@ -96,7 +96,7 @@ expected_values = {
   'graceful_restart_timers_restart'        => '130',
   'graceful_restart_timers_stalepath_time' => '310',
   'timer_bgp_keepalive'                    => '45',
-  'timer_bgp_holdtime'                     => '110'
+  'timer_bgp_holdtime'                     => '110',
 }
 if platform != 'ios_xr'
   expected_values['bestpath_med_non_deterministic'] = 'true'
@@ -110,17 +110,17 @@ if platform != 'ios_xr'
 end
 
 expected_values_vrf1 = {
-  'ensure'                                 => 'present',
-  'route_distinguisher'                    => 'auto',
-  'router_id'                              => '192.168.0.66',
-  'log_neighbor_changes'                   => 'false',
-  'bestpath_always_compare_med'            => 'true',
-  'bestpath_aspath_multipath_relax'        => 'true',
-  'bestpath_compare_routerid'              => 'true',
-  'bestpath_cost_community_ignore'         => 'true',
-  'bestpath_med_missing_as_worst'          => 'true',
-  'timer_bgp_keepalive'                    => '46',
-  'timer_bgp_holdtime'                     => '111'
+  'ensure'                          => 'present',
+  'route_distinguisher'             => 'auto',
+  'router_id'                       => '192.168.0.66',
+  'log_neighbor_changes'            => 'false',
+  'bestpath_always_compare_med'     => 'true',
+  'bestpath_aspath_multipath_relax' => 'true',
+  'bestpath_compare_routerid'       => 'true',
+  'bestpath_cost_community_ignore'  => 'true',
+  'bestpath_med_missing_as_worst'   => 'true',
+  'timer_bgp_keepalive'             => '46',
+  'timer_bgp_holdtime'              => '111',
 }
 if platform != 'ios_xr'
   expected_values_vrf1['bestpath_med_confed']                    = 'true'
@@ -141,16 +141,16 @@ if platform != 'ios_xr'
 end
 
 expected_values_vrf2 = {
-  'ensure'                                 => 'present',
-  'route_distinguisher'                    => '1.1.1.1:1',
-  'router_id'                              => '192.168.0.77',
-  'bestpath_always_compare_med'            => 'false',
-  'bestpath_aspath_multipath_relax'        => 'false',
-  'bestpath_compare_routerid'              => 'false',
-  'bestpath_cost_community_ignore'         => 'false',
-  'bestpath_med_missing_as_worst'          => 'false',
-  'timer_bgp_keepalive'                    => '48',
-  'timer_bgp_holdtime'                     => '114'
+  'ensure'                          => 'present',
+  'route_distinguisher'             => '1.1.1.1:1',
+  'router_id'                       => '192.168.0.77',
+  'bestpath_always_compare_med'     => 'false',
+  'bestpath_aspath_multipath_relax' => 'false',
+  'bestpath_compare_routerid'       => 'false',
+  'bestpath_cost_community_ignore'  => 'false',
+  'bestpath_med_missing_as_worst'   => 'false',
+  'timer_bgp_keepalive'             => '48',
+  'timer_bgp_holdtime'              => '114',
 }
 if platform != 'ios_xr'
   expected_values_vrf2['bestpath_med_confed']                    = 'false'
@@ -173,7 +173,7 @@ end
 # Used to clarify true/false values for UtilityLib args.
 test = {
   present: false,
-  absent:  true
+  absent:  true,
 }
 
 test_name "TestCase :: #{testheader}" do

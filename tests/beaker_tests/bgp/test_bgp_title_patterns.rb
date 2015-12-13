@@ -92,7 +92,7 @@ expected_default_values = {
   'graceful_restart_timers_restart'        => '120',
   'graceful_restart_timers_stalepath_time' => '300',
   'timer_bgp_keepalive'                    => '60',
-  'timer_bgp_holdtime'                     => '180'
+  'timer_bgp_holdtime'                     => '180',
 }
 if platform != 'ios_xr'
   expected_default_values['bestpath_med_non_deterministic'] = 'false'
@@ -109,7 +109,7 @@ end
 # Used to clarify true/false values for UtilityLib args.
 test = {
   present: false,
-  absent:  true
+  absent:  true,
 }
 
 test_name "TestCase :: #{testheader}" do
