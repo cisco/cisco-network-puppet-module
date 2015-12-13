@@ -69,6 +69,15 @@ module UtilityLib
     "/isan/bin/vsh -c '#{nxosclistr}'"
   end
 
+  # Method to return the Vegas shell command string for a NXOS CLI command.
+  # @param nxosclistr [String] The NXOS CLI command string to execute on host.
+  # @result vshellcmd [String] Returns 'vsh -c <cmd>' command string.
+  # This version takes care of lxc type also. In case of lxc, we need to send
+  # a 'dohost <cmd>' command
+  def self.get_vshell_cmd_all(lxc, nxosclistr)
+    lxc ? "dohost '#{nxosclistr}'" : "/isan/bin/vsh -c '#{nxosclistr}'"
+  end
+
   # B. Method to define PUPPETMASTER_MANIFESTPATH constant using puppet
   # config command output on puppet master.
 
@@ -158,10 +167,35 @@ end
 ### TBD: The helper methods below live outside the module for now,
 ###      until we solve the 'step' and 'on' references.
 
+# Get switch type using factor
+def device_type
+  platform = fact_on(agent, '-p cisco.hardware.type')
+  case platform
+  when /Nexus7.00/
+    return :N7K
+  when /Nexus[56]/
+    return :N5K
+  else
+    return :other
+  end
+end
+
+# Figure whether we are running in a container
+def os_lxc?
+  val = fact_on(agent, 'virtual')
+  val.empty? || val != 'lxc' ? false : true
+end
+
 # Full command string for puppet agent
 def puppet_agent_cmd
   cmd = UtilityLib::PUPPET_BINPATH + 'agent -t'
+  return cmd if os_lxc?
   UtilityLib.get_namespace_cmd(agent, cmd, options)
+end
+
+# Wrapper for UtilityLib.get_vshell_cmd
+def get_vshell_cmd(nxosclistr)
+  UtilityLib.get_vshell_cmd_all(os_lxc?, nxosclistr)
 end
 
 # Auto generation of properties for manifests
@@ -266,7 +300,7 @@ end
 # Wrapper for config pattern-match tests
 def test_show_cmd(tests, id, state=false)
   stepinfo = format_stepinfo(tests, id, 'SHOW CMD')
-  show_cmd = UtilityLib.get_vshell_cmd(tests[:show_cmd])
+  show_cmd = get_vshell_cmd(tests[:show_cmd])
   step "TestStep :: #{stepinfo}" do
     logger.debug('test_show_cmd :: BEGIN')
     on(tests[:agent], show_cmd) do
@@ -298,9 +332,9 @@ def node_feature_cleanup(agent, feature, stepinfo='feature cleanup',
                          enable=true)
   step "TestStep :: #{stepinfo}" do
     logger.debug("#{stepinfo} disable feature")
-    clean = UtilityLib.get_vshell_cmd("conf t ; no feature #{feature}")
+    clean = get_vshell_cmd("conf t ; no feature #{feature}")
     on(agent, clean, acceptable_exit_codes: [0, 2])
-    show_cmd = UtilityLib.get_vshell_cmd('show running-config section feature')
+    show_cmd = get_vshell_cmd('show running-config section feature')
     on(agent, show_cmd) do
       UtilityLib.search_pattern_in_output(stdout, [/feature #{feature}/],
                                           true, self, logger)
@@ -308,11 +342,38 @@ def node_feature_cleanup(agent, feature, stepinfo='feature cleanup',
 
     return unless enable
     logger.debug("#{stepinfo} re-enable feature")
-    clean = UtilityLib.get_vshell_cmd("conf t ; feature #{feature}")
+    clean = get_vshell_cmd("conf t ; feature #{feature}")
     on(agent, clean, acceptable_exit_codes: [0, 2])
-    show_cmd = UtilityLib.get_vshell_cmd('show running-config section feature')
+    show_cmd = get_vshell_cmd('show running-config section feature')
     on(agent, show_cmd) do
       UtilityLib.search_pattern_in_output(stdout, [/feature #{feature}/],
+                                          false, self, logger)
+    end
+  end
+end
+
+# Method to clean up a feature-set on the test node
+# @param agent [String] the agent that is going to run the test
+# @param feature [String] the feature name that will be cleaned up
+def node_featureset_cleanup(agent, feature, stepinfo='feature-set cleanup',
+                            enable=true)
+  step "TestStep :: #{stepinfo}" do
+    logger.debug("#{stepinfo} disable feature")
+    clean = get_vshell_cmd("conf t ; no feature-set #{feature}")
+    on(agent, clean, acceptable_exit_codes: [0, 2])
+    show_cmd = get_vshell_cmd('show running-config section feature')
+    on(agent, show_cmd) do
+      UtilityLib.search_pattern_in_output(stdout, [/^feature\-set #{feature}/],
+                                          true, self, logger)
+    end
+
+    return unless enable
+    logger.debug("#{stepinfo} re-enable feature")
+    clean = get_vshell_cmd("conf t ; feature-set #{feature}")
+    on(agent, clean, acceptable_exit_codes: [0, 2])
+    show_cmd = get_vshell_cmd('show running-config section feature')
+    on(agent, show_cmd) do
+      UtilityLib.search_pattern_in_output(stdout, [/^feature\-set #{feature}/],
                                           false, self, logger)
     end
   end
@@ -321,7 +382,7 @@ end
 # Helper to remove all IP address configs from interfaces
 def interface_ip_cleanup(agent, stepinfo='Pre Clean:')
   logger.debug("#{stepinfo} Interface IP cleanup")
-  show_cmd = UtilityLib.get_vshell_cmd('show ip interface brief')
+  show_cmd = get_vshell_cmd('show ip interface brief')
 
   # Find the interfaces with IP addresses; build a removal config.
   # Note mgmt0 will not appear in the show cmd output.
@@ -334,7 +395,7 @@ def interface_ip_cleanup(agent, stepinfo='Pre Clean:')
   clean = clean.join(' ; ').prepend('conf t ; ')
   logger.debug("#{stepinfo} Clean string:\n#{clean}")
   # exit codes: 0 = no changes, 2 = changes have occurred
-  on(agent, UtilityLib.get_vshell_cmd(clean), acceptable_exit_codes: [0, 2])
+  on(agent, get_vshell_cmd(clean), acceptable_exit_codes: [0, 2])
 end
 
 # bgp neighbor remote-as configuration helper
@@ -343,7 +404,7 @@ def bgp_nbr_remote_as(agent, remote_as)
   vrf = (vrf == 'default') ? '' : "vrf #{vrf} ;"
   cfg_str = "conf t ; router bgp #{asn} ; #{vrf} " \
             "neighbor #{nbr} ; remote-as #{remote}"
-  on(agent, UtilityLib.get_vshell_cmd(cfg_str))
+  on(agent, get_vshell_cmd(cfg_str))
 end
 
 # If a [:title] exists merge it with the [:af] values to create a complete af.
