@@ -58,7 +58,6 @@ require File.expand_path('../aaalogincfgsvclib.rb', __FILE__)
 
 result = 'PASS'
 testheader = 'AaaLoginCfgSvc Resource :: Attribute Non-defaults'
-UtilityLib.set_manifest_path(master, self)
 id = 'test_conf'
 tests = {
   :master => master,
@@ -88,7 +87,7 @@ test_name "TestCase :: #{testheader}" do
       },
     }
     resource_cmd_str =
-      UtilityLib::PUPPET_BINPATH +
+      PUPPET_BINPATH +
       "resource cisco_aaa_authorization_login_cfg_svc '#{title}'"
     tests[id][:resource_cmd] =
       UtilityLib.get_namespace_cmd(agent, resource_cmd_str, options)

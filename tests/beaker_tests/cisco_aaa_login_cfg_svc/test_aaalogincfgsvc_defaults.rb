@@ -54,7 +54,6 @@
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 require File.expand_path('../aaalogincfgsvclib.rb', __FILE__)
 
-UtilityLib.set_manifest_path(master, self)
 result = 'PASS'
 testheader = 'AaaLoginCfgSvc Resource :: Attribute Defaults'
 id = 'test_conf'
@@ -80,7 +79,7 @@ def create_aaalogincfgsvc_defaults(tests, id, title, string=false)
 
   create_aaalogincfgsvc_manifest_simple(tests, id)
   resource_cmd_str =
-    UtilityLib::PUPPET_BINPATH +
+    PUPPET_BINPATH +
     "resource cisco_aaa_authorization_login_cfg_svc '#{title}'"
   tests[id][:resource_cmd] =
     UtilityLib.get_namespace_cmd(agent, resource_cmd_str, options)
@@ -88,7 +87,6 @@ end
 
 test_name "TestCase :: #{testheader}" do
   stepinfo = 'Setup switch for provider test'
-  UtilityLib.set_manifest_path(master, self)
   resource_absent_cleanup(agent,
                           'cisco_aaa_authorization_login_cfg_svc',
                           stepinfo)

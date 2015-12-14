@@ -23,7 +23,7 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 def create_aaalogincfgsvc_manifest_simple(tests, name)
   # config service needs proper supporting configuration, else the
   # configuration CLI will be locked
-  tests[name][:manifest] = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+  tests[name][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   node default {
     cisco_aaa_authorization_login_cfg_svc { '#{name}':
 #{prop_hash_to_manifest(tests[name][:manifest_props])}
@@ -43,7 +43,7 @@ end
 def create_aaalogincfgsvc_manifest_full(tests, name)
   # config service needs proper supporting configuration, else the
   # configuration CLI will be locked
-  tests[name][:manifest] = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+  tests[name][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   node default {
     cisco_aaa_authorization_login_cfg_svc { '#{name}':
 #{prop_hash_to_manifest(tests[name][:manifest_props])}

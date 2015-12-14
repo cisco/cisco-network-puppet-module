@@ -264,7 +264,7 @@ end
 # @param res_name [String] the resource to retrieve instances of
 # @return [Array] an array of string names of instances
 def get_current_resource_instances(agent, res_name)
-  cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+  cmd_str = UtilityLib.get_namespace_cmd(agent, PUPPET_BINPATH +
       "resource #{res_name}", options)
   on(agent, cmd_str, acceptable_exit_codes: [0])
   names = stdout.scan(/#{res_name} { '(.+)':/).flatten
@@ -279,7 +279,7 @@ def resource_absent_cleanup(agent, res_name, stepinfo='absent clean')
   step "TestStep :: #{stepinfo}" do
     # set each resource to ensure=absent
     get_current_resource_instances(agent, res_name).each do |title|
-      cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+      cmd_str = UtilityLib.get_namespace_cmd(agent, PUPPET_BINPATH +
         "resource #{res_name} '#{title}' ensure=absent", options)
       on(agent, cmd_str, acceptable_exit_codes: [0])
     end

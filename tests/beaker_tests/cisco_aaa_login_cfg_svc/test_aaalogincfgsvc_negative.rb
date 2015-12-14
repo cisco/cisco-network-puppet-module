@@ -57,7 +57,6 @@ require File.expand_path('../aaalogincfgsvclib.rb', __FILE__)
 
 result = 'PASS'
 testheader = 'AaaLoginCfgSvc Resource :: Negative Value Test'
-UtilityLib.set_manifest_path(master, self)
 tests = {
   :master => master,
   :agent  => agent,
