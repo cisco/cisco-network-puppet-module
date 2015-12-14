@@ -199,6 +199,7 @@ The following resources include cisco types and providers along with cisco provi
   * [`network_snmp (netdev_stdlib)`](#type-network_snmp)
   * [`snmp_community (netdev_stdlib)`](#type-snmp_community)
   * [`snmp_notification (netdev_stdlib)`](#type-snmp_notification)
+  * [`snmp_notification_receiver (netdev_stdlib)`](#type-snmp_notification_receiver)
   * [`snmp_user (netdev_stdlib)`](#type-snmp_user)
 
 * SYSLOG Types
@@ -274,6 +275,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`search_domain`](#type-search_domain)
 * [`snmp_community`](#type-snmp_community)
 * [`snmp_notification`](#type-snmp_notification)
+* [`snmp_notification_receiver`](#type-snmp_notification_receiver)
 * [`snmp_user`](#type-snmp_user)
 * [`syslog_server`](#type-syslog_server)
 * [`syslog_setting`](#type-syslog_setting)
@@ -1673,6 +1675,40 @@ Manages an SNMP notification on a Cisco SNMP server.
 ##### `enable`
 Determine whether the trap should be on or off. Valid
 values are true and false.
+
+### Type: snmp_notification_receiver
+
+Manages an SNMP user on an cisco SNMP server.
+
+#### Parameters
+
+##### `ensure`
+Determines whether the config should be present or not on the device. Valid
+values are 'present', and 'absent'.
+
+##### `name`
+IP address of the SNMP user. Valid value is a string.
+
+##### `port`
+SNMP UDP port number
+
+##### `username`
+Username to use for SNMPv3 privacy and authentication.  This is the community string for SNMPv1 and v2.
+
+##### `version`
+SNMP version [v1|v2|v3]
+
+##### `type`
+The type of receiver [traps|informs].
+
+##### `security`
+SNMPv3 security mode [auto|noauth|priv].
+
+##### `vrf`
+Interface to send SNMP data from, e.g. "management"
+
+##### `source_interface`
+Source interface to send SNMP data from, e.g. "ethernet 2/1".
 
 ### Type: snmp_user
 
