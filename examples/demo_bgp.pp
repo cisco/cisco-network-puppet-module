@@ -19,7 +19,29 @@ class ciscopuppet::demo_bgp {
   # --------------------------------------------------------------------------#
   # Configure Global BGP                                                      #
   # --------------------------------------------------------------------------#
-  cisco_bgp { '55.77 blue':
+
+  $maxas_limit = $operatingsystem ? {
+    'nexus' => '50',
+    default => undef
+  }
+  $suppress_fib_pending = $operatingsystem ? {
+    'nexus' => false,
+    default => undef
+  }
+  $bestpath_med_non_deterministic = $operatingsystem ? {
+    'nexus' => true,
+    default => undef
+  }
+  $timer_bestpath_limit = $operatingsystem ? {
+    'nexus' => '255',
+    default => undef
+  }
+  $graceful_restart_helper = $operatingsystem ? {
+    'nexus' => true,
+    default => undef
+  }
+
+  cisco_bgp { '55.77 default':
     ensure                                 => present,
 
     router_id                              => '192.168.0.66',
@@ -27,8 +49,8 @@ class ciscopuppet::demo_bgp {
     confederation_id                       => '33',
     confederation_peers                    => '99 88 200.1',
     enforce_first_as                       => false,
-    maxas_limit                            => '50',
-    suppress_fib_pending                   => false,
+    maxas_limit                            => $maxas_limit,
+    suppress_fib_pending                   => $suppress_fib_pending,
     log_neighbor_changes                   => false,
 
     # Best Path Properties
@@ -38,19 +60,34 @@ class ciscopuppet::demo_bgp {
     bestpath_cost_community_ignore         => true,
     bestpath_med_confed                    => true,
     bestpath_med_missing_as_worst          => true,
-    bestpath_med_non_deterministic         => true,
-    timer_bestpath_limit                   => '255',
-    timer_bestpath_limit_always            => true,
+    bestpath_med_non_deterministic         => $bestpath_med_non_deterministic,
+    timer_bestpath_limit                   => $timer_bestpath_limit,
+    timer_bestpath_limit_always            => $timer_bestpath_limit_always,
 
     # Graceful Restart Properties
     graceful_restart                       => false,
     graceful_restart_timers_restart        => '131',
     graceful_restart_timers_stalepath_time => '311',
-    graceful_restart_helper                => true,
+    graceful_restart_helper                => $graceful_restart_helper,
 
     # Timer Properties
     timer_bgp_keepalive                    => '46',
     timer_bgp_holdtime                     => '111',
+  }
+
+  $confederation_peers = $operatingsystem ? {
+    'nexus' => '12 11 13',
+    default => undef
+  }
+
+  cisco_bgp { '55.77 blue':
+    ensure                                 => present,
+
+    confederation_peers                    => $confederation_peers,
+    enforce_first_as                       => true,
+    log_neighbor_changes                   => true,
+    timer_bgp_keepalive                    => '60',
+    timer_bgp_holdtime                     => '120',
   }
 
   # --------------------------------------------------------------------------#

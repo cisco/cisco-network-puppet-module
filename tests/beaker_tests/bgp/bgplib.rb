@@ -34,22 +34,36 @@ module BgpLib
   VRF2        = 'red'
 
   # Create manifest ensure => present + 'default' property values
-  def self.create_bgp_manifest_present
+  def self.create_bgp_manifest_present(platform, vrf='default')
+    conditional_props = ''
+    if platform != 'ios_xr'
+      conditional_props <<
+        "maxas_limit                            => 'default',
+         shutdown                               => 'default',
+         suppress_fib_pending                   => 'default',
+         bestpath_med_non_deterministic         => 'default',
+         timer_bestpath_limit                   => 'default',
+         timer_bestpath_limit_always            => 'default',
+         graceful_restart_helper                => 'default',
+         "
+    end
+
+    if vrf != 'default'
+      conditional_props <<
+        "route_distinguisher                    => 'default',"
+    end
+
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'default':
         ensure                                 => present,
         asn                                    => #{BgpLib::ASN},
-        vrf                                    => 'default',
+        vrf                                    => '#{vrf}',
         router_id                              => 'default',
         cluster_id                             => 'default',
         confederation_id                       => 'default',
         confederation_peers                    => 'default',
         enforce_first_as                       => 'default',
-        maxas_limit                            => 'default',
-        shutdown                               => 'default',
-
-        suppress_fib_pending                   => 'default',
         log_neighbor_changes                   => 'default',
 
         # Best Path Properties
@@ -59,119 +73,49 @@ module BgpLib
         bestpath_cost_community_ignore         => 'default',
         bestpath_med_confed                    => 'default',
         bestpath_med_missing_as_worst          => 'default',
-        bestpath_med_non_deterministic         => 'default',
-        timer_bestpath_limit                   => 'default',
-        timer_bestpath_limit_always            => 'default',
 
         # Graceful Restart Properties
         graceful_restart                       => 'default',
         graceful_restart_timers_restart        => 'default',
         graceful_restart_timers_stalepath_time => 'default',
-        graceful_restart_helper                => 'default',
 
         # Timer Properties
         timer_bgp_keepalive                    => 'default',
         timer_bgp_holdtime                     => 'default',
+
+        #{conditional_props}
       }
-    }
-    EOF"
+    }\nEOF"
     manifest_str
   end
 
   # Create manifest ensure => present + 'default' property values
   # for vrf1
-  def self.create_bgp_manifest_present_vrf1
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
-    node 'default' {
-      cisco_bgp { 'default':
-        ensure                                 => present,
-        asn                                    => #{BgpLib::ASN},
-        vrf                                    => #{BgpLib::VRF1},
-        route_distinguisher                    => 'default',
-        router_id                              => 'default',
-        cluster_id                             => 'default',
-        confederation_id                       => 'default',
-        confederation_peers                    => 'default',
-        maxas_limit                            => 'default',
-        shutdown                               => 'default',
-
-        suppress_fib_pending                   => 'default',
-        log_neighbor_changes                   => 'default',
-
-        # Best Path Properties
-        bestpath_always_compare_med            => 'default',
-        bestpath_aspath_multipath_relax        => 'default',
-        bestpath_compare_routerid              => 'default',
-        bestpath_cost_community_ignore         => 'default',
-        bestpath_med_confed                    => 'default',
-        bestpath_med_missing_as_worst          => 'default',
-        bestpath_med_non_deterministic         => 'default',
-        timer_bestpath_limit                   => 'default',
-        timer_bestpath_limit_always            => 'default',
-
-        # Graceful Restart Properties
-        graceful_restart                       => 'default',
-        graceful_restart_timers_restart        => 'default',
-        graceful_restart_timers_stalepath_time => 'default',
-        graceful_restart_helper                => 'default',
-
-        # Timer Properties
-        timer_bgp_keepalive                    => 'default',
-        timer_bgp_holdtime                     => 'default',
-      }
-    }
-    EOF"
-    manifest_str
+  def self.create_bgp_manifest_present_vrf1(platform)
+    create_bgp_manifest_present(platform, BgpLib::VRF1)
   end
 
   # Create manifest ensure => present + 'default' property values
   # for vrf2
-  def self.create_bgp_manifest_present_vrf2
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
-    node 'default' {
-      cisco_bgp { 'default':
-        ensure                                 => present,
-        asn                                    => #{BgpLib::ASN},
-        vrf                                    => #{BgpLib::VRF2},
-        route_distinguisher                    => 'default',
-        router_id                              => 'default',
-        cluster_id                             => 'default',
-        confederation_id                       => 'default',
-        confederation_peers                    => 'default',
-        maxas_limit                            => 'default',
-        shutdown                               => 'default',
-
-        suppress_fib_pending                   => 'default',
-        log_neighbor_changes                   => 'default',
-
-        # Best Path Properties
-        bestpath_always_compare_med            => 'default',
-        bestpath_aspath_multipath_relax        => 'default',
-        bestpath_compare_routerid              => 'default',
-        bestpath_cost_community_ignore         => 'default',
-        bestpath_med_confed                    => 'default',
-        bestpath_med_missing_as_worst          => 'default',
-        bestpath_med_non_deterministic         => 'default',
-        timer_bestpath_limit                   => 'default',
-        timer_bestpath_limit_always            => 'default',
-
-        # Graceful Restart Properties
-        graceful_restart                       => 'default',
-        graceful_restart_timers_restart        => 'default',
-        graceful_restart_timers_stalepath_time => 'default',
-        graceful_restart_helper                => 'default',
-
-        # Timer Properties
-        timer_bgp_keepalive                    => 'default',
-        timer_bgp_holdtime                     => 'default',
-      }
-    }
-    EOF"
-    manifest_str
+  def self.create_bgp_manifest_present_vrf2(platform)
+    create_bgp_manifest_present(platform, BgpLib::VRF2)
   end
 
   # Create manifest ensure => present + 'non-default' property values
-  def self.create_bgp_manifest_present_non_default
+  def self.create_bgp_manifest_present_non_default(platform)
+    conditional_props = ''
+    if platform != 'ios_xr'
+      conditional_props =
+       "maxas_limit                            => '50',
+        shutdown                               => 'true',
+        suppress_fib_pending                   => 'true',
+        bestpath_med_non_deterministic         => 'true',
+        timer_bestpath_limit                   => '255',
+        timer_bestpath_limit_always            => 'true',
+        graceful_restart_helper                => 'true',
+        "
+    end
+
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'default':
@@ -183,10 +127,6 @@ module BgpLib
         confederation_id                       => '99',
         confederation_peers                    => '55 23.4 88 200.1',
         enforce_first_as                       => 'true',
-        maxas_limit                            => '50',
-        shutdown                               => 'true',
-
-        suppress_fib_pending                   => 'true',
         log_neighbor_changes                   => 'true',
 
         # Best Path Properties
@@ -196,28 +136,44 @@ module BgpLib
         bestpath_cost_community_ignore         => 'true',
         bestpath_med_confed                    => 'true',
         bestpath_med_missing_as_worst          => 'true',
-        bestpath_med_non_deterministic         => 'true',
-        timer_bestpath_limit                   => '255',
-        timer_bestpath_limit_always            => 'true',
+
+        # Timer Properties
+        timer_bgp_keepalive                    => '45',
+        timer_bgp_holdtime                     => '110',
 
         # Graceful Restart Properties
         graceful_restart                       => 'true',
         graceful_restart_timers_restart        => '130',
         graceful_restart_timers_stalepath_time => '310',
-        graceful_restart_helper                => 'true',
 
-        # Timer Properties
-        timer_bgp_keepalive                    => '45',
-        timer_bgp_holdtime                     => '110',
+        #{conditional_props}
       }
-    }
-    EOF"
+    }\nEOF"
     manifest_str
   end
 
   # Create manifest ensure => present + 'non-default' property values
   # for vrf1
-  def self.create_bgp_manifest_present_non_default_vrf1
+  def self.create_bgp_manifest_present_non_default_vrf1(platform)
+    conditional_props = ''
+    if platform != 'ios_xr'
+      conditional_props =
+       "maxas_limit                            => '55',
+        suppress_fib_pending                   => 'false',
+        bestpath_med_confed                    => 'true',
+        bestpath_med_non_deterministic         => 'true',
+        timer_bestpath_limit                   => '255',
+        timer_bestpath_limit_always            => 'true',
+        graceful_restart_helper                => 'true',
+        cluster_id                             => '55',
+        confederation_id                       => '33',
+        confederation_peers                    => '99 88 200.1',
+        graceful_restart                       => 'false',
+        graceful_restart_timers_restart        => '131',
+        graceful_restart_timers_stalepath_time => '311',
+        "
+    end
+
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'default':
@@ -226,43 +182,44 @@ module BgpLib
         vrf                                    => #{BgpLib::VRF1},
         route_distinguisher                    => 'auto',
         router_id                              => '192.168.0.66',
-        cluster_id                             => '55',
-        confederation_id                       => '33',
-        confederation_peers                    => '99 88 200.1',
-        maxas_limit                            => '55',
-
-        suppress_fib_pending                   => 'false',
         log_neighbor_changes                   => 'false',
-
         # Best Path Properties
         bestpath_always_compare_med            => 'true',
         bestpath_aspath_multipath_relax        => 'true',
         bestpath_compare_routerid              => 'true',
         bestpath_cost_community_ignore         => 'true',
-        bestpath_med_confed                    => 'true',
         bestpath_med_missing_as_worst          => 'true',
-        bestpath_med_non_deterministic         => 'true',
-        timer_bestpath_limit                   => '255',
-        timer_bestpath_limit_always            => 'true',
-
-        # Graceful Restart Properties
-        graceful_restart                       => 'false',
-        graceful_restart_timers_restart        => '131',
-        graceful_restart_timers_stalepath_time => '311',
-        graceful_restart_helper                => 'true',
-
         # Timer Properties
         timer_bgp_keepalive                    => '46',
         timer_bgp_holdtime                     => '111',
+
+        #{conditional_props}
       }
-    }
-    EOF"
+    }\nEOF"
     manifest_str
   end
 
   # Create manifest ensure => present + 'non-default' property values
   # for vrf2
-  def self.create_bgp_manifest_present_non_default_vrf2
+  def self.create_bgp_manifest_present_non_default_vrf2(platform)
+    conditional_props = ''
+    if platform != 'ios_xr'
+      conditional_props =
+       "maxas_limit                            => '60',
+        suppress_fib_pending                   => 'false',
+        bestpath_med_confed                    => 'false',
+        bestpath_med_non_deterministic         => 'false',
+        timer_bestpath_limit                   => '115',
+        timer_bestpath_limit_always            => 'false',
+        graceful_restart_helper                => 'false',
+        cluster_id                             => '10.0.0.2',
+        confederation_id                       => '32.88',
+        confederation_peers                    => '55 23.4 88 200.1',
+        graceful_restart                       => 'false',
+        graceful_restart_timers_restart        => '132',
+        graceful_restart_timers_stalepath_time => '312',
+        "
+    end
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'default':
@@ -271,80 +228,44 @@ module BgpLib
         vrf                                    => #{BgpLib::VRF2},
         route_distinguisher                    => '1.1.1.1:1',
         router_id                              => '192.168.0.77',
-        cluster_id                             => '10.0.0.2',
-        confederation_id                       => '32.88',
-        confederation_peers                    => '55 23.4 88 200.1',
-        maxas_limit                            => '60',
-
-        suppress_fib_pending                   => 'false',
         log_neighbor_changes                   => 'false',
-
         # Best Path Properties
         bestpath_always_compare_med            => 'false',
         bestpath_aspath_multipath_relax        => 'false',
         bestpath_compare_routerid              => 'false',
         bestpath_cost_community_ignore         => 'false',
-        bestpath_med_confed                    => 'false',
         bestpath_med_missing_as_worst          => 'false',
-        bestpath_med_non_deterministic         => 'false',
-        timer_bestpath_limit                   => '115',
-        timer_bestpath_limit_always            => 'false',
-
-        # Graceful Restart Properties
-        graceful_restart                       => 'false',
-        graceful_restart_timers_restart        => '132',
-        graceful_restart_timers_stalepath_time => '312',
-        graceful_restart_helper                => 'false',
-
         # Timer Properties
         timer_bgp_keepalive                    => '48',
         timer_bgp_holdtime                     => '114',
+
+        #{conditional_props}
       }
-    }
-    EOF"
+    }\nEOF"
     manifest_str
   end
 
   # Create manifest ensure => absent
-  def self.create_bgp_manifest_absent(asn=BgpLib::ASN)
+  def self.create_bgp_manifest_absent(vrf='default', asn=BgpLib::ASN)
     manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'default':
         ensure                                 => absent,
         asn                                    => #{asn},
-        vrf                                    => 'default',
+        vrf                                    => '#{vrf}',
       }
-    }
-    EOF"
+    }\nEOF"
     manifest_str
   end
 
   # Create manifest ensure => absent for vrf1
   def self.create_bgp_manifest_absent_vrf1
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
-    node 'default' {
-      cisco_bgp { 'default':
-        ensure                                 => absent,
-        asn                                    => #{BgpLib::ASN},
-        vrf                                    => #{BgpLib::VRF1},
-      }
-    }
-    EOF"
-    manifest_str
+    create_bgp_manifest_absent(BgpLib::VRF1)
   end
 
   # Create manifest ensure => absent for vrf2
   def self.create_bgp_manifest_absent_vrf2
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
-    node 'default' {
-      cisco_bgp { 'default':
-        ensure                                 => absent,
-        asn                                    => #{BgpLib::ASN},
-        vrf                                    => #{BgpLib::VRF2},
-      }
-    }
-    EOF"
-    manifest_str
+    create_bgp_manifest_absent(BgpLib::VRF2)
   end
 
   # The following manifests are used to validate title patterns that
@@ -360,8 +281,7 @@ module BgpLib
         ensure                                 => present,
         asn                                    => #{BgpLib::ASN},
       }
-    }
-    EOF"
+    }\nEOF"
     manifest_str
   end
 
@@ -373,8 +293,7 @@ module BgpLib
         asn                                    => #{BgpLib::ASN},
         vrf                                    => 'default',
       }
-    }
-    EOF"
+    }\nEOF"
     manifest_str
   end
 
@@ -385,8 +304,7 @@ module BgpLib
         ensure                                 => present,
         vrf                                    => 'default',
       }
-    }
-    EOF"
+    }\nEOF"
     manifest_str
   end
 
@@ -396,8 +314,7 @@ module BgpLib
       cisco_bgp { '#{BgpLib::ASN} default':
         ensure                                 => present,
       }
-    }
-    EOF"
+    }\nEOF"
     manifest_str
   end
 
@@ -410,8 +327,7 @@ module BgpLib
         asn                                    => #{BgpLib::ASN},
         vrf                                    => 'default',
       }
-    }
-    EOF"
+    }\nEOF"
     manifest_str
   end
 
@@ -430,8 +346,7 @@ module BgpLib
         asn                                    => #{BgpLib::ASN},
         vrf                                    => #{BgpLib::VRF1},
       }
-    }
-    EOF"
+    }\nEOF"
     manifest_str
   end
 
@@ -443,8 +358,7 @@ module BgpLib
         asn                                    => #{BgpLib::ASN},
         vrf                                    => #{BgpLib::VRF1},
       }
-    }
-    EOF"
+    }\nEOF"
     manifest_str
   end
 
@@ -454,8 +368,7 @@ module BgpLib
       cisco_bgp { '#{BgpLib::ASN} #{BgpLib::VRF1}':
         ensure                                 => present,
       }
-    }
-    EOF"
+    }\nEOF"
     manifest_str
   end
 
@@ -465,8 +378,7 @@ module BgpLib
       cisco_bgp { '#{BgpLib::ASN} #{BgpLib::VRF1}':
         ensure                                 => absent,
       }
-    }
-    EOF"
+    }\nEOF"
     manifest_str
   end
 
@@ -479,8 +391,7 @@ module BgpLib
         asn                                    => #{BgpLib::ASN},
         vrf                                    => #{BgpLib::VRF1},
       }
-    }
-    EOF"
+    }\nEOF"
     manifest_str
   end
 
@@ -492,8 +403,7 @@ module BgpLib
         asn                                    => #{BgpLib::ASN},
         vrf                                    => #{BgpLib::VRF1},
       }
-    }
-    EOF"
+    }\nEOF"
     manifest_str
   end
 
@@ -512,8 +422,7 @@ module BgpLib
         asn                                    => #{BgpLib::ASN_ASDOT},
         vrf                                    => #{BgpLib::VRF1},
       }
-    }
-    EOF"
+    }\nEOF"
     manifest_str
   end
 
@@ -525,8 +434,7 @@ module BgpLib
         asn                                    => #{BgpLib::ASN_ASDOT},
         vrf                                    => #{BgpLib::VRF1},
       }
-    }
-    EOF"
+    }\nEOF"
     manifest_str
   end
 
@@ -536,8 +444,7 @@ module BgpLib
       cisco_bgp { '#{BgpLib::ASN_ASDOT} #{BgpLib::VRF1}':
         ensure                                 => present,
       }
-    }
-    EOF"
+    }\nEOF"
     manifest_str
   end
 
@@ -547,8 +454,7 @@ module BgpLib
       cisco_bgp { '#{BgpLib::ASN_ASDOT} #{BgpLib::VRF1}':
         ensure                                 => absent,
       }
-    }
-    EOF"
+    }\nEOF"
     manifest_str
   end
 
@@ -561,8 +467,7 @@ module BgpLib
         asn                                    => #{BgpLib::ASN_ASDOT},
         vrf                                    => #{BgpLib::VRF1},
       }
-    }
-    EOF"
+    }\nEOF"
     manifest_str
   end
 
@@ -574,8 +479,15 @@ module BgpLib
         asn                                    => #{BgpLib::ASN_ASDOT},
         vrf                                    => #{BgpLib::VRF1},
       }
-    }
-    EOF"
+    }\nEOF"
+    manifest_str
+  end
+
+  def self.create_cleanup_bgp
+    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+      node 'default' {
+        resources { cisco_bgp: purge => true }
+      }\nEOF"
     manifest_str
   end
 end

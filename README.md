@@ -304,25 +304,25 @@ VPN Route Distinguisher (RD). The RD is combined with the IPv4 or IPv6 prefix le
 Router Identifier (ID) of the BGP router VRF instance. Valid values are string, and keyword 'default'.
 
 ##### `cluster_id`
-Route Reflector Cluster-ID. Valid values are String, keyword 'default'.
+Route Reflector Cluster-ID. Valid values are String, keyword 'default'. On IOS XR, this property is only supported in the global BGP context.
 
 ##### `confederation_id`
-Routing domain confederation AS. Valid values are String, keyword 'default'.
+Routing domain confederation AS. Valid values are String, keyword 'default'. On IOS XR, this property is only supported in the global BGP context.
 
 ##### `confederation_peers`
-AS confederation parameters. Valid values are String, keyword 'default'.
+AS confederation parameters. Valid values are String, keyword 'default'. On IOS XR, this property is only supported in the global BGP context.
 
 ##### `enforce_first_as`
 Enable/Disable enforces the neighbor autonomous system to be the first AS number listed in the AS path attribute for eBGP. Valid values are 'true', 'false', and 'default'.
 
 ##### `maxas_limit`
-Specify Maximum number of AS numbers allowed in the AS-path attribute. Valid values are integers between 1 and 512, or keyword 'default' to disable this property.
+Specify Maximum number of AS numbers allowed in the AS-path attribute. Valid values are integers between 1 and 512, or keyword 'default' to disable this property. This property is not supported on IOS XR.
 
 ##### `shutdown`
-Administratively shutdown the BGP protocol. Valid values are 'true', 'false', and 'default'.
+Administratively shutdown the BGP protocol. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 
-##### `supress_fib_pending`
-Enable/Disable advertise only routes programmed in hardware to peers. Valid values are 'true', 'false', and 'default'
+##### `suppress_fib_pending`
+Enable/Disable advertise only routes programmed in hardware to peers. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 
 ##### `log_neighbor_changes`
 Enable/Disable message logging for neighbor up/down event. Valid values are 'true', 'false', and 'default'
@@ -340,31 +340,31 @@ Enable/Disable comparison of router IDs for identical eBGP paths. Valid values a
 Enable/Disable Ignores the cost community for BGP best-path calculations. Valid values are 'true', 'false', and 'default'
 
 ##### `bestpath_med_confed`
-Enable/Disable enforcement of bestpath to do a MED comparison only between paths originated within a confederation. Valid values are 'true', 'false', and 'default'
+Enable/Disable enforcement of bestpath to do a MED comparison only between paths originated within a confederation. Valid values are 'true', 'false', and 'default'. On IOS XR, this property is only supported in the global BGP context.
 
 ##### `bestpath_med_missing_as_worst`
 Enable/Disable assigns the value of infinity to received routes that do not carry the MED attribute, making these routes the least desirable. Valid values are 'true', 'false', and 'default'.
 
 ##### `bestpath_med_non_deterministic`
-Enable/Disable deterministic selection of the best MED path from among the paths from the same autonomous system. Valid values are 'true', 'false', and 'default'
+Enable/Disable deterministic selection of the best MED path from among the paths from the same autonomous system. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 
 ##### `timer_bestpath_limit`
-Specify timeout for the first best path after a restart, in seconds. Valid values are Integer, keyword 'default'.
+Specify timeout for the first best path after a restart, in seconds. Valid values are Integer, keyword 'default'. This property is not supported on IOS XR.
 
 ##### `timer_bestpath_limit_always`
-Enable/Disable update-delay-always option. Valid values are 'true', 'false', and 'default'
+Enable/Disable update-delay-always option. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 
 ##### `graceful_restart`
-Enable/Disable graceful restart. Valid values are 'true', 'false', and 'default'
+Enable/Disable graceful restart. Valid values are 'true', 'false', and 'default'. On IOS XR, this property is only supported in the global BGP context.
 
 ##### `graceful_restart_helper`
-Enable/Disable graceful restart helper mode. Valid values are 'true', 'false', and 'default'
+Enable/Disable graceful restart helper mode. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 
 ##### `graceful_restart_timers_restart`
-Set maximum time for a restart sent to the BGP peer. Valid values are Integer, keyword 'default'.
+Set maximum time for a restart sent to the BGP peer. Valid values are Integer, keyword 'default'. On IOS XR, this property is only supported in the global BGP context.
 
 ##### `graceful_restart_timers_stalepath_time`
-Set maximum time that BGP keeps the stale routes from the restarting BGP peer. Valid values are Integer, keyword 'default'.
+Set maximum time that BGP keeps the stale routes from the restarting BGP peer. Valid values are Integer, keyword 'default'. On IOS XR, this property is only supported in the global BGP context.
 
 ##### `timer_bgp_keepalive`
 Set bgp keepalive timer. Valid values are Integer, keyword 'default'.

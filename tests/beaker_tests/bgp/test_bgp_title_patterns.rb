@@ -64,44 +64,47 @@ testheader = 'Resource cisco_bgp:: Verify Title Patterns'
 # Define PUPPETMASTER_MANIFESTPATH.
 UtilityLib.set_manifest_path(master, self)
 # Create puppet agent command
-puppet_cmd = UtilityLib.get_namespace_cmd(agent,
-                                          UtilityLib::PUPPET_BINPATH + 'agent -t', options)
-# Create command to show the bgp running configuration
-show_run_bgp = UtilityLib.get_vshell_cmd('show running-config section bgp')
+puppet_cmd = UtilityLib.get_namespace_cmd(
+  agent, UtilityLib::PUPPET_BINPATH + 'agent -t', options)
 # Create commands to issue the puppet resource command for cisco_bgp
-resource_default = UtilityLib.get_namespace_cmd(agent,
-                                                UtilityLib::PUPPET_BINPATH + "resource cisco_bgp '#{BgpLib::ASN} default'", options)
-resource_vrf1 = UtilityLib.get_namespace_cmd(agent,
-                                             UtilityLib::PUPPET_BINPATH +
-                                             "resource cisco_bgp '#{BgpLib::ASN} #{BgpLib::VRF1}'", options)
-resource_asdot = UtilityLib.get_namespace_cmd(agent,
-                                              UtilityLib::PUPPET_BINPATH +
-                                              "resource cisco_bgp '#{BgpLib::ASN_ASPLAIN} #{BgpLib::VRF1}'", options)
+resource_default = UtilityLib.get_namespace_cmd(
+  agent, UtilityLib::PUPPET_BINPATH +
+    "resource cisco_bgp '#{BgpLib::ASN} default'", options)
+resource_vrf1 = UtilityLib.get_namespace_cmd(
+  agent, UtilityLib::PUPPET_BINPATH +
+    "resource cisco_bgp '#{BgpLib::ASN} #{BgpLib::VRF1}'", options)
+resource_asdot = UtilityLib.get_namespace_cmd(
+  agent, UtilityLib::PUPPET_BINPATH +
+    "resource cisco_bgp '#{BgpLib::ASN_ASPLAIN} #{BgpLib::VRF1}'", options)
+platform = fact_on(agent, 'os.name')
 
 # Define expected default values for cisco_bgp resource
 expected_default_values = {
   'ensure'                                 => 'present',
   'enforce_first_as'                       => 'true',
-  'maxas_limit'                            => 'false',
-  'shutdown'                               => 'false',
-  'suppress_fib_pending'                   => 'false',
-  'log_neighbor_changes'                   => 'false',
   'bestpath_always_compare_med'            => 'false',
   'bestpath_aspath_multipath_relax'        => 'false',
   'bestpath_compare_routerid'              => 'false',
   'bestpath_cost_community_ignore'         => 'false',
   'bestpath_med_confed'                    => 'false',
   'bestpath_med_missing_as_worst'          => 'false',
-  'bestpath_med_non_deterministic'         => 'false',
-  'graceful_restart'                       => 'true',
+  'graceful_restart'                       => 'false',
   'graceful_restart_timers_restart'        => '120',
   'graceful_restart_timers_stalepath_time' => '300',
-  'graceful_restart_helper'                => 'false',
   'timer_bgp_keepalive'                    => '60',
   'timer_bgp_holdtime'                     => '180',
-  'timer_bestpath_limit'                   => '300',
-  'timer_bestpath_limit_always'            => 'false',
 }
+if platform != 'ios_xr'
+  expected_default_values['bestpath_med_non_deterministic'] = 'false'
+  expected_default_values['graceful_restart']               = 'true'
+  expected_default_values['graceful_restart_helper']        = 'false'
+  expected_default_values['log_neighbor_changes']           = 'false'
+  expected_default_values['maxas_limit']                    = 'false'
+  expected_default_values['shutdown']                       = 'false'
+  expected_default_values['suppress_fib_pending']           = 'false'
+  expected_default_values['timer_bestpath_limit']           = '300'
+  expected_default_values['timer_bestpath_limit_always']    = 'false'
+end
 
 # Used to clarify true/false values for UtilityLib args.
 test = {
@@ -112,16 +115,9 @@ test = {
 test_name "TestCase :: #{testheader}" do
   stepinfo = 'Setup switch for cisco_bgp provider test'
   step "TestStep :: #{stepinfo}" do
-    # Remove feature bgp to put testbed into a clean starting state.
-    cmd_str = UtilityLib.get_vshell_cmd('config t ; no feature bgp')
-    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
-
-    on(agent, show_run_bgp) do
-      UtilityLib.search_pattern_in_output(stdout, [/feature bgp/],
-                                          test[:absent], self, logger)
-    end
-
-    logger.info("TestStep :: #{stepinfo} :: #{result}")
+    on(master, BgpLib.create_cleanup_bgp)
+    on(agent, puppet_cmd, acceptable_exit_codes: [0, 2, 6])
+    logger.info("#{stepinfo} :: #{result}")
   end
 
   # Validate manifests that create a cisco_bgp resource with the following
@@ -148,7 +144,7 @@ test_name "TestCase :: #{testheader}" do
       logger.info("#{stepinfo} :: #{result}")
     end
 
-    stepinfo = "Check cisco_bgp resource using 'puppet resource' comand"
+    stepinfo = "Check cisco_bgp resource using 'puppet resource' command"
     step "TestStep :: #{stepinfo}" do
       on(agent, resource_default) do
         UtilityLib.search_pattern_in_output(stdout, expected_default_values,
@@ -198,6 +194,14 @@ test_name "TestCase :: #{testheader}" do
     # enforce_first_as only in the default_vrf
     expected_default_values.delete('enforce_first_as')
 
+    if platform == 'ios_xr'
+      # XR does not support these properties under a non-default vrf
+      expected_default_values.delete('bestpath_med_confed')
+      expected_default_values.delete('graceful_restart')
+      expected_default_values.delete('graceful_restart_timers_restart')
+      expected_default_values.delete('graceful_restart_timers_stalepath_time')
+    end
+
     stepinfo = "Apply title patterns manifest: #{mp}"
     step "TestStep :: #{stepinfo}" do
       on(master, current_manifest_present)
@@ -205,7 +209,7 @@ test_name "TestCase :: #{testheader}" do
       logger.info("#{stepinfo} :: #{result}")
     end
 
-    stepinfo = "Check cisco_bgp resource using 'puppet resource' comand"
+    stepinfo = "Check cisco_bgp resource using 'puppet resource' command"
     step "TestStep :: #{stepinfo}" do
       on(agent, resource_vrf1) do
         UtilityLib.search_pattern_in_output(stdout, expected_default_values,
@@ -259,7 +263,7 @@ test_name "TestCase :: #{testheader}" do
       logger.info("#{stepinfo} :: #{result}")
     end
 
-    stepinfo = "Check cisco_bgp resource using 'puppet resource' comand"
+    stepinfo = "Check cisco_bgp resource using 'puppet resource' command"
     step "TestStep :: #{stepinfo}" do
       on(agent, resource_asdot) do
         UtilityLib.search_pattern_in_output(stdout, expected_default_values,
