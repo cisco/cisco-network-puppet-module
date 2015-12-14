@@ -26,7 +26,7 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
-Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:nxapi) do
+Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:cisco) do
   confine feature: :cisco_node_utils
   defaultfor operatingsystem: :nexus
 

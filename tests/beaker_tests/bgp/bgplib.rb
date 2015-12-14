@@ -195,8 +195,7 @@ module BgpLib
 
         #{conditional_props}
       }
-    }
-    EOF"
+    }\nEOF"
     manifest_str
   end
 
@@ -242,8 +241,7 @@ module BgpLib
 
         #{conditional_props}
       }
-    }
-    EOF"
+    }\nEOF"
     manifest_str
   end
 

@@ -26,8 +26,8 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
-Puppet::Type.type(:cisco_bgp).provide(:nxapi) do
-  desc 'The NXAPI provider.'
+Puppet::Type.type(:cisco_bgp).provide(:cisco) do
+  desc 'The cisco bgp provider.'
 
   confine feature: :cisco_node_utils
   defaultfor operatingsystem: :nexus
