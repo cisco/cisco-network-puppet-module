@@ -30,7 +30,7 @@ Puppet::Type.type(:cisco_bgp).provide(:cisco) do
   desc 'The cisco bgp provider.'
 
   confine feature: :cisco_node_utils
-  defaultfor operatingsystem: :nexus
+  defaultfor operatingsystem: [:ios_xr, :nexus]
 
   mk_resource_methods
 

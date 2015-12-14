@@ -28,7 +28,7 @@ end
 
 Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:cisco) do
   confine feature: :cisco_node_utils
-  defaultfor operatingsystem: :nexus
+  defaultfor operatingsystem: [:ios_xr, :nexus]
 
   mk_resource_methods
 

@@ -27,10 +27,10 @@ rescue LoadError # seen on master, not on agent
 end
 
 Puppet::Type.type(:cisco_interface).provide(:cisco) do
-  desc 'The NXAPI provider for cisco_interface.'
+  desc 'The provider for cisco_interface.'
 
   confine feature: :cisco_node_utils
-  defaultfor operatingsystem: :nexus
+  defaultfor operatingsystem: [:ios_xr, :nexus]
 
   mk_resource_methods
 
