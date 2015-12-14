@@ -152,7 +152,7 @@ The following resources include cisco types and providers along with cisco provi
 * AAA Types
   * [`cisco_aaa_authentication_login`](#type-cisco_aaa_authentication_login)
   * [`cisco_aaa_authorization_login_cfg_svc`](#type-cisco_aaa_authorization_login_cfg_svc)
-  * [`cisco_aaa_group_tacacs`](#type-cisco_aaa_group_tacacas)
+  * [`cisco_aaa_group_tacacs`](#type-cisco_aaa_group_tacacs)
 
 * BGP Types
   * [`cisco_vrf`](#type-cisco_vrf)
