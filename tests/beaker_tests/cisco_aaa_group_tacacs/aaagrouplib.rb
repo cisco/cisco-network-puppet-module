@@ -46,7 +46,7 @@ module AaaGroupLib
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_aaagroup_manifest_present
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_aaa_group_tacacs { 'test':
       ensure                 => present,
@@ -65,7 +65,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_aaagroup_manifest_absent
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_aaa_group_tacacs { 'test':
       ensure                 => absent,
@@ -80,7 +80,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_aaagroup_manifest_nondefaults
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_tacacs_server { 'default':
       ensure                 => present,
@@ -108,7 +108,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_aaagroup_manifest_deadtime_negative
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_aaa_group_tacacs { 'test':
       ensure                 => present,
@@ -123,7 +123,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_aaagroup_manifest_vrf_name_negative
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_aaa_group_tacacs { 'test':
       ensure                 => present,
@@ -138,7 +138,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_aaagroup_manifest_source_interface_negative
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_aaa_group_tacacs { 'test':
       ensure                 => present,
@@ -153,7 +153,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_aaagroup_manifest_server_hosts_negative
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_aaa_group_tacacs { 'test':
       ensure                 => present,

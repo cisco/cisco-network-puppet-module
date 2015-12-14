@@ -64,9 +64,6 @@ testheader = 'OSPFINTF Resource :: All Attributes Negatives'
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
-    # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
-    UtilityLib.set_manifest_path(master, self)
-
     # Expected exit_code is 0 since this is a vegas shell cmd.
     cmd_str = get_vshell_cmd('conf t ; no feature ospf')
     on(agent, cmd_str)
@@ -88,7 +85,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, OspfIntfLib.create_ospfintf_manifest_cost_negative)
 
     # Expected exit_code is 6 since this is a puppet agent cmd with failure.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [6])
 
@@ -99,7 +96,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_intf_ospf resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       "resource cisco_interface_ospf 'ethernet1/4 test'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
@@ -122,7 +119,7 @@ test_name "TestCase :: #{testheader}" do
     end
 
     # Cleanup partially configured resource.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       "resource cisco_interface_ospf 'ethernet1/4 test' ensure=absent", options)
     on(agent, cmd_str)
 
@@ -135,7 +132,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, OspfIntfLib.create_ospfintf_manifest_hellointerval_negative)
 
     # Expected exit_code is 6 since this is a puppet agent cmd with failure.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [6])
 
@@ -146,7 +143,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_intf_ospf resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       "resource cisco_interface_ospf 'ethernet1/4 test'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
@@ -169,7 +166,7 @@ test_name "TestCase :: #{testheader}" do
     end
 
     # Cleanup partially configured resource.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       "resource cisco_interface_ospf 'ethernet1/4 test' ensure=absent", options)
     on(agent, cmd_str)
 
@@ -182,7 +179,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, OspfIntfLib.create_ospfintf_manifest_deadinterval_negative)
 
     # Expected exit_code is 6 since this is a puppet agent cmd with failure.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [6])
 
@@ -193,7 +190,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_intf_ospf resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       "resource cisco_interface_ospf 'ethernet1/4 test'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
@@ -216,7 +213,7 @@ test_name "TestCase :: #{testheader}" do
     end
 
     # Cleanup partially configured resource.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       "resource cisco_interface_ospf 'ethernet1/4 test' ensure=absent", options)
     on(agent, cmd_str)
 
@@ -229,7 +226,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, OspfIntfLib.create_ospfintf_manifest_passiveintf_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -240,7 +237,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_intf_ospf resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       "resource cisco_interface_ospf 'ethernet1/4 test'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
@@ -263,7 +260,7 @@ test_name "TestCase :: #{testheader}" do
     end
 
     # Cleanup partially configured resource.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       "resource cisco_interface_ospf 'ethernet1/4 test' ensure=absent", options)
     on(agent, cmd_str)
 

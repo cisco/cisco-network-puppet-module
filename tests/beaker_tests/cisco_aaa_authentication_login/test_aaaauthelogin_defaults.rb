@@ -54,7 +54,6 @@
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 require File.expand_path('../aaaautheloginlib.rb', __FILE__)
 
-UtilityLib.set_manifest_path(master, self)
 result = 'PASS'
 testheader = 'AAA Authentication Login:: Attribute Defaults'
 id = 'default'
@@ -86,7 +85,7 @@ def create_aaaauthelogin_defaults(tests, id, string=false)
 
   create_aaaauthelogin_manifest(tests, id)
   resource_cmd_str =
-    UtilityLib::PUPPET_BINPATH +
+    PUPPET_BINPATH +
     "resource cisco_aaa_authentication_login '#{title}'"
   tests[id][:resource_cmd] =
     get_namespace_cmd(agent, resource_cmd_str, options)

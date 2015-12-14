@@ -46,7 +46,7 @@ module OspfIntfLib
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_ospfintf_manifest_present
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf { 'test':
     ensure                   => present,
@@ -74,7 +74,7 @@ EOF"
   # @param intf is used to optionally specify the interface to use
   # @result manifest_str is the newly constructed manifest
   def self.create_ospfintf_area_manifest(area, intf='ethernet1/4')
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf { 'test':
     ensure                   => present,
@@ -98,7 +98,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_ospfintf_manifest_absent
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_interface_ospf { 'ethernet1/4 test':
     ensure                   => absent,
@@ -117,7 +117,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_ospfintf_manifest_nondefaults
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf { 'test':
     ensure                   => present,
@@ -144,7 +144,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_ospfintf_manifest_cost_negative
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf { 'test':
     ensure                   => present,
@@ -168,7 +168,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_ospfintf_manifest_hellointerval_negative
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf { 'test':
     ensure                   => present,
@@ -192,7 +192,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_ospfintf_manifest_deadinterval_negative
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf { 'test':
     ensure                   => present,
@@ -216,7 +216,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_ospfintf_manifest_passiveintf_negative
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf { 'test':
     ensure                   => present,

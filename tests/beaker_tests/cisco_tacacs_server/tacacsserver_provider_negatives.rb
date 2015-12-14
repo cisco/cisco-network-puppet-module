@@ -64,15 +64,12 @@ testheader = 'TACACSSERVER Resource :: All Attributes Negatives'
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
-    # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
-    UtilityLib.set_manifest_path(master, self)
-
     # Expected exit_code is 0 since this is a bash shell cmd.
     on(master, TacacsServerLib.create_tacacsserver_absent)
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no change.
     # Or expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
@@ -94,7 +91,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, TacacsServerLib.create_tacacsserver_timeout_negative)
 
     # Expected exit_code is 4 since this is a puppet agent cmd with failure.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [4])
 
@@ -105,7 +102,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_tacacs_server absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'resource cisco_tacacs_server', options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
@@ -136,7 +133,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, TacacsServerLib.create_tacacsserver_deadtime_negative)
 
     # Expected exit_code is 4 since this is a puppet agent cmd with failure.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [4])
 
@@ -147,7 +144,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_tacacs_server absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'resource cisco_tacacs_server', options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
@@ -178,7 +175,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, TacacsServerLib.create_tacacsserver_type_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -189,7 +186,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_tacacs_server absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'resource cisco_tacacs_server', options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
@@ -220,7 +217,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, TacacsServerLib.create_tacacsserver_passwd_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
@@ -231,7 +228,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_tacacs_server absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'resource cisco_tacacs_server', options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
@@ -262,7 +259,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, TacacsServerLib.create_tacacsserver_sourceintf_negative)
 
     # Expected exit_code is 4 since this is a puppet agent cmd with failure.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [4])
 
@@ -273,7 +270,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_tacacs_server absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'resource cisco_tacacs_server', options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,

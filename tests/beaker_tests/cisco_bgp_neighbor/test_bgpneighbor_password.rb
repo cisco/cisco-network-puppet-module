@@ -57,7 +57,7 @@ require File.expand_path('../bgpneighborlib.rb', __FILE__)
 result = 'PASS'
 testheader = 'BGP Neighbor Resource :: Password and type attributes'
 id = 'test_green'
-UtilityLib.set_manifest_path(master, self)
+
 tests = {
   :master => master,
   :agent  => agent,
@@ -92,7 +92,7 @@ test_name "TestCase :: #{testheader}" do
       },
     }
     resource_cmd_str =
-      UtilityLib::PUPPET_BINPATH +
+      PUPPET_BINPATH +
       'resource cisco_bgp_neighbor ' + "'#{asn} #{vrf} #{neighbor}'"
     tests[id][:resource_cmd] =
       get_namespace_cmd(agent, resource_cmd_str, options)

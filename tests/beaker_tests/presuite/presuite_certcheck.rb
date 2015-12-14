@@ -46,17 +46,14 @@ puppetagentcert = nil
 test_name "TestCase :: #{testheader}" do
   # @step [Setup] Checks for Puppet Agent Cert on master.
   step 'TestStep :: Check for Puppet Agent cert on master' do
-    # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
-    UtilityLib.set_manifest_path(master, self)
-
     # Expected exit_code is 0 since this is a puppet config cmd with no change.
-    cmd_str = UtilityLib::PUPPET_BINPATH + 'config print certname'
+    cmd_str = PUPPET_BINPATH + 'config print certname'
     on(agent, cmd_str) do
       puppetagentcert = stdout.strip
     end
 
     # Expected exit_code is 0 since this is a puppet cert cmd with no change.
-    cmd_str = UtilityLib::PUPPET_BINPATH + 'cert --list ' + puppetagentcert
+    cmd_str = PUPPET_BINPATH + 'cert --list ' + puppetagentcert
     on(master, cmd_str) do
       search_pattern_in_output(stdout, \
                                [Regexp.new(puppetagentcert)], false, self, logger)

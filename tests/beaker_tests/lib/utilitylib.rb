@@ -36,22 +36,8 @@
 #    result.
 
 # Define various CONSTANTS used by beaker tests
-module UtilityLib
-  # SLEEP_WAIT_TIME = 10
-
-  # Define constants used by beaker tests
-  PUPPET_BINPATH = '/opt/puppetlabs/bin/puppet '
-
-  def self.set_manifest_path(host, testcase)
-    unless const_defined?(:PUPPETMASTER_MANIFESTPATH)
-      cmd_str = UtilityLib::PUPPET_BINPATH + 'config print manifest'
-      testcase.on(host, cmd_str) do
-        const_set(:PUPPETMASTER_MANIFESTPATH,
-                  testcase.stdout.strip + '/site.pp')
-      end
-    end
-  end
-end # module UtilityLib
+PUPPET_BINPATH = '/opt/puppetlabs/bin/puppet '
+PUPPETMASTER_MANIFESTPATH = '/etc/puppetlabs/code/environments/production/manifests/site.pp'
 
 # The remaining methods are defined outside of the UtilityLib module so that
 # they can access the Beaker DSL API's.
@@ -142,7 +128,7 @@ end
 
 # Full command string for puppet agent
 def puppet_agent_cmd
-  cmd = UtilityLib::PUPPET_BINPATH + 'agent -t'
+  cmd = PUPPET_BINPATH + 'agent -t'
   get_namespace_cmd(agent, cmd, options)
 end
 

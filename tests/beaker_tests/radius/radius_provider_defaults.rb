@@ -62,9 +62,6 @@ testheader = 'radius Resource :: All Attributes Defaults'
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider' do
-    # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
-    UtilityLib.set_manifest_path(master, self)
-
     logger.info('Setup switch for provider')
   end
 
@@ -74,7 +71,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, RadiusLib.create_radius_manifest_true)
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no changes.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [0])
 
@@ -87,7 +84,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, RadiusLib.create_radius_manifest_false)
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no changes.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [0])
 

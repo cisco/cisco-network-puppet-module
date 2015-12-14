@@ -55,12 +55,12 @@ require File.expand_path('../vrflib.rb', __FILE__)
 result = 'PASS'
 testheader = 'VRF Resource :: All Attributes Defaults'
 vrf_name = 'test_green'
-UtilityLib.set_manifest_path(master, self)
+
 puppet_agent_cmd =
-  get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+  get_namespace_cmd(agent, PUPPET_BINPATH +
                                'agent -t', options)
 puppet_resource_cmd =
-  get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+  get_namespace_cmd(agent, PUPPET_BINPATH +
                                "resource cisco_vrf '#{vrf_name}'", options)
 clear_vrf_cmd = get_vshell_cmd("conf t ; no vrf context #{vrf_name}")
 show_vrf_cmd = get_vshell_cmd("show running | section \"vrf context #{vrf_name}\"")

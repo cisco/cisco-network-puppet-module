@@ -59,9 +59,6 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 # -----------------------------
 testheader = 'Resource cisco_bgp_neighbor_af'
 
-# Define PUPPETMASTER_MANIFESTPATH.
-UtilityLib.set_manifest_path(master, self)
-
 # The 'tests' hash is used to define all of the test data values and expected
 # results. It is also used to pass optional flags to the test methods when
 # necessary.
@@ -490,7 +487,7 @@ tests['title_patterns'] = {
 
 # Full command string for puppet resource with neighbor AF
 def puppet_resource_cmd(af)
-  cmd = UtilityLib::PUPPET_BINPATH + \
+  cmd = PUPPET_BINPATH + \
         "resource cisco_bgp_neighbor_af '#{af.values.join(' ')}'"
   get_namespace_cmd(agent, cmd, options)
 end
@@ -530,7 +527,7 @@ def build_manifest_bgp_nbr_af(tests, id)
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
   logger.debug("build_manifest_bgp_nbr_af :: title_pattern:\n" +
                tests[id][:title_pattern])
-  tests[id][:manifest] = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+  tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   node 'default' {
     cisco_bgp_neighbor_af { '#{tests[id][:title_pattern]}':
       #{state}

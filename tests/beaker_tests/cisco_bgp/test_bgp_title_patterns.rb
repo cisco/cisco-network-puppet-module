@@ -61,21 +61,19 @@ require File.expand_path('../bgplib.rb', __FILE__)
 result = 'PASS'
 testheader = 'Resource cisco_bgp:: Verify Title Patterns'
 
-# Define PUPPETMASTER_MANIFESTPATH.
-UtilityLib.set_manifest_path(master, self)
 # Create puppet agent command
 puppet_cmd = get_namespace_cmd(agent,
-                               UtilityLib::PUPPET_BINPATH + 'agent -t', options)
+                               PUPPET_BINPATH + 'agent -t', options)
 # Create command to show the bgp running configuration
 show_run_bgp = get_vshell_cmd('show running-config section bgp')
 # Create commands to issue the puppet resource command for cisco_bgp
 resource_default = get_namespace_cmd(agent,
-                                     UtilityLib::PUPPET_BINPATH + "resource cisco_bgp '#{BgpLib::ASN} default'", options)
+                                     PUPPET_BINPATH + "resource cisco_bgp '#{BgpLib::ASN} default'", options)
 resource_vrf1 = get_namespace_cmd(agent,
-                                  UtilityLib::PUPPET_BINPATH +
+                                  PUPPET_BINPATH +
                                   "resource cisco_bgp '#{BgpLib::ASN} #{BgpLib::VRF1}'", options)
 resource_asdot = get_namespace_cmd(agent,
-                                   UtilityLib::PUPPET_BINPATH +
+                                   PUPPET_BINPATH +
                                    "resource cisco_bgp '#{BgpLib::ASN_ASPLAIN} #{BgpLib::VRF1}'", options)
 
 # Define expected default values for cisco_bgp resource

@@ -33,7 +33,7 @@ module BgpLib
 
   # Create manifest ensure => present + 'default' property values
   def self.create_bgp_manifest_present
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'default':
         ensure                                 => present,
@@ -83,7 +83,7 @@ module BgpLib
   # Create manifest ensure => present + 'default' property values
   # for vrf1
   def self.create_bgp_manifest_present_vrf1
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'default':
         ensure                                 => present,
@@ -130,7 +130,7 @@ module BgpLib
   # Create manifest ensure => present + 'default' property values
   # for vrf2
   def self.create_bgp_manifest_present_vrf2
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'default':
         ensure                                 => present,
@@ -176,7 +176,7 @@ module BgpLib
 
   # Create manifest ensure => present + 'non-default' property values
   def self.create_bgp_manifest_present_non_default
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'default':
         ensure                                 => present,
@@ -226,7 +226,7 @@ module BgpLib
   # Create manifest ensure => present + 'non-default' property values
   # for vrf1
   def self.create_bgp_manifest_present_non_default_vrf1
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'default':
         ensure                                 => present,
@@ -272,7 +272,7 @@ module BgpLib
   # Create manifest ensure => present + 'non-default' property values
   # for vrf2
   def self.create_bgp_manifest_present_non_default_vrf2
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'default':
         ensure                                 => present,
@@ -317,7 +317,7 @@ module BgpLib
 
   # Create manifest ensure => absent
   def self.create_bgp_manifest_absent
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'default':
         ensure                                 => absent,
@@ -331,7 +331,7 @@ module BgpLib
 
   # Create manifest ensure => absent for vrf1
   def self.create_bgp_manifest_absent_vrf1
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'default':
         ensure                                 => absent,
@@ -345,7 +345,7 @@ module BgpLib
 
   # Create manifest ensure => absent for vrf2
   def self.create_bgp_manifest_absent_vrf2
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'default':
         ensure                                 => absent,
@@ -364,7 +364,7 @@ module BgpLib
   # vrf => 'default
   # (all_other_attributes => default values)
   def self.create_bgp_manifest_title_pattern1
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'raleigh':
         ensure                                 => present,
@@ -376,7 +376,7 @@ module BgpLib
   end
 
   def self.create_bgp_manifest_title_pattern2
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'raleigh':
         ensure                                 => present,
@@ -389,7 +389,7 @@ module BgpLib
   end
 
   def self.create_bgp_manifest_title_pattern3
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { '#{BgpLib::ASN}':
         ensure                                 => present,
@@ -401,7 +401,7 @@ module BgpLib
   end
 
   def self.create_bgp_manifest_title_pattern4
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { '#{BgpLib::ASN} default':
         ensure                                 => present,
@@ -413,7 +413,7 @@ module BgpLib
 
   # asn and vrf properties take precedence over '55 blue'
   def self.create_bgp_manifest_title_pattern5
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { '55 blue':
         ensure                                 => present,
@@ -433,7 +433,7 @@ module BgpLib
   # (all_other_attributes => default values)
 
   def self.create_bgp_manifest_title_pattern6
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'raleigh':
         ensure                                 => present,
@@ -446,7 +446,7 @@ module BgpLib
   end
 
   def self.create_bgp_manifest_title_pattern6_remove
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'raleigh':
         ensure                                 => absent,
@@ -459,7 +459,7 @@ module BgpLib
   end
 
   def self.create_bgp_manifest_title_pattern7
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { '#{BgpLib::ASN} #{BgpLib::VRF1}':
         ensure                                 => present,
@@ -470,7 +470,7 @@ module BgpLib
   end
 
   def self.create_bgp_manifest_title_pattern7_remove
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { '#{BgpLib::ASN} #{BgpLib::VRF1}':
         ensure                                 => absent,
@@ -482,7 +482,7 @@ module BgpLib
 
   # asn and vrf properties take precedence over '876 red'
   def self.create_bgp_manifest_title_pattern8
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { '876 red':
         ensure                                 => present,
@@ -495,7 +495,7 @@ module BgpLib
   end
 
   def self.create_bgp_manifest_title_pattern8_remove
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { '876 red':
         ensure                                 => absent,
@@ -515,7 +515,7 @@ module BgpLib
   # (all_other_attributes => default values)
 
   def self.create_bgp_manifest_title_pattern9
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'raleigh':
         ensure                                 => present,
@@ -528,7 +528,7 @@ module BgpLib
   end
 
   def self.create_bgp_manifest_title_pattern9_remove
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'raleigh':
         ensure                                 => absent,
@@ -541,7 +541,7 @@ module BgpLib
   end
 
   def self.create_bgp_manifest_title_pattern10
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { '#{BgpLib::ASN_ASDOT} #{BgpLib::VRF1}':
         ensure                                 => present,
@@ -552,7 +552,7 @@ module BgpLib
   end
 
   def self.create_bgp_manifest_title_pattern10_remove
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { '#{BgpLib::ASN_ASDOT} #{BgpLib::VRF1}':
         ensure                                 => absent,
@@ -564,7 +564,7 @@ module BgpLib
 
   # asn and vrf properties take precedence over '876.99 red'
   def self.create_bgp_manifest_title_pattern11
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { '876.99 red':
         ensure                                 => present,
@@ -577,7 +577,7 @@ module BgpLib
   end
 
   def self.create_bgp_manifest_title_pattern11_remove
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { '876.500 red':
         ensure                                 => absent,

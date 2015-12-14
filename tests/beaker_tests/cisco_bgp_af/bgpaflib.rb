@@ -34,7 +34,7 @@ end
 module BgpAFLib
   # puppet resource command for address-families
   def self.resource_cmd(af)
-    UtilityLib::PUPPET_BINPATH + \
+    PUPPET_BINPATH + \
       "resource cisco_bgp_af '#{af.values.join(' ')}'"
   end
 

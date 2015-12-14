@@ -65,9 +65,6 @@ testheader = 'VTP Resource :: All Attributes NonDefaults'
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
-    # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
-    UtilityLib.set_manifest_path(master, self)
-
     # Expected exit_code is 0 since this is a vegas shell cmd with no change.
     cmd_str = get_vshell_cmd('conf t ; no feature vtp')
     on(agent, cmd_str)
@@ -90,7 +87,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, VtpLib.create_vtp_manifest_nondefaults)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -101,7 +98,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_vtp resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'resource cisco_vtp', options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
@@ -138,7 +135,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, VtpLib.create_vtp_manifest_absent)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -149,7 +146,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_vtp resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'resource cisco_vtp', options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,

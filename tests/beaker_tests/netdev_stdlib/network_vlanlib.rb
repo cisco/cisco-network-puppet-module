@@ -44,7 +44,7 @@ module NetworkVlanLib
   # @param shut [Boolean] The value to pass to the shutdown property
   # @result none [None] Returns no object.
   def self.create_network_vlan_manifest(name, ens, vname, shut)
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   network_vlan { #{name.inspect}:
     ensure    => #{ens.inspect},
@@ -61,7 +61,7 @@ EOF"
   # @param ensure [String] The value to pass to the ensure property
   # @result none [None] Returns no object.
   def self.create_network_vlan_manifest_ensure(name, ens)
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   network_vlan { #{name}:
     ensure    => #{ens.inspect},

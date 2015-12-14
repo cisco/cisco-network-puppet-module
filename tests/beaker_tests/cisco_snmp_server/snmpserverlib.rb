@@ -48,7 +48,7 @@ module SnmpServerLib
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_snmpserver_manifest_defaults
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_snmp_server { 'default':
       packet_size            => 'default',
@@ -94,7 +94,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_snmpserver_manifest_nondefaults
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_snmp_server { 'default':
       packet_size            => 2500,
@@ -114,7 +114,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_snmpserver_manifest_packetsize_negative
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_snmp_server { 'test':
       packet_size            => #{SnmpServerLib::PACKETSIZE_NEGATIVE},
@@ -128,7 +128,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_snmpserver_manifest_aaatimeout_negative
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_snmp_server { 'test':
       aaa_user_cache_timeout => #{SnmpServerLib::AAATIMEOUT_NEGATIVE},
@@ -142,7 +142,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_snmpserver_manifest_tcpauth_negative
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_snmp_server { 'test':
       tcp_session_auth       => #{SnmpServerLib::TCPAUTH_NEGATIVE},
@@ -156,7 +156,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_snmpserver_manifest_protocol_negative
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_snmp_server { 'test':
       protocol               => #{SnmpServerLib::PROTOCOL_NEGATIVE},
@@ -170,7 +170,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_snmpserver_manifest_globalpriv_negative
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_snmp_server { 'test':
       global_enforce_priv    => #{SnmpServerLib::GLOBALPRIV_NEGATIVE},

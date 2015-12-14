@@ -21,7 +21,7 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 # @param tests [Hash] a hash that contains the supported attributes
 # @result none [None] Returns no object.
 def create_aaaauthelogin_manifest(tests, name)
-  tests[name][:manifest] = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+  tests[name][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   node default {
     cisco_aaa_authentication_login { '#{name}':\n
     #{prop_hash_to_manifest(tests[name][:manifest_props])}

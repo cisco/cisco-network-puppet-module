@@ -56,7 +56,7 @@ require File.expand_path('../aaaautheloginlib.rb', __FILE__)
 
 result = 'PASS'
 testheader = 'AAA Authentication Login Resource :: Attribute Non-defaults'
-UtilityLib.set_manifest_path(master, self)
+
 id = 'default'
 tests = {
   :master => master,
@@ -90,7 +90,7 @@ test_name "TestCase :: #{testheader}" do
       },
     }
     resource_cmd_str =
-      UtilityLib::PUPPET_BINPATH +
+      PUPPET_BINPATH +
       "resource cisco_aaa_authentication_login 'default'"
     tests[id][:resource_cmd] =
       get_namespace_cmd(agent, resource_cmd_str, options)

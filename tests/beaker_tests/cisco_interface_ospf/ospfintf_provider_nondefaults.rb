@@ -66,9 +66,6 @@ testheader = 'OSPFINTF Resource :: All Attributes NonDefaults'
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
-    # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
-    UtilityLib.set_manifest_path(master, self)
-
     # Expected exit_code is 0 since this is a vegas shell cmd.
     cmd_str = get_vshell_cmd('conf t ; no feature ospf')
     on(agent, cmd_str)
@@ -90,7 +87,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, OspfIntfLib.create_ospfintf_manifest_nondefaults)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -101,7 +98,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_intf_ospf resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       "resource cisco_interface_ospf 'ethernet1/4 test'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
@@ -146,7 +143,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, OspfIntfLib.create_ospfintf_manifest_absent)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -157,7 +154,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_intf_ospf resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       "resource cisco_interface_ospf 'ethernet1/4 test'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
@@ -202,7 +199,7 @@ test_name "TestCase :: #{testheader}" do
     area2 = '0.0.0.6'
     on(master, OspfIntfLib.create_ospfintf_area_manifest(area1))
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
     # check for successfull configured area
@@ -219,7 +216,7 @@ test_name "TestCase :: #{testheader}" do
     # update area to area2
     on(master, OspfIntfLib.create_ospfintf_area_manifest(area2))
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
     # check for successfull configured area
@@ -234,7 +231,7 @@ test_name "TestCase :: #{testheader}" do
                                false, self, logger)
     end
     # cleanup
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       "resource cisco_interface_ospf 'ethernet1/4 test' ensure=absent", options)
     on(agent, cmd_str)
 

@@ -41,7 +41,7 @@ module CiscoCommandLib
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_cisco_command_nondefaults
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_command_config { 'interface_config':
     command => '

@@ -62,16 +62,13 @@ testheader = 'radius_server Resource :: All Attributes Defaults'
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider' do
-    # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
-    UtilityLib.set_manifest_path(master, self)
-
     logger.info('Setup switch for provider')
 
     # Make sure radius server is not configured before test starts.
     on(master, RadiusServerLib.create_radius_server_manifest_absent)
 
     # Expected exit_code is 0,2 since server may or may not be configured.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
   end
@@ -82,7 +79,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, RadiusServerLib.create_radius_server_manifest_present)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -93,7 +90,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check radius_server resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'resource radius_server 8.8.8.8', options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
@@ -125,7 +122,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, RadiusServerLib.create_radius_server_manifest_present_change)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -136,7 +133,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check radius_server resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'resource radius_server 8.8.8.8', options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
@@ -186,7 +183,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, RadiusServerLib.create_radius_server_manifest_absent)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -197,7 +194,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check radius_server resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'resource radius_server 8.8.8.8', options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },

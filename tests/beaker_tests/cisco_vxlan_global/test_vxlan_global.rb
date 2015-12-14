@@ -60,7 +60,6 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 testheader = 'Resource cisco_vxlan_global'
 
 # Define PUPPETMASTER_MANIFESTPATH.
-UtilityLib.set_manifest_path(master, self)
 
 # The 'tests' hash is used to define all of the test data values and expected
 # results. It is also used to pass optional flags to the test methods when
@@ -147,7 +146,7 @@ tests['non_default_properties'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = UtilityLib::PUPPET_BINPATH + 'resource cisco_vxlan_global'
+  cmd = PUPPET_BINPATH + 'resource cisco_vxlan_global'
   get_namespace_cmd(agent, cmd, options)
 end
 
@@ -167,7 +166,7 @@ def build_manifest_vxlan_global(tests, id)
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
   logger.debug("build_manifest_vxlan_global :: title_pattern:\n" +
                tests[id][:title_pattern])
-  tests[id][:manifest] = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+  tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   node 'default' {
     cisco_vxlan_global { 'default':
       #{state}

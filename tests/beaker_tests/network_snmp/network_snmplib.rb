@@ -44,7 +44,7 @@ module NetworkSnmpLib
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_network_snmp_manifest_set
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   network_snmp {'default':
     enable => true,
@@ -60,7 +60,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_network_snmp_manifest_unset
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   network_snmp {'default':
     enable => false,

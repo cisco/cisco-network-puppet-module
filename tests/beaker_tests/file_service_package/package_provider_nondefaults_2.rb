@@ -63,9 +63,6 @@ testheader = 'PACKAGE Resource :: All Attributes NonDefaults'
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
-    # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
-    UtilityLib.set_manifest_path(master, self)
-
     # Expected exit_code is 0 since this is a puppet agent cmd with no change.
     cmd_str =
       get_vshell_cmd('dir bootflash:n9000_sample-1.0.0-7.0.3.x86_64.rpm')
@@ -78,7 +75,7 @@ test_name "TestCase :: #{testheader}" do
     # No change would imply that Sample package is uninstalled prior to test.
     # Or expected exit_code is 2 since this is a puppet agent cmd with change.
     # Change would imply that Sample package is installed prior to test.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
@@ -93,7 +90,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     # Change would imply that Sample package is uninstalled prior to test and
     # installed after test.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -105,7 +102,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     # Sample package state should not be purged.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       "resource package 'n9000_sample'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,

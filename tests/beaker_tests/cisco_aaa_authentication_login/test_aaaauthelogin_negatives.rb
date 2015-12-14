@@ -57,7 +57,7 @@ require File.expand_path('../aaaautheloginlib.rb', __FILE__)
 
 result = 'PASS'
 testheader = 'Aaa Authentication Login Resource :: Negative Value Test'
-UtilityLib.set_manifest_path(master, self)
+
 tests = {
   :master => master,
   :agent  => agent,

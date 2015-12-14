@@ -54,7 +54,6 @@
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 require File.expand_path('../bgpneighborlib.rb', __FILE__)
 
-UtilityLib.set_manifest_path(master, self)
 result = 'PASS'
 testheader = 'BGP Neighbor Resource :: Attribute Defaults'
 id = 'test_green'
@@ -109,7 +108,7 @@ def create_bgp_neighbor_defaults(tests, id, title, string=false)
 
   create_bgpneighbor_manifest(tests, id)
   resource_cmd_str =
-    UtilityLib::PUPPET_BINPATH +
+    PUPPET_BINPATH +
     "resource cisco_bgp_neighbor '#{asn} #{vrf} #{neighbor}'"
   tests[id][:resource_cmd] =
     get_namespace_cmd(agent, resource_cmd_str, options)

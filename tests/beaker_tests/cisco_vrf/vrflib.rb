@@ -25,7 +25,7 @@ module VrfLib
   # @result none [None] Returns no object.
   def self.create_vrf_manifest_default(name, present=true)
     ensure_str = present ? 'present' : 'absent'
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node default {
       cisco_vrf { '#{name}':
         ensure  => #{ensure_str},
@@ -43,7 +43,7 @@ module VrfLib
   # @param name [String] Name of the vrf
   # @result none [None] Returns no object.
   def self.create_vrf_manifest_nondefaults(name, description, shutdown, vni)
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node default {
       cisco_vrf { '#{name}':
         ensure       => present,
@@ -60,7 +60,7 @@ module VrfLib
   # @param name [String] Name of the vrf
   # @result none [None] Returns no object
   def self.update_vrf_manifest_no_description(name)
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node default {
       cisco_vrf { '#{name}':
         ensure                    => present,
@@ -78,7 +78,7 @@ module VrfLib
   # @param shutdown [Boolean] Boolean for the shutdown attribute
   # @result none [None] Returns no object.
   def self.update_vrf_manifest_by_name_attribute(name, description, shutdown, vni)
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node default {
       cisco_vrf { 'any_#{name}':
         ensure                   => present,

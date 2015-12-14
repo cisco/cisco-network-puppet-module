@@ -69,15 +69,12 @@ test_name "TestCase :: #{testheader}" do
     # Remove any stale interface IP addresses from testbed.
     interface_ip_cleanup(agent)
 
-    # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
-    UtilityLib.set_manifest_path(master, self)
-
     # Expected exit_code is 0 since this is a bash shell cmd.
     on(master, SviIntfLib.create_sviintf_manifest_absent)
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no change.
     # Or expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
@@ -98,7 +95,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SviIntfLib.create_sviintf_manifest_nondefaults)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -109,7 +106,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_interface resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       "resource cisco_interface 'vlan80'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
@@ -150,7 +147,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SviIntfLib.create_sviintf_manifest_absent)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -161,7 +158,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_interface resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       "resource cisco_interface 'vlan80'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
