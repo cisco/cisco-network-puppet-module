@@ -59,14 +59,13 @@ Puppet::Type.type(:cisco_acl).provide(:nxapi) do
     super(value)
     afi = @property_hash[:afi]
     acl_name = @property_hash[:acl_name]
-    puts "PUP: init: afi: #{afi} name: #{acl_name}"
+    # puts "PUP: init: afi: #{afi} name: #{acl_name}"
     @acl = Cisco::Acl.acls[afi][acl_name] unless afi.nil?
     @property_flush = {}
   end
 
   def self.properties_get(afi, acl, inst)
-    puts "\nPUP: Checking instance: #{afi} #{acl} <-------<<"
-    #debug "Checking instance, #{afi} #{acl}"
+    # puts "\nPUP: Checking instance: #{afi} #{acl} <-------<<"
     current_state = {
       name:   "#{afi} #{acl}",
       afi: afi,
@@ -75,12 +74,12 @@ Puppet::Type.type(:cisco_acl).provide(:nxapi) do
     }
     # Call node_utils getter for each property
     ACL_NON_BOOL_PROPS.each do |prop|
-      puts "PUP: prop_get:  #{prop} = >#{inst.send(prop)}" 
+      # puts "PUP: prop_get:  #{prop} = >#{inst.send(prop)}" 
       current_state[prop] = inst.send(prop)
     end
 
     ACL_BOOL_PROPS.each do |prop|
-      puts "PUP: prop_get:  #{prop} = >#{inst.send(prop)}" 
+      # puts "PUP: prop_get:  #{prop} = >#{inst.send(prop)}" 
       val = inst.send(prop)
       if val.nil?
         current_state[prop] = nil
@@ -94,12 +93,8 @@ Puppet::Type.type(:cisco_acl).provide(:nxapi) do
 
   def self.instances
     instance_array = []
-    require 'pp' # prettyprint (remove this) 
-    puts "Acl.acls:" 
-    require 'pp' # prettyprint (remove this) 
-    pp Cisco::Acl.acls
     Cisco::Acl.acls.each do |afi, acls|
-      puts "Acl WALK: afi: #{afi}"
+      # puts "Acl WALK: afi: #{afi}"
       acls.each do |acl, inst|
         begin
           instance_array << properties_get(afi, acl, inst)
@@ -145,17 +140,14 @@ Puppet::Type.type(:cisco_acl).provide(:nxapi) do
   end
 
   def flush
-    puts "FLUSH:"
     if @property_flush[:ensure] == :absent
       @acl.destroy
       @acl = nil
     else
-      puts "CREATE"
-      # create new, delete prexisting and create new, or update
       if @acl.nil?
         # create new
         new_instance = true
-        puts "FLUSH: #{@resource[:afi]}, #{@resource[:acl_name]}"
+        # puts "FLUSH: #{@resource[:afi]}, #{@resource[:acl_name]}"
         @acl = Cisco::Acl.new(@resource[:afi], @resource[:acl_name])
       end
       properties_set(new_instance)
