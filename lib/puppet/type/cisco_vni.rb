@@ -70,7 +70,7 @@ Puppet::Type.newtype(:cisco_vni) do
   ensurable
 
   newproperty(:mapped_vlan) do
-    desc "ID of the VLAN mapped to teh VNI. Valid values are integer."
+    desc 'ID of the VLAN mapped to teh VNI. Valid values are integer.'
     # Keyword 'default' is not supported as there is no default mapping
     # between a vni and vlan
     munge do |value|
