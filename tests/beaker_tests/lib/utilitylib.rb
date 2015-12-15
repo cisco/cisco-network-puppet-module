@@ -39,7 +39,7 @@
 PUPPET_BINPATH = '/opt/puppetlabs/bin/puppet '
 PUPPETMASTER_MANIFESTPATH = '/etc/puppetlabs/code/environments/production/manifests/site.pp'
 
-# The remaining methods are defined outside of the UtilityLib module so that
+# These methods are defined outside of a module so that
 # they can access the Beaker DSL API's.
 
 # Method to return the VRF namespace specific command string from basic
@@ -264,7 +264,7 @@ end
 # @param res_name [String] the resource to retrieve instances of
 # @return [Array] an array of string names of instances
 def get_current_resource_instances(agent, res_name)
-  cmd_str = UtilityLib.get_namespace_cmd(agent, PUPPET_BINPATH +
+  cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       "resource #{res_name}", options)
   on(agent, cmd_str, acceptable_exit_codes: [0])
   names = stdout.scan(/#{res_name} { '(.+)':/).flatten
@@ -275,11 +275,10 @@ end
 # @param agent [String] the agent that is going to run the test
 # @param res_name [String] the resource name that will be cleaned up
 def resource_absent_cleanup(agent, res_name, stepinfo='absent clean')
-  # Don't forget to UtilityLib.set_manifest_path(master, self)
   step "TestStep :: #{stepinfo}" do
     # set each resource to ensure=absent
     get_current_resource_instances(agent, res_name).each do |title|
-      cmd_str = UtilityLib.get_namespace_cmd(agent, PUPPET_BINPATH +
+      cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
         "resource #{res_name} '#{title}' ensure=absent", options)
       on(agent, cmd_str, acceptable_exit_codes: [0])
     end

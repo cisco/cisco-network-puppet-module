@@ -90,7 +90,7 @@ test_name "TestCase :: #{testheader}" do
       PUPPET_BINPATH +
       "resource cisco_aaa_authorization_login_cfg_svc '#{title}'"
     tests[id][:resource_cmd] =
-      UtilityLib.get_namespace_cmd(agent, resource_cmd_str, options)
+      get_namespace_cmd(agent, resource_cmd_str, options)
 
     tests[id][:desc] =
       '1.1 Apply manifest with non-default attributes, and test'
@@ -123,7 +123,7 @@ test_name "TestCase :: #{testheader}" do
                           stepinfo)
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")
