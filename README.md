@@ -149,6 +149,11 @@ The following resources include cisco types and providers along with cisco provi
 * Miscellaneous Types
   * [`cisco_command_config`](#type-cisco_command_config)
 
+* AAA Types
+  * [`cisco_aaa_authentication_login`](#type-cisco_aaa_authentication_login)
+  * [`cisco_aaa_authorization_login_cfg_svc`](#type-cisco_aaa_authorization_login_cfg_svc)
+  * [`cisco_aaa_group_tacacs`](#type-cisco_aaa_group_tacacs)
+
 * BGP Types
   * [`cisco_vrf`](#type-cisco_vrf)
   * [`cisco_bgp`](#type-cisco_bgp)
@@ -218,6 +223,9 @@ The following resources include cisco types and providers along with cisco provi
 ### <a name="resource-by-name">Cisco Resource Type Catalog (by Name)<a>
 
 * [`cisco_command_config`](#type-cisco_command_config)
+* [`cisco_aaa_authentication_login`](#type-cisco_aaa_authentication_login)
+* [`cisco_aaa_authorization_login_cfg_svc`](#type-cisco_aaa_authorization_login_cfg_svc)
+* [`cisco_aaa_group_tacacs`](#type-cisco_aaa_group_tacacs)
 * [`cisco_bgp`](#type-cisco_bgp)
 * [`cisco_bgp_af`](#type-cisco_bgp_af)
 * [`cisco_bgp_neighbor`](#type-cisco_bgp_neighbor)
@@ -287,6 +295,75 @@ This provider allows raw configurations to be managed by Puppet. It serves as a 
 * Negating a submode will also remove configuratons under that submode, without having to specify every submode config statement: `no router ospf RED` removes all configuration under router ospf RED.
 * Syntax does not auto-complete: use `Ethernet1/1`, not `Eth1/1`.
 * If a CLI command is rejected during configuration, the resource will abort at that point and will not issue any remaining CLI. For this reason, we recommend limiting the scope of each instance of this resource.
+
+--
+### Type: cisco_aaa_authentication_login
+
+Manages AAA Authentication Login configuration.
+
+#### Parameters
+
+##### `name`
+The name of the AAA Authentication Login instance. Must be 'default'
+
+##### `ascii_authentication`
+Enable/disable ascii_authentication for AAA Authentication Login. Valid values are true, false, keyword 'default'
+
+##### `chap`
+Enable/disable chap for AAA Authentication Login.
+
+##### `error_display`
+Enable/disable error_display for AAA Authentication Login.
+
+##### `mschap`
+Enable/disable mschap for AAA Authentication Login.
+
+##### `mschapv2`
+Enable/disable mschapv2 for AAA Authentication Login.
+
+--
+### Type: cisco_aaa_authorization_login_cfg_svc
+
+Manages configuration for Authorization Login Config Service.
+
+#### Parameters
+
+##### `ensure`
+Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
+
+##### `name`
+Name of the config login service. Valid values are 'console' or 'default'.
+
+##### `groups`
+Tacacs+ groups configured for this service. Valid values are an array of strings, keyword 'default'.
+
+##### `method`
+Authentication methods on this device. Valid values are 'local', 'unselected', 'default'.
+
+--
+### Type: cisco_aaa_group_tacacs
+
+Manages configuration for a TACACS+ server group.
+
+#### Parameters
+
+##### `ensure`
+Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
+
+##### `group`
+Name of the aaa group TACACS instance. Valid values are string.
+
+##### `deadtime`
+Deadtime interval for this TACACS+ server group. Valid values are integer, in minutes, keyword 'default'
+
+##### `server_hosts`
+An array of TACACS+ server hosts associated with this TACACS+ server group. Valid values are an array, or the keyword 'default'.
+
+##### `source_interface`
+Source interface for TACACS+ servers in this TACACS+ server group Valid values are string, keyword 'default'.
+
+##### `vrf_name`
+Specifies the virtual routing and forwarding instance (VRF) to use to contact this TACACS server group. Valid values are string, the keyword 'default'.
 
 --
 ### Type: cisco_bgp
