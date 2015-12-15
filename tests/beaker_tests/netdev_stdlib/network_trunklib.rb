@@ -38,7 +38,7 @@ module NetworkTrunkLib
   # A. Methods to create manifests for network_trunk Puppet provider test cases.
 
   def self.create_absent
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   network_vlan { '128':
     ensure        => 'absent',
@@ -54,7 +54,7 @@ EOF"
   end
 
   def self.create_defaults
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   network_vlan { '128':
     ensure        => 'present',
@@ -71,7 +71,7 @@ EOF"
   end
 
   def self.create_non_defaults
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   network_vlan { '128':
     ensure        => 'absent',
