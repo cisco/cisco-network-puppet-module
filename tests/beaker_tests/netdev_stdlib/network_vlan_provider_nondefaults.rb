@@ -62,19 +62,16 @@ testheader = 'network_vlan Resource :: All Attributes NonDefaults'
 test_name "TestCase :: #{testheader}" do
   ## @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
-    # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
-    UtilityLib.set_manifest_path(master, self)
-
     # Expected exit_code is 0 since this is a vegas shell cmd.
-    cmd_str = UtilityLib.get_vshell_cmd('conf t ; no vlan 666')
+    cmd_str = get_vshell_cmd('conf t ; no vlan 666')
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config')
+    cmd_str = get_vshell_cmd('show running-config')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [/vlan (\d+,)*666\D/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout, [/vlan (\d+,)*666\D/],
+                               true, self, logger)
     end
     logger.info("Setup switch for provider test :: #{result}")
   end
@@ -89,7 +86,7 @@ test_name "TestCase :: #{testheader}" do
                                                           ))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -100,14 +97,14 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check network_vlan resource on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       "resource network_vlan '666'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'ensure'    => 'present',
-                                            'shutdown'  => 'false',
-                                            'vlan_name' => 'somename' },
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'ensure'    => 'present',
+                                 'shutdown'  => 'false',
+                                 'vlan_name' => 'somename' },
+                               false, self, logger)
     end
 
     logger.info("Check network_vlan resource on agent :: #{result}")
@@ -117,15 +114,15 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check network_vlan settings on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config vlan')
+    cmd_str = get_vshell_cmd('show running-config vlan')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [
-                                            /vlan (\d+,)*666\D/,
-                                            /vlan 666/,
-                                            /  name somename/,
-                                          ],
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               [
+                                 /vlan (\d+,)*666\D/,
+                                 /vlan 666/,
+                                 /  name somename/,
+                               ],
+                               false, self, logger)
     end
 
     logger.info("Check network_vlan resource on agent :: #{result}")
@@ -141,7 +138,7 @@ test_name "TestCase :: #{testheader}" do
                                                           ))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -152,14 +149,14 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check network_vlan resource on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       "resource network_vlan '666'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'ensure'    => 'present',
-                                            'shutdown'  => 'true',
-                                            'vlan_name' => 'othername' },
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'ensure'    => 'present',
+                                 'shutdown'  => 'true',
+                                 'vlan_name' => 'othername' },
+                               false, self, logger)
     end
 
     logger.info("Check network_vlan resource on agent :: #{result}")
@@ -169,23 +166,23 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check network_vlan settings on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config')
+    cmd_str = get_vshell_cmd('show running-config')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [
-                                            /vlan (\d+,)*666\D/,
-                                            /vlan 666/,
-                                            /  name othername/,
-                                            /  shutdown/,
-                                          ],
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               [
+                                 /vlan (\d+,)*666\D/,
+                                 /vlan 666/,
+                                 /  name othername/,
+                                 /  shutdown/,
+                               ],
+                               false, self, logger)
     end
 
     logger.info("Check network_vlan resource on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

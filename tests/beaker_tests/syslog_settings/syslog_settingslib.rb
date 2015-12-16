@@ -45,7 +45,7 @@ module SyslogSettingLib
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_syslog_settings_manifest_milliseconds
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   syslog_settings {'default':
     time_stamp_units => 'milliseconds',
@@ -60,7 +60,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_syslog_settings_manifest_seconds
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     syslog_settings {'default':
       time_stamp_units => 'seconds',

@@ -57,9 +57,6 @@ testheader = 'tacacs_server Resource :: All Attributes Defaults'
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider' do
-    # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
-    UtilityLib.set_manifest_path(master, self)
-
     logger.info('Setup switch for provider')
   end
 
@@ -69,7 +66,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, TacacsServerLib.create_tacacs_server_manifest_present)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -80,19 +77,19 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check tacacs_server resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'resource tacacs_server 8.8.8.8', options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, { 'ensure' => 'present' },
-                                          false, self, logger)
-      UtilityLib.search_pattern_in_output(stdout, { 'key' => '44444444' },
-                                          false, self, logger)
-      UtilityLib.search_pattern_in_output(stdout, { 'key_format' => '7' },
-                                          false, self, logger)
-      UtilityLib.search_pattern_in_output(stdout, { 'port' => '48' },
-                                          false, self, logger)
-      UtilityLib.search_pattern_in_output(stdout, { 'timeout' => '2' },
-                                          false, self, logger)
+      search_pattern_in_output(stdout, { 'ensure' => 'present' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'key' => '44444444' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'key_format' => '7' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'port' => '48' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'timeout' => '2' },
+                               false, self, logger)
     end
 
     logger.info("Check tacacs_server resource presence on agent :: #{result}")
@@ -104,7 +101,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, TacacsServerLib.create_tacacs_server_manifest_present_change)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -115,19 +112,19 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check tacacs_server resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'resource tacacs_server 8.8.8.8', options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, { 'ensure' => 'present' },
-                                          false, self, logger)
-      UtilityLib.search_pattern_in_output(stdout, { 'key' => '44444444' },
-                                          false, self, logger)
-      UtilityLib.search_pattern_in_output(stdout, { 'key_format' => '7' },
-                                          false, self, logger)
-      UtilityLib.search_pattern_in_output(stdout, { 'port' => '47' },
-                                          false, self, logger)
-      UtilityLib.search_pattern_in_output(stdout, { 'timeout' => '3' },
-                                          false, self, logger)
+      search_pattern_in_output(stdout, { 'ensure' => 'present' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'key' => '44444444' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'key_format' => '7' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'port' => '47' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'timeout' => '3' },
+                               false, self, logger)
     end
 
     logger.info("Check tacacs_server resource presence on agent :: #{result}")
@@ -139,7 +136,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, TacacsServerLib.create_tacacs_server_manifest_absent)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -150,18 +147,18 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check tacacs_server resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'resource tacacs_server 8.8.8.8', options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, { 'ensure' => 'present' },
-                                          true, self, logger)
+      search_pattern_in_output(stdout, { 'ensure' => 'present' },
+                               true, self, logger)
     end
 
     logger.info("Check tacacs_server resource presence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")
