@@ -218,6 +218,7 @@ The following resources include cisco types and providers along with cisco provi
   
 * VXLAN Types
   * [`cisco_vxlan_global`](#type-cisco_vxlan_global)
+  * [`cisco_vni`](#type-cisco_vni)
 
 --
 ### <a name="resource-by-name">Cisco Resource Type Catalog (by Name)<a>
@@ -244,6 +245,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_vrf`](#type-cisco_vrf)
 * [`cisco_vtp`](#type-cisco_vtp)
 * [`cisco_vxlan_global`](#type-cisco_vxlan_global)
+* [`cisco_vni`](#type-cisco_vni)
 
 ### <a name="resource-by-name-netdev">NetDev StdLib Resource Type Catalog (by Name)<a>
 
@@ -1373,6 +1375,20 @@ The number of host moves allowed in n seconds. The range is 1 to 1000 moves; def
 
 ##### `dup_host_mac_detection_timeout`
 The duplicate detection timeout in seconds for the number of host moves. The range is 2 to 36000 seconds; default is 180 seconds.
+
+### Type: cisco_vni
+Manages Cisco VXLAN Network Identifier (VNI).
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `name`
+Instance of vni, valid value is integer.
+
+##### `mapped_vlan`
+VLAN ID mapped to the VNI. 
 
 --
 ### NetDev StdLib Resource Type Details
