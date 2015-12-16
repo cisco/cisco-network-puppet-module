@@ -96,7 +96,7 @@ Puppet::Type.newtype(:cisco_acl) do
     ]
   end
 
-  newparam(:afi) do
+  newparam(:afi, namevar: true) do
     desc 'The Address-Family Indentifier (ipv4|ipv6).'
     newvalues(:ipv4, :ipv6)
   end
