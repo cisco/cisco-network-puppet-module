@@ -59,9 +59,6 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 # -----------------------------
 testheader = 'Resource cisco_vni'
 
-# Define PUPPETMASTER_MANIFESTPATH.
-UtilityLib.set_manifest_path(master, self)
-
 # The 'tests' hash is used to define all of the test data values and expected
 # results. It is also used to pass optional flags to the test methods when
 # necessary.
@@ -102,13 +99,6 @@ tests = {
 #   :title_pattern will be set to 'id'.
 #
 
-tests['preclean'] = {
-  title_pattern:  '10000',
-  manifest_props: '',
-  code:           [0, 2],
-  resource_props: {},
-}
-
 # Default property testing doesn't apply here. mapped_vlan => 'default'
 # amounts to nothing as there is no default vlan to vni mapping
 
@@ -128,8 +118,8 @@ tests['non_default_properties'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = UtilityLib::PUPPET_BINPATH + 'resource cisco_vni'
-  UtilityLib.get_namespace_cmd(agent, cmd, options)
+  cmd = PUPPET_BINPATH + 'resource cisco_vni'
+  get_namespace_cmd(agent, cmd, options)
 end
 
 def build_manifest_vni(tests, id)
@@ -145,7 +135,7 @@ def build_manifest_vni(tests, id)
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
   logger.debug("build_manifest_vni :: title_pattern:\n" +
                tests[id][:title_pattern])
-  tests[id][:manifest] = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+  tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   node 'default' {
     cisco_vni { '#{tests[id][:title_pattern]}':
       #{state}
@@ -178,11 +168,8 @@ end
 #################################################################
 test_name "TestCase :: #{testheader}" do
   # -------------
-  id = 'preclean'
-  tests[id][:desc] = 'Preclean'
-  tests[id][:ensure] = :absent
-  test_harness_vni(tests, id)
-
+  resource_absent_cleanup(agent, 'cisco_vni',
+                          'Setup switch for cisco_vni provider test')
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Non Default Property Testing")
   id = 'non_default_properties'

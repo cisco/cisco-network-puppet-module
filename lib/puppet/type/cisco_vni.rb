@@ -1,4 +1,4 @@
-# Manages a Cisco VNI.
+# Manages a Cisco VXLAN Network Identifier (VNI).
 #
 # December 2015
 #
@@ -17,7 +17,7 @@
 # limitations under the License.
 
 Puppet::Type.newtype(:cisco_vni) do
-  @doc = "Manages a Cisco VNI.
+  @doc = "Manages a Cisco VXLAN Network Identifiew (VNI).
 
   cisco_vni {\"<vni>\":
     ..attributes..
@@ -53,14 +53,6 @@ Puppet::Type.newtype(:cisco_vni) do
 
   newparam(:vni, namevar: true) do
     desc 'ID of the Virtual Network Identifier. Valid values are integer.'
-
-    validate do |id|
-      valid_ids = *(4096..1_677_721_5)
-
-      unless valid_ids.include?(id.to_i)
-        fail('ID is not in the valid range.')
-      end # if
-    end
   end # param id
 
   ##############
@@ -70,7 +62,7 @@ Puppet::Type.newtype(:cisco_vni) do
   ensurable
 
   newproperty(:mapped_vlan) do
-    desc 'ID of the VLAN mapped to teh VNI. Valid values are integer.'
+    desc 'Thee VLAN id that is mapped to the VNI. Valid values are integer.'
     # Keyword 'default' is not supported as there is no default mapping
     # between a vni and vlan
     munge do |value|
