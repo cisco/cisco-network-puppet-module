@@ -31,15 +31,6 @@ Puppet::Type.type(:cisco_acl).provide(:nxapi) do
 
   mk_resource_methods
 
-  # -----------------------------------------------------------------------
-  # TEMPLATE STEP 1. Add property names to the *_PROPS arrays. The AutoGen
-  #          code will dynamically create getter & setter methods for each
-  #          property in the arrays. Some multi-value properties like
-  #          ip_address/masklen will require customer getters & setters.
-  #          See existing providers for example code.
-  # -----------------------------------------------------------------------
-  # Property symbol arrays for method auto-generation. There are separate arrays
-  # because the boolean-based methods are processed slightly different.
   ACL_NON_BOOL_PROPS = [
     :fragments
   ]
@@ -59,27 +50,23 @@ Puppet::Type.type(:cisco_acl).provide(:nxapi) do
     super(value)
     afi = @property_hash[:afi]
     acl_name = @property_hash[:acl_name]
-    # puts "PUP: init: afi: #{afi} name: #{acl_name}"
     @acl = Cisco::Acl.acls[afi][acl_name] unless afi.nil?
     @property_flush = {}
   end
 
   def self.properties_get(afi, acl, inst)
-    # puts "\nPUP: Checking instance: #{afi} #{acl} <-------<<"
     current_state = {
-      name:   "#{afi} #{acl}",
-      afi: afi,
+      name:     "#{afi} #{acl}",
+      afi:      afi,
       acl_name: acl,
-      ensure: :present,
+      ensure:   :present,
     }
     # Call node_utils getter for each property
     ACL_NON_BOOL_PROPS.each do |prop|
-      # puts "PUP: prop_get:  #{prop} = >#{inst.send(prop)}" 
       current_state[prop] = inst.send(prop)
     end
 
     ACL_BOOL_PROPS.each do |prop|
-      # puts "PUP: prop_get:  #{prop} = >#{inst.send(prop)}" 
       val = inst.send(prop)
       if val.nil?
         current_state[prop] = nil
@@ -94,7 +81,6 @@ Puppet::Type.type(:cisco_acl).provide(:nxapi) do
   def self.instances
     instance_array = []
     Cisco::Acl.acls.each do |afi, acls|
-      # puts "Acl WALK: afi: #{afi}"
       acls.each do |acl, inst|
         begin
           instance_array << properties_get(afi, acl, inst)
@@ -147,7 +133,6 @@ Puppet::Type.type(:cisco_acl).provide(:nxapi) do
       if @acl.nil?
         # create new
         new_instance = true
-        # puts "FLUSH: #{@resource[:afi]}, #{@resource[:acl_name]}"
         @acl = Cisco::Acl.new(@resource[:afi], @resource[:acl_name])
       end
       properties_set(new_instance)

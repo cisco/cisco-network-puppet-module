@@ -17,28 +17,50 @@
 
 Puppet::Type.newtype(:cisco_acl) do
   # ---------------------------------------------------------------
-  # STEP 1. Create a @doc entry to describe the resource and usage
+  # @doc entry to describe the resource and usage
   # ---------------------------------------------------------------
-  @doc = "Manages configuration of a acl instance
+  @doc = "Manages configuration of an acl instance
 
-  ```
+  ~~~puppet
   cisco_acl {'<string>':
     ..attributes..
   }
-  ```
+  ~~~
 
   `<string>` is the name of the acl instance.
 
   Example:
 
-  ```
-    cisco_acl { 'ipv4 foo' :
-      ensure => present,
+  ~~~puppet
+    cisco_acl { 'ipv4 my_acl' :
+      ensure          => present,
       stats_per_entry => false,
-      fragments => 'permit'
+      fragments       => 'permit'
     }
+  ~~~
 
-  ```
+  Example Title Patterns
+
+  ~~~puppet
+    cisco_acl { 'new_york' :
+      ensure          => present,
+      afi             => 'ipv4',
+      acl_name        => 'my_acl'
+    }
+  ~~~
+
+  ~~~puppet
+    cisco_acl { 'ipv4' :
+      ensure          => present,
+      acl_name        => 'my_acl'
+    }
+  ~~~
+
+  ~~~puppet
+    cisco_acl { 'ipv4 my_acl' :
+      ensure          => present,
+    }
+  ~~~
   "
 
   ensurable
@@ -51,21 +73,32 @@ Puppet::Type.newtype(:cisco_acl) do
   # These attributes may be overwritten later.
   def self.title_patterns
     identity = ->(x) { x }
-    patterns = []
-
-    # Below pattern matches the resource name.
-    patterns << [
-      /^(\S+)\s+(\S+)$/,
+    [
       [
-        [:afi, identity],
-        [:acl_name, identity]
+        /^(ipv4|ipv6)$/,
+        [
+          [:afi, identity]
+        ],
+      ],
+      [
+        /^(\S+)\s+(\S+)$/,
+        [
+          [:afi, identity],
+          [:acl_name, identity],
+        ],
+      ],
+      [
+        /^(\S+)$/,
+        [
+          [:acl_name, identity]
+        ],
       ],
     ]
-    patterns
   end
 
   newparam(:afi) do
-    desc 'Whether it ACL is ipv4 ACL or ipv6 ACL'
+    desc 'The Address-Family Indentifier (ipv4|ipv6).'
+    newvalues(:ipv4, :ipv6)
   end
 
   newparam(:acl_name, namevar: true) do
@@ -82,11 +115,11 @@ Puppet::Type.newtype(:cisco_acl) do
   end
 
   # ---------------------------------------------------------------
-  # STEP 3. Define any properties.
+  # Definition of properties.
   # ---------------------------------------------------------------
 
   newproperty(:stats_per_entry) do
-    desc 'per-entry statistics enabled stats for the acl.'
+    desc 'Enable per-entry statistics for the acl.'
     newvalues(:true, :false)
   end
 
@@ -97,7 +130,5 @@ Puppet::Type.newtype(:cisco_acl) do
       value = :default if value == 'default'
       value
     end
-
-    #newvalues(:permit, :deny, :default)
   end
 end

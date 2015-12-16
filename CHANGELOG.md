@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 #### NetDev Resources.
 - search_domain provider.
 - network_trunk provider.
+- cisco_acl type and provider
 
 ### Added
 - Extended cisco_bgp with the following attributes:

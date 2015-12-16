@@ -15,7 +15,7 @@
 ###############################################################################
 # TestCase Name:
 # -------------
-# test-acl.rb
+# test_acl.rb
 #
 # TestCase Prerequisites:
 # -----------------------
@@ -109,11 +109,11 @@ tests['default_properties_ipv4'] = {
   title_pattern:  'ipv4 beaker1',
   manifest_props: "
     stats_per_entry                  => 'false',
-    fragments                       => 'default',
+    fragments                        => 'default',
   ",
   resource_props: {
     'stats_per_entry' => 'false',
-    'fragments'      => '',
+    'fragments'       => '',
   },
 }
 
@@ -121,11 +121,11 @@ tests['default_properties_ipv6'] = {
   title_pattern:  'ipv6 beaker_2',
   manifest_props: "
     stats_per_entry                  => 'false',
-    fragments                       => 'default',
+    fragments                        => 'default',
   ",
   resource_props: {
     'stats_per_entry' => 'false',
-    'fragments'      => '',
+    'fragments'       => '',
   },
 }
 
@@ -133,11 +133,11 @@ tests['non_default_properties_ipv4'] = {
   title_pattern:  'ipv4 beaker_3',
   manifest_props: "
     stats_per_entry                  => 'true',
-    fragments                       => 'permit-all',
+    fragments                        => 'permit-all',
   ",
   resource_props: {
     'stats_per_entry' => 'true',
-    'fragments'      => 'permit-all',
+    'fragments'       => 'permit-all',
   },
 }
 
@@ -145,14 +145,24 @@ tests['non_default_properties_ipv6'] = {
   title_pattern:  'ipv6 beaker_4',
   manifest_props: "
     stats_per_entry                  => 'true',
-    fragments                       => 'deny-all',
+    fragments                        => 'deny-all',
   ",
   resource_props: {
     'stats_per_entry' => 'true',
-    'fragments'      => 'deny-all',
+    'fragments'       => 'deny-all',
   },
 }
 
+tests['title_patterns'] = {
+  manifest_props: "
+    stats_per_entry                  => 'false',
+    fragments                        => 'default',
+  ",
+  resource_props: {
+    'stats_per_entry' => 'false',
+    'fragments'       => '',
+  },
+}
 
 #################################################################
 # HELPER FUNCTIONS
@@ -195,12 +205,7 @@ def test_harness_acl(tests, id)
   # Build the manifest for this test
   build_manifest_acl(tests, id)
 
-  # FUTURE
-  # test_harness_common(tests, id)
-
-  test_manifest(tests, id)
-  test_resource(tests, id)
-  test_idempotence(tests, id)
+  test_harness_common(tests, id)
 
   tests[id][:ensure] = nil
 end
@@ -251,21 +256,25 @@ test_name "TestCase :: #{testheader}" do
   test_harness_acl(tests, id)
 
   # -------------------------------------------------------------------
-  # FUTURE
   # logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
-  # node_feature_cleanup(agent, 'acl')
 
-  # id = 'title_patterns'
-  # tests[id][:desc] = '3.1 Title Patterns'
-  # tests[id][:title_pattern] = '2'
-  # tests[id][:af] = { :vrf => 'default', :afi => 'ipv4', :safi => 'unicast' }
-  # test_harness_acl(tests, id)
+  id = 'title_patterns'
+  tests[id][:desc] = '3.1 Title Patterns'
+  tests[id][:title_pattern] = 'ipv4'
+  tests[id][:acl_name] = 'title_ipv4_beaker'
+  test_harness_acl(tests, id)
 
-  # id = 'title_patterns'
-  # tests[id][:desc] = '3.2 Title Patterns'
-  # tests[id][:title_pattern] = '2 blue'
-  # tests[id][:af] = { :afi => 'ipv4', :safi => 'unicast' }
-  # test_harness_acl(tests, id)
+  id = 'title_patterns'
+  tests[id][:desc] = '3.2 Title Patterns'
+  tests[id][:title_pattern] = 'ipv6'
+  tests[id][:acl_name] = 'title_ipv4_beaker'
+  test_harness_acl(tests, id)
+
+  id = 'title_patterns'
+  tests[id][:desc] = '3.3 Title Patterns'
+  tests[id][:title_pattern] = 'title_beaker'
+  tests[id][:afi] = 'ipv4'
+  test_harness_acl(tests, id)
 end
 
 logger.info('TestCase :: # {testheader} :: End')

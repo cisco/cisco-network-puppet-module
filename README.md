@@ -149,6 +149,9 @@ The following resources include cisco types and providers along with cisco provi
 * Miscellaneous Types
   * [`cisco_command_config`](#type-cisco_command_config)
 
+* ACL Types
+  * [`cisco_acl`](#type-cisco_acl)
+
 * BGP Types
   * [`cisco_vrf`](#type-cisco_vrf)
   * [`cisco_bgp`](#type-cisco_bgp)
@@ -215,6 +218,7 @@ The following resources include cisco types and providers along with cisco provi
 ### <a name="resource-by-name">Cisco Resource Type Catalog (by Name)<a>
 
 * [`cisco_command_config`](#type-cisco_command_config)
+* [`cisco_acl`](#type-cisco_acl)
 * [`cisco_bgp`](#type-cisco_bgp)
 * [`cisco_bgp_af`](#type-cisco_bgp_af)
 * [`cisco_bgp_neighbor`](#type-cisco_bgp_neighbor)
@@ -283,6 +287,28 @@ This provider allows raw configurations to be managed by Puppet. It serves as a 
 * Negating a submode will also remove configuratons under that submode, without having to specify every submode config statement: `no router ospf RED` removes all configuration under router ospf RED.
 * Syntax does not auto-complete: use `Ethernet1/1`, not `Eth1/1`.
 * If a CLI command is rejected during configuration, the resource will abort at that point and will not issue any remaining CLI. For this reason, we recommend limiting the scope of each instance of this resource.
+
+--
+### Type: cisco_acl                                                                                                   
+
+Manages configuration of a ACL instance.                                                                              
+
+#### Parameters                                                                                                       
+
+##### `ensure`
+Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
+
+##### `afi`
+Address Family Identifier (AFI). Required. Valid values are ipv4 and ipv6.
+
+##### `acl_name`
+Name of the acl instance. Valid values are string.
+
+##### `stats_per_entry`
+Enable/disable Statistics Per Entry for ACL. Valid values are true, false, keyword 'default'.
+
+##### `fragments`
+Permit or deny Fragments for ACL. Valid values are 'permit-all' and 'deny-all'
 
 --
 ### Type: cisco_bgp
