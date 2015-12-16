@@ -217,8 +217,8 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_vrf`](#type-cisco_vrf)
   
 * VXLAN Types
-  * [`cisco_vxlan_global`](#type-cisco_vxlan_global)
   * [`cisco_vni`](#type-cisco_vni)
+  * [`cisco_vxlan_global`](#type-cisco_vxlan_global)
 
 --
 ### <a name="resource-by-name">Cisco Resource Type Catalog (by Name)<a>
@@ -242,10 +242,10 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_tacacs_server`](#type-cisco_tacacs_server)
 * [`cisco_tacacs_server_host`](#type-cisco_tacacs_server_host)
 * [`cisco_vlan`](#type-cisco_vlan)
+* [`cisco_vni`](#type-cisco_vni)
 * [`cisco_vrf`](#type-cisco_vrf)
 * [`cisco_vtp`](#type-cisco_vtp)
 * [`cisco_vxlan_global`](#type-cisco_vxlan_global)
-* [`cisco_vni`](#type-cisco_vni)
 
 ### <a name="resource-by-name-netdev">NetDev StdLib Resource Type Catalog (by Name)<a>
 
@@ -1349,6 +1349,21 @@ VTP file name. Valid values are a string or the keyword 'default'.
 Password for the VTP domain. Valid values are a string or the keyword 'default'.
 
 --
+### Type: cisco_vni
+Manages the VNI (VXLAN Network Identifier) configuration of a Cisco device.
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `name`
+Instance of vni, valid value is integer.
+
+##### `mapped_vlan`
+The VLAN ID that will map to the VNI. 
+
+--
 ### Type: cisco_vxlan_global
 Handles the detection of duplicate IP or MAC addresses based on the number of moves in a given time-interval (seconds).
 Also configures anycast gateway MAC of the switch.
@@ -1375,20 +1390,6 @@ The number of host moves allowed in n seconds. The range is 1 to 1000 moves; def
 
 ##### `dup_host_mac_detection_timeout`
 The duplicate detection timeout in seconds for the number of host moves. The range is 2 to 36000 seconds; default is 180 seconds.
-
-### Type: cisco_vni
-Manages Cisco VXLAN Network Identifier (VNI).
-
-#### Parameters
-
-##### `ensure`
-Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
-
-##### `name`
-Instance of vni, valid value is integer.
-
-##### `mapped_vlan`
-VLAN ID mapped to the VNI. 
 
 --
 ### NetDev StdLib Resource Type Details
