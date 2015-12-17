@@ -1,5 +1,6 @@
-# Manifest to demo cisco_vxlan_global provider
-#
+# Manifest to demo VXLAN providers:
+# 1. cisco_vxlan_global
+# 2. cisco_vni
 # Copyright (c) 2014-2015 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,14 +15,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet::demo_vxlan_global {
+class ciscopuppet::demo_vxlan {
   cisco_vxlan_global { 'default':
     ensure                                => present,
-    dup_host_ip_addr_detection_host_moves => 7,
-    dup_host_ip_addr_detection_timeout    => 170,
-    anycast_gateway_mac                   => '1234.3456.5678',
-    dup_host_mac_detection_host_moves     => 7,
-    dup_host_mac_detection_timeout        => 170,
+    dup_host_ip_addr_detection_host_moves => '100',
+    dup_host_ip_addr_detection_timeout    => '10',
+    anycast_gateway_mac                   => '1234.4567.6789',
+    dup_host_mac_detection_host_moves     => '100',
+    dup_host_mac_detection_timeout        => '10',
+  }
+
+  cisco_vni { '10001':
+    ensure      => present,
+    mapped_vlan => '101',
   }
 }
 

@@ -17,7 +17,7 @@
 # limitations under the License.
 
 Puppet::Type.newtype(:cisco_vni) do
-  @doc = "Manages a Cisco VXLAN Network Identifiew (VNI).
+  @doc = "Manages a Cisco VXLAN Network Identifier (VNI).
 
   cisco_vni {\"<vni>\":
     ..attributes..
