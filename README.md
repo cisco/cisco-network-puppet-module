@@ -1429,7 +1429,7 @@ Creates a VXLAN Network Virtualization Endpoint (NVE) overlay interface that ter
 Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
 
 ##### `description`
-Description of the NVE interface.  Valid values are string, and keyword 'default'.
+Description of the NVE interface.  Valid values are string, or keyword 'default'.
 
 ##### `host_reachability`
 Specify mechanism for host reachability advertisement. Valid values are 'evpn', 'flood' or keyword 'default'.
