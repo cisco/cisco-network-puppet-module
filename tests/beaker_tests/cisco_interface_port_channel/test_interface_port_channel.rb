@@ -213,6 +213,10 @@ test_name "TestCase :: #{testheader}" do
   id = 'non_default_properties'
   tests[id][:desc] = '2.1 Non Default Properties'
   test_harness_interface_port_channel(tests, id)
+
+  tests[id][:desc] = '2.2 Non Default Properties (absent)'
+  tests[id][:ensure] = :absent
+  test_harness_interface_port_channel(tests, id)
 end
 
 logger.info("TestCase :: #{testheader} :: End")
