@@ -219,8 +219,10 @@ The following resources include cisco types and providers along with cisco provi
 * VRF Type
   * [`cisco_vrf`](#type-cisco_vrf)
 
+* VNI Type
+   * [`cisco_vni`](#type-cisco_vni)
+
 * VXLAN Types
-  * [`cisco_vni`](#type-cisco_vni)
   * [`cisco_vxlan_global`](#type-cisco_vxlan_global)
   * [`cisco_vxlan_vtep`](#type-cisco_vxlan_vtep)
 
@@ -1378,7 +1380,7 @@ Password for the VTP domain. Valid values are a string or the keyword 'default'.
 
 --
 ### Type: cisco_vni
-Manages the VNI (VXLAN Network Identifier) configuration of a Cisco device.
+Manages the VNI (Virtual Network Identifier) configuration of a Cisco device.
 
 #### Parameters
 
