@@ -29,5 +29,13 @@ class ciscopuppet::demo_vxlan {
     ensure      => present,
     mapped_vlan => '101',
   }
+
+  cisco_vxlan_vtep { 'nve1':
+    ensure             => present,
+    description        => 'Configured by Puppet',
+    host_reachability  => 'evpn',
+    shutdown           => 'false',
+    source_interface   => 'loopback55',
+  }
 }
 
