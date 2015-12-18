@@ -28,7 +28,7 @@ class ciscopuppet::demo_vxlan {
     ensure             => present,
     description        => 'Configured by Puppet',
     host_reachability  => 'evpn',
-    shutdown           => false,
+    shutdown           => 'false',
     source_interface   => 'loopback55',
   }
 }

@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `cisco_aaa_group_tacacs` type and provider.
 - `cisco_vni` type and provider.
 - `cisco_vxlan_global` type and provider.
+- `cisco_vxlan_vtep` type and provider.
 
 #### NetDev Resources
 - `search_domain` provider.

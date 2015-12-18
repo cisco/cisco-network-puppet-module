@@ -219,6 +219,7 @@ The following resources include cisco types and providers along with cisco provi
 * VXLAN Types
   * [`cisco_vni`](#type-cisco_vni)
   * [`cisco_vxlan_global`](#type-cisco_vxlan_global)
+  * [`cisco_vxlan_vtep`](#type-cisco_vxlan_vtep)
 
 --
 ### <a name="resource-by-name">Cisco Resource Type Catalog (by Name)<a>
@@ -246,6 +247,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_vrf`](#type-cisco_vrf)
 * [`cisco_vtp`](#type-cisco_vtp)
 * [`cisco_vxlan_global`](#type-cisco_vxlan_global)
+* [`cisco_vxlan_vtep`](#type-cisco_vxlan_vtep)
 
 ### <a name="resource-by-name-netdev">NetDev StdLib Resource Type Catalog (by Name)<a>
 
@@ -1390,6 +1392,27 @@ The number of host moves allowed in n seconds. The range is 1 to 1000 moves; def
 
 ##### `dup_host_mac_detection_timeout`
 The duplicate detection timeout in seconds for the number of host moves. The range is 2 to 36000 seconds; default is 180 seconds.
+
+--
+### Type: cisco_vxlan_vtep
+Creates a VXLAN Network Virtualization Endpoint (NVE) overlay interface that terminates VXLAN tunnels.
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `description`
+Description of the NVE interface.  Valid values are string, and keyword 'default'.
+
+##### `host_reachability`
+Specify mechanism for host reachability advertisement. Valid values are 'evpn', 'flood' or keyword 'default'.
+
+##### `shutdown`
+Administratively shutdown the NVE interface. Valid values are true, false or keyword 'default'.
+
+##### `source_interface`
+Specify the loopback interface whose IP address should be used for the NVE interface. Valid values are string or keyword 'default'.
 
 --
 ### NetDev StdLib Resource Type Details
