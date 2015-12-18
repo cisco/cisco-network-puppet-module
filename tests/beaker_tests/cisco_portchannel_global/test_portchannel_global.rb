@@ -143,6 +143,76 @@ tests['non_default_properties'] = {
   },
 }
 
+tests['default_properties_n6k'] = {
+  title_pattern:  'default',
+  manifest_props: "
+    bundle_hash                  => 'default',
+    bundle_select                => 'default',
+    hash_poly                    => 'default',
+  ",
+  code:           [0, 2],
+  resource_props: {
+    'bundle_hash'                => 'ip',
+    'bundle_select'              => 'src-dst',
+    'hash_poly'                  => 'CRC10b',
+  },
+}
+
+tests['non_default_properties_n6k'] = {
+  title_pattern:  'default',
+  manifest_props: "
+    bundle_hash                  => 'mac',
+    bundle_select                => 'dst',
+    hash_poly                    => 'CRC10c',
+  ",
+  resource_props: {
+    'bundle_hash'                => 'mac',
+    'bundle_select'              => 'dst',
+    'hash_poly'                  => 'CRC10c',
+  },
+}
+
+tests['default_properties_n9k'] = {
+  title_pattern:  'default',
+  manifest_props: "
+    bundle_hash                  => 'default',
+    bundle_select                => 'default',
+    concatenation                => 'default',
+    resilient                    => 'default',
+    rotate                       => 'default',
+    symmetry                     => 'default',
+  ",
+  code:           [0, 2],
+  resource_props: {
+    'bundle_hash'                => 'ip-l4port',
+    'bundle_select'              => 'src-dst',
+    'concatenation'              => 'false',
+    'resilient'                  => 'false',
+    'rotate'                     => '0',
+    'symmetry'                   => 'false',
+  },
+}
+
+tests['non_default_properties_n9k'] = {
+  title_pattern:  'default',
+  manifest_props: "
+    bundle_hash                  => 'ip',
+    bundle_select                => 'src-dst',
+    concatenation                => 'true',
+    resilient                    => 'true',
+    rotate                       => '4',
+    symmetry                     => 'true',
+  ",
+  resource_props: {
+    'bundle_hash'                => 'ip',
+    'bundle_select'              => 'src-dst',
+    'concatenation'              => 'true',
+    'resilient'                  => 'true',
+    'rotate'                     => '4',
+    'symmetry'                   => 'true',
+  },
+}
+
 #################################################################
 # HELPER FUNCTIONS
 #################################################################
@@ -201,7 +271,7 @@ test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
-  id = 'default_properties'
+  id = 'default_properties_n9k'
   tests[id][:desc] = '1.1 Default Properties'
   test_harness_portchannel_global(tests, id)
 
@@ -209,7 +279,7 @@ test_name "TestCase :: #{testheader}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  id = 'non_default_properties'
+  id = 'non_default_properties_n9k'
   tests[id][:desc] = '2.1 Non Default Properties'
   test_harness_portchannel_global(tests, id)
 

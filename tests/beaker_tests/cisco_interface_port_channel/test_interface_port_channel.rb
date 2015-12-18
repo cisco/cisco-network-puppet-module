@@ -112,6 +112,7 @@ tests['default_properties'] = {
     port_hash_distribution        => 'default',
     port_load_defer               => 'default',
   ",
+  code:           [0, 2],
   resource_props: {
     'lacp_graceful_convergence' => 'true',
     'lacp_max_bundle'           => '16',
