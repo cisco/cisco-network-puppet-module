@@ -41,7 +41,7 @@ module TacacsLib
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_tacacs_manifest
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   tacacs { 'default':
     enable              => true,
@@ -56,7 +56,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_tacacs_manifest_change_disabled
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   tacacs { 'default':
     enable  => false,

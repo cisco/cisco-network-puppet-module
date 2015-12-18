@@ -54,7 +54,7 @@ Puppet::Type.type(:cisco_aaa_group_tacacs).provide(:nxapi) do
         deadtime:         group.deadtime,
         vrf_name:         group.vrf,
         source_interface: group.source_interface.downcase,
-        server_hosts:     group.servers.keys)
+        server_hosts:     group.servers)
     end
     instances
   end
@@ -165,7 +165,7 @@ Puppet::Type.type(:cisco_aaa_group_tacacs).provide(:nxapi) do
               deadtime: #{@aaa_group.deadtime}
               vrf_name: #{@aaa_group.vrf}
       source_interface: #{@aaa_group.source_interface}
-          server_hosts: #{@aaa_group.servers.keys}
+          server_hosts: #{@aaa_group.servers}
     "
   end
 end

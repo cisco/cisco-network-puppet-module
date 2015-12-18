@@ -142,7 +142,7 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 
 ## <a name ="resource-reference">Resource Reference<a>
 
-The following resources include cisco types and providers along with cisco provider support for netdev stdlib types.  Installing the `ciscopuppet` module will install both the `ciscopuppet` and `netdev_stdlib` modules. 
+The following resources include cisco types and providers along with cisco provider support for netdev stdlib types.  Installing the `ciscopuppet` module will install both the `ciscopuppet` and `netdev_stdlib` modules.
 
 ### <a name="resource-by-tech">Resource Type Catalog (by Technology)<a>
 
@@ -153,6 +153,9 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_aaa_authentication_login`](#type-cisco_aaa_authentication_login)
   * [`cisco_aaa_authorization_login_cfg_svc`](#type-cisco_aaa_authorization_login_cfg_svc)
   * [`cisco_aaa_group_tacacs`](#type-cisco_aaa_group_tacacs)
+
+* ACL Types
+  * [`cisco_acl`](#type-cisco_acl)
 
 * BGP Types
   * [`cisco_vrf`](#type-cisco_vrf)
@@ -215,8 +218,9 @@ The following resources include cisco types and providers along with cisco provi
 
 * VRF Type
   * [`cisco_vrf`](#type-cisco_vrf)
-  
+
 * VXLAN Types
+  * [`cisco_vni`](#type-cisco_vni)
   * [`cisco_vxlan_global`](#type-cisco_vxlan_global)
 
 --
@@ -226,6 +230,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_aaa_authentication_login`](#type-cisco_aaa_authentication_login)
 * [`cisco_aaa_authorization_login_cfg_svc`](#type-cisco_aaa_authorization_login_cfg_svc)
 * [`cisco_aaa_group_tacacs`](#type-cisco_aaa_group_tacacs)
+* [`cisco_acl`](#type-cisco_acl)
 * [`cisco_bgp`](#type-cisco_bgp)
 * [`cisco_bgp_af`](#type-cisco_bgp_af)
 * [`cisco_bgp_neighbor`](#type-cisco_bgp_neighbor)
@@ -241,6 +246,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_tacacs_server`](#type-cisco_tacacs_server)
 * [`cisco_tacacs_server_host`](#type-cisco_tacacs_server_host)
 * [`cisco_vlan`](#type-cisco_vlan)
+* [`cisco_vni`](#type-cisco_vni)
 * [`cisco_vrf`](#type-cisco_vrf)
 * [`cisco_vtp`](#type-cisco_vtp)
 * [`cisco_vxlan_global`](#type-cisco_vxlan_global)
@@ -366,6 +372,28 @@ Source interface for TACACS+ servers in this TACACS+ server group Valid values a
 Specifies the virtual routing and forwarding instance (VRF) to use to contact this TACACS server group. Valid values are string, the keyword 'default'.
 
 --
+### Type: cisco_acl
+
+Manages configuration of a ACL instance.
+
+#### Parameters
+
+##### `ensure`
+Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
+
+##### `afi`
+Address Family Identifier (AFI). Required. Valid values are ipv4 and ipv6.
+
+##### `acl_name`
+Name of the acl instance. Valid values are string.
+
+##### `stats_per_entry`
+Enable/disable Statistics Per Entry for ACL. Valid values are true, false, keyword 'default'.
+
+##### `fragments`
+Permit or deny Fragments for ACL. Valid values are 'permit-all' and 'deny-all'
+
+--
 ### Type: cisco_bgp
 
 Manages configuration of a BGP instance.
@@ -413,7 +441,7 @@ Specify Maximum number of AS numbers allowed in the AS-path attribute. Valid val
 
 ##### `neighbor_down_fib_accelerate`
 Enable/Disable handle BGP neighbor down event, due to various reasons. Valid values are 'true', 'false', and 'default'.
- 
+
 ##### `shutdown`
 Administratively shutdown the BGP protocol. Valid values are 'true', 'false', and 'default'.
 
@@ -708,7 +736,7 @@ Specify the password for neighbor. Valid value is string.
 Specify the encryption type the password will use. Valid values are 'cleartext', '3des' or 'cisco_type_7' encryption, and 'default',which defaults to 'cleartext'.
 
 ##### `remote_as`
-Specify Autonomous System Number of the neighbor. Valid values are String or Integer in ASPLAIN or ASDOT notation, or 'default', which means not to configure it. 
+Specify Autonomous System Number of the neighbor. Valid values are String or Integer in ASPLAIN or ASDOT notation, or 'default', which means not to configure it.
 
 ##### `remove_private_as`
 Specify the config to remove private AS number from outbound updates. Valid  values are 'enable' to enable this config, 'disable' to disable this config, 'all' to remove all private AS number, or 'replace-as', to replace the private AS number.
@@ -739,7 +767,7 @@ Manages configuration of a BGP Neighbor Address-family instance.
 #### Parameters
 
 ###### `ensure`
-Determine whether the neighbor address family config should be present or not. 
+Determine whether the neighbor address family config should be present or not.
 Valid values are 'present' and 'absent'.
 
 ##### `asn`
@@ -1347,6 +1375,21 @@ VTP file name. Valid values are a string or the keyword 'default'.
 Password for the VTP domain. Valid values are a string or the keyword 'default'.
 
 --
+### Type: cisco_vni
+Manages the VNI (VXLAN Network Identifier) configuration of a Cisco device.
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `name`
+Instance of vni, valid value is integer.
+
+##### `mapped_vlan`
+The VLAN ID that will map to the VNI.
+
+--
 ### Type: cisco_vxlan_global
 Handles the detection of duplicate IP or MAC addresses based on the number of moves in a given time-interval (seconds).
 Also configures anycast gateway MAC of the switch.
@@ -1547,8 +1590,7 @@ Encryption key format [0-7].  Valid value is an integer.
 
 ### Type: search_domain
 
-Configure the search domain of the device. Note that this type is functionally equivalent to 
-the netdev_stdlib domain_name type.
+Configure the search domain of the device. Note that this type is functionally equivalent to the netdev_stdlib domain_name type.
 
 #### Parameters
 

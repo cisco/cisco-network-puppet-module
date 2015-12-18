@@ -45,7 +45,7 @@ module NtpConfigLib
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_ntp_config_manifest_set
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   ntp_config {'default':
     source_interface => 'ethernet2/1',
@@ -60,7 +60,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_ntp_config_manifest_unset
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     ntp_config {'default':
       source_interface => 'unset',
