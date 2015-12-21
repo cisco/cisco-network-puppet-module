@@ -52,12 +52,13 @@
 #
 ###############################################################################
 
-require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-
 # -----------------------------
 # Common settings and variables
 # -----------------------------
 testheader = 'Resource cisco_acl'
+
+# Define PUPPETMASTER_MANIFESTPATH.
+UtilityLib.set_manifest_path(master, self)
 
 # The 'tests' hash is used to define all of the test data values and expected
 # results. It is also used to pass optional flags to the test methods when
@@ -103,7 +104,7 @@ tests = {
 #   title/af manifests
 #
 tests['default_properties_ipv4'] = {
-  title_pattern:  'ipv4 beaker1',
+  title_pattern:  'ipv4 beaker_1',
   manifest_props: "
     stats_per_entry                  => 'false',
     fragments                        => 'default',
@@ -150,12 +151,31 @@ tests['non_default_properties_ipv6'] = {
   },
 }
 
-tests['title_patterns'] = {
-  manifest_props: "
+tests['title_patterns_afi_only'] = {
+  manifest_props:        "
+    acl_name                         => 'beaker_afi_only',
     stats_per_entry                  => 'false',
     fragments                        => 'default',
   ",
-  resource_props: {
+  manifest_props_absent: "
+    acl_name                         => 'beaker_afi_only',
+  ",
+  resource_props:        {
+    'stats_per_entry' => 'false',
+    'fragments'       => '',
+  },
+}
+
+tests['title_patterns_acl_name_only'] = {
+  manifest_props:        "
+    afi                              => 'ipv4',
+    stats_per_entry                  => 'false',
+    fragments                        => 'default',
+  ",
+  manifest_props_absent: "
+    afi                              => 'ipv4',
+  ",
+  resource_props:        {
     'stats_per_entry' => 'false',
     'fragments'       => '',
   },
@@ -167,13 +187,14 @@ tests['title_patterns'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = PUPPET_BINPATH + 'resource cisco_acl'
-  get_namespace_cmd(agent, cmd, options)
+  cmd = UtilityLib::PUPPET_BINPATH + 'resource cisco_acl'
+  UtilityLib.get_namespace_cmd(agent, cmd, options)
 end
 
 def build_manifest_acl(tests, id)
   if tests[id][:ensure] == :absent
     state = 'ensure => absent,'
+    manifest = tests[id][:manifest_props_absent]
     tests[id][:resource] = {}
   else
     state = 'ensure => present,'
@@ -184,7 +205,7 @@ def build_manifest_acl(tests, id)
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
   logger.debug("build_manifest_acl :: title_pattern:\n" +
                tests[id][:title_pattern])
-  tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+  tests[id][:manifest] = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
   node 'default' {
     cisco_acl { '#{tests[id][:title_pattern]}':
       #{state}
@@ -255,29 +276,32 @@ test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
   # logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
 
-  id = 'title_patterns'
+  id = 'title_patterns_afi_only'
   tests[id][:desc] = '3.1 Title Patterns'
   tests[id][:title_pattern] = 'ipv4'
-  tests[id][:acl_name] = 'title_ipv4_beaker'
   test_harness_acl(tests, id)
 
-  id = 'title_patterns'
   tests[id][:desc] = '3.2 Title Patterns'
+  tests[id][:ensure] = :absent
+  test_harness_acl(tests, id)
+
+  id = 'title_patterns_afi_only'
+  tests[id][:desc] = '3.4 Title Patterns'
   tests[id][:title_pattern] = 'ipv6'
-  tests[id][:acl_name] = 'title_ipv4_beaker'
   test_harness_acl(tests, id)
 
-  id = 'title_patterns'
-  tests[id][:desc] = '3.3 Title Patterns'
-  tests[id][:title_pattern] = 'title_beaker'
-  tests[id][:afi] = 'ipv4'
+  tests[id][:desc] = '3.4 Title Patterns'
+  tests[id][:ensure] = :absent
   test_harness_acl(tests, id)
 
-  # id = 'title_patterns'
-  # tests[id][:desc] = '3.4 Title Patterns'
-  # tests[id][:title_pattern] = 'ipv4 my_acl'
-  # tests[id].delete(:afi)
-  # test_harness_acl(tests, id)
+  id = 'title_patterns_acl_name_only'
+  tests[id][:desc] = '3.5 Title Patterns'
+  tests[id][:title_pattern] = 'beaker_acl_name_only'
+  test_harness_acl(tests, id)
+
+  tests[id][:desc] = '3.6 Title Patterns'
+  tests[id][:ensure] = :absent
+  test_harness_acl(tests, id)
 end
 
 logger.info('TestCase :: # {testheader} :: End')
