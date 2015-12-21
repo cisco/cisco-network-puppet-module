@@ -143,6 +143,80 @@ tests['non_default_properties'] = {
   },
 }
 
+tests['default_properties_n9k'] = {
+  title_pattern:  'port-channel100',
+  manifest_props: "
+    lacp_graceful_convergence     => 'default',
+    lacp_max_bundle               => 'default',
+    lacp_min_links                => 'default',
+    lacp_suspend_individual       => 'default',
+    port_hash_distribution        => 'default',
+    port_load_defer               => 'default',
+  ",
+  code:           [0, 2],
+  resource_props: {
+    'lacp_graceful_convergence' => 'true',
+    'lacp_max_bundle'           => '32',
+    'lacp_min_links'            => '1',
+    'lacp_suspend_individual'   => 'true',
+    'port_hash_distribution'    => 'false',
+    'port_load_defer'           => 'false',
+  },
+}
+
+tests['non_default_properties_n9k'] = {
+  title_pattern:  'port-channel100',
+  manifest_props: "
+    lacp_graceful_convergence     => 'false',
+    lacp_max_bundle               => '10',
+    lacp_min_links                => '3',
+    lacp_suspend_individual       => 'false',
+    port_hash_distribution        => 'fixed',
+    port_load_defer               => 'true',
+  ",
+  resource_props: {
+    'lacp_graceful_convergence' => 'false',
+    'lacp_max_bundle'           => '10',
+    'lacp_min_links'            => '3',
+    'lacp_suspend_individual'   => 'false',
+    'port_hash_distribution'    => 'fixed',
+    'port_load_defer'           => 'true',
+  },
+}
+
+tests['default_properties_n6k'] = {
+  title_pattern:  'port-channel100',
+  manifest_props: "
+    lacp_graceful_convergence     => 'default',
+    lacp_max_bundle               => 'default',
+    lacp_min_links                => 'default',
+    lacp_suspend_individual       => 'default',
+  ",
+  code:           [0, 2],
+  resource_props: {
+    'lacp_graceful_convergence' => 'true',
+    'lacp_max_bundle'           => '32',
+    'lacp_min_links'            => '1',
+    'lacp_suspend_individual'   => 'true',
+  },
+}
+
+tests['non_default_properties_n6k'] = {
+  title_pattern:  'port-channel100',
+  manifest_props: "
+    lacp_graceful_convergence     => 'false',
+    lacp_max_bundle               => '10',
+    lacp_min_links                => '3',
+    lacp_suspend_individual       => 'false',
+  ",
+  resource_props: {
+    'lacp_graceful_convergence' => 'false',
+    'lacp_max_bundle'           => '10',
+    'lacp_min_links'            => '3',
+    'lacp_suspend_individual'   => 'false',
+  },
+}
+
 #################################################################
 # HELPER FUNCTIONS
 #################################################################
@@ -201,7 +275,7 @@ test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
-  id = 'default_properties'
+  id = 'default_properties_n9k'
   tests[id][:desc] = '1.1 Default Properties'
   test_harness_interface_port_channel(tests, id)
 
@@ -211,7 +285,7 @@ test_name "TestCase :: #{testheader}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  id = 'non_default_properties'
+  id = 'non_default_properties_n9k'
   tests[id][:desc] = '2.1 Non Default Properties'
   test_harness_interface_port_channel(tests, id)
 
