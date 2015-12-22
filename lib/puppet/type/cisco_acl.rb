@@ -42,10 +42,9 @@ Puppet::Type.newtype(:cisco_acl) do
   Example Title Patterns
 
   ~~~puppet
-    cisco_acl { 'new_york' :
+    cisco_acl { 'my_acl' :
       ensure          => present,
       afi             => 'ipv4',
-      acl_name        => 'my_acl'
     }
   ~~~
 

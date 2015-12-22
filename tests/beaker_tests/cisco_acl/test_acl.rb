@@ -283,7 +283,7 @@ test_name "TestCase :: #{testheader}" do
   test_harness_acl(tests, id)
 
   id = 'title_patterns_afi_only'
-  tests[id][:desc] = '3.4 Title Patterns'
+  tests[id][:desc] = '3.3 Title Patterns'
   tests[id][:title_pattern] = 'ipv6'
   test_harness_acl(tests, id)
 
