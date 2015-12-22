@@ -17,8 +17,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `cisco_vxlan_vtep` type and provider.
 
 #### NetDev Resources
-- `search_domain` provider.
 - `network_trunk` provider.
+- `search_domain` provider.
+- `snmp_notification` provider.
 
 ### Added
 - Extended `cisco_bgp` with the following attributes:
