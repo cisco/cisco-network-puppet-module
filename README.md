@@ -152,6 +152,7 @@ The following resources include cisco types and providers along with cisco provi
 * AAA Types
   * [`cisco_aaa_authentication_login`](#type-cisco_aaa_authentication_login)
   * [`cisco_aaa_authorization_login_cfg_svc`](#type-cisco_aaa_authorization_login_cfg_svc)
+  * [`cisco_aaa_authorization_login_exec_svc`](#type-cisco_aaa_authorization_login_exec_svc)
   * [`cisco_aaa_group_tacacs`](#type-cisco_aaa_group_tacacs)
 
 * ACL Types
@@ -232,6 +233,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_command_config`](#type-cisco_command_config)
 * [`cisco_aaa_authentication_login`](#type-cisco_aaa_authentication_login)
 * [`cisco_aaa_authorization_login_cfg_svc`](#type-cisco_aaa_authorization_login_cfg_svc)
+* [`cisco_aaa_authorization_login_exec_svc`](#type-cisco_aaa_authorization_login_exec_svc)
 * [`cisco_aaa_group_tacacs`](#type-cisco_aaa_group_tacacs)
 * [`cisco_acl`](#type-cisco_acl)
 * [`cisco_bgp`](#type-cisco_bgp)
@@ -343,6 +345,25 @@ Determines whether the config should be present or not on the device. Valid valu
 
 ##### `name`
 Name of the config login service. Valid values are 'console' or 'default'.
+
+##### `groups`
+Tacacs+ groups configured for this service. Valid values are an array of strings, keyword 'default'.
+
+##### `method`
+Authentication methods on this device. Valid values are 'local', 'unselected', 'default'.
+
+--
+### Type: cisco_aaa_authorization_login_exec_svc
+
+Manages configuration for Authorization Login Exec Service.
+
+#### Parameters
+
+##### `ensure`
+Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
+
+##### `name`
+Name of the exec login service. Valid values are 'console' or 'default'.
 
 ##### `groups`
 Tacacs+ groups configured for this service. Valid values are an array of strings, keyword 'default'.

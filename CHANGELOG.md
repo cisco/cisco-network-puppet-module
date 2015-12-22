@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 #### Cisco Resources
 - `cisco_aaa_authentication_login` type and provider.
 - `cisco_aaa_authorization_login_cfg_svc` type and provider.
+- `cisco_aaa_authorization_login_exec_svc` type and provider.
 - `cisco_aaa_group_tacacs` type and provider.
 - `cisco_acl` type and provider
 - `cisco_evpn_vni` type and provider.
