@@ -26,7 +26,7 @@ rescue LoadError # seen on master, not on agent
 end
 
 Puppet::Type.type(:cisco_evpn_vni).provide(:nxapi) do
-  desc 'The NXAPI provider gor cisco evpn vni'
+  desc 'The NXAPI provider for cisco evpn vni'
 
   confine feature: :cisco_node_utils
   defaultfor operatingsystem: :nexus
