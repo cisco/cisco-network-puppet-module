@@ -151,7 +151,7 @@ Puppet::Type.newtype(:cisco_ace) do
     validate do |src_port|
       fail 'src port should be eq , neq, lt, gt or '\
         "range or portgroup object. src_port: #{src_port} " unless
-        %r{eq \S+|neq \S+|lt \S+|gt \S+|range \S+ \S+|portgroup \S+}
+        %r{/eq \S+|neq \S+|lt \S+|gt \S+|range \S+ \S+|portgroup \S+/}
         .match(src_port)
     end
 
@@ -166,7 +166,7 @@ Puppet::Type.newtype(:cisco_ace) do
     validate do |dst_addr|
       fail 'dst address should be ip address/prefix_len or address '\
       'wildcard or object group' unless
-      %r{any|host \S+|\S+\/\d+|\S+ [:\.0-9a-fA-F]+|addrgroup \S+}
+      %r{/any|host \S+|\S+\/\d+|\S+ [:\.0-9a-fA-F]+|addrgroup \S+/}
       .match(dst_addr)
     end
 
@@ -181,7 +181,7 @@ Puppet::Type.newtype(:cisco_ace) do
     validate do |dst_port|
       fail 'src port should be eq, neq, lt, gt or '\
       "range or portgroup object dst_port: #{dst_port}" unless
-      %r{eq \S+|neq \S+|lt \S+|gt \S+|range \S+ \S+|portgroup \S+}
+      %r{/eq \S+|neq \S+|lt \S+|gt \S+|range \S+ \S+|portgroup \S+/}
       .match(dst_port)
     end
 
