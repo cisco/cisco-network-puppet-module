@@ -1,5 +1,5 @@
 #
-# The NXAPI provider for cisco_interface_port_channel
+# The NXAPI provider for cisco_interface_portchannel
 #
 # Dec 2015
 #
@@ -26,8 +26,8 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
-Puppet::Type.type(:cisco_interface_port_channel).provide(:nxapi) do
-  desc 'The NXAPI provider for cisco_interface_port_channel'
+Puppet::Type.type(:cisco_interface_portchannel).provide(:nxapi) do
+  desc 'The NXAPI provider for cisco_interface_portchannel'
 
   confine feature: :cisco_node_utils
   defaultfor operatingsystem: :nexus
@@ -47,15 +47,15 @@ Puppet::Type.type(:cisco_interface_port_channel).provide(:nxapi) do
   INTF_PC_ALL_PROPS = INTF_PC_NON_BOOL_PROPS + INTF_PC_BOOL_PROPS
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self,
-                                            '@interface_port_channel',
+                                            '@interface_portchannel',
                                             INTF_PC_NON_BOOL_PROPS)
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self,
-                                            '@interface_port_channel',
+                                            '@interface_portchannel',
                                             INTF_PC_BOOL_PROPS)
 
   def initialize(value={})
     super(value)
-    @interface_port_channel =
+    @interface_portchannel =
         Cisco::InterfacePortChannel.interfaces[@property_hash[:name]]
     @property_flush = {}
   end
@@ -119,21 +119,21 @@ Puppet::Type.type(:cisco_interface_port_channel).provide(:nxapi) do
       next unless @resource[prop]
       send("#{prop}=", @resource[prop]) if new_interface
       unless @property_flush[prop].nil?
-        @interface_port_channel.send("#{prop}=", @property_flush[prop]) if
-          @interface_port_channel.respond_to?("#{prop}=")
+        @interface_portchannel.send("#{prop}=", @property_flush[prop]) if
+          @interface_portchannel.respond_to?("#{prop}=")
       end
     end
   end
 
   def flush
     if @property_flush[:ensure] == :absent
-      @interface_port_channel.destroy
-      @interface_port_channel = nil
+      @interface_portchannel.destroy
+      @interface_portchannel = nil
     else
       # Create/Update
-      if @interface_port_channel.nil?
+      if @interface_portchannel.nil?
         new_interface = true
-        @interface_port_channel =
+        @interface_portchannel =
             Cisco::InterfacePortChannel.new(@resource[:interface])
       end
       properties_set(new_interface)
@@ -142,17 +142,17 @@ Puppet::Type.type(:cisco_interface_port_channel).provide(:nxapi) do
   end
 
   def puts_config
-    if @interface_port_channel.nil?
+    if @interface_portchannel.nil?
       info "InterfacePortChannel=#{@resource[:interface]} is absent."
       return
     end
 
-    # Dump all current properties for this interface_port_channel
-    current = sprintf("\n%30s: %s", 'interface_port_channel',
-                      @interface_port_channel.name)
+    # Dump all current properties for this interface_portchannel
+    current = sprintf("\n%30s: %s", 'interface_portchannel',
+                      @interface_portchannel.name)
     INTF_PC_ALL_PROPS.each do |prop|
       current.concat(sprintf("\n%30s: %s", prop,
-                             @interface_port_channel.send(prop)))
+                             @interface_portchannel.send(prop)))
     end
     debug current
   end # puts_config

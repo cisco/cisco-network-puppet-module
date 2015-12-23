@@ -16,19 +16,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Puppet::Type.newtype(:cisco_interface_port_channel) do
+Puppet::Type.newtype(:cisco_interface_portchannel) do
   @doc = %q(
     "Manages a Cisco PortChannel Interface.
      Any resource dependency should be run before the interface resource.
 
-     cisco_interface_port_channel {\"<interface>\":
+     cisco_interface_portchannel {\"<interface>\":
        ..attributes..
      }
 
      <interface> is the complete name of the interface.
 
      Example:
-     cisco_interface_port_channel {"port-channel100":
+     cisco_interface_portchannel {"port-channel100":
        ensure                       => 'present',
        lacp_graceful_convergence    => false,
        lacp_max_bundle              => 10,

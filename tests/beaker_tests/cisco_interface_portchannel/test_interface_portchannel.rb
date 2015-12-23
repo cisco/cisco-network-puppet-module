@@ -15,11 +15,11 @@
 ###############################################################################
 # TestCase Name:
 # -------------
-# test-interface_port_channel.rb
+# test-interface_portchannel.rb
 #
 # TestCase Prerequisites:
 # -----------------------
-# This is a Puppet interface_port_channel resource testcase for Puppet Agent
+# This is a Puppet interface_portchannel resource testcase for Puppet Agent
 # on Nexus devices.
 # The test case assumes the following prerequisites are already satisfied:
 #   - Host configuration file contains agent and master information.
@@ -29,7 +29,7 @@
 #
 # TestCase:
 # ---------
-# This interface_port_channel resource test verifies default values for all
+# This interface_portchannel resource test verifies default values for all
 # properties.
 #
 # The following exit_codes are validated for Puppet, Vegas shell and
@@ -58,7 +58,7 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 # -----------------------------
 # Common settings and variables
 # -----------------------------
-testheader = 'Resource cisco_interface_port_channel'
+testheader = 'Resource cisco_interface_portchannel'
 
 # Define PUPPETMASTER_MANIFESTPATH.
 
@@ -195,7 +195,7 @@ tests['default_properties_n6k'] = {
   code:           [0, 2],
   resource_props: {
     'lacp_graceful_convergence' => 'true',
-    'lacp_max_bundle'           => '32',
+    'lacp_max_bundle'           => '16',
     'lacp_min_links'            => '1',
     'lacp_suspend_individual'   => 'true',
   },
@@ -224,11 +224,11 @@ tests['non_default_properties_n6k'] = {
 # Full command string for puppet resource command
 def puppet_resource_cmd
   cmd = PUPPET_BINPATH +
-        'resource cisco_interface_port_channel port-channel100'
+        'resource cisco_interface_portchannel port-channel100'
   get_namespace_cmd(agent, cmd, options)
 end
 
-def build_manifest_interface_port_channel(tests, id)
+def build_manifest_interface_portchannel(tests, id)
   if tests[id][:ensure] == :absent
     state = 'ensure => absent,'
     tests[id][:resource] = {}
@@ -240,11 +240,11 @@ def build_manifest_interface_port_channel(tests, id)
 
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
   logger.debug(
-    "build_manifest_interface_port_channel :: title_pattern:\n" +
+    "build_manifest_interface_portchannel :: title_pattern:\n" +
              tests[id][:title_pattern])
   tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   node 'default' {
-    cisco_interface_port_channel { 'port-channel100':
+    cisco_interface_portchannel { 'port-channel100':
       #{state}
       #{manifest}
     }
@@ -252,13 +252,13 @@ def build_manifest_interface_port_channel(tests, id)
 EOF"
 end
 
-def test_harness_interface_port_channel(tests, id)
+def test_harness_interface_portchannel(tests, id)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:resource_cmd] = puppet_resource_cmd
   tests[id][:desc] += " [ensure => #{tests[id][:ensure]}]"
 
   # Build the manifest for this test
-  build_manifest_interface_port_channel(tests, id)
+  build_manifest_interface_portchannel(tests, id)
 
   # test_harness_common(tests, id)
   test_manifest(tests, id)
@@ -275,23 +275,23 @@ test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
-  id = 'default_properties_n9k'
+  id = 'default_properties_n6k'
   tests[id][:desc] = '1.1 Default Properties'
-  test_harness_interface_port_channel(tests, id)
+  test_harness_interface_portchannel(tests, id)
 
   tests[id][:desc] = '1.2 Default Properties'
   tests[id][:ensure] = :absent
-  test_harness_interface_port_channel(tests, id)
+  test_harness_interface_portchannel(tests, id)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  id = 'non_default_properties_n9k'
+  id = 'non_default_properties_n6k'
   tests[id][:desc] = '2.1 Non Default Properties'
-  test_harness_interface_port_channel(tests, id)
+  test_harness_interface_portchannel(tests, id)
 
   tests[id][:desc] = '2.2 Non Default Properties (absent)'
   tests[id][:ensure] = :absent
-  test_harness_interface_port_channel(tests, id)
+  test_harness_interface_portchannel(tests, id)
 end
 
 logger.info("TestCase :: #{testheader} :: End")
