@@ -42,23 +42,7 @@ Puppet::Type.newtype(:cisco_portchannel_global) do
   # Resource Naming #
   ###################
 
-  # Parse out the title to fill in the attributes in these
-  # patterns. These attributes can be overwritten later.
-  def self.title_patterns
-    identity = ->(x) { x }
-    patterns = []
-
-    # Below pattern matches both parts of the full composite name.
-    patterns << [
-      /^(\S+)$/,
-      [
-        [:name, identity]
-      ],
-    ]
-    patterns
-  end
-
-  newparam(:name, namevar: true) do
+  newparam(:name, namevar: :true) do
     desc 'ID of the portchannel global config. Valid values are default.'
 
     validate do |inst_name|
@@ -69,8 +53,6 @@ Puppet::Type.newtype(:cisco_portchannel_global) do
   ##############
   # Attributes #
   ##############
-
-  ensurable
 
   newproperty(:asymmetric) do
     desc 'Asymmetric hash.'

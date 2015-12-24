@@ -225,14 +225,8 @@ def puppet_resource_cmd
 end
 
 def build_manifest_portchannel_global(tests, id)
-  if tests[id][:ensure] == :absent
-    state = 'ensure => absent,'
-    tests[id][:resource] = {}
-  else
-    state = 'ensure => present,'
-    manifest = tests[id][:manifest_props]
-    tests[id][:resource] = tests[id][:resource_props]
-  end
+  manifest = tests[id][:manifest_props]
+  tests[id][:resource] = tests[id][:resource_props]
 
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
   logger.debug(
@@ -241,7 +235,6 @@ def build_manifest_portchannel_global(tests, id)
   tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   node 'default' {
     cisco_portchannel_global { 'default':
-      #{state}
       #{manifest}
     }
   }
@@ -249,9 +242,7 @@ EOF"
 end
 
 def test_harness_portchannel_global(tests, id)
-  tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:resource_cmd] = puppet_resource_cmd
-  tests[id][:desc] += " [ensure => #{tests[id][:ensure]}]"
 
   # Build the manifest for this test
   build_manifest_portchannel_global(tests, id)
