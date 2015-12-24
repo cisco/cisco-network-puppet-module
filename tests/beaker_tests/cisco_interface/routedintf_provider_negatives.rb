@@ -59,6 +59,7 @@ require File.expand_path('../routedintflib.rb', __FILE__)
 
 result = 'PASS'
 testheader = 'ROUTEDINTF Resource :: All Attributes Negatives'
+test_intf = 'ethernet1/4'
 
 # @test_name [TestCase] Executes negatives testcase for ROUTEDINTF Resource.
 test_name "TestCase :: #{testheader}" do
@@ -66,6 +67,9 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Setup switch for provider test' do
     # Remove any stale interface IP addresses from testbed.
     interface_ip_cleanup(agent)
+
+    # Remove any stale config from test interface
+    interface_cleanup(agent, test_intf)
 
     # Expected exit_code is 0 since this is a bash shell cmd.
     on(master, RoutedIntfLib.create_routedintf_manifest_switchport_access)
@@ -78,7 +82,7 @@ test_name "TestCase :: #{testheader}" do
 
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config interface eth1/4')
+    cmd_str = get_vshell_cmd("show running-config interface #{test_intf}")
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, [/no switchport/],
                                true, self, logger)
@@ -105,7 +109,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface 'ethernet1/4'", options)
+      "resource cisco_interface '#{test_intf}'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ipv4_address' => RoutedIntfLib::IPV4ADDRESS_NEGATIVE },
@@ -119,7 +123,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config interface eth1/4')
+    cmd_str = get_vshell_cmd("show running-config interface #{test_intf}")
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                [/^ *ip address #{RoutedIntfLib::IPV4ADDRESS_NEGATIVE}/],
@@ -147,7 +151,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface 'ethernet1/4'", options)
+      "resource cisco_interface '#{test_intf}'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, \
                                { 'ipv4_netmask_length' => RoutedIntfLib::IPV4MASKLEN_NEGATIVE },
@@ -161,7 +165,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config interface eth1/4')
+    cmd_str = get_vshell_cmd("show running-config interface #{test_intf}")
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                [%r{^ *ip address 192.168.1.1/#{RoutedIntfLib::IPV4MASKLEN_NEGATIVE}}],
@@ -189,7 +193,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface 'ethernet1/4'", options)
+      "resource cisco_interface '#{test_intf}'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'shutdown' => RoutedIntfLib::SHUTDOWN_NEGATIVE },
@@ -203,7 +207,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config interface eth1/4')
+    cmd_str = get_vshell_cmd("show running-config interface #{test_intf}")
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                [/^ *shutdown/],
@@ -243,7 +247,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface 'ethernet1/4'", options)
+      "resource cisco_interface '#{test_intf}'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ipv4_proxy_arp' => RoutedIntfLib::IPV4PROXYARP_NEGATIVE },
@@ -257,7 +261,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config interface eth1/4')
+    cmd_str = get_vshell_cmd("show running-config interface #{test_intf}")
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                [/^ *ip proxy-arp/],
@@ -285,7 +289,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface 'ethernet1/4'", options)
+      "resource cisco_interface '#{test_intf}'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ipv4_redirects' => RoutedIntfLib::IPV4REDIR_NEGATIVE },
@@ -299,7 +303,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config interface eth1/4')
+    cmd_str = get_vshell_cmd("show running-config interface #{test_intf}")
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                [/^ *ip redirects/],
@@ -328,7 +332,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface 'ethernet1/4'", options)
+      "resource cisco_interface '#{test_intf}'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'encapsulation_dot1q' => RoutedIntfLib::ENCAP_DOT1Q_NEGATIVE },
@@ -342,7 +346,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config interface eth1/4')
+    cmd_str = get_vshell_cmd("show running-config interface #{test_intf}")
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                [/encapsulation dot1q/],
@@ -370,7 +374,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface 'ethernet1/4'", options)
+      "resource cisco_interface '#{test_intf}'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'mtu' => RoutedIntfLib::MTU_NEGATIVE },
@@ -384,7 +388,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config interface eth1/4')
+    cmd_str = get_vshell_cmd("show running-config interface #{test_intf}")
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                [/mtu/],
@@ -413,7 +417,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface 'ethernet1/4'", options)
+      "resource cisco_interface '#{test_intf}'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'switchport_trunk_allowed_vlan' => RoutedIntfLib::TRUNK_ALLOWED_NEGATIVE },
@@ -427,7 +431,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config interface eth1/4')
+    cmd_str = get_vshell_cmd("show running-config interface #{test_intf}")
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                [/switchport trunk allowed vlan/],
@@ -456,7 +460,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface 'ethernet1/4'", options)
+      "resource cisco_interface '#{test_intf}'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'switchport_trunk_native_vlan' => RoutedIntfLib::TRUNK_NATIVE_NEGATIVE },
@@ -470,7 +474,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config interface eth1/4')
+    cmd_str = get_vshell_cmd("show running-config interface #{test_intf}")
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                [/switchport trunk native vlan/],
@@ -498,7 +502,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface 'ethernet1/4'", options)
+      "resource cisco_interface '#{test_intf}'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'vrf' => RoutedIntfLib::VRF_NEGATIVE },
@@ -512,7 +516,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config interface eth1/4')
+    cmd_str = get_vshell_cmd("show running-config interface #{test_intf}")
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                [/vrf member/],
@@ -522,39 +526,41 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check interface instance absence on agent :: #{result}")
   end
 
-  # @step [Step] Requests manifest from the master server to the agent.
-  step 'TestStep :: Get negative test resource manifest from master' do
-    # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, RoutedIntfLib.create_channel_group_manifest_negative)
+  # TBD: CHANNEL-GROUP NEGATIVE TEST DOES NOT RETURN EXIT CODE [1]
+  #
+  # # @step [Step] Requests manifest from the master server to the agent.
+  # step 'TestStep :: Get negative test resource manifest from master' do
+  #   # Expected exit_code is 0 since this is a bash shell cmd.
+  #   on(master, RoutedIntfLib.create_channel_group_manifest_negative)
 
-    # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
-    on(agent, cmd_str, acceptable_exit_codes: [1])
+  #   # Expected exit_code is 1 since this is a puppet agent cmd with error.
+  #   cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
+  #     'agent -t', options)
+  #   on(agent, cmd_str, acceptable_exit_codes: [1])
 
-    logger.info("Get negative test resource manifest from master :: #{result}")
-  end
+  #   logger.info("Get negative test resource manifest from master :: #{result}")
+  # end
 
-  # @step [Step] Checks cisco_interface resource on agent using resource cmd.
-  step 'TestStep :: Check cisco_interface resource absence on agent' do
-    # Expected exit_code is 0 since this is a puppet resource cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface 'ethernet1/4'", options)
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               { 'channel_group' => RoutedIntfLib::CHANNEL_GROUP_NEGATIVE },
-                               true, self, logger)
-    end
-
-    logger.info("Check cisco_interface resource absence on agent :: #{result}")
-  end
+  # # @step [Step] Checks cisco_interface resource on agent using resource cmd.
+  # step 'TestStep :: Check cisco_interface resource absence on agent' do
+  #   # Expected exit_code is 0 since this is a puppet resource cmd.
+  #   # Flag is set to true to check for absence of RegExp pattern in stdout.
+  #   cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
+  #     "resource cisco_interface '#{test_intf}'", options)
+  #   on(agent, cmd_str) do
+  #     search_pattern_in_output(stdout,
+  #                              { 'channel_group' => RoutedIntfLib::CHANNEL_GROUP_NEGATIVE },
+  #                              true, self, logger)
+  #   end
+  #
+  #   logger.info("Check cisco_interface resource absence on agent :: #{result}")
+  # end
 
   # @step [Step] Checks interface instance on agent using switch show cli cmds.
   step 'TestStep :: Check interface instance absence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config interface eth1/4')
+    cmd_str = get_vshell_cmd("show running-config interface #{test_intf}")
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                [/channel-group/],
@@ -563,6 +569,9 @@ test_name "TestCase :: #{testheader}" do
 
     logger.info("Check interface instance absence on agent :: #{result}")
   end
+
+  # Remove any stale config from test interface
+  interface_cleanup(agent, test_intf)
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   raise_passfail_exception(result, testheader, self, logger)

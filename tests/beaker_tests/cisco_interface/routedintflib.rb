@@ -67,6 +67,17 @@ node default {
       switchport_autostate_exclude => 'default',
       switchport_vtp               => 'default',
       vrf                          => 'default',
+  }}
+EOF"
+    manifest_str
+  end
+
+  def self.create_routedintf_manifest_channel_group
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+    cisco_interface { 'ethernet1/4':
+      ensure                       => present,
+      switchport_mode              => disabled,
       channel_group                => 200,
   }}
 EOF"
@@ -143,6 +154,7 @@ node default {
       switchport_mode              => disabled,
       ipv4_address                 => '192.168.1.1',
       ipv4_netmask_length          => 16,
+      ipv4_pim_sparse_mode         => true,
       ipv4_proxy_arp               => true,
       ipv4_redirects               => false,
       mtu                          => 1556,
