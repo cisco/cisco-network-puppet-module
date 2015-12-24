@@ -16,15 +16,16 @@
 
 class ciscopuppet::demo_interface {
   cisco_interface { 'Ethernet1/1' :
-    shutdown            => true,
-    switchport_mode     => disabled,
-    description         => 'managed by puppet',
-    ipv4_address        => '192.168.55.55',
-    ipv4_netmask_length => 24,
-    mtu                 => 1600,
-    speed               => 100,
-    duplex              => 'full',
-    vrf                 => 'test',
+    shutdown               => true,
+    switchport_mode        => disabled,
+    description            => 'managed by puppet',
+    ipv4_address           => '192.168.55.55',
+    ipv4_netmask_length    => 24,
+    ipv4_pim_sparse_mode   => 24,
+    mtu                    => 1600,
+    speed                  => 100,
+    duplex                 => 'full',
+    vrf                    => 'test',
   }
 
   cisco_interface { 'Ethernet1/1.1':

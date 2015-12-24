@@ -216,6 +216,18 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get negative test resource manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
+    on(master, RoutedIntfLib.create_routedintf_manifest_ipv4pimsparsemode_negative)
+
+    # Expected exit_code is 1 since this is a puppet agent cmd with error.
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH + 'agent -t', options)
+    on(agent, cmd_str, acceptable_exit_codes: [1])
+
+    logger.info("Get negative test resource manifest from master :: #{result}")
+  end
+
+  # @step [Step] Requests manifest from the master server to the agent.
+  step 'TestStep :: Get negative test resource manifest from master' do
+    # Expected exit_code is 0 since this is a bash shell cmd.
     on(master, RoutedIntfLib.create_routedintf_manifest_ipv4proxyarp_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
