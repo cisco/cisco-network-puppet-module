@@ -32,4 +32,7 @@ class ciscopuppet::demo_netdev_snmp {
     localized_key   => true,
   }
 
+  snmp_notification { 'vtp vlandelete':
+    enable => 'true',
+  }
 }

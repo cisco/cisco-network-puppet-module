@@ -15,11 +15,10 @@
 ###############################################################################
 # TestCase Name:
 # -------------
-# test_acl.rb
-#
+# test_evpn_vni.rb
 # TestCase Prerequisites:
 # -----------------------
-# This is a Puppet acl resource testcase for Puppet Agent on
+# This is a Puppet BGP AF resource testcase for Puppet Agent on
 # Nexus devices.
 # The test case assumes the following prerequisites are already satisfied:
 #   - Host configuration file contains agent and master information.
@@ -29,7 +28,7 @@
 #
 # TestCase:
 # ---------
-# This ACL resource test verifies default values for all properties.
+# This BGP AF resource test verifies default values for all properties.
 #
 # The following exit_codes are validated for Puppet, Vegas shell and
 # Bash shell commands.
@@ -52,10 +51,12 @@
 #
 ###############################################################################
 
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
+
 # -----------------------------
 # Common settings and variables
 # -----------------------------
-testheader = 'Resource cisco_acl'
+testheader = 'Resource cisco_evpn_vni'
 
 # The 'tests' hash is used to define all of the test data values and expected
 # results. It is also used to pass optional flags to the test methods when
@@ -70,7 +71,7 @@ testheader = 'Resource cisco_acl'
 tests = {
   master:   master,
   agent:    agent,
-  show_cmd: 'show run section ip',
+  show_cmd: 'show run bgp all',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -96,85 +97,46 @@ tests = {
 #   Can be used with :af for mixed title/af testing. If mixing, :af values will
 #   be merged with title values and override any duplicates. If omitted,
 #   :title_pattern will be set to 'id'.
-# tests[id][:af] - (Optional) defines the address-family values.
-#   Must use :title_pattern if :af is not specified. Useful for testing mixed
-#   title/af manifests
 #
-tests['default_properties_ipv4'] = {
-  title_pattern:  'ipv4 beaker_1',
+
+#
+# default_properties
+#
+tests['default_properties'] = {
+  desc:           '1.1 Default Properties',
+  title_pattern:  '4096',
   manifest_props: "
-    stats_per_entry                  => 'false',
-    fragments                        => 'default',
-  ",
+    route_distinguisher       => 'default',
+    route_target_both         => 'default',
+    route_target_export       => 'default',
+    route_target_import       => 'default',
+    ",
+
   resource_props: {
-    'stats_per_entry' => 'false',
-    'fragments'       => '',
   },
 }
 
-tests['default_properties_ipv6'] = {
-  title_pattern:  'ipv6 beaker_2',
+#
+# non_default_properties
+#
+routetargetboth = ['1.2.3.4:55', '2:2', '55:33', 'auto']
+routetargetexport = ['1.2.3.4:55', '2:2', '55:33', 'auto']
+routetargetimport = ['1.2.3.4:55', '2:2', '55:33', 'auto']
+tests['non_default_properties'] = {
+  desc:           '2.1 Non Default Properties',
+  title_pattern:  '4096',
   manifest_props: "
-    stats_per_entry                  => 'false',
-    fragments                        => 'default',
-  ",
+    route_distinguisher => 'auto',
+    route_target_both   => #{routetargetboth},
+    route_target_export => #{routetargetexport},
+    route_target_import => #{routetargetimport},
+    ",
+
   resource_props: {
-    'stats_per_entry' => 'false',
-    'fragments'       => '',
-  },
-}
-
-tests['non_default_properties_ipv4'] = {
-  title_pattern:  'ipv4 beaker_3',
-  manifest_props: "
-    stats_per_entry                  => 'true',
-    fragments                        => 'permit-all',
-  ",
-  resource_props: {
-    'stats_per_entry' => 'true',
-    'fragments'       => 'permit-all',
-  },
-}
-
-tests['non_default_properties_ipv6'] = {
-  title_pattern:  'ipv6 beaker_4',
-  manifest_props: "
-    stats_per_entry                  => 'true',
-    fragments                        => 'deny-all',
-  ",
-  resource_props: {
-    'stats_per_entry' => 'true',
-    'fragments'       => 'deny-all',
-  },
-}
-
-tests['title_patterns_afi_only'] = {
-  manifest_props:        "
-    acl_name                         => 'beaker_afi_only',
-    stats_per_entry                  => 'false',
-    fragments                        => 'default',
-  ",
-  manifest_props_absent: "
-    acl_name                         => 'beaker_afi_only',
-  ",
-  resource_props:        {
-    'stats_per_entry' => 'false',
-    'fragments'       => '',
-  },
-}
-
-tests['title_patterns_acl_name_only'] = {
-  manifest_props:        "
-    afi                              => 'ipv4',
-    stats_per_entry                  => 'false',
-    fragments                        => 'default',
-  ",
-  manifest_props_absent: "
-    afi                              => 'ipv4',
-  ",
-  resource_props:        {
-    'stats_per_entry' => 'false',
-    'fragments'       => '',
+    'route_distinguisher' => 'auto',
+    'route_target_both'   => "#{routetargetboth}",
+    'route_target_export' => "#{routetargetexport}",
+    'route_target_import' => "#{routetargetimport}",
   },
 }
 
@@ -184,15 +146,14 @@ tests['title_patterns_acl_name_only'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = PUPPET_BINPATH + 'resource cisco_acl'
+  cmd = PUPPET_BINPATH + 'resource cisco_evpn_vni'
   get_namespace_cmd(agent, cmd, options)
 end
 
-def build_manifest_acl(tests, id)
+def build_manifest_evpn_vni(tests, id)
   if tests[id][:ensure] == :absent
     state = 'ensure => absent,'
-    manifest = tests[id][:manifest_props_absent]
-    tests[id][:resource] = {}
+    tests[id][:resource] = { 'ensure' => 'absent' }
   else
     state = 'ensure => present,'
     manifest = tests[id][:manifest_props]
@@ -200,11 +161,11 @@ def build_manifest_acl(tests, id)
   end
 
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
-  logger.debug("build_manifest_acl :: title_pattern:\n" +
+  logger.debug("build_manifest_evpn_vni :: title_pattern:\n" +
                tests[id][:title_pattern])
   tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   node 'default' {
-    cisco_acl { '#{tests[id][:title_pattern]}':
+    cisco_evpn_vni { '#{tests[id][:title_pattern]}':
       #{state}
       #{manifest}
     }
@@ -212,14 +173,15 @@ def build_manifest_acl(tests, id)
 EOF"
 end
 
-def test_harness_acl(tests, id)
+def test_harness_evpn_vni(tests, id)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:resource_cmd] = puppet_resource_cmd
-  tests[id][:desc] += " [ensure => #{tests[id][:ensure]}]"
 
   # Build the manifest for this test
-  build_manifest_acl(tests, id)
+  build_manifest_evpn_vni(tests, id)
 
+  # For full test support of properties use test_harness_common; as an
+  # alternative use direct calls to individual test_* wrapper methods:
   test_harness_common(tests, id)
 
   tests[id][:ensure] = nil
@@ -229,76 +191,19 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
-  # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  # node_feature_cleanup(agent, 'acl')
+  resource_absent_cleanup(agent, 'cisco_evpn_vni',
+                          'Fail to clean resource cisco_evpn_vni')
 
   # -----------------------------------
-  id = 'default_properties_ipv4'
-  tests[id][:desc] = '1.1 Default Properties'
-  test_harness_acl(tests, id)
-
-  tests[id][:desc] = '1.2 Default Properties'
-  tests[id][:ensure] = :absent
-  test_harness_acl(tests, id)
-
-  id = 'default_properties_ipv6'
-  tests[id][:desc] = '1.3 Default Properties'
-  test_harness_acl(tests, id)
-
-  tests[id][:desc] = '1.4 Default Properties'
-  tests[id][:ensure] = :absent
-  test_harness_acl(tests, id)
+  id = 'default_properties'
+  test_harness_evpn_vni(tests, id)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  # node_feature_cleanup(agent, 'acl')
-
-  id = 'non_default_properties_ipv4'
-  tests[id][:desc] = '2.1 Non Default Properties'
-  test_harness_acl(tests, id)
-
-  tests[id][:desc] = '2.2 Non Default Properties'
-  tests[id][:ensure] = :absent
-  test_harness_acl(tests, id)
-
-  id = 'non_default_properties_ipv6'
-  tests[id][:desc] = '2.3 Non Default Properties'
-  test_harness_acl(tests, id)
-
-  tests[id][:desc] = '2.4 Non Default Properties'
-  tests[id][:ensure] = :absent
-  test_harness_acl(tests, id)
-
-  # -------------------------------------------------------------------
-  # logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
-
-  id = 'title_patterns_afi_only'
-  tests[id][:desc] = '3.1 Title Patterns'
-  tests[id][:title_pattern] = 'ipv4'
-  test_harness_acl(tests, id)
-
-  tests[id][:desc] = '3.2 Title Patterns'
-  tests[id][:ensure] = :absent
-  test_harness_acl(tests, id)
-
-  id = 'title_patterns_afi_only'
-  tests[id][:desc] = '3.3 Title Patterns'
-  tests[id][:title_pattern] = 'ipv6'
-  test_harness_acl(tests, id)
-
-  tests[id][:desc] = '3.4 Title Patterns'
-  tests[id][:ensure] = :absent
-  test_harness_acl(tests, id)
-
-  id = 'title_patterns_acl_name_only'
-  tests[id][:desc] = '3.5 Title Patterns'
-  tests[id][:title_pattern] = 'beaker_acl_name_only'
-  test_harness_acl(tests, id)
-
-  tests[id][:desc] = '3.6 Title Patterns'
-  tests[id][:ensure] = :absent
-  test_harness_acl(tests, id)
+  id = 'non_default_properties'
+  tests[id][:desc] = 'non_default_properties_R'
+  test_harness_evpn_vni(tests, id)
 end
 
-logger.info('TestCase :: # {testheader} :: End')
+logger.info("TestCase :: #{testheader} :: End")

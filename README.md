@@ -152,6 +152,7 @@ The following resources include cisco types and providers along with cisco provi
 * AAA Types
   * [`cisco_aaa_authentication_login`](#type-cisco_aaa_authentication_login)
   * [`cisco_aaa_authorization_login_cfg_svc`](#type-cisco_aaa_authorization_login_cfg_svc)
+  * [`cisco_aaa_authorization_login_exec_svc`](#type-cisco_aaa_authorization_login_exec_svc)
   * [`cisco_aaa_group_tacacs`](#type-cisco_aaa_group_tacacs)
 
 * ACL Types
@@ -197,6 +198,7 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_snmp_user`](#type-cisco_snmp_user)
   * [`network_snmp (netdev_stdlib)`](#type-network_snmp)
   * [`snmp_community (netdev_stdlib)`](#type-snmp_community)
+  * [`snmp_notification (netdev_stdlib)`](#type-snmp_notification)
   * [`snmp_user (netdev_stdlib)`](#type-snmp_user)
 
 * SYSLOG Types
@@ -219,9 +221,12 @@ The following resources include cisco types and providers along with cisco provi
 * VRF Type
   * [`cisco_vrf`](#type-cisco_vrf)
 
+* VNI Type
+   * [`cisco_vni`](#type-cisco_vni)
+
 * VXLAN Types
-  * [`cisco_vni`](#type-cisco_vni)
   * [`cisco_vxlan_global`](#type-cisco_vxlan_global)
+  * [`cisco_vxlan_vtep`](#type-cisco_vxlan_vtep)
 
 --
 ### <a name="resource-by-name">Cisco Resource Type Catalog (by Name)<a>
@@ -229,6 +234,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_command_config`](#type-cisco_command_config)
 * [`cisco_aaa_authentication_login`](#type-cisco_aaa_authentication_login)
 * [`cisco_aaa_authorization_login_cfg_svc`](#type-cisco_aaa_authorization_login_cfg_svc)
+* [`cisco_aaa_authorization_login_exec_svc`](#type-cisco_aaa_authorization_login_exec_svc)
 * [`cisco_aaa_group_tacacs`](#type-cisco_aaa_group_tacacs)
 * [`cisco_acl`](#type-cisco_acl)
 * [`cisco_bgp`](#type-cisco_bgp)
@@ -250,6 +256,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_vrf`](#type-cisco_vrf)
 * [`cisco_vtp`](#type-cisco_vtp)
 * [`cisco_vxlan_global`](#type-cisco_vxlan_global)
+* [`cisco_vxlan_vtep`](#type-cisco_vxlan_vtep)
 
 ### <a name="resource-by-name-netdev">NetDev StdLib Resource Type Catalog (by Name)<a>
 
@@ -266,6 +273,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`radius_server`](#type-radius_server)
 * [`search_domain`](#type-search_domain)
 * [`snmp_community`](#type-snmp_community)
+* [`snmp_notification`](#type-snmp_notification)
 * [`snmp_user`](#type-snmp_user)
 * [`syslog_server`](#type-syslog_server)
 * [`syslog_setting`](#type-syslog_setting)
@@ -339,6 +347,25 @@ Determines whether the config should be present or not on the device. Valid valu
 
 ##### `name`
 Name of the config login service. Valid values are 'console' or 'default'.
+
+##### `groups`
+Tacacs+ groups configured for this service. Valid values are an array of strings, keyword 'default'.
+
+##### `method`
+Authentication methods on this device. Valid values are 'local', 'unselected', 'default'.
+
+--
+### Type: cisco_aaa_authorization_login_exec_svc
+
+Manages configuration for Authorization Login Exec Service.
+
+#### Parameters
+
+##### `ensure`
+Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
+
+##### `name`
+Name of the exec login service. Valid values are 'console' or 'default'.
 
 ##### `groups`
 Tacacs+ groups configured for this service. Valid values are an array of strings, keyword 'default'.
@@ -1376,7 +1403,7 @@ Password for the VTP domain. Valid values are a string or the keyword 'default'.
 
 --
 ### Type: cisco_vni
-Manages the VNI (VXLAN Network Identifier) configuration of a Cisco device.
+Manages the VNI (Virtual Network Identifier) configuration of a Cisco device.
 
 #### Parameters
 
@@ -1416,6 +1443,27 @@ The number of host moves allowed in n seconds. The range is 1 to 1000 moves; def
 
 ##### `dup_host_mac_detection_timeout`
 The duplicate detection timeout in seconds for the number of host moves. The range is 2 to 36000 seconds; default is 180 seconds.
+
+--
+### Type: cisco_vxlan_vtep
+Creates a VXLAN Network Virtualization Endpoint (NVE) overlay interface that terminates VXLAN tunnels.
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `description`
+Description of the NVE interface.  Valid values are string, or keyword 'default'.
+
+##### `host_reachability`
+Specify mechanism for host reachability advertisement. Valid values are 'evpn', 'flood' or keyword 'default'.
+
+##### `shutdown`
+Administratively shutdown the NVE interface. Valid values are true, false or keyword 'default'.
+
+##### `source_interface`
+Specify the loopback interface whose IP address should be used for the NVE interface. Valid values are string or keyword 'default'.
 
 --
 ### NetDev StdLib Resource Type Details
@@ -1616,6 +1664,15 @@ keyword 'default'.
 ##### `acl`
 Assigns an Access Control List (ACL) to an SNMP community to filter SNMP
 requests. Valid values are a string or the keyword 'default'.
+
+### Type: snmp_notification
+Manages an SNMP notification on a Cisco SNMP server.
+
+#### Parameters
+
+##### `enable`
+Determine whether the trap should be on or off. Valid
+values are true and false.
 
 ### Type: snmp_user
 

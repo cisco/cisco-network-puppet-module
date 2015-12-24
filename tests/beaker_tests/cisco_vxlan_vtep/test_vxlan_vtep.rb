@@ -15,11 +15,11 @@
 ###############################################################################
 # TestCase Name:
 # -------------
-# test_acl.rb
+# test-cisco_vxlan_vtep.rb
 #
 # TestCase Prerequisites:
 # -----------------------
-# This is a Puppet acl resource testcase for Puppet Agent on
+# This is a Puppet cisco_vxlan_vtep resource testcase for Puppet Agent on
 # Nexus devices.
 # The test case assumes the following prerequisites are already satisfied:
 #   - Host configuration file contains agent and master information.
@@ -29,7 +29,8 @@
 #
 # TestCase:
 # ---------
-# This ACL resource test verifies default values for all properties.
+# This cisco_vxlan_vtep resource test verifies default and non-default values
+# for all properties.
 #
 # The following exit_codes are validated for Puppet, Vegas shell and
 # Bash shell commands.
@@ -52,10 +53,12 @@
 #
 ###############################################################################
 
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
+
 # -----------------------------
 # Common settings and variables
 # -----------------------------
-testheader = 'Resource cisco_acl'
+testheader = 'Resource cisco_vxlan_vtep'
 
 # The 'tests' hash is used to define all of the test data values and expected
 # results. It is also used to pass optional flags to the test methods when
@@ -65,12 +68,10 @@ testheader = 'Resource cisco_acl'
 # Top-level keys set by caller:
 # tests[:master] - the master object
 # tests[:agent] - the agent object
-# tests[:show_cmd] - the common show command to use for test_show_run
 #
 tests = {
-  master:   master,
-  agent:    agent,
-  show_cmd: 'show run section ip',
+  master: master,
+  agent:  agent,
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -80,7 +81,6 @@ tests = {
 # tests[id][:manifest] - the complete manifest, as used by test_harness_common
 # tests[id][:resource] - a hash of expected states, used by test_resource
 # tests[id][:resource_cmd] - 'puppet resource' command to use with test_resource
-# tests[id][:show_pattern] - array of regexp patterns to use with test_show_cmd
 # tests[id][:ensure] - (Optional) set to :present or :absent before calling
 # tests[id][:code] - (Optional) override the default exit code in some tests.
 #
@@ -100,81 +100,61 @@ tests = {
 #   Must use :title_pattern if :af is not specified. Useful for testing mixed
 #   title/af manifests
 #
-tests['default_properties_ipv4'] = {
-  title_pattern:  'ipv4 beaker_1',
+tests['default_properties'] = {
+  title_pattern:  'nve1',
   manifest_props: "
-    stats_per_entry                  => 'false',
-    fragments                        => 'default',
+    description        => 'default',
+    host_reachability  => 'default',
+    shutdown           => 'default',
+    source_interface   => 'default',
   ",
   resource_props: {
-    'stats_per_entry' => 'false',
-    'fragments'       => '',
+    'host_reachability' => 'flood',
+    'shutdown'          => 'true',
   },
 }
 
-tests['default_properties_ipv6'] = {
-  title_pattern:  'ipv6 beaker_2',
+tests['non_default_properties'] = {
+  title_pattern:  'nve1',
   manifest_props: "
-    stats_per_entry                  => 'false',
-    fragments                        => 'default',
+    description        => 'Configured by Puppet',
+    host_reachability  => 'evpn',
+    shutdown           => 'false',
+    source_interface   => 'loopback55',
   ",
   resource_props: {
-    'stats_per_entry' => 'false',
-    'fragments'       => '',
+    'description'       => 'Configured by Puppet',
+    'host_reachability' => 'evpn',
+    'shutdown'          => 'false',
+    'source_interface'  => 'loopback55',
   },
 }
 
-tests['non_default_properties_ipv4'] = {
-  title_pattern:  'ipv4 beaker_3',
+tests['change_parameters'] = {
+  title_pattern:  'nve1',
   manifest_props: "
-    stats_per_entry                  => 'true',
-    fragments                        => 'permit-all',
+    host_reachability  => 'flood',
+    shutdown           => 'true',
+    source_interface   => 'loopback1',
   ",
   resource_props: {
-    'stats_per_entry' => 'true',
-    'fragments'       => 'permit-all',
+    'description'       => 'Configured by Puppet',
+    'host_reachability' => 'flood',
+    'shutdown'          => 'true',
+    'source_interface'  => 'loopback1',
   },
 }
 
-tests['non_default_properties_ipv6'] = {
-  title_pattern:  'ipv6 beaker_4',
+tests['change_source_int_when_shutdown'] = {
+  title_pattern:  'nve1',
   manifest_props: "
-    stats_per_entry                  => 'true',
-    fragments                        => 'deny-all',
+    source_interface   => 'loopback88',
   ",
   resource_props: {
-    'stats_per_entry' => 'true',
-    'fragments'       => 'deny-all',
-  },
-}
-
-tests['title_patterns_afi_only'] = {
-  manifest_props:        "
-    acl_name                         => 'beaker_afi_only',
-    stats_per_entry                  => 'false',
-    fragments                        => 'default',
-  ",
-  manifest_props_absent: "
-    acl_name                         => 'beaker_afi_only',
-  ",
-  resource_props:        {
-    'stats_per_entry' => 'false',
-    'fragments'       => '',
-  },
-}
-
-tests['title_patterns_acl_name_only'] = {
-  manifest_props:        "
-    afi                              => 'ipv4',
-    stats_per_entry                  => 'false',
-    fragments                        => 'default',
-  ",
-  manifest_props_absent: "
-    afi                              => 'ipv4',
-  ",
-  resource_props:        {
-    'stats_per_entry' => 'false',
-    'fragments'       => '',
+    'description'       => 'Configured by Puppet',
+    'host_reachability' => 'flood',
+    'shutdown'          => 'true',
+    'source_interface'  => 'loopback88',
   },
 }
 
@@ -184,14 +164,13 @@ tests['title_patterns_acl_name_only'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = PUPPET_BINPATH + 'resource cisco_acl'
+  cmd = PUPPET_BINPATH + 'resource cisco_vxlan_vtep'
   get_namespace_cmd(agent, cmd, options)
 end
 
-def build_manifest_acl(tests, id)
+def build_manifest_cisco_vxlan_vtep(tests, id)
   if tests[id][:ensure] == :absent
     state = 'ensure => absent,'
-    manifest = tests[id][:manifest_props_absent]
     tests[id][:resource] = {}
   else
     state = 'ensure => present,'
@@ -200,11 +179,11 @@ def build_manifest_acl(tests, id)
   end
 
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
-  logger.debug("build_manifest_acl :: title_pattern:\n" +
+  logger.debug("build_manifest_cisco_vxlan_vtep :: title_pattern:\n" +
                tests[id][:title_pattern])
   tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   node 'default' {
-    cisco_acl { '#{tests[id][:title_pattern]}':
+    cisco_vxlan_vtep { '#{tests[id][:title_pattern]}':
       #{state}
       #{manifest}
     }
@@ -212,15 +191,17 @@ def build_manifest_acl(tests, id)
 EOF"
 end
 
-def test_harness_acl(tests, id)
+def test_harness_cisco_vxlan_vtep(tests, id)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:resource_cmd] = puppet_resource_cmd
   tests[id][:desc] += " [ensure => #{tests[id][:ensure]}]"
 
   # Build the manifest for this test
-  build_manifest_acl(tests, id)
+  build_manifest_cisco_vxlan_vtep(tests, id)
 
-  test_harness_common(tests, id)
+  test_manifest(tests, id)
+  test_resource(tests, id)
+  test_idempotence(tests, id)
 
   tests[id][:ensure] = nil
 end
@@ -231,74 +212,47 @@ end
 test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  # node_feature_cleanup(agent, 'acl')
+  resource_absent_cleanup(agent, 'cisco_vxlan_vtep',
+                          'Setup switch for cisco_vxlan_vtep provider test')
 
   # -----------------------------------
-  id = 'default_properties_ipv4'
+  id = 'default_properties'
   tests[id][:desc] = '1.1 Default Properties'
-  test_harness_acl(tests, id)
+  test_harness_cisco_vxlan_vtep(tests, id)
 
   tests[id][:desc] = '1.2 Default Properties'
   tests[id][:ensure] = :absent
-  test_harness_acl(tests, id)
-
-  id = 'default_properties_ipv6'
-  tests[id][:desc] = '1.3 Default Properties'
-  test_harness_acl(tests, id)
-
-  tests[id][:desc] = '1.4 Default Properties'
-  tests[id][:ensure] = :absent
-  test_harness_acl(tests, id)
+  test_harness_cisco_vxlan_vtep(tests, id)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  # node_feature_cleanup(agent, 'acl')
 
-  id = 'non_default_properties_ipv4'
-  tests[id][:desc] = '2.1 Non Default Properties'
-  test_harness_acl(tests, id)
+  id = 'non_default_properties'
+  tests[id][:desc] = '2.1 Non-Default Properties'
+  test_harness_cisco_vxlan_vtep(tests, id)
 
-  tests[id][:desc] = '2.2 Non Default Properties'
+  tests[id][:desc] = '2.2 Non-Default Properties'
   tests[id][:ensure] = :absent
-  test_harness_acl(tests, id)
-
-  id = 'non_default_properties_ipv6'
-  tests[id][:desc] = '2.3 Non Default Properties'
-  test_harness_acl(tests, id)
-
-  tests[id][:desc] = '2.4 Non Default Properties'
-  tests[id][:ensure] = :absent
-  test_harness_acl(tests, id)
+  test_harness_cisco_vxlan_vtep(tests, id)
+  # -------------------------------------------------------------------
 
   # -------------------------------------------------------------------
-  # logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
+  logger.info("\n#{'-' * 60}\nSection 3. Property Changes")
 
-  id = 'title_patterns_afi_only'
-  tests[id][:desc] = '3.1 Title Patterns'
-  tests[id][:title_pattern] = 'ipv4'
-  test_harness_acl(tests, id)
+  id = 'non_default_properties'
+  tests[id][:desc] = '3.1 Setup'
+  test_harness_cisco_vxlan_vtep(tests, id)
 
-  tests[id][:desc] = '3.2 Title Patterns'
-  tests[id][:ensure] = :absent
-  test_harness_acl(tests, id)
+  id = 'change_parameters'
+  tests[id][:desc] = '3.1 Change host_reach, shutdown state, source int'
+  test_harness_cisco_vxlan_vtep(tests, id)
 
-  id = 'title_patterns_afi_only'
-  tests[id][:desc] = '3.3 Title Patterns'
-  tests[id][:title_pattern] = 'ipv6'
-  test_harness_acl(tests, id)
+  id = 'change_source_int_when_shutdown'
+  tests[id][:desc] = '3.1 Change source_interface, shutdown state: true'
+  test_harness_cisco_vxlan_vtep(tests, id)
 
-  tests[id][:desc] = '3.4 Title Patterns'
-  tests[id][:ensure] = :absent
-  test_harness_acl(tests, id)
-
-  id = 'title_patterns_acl_name_only'
-  tests[id][:desc] = '3.5 Title Patterns'
-  tests[id][:title_pattern] = 'beaker_acl_name_only'
-  test_harness_acl(tests, id)
-
-  tests[id][:desc] = '3.6 Title Patterns'
-  tests[id][:ensure] = :absent
-  test_harness_acl(tests, id)
+  resource_absent_cleanup(agent, 'cisco_vxlan_vtep',
+                          'Setup switch for cisco_vxlan_vtep provider test')
 end
 
 logger.info('TestCase :: # {testheader} :: End')
