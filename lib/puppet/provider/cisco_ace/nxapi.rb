@@ -1,5 +1,5 @@
 #
-# The NXAPI provider for cisco_acl.
+# The NXAPI provider for cisco_ace.
 #
 # July, 2015
 #
@@ -36,8 +36,6 @@ Puppet::Type.type(:cisco_ace).provide(:nxapi) do
 
   # Property symbol array for method auto-generation.
   #
-  # NOTE: For maintainability please keep this list in alphabetical order and
-  # one property per line.
   ACL_NON_BOOL_PROPS = [
     :action,
     :proto,
@@ -45,7 +43,6 @@ Puppet::Type.type(:cisco_ace).provide(:nxapi) do
     :src_port,
     :dst_addr,
     :dst_port,
-    :option_format,
   ]
 
   ACL_BOOL_PROPS = [
@@ -63,7 +60,7 @@ Puppet::Type.type(:cisco_ace).provide(:nxapi) do
     afi = @property_hash[:afi]
     acl_name = @property_hash[:acl_name]
     seqno    = @property_hash[:seqno]
-    @ace = Cisco::Ace.aces[afi][acl_name][seqno] unless acl_name.nil? && seqno.nil?
+    @ace = Cisco::Ace.aces[afi][acl_name][seqno] unless acl_name.nil? || seqno.nil?
     @property_flush = {}
   end
 
@@ -109,9 +106,9 @@ Puppet::Type.type(:cisco_ace).provide(:nxapi) do
     ace_instances = instances
     resources.keys.each do |name|
       provider = ace_instances.find do |ace|
-        resources[name][:seqno] == ace.seqno.to_i &&
+        resources[name][:afi] == ace.afi.to_s &&
         resources[name][:acl_name] == ace.acl_name.to_s &&
-        resources[name][:afi] == ace.afi.to_s
+        resources[name][:seqno] == ace.seqno.to_i
       end
       resources[name].provider = provider unless provider.nil?
     end
@@ -150,58 +147,27 @@ Puppet::Type.type(:cisco_ace).provide(:nxapi) do
   # The following properties are setters and cannot be handled
   # by PuppetX::Cisco::AutoGen.mk_puppet_methods.
   def ace_set
-    return unless @property_flush[:action] ||
-                  @property_flush[:proto] ||
-                  @property_flush[:src_addr] ||
-                  @property_flush[:src_port] ||
-                  @property_flush[:dst_addr] ||
-                  @property_flush[:dst_port]
+    attrs = {}
+    [:action, :proto, :src_addr, :src_port, :dst_addr, :dst_port].each do |p|
+      attrs[p] = @property_flush[p] if @property_flush[p]
+    end
+    return if attrs.empty?
     @ace.ace_set(@property_flush)
   end
 
-  def action_set
-    return unless @property_flush[:action]
-    @ace.action = @property_flush[:action]
-  end
-
-  def proto_set
-    return unless @property_flush[:proto]
-    @ace.proto = @property_flush[:proto]
-  end
-
-  def src_addr_set
-    return unless @property_flush[:src_addr]
-    @ace.src_addr = @property_flush[:src_addr]
-  end
-
-  def src_port_set
-    return unless @property_flush[:src_port]
-    @ace.src_port = @property_flush[:src_port]
-  end
-
-  def dst_addr_set
-    return unless @property_flush[:dst_addr]
-    @ace.dst_addr = @property_flush[:dst_addr]
-  end
-
-  def dst_port_set
-    return unless @property_flush[:dst_port]
-    @ace.dst_port = @property_flush[:dst_port]
-  end
-
-  def option_format_set
-    return unless @property_flush[:option_format]
-    @ace.option_format = @property_flush[:option_format]
-  end
-
   def flush
-    if @ace.nil?
-      new_ace = true
-      @ace = Cisco::Ace.new(@resource[:afi], @resource[:acl_name],
-                            @resource[:seqno])
+    if @property_flush[:ensure] == :absent
+      @ace.destroy
+      @ace = nil
+    else
+      if @ace.nil?
+        new_ace = true
+        @ace = Cisco::Ace.new(@resource[:afi], @resource[:acl_name],
+                              @resource[:seqno])
+      end
+      properties_set(new_ace)
+      puts_config
     end
-    properties_set(new_ace)
-    puts_config
   end
 
   def puts_config

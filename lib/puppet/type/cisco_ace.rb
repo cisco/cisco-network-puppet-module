@@ -46,7 +46,6 @@ Puppet::Type.newtype(:cisco_ace) do
       src_port                              => eq 40,
       dst_addr                              => 8.9.0.4/32,
       dst_port                              => range 32 56,
-      option_format                         => precedence critical
     }
   ~~~
   "
@@ -61,7 +60,7 @@ Puppet::Type.newtype(:cisco_ace) do
     identity = ->(x) { x }
     [
       [
-        /^(\S+) (\S+) (\d+)$/,
+        /^(ipv4|ipv6)\s+(\S+)\s+(\d+)$/,
         [
           [:afi, identity],
           [:acl_name, identity],
@@ -85,11 +84,11 @@ Puppet::Type.newtype(:cisco_ace) do
 
   # Only needed to satisfy name parameter.
   newparam(:name) do
-    desc 'acl_name '
   end
 
   newparam(:afi, namevar: true) do
-    desc 'afi info of ace '
+    desc 'The Address-Family Indentifier (ipv4|ipv6).'
+    newvalues(:ipv4, :ipv6)
   end
 
   newparam(:acl_name, namevar: true) do
@@ -105,23 +104,21 @@ Puppet::Type.newtype(:cisco_ace) do
   ##############
 
   newproperty(:action) do
-    desc ' ace action '
+    desc 'Ace Action Identifier (permit|deny)'
 
     validate do |action|
       fail 'action should be permit or deny ' unless
-        /permit|deny/.match(action)
+        /permit|deny/.match(action.downcase)
     end
 
-    munge do |action|
-      action
-    end
+    munge(&:downcase)
   end
 
   newproperty(:proto) do
     desc 'protocol of ace'
 
     validate do |proto|
-      fail 'protocol should be either string or integer' unless
+      fail 'proto must be type String or Integer' unless
         /\S+|\d+/.match(proto)
     end
 
@@ -134,9 +131,9 @@ Puppet::Type.newtype(:cisco_ace) do
     desc 'src address of the ace'
 
     validate do |src_addr|
-      fail 'src address should be ip address/prefix_len or address '\
-      'wildcard or object group' unless
-      %r{any|host \S+|\S+\/\d+|\S+ [:\.0-9a-fA-F]+|addrgroup \S+}
+      fail 'src_addr must be ip address/prefix_len (10.0.0.0/8), '\
+      "address group (addrgroup foo), or keyword 'any'" unless
+      %r{/any|host \S+|\S+\/\d+|\S+ [:\.0-9a-fA-F]+|addrgroup \S+/}
       .match(src_addr)
     end
 
@@ -164,9 +161,9 @@ Puppet::Type.newtype(:cisco_ace) do
     desc 'dst address of the ace'
 
     validate do |dst_addr|
-      fail 'dst address should be ip address/prefix_len or address '\
-      'wildcard or object group' unless
-      %r{/any|host \S+|\S+\/\d+|\S+ [:\.0-9a-fA-F]+|addrgroup \S+/}
+      fail 'src_addr must be ip address/prefix_len (10.0.0.0/8), '\
+      "address group (addrgroup foo), or keyword 'any'" unless
+      %r{any|host \S+|\S+\/\d+|\S+ [:\.0-9a-fA-F]+|addrgroup \S+}
       .match(dst_addr)
     end
 
@@ -187,14 +184,6 @@ Puppet::Type.newtype(:cisco_ace) do
 
     munge do |dst_port|
       dst_port
-    end
-  end
-
-  newproperty(:option_format) do
-    desc 'ace option configuartion'
-
-    munge do |option_format|
-      option_format
     end
   end
 end
