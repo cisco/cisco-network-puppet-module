@@ -83,6 +83,13 @@ expected_default_values = {
   'flush_routes'                           => 'false',
   'isolate'                                => 'false',
   'enforce_first_as'                       => 'true',
+  'event_history_cli'                      => 'true',
+  'event_history_cli_size'                 => 'small',
+  'event_history_detail'                   => 'false',
+  'event_history_events'                   => 'true',
+  'event_history_events_size'              => 'small',
+  'event_history_periodic'                 => 'true',
+  'event_history_periodic_size'            => 'small',
   'maxas_limit'                            => 'false',
   'neighbor_down_fib_accelerate'           => 'false',
   'shutdown'                               => 'false',
@@ -199,6 +206,13 @@ test_name "TestCase :: #{testheader}" do
 
     # enforce_first_as only in the default_vrf
     expected_default_values.delete('enforce_first_as')
+    expected_default_values.delete('event_history_cli')
+    expected_default_values.delete('event_history_cli_size')
+    expected_default_values.delete('event_history_detail')
+    expected_default_values.delete('event_history_events')
+    expected_default_values.delete('event_history_events_size')
+    expected_default_values.delete('event_history_periodic')
+    expected_default_values.delete('event_history_periodic_size')
 
     stepinfo = "Apply title patterns manifest: #{mp}"
     step "TestStep :: #{stepinfo}" do

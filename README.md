@@ -454,6 +454,37 @@ AS confederation parameters. Valid values are String, keyword 'default'.
 ##### `enforce_first_as`
 Enable/Disable enforces the neighbor autonomous system to be the first AS number listed in the AS path attribute for eBGP. Valid values are 'true', 'false', and 'default'.
 
+##### `event_history_cli`
+Enable/Disable cli event history buffer. Valid values are 'true', 'false', and 'default'.
+
+##### `event_history_cli_size`
+Set cli event history buffer size. Valid values are 'small', 'medium', 'large', 'disable' or 'default'.
+
+##### `event_history_cli`
+Enable/Disable cli event history buffer. Valid values are 'true', 'false', and 'default'.
+
+##### `event_history_cli_size`
+Set cli event history buffer size. Valid values are 'small', 'medium', 'large', 'disable' or 'default'.
+
+##### `event_history_detail`
+Enable/Disable detail event history buffer. Valid values are 'true', 'false', and 'default'.
+
+##### `event_history_detail_size`
+Set detail event history buffer size. Valid values are 'small', 'medium', 'large', 'disable' or 'default'.
+
+##### `event_history_events`
+Enable/Disable events history buffer. Valid values are 'true', 'false', and 'default'.
+
+##### `event_history_events_size`
+Set events history buffer size. Valid values are 'small', 'medium', 'large', 'disable' or 'default'.
+
+##### `event_history_periodic`
+Enable/Disable periodic events history buffer. Valid values are 'true', 'false', and 'default'.
+
+##### `event_history_periodic_size`
+Set periodic events history buffer size. Valid values are 'small', 'medium', 'large', 'disable' or 'default'.
+
+
 ##### `fast_external_fallover`
 Enable/Disable immediately reset the session if the link to a directly connected BGP peer goes down. Valid values are 'true', 'false', and 'default'.
 

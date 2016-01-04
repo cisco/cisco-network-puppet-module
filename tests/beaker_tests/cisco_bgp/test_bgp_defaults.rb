@@ -91,6 +91,13 @@ expected_default_values = {
   'bestpath_med_missing_as_worst'          => 'false',
   'bestpath_med_non_deterministic'         => 'false',
   'enforce_first_as'                       => 'true',
+  'event_history_cli'                      => 'true',
+  'event_history_cli_size'                 => 'small',
+  'event_history_detail'                   => 'false',
+  'event_history_events'                   => 'true',
+  'event_history_events_size'              => 'small',
+  'event_history_periodic'                 => 'true',
+  'event_history_periodic_size'            => 'small',
   'fast_external_fallover'                 => 'true',
   'flush_routes'                           => 'false',
   'isolate'                                => 'false',
@@ -170,6 +177,13 @@ test_name "TestCase :: #{testheader}" do
 
   # enforce_first_as only in default_vrf
   expected_default_values.delete('enforce_first_as')
+  expected_default_values.delete('event_history_cli')
+  expected_default_values.delete('event_history_cli_size')
+  expected_default_values.delete('event_history_detail')
+  expected_default_values.delete('event_history_events')
+  expected_default_values.delete('event_history_events_size')
+  expected_default_values.delete('event_history_periodic')
+  expected_default_values.delete('event_history_periodic_size')
   stepinfo = "Apply resource ensure => present manifest (#{context})"
   step "TestStep :: #{stepinfo}" do
     on(master, BgpLib.create_bgp_manifest_present_vrf1)

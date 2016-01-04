@@ -42,6 +42,10 @@ Puppet::Type.type(:cisco_bgp).provide(:nxapi) do
     :cluster_id,
     :confederation_id,
     :confederation_peers,
+    :event_history_cli_size,
+    :event_history_detail_size,
+    :event_history_events_size,
+    :event_history_periodic_size,
     :graceful_restart_timers_restart,
     :graceful_restart_timers_stalepath_time,
     :maxas_limit,
@@ -60,6 +64,10 @@ Puppet::Type.type(:cisco_bgp).provide(:nxapi) do
     :bestpath_med_missing_as_worst,
     :bestpath_med_non_deterministic,
     :enforce_first_as,
+    :event_history_cli,
+    :event_history_detail,
+    :event_history_events,
+    :event_history_periodic,
     :fast_external_fallover,
     :flush_routes,
     :graceful_restart,
@@ -161,6 +169,10 @@ Puppet::Type.type(:cisco_bgp).provide(:nxapi) do
     timer_bgp_keepalive_hold_set
     timer_bestpath_limit_set
     confederation_peers_set
+    event_history_cli_set
+    event_history_detail_set
+    event_history_events_set
+    event_history_periodic_set
   end
 
   # Custom setters.
@@ -207,6 +219,98 @@ Puppet::Type.type(:cisco_bgp).provide(:nxapi) do
   def confederation_peers_set
     return unless @property_flush[:confederation_peers]
     @bgp_vrf.confederation_peers_set(@property_flush[:confederation_peers])
+  end
+
+  def event_history_cli_set
+    return unless
+      @property_flush.key?(:event_history_cli) ||
+      @property_flush.key?(:event_history_cli_size)
+
+    # size is optional
+    size = @property_flush[:event_history_cli_size]
+    if @property_flush.key?(:event_history_cli_size)
+      if size == :default
+        size = @bgp_vrf.default_event_history_cli_size
+      else
+        size = @property_flush[:event_history_cli_size]
+      end
+    end
+
+    if @property_flush.key?(:event_history_cli)
+      state = @property_flush[:event_history_cli]
+    else
+      state = size ? true : @bgp_vrf.event_history_cli
+    end
+    @bgp_vrf.event_history_cli_set(state, size)
+  end
+
+  def event_history_detail_set
+    return unless
+      @property_flush.key?(:event_history_detail) ||
+      @property_flush.key?(:event_history_detail_size)
+
+    # size is optional
+    size = @property_flush[:event_history_detail_size]
+    if @property_flush.key?(:event_history_detail_size)
+      if size == :default
+        size = @bgp_vrf.default_event_history_detail_size
+      else
+        size = @property_flush[:event_history_detail_size]
+      end
+    end
+
+    if @property_flush.key?(:event_history_detail)
+      state = @property_flush[:event_history_detail]
+    else
+      state = size ? true : @bgp_vrf.event_history_detail
+    end
+    @bgp_vrf.event_history_detail_set(state, size)
+  end
+
+  def event_history_events_set
+    return unless
+      @property_flush.key?(:event_history_events) ||
+      @property_flush.key?(:event_history_events_size)
+
+    # size is optional
+    size = @property_flush[:event_history_events_size]
+    if @property_flush.key?(:event_history_events_size)
+      if size == :default
+        size = @bgp_vrf.default_event_history_events_size
+      else
+        size = @property_flush[:event_history_events_size]
+      end
+    end
+
+    if @property_flush.key?(:event_history_events)
+      state = @property_flush[:event_history_events]
+    else
+      state = size ? true : @bgp_vrf.event_history_events
+    end
+    @bgp_vrf.event_history_events_set(state, size)
+  end
+
+  def event_history_periodic_set
+    return unless
+      @property_flush.key?(:event_history_periodic) ||
+      @property_flush.key?(:event_history_periodic_size)
+
+    # size is optional
+    size = @property_flush[:event_history_periodic_size]
+    if @property_flush.key?(:event_history_periodic_size)
+      if size == :default
+        size = @bgp_vrf.default_event_history_periodic_size
+      else
+        size = @property_flush[:event_history_periodic_size]
+      end
+    end
+
+    if @property_flush.key?(:event_history_periodic)
+      state = @property_flush[:event_history_periodic]
+    else
+      state = size ? true : @bgp_vrf.event_history_periodic
+    end
+    @bgp_vrf.event_history_periodic_set(state, size)
   end
 
   def flush
