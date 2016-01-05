@@ -55,11 +55,11 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     :switchport_trunk_native_vlan,
   ]
   INTF_BOOL_PROPS = [
-    :shutdown,
-    :negotiate_auto,
-    :ipv4_redirects,
     :ipv4_pim_sparse_mode,
     :ipv4_proxy_arp,
+    :ipv4_redirects,
+    :negotiate_auto,
+    :shutdown,
     :switchport_vtp,
     :switchport_autostate_exclude,
     :svi_autostate,
