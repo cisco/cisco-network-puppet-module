@@ -34,6 +34,7 @@ module RoutedIntfLib
   ENCAP_DOT1Q_NEGATIVE         = 'invalid'
   IPV4ADDRESS_NEGATIVE         = '-1.-1.-1.-1'
   IPV4MASKLEN_NEGATIVE         = '-1'
+  IPV4PIMSPARSEMODE            = 'invalid'
   IPV4PROXYARP_NEGATIVE        = 'invalid'
   IPV4REDIR_NEGATIVE           = 'invalid'
   MTU_NEGATIVE                 = '1999'
@@ -66,6 +67,17 @@ node default {
       switchport_autostate_exclude => 'default',
       switchport_vtp               => 'default',
       vrf                          => 'default',
+  }}
+EOF"
+    manifest_str
+  end
+
+  def self.create_routedintf_manifest_channel_group
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+    cisco_interface { 'ethernet1/4':
+      ensure                       => present,
+      switchport_mode              => disabled,
       channel_group                => 200,
   }}
 EOF"
@@ -142,6 +154,7 @@ node default {
       switchport_mode              => disabled,
       ipv4_address                 => '192.168.1.1',
       ipv4_netmask_length          => 16,
+      ipv4_pim_sparse_mode         => true,
       ipv4_proxy_arp               => true,
       ipv4_redirects               => false,
       mtu                          => 1556,
@@ -292,6 +305,23 @@ node default {
       shutdown                     => false,
       switchport_mode              => trunk,
       switchport_trunk_native_vlan => #{RoutedIntfLib::TRUNK_NATIVE_NEGATIVE},
+    }
+}
+EOF"
+    manifest_str
+  end
+
+  # Method to create a manifest for RoutedINTF resource attribute 'ipv4_pim_sparse_mode'
+  # @param none [None] No input parameters exist.
+  # @result none [None] Returns no object.
+  def self.create_routedintf_manifest_ipv4pimsparsemode_negative
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+    cisco_interface { 'ethernet1/4':
+      ensure                       => present,
+      shutdown                     => false,
+      switchport_mode              => disabled,
+      ipv4_pim_sparse_mode         => #{RoutedIntfLib::IPV4PIMSPARSEMODE},
     }
 }
 EOF"

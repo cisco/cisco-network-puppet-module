@@ -43,6 +43,7 @@ Puppet::Type.newtype(:cisco_interface) do
      ipv4_netmask_length          => 24,
      ipv4_redirects               => true,
      ipv4_proxy_arp               => true,
+     ipv4_pim_sparse_mode         => true,
      negotiate_auto               => true,
     }
     cisco_interface { \"loopback42\" :
@@ -212,6 +213,13 @@ Puppet::Type.newtype(:cisco_interface) do
   ########################################
   # Begin L3 interface config attributes #
   ########################################
+
+  newproperty(:ipv4_pim_sparse_mode) do
+    desc '<L3 attribute> Enables or disables ipv4 pim sparse mode '\
+         'on the interface.'
+
+    newvalues(:true, :false, :default)
+  end # property ipv4_pim_sparse_mode
 
   newproperty(:ipv4_proxy_arp) do
     desc "<L3 attribute> Enables or disables proxy arp on the

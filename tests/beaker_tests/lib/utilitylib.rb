@@ -312,7 +312,18 @@ def node_feature_cleanup(agent, feature, stepinfo='feature cleanup',
   end
 end
 
-# Helper to remove all IP address configs from interfaces
+# Helper to nuke a single interface. This is needed to remove all
+# configurations from the interface.
+def interface_cleanup(agent, intf, stepinfo='Pre Clean:')
+  logger.debug("#{stepinfo} Interface cleanup #{intf}")
+
+  # exit codes: 0 = no changes, 2 = changes have occurred
+  clean = "conf t ; default interface #{intf}"
+  on(agent, get_vshell_cmd(clean), acceptable_exit_codes: [0, 2])
+end
+
+# Helper to remove all IP address configs from all interfaces. This is
+# needed to avoid IP conflicts with our test interface.
 def interface_ip_cleanup(agent, stepinfo='Pre Clean:')
   logger.debug("#{stepinfo} Interface IP cleanup")
   show_cmd = get_vshell_cmd('show ip interface brief')
