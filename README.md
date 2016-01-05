@@ -460,12 +460,6 @@ Enable/Disable cli event history buffer. Valid values are 'true', 'false', and '
 ##### `event_history_cli_size`
 Set cli event history buffer size. Valid values are 'small', 'medium', 'large', 'disable' or 'default'.
 
-##### `event_history_cli`
-Enable/Disable cli event history buffer. Valid values are 'true', 'false', and 'default'.
-
-##### `event_history_cli_size`
-Set cli event history buffer size. Valid values are 'small', 'medium', 'large', 'disable' or 'default'.
-
 ##### `event_history_detail`
 Enable/Disable detail event history buffer. Valid values are 'true', 'false', and 'default'.
 
