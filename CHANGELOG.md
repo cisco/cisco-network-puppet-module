@@ -39,6 +39,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `suppress_inactive`
 - Extended `cisco_interface` with the following attributes:
   - `channel_group`
+  - `vlan_mapping`, `vlan_mapping_enable`
 - Extended `cisco_vrf` with the following attributes:
   - `vni`
   

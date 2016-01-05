@@ -1,6 +1,6 @@
 # Manifest to demo cisco_interface provider
 #
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2014-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -55,4 +55,10 @@ class ciscopuppet::demo_interface {
     duplex      => 'auto',
     speed       => '100m',
   }
+  #  Requires F3 or newer linecards
+  # cisco_interface { 'Ethernet9/1':
+  #   switchport_mode                => trunk,
+  #   switchport_vlan_mapping        => [[20, 21], [30, 31]]
+  #   switchport_vlan_mapping_enable => false
+  # }
 }
