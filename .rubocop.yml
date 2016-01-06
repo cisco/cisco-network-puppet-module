@@ -7,7 +7,7 @@ AllCops:
 
 # Baseline code complexity metrics - we should try and reduce these over time
 Metrics/AbcSize:
-  Max: 43
+  Max: 47
 
 Metrics/CyclomaticComplexity:
   Max: 16

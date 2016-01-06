@@ -394,7 +394,7 @@ def setup_mt_full_env(tests, testcase)
   # MT-full tests require a specific linecard. Search for a compatible
   # module and enable it.
 
-  testheader = tests[:testheader]
+  testheader = tests[:testheader] ? tests[:testheader] : 'setup_mt_full_env'
   mod = 'f3'
   step 'Check for Compatible Line Module' do
     tests[:intf] = mt_full_interface
@@ -409,7 +409,7 @@ def setup_mt_full_env(tests, testcase)
     tests[:vdc] = default_vdc_name
     break if tests[:vdc]
     prereq_skip(testheader, testcase, 'Unable to determine default vdc name')
-  end
+  end if tests[:vdc].nil?
   vdc = tests[:vdc]
 
   step "Check for 'limit-resource module-type #{mod}'" do
