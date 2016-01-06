@@ -198,7 +198,7 @@ test_name "TestCase :: #{testheader}" do
     current_manifest_present = BgpLib.send("#{mp}")
     current_manifest_absent = BgpLib.send("#{ma}")
 
-    # enforce_first_as only in the default_vrf
+    # Remove Properties that can only be used in the default_vrf
     expected_default_values.delete('enforce_first_as')
     expected_default_values.delete('disable_policy_batching')
 
