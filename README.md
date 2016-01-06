@@ -969,6 +969,9 @@ Enable/Disable negotiate auto on the interface. Valid values are 'true',
 
 ##### L3 interface config attributes
 
+###### `ipv4_pim_sparse_mode`
+Enables or disables ipv4 pim sparse mode on the interface. Valid values are 'true', 'false', and 'default'.
+
 ###### `ipv4_proxy_arp`
 Enables or disables proxy arp on the interface. Valid values are 'true', 'false', and 'default'.
 
@@ -982,6 +985,16 @@ keyword 'default'.
 ###### `ipv4_netmask_length`
 Network mask length of the IP address on the interface. Valid values are
 integer and keyword 'default'.
+
+###### `vlan_mapping`
+This property is a nested array of [original_vlan, translated_vlan] pairs. Valid values are an array specifying the mapped vlans or keyword 'default'; e.g.:
+
+```
+vlan_mapping => [[20, 21], [30, 31]]
+```
+
+###### `vlan_mapping_enable`
+Allows disablement of vlan_mapping on a given interface. Valid values are 'true', 'false', and 'default'.
 
 ###### `vrf`
 VRF member of the interface.  Valid values are a string or the keyword 'default'.
@@ -1827,7 +1840,7 @@ Minimum Requirements:
 ## License
 
 ~~~text
-Copyright (c) 2014-2015 Cisco and/or its affiliates.
+Copyright (c) 2014-2016 Cisco and/or its affiliates.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
