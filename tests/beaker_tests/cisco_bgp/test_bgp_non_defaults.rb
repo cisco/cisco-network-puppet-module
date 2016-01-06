@@ -77,7 +77,6 @@ resource_vrf2 = get_namespace_cmd(agent,
                                   "resource cisco_bgp '#{BgpLib::ASN} #{BgpLib::VRF2}'", options)
 
 # Define expected default values for cisco_bgp resource
-prefix_list = [['ipv4', 'xx'], ['ipv6', 'yy']] # rubocop:disable Style/WordArray
 expected_values = {
   'ensure'                                 => 'present',
   'router_id'                              => '192.168.0.55',
@@ -85,7 +84,8 @@ expected_values = {
   'confederation_id'                       => '99',
   'confederation_peers'                    => '55 23.4 88 200.1',
   'disable_policy_batching'                => 'true',
-  'disable_policy_batching_prefix'         => "#{prefix_list}",
+  'disable_policy_batching_ipv4'           => 'xx',
+  'disable_policy_batching_ipv6'           => 'yy',
   'enforce_first_as'                       => 'true',
   'fast_external_fallover'                 => 'false',
   'flush_routes'                           => 'true',

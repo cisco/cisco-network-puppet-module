@@ -37,7 +37,6 @@ Puppet::Type.newtype(:cisco_bgp) do
   `<bgp-title>` is the title of the bgp resource.
 
   Example:
-  $prefix_list = [['ipv4', 'xx'], ['ipv6', 'yy']]
   ~~~puppet
     cisco_bgp { 'raleigh':
       ensure                                 => present,
@@ -49,7 +48,8 @@ Puppet::Type.newtype(:cisco_bgp) do
       confederation_id                       => '77.6',
       confederation_peers                    => '77.6 88 99.4 200'
       disable_policy_batching                => true,
-      disable_policy_batching_prefix         => $prefix_list
+      disable_policy_batching_ipv4           => 'xx',
+      disable_policy_batching_ipv6           => 'yy',
       enforce_first_as                       => true,
       fast_external_fallover                 => true,
       flush_routes                           => false,
@@ -287,26 +287,35 @@ Puppet::Type.newtype(:cisco_bgp) do
     newvalues(:true, :false, :default)
   end # property disable_policy_batching
 
-  newproperty(:disable_policy_batching_prefix, array_matching: :all) do
-    format = "[['afi string'], ['prefix-list string']]"
-    desc 'Enable/Disable the batching evaluation of prefix' \
-         "advertisements to all peers.Valid values match format #{format}."
+  newproperty(:disable_policy_batching_ipv4) do
+    desc "Enable/Disable the batching evaluation of prefix
+          advertisements to all peers. Valid values are a string"
 
-    # Override puppet's insync method, which checks whether current value is
-    # equal to value specified in manifest.  Make sure puppet considers
-    # 2 arrays with same elements but in different order as equal.
-    def insync?(is)
-      (is.size == should.size && is.sort == should.sort)
+    validate do |value|
+      fail("'disable_policy_batching_ipv4' value must be a string") unless
+        value.is_a? String
     end
 
     munge do |value|
-      begin
-        return value = :default if value == 'default'
-        fail("Value must match format #{format}") unless value.is_a?(Array)
-        value
-      end
+      value = :default if value == 'default'
+      value
     end
-  end # property disable_policy_batching_prefix
+  end # property disable_policy_batching_ipv4
+
+  newproperty(:disable_policy_batching_ipv6) do
+    desc "Enable/Disable the batching evaluation of prefix
+          advertisements to all peers. Valid values are a string"
+
+    validate do |value|
+      fail("'disable_policy_batching_ipv6' value must be a string") unless
+        value.is_a? String
+    end
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property disable_policy_batching_ipv6
 
   newproperty(:enforce_first_as) do
     desc 'Enable/Disable enforces the neighbor autonomous system ' \

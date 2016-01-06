@@ -45,7 +45,8 @@ module BgpLib
         confederation_id                       => 'default',
         confederation_peers                    => 'default',
         disable_policy_batching                => 'default',
-        disable_policy_batching_prefix         => 'default',
+        disable_policy_batching_ipv4           => 'default',
+        disable_policy_batching_ipv6           => 'default',
         enforce_first_as                       => 'default',
         fast_external_fallover                 => 'default',
         flush_routes                           => 'default',
@@ -181,7 +182,6 @@ module BgpLib
   # Create manifest ensure => present + 'non-default' property values
   # rubocop:disable Metrics/MethodLength
   def self.create_bgp_manifest_present_non_default
-    prefix_list = [['ipv4', 'xx'], ['ipv6', 'yy']] # rubocop:disable Style/WordArray
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'default':
@@ -193,7 +193,8 @@ module BgpLib
         confederation_id                       => '99',
         confederation_peers                    => '55 23.4 88 200.1',
         disable_policy_batching                => 'true',
-        disable_policy_batching_prefix         => #{prefix_list},
+        disable_policy_batching_ipv4           => 'xx',
+        disable_policy_batching_ipv6           => 'yy',
         enforce_first_as                       => 'true',
         fast_external_fallover                 => 'false',
         flush_routes                           => 'true',

@@ -42,7 +42,8 @@ Puppet::Type.type(:cisco_bgp).provide(:nxapi) do
     :cluster_id,
     :confederation_id,
     :confederation_peers,
-    :disable_policy_batching_prefix,
+    :disable_policy_batching_ipv4,
+    :disable_policy_batching_ipv6,
     :graceful_restart_timers_restart,
     :graceful_restart_timers_stalepath_time,
     :maxas_limit,
@@ -110,7 +111,6 @@ Puppet::Type.type(:cisco_bgp).provide(:nxapi) do
       end
     end
     debug current_state
-    current_state[:disable_policy_batching_prefix] = instance.disable_policy_batching_prefix
     new(current_state)
   end # self.properties_get
 
@@ -210,21 +210,6 @@ Puppet::Type.type(:cisco_bgp).provide(:nxapi) do
   def confederation_peers_set
     return unless @property_flush[:confederation_peers]
     @bgp_vrf.confederation_peers_set(@property_flush[:confederation_peers])
-  end
-
-  def disable_policy_batching_prefix
-    return @property_hash[:disable_policy_batching_prefix] if @resource[:disable_policy_batching_prefix].nil?
-    if @resource[:disable_policy_batching_prefix][0] == :default &&
-       @property_hash[:disable_policy_batching_prefix] == @bgp_vrf.default_disable_policy_batching_prefix
-      return [:default]
-    else
-      @property_hash[:disable_policy_batching_prefix]
-    end
-  end
-
-  def disable_policy_batching_prefix=(should_list)
-    should_list = @bgp_vrf.default_disable_policy_batching_prefix if should_list[0] == :default
-    @property_flush[:disable_policy_batching_prefix] = should_list
   end
 
   def flush
