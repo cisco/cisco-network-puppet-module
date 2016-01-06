@@ -32,6 +32,7 @@ module BgpLib
   VRF2        = 'red'
 
   # Create manifest ensure => present + 'default' property values
+  # rubocop:disable Metrics/MethodLength
   def self.create_bgp_manifest_present
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
@@ -43,6 +44,8 @@ module BgpLib
         cluster_id                             => 'default',
         confederation_id                       => 'default',
         confederation_peers                    => 'default',
+        disable_policy_batching                => 'default',
+        disable_policy_batching_prefix         => 'default',
         enforce_first_as                       => 'default',
         fast_external_fallover                 => 'default',
         flush_routes                           => 'default',
@@ -79,6 +82,7 @@ module BgpLib
     EOF"
     manifest_str
   end
+  # rubocop:enable Metrics/MethodLength
 
   # Create manifest ensure => present + 'default' property values
   # for vrf1
@@ -175,7 +179,9 @@ module BgpLib
   end
 
   # Create manifest ensure => present + 'non-default' property values
+  # rubocop:disable Metrics/MethodLength
   def self.create_bgp_manifest_present_non_default
+    prefix_list = [['ipv4', 'xx'], ['ipv6', 'yy']] # rubocop:disable Style/WordArray
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'default':
@@ -186,6 +192,8 @@ module BgpLib
         cluster_id                             => '10.0.0.1',
         confederation_id                       => '99',
         confederation_peers                    => '55 23.4 88 200.1',
+        disable_policy_batching                => 'true',
+        disable_policy_batching_prefix         => #{prefix_list},
         enforce_first_as                       => 'true',
         fast_external_fallover                 => 'false',
         flush_routes                           => 'true',
@@ -222,6 +230,7 @@ module BgpLib
     EOF"
     manifest_str
   end
+  # rubocop:enable Metrics/MethodLength
 
   # Create manifest ensure => present + 'non-default' property values
   # for vrf1

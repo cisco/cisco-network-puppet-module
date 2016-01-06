@@ -451,6 +451,20 @@ Routing domain confederation AS. Valid values are String, keyword 'default'.
 ##### `confederation_peers`
 AS confederation parameters. Valid values are String, keyword 'default'.
 
+##### `disable_policy_batching` 
+Enable/Disable the batching evaluation of prefix advertisements to all peers. Valid values are String, keyword 'default'.
+
+##### `disable_policy_batching_prefix`
+Enable/Disable the batching evaluation of prefix advertisements to all peers with prefix list.
+
+For example prefix_list:
+``` ruby
+[
+  ["ipv4", "xx"],
+  ["ipv6", "yy"]
+]
+```
+
 ##### `enforce_first_as`
 Enable/Disable enforces the neighbor autonomous system to be the first AS number listed in the AS path attribute for eBGP. Valid values are 'true', 'false', and 'default'.
 

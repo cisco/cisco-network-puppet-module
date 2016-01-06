@@ -37,7 +37,7 @@ Puppet::Type.newtype(:cisco_bgp) do
   `<bgp-title>` is the title of the bgp resource.
 
   Example:
-
+  $prefix_list = [['ipv4', 'xx'], ['ipv6', 'yy']]
   ~~~puppet
     cisco_bgp { 'raleigh':
       ensure                                 => present,
@@ -48,6 +48,8 @@ Puppet::Type.newtype(:cisco_bgp) do
       cluster_id                             => '55',
       confederation_id                       => '77.6',
       confederation_peers                    => '77.6 88 99.4 200'
+      disable_policy_batching                => true,
+      disable_policy_batching_prefix         => $prefix_list
       enforce_first_as                       => true,
       fast_external_fallover                 => true,
       flush_routes                           => false,
@@ -277,6 +279,34 @@ Puppet::Type.newtype(:cisco_bgp) do
 
     newvalues(:true, :false, :default)
   end # property shutdown
+
+  newproperty(:disable_policy_batching) do
+    desc 'Enable/Disable the batching evaluation of prefix' \
+         'advertisements to all peers'
+
+    newvalues(:true, :false, :default)
+  end # property disable_policy_batching
+
+  newproperty(:disable_policy_batching_prefix, array_matching: :all) do
+    format = "[['afi string'], ['prefix-list string']]"
+    desc 'Enable/Disable the batching evaluation of prefix' \
+         "advertisements to all peers.Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property disable_policy_batching_prefix
 
   newproperty(:enforce_first_as) do
     desc 'Enable/Disable enforces the neighbor autonomous system ' \
