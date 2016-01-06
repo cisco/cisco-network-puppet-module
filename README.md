@@ -142,21 +142,15 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 
 ## <a name ="resource-reference">Resource Reference<a>
 
-The following resources include cisco types and providers along with cisco provider support for netdev stdlib types.  Installing the `ciscopuppet` module will install both the `ciscopuppet` and `netdev_stdlib` modules.
+The following resources include cisco types and providers along with cisco provider support for netdev stdlib types.  Installing the `ciscopuppet` module will install both the `ciscopuppet` and `netdev_stdlib` modules. 
 
 ### <a name="resource-by-tech">Resource Type Catalog (by Technology)<a>
 
 * Miscellaneous Types
   * [`cisco_command_config`](#type-cisco_command_config)
 
-* AAA Types
-  * [`cisco_aaa_authentication_login`](#type-cisco_aaa_authentication_login)
-  * [`cisco_aaa_authorization_login_cfg_svc`](#type-cisco_aaa_authorization_login_cfg_svc)
-  * [`cisco_aaa_authorization_login_exec_svc`](#type-cisco_aaa_authorization_login_exec_svc)
-  * [`cisco_aaa_group_tacacs`](#type-cisco_aaa_group_tacacs)
-
 * ACL Types
-  * [`cisco_acl`](#type-cisco_acl)
+  * [`cisco_ace`](#type-cisco_ace)
 
 * BGP Types
   * [`cisco_vrf`](#type-cisco_vrf)
@@ -198,7 +192,6 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_snmp_user`](#type-cisco_snmp_user)
   * [`network_snmp (netdev_stdlib)`](#type-network_snmp)
   * [`snmp_community (netdev_stdlib)`](#type-snmp_community)
-  * [`snmp_notification (netdev_stdlib)`](#type-snmp_notification)
   * [`snmp_user (netdev_stdlib)`](#type-snmp_user)
 
 * SYSLOG Types
@@ -220,23 +213,14 @@ The following resources include cisco types and providers along with cisco provi
 
 * VRF Type
   * [`cisco_vrf`](#type-cisco_vrf)
-
-* VNI Type
-   * [`cisco_vni`](#type-cisco_vni)
-
+  
 * VXLAN Types
   * [`cisco_vxlan_global`](#type-cisco_vxlan_global)
-  * [`cisco_vxlan_vtep`](#type-cisco_vxlan_vtep)
 
 --
 ### <a name="resource-by-name">Cisco Resource Type Catalog (by Name)<a>
 
 * [`cisco_command_config`](#type-cisco_command_config)
-* [`cisco_aaa_authentication_login`](#type-cisco_aaa_authentication_login)
-* [`cisco_aaa_authorization_login_cfg_svc`](#type-cisco_aaa_authorization_login_cfg_svc)
-* [`cisco_aaa_authorization_login_exec_svc`](#type-cisco_aaa_authorization_login_exec_svc)
-* [`cisco_aaa_group_tacacs`](#type-cisco_aaa_group_tacacs)
-* [`cisco_acl`](#type-cisco_acl)
 * [`cisco_bgp`](#type-cisco_bgp)
 * [`cisco_bgp_af`](#type-cisco_bgp_af)
 * [`cisco_bgp_neighbor`](#type-cisco_bgp_neighbor)
@@ -252,11 +236,9 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_tacacs_server`](#type-cisco_tacacs_server)
 * [`cisco_tacacs_server_host`](#type-cisco_tacacs_server_host)
 * [`cisco_vlan`](#type-cisco_vlan)
-* [`cisco_vni`](#type-cisco_vni)
 * [`cisco_vrf`](#type-cisco_vrf)
 * [`cisco_vtp`](#type-cisco_vtp)
 * [`cisco_vxlan_global`](#type-cisco_vxlan_global)
-* [`cisco_vxlan_vtep`](#type-cisco_vxlan_vtep)
 
 ### <a name="resource-by-name-netdev">NetDev StdLib Resource Type Catalog (by Name)<a>
 
@@ -273,7 +255,6 @@ The following resources include cisco types and providers along with cisco provi
 * [`radius_server`](#type-radius_server)
 * [`search_domain`](#type-search_domain)
 * [`snmp_community`](#type-snmp_community)
-* [`snmp_notification`](#type-snmp_notification)
 * [`snmp_user`](#type-snmp_user)
 * [`syslog_server`](#type-syslog_server)
 * [`syslog_setting`](#type-syslog_setting)
@@ -309,116 +290,6 @@ This provider allows raw configurations to be managed by Puppet. It serves as a 
 * Negating a submode will also remove configuratons under that submode, without having to specify every submode config statement: `no router ospf RED` removes all configuration under router ospf RED.
 * Syntax does not auto-complete: use `Ethernet1/1`, not `Eth1/1`.
 * If a CLI command is rejected during configuration, the resource will abort at that point and will not issue any remaining CLI. For this reason, we recommend limiting the scope of each instance of this resource.
-
---
-### Type: cisco_aaa_authentication_login
-
-Manages AAA Authentication Login configuration.
-
-#### Parameters
-
-##### `name`
-The name of the AAA Authentication Login instance. Must be 'default'
-
-##### `ascii_authentication`
-Enable/disable ascii_authentication for AAA Authentication Login. Valid values are true, false, keyword 'default'
-
-##### `chap`
-Enable/disable chap for AAA Authentication Login.
-
-##### `error_display`
-Enable/disable error_display for AAA Authentication Login.
-
-##### `mschap`
-Enable/disable mschap for AAA Authentication Login.
-
-##### `mschapv2`
-Enable/disable mschapv2 for AAA Authentication Login.
-
---
-### Type: cisco_aaa_authorization_login_cfg_svc
-
-Manages configuration for Authorization Login Config Service.
-
-#### Parameters
-
-##### `ensure`
-Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
-
-##### `name`
-Name of the config login service. Valid values are 'console' or 'default'.
-
-##### `groups`
-Tacacs+ groups configured for this service. Valid values are an array of strings, keyword 'default'.
-
-##### `method`
-Authentication methods on this device. Valid values are 'local', 'unselected', 'default'.
-
---
-### Type: cisco_aaa_authorization_login_exec_svc
-
-Manages configuration for Authorization Login Exec Service.
-
-#### Parameters
-
-##### `ensure`
-Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
-
-##### `name`
-Name of the exec login service. Valid values are 'console' or 'default'.
-
-##### `groups`
-Tacacs+ groups configured for this service. Valid values are an array of strings, keyword 'default'.
-
-##### `method`
-Authentication methods on this device. Valid values are 'local', 'unselected', 'default'.
-
---
-### Type: cisco_aaa_group_tacacs
-
-Manages configuration for a TACACS+ server group.
-
-#### Parameters
-
-##### `ensure`
-Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
-
-##### `group`
-Name of the aaa group TACACS instance. Valid values are string.
-
-##### `deadtime`
-Deadtime interval for this TACACS+ server group. Valid values are integer, in minutes, keyword 'default'
-
-##### `server_hosts`
-An array of TACACS+ server hosts associated with this TACACS+ server group. Valid values are an array, or the keyword 'default'.
-
-##### `source_interface`
-Source interface for TACACS+ servers in this TACACS+ server group Valid values are string, keyword 'default'.
-
-##### `vrf_name`
-Specifies the virtual routing and forwarding instance (VRF) to use to contact this TACACS server group. Valid values are string, the keyword 'default'.
-
---
-### Type: cisco_acl
-
-Manages configuration of a ACL instance.
-
-#### Parameters
-
-##### `ensure`
-Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
-
-##### `afi`
-Address Family Identifier (AFI). Required. Valid values are ipv4 and ipv6.
-
-##### `acl_name`
-Name of the acl instance. Valid values are string.
-
-##### `stats_per_entry`
-Enable/disable Statistics Per Entry for ACL. Valid values are true, false, keyword 'default'.
-
-##### `fragments`
-Permit or deny Fragments for ACL. Valid values are 'permit-all' and 'deny-all'
 
 --
 ### Type: cisco_bgp
@@ -468,7 +339,7 @@ Specify Maximum number of AS numbers allowed in the AS-path attribute. Valid val
 
 ##### `neighbor_down_fib_accelerate`
 Enable/Disable handle BGP neighbor down event, due to various reasons. Valid values are 'true', 'false', and 'default'.
-
+ 
 ##### `shutdown`
 Administratively shutdown the BGP protocol. Valid values are 'true', 'false', and 'default'.
 
@@ -763,7 +634,7 @@ Specify the password for neighbor. Valid value is string.
 Specify the encryption type the password will use. Valid values are 'cleartext', '3des' or 'cisco_type_7' encryption, and 'default',which defaults to 'cleartext'.
 
 ##### `remote_as`
-Specify Autonomous System Number of the neighbor. Valid values are String or Integer in ASPLAIN or ASDOT notation, or 'default', which means not to configure it.
+Specify Autonomous System Number of the neighbor. Valid values are String or Integer in ASPLAIN or ASDOT notation, or 'default', which means not to configure it. 
 
 ##### `remove_private_as`
 Specify the config to remove private AS number from outbound updates. Valid  values are 'enable' to enable this config, 'disable' to disable this config, 'all' to remove all private AS number, or 'replace-as', to replace the private AS number.
@@ -794,7 +665,7 @@ Manages configuration of a BGP Neighbor Address-family instance.
 #### Parameters
 
 ###### `ensure`
-Determine whether the neighbor address family config should be present or not.
+Determine whether the neighbor address family config should be present or not. 
 Valid values are 'present' and 'absent'.
 
 ##### `asn`
@@ -1415,21 +1286,6 @@ VTP file name. Valid values are a string or the keyword 'default'.
 Password for the VTP domain. Valid values are a string or the keyword 'default'.
 
 --
-### Type: cisco_vni
-Manages the VNI (Virtual Network Identifier) configuration of a Cisco device.
-
-#### Parameters
-
-##### `ensure`
-Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
-
-##### `name`
-Instance of vni, valid value is integer.
-
-##### `mapped_vlan`
-The VLAN ID that will map to the VNI.
-
---
 ### Type: cisco_vxlan_global
 Handles the detection of duplicate IP or MAC addresses based on the number of moves in a given time-interval (seconds).
 Also configures anycast gateway MAC of the switch.
@@ -1456,27 +1312,6 @@ The number of host moves allowed in n seconds. The range is 1 to 1000 moves; def
 
 ##### `dup_host_mac_detection_timeout`
 The duplicate detection timeout in seconds for the number of host moves. The range is 2 to 36000 seconds; default is 180 seconds.
-
---
-### Type: cisco_vxlan_vtep
-Creates a VXLAN Network Virtualization Endpoint (NVE) overlay interface that terminates VXLAN tunnels.
-
-#### Parameters
-
-##### `ensure`
-Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
-
-##### `description`
-Description of the NVE interface.  Valid values are string, or keyword 'default'.
-
-##### `host_reachability`
-Specify mechanism for host reachability advertisement. Valid values are 'evpn', 'flood' or keyword 'default'.
-
-##### `shutdown`
-Administratively shutdown the NVE interface. Valid values are true, false or keyword 'default'.
-
-##### `source_interface`
-Specify the loopback interface whose IP address should be used for the NVE interface. Valid values are string or keyword 'default'.
 
 --
 ### NetDev StdLib Resource Type Details
@@ -1651,7 +1486,8 @@ Encryption key format [0-7].  Valid value is an integer.
 
 ### Type: search_domain
 
-Configure the search domain of the device. Note that this type is functionally equivalent to the netdev_stdlib domain_name type.
+Configure the search domain of the device. Note that this type is functionally equivalent to 
+the netdev_stdlib domain_name type.
 
 #### Parameters
 
@@ -1677,15 +1513,6 @@ keyword 'default'.
 ##### `acl`
 Assigns an Access Control List (ACL) to an SNMP community to filter SNMP
 requests. Valid values are a string or the keyword 'default'.
-
-### Type: snmp_notification
-Manages an SNMP notification on a Cisco SNMP server.
-
-#### Parameters
-
-##### `enable`
-Determine whether the trap should be on or off. Valid
-values are true and false.
 
 ### Type: snmp_user
 
