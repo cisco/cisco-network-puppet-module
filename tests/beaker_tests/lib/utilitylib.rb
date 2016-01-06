@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2014-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -124,6 +124,14 @@ rescue Beaker::DSL::Outcomes::PassTest
   logger.success("TestCase :: #{message} :: PASS")
 rescue Beaker::DSL::Outcomes::FailTest
   logger.error("TestCase :: #{message} :: FAIL")
+end
+
+# Raise a Beaker::DSL::Outcomes::SkipTest exception.
+# @param message [String] String object to represent testcase.
+# @param testcase [TestCase] An instance of Beaker::TestCase.
+# @result none [None] Returns no object.
+def raise_skip_exception(message, testcase)
+  testcase.skip_test("\nTestCase :: #{message} :: SKIP")
 end
 
 # Full command string for puppet agent
@@ -373,4 +381,132 @@ def bgp_title_pattern_munge(tests, id, provider=nil)
   t.merge!(tests[id][:af])
   t[:vrf] = 'default' if t[:vrf].nil?
   t
+end
+
+# setup_mt_full_env
+# Check and set up prerequisites for Multi-Tenancy Full (MT-full) testing.
+# MT-full currently requires an F3 line module. This method will update
+# the tests hash with the names of the default vdc and also an appropriate
+# test interface name to use for testing.
+# tests[:vdc] The default vdc name
+# tests[:intf] A compatible interface to use for MT-full testing.
+def setup_mt_full_env(tests, testcase)
+  # MT-full tests require a specific linecard. Search for a compatible
+  # module and enable it.
+
+  testheader = tests[:testheader] ? tests[:testheader] : 'setup_mt_full_env'
+  mod = 'f3'
+  step 'Check for Compatible Line Module' do
+    tests[:intf] = mt_full_interface
+    break if tests[:intf]
+    prereq_skip(testheader, testcase,
+                "MT-full tests require #{mod} or compatible line module")
+  end if tests[:intf].nil?
+  intf = tests[:intf]
+  logger.info("Test interface name is '#{intf}'")
+
+  step 'Get default VDC name' do
+    tests[:vdc] = default_vdc_name
+    break if tests[:vdc]
+    prereq_skip(testheader, testcase, 'Unable to determine default vdc name')
+  end if tests[:vdc].nil?
+  vdc = tests[:vdc]
+
+  step "Check for 'limit-resource module-type #{mod}'" do
+    break if limit_resource_module_type_get(vdc, mod)
+    logger.info("limit-resource module-type does not include '#{mod}', "\
+                'update it now...')
+    limit_resource_module_type_set(vdc, mod)
+    break if limit_resource_module_type_get(vdc, mod)
+    prereq_skip(testheader, testcase,
+                "Unable to set limit-resource module-type to '#{mod}'")
+  end
+
+  step "Verify that '#{intf}' is allocated to VDC" do
+    break if vdc_allocate_interface_get(vdc, intf)
+    logger.info("'#{intf}' is not allocated to VDC, allocate it now...")
+    vdc_allocate_interface_set(vdc, intf)
+    break if vdc_allocate_interface_get(vdc, intf)
+    prereq_skip(testheader, testcase,
+                "Unable to allocate interface '#{intf}' to VDC")
+  end
+
+  step "Add switchport config to #{intf}" do
+    cmd = get_vshell_cmd("conf t ; int #{intf} ; #{tests[:config_switchport]}")
+    on(agent, cmd, pty: true)
+  end if tests[:config_switchport]
+
+  step 'Add bridge-domain global config' do
+    cmd = get_vshell_cmd("conf t ; #{tests[:config_bridge_domain]}")
+    on(agent, cmd, pty: true)
+  end if tests[:config_bridge_domain]
+end
+
+# Helper to raise skip when prereqs are not met
+def prereq_skip(testheader, testcase, message)
+  logger.error("** PLATFORM PREREQUISITE NOT MET: #{message}")
+  raise_skip_exception(testheader, testcase)
+end
+
+# Return an interface name from the first MT-full compatible line module found
+def mt_full_interface
+  # Search for F3 card on device, create an interface name if found
+  cmd = get_vshell_cmd('sh mod')
+  out = on(agent, cmd, pty: true).stdout[/^(\d+)\s.*N7K-F3/]
+  slot = out.nil? ? nil : Regexp.last_match[1]
+  "ethernet#{slot}/1" unless slot.nil?
+end
+
+# Return the default vdc name
+def default_vdc_name
+  cmd = get_vshell_cmd('sh run vdc')
+  out = on(agent, cmd, pty: true).stdout[/^vdc (\S+) id 1$/]
+  out.nil? ? nil : Regexp.last_match[1]
+end
+
+# Check for presence of limit-resource module-type
+def limit_resource_module_type_get(vdc, mod)
+  cmd = get_vshell_cmd("sh vdc #{vdc} detail")
+  pat = Regexp.new("vdc supported linecards:.*(#{mod})")
+  out = on(agent, cmd, pty: true).stdout.match(pat)
+  out.nil? ? nil : Regexp.last_match[1]
+end
+
+# Set limit-resource module-type
+def limit_resource_module_type_set(vdc, mod)
+  # Turn off prompting
+  cmd = get_vshell_cmd('terminal dont-ask persist')
+  on(agent, cmd, pty: true)
+
+  cmd = get_vshell_cmd("conf t ; vdc #{vdc} ; "\
+                       "limit-resource module-type #{mod}")
+  on(agent, cmd, pty: true)
+
+  # Reset dont-ask to default setting
+  cmd = get_vshell_cmd('no terminal dont-ask persist')
+  on(agent, cmd, pty: true)
+end
+
+# Check for presence of interface in vdc allocated interfaces
+def vdc_allocate_interface_get(vdc, intf)
+  intf_pat = "(#{intf}) " # note trailing space
+  cmd = get_vshell_cmd("sh vdc #{vdc} membership")
+  out = on(agent, cmd, pty: true).stdout.match(
+    Regexp.new(intf_pat, Regexp::IGNORECASE))
+  out.nil? ? nil : Regexp.last_match[1]
+end
+
+# Add interface to vdc's allocated interfaces
+def vdc_allocate_interface_set(vdc, intf)
+  # Turn off prompting
+  cmd = get_vshell_cmd('terminal dont-ask persist')
+  on(agent, cmd, pty: true)
+
+  cmd = get_vshell_cmd("conf t ; vdc #{vdc} ; "\
+                       "allocate interface #{intf}")
+  on(agent, cmd, pty: true)
+
+  # Reset prompting to default state
+  cmd = get_vshell_cmd('no terminal dont-ask persist')
+  on(agent, cmd, pty: true)
 end

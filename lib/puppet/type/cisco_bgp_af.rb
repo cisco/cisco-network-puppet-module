@@ -132,7 +132,6 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   # Parse out the title to fill in the attributes in these patterns. These
   # attributes can be overwritten later.
 
-  # rubocop:disable Metrics/MethodLength
   def self.title_patterns
     identity = ->(x) { x }
     [
@@ -174,7 +173,6 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       ],
     ]
   end
-  # rubocop:enable Metrics/MethodLength
 
   ##############
   # Parameters #

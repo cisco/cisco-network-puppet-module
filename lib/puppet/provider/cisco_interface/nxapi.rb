@@ -3,7 +3,7 @@
 #
 # May 2015
 #
-# Copyright (c) 2015 Cisco and/or its affiliates.
+# Copyright (c) 2015-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
   # because the boolean-based methods are processed slightly different.
   # Note: switchport_mode should always process first to evaluate L2 vs L3.
   # Note: vrf should be the first L3 property to process.  The AutoGen vrf
-  # setting is not used.
+  # setter is not used.
   INTF_NON_BOOL_PROPS = [
     :switchport_mode,
     :vrf,
@@ -53,6 +53,7 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     :duplex,
     :switchport_trunk_allowed_vlan,
     :switchport_trunk_native_vlan,
+    :vlan_mapping,
   ]
   INTF_BOOL_PROPS = [
     :ipv4_pim_sparse_mode,
@@ -60,10 +61,11 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     :ipv4_redirects,
     :negotiate_auto,
     :shutdown,
-    :switchport_vtp,
     :switchport_autostate_exclude,
+    :switchport_vtp,
     :svi_autostate,
     :svi_management,
+    :vlan_mapping_enable,
   ]
   INTF_ALL_PROPS = INTF_NON_BOOL_PROPS + INTF_BOOL_PROPS
 
@@ -97,6 +99,8 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
         current_state[prop] = val ? :true : :false
       end
     end
+    # nested array properties
+    current_state[:vlan_mapping] = intf.vlan_mapping
     new(current_state)
   end # self.properties_get
 
@@ -166,6 +170,21 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
       mask = @resource[:ipv4_netmask_length]
     end
     @interface.ipv4_addr_mask_set(addr, mask)
+  end
+
+  def vlan_mapping
+    return @property_hash[:vlan_mapping] if @resource[:vlan_mapping].nil?
+    if @resource[:vlan_mapping][0] == :default &&
+       @property_hash[:vlan_mapping] == @interface.default_vlan_mapping
+      return [:default]
+    else
+      @property_hash[:vlan_mapping]
+    end
+  end
+
+  def vlan_mapping=(should_list)
+    should_list = @interface.default_vlan_mapping if should_list[0] == :default
+    @property_flush[:vlan_mapping] = should_list
   end
 
   # override vrf setter

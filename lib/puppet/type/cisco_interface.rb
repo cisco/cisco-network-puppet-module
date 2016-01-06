@@ -2,7 +2,7 @@
 #
 # May 2013
 #
-# Copyright (c) 2013-2015 Cisco and/or its affiliates.
+# Copyright (c) 2013-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -45,6 +45,11 @@ Puppet::Type.newtype(:cisco_interface) do
      ipv4_proxy_arp               => true,
      ipv4_pim_sparse_mode         => true,
      negotiate_auto               => true,
+    }
+    cisco_interface { \"Ethernet9/1\" :
+     switchport_mode              => 'trunk',
+     vlan_mapping_enable          => 'false',
+     vlan_mapping                 => [[20, 21], [30, 31]],
     }
     cisco_interface { \"loopback42\" :
      description                  => \"logical interface\",
@@ -316,6 +321,38 @@ Puppet::Type.newtype(:cisco_interface) do
 
     newvalues(:true, :false, :default)
   end # property svi_management
+
+  ################
+  # vlan mapping #
+  ################
+
+  newproperty(:vlan_mapping, array_matching: :all) do
+    format = '[[original_vlan, translated_vlan], [orig2, tran2]]'
+    desc 'An array of [original_vlan, translated_vlan] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property vlan_mapping
+
+  newproperty(:vlan_mapping_enable) do
+    desc 'Enable/Disable vlan mapping on the interface. '\
+         "Valid values are 'true', 'false', and 'default'."
+
+    newvalues(:true, :false, :default)
+  end # property vlan_mapping_enable
 
   ################
   # Autorequires #
