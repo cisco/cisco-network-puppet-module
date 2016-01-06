@@ -51,7 +51,7 @@
 #
 ###############################################################################
 
-# Require UtilityLib.rb and AceLib.rb paths.
+# Require UtilityLib.rb paths.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 # -----------------------------
@@ -94,13 +94,31 @@ tests = {
 #   Can be used with :af for mixed title/af testing. If mixing, :af values will
 #   be merged with title values and override any duplicates. If omitted,
 #   :title_pattern will be set to 'id'.
-# tests[id][:af] - (Optional) defines the address-family values.
-#   Must use :title_pattern if :af is not specified. Useful for testing mixed
-#   title/af manifests
 #
-tests['create_ipv4_seq_10'] = {
-  title_pattern:  'ipv4 foo-1 10',
+
+tests['default_properties_ipv4'] = {
+  title_pattern:  'ipv4 foo-1',
   manifest_props: "
+    stats_per_entry                  => 'false',
+    fragments                        => 'default',
+  ",
+  resource_props: {
+    'stats_per_entry' => 'false',
+    'fragments'       => '',
+  },
+}
+
+tests['create_ipv4_seq_10'] = {
+  title_pattern:  'ipv4 beaker_1 10',
+  manifest_props: "
+    'action'        => 'permit',
+    'proto'         => 'tcp',
+    'src_addr'      => '1.2.3.4 2.3.4.5',
+    'src_port'      => 'eq 40',
+    'dst_addr'      => '9.9.0.4/32',
+    'dst_port'      => 'range 32 56',
+  ",
+  resource_props: "
     'action'        => 'permit',
     'proto'         => 'tcp',
     'src_addr'      => '1.2.3.4 2.3.4.5',
@@ -110,6 +128,25 @@ tests['create_ipv4_seq_10'] = {
   ",
 }
 
+tests['destroy_ipv4_seq_10'] = {
+  title_pattern:  'ipv4 beaker_1 10',
+  manifest_props: "
+    'action'        => 'permit',
+    'proto'         => 'tcp',
+    'src_addr'      => '1.2.3.4 2.3.4.5',
+    'src_port'      => 'eq 40',
+    'dst_addr'      => '9.9.0.4/32',
+    'dst_port'      => 'range 32 56',
+  ",
+  resource_props: "
+    'action'        => 'permit',
+    'proto'         => 'tcp',
+    'src_addr'      => '1.2.3.4 2.3.4.5',
+    'src_port'      => 'eq 40',
+    'dst_addr'      => '9.9.0.4/32',
+    'dst_port'      => 'range 32 56',
+  ",
+}
 #################################################################
 # HELPER FUNCTIONS
 #################################################################
@@ -135,7 +172,7 @@ def build_manifest_ace(tests, id)
   logger.debug("build_manifest_ace :: title_pattern:\n" +
                tests[id][:title_pattern])
   tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
-  node 'agent-lab3-nx' {
+  node 'default' {
     cisco_ace { '#{tests[id][:title_pattern]}':
       #{state}
       #{manifest}
@@ -164,10 +201,20 @@ test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   # node_feature_cleanup(agent, 'acl')
+  # ------------create ipv4 foo-1 acl ------------------------
+  id = 'default_properties_ipv4'
+  tests[id][:desc] = '1.1 create ipv4 beaker_1'
+  test_harness_ace(tests, id)
 
-  # -----------------------------------
+  # ------------create ipv4 foo-1 sequence number 10--------
   id = 'create_ipv4_seq_10'
-  tests[id][:desc] = '1.1 create ipv4 foo-1 seq 10'
+  tests[id][:desc] = '1.2 create ipv4 beaker_1 seq 10'
+  test_harness_ace(tests, id)
+
+  # ------------destroy ipv4 foo-1 sequence number 10--------
+  id = 'destroy_ipv4_seq_10'
+  tests[id][:ensure] = :absent
+  tests[id][:desc] = '1.3 destroy ipv4 beaker_1 seq 10'
   test_harness_ace(tests, id)
 end
 
