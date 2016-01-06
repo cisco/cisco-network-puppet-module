@@ -102,7 +102,7 @@ tests = {
 #   :title_pattern will be set to 'id'.
 #
 
-tests['default_properties'] = {
+tests['default_properties_asym'] = {
   title_pattern:  'port-channel100',
   manifest_props: "
     lacp_graceful_convergence     => 'default',
@@ -123,7 +123,7 @@ tests['default_properties'] = {
   },
 }
 
-tests['non_default_properties'] = {
+tests['non_default_properties_asym'] = {
   title_pattern:  'port-channel100',
   manifest_props: "
     lacp_graceful_convergence     => 'false',
@@ -143,7 +143,7 @@ tests['non_default_properties'] = {
   },
 }
 
-tests['default_properties_n9k'] = {
+tests['default_properties_sym'] = {
   title_pattern:  'port-channel100',
   manifest_props: "
     lacp_graceful_convergence     => 'default',
@@ -164,7 +164,7 @@ tests['default_properties_n9k'] = {
   },
 }
 
-tests['non_default_properties_n9k'] = {
+tests['non_default_properties_sym'] = {
   title_pattern:  'port-channel100',
   manifest_props: "
     lacp_graceful_convergence     => 'false',
@@ -184,7 +184,7 @@ tests['non_default_properties_n9k'] = {
   },
 }
 
-tests['default_properties_n6k'] = {
+tests['default_properties_eth'] = {
   title_pattern:  'port-channel100',
   manifest_props: "
     lacp_graceful_convergence     => 'default',
@@ -201,7 +201,7 @@ tests['default_properties_n6k'] = {
   },
 }
 
-tests['non_default_properties_n6k'] = {
+tests['non_default_properties_eth'] = {
   title_pattern:  'port-channel100',
   manifest_props: "
     lacp_graceful_convergence     => 'false',
@@ -225,6 +225,11 @@ tests['non_default_properties_n6k'] = {
 def puppet_resource_cmd
   cmd = PUPPET_BINPATH +
         'resource cisco_interface_portchannel port-channel100'
+  get_namespace_cmd(agent, cmd, options)
+end
+
+def puppet_facter_cmd
+  cmd = FACTER_BINPATH + '-p cisco.hardware.type'
   get_namespace_cmd(agent, cmd, options)
 end
 
@@ -273,25 +278,77 @@ end
 #################################################################
 test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
+  platform_info = on(agent, puppet_facter_cmd).stdout.chomp
+  case platform_info
+  when /Nexus7/
+    device = :N7K
+  when /Nexus [56]/
+    device = :N5K
+  when /(NX-OSv|Nexus9)/
+    device = :N9K
+  else
+    device = :other
+  end
+  logger.info("#### This device is of type: #{device} #####")
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
-  id = 'default_properties_n6k'
-  tests[id][:desc] = '1.1 Default Properties'
-  test_harness_interface_portchannel(tests, id)
+  if device == :N7K
+    id = 'default_properties_asym'
+    tests[id][:desc] = '1.1 Default Properties'
+    test_harness_interface_portchannel(tests, id)
 
-  tests[id][:desc] = '1.2 Default Properties'
-  tests[id][:ensure] = :absent
-  test_harness_interface_portchannel(tests, id)
+    tests[id][:desc] = '1.2 Default Properties'
+    tests[id][:ensure] = :absent
+    test_harness_interface_portchannel(tests, id)
+  elsif device == :N5K
+    id = 'default_properties_eth'
+    tests[id][:desc] = '1.1 Default Properties'
+    test_harness_interface_portchannel(tests, id)
+
+    tests[id][:desc] = '1.2 Default Properties'
+    tests[id][:ensure] = :absent
+    test_harness_interface_portchannel(tests, id)
+  elsif device == :N9K
+    id = 'default_properties_sym'
+    tests[id][:desc] = '1.1 Default Properties'
+    test_harness_interface_portchannel(tests, id)
+
+    tests[id][:desc] = '1.2 Default Properties'
+    tests[id][:ensure] = :absent
+    test_harness_interface_portchannel(tests, id)
+  else
+    # do nothing
+  end
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  id = 'non_default_properties_n6k'
-  tests[id][:desc] = '2.1 Non Default Properties'
-  test_harness_interface_portchannel(tests, id)
+  if device == :N7K
+    id = 'non_default_properties_asym'
+    tests[id][:desc] = '2.1 Non Default Properties'
+    test_harness_interface_portchannel(tests, id)
 
-  tests[id][:desc] = '2.2 Non Default Properties (absent)'
-  tests[id][:ensure] = :absent
-  test_harness_interface_portchannel(tests, id)
+    tests[id][:desc] = '2.2 Non Default Properties (absent)'
+    tests[id][:ensure] = :absent
+    test_harness_interface_portchannel(tests, id)
+  elsif device == :N5K
+    id = 'non_default_properties_eth'
+    tests[id][:desc] = '2.1 Non Default Properties'
+    test_harness_interface_portchannel(tests, id)
+
+    tests[id][:desc] = '2.2 Non Default Properties (absent)'
+    tests[id][:ensure] = :absent
+    test_harness_interface_portchannel(tests, id)
+  elsif device == :N9K
+    id = 'non_default_properties_sym'
+    tests[id][:desc] = '2.1 Non Default Properties'
+    test_harness_interface_portchannel(tests, id)
+
+    tests[id][:desc] = '2.2 Non Default Properties (absent)'
+    tests[id][:ensure] = :absent
+    test_harness_interface_portchannel(tests, id)
+  else
+    # do nothing
+  end
 end
 
 logger.info("TestCase :: #{testheader} :: End")

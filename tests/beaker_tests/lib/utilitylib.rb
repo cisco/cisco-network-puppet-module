@@ -37,6 +37,7 @@
 
 # Define various CONSTANTS used by beaker tests
 PUPPET_BINPATH = '/opt/puppetlabs/bin/puppet '
+FACTER_BINPATH = '/opt/puppetlabs/bin/facter '
 PUPPETMASTER_MANIFESTPATH = '/etc/puppetlabs/code/environments/production/manifests/site.pp'
 
 # These methods are defined outside of a module so that

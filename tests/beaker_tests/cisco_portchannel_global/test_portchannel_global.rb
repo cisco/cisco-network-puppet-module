@@ -102,7 +102,7 @@ tests = {
 #   :title_pattern will be set to 'id'.
 #
 
-tests['default_properties'] = {
+tests['default_properties_asym'] = {
   title_pattern:  'default',
   manifest_props: "
     asymmetric                   => 'default',
@@ -123,7 +123,7 @@ tests['default_properties'] = {
   },
 }
 
-tests['non_default_properties'] = {
+tests['non_default_properties_asym'] = {
   title_pattern:  'default',
   manifest_props: "
     asymmetric                   => 'true',
@@ -143,7 +143,7 @@ tests['non_default_properties'] = {
   },
 }
 
-tests['default_properties_n6k'] = {
+tests['default_properties_eth'] = {
   title_pattern:  'default',
   manifest_props: "
     bundle_hash                  => 'default',
@@ -158,7 +158,7 @@ tests['default_properties_n6k'] = {
   },
 }
 
-tests['non_default_properties_n6k'] = {
+tests['non_default_properties_eth'] = {
   title_pattern:  'default',
   manifest_props: "
     bundle_hash                  => 'mac',
@@ -172,7 +172,7 @@ tests['non_default_properties_n6k'] = {
   },
 }
 
-tests['default_properties_n9k'] = {
+tests['default_properties_sym'] = {
   title_pattern:  'default',
   manifest_props: "
     bundle_hash                  => 'default',
@@ -193,7 +193,7 @@ tests['default_properties_n9k'] = {
   },
 }
 
-tests['non_default_properties_n9k'] = {
+tests['non_default_properties_sym'] = {
   title_pattern:  'default',
   manifest_props: "
     bundle_hash                  => 'ip',
@@ -221,6 +221,11 @@ tests['non_default_properties_n9k'] = {
 def puppet_resource_cmd
   cmd = PUPPET_BINPATH +
         'resource cisco_portchannel_global'
+  get_namespace_cmd(agent, cmd, options)
+end
+
+def puppet_facter_cmd
+  cmd = FACTER_BINPATH + '-p cisco.hardware.type'
   get_namespace_cmd(agent, cmd, options)
 end
 
@@ -260,19 +265,55 @@ end
 #################################################################
 test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
+  platform_info = on(agent, puppet_facter_cmd).stdout.chomp
+  case platform_info
+  when /Nexus7/
+    device = :N7K
+  when /Nexus [56]/
+    device = :N5K
+  when /(NX-OSv|Nexus9)/
+    device = :N9K
+  else
+    device = :other
+  end
+  logger.info("#### This device is of type: #{device} #####")
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
-  id = 'default_properties'
-  tests[id][:desc] = '1.1 Default Properties'
-  test_harness_portchannel_global(tests, id)
+  if device == :N7K
+    id = 'default_properties_asym'
+    tests[id][:desc] = '1.1 Default Properties'
+    test_harness_portchannel_global(tests, id)
+  elsif device == :N5K
+    id = 'default_properties_eth'
+    tests[id][:desc] = '1.1 Default Properties'
+    test_harness_portchannel_global(tests, id)
+  elsif device == :N9K
+    id = 'default_properties_sym'
+    tests[id][:desc] = '1.1 Default Properties'
+    test_harness_portchannel_global(tests, id)
+  else
+    # do nothing
+  end
 
   # no absent test for portchannel_global
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  id = 'non_default_properties'
-  tests[id][:desc] = '2.1 Non Default Properties'
-  test_harness_portchannel_global(tests, id)
+  if device == :N7K
+    id = 'non_default_properties_asym'
+    tests[id][:desc] = '2.1 Non Default Properties'
+    test_harness_portchannel_global(tests, id)
+  elsif device == :N5K
+    id = 'non_default_properties_eth'
+    tests[id][:desc] = '2.1 Non Default Properties'
+    test_harness_portchannel_global(tests, id)
+  elsif device == :N9K
+    id = 'non_default_properties_sym'
+    tests[id][:desc] = '2.1 Non Default Properties'
+    test_harness_portchannel_global(tests, id)
+  else
+    # do nothing
+  end
 
   # no absent test for portchannel_global
 end

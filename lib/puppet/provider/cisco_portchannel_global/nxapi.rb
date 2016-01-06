@@ -64,8 +64,7 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:nxapi) do
   def self.properties_get(global_id, v)
     debug "Checking instance, global #{global_id}"
     current_state = {
-      name:   global_id,
-      ensure: :present,
+      name: global_id
     }
 
     # Call node_utils getter for each property
@@ -101,26 +100,13 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:nxapi) do
     end
   end # self.prefetch
 
-  def exists?
-    (@property_hash[:ensure] == :present)
-  end
-
-  def create
-    @property_flush[:ensure] = :present
-  end
-
-  def destroy
-    @property_flush[:ensure] = :absent
-  end
-
   def instance_name
     name
   end
 
-  def properties_set(new_global=false)
+  def properties_set
     PC_GLOBAL_ALL_PROPS.each do |prop|
       next unless @resource[prop]
-      send("#{prop}=", @resource[prop]) if new_global
       unless @property_flush[prop].nil?
         @pc_global.send("#{prop}=", @property_flush[prop]) if
           @pc_global.respond_to?("#{prop}=")
@@ -244,27 +230,11 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:nxapi) do
   end
 
   def flush
-    if @property_flush[:ensure] == :absent
-      @pc_global.destroy
-      @pc_global = nil
-    else
-      # Create/Update
-      new_global = false
-      if @pc_global.nil?
-        new_global = true
-        @pc_global = Cisco::PortChannelGlobal.new(@resource[:name])
-      end
-      properties_set(new_global)
-    end
+    properties_set
     puts_config
   end
 
   def puts_config
-    if @pc_global.nil?
-      info "PortChannelGlobal=#{@resource[:name]} is absent."
-      return
-    end
-
     # Dump all current properties for this global
     current = sprintf("\n%30s: %s", 'name', instance_name)
     PC_GLOBAL_ALL_PROPS.each do |prop|

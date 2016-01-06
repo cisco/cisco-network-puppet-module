@@ -17,27 +17,26 @@
 # limitations under the License.
 
 Puppet::Type.newtype(:cisco_portchannel_global) do
-  @doc = %q(
+  @doc = "
     Manages the Cisco PortChannel Global configuration resource.
-    cisco_portchannel_global {"default":
+    cisco_portchannel_global {'default':
       ..attributes..
     }
-    "default" is only acceptable name for this global config object.
+    'default' is only acceptable name for this global config object.
     Example:
-    cisco_portchannel_global { "default":
-      ensure                         => 'present',
-      asymmetric                     => true,
-      bundle_hash                    => "ip",
-      bundle_select                  => "dst",
-      concatenation                  => false,
-      hash_distribution              => "adaptive",
-      hash_poly                      => "CRC10a",
-      load_defer                     => 1000,
-      resilient                      => true,
-      rotate                         => 10,
-      symmetry                       => true,
+    cisco_portchannel_global { 'default':
+      asymmetric                     => 'true',
+      bundle_hash                    => 'ip',
+      bundle_select                  => 'dst',
+      concatenation                  => 'false',
+      hash_distribution              => 'adaptive',
+      hash_poly                      => 'CRC10a',
+      load_defer                     => '1000',
+      resilient                      => 'true',
+      rotate                         => '10',
+      symmetry                       => 'true',
     }
-  )
+  "
   ###################
   # Resource Naming #
   ###################
