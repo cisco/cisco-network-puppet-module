@@ -224,11 +224,6 @@ def puppet_resource_cmd
   get_namespace_cmd(agent, cmd, options)
 end
 
-def puppet_facter_cmd
-  cmd = FACTER_BINPATH + '-p cisco.hardware.type'
-  get_namespace_cmd(agent, cmd, options)
-end
-
 def build_manifest_portchannel_global(tests, id)
   manifest = tests[id][:manifest_props]
   tests[id][:resource] = tests[id][:resource_props]
@@ -265,29 +260,19 @@ end
 #################################################################
 test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
-  platform_info = on(agent, puppet_facter_cmd).stdout.chomp
-  case platform_info
-  when /Nexus7/
-    device = :N7K
-  when /Nexus [56]/
-    device = :N5K
-  when /(NX-OSv|Nexus9)/
-    device = :N9K
-  else
-    device = :other
-  end
+  device = platform
   logger.info("#### This device is of type: #{device} #####")
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
-  if device == :N7K
+  if device == 'n7k'
     id = 'default_properties_asym'
     tests[id][:desc] = '1.1 Default Properties'
     test_harness_portchannel_global(tests, id)
-  elsif device == :N5K
+  elsif device == 'n5k' || device == 'n6k'
     id = 'default_properties_eth'
     tests[id][:desc] = '1.1 Default Properties'
     test_harness_portchannel_global(tests, id)
-  elsif device == :N9K
+  elsif device == 'n3k' || device == 'n9k'
     id = 'default_properties_sym'
     tests[id][:desc] = '1.1 Default Properties'
     test_harness_portchannel_global(tests, id)
@@ -299,15 +284,15 @@ test_name "TestCase :: #{testheader}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  if device == :N7K
+  if device == 'n7k'
     id = 'non_default_properties_asym'
     tests[id][:desc] = '2.1 Non Default Properties'
     test_harness_portchannel_global(tests, id)
-  elsif device == :N5K
+  elsif device == 'n5k' || device == 'n6k'
     id = 'non_default_properties_eth'
     tests[id][:desc] = '2.1 Non Default Properties'
     test_harness_portchannel_global(tests, id)
-  elsif device == :N9K
+  elsif device == 'n3k' || device == 'n9k'
     id = 'non_default_properties_sym'
     tests[id][:desc] = '2.1 Non Default Properties'
     test_harness_portchannel_global(tests, id)
