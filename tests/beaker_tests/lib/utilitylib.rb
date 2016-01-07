@@ -532,15 +532,15 @@ def platform
   return @cisco_hardware unless @cisco_hardware.nil?
   pi = on(agent, facter_cmd('-p cisco.hardware.type')).stdout.chomp
   case pi
-  when /Nexus.*300/
+  when /Nexus\s?300/
     @cisco_hardware = 'n3k'
-  when /Nexus.*500/
+  when /Nexus\s?500/
     @cisco_hardware = 'n5k'
-  when /Nexus.*600/
+  when /Nexus\s?600/
     @cisco_hardware = 'n6k'
-  when /Nexus.*700/
+  when /Nexus\s?700/
     @cisco_hardware = 'n7k'
-  when /Nexus.*900/
+  when /Nexus\s?900/
     @cisco_hardware = 'n9k'
   when /NX-OSv/
     @cisco_hardware = 'n9k'
