@@ -517,7 +517,7 @@ def facter_cmd(cmd)
   get_namespace_cmd(agent, FACTER_BINPATH + cmd, options)
 end
 
-# Used to cash the operation system information
+# Used to cache the operation system information
 @cisco_os = nil
 # Use facter to return cisco operating system information
 def operating_system
@@ -525,7 +525,7 @@ def operating_system
   @cisco_os = on(agent, facter_cmd('os.name')).stdout.chomp
 end
 
-# Used to cash the cisco hardware type
+# Used to cache the cisco hardware type
 @cisco_hardware = nil
 # Use facter to return cisco hardware type
 def platform
