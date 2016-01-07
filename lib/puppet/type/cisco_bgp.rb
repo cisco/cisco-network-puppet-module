@@ -49,14 +49,10 @@ Puppet::Type.newtype(:cisco_bgp) do
       confederation_id                       => '77.6',
       confederation_peers                    => '77.6 88 99.4 200'
       enforce_first_as                       => true,
-      event_history_cli                      => true,
-      event_history_cli_size                 => 'large',
-      event_history_detail                   => true,
-      event_history_detail_size              => 'large',
-      event_history_events                   => true,
-      event_history_events_size              => 'large',
-      event_history_periodic                 => true,
-      event_history_periodic_size            => 'large',
+      event_history_cli                      => 'true',
+      event_history_detail                   => 'small',
+      event_history_events                   => 'large',
+      event_history_periodic                 => 'disable',
       fast_external_fallover                 => true,
       flush_routes                           => false,
       isolate                                => false,
@@ -294,64 +290,56 @@ Puppet::Type.newtype(:cisco_bgp) do
   end # property enforce_first_as
 
   newproperty(:event_history_cli) do
-    desc 'event_history_cli state.' \
-         "Valid values are True, False or 'default'"
-    newvalues(:true, :false, :default)
-  end
+    desc "event_history_cli state. Valid values are True, False, size_small,
+          size_medium, size_large, size_disable or 'default'"
 
-  newproperty(:event_history_cli_size) do
-    desc 'event_history_cli_size state. Valid values are a String' \
-         "'small', 'medium', 'large', 'disable' or 'default'"
     munge do |value|
-      value = :default if value == 'default'
-      value
+      value = 'size_small' if value == 'true'
+      value.to_sym
     end
-  end
+
+    newvalues(:true, :false, :default,
+              :size_small, :size_medium, :size_large, :size_disable)
+  end # property event_history_cli
 
   newproperty(:event_history_detail) do
-    desc 'event_history_detail state.' \
-         "Valid values are True, False or 'default'"
-    newvalues(:true, :false, :default)
-  end
+    desc "event_history_detail state. Valid values are True, False, size_small,
+          size_medium, size_large, size_disable or 'default'"
 
-  newproperty(:event_history_detail_size) do
-    desc 'event_history_detail_size state. Valid values are a String' \
-         "'small', 'medium', 'large', 'disable' or 'default'"
     munge do |value|
-      value = :default if value == 'default'
-      value
+      value = 'size_disable' if value == 'true'
+      value.to_sym
     end
-  end
+
+    newvalues(:true, :false, :default,
+              :size_small, :size_medium, :size_large, :size_disable)
+  end # property event_history_detail
 
   newproperty(:event_history_events) do
-    desc 'event_history_events state.' \
-         "Valid values are True, False or 'default'"
-    newvalues(:true, :false, :default)
-  end
+    desc "event_history_events state. Valid values are True, False, size_small,
+          size_medium, size_large, size_disable or 'default'"
 
-  newproperty(:event_history_events_size) do
-    desc 'event_history_events_size state. Valid values are a String' \
-         "'small', 'medium', 'large', 'disable' or 'default'"
     munge do |value|
-      value = :default if value == 'default'
-      value
+      value = 'size_small' if value == 'true'
+      value.to_sym
     end
-  end
+
+    newvalues(:true, :false, :default,
+              :size_small, :size_medium, :size_large, :size_disable)
+  end # property event_history_events
 
   newproperty(:event_history_periodic) do
-    desc 'event_history_periodic state.' \
-         "Valid values are True, False or 'default'"
-    newvalues(:true, :false, :default)
-  end
+    desc "event_history_periodic state. Valid values are True, False, size_small,
+          size_medium, size_large, size_disable or 'default'"
 
-  newproperty(:event_history_periodic_size) do
-    desc 'event_history_periodic_size state. Valid values are a String' \
-         "'small', 'medium', 'large', 'disable' or 'default'"
     munge do |value|
-      value = :default if value == 'default'
-      value
+      value = 'size_small' if value == 'true'
+      value.to_sym
     end
-  end
+
+    newvalues(:true, :false, :default,
+              :size_small, :size_medium, :size_large, :size_disable)
+  end # property event_history_periodic
 
   newproperty(:fast_external_fallover) do
     desc 'Enable/Disable immediately reset the session if the link ' \
