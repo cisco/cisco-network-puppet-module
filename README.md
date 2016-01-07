@@ -466,10 +466,6 @@ Enable/Disable events history buffer. Valid values are 'true'(=>size_small), 'fa
 ##### `event_history_periodic`
 Enable/Disable periodic events history buffer. Valid values are 'true'(=>size_small), 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
 
-##### `event_history_periodic_size`
-Set periodic events history buffer size. Valid values are 'small', 'medium', 'large', 'disable' or 'default'.
-
-
 ##### `fast_external_fallover`
 Enable/Disable immediately reset the session if the link to a directly connected BGP peer goes down. Valid values are 'true', 'false', and 'default'.
 
