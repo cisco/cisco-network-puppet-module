@@ -19,7 +19,6 @@ class ciscopuppet::demo_bgp {
   # --------------------------------------------------------------------------#
   # Configure Global BGP                                                      #
   # --------------------------------------------------------------------------#
-  $prefix_list = [['ipv4', 'xx'], ['ipv6', 'yy']]
   cisco_bgp { '55.77 blue':
     ensure                                 => present,
 
@@ -29,7 +28,8 @@ class ciscopuppet::demo_bgp {
     confederation_id                       => '33',
     confederation_peers                    => '99 88 200.1',
     disable_policy_batching                => true,
-    disable_policy_batching_prefix         => $prefix_list,
+    disable_policy_batching_ipv4           => 'my_v4_pfx_list',
+    disable_policy_batching_ipv6           => 'my_v6_pfx_list',
     enforce_first_as                       => false,
     maxas_limit                            => '50',
     suppress_fib_pending                   => false,

@@ -169,7 +169,7 @@ test_name "TestCase :: #{testheader}" do
 
   context = "vrf #{BgpLib::VRF1}"
 
-  # enforce_first_as only in default_vrf
+  # Remove properties that can only be used in the default vrf
   expected_default_values.delete('enforce_first_as')
   expected_default_values.delete('disable_policy_batching')
   stepinfo = "Apply resource ensure => present manifest (#{context})"

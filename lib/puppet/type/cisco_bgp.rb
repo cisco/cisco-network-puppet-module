@@ -289,10 +289,10 @@ Puppet::Type.newtype(:cisco_bgp) do
 
   newproperty(:disable_policy_batching_ipv4) do
     desc "Enable/Disable the batching evaluation of prefix
-          advertisements to all peers. Valid values are a string"
+          advertisements to all peers. Valid values are String"
 
     validate do |value|
-      fail("'disable_policy_batching_ipv4' value must be a string") unless
+      fail("'disable_policy_batching_ipv4' value must be String") unless
         value.is_a? String
     end
 
@@ -304,10 +304,10 @@ Puppet::Type.newtype(:cisco_bgp) do
 
   newproperty(:disable_policy_batching_ipv6) do
     desc "Enable/Disable the batching evaluation of prefix
-          advertisements to all peers. Valid values are a string"
+          advertisements to all peers. Valid values are String"
 
     validate do |value|
-      fail("'disable_policy_batching_ipv6' value must be a string") unless
+      fail("'disable_policy_batching_ipv6' value must be String") unless
         value.is_a? String
     end
 
