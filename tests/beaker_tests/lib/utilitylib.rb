@@ -37,6 +37,7 @@
 
 # Define various CONSTANTS used by beaker tests
 PUPPET_BINPATH = '/opt/puppetlabs/bin/puppet '
+FACTER_BINPATH = '/opt/puppetlabs/bin/facter '
 PUPPETMASTER_MANIFESTPATH = '/etc/puppetlabs/code/environments/production/manifests/site.pp'
 
 # These methods are defined outside of a module so that
@@ -509,4 +510,42 @@ def vdc_allocate_interface_set(vdc, intf)
   # Reset prompting to default state
   cmd = get_vshell_cmd('no terminal dont-ask persist')
   on(agent, cmd, pty: true)
+end
+
+# Facter command builder helper method
+def facter_cmd(cmd)
+  get_namespace_cmd(agent, FACTER_BINPATH + cmd, options)
+end
+
+# Used to cash the operation system information
+@cisco_os = nil
+# Use facter to return cisco operating system information
+def operating_system
+  return @cisco_os unless @cisco_os.nil?
+  @cisco_os = on(agent, facter_cmd('os.name')).stdout.chomp
+end
+
+# Used to cash the cisco hardware type
+@cisco_hardware = nil
+# Use facter to return cisco hardware type
+def platform
+  return @cisco_hardware unless @cisco_hardware.nil?
+  pi = on(agent, facter_cmd('-p cisco.hardware.type')).stdout.chomp
+  case pi
+  when /Nexus.*300/
+    @cisco_hardware = 'n3k'
+  when /Nexus.*500/
+    @cisco_hardware = 'n5k'
+  when /Nexus.*600/
+    @cisco_hardware = 'n6k'
+  when /Nexus.*700/
+    @cisco_hardware = 'n7k'
+  when /Nexus.*900/
+    @cisco_hardware = 'n9k'
+  when /NX-OSv/
+    @cisco_hardware = 'n9k'
+  else
+    fail "Unrecognized platform type: #{pi}\n"
+  end
+  @cisco_hardware
 end
