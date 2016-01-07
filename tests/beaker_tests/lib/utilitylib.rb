@@ -531,6 +531,11 @@ end
 def platform
   return @cisco_hardware unless @cisco_hardware.nil?
   pi = on(agent, facter_cmd('-p cisco.hardware.type')).stdout.chomp
+  # The following kind of string info is returned for Nexus.
+  # - Nexus9000 C9396PX Chassis
+  # - Nexus7000 C7010 (10 Slot) Chassis
+  # - Nexus 6001 Chassis
+  # - NX-OSv Chassis
   case pi
   when /Nexus\s?300/
     @cisco_hardware = 'n3k'
