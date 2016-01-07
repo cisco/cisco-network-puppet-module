@@ -390,6 +390,7 @@ end
 # test interface name to use for testing.
 # tests[:vdc] The default vdc name
 # tests[:intf] A compatible interface to use for MT-full testing.
+# rubocop:disable Metrics/MethodLength,Metrics/AbcSize
 def setup_mt_full_env(tests, testcase)
   # MT-full tests require a specific linecard. Search for a compatible
   # module and enable it.
@@ -431,6 +432,8 @@ def setup_mt_full_env(tests, testcase)
                 "Unable to allocate interface '#{intf}' to VDC")
   end
 
+  interface_cleanup(tests[:agent], intf)
+
   step "Add switchport config to #{intf}" do
     cmd = get_vshell_cmd("conf t ; int #{intf} ; #{tests[:config_switchport]}")
     on(agent, cmd, pty: true)
@@ -441,6 +444,7 @@ def setup_mt_full_env(tests, testcase)
     on(agent, cmd, pty: true)
   end if tests[:config_bridge_domain]
 end
+# rubocop:enable Metrics/MethodLength,Metrics/AbcSize
 
 # Helper to raise skip when prereqs are not met
 def prereq_skip(testheader, testcase, message)
