@@ -65,9 +65,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - ntp_server provider.
 - radius provider.
 - radius global provider.
+- snmp_notification_receiver provider.
+- snmp_user provider.
 - syslog_server provider.
 - syslog_setting provider.
-- snmp_user provider.
 
 ### Added
 - New documentation for developing beaker testcases: README-develop-beaker-scripts.md
