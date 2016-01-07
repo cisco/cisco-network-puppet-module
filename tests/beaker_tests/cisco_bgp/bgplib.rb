@@ -32,7 +32,6 @@ module BgpLib
   VRF2        = 'red'
 
   # Create manifest ensure => present + 'default' property values
-  # rubocop:disable Metrics/MethodLength
   def self.create_bgp_manifest_present
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
@@ -83,7 +82,6 @@ module BgpLib
     EOF"
     manifest_str
   end
-  # rubocop:enable Metrics/MethodLength
 
   # Create manifest ensure => present + 'default' property values
   # for vrf1
@@ -180,7 +178,6 @@ module BgpLib
   end
 
   # Create manifest ensure => present + 'non-default' property values
-  # rubocop:disable Metrics/MethodLength
   def self.create_bgp_manifest_present_non_default
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
@@ -231,7 +228,6 @@ module BgpLib
     EOF"
     manifest_str
   end
-  # rubocop:enable Metrics/MethodLength
 
   # Create manifest ensure => present + 'non-default' property values
   # for vrf1
