@@ -517,7 +517,7 @@ def facter_cmd(cmd)
   get_namespace_cmd(agent, FACTER_BINPATH + cmd, options)
 end
 
-# Used to cash the operation system information
+# Used to cache the operation system information
 @cisco_os = nil
 # Use facter to return cisco operating system information
 def operating_system
@@ -525,7 +525,7 @@ def operating_system
   @cisco_os = on(agent, facter_cmd('os.name')).stdout.chomp
 end
 
-# Used to cash the cisco hardware type
+# Used to cache the cisco hardware type
 @cisco_hardware = nil
 # Use facter to return cisco hardware type
 def platform
@@ -537,15 +537,15 @@ def platform
   # - Nexus 6001 Chassis
   # - NX-OSv Chassis
   case pi
-  when /Nexus\s?300/
+  when /Nexus\s?3\d\d\d/
     @cisco_hardware = 'n3k'
-  when /Nexus\s?500/
+  when /Nexus\s?5\d\d\d/
     @cisco_hardware = 'n5k'
-  when /Nexus\s?600/
+  when /Nexus\s?6\d\d\d/
     @cisco_hardware = 'n6k'
-  when /Nexus\s?700/
+  when /Nexus\s?7\d\d\d/
     @cisco_hardware = 'n7k'
-  when /Nexus\s?900/
+  when /Nexus\s?9\d\d\d/
     @cisco_hardware = 'n9k'
   when /NX-OSv/
     @cisco_hardware = 'n9k'
