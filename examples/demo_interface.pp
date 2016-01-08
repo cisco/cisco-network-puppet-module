@@ -1,6 +1,6 @@
 # Manifest to demo cisco_interface provider
 #
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2014-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,15 +16,16 @@
 
 class ciscopuppet::demo_interface {
   cisco_interface { 'Ethernet1/1' :
-    shutdown            => true,
-    switchport_mode     => disabled,
-    description         => 'managed by puppet',
-    ipv4_address        => '192.168.55.55',
-    ipv4_netmask_length => 24,
-    mtu                 => 1600,
-    speed               => 100,
-    duplex              => 'full',
-    vrf                 => 'test',
+    shutdown               => true,
+    switchport_mode        => disabled,
+    description            => 'managed by puppet',
+    ipv4_address           => '192.168.55.55',
+    ipv4_netmask_length    => 24,
+    ipv4_pim_sparse_mode   => 24,
+    mtu                    => 1600,
+    speed                  => 100,
+    duplex                 => 'full',
+    vrf                    => 'test',
   }
 
   cisco_interface { 'Ethernet1/1.1':
@@ -55,4 +56,10 @@ class ciscopuppet::demo_interface {
     duplex      => 'auto',
     speed       => '100m',
   }
+  #  Requires F3 or newer linecards
+  # cisco_interface { 'Ethernet9/1':
+  #   switchport_mode                => trunk,
+  #   switchport_vlan_mapping        => [[20, 21], [30, 31]]
+  #   switchport_vlan_mapping_enable => false
+  # }
 }

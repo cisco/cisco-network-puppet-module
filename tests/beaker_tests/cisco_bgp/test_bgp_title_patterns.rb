@@ -82,6 +82,7 @@ expected_default_values = {
   'fast_external_fallover'                 => 'true',
   'flush_routes'                           => 'false',
   'isolate'                                => 'false',
+  'disable_policy_batching'                => 'false',
   'enforce_first_as'                       => 'true',
   'event_history_cli'                      => 'size_small',
   'event_history_detail'                   => 'false',
@@ -201,12 +202,13 @@ test_name "TestCase :: #{testheader}" do
     current_manifest_present = BgpLib.send("#{mp}")
     current_manifest_absent = BgpLib.send("#{ma}")
 
-    # enforce_first_as only in the default_vrf
+    # Remove Properties that can only be used in the default_vrf
     expected_default_values.delete('enforce_first_as')
     expected_default_values.delete('event_history_cli')
     expected_default_values.delete('event_history_detail')
     expected_default_values.delete('event_history_events')
     expected_default_values.delete('event_history_periodic')
+    expected_default_values.delete('disable_policy_batching')
 
     stepinfo = "Apply title patterns manifest: #{mp}"
     step "TestStep :: #{stepinfo}" do

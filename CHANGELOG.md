@@ -23,6 +23,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 - Extended `cisco_bgp` with the following attributes:
+  - `disable_policy_batching`, `disable_policy_batching_ipv4`, `disable_policy_batching_ipv6`
   - `fast_external_fallover`
   - `flush_routes`
   - `isolate`
@@ -43,6 +44,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `suppress_inactive`
 - Extended `cisco_interface` with the following attributes:
   - `channel_group`
+  - `ipv4_pim_sparse_mode`
+  - `vlan_mapping`, `vlan_mapping_enable`
 - Extended `cisco_vrf` with the following attributes:
   - `vni`
   
@@ -67,9 +70,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - ntp_server provider.
 - radius provider.
 - radius global provider.
+- snmp_notification_receiver provider.
+- snmp_user provider.
 - syslog_server provider.
 - syslog_setting provider.
-- snmp_user provider.
 
 ### Added
 - New documentation for developing beaker testcases: README-develop-beaker-scripts.md

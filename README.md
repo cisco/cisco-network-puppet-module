@@ -88,6 +88,8 @@ cisco_nxapi (1.0.0)
 net_http_unix (0.2.1)
 ~~~
 
+*Please note: The `ciscopuppet` module requires a compatible `cisco_node_utils` gem. This is not an issue with release versions; however, when using a pre-release module it may be necessary to manually build a compatible gem. Please see the `cisco_node_utils` developer's guide for more information on building a `cisco_node_utils` gem:  [README-develop-node-utils-APIs.md](https://github.com/cisco/cisco-network-node-utils/blob/develop/docs/README-develop-node-utils-APIs.md#step-5-build-and-install-the-gem)*
+
 ##### Gem Persistence (bash-shell only)
 
 Please note that in the Nexus `bash-shell` environment these gems are currently not persistent across system reload. This persistence issue can be mitigated by simply defining a manifest entry for installing the `cisco_node_utils` gem via the package provider.
@@ -199,6 +201,7 @@ The following resources include cisco types and providers along with cisco provi
   * [`network_snmp (netdev_stdlib)`](#type-network_snmp)
   * [`snmp_community (netdev_stdlib)`](#type-snmp_community)
   * [`snmp_notification (netdev_stdlib)`](#type-snmp_notification)
+  * [`snmp_notification_receiver (netdev_stdlib)`](#type-snmp_notification_receiver)
   * [`snmp_user (netdev_stdlib)`](#type-snmp_user)
 
 * SYSLOG Types
@@ -274,6 +277,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`search_domain`](#type-search_domain)
 * [`snmp_community`](#type-snmp_community)
 * [`snmp_notification`](#type-snmp_notification)
+* [`snmp_notification_receiver`](#type-snmp_notification_receiver)
 * [`snmp_user`](#type-snmp_user)
 * [`syslog_server`](#type-syslog_server)
 * [`syslog_setting`](#type-syslog_setting)
@@ -450,6 +454,15 @@ Routing domain confederation AS. Valid values are String, keyword 'default'.
 
 ##### `confederation_peers`
 AS confederation parameters. Valid values are String, keyword 'default'.
+
+##### `disable_policy_batching` 
+Enable/Disable the batching evaluation of prefix advertisements to all peers. Valid values are 'true', 'false', and 'default'.
+
+##### `disable_policy_batching_ipv4`
+Enable/Disable the batching evaluation of prefix advertisements to all peers with prefix list. Valid values are String, keyword 'default'.  
+
+##### `disable_policy_batching_ipv6`
+Enable/Disable the batching evaluation of prefix advertisements to all peers with prefix list. Valid values are String, keyword 'default'.  
 
 ##### `enforce_first_as`
 Enable/Disable enforces the neighbor autonomous system to be the first AS number listed in the AS path attribute for eBGP. Valid values are 'true', 'false', and 'default'.
@@ -981,6 +994,9 @@ Enable/Disable negotiate auto on the interface. Valid values are 'true',
 
 ##### L3 interface config attributes
 
+###### `ipv4_pim_sparse_mode`
+Enables or disables ipv4 pim sparse mode on the interface. Valid values are 'true', 'false', and 'default'.
+
 ###### `ipv4_proxy_arp`
 Enables or disables proxy arp on the interface. Valid values are 'true', 'false', and 'default'.
 
@@ -994,6 +1010,16 @@ keyword 'default'.
 ###### `ipv4_netmask_length`
 Network mask length of the IP address on the interface. Valid values are
 integer and keyword 'default'.
+
+###### `vlan_mapping`
+This property is a nested array of [original_vlan, translated_vlan] pairs. Valid values are an array specifying the mapped vlans or keyword 'default'; e.g.:
+
+```
+vlan_mapping => [[20, 21], [30, 31]]
+```
+
+###### `vlan_mapping_enable`
+Allows disablement of vlan_mapping on a given interface. Valid values are 'true', 'false', and 'default'.
 
 ###### `vrf`
 VRF member of the interface.  Valid values are a string or the keyword 'default'.
@@ -1686,6 +1712,40 @@ Manages an SNMP notification on a Cisco SNMP server.
 Determine whether the trap should be on or off. Valid
 values are true and false.
 
+### Type: snmp_notification_receiver
+
+Manages an SNMP user on an cisco SNMP server.
+
+#### Parameters
+
+##### `ensure`
+Determines whether the config should be present or not on the device. Valid
+values are 'present', and 'absent'.
+
+##### `name`
+IP address of the SNMP user. Valid value is a string.
+
+##### `port`
+SNMP UDP port number
+
+##### `username`
+Username to use for SNMPv3 privacy and authentication.  This is the community string for SNMPv1 and v2.
+
+##### `version`
+SNMP version [v1|v2|v3]
+
+##### `type`
+The type of receiver [traps|informs].
+
+##### `security`
+SNMPv3 security mode [auto|noauth|priv].
+
+##### `vrf`
+Interface to send SNMP data from, e.g. "management"
+
+##### `source_interface`
+Source interface to send SNMP data from, e.g. "ethernet 2/1".
+
 ### Type: snmp_user
 
 Manages an SNMP user on an cisco SNMP server.
@@ -1839,7 +1899,7 @@ Minimum Requirements:
 ## License
 
 ~~~text
-Copyright (c) 2014-2015 Cisco and/or its affiliates.
+Copyright (c) 2014-2016 Cisco and/or its affiliates.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
