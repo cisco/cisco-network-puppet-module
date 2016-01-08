@@ -443,6 +443,11 @@ def setup_mt_full_env(tests, testcase)
     cmd = get_vshell_cmd("conf t ; #{tests[:config_bridge_domain]}")
     on(agent, cmd, pty: true)
   end if tests[:config_bridge_domain]
+
+  step 'Add encap profile global config' do
+    cmd = get_vshell_cmd("conf t ; #{tests[:config_encap_prof_global]}")
+    on(agent, cmd, pty: true)
+  end if tests[:config_encap_prof_global]
 end
 # rubocop:enable Metrics/MethodLength,Metrics/AbcSize
 
