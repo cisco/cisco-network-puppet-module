@@ -174,7 +174,7 @@ The following resources include cisco types and providers along with cisco provi
 * Interface Types
   * [`cisco_interface`](#type-cisco_interface)
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
-  * [`cisco_interface_service`](#type-cisco_interface_service)
+  * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
   * [`network_interface (netdev_stdlib)`](#type-network_interface)
 
 * NTP Types
@@ -224,7 +224,7 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_vrf`](#type-cisco_vrf)
 
 * VNI Types
-   * [`cisco_interface_service`](#type-cisco_interface_service)
+   * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
    * [`cisco_vni`](#type-cisco_vni)
 
 * VXLAN Types
@@ -246,7 +246,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_bgp_neighbor_af`](#type-cisco_bgp_neighbor_af)
 * [`cisco_interface`](#type-cisco_interface)
 * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
-* [`cisco_interface_service`](#type-cisco_interface_service)
+* [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
 * [`cisco_ospf`](#type-cisco_ospf)
 * [`cisco_ospf_vrf`](#type-cisco_ospf_vrf)
 * [`cisco_snmp_community`](#type-cisco_snmp_community)
@@ -1014,13 +1014,13 @@ Enable/Disable autostate on the SVI interface. Valid values are 'true',
 Enable/Disable management on the SVI interface. Valid values are 'true', 'false', and 'default'.
 
 --
-### Type: cisco_interface_service
+### Type: cisco_interface_service_vni
 
-Manages a Cisco Network Interface Service.
+Manages a Cisco Network Interface Service VNI.
 
 #### Parameters
 
-##### Basic interface service config attributes
+##### Basic interface service vni config attributes
 
 ###### `ensure`
 Determine whether the interface config should be present or not. Valid values are 'present' and 'absent'.
@@ -1035,7 +1035,7 @@ The Service ID number. Valid value is an Integer.
 The VNI Encapsulation Profile Name. Valid values are String or the keyword 'default'
 
 ###### `shutdown`
-Shutdown state of the interface service. Valid values are 'true', 'false', or 'default'.
+Shutdown state of the interface service vni. Valid values are 'true', 'false', or 'default'.
 
 --
 ### Type: `network_interface`

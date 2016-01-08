@@ -1,5 +1,5 @@
 #
-# The NXAPI provider for cisco_interface_service.
+# The NXAPI provider for cisco_interface_service_vni.
 #
 # January 2016, Chris Van Heuveln
 #
@@ -26,8 +26,8 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
-Puppet::Type.type(:cisco_interface_service).provide(:nxapi) do
-  desc 'The NXAPI provider for cisco_interface_service.'
+Puppet::Type.type(:cisco_interface_service_vni).provide(:nxapi) do
+  desc 'The NXAPI provider for cisco_interface_service_vni'
 
   confine feature: :cisco_node_utils
   defaultfor operatingsystem: :nexus
@@ -53,7 +53,7 @@ Puppet::Type.type(:cisco_interface_service).provide(:nxapi) do
     super(value)
     intf = @property_hash[:interface]
     sid = @property_hash[:sid]
-    @nu = Cisco::InterfaceService.svc_vni_ids[intf][sid] unless sid.nil?
+    @nu = Cisco::InterfaceServiceVni.svc_vni_ids[intf][sid] unless sid.nil?
     @property_flush = {}
   end
 
@@ -82,7 +82,7 @@ Puppet::Type.type(:cisco_interface_service).provide(:nxapi) do
 
   def self.instances
     all_sids = []
-    Cisco::InterfaceService.svc_vni_ids.each do |intf, sids_this_intf|
+    Cisco::InterfaceServiceVni.svc_vni_ids.each do |intf, sids_this_intf|
       sids_this_intf.each do |sid, nu_obj|
         all_sids << properties_get(intf, sid, nu_obj)
       end
@@ -136,8 +136,8 @@ Puppet::Type.type(:cisco_interface_service).provide(:nxapi) do
       # Create/Update
       if @nu.nil?
         new_sid = true
-        @nu = Cisco::InterfaceService.new(@resource[:interface],
-                                          @resource[:sid])
+        @nu = Cisco::InterfaceServiceVni.new(@resource[:interface],
+                                             @resource[:sid])
       end
       properties_set(new_sid)
     end

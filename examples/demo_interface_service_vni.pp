@@ -1,4 +1,4 @@
-# Manifest to demo cisco_interface_service provider
+# Manifest to demo cisco_interface_service_vni provider
 #
 # Copyright (c) 2016 Cisco and/or its affiliates.
 #
@@ -14,12 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet::demo_interface_service {
-  cisco_interface_service { 'Ethernet9/2 344' :
+class ciscopuppet::demo_interface_service_vni {
+  cisco_interface_service_vni { 'Ethernet9/2 344' :
     encapsulation_profile_vni   => 'vni_500_5000',
     shutdown                    => true,
   }
-  cisco_interface_service { 'Ethernet9/2 491' :
+  cisco_interface_service_vni { 'Ethernet9/2 491' :
     encapsulation_profile_vni   => 'vni_600_6000',
     shutdown                    => 'default',
   }

@@ -15,7 +15,7 @@
 ###############################################################################
 # TestCase Name:
 # -------------
-# test_interface_service.rb
+# test_interface_service_vni.rb
 #
 # TestCase Prerequisites:
 # -----------------------
@@ -33,7 +33,7 @@
 #        ** IMPORTANT ADDITIONAL PREREQUISITES **
 #        ****************************************
 #
-# The interface service provider has additional prerequisites.
+# The interface service vni provider has additional prerequisites.
 #
 #  - VDC support
 #  - F3 linecard
@@ -72,7 +72,7 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 # -----------------------------
 # Common settings and variables
 # -----------------------------
-testheader = 'Resource cisco_interface_service'
+testheader = 'Resource cisco_interface_service_vni'
 
 # The 'tests' hash is used to define all of the test data values and expected
 # results. It is also used to pass optional flags to the test methods when
@@ -129,25 +129,25 @@ tests['non_default_properties'] = {
 # HELPER FUNCTIONS
 #################################################################
 
-def build_manifest_interface_service(tests, id)
+def build_manifest_interface_service_vni(tests, id)
   intf = tests[:intf]
   sid = tests[:sid]
   tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   node default {
-    cisco_interface_service { '#{intf} #{sid}':
+    cisco_interface_service_vni { '#{intf} #{sid}':
     \n#{prop_hash_to_manifest(tests[id][:manifest_props])}
     }\n  }\nEOF"
 
-  cmd = PUPPET_BINPATH + "resource cisco_interface_service '#{intf} #{sid}'"
+  cmd = PUPPET_BINPATH + "resource cisco_interface_service_vni '#{intf} #{sid}'"
   tests[id][:resource_cmd] =
     get_namespace_cmd(agent, cmd, options)
 end
 
-def test_harness_interface_service(tests, id)
+def test_harness_interface_service_vni(tests, id)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
 
   # Build the manifest for this test
-  build_manifest_interface_service(tests, id)
+  build_manifest_interface_service_vni(tests, id)
 
   # Workaround for (ioctl) facter bug on n7k ***
   tests[id][:code] = [0, 2]
@@ -168,15 +168,15 @@ test_name "TestCase :: #{testheader}" do
   # -----------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   id = 'default_properties'
-  test_harness_interface_service(tests, id)
+  test_harness_interface_service_vni(tests, id)
 
   tests[id][:ensure] = :absent
-  test_harness_interface_service(tests, id)
+  test_harness_interface_service_vni(tests, id)
   tests[id][:ensure] = :present
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  test_harness_interface_service(tests, 'non_default_properties')
+  test_harness_interface_service_vni(tests, 'non_default_properties')
 end
 
 logger.info("TestCase :: #{testheader} :: End")

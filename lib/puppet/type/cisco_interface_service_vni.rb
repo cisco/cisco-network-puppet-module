@@ -1,4 +1,4 @@
-# Manages a Cisco Network Interface Service.
+# Manages a Cisco Network Interface Service VNI
 #
 # January 2016
 #
@@ -16,10 +16,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Puppet::Type.newtype(:cisco_interface_service) do
-  @doc = "Manages a Cisco Network Interface Service.
+Puppet::Type.newtype(:cisco_interface_service_vni) do
+  @doc = "Manages a Cisco Network Interface Service VNI.
 
-  cisco_interface_service {'<interface> <service_id>':
+  cisco_interface_service_vni_vni {'<interface> <service_id>':
     ..attributes..
   }
 
@@ -27,12 +27,12 @@ Puppet::Type.newtype(:cisco_interface_service) do
   <service_id> is the VNI service instance ID
 
   Example:
-    cisco_interface_service {'ethernet1/1 214':
+    cisco_interface_service_vni {'ethernet1/1 214':
      shutdown                     => false,
      encapsulation_profile_vni    => 'vni_500_5000',
     }
 
-    cisco_interface_service {'ethernet1/9 4022':
+    cisco_interface_service_vni {'ethernet1/9 4022':
      shutdown                     => false,
      encapsulation_profile_vni    => 'vni_700_7000',
     }

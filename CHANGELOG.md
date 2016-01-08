@@ -12,7 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `cisco_aaa_group_tacacs` type and provider.
 - `cisco_acl` type and provider
 - `cisco_evpn_vni` type and provider.
-- `cisco_interface_service` type and provider
+- `cisco_interface_service_vni` type and provider
 - `cisco_vni` type and provider.
 - `cisco_vxlan_global` type and provider.
 - `cisco_vxlan_vtep` type and provider.
