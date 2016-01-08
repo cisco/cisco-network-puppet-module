@@ -37,7 +37,6 @@ Puppet::Type.newtype(:cisco_bgp) do
   `<bgp-title>` is the title of the bgp resource.
 
   Example:
-
   ~~~puppet
     cisco_bgp { 'raleigh':
       ensure                                 => present,
@@ -48,6 +47,9 @@ Puppet::Type.newtype(:cisco_bgp) do
       cluster_id                             => '55',
       confederation_id                       => '77.6',
       confederation_peers                    => '77.6 88 99.4 200'
+      disable_policy_batching                => true,
+      disable_policy_batching_ipv4           => 'xx',
+      disable_policy_batching_ipv6           => 'yy',
       enforce_first_as                       => true,
       fast_external_fallover                 => true,
       flush_routes                           => false,
@@ -277,6 +279,43 @@ Puppet::Type.newtype(:cisco_bgp) do
 
     newvalues(:true, :false, :default)
   end # property shutdown
+
+  newproperty(:disable_policy_batching) do
+    desc 'Enable/Disable the batching evaluation of prefix' \
+         'advertisements to all peers'
+
+    newvalues(:true, :false, :default)
+  end # property disable_policy_batching
+
+  newproperty(:disable_policy_batching_ipv4) do
+    desc "Enable/Disable the batching evaluation of prefix
+          advertisements to all peers. Valid values are String"
+
+    validate do |value|
+      fail("'disable_policy_batching_ipv4' value must be String") unless
+        value.is_a? String
+    end
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property disable_policy_batching_ipv4
+
+  newproperty(:disable_policy_batching_ipv6) do
+    desc "Enable/Disable the batching evaluation of prefix
+          advertisements to all peers. Valid values are String"
+
+    validate do |value|
+      fail("'disable_policy_batching_ipv6' value must be String") unless
+        value.is_a? String
+    end
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property disable_policy_batching_ipv6
 
   newproperty(:enforce_first_as) do
     desc 'Enable/Disable enforces the neighbor autonomous system ' \

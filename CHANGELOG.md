@@ -23,6 +23,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 - Extended `cisco_bgp` with the following attributes:
+  - `disable_policy_batching`, `disable_policy_batching_ipv4`, `disable_policy_batching_ipv6`
   - `fast_external_fallover`
   - `flush_routes`
   - `isolate`
