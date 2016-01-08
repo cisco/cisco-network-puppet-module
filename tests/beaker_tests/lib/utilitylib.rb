@@ -483,13 +483,18 @@ def limit_resource_module_type_get(vdc, mod)
 end
 
 # Set limit-resource module-type
-def limit_resource_module_type_set(vdc, mod)
+def limit_resource_module_type_set(vdc, mod, default=false)
   # Turn off prompting
   cmd = get_vshell_cmd('terminal dont-ask persist')
   on(agent, cmd, pty: true)
 
-  cmd = get_vshell_cmd("conf t ; vdc #{vdc} ; "\
-                       "limit-resource module-type #{mod}")
+  if default
+    cmd = get_vshell_cmd("conf t ; vdc #{vdc} ; "\
+                         'no limit-resource module-type')
+  else
+    cmd = get_vshell_cmd("conf t ; vdc #{vdc} ; "\
+                         "limit-resource module-type #{mod}")
+  end
   on(agent, cmd, pty: true)
 
   # Reset dont-ask to default setting

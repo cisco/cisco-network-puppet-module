@@ -150,6 +150,7 @@ The following resources include cisco types and providers along with cisco provi
 
 * Miscellaneous Types
   * [`cisco_command_config`](#type-cisco_command_config)
+  * [`cisco_vdc`](#type-cisco_vdc)
 
 * AAA Types
   * [`cisco_aaa_authentication_login`](#type-cisco_aaa_authentication_login)
@@ -257,6 +258,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_snmp_user`](#type-cisco_snmp_user)
 * [`cisco_tacacs_server`](#type-cisco_tacacs_server)
 * [`cisco_tacacs_server_host`](#type-cisco_tacacs_server_host)
+* [`cisco_vdc`](#type-cisco_vdc)
 * [`cisco_vlan`](#type-cisco_vlan)
 * [`cisco_vni`](#type-cisco_vni)
 * [`cisco_vrf`](#type-cisco_vrf)
@@ -1376,6 +1378,23 @@ Specifies a preshared key for the host. Valid values are 'clear', 'encrypted',
 
 ##### `encryption_password`
 "Specifies the preshared key password for the host. Valid value is a string.
+
+--
+### Type: cisco_vdc
+
+Manages a Cisco VDC (Virtual Device Context).
+
+#### Parameters
+
+##### `name`
+Name of the VDC. Valid value is a String or optional keyword 'default' when referencing the default VDC.
+*The current implementation restricts changes to the default VDC*.
+
+##### `ensure`
+Determined wether the config should be present or not. Valid values are 'present' and 'absent'.
+
+##### `limit_resource_module_type`
+This command restricts the allowed module-types in a given VDC. Valid values are String or keyword 'default'.
 
 --
 ### Type: cisco_vlan
