@@ -33,10 +33,11 @@
 #        ** IMPORTANT ADDITIONAL PREREQUISITES **
 #        ****************************************
 #
-# The encapsulation profile vni property has additional prerequisites.
+# The interface service provider has additional prerequisites.
 #
 #  - VDC support
 #  - F3 linecard
+#  - N7 platforms only
 #
 # This test will need to be updated as the product matures.
 #
