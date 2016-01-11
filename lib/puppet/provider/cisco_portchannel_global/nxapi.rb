@@ -208,7 +208,7 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:nxapi) do
                     bs.to_s, bh.to_s, hp.to_s, nil, nil, nil, nil)
   end
 
-  # for n6k/n5k:
+  # for n7k:
   # port-channel load-balance src-dst ip rotate 4 asymmetric
   # all the above properties will be set all at once so make sure
   # all the needed resources are present
