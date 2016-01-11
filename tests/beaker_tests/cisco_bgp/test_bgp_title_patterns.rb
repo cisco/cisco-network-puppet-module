@@ -84,6 +84,10 @@ expected_default_values = {
   'isolate'                                => 'false',
   'disable_policy_batching'                => 'false',
   'enforce_first_as'                       => 'true',
+  'event_history_cli'                      => 'size_small',
+  'event_history_detail'                   => 'false',
+  'event_history_events'                   => 'size_small',
+  'event_history_periodic'                 => 'size_small',
   'maxas_limit'                            => 'false',
   'neighbor_down_fib_accelerate'           => 'false',
   'shutdown'                               => 'false',
@@ -200,6 +204,10 @@ test_name "TestCase :: #{testheader}" do
 
     # Remove Properties that can only be used in the default_vrf
     expected_default_values.delete('enforce_first_as')
+    expected_default_values.delete('event_history_cli')
+    expected_default_values.delete('event_history_detail')
+    expected_default_values.delete('event_history_events')
+    expected_default_values.delete('event_history_periodic')
     expected_default_values.delete('disable_policy_batching')
 
     stepinfo = "Apply title patterns manifest: #{mp}"

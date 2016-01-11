@@ -30,6 +30,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `isolate`
   - `neighbor_down_fib_accelerate`
   - `route_distinguisher`
+  - `event_history_cli`
+  - `event_history_detail`
+  - `event_history_events`
+  - `event_history_periodic`
 - Extended `cisco_bgp_af` with the following attributes:
   - `default_metric`
   - `distance_ebgp`, `distance_ibgp`, `distance_local`
