@@ -118,6 +118,10 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:nxapi) do
     port_channel_load_balance_asym_rot_set
   end
 
+  # for n9k/n3k:
+  # port-channel load-balance src-dst ip rotate 4 concatenation symmetric
+  # all the above properties will be set all at once so make sure
+  # all the needed resources are present
   def port_channel_load_balance_sym_concat_rot_all?
     @resource[:bundle_hash] &&
       @resource[:bundle_select] &&
@@ -138,6 +142,9 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:nxapi) do
     else
       bs = @pc_global.bundle_select
     end
+    # if the boolean values are same as before, puppet server will not send
+    # concatenation, but we need it, otherwise, it will be set to false in the
+    # config so send the previous value even if the config is same as before
     if @property_flush[:concatenation].nil?
       cc = @pc_global.concatenation
     elsif @property_flush[:concatenation] != @pc_global.concatenation
@@ -145,6 +152,9 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:nxapi) do
     else
       cc = @pc_global.concatenation
     end
+    # if the boolean values are same as before, puppet server will not send
+    # symmetry, but we need it, otherwise, it will be set to false in the
+    # config so send the previous value even if the config is same as before
     if @property_flush[:symmetry].nil?
       sy = @pc_global.symmetry
     elsif @property_flush[:symmetry] != @pc_global.symmetry
@@ -167,6 +177,10 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:nxapi) do
                     bs.to_s, bh.to_s, nil, nil, sy, cc, ro)
   end
 
+  # for n6k/n5k:
+  # port-channel load-balance ethernet source-dest-ip CRC10c
+  # all the above properties will be set all at once so make sure
+  # all the needed resources are present
   def port_channel_load_balance_hash_poly_all?
     @resource[:bundle_hash] &&
       @resource[:bundle_select] &&
@@ -194,6 +208,10 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:nxapi) do
                     bs.to_s, bh.to_s, hp.to_s, nil, nil, nil, nil)
   end
 
+  # for n6k/n5k:
+  # port-channel load-balance src-dst ip rotate 4 asymmetric
+  # all the above properties will be set all at once so make sure
+  # all the needed resources are present
   def port_channel_load_balance_asym_rot_all?
     @resource[:bundle_hash] &&
       @resource[:bundle_select] &&
@@ -213,6 +231,9 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:nxapi) do
     else
       bs = @pc_global.bundle_select
     end
+    # if the boolean values are same as before, puppet server will not send
+    # asymmetric, but we need it, otherwise, it will be set to false in the
+    # config so send the previous value even if the config is same as before
     if @property_flush[:asymmetric].nil?
       as = @pc_global.asymmetric
     elsif @property_flush[:asymmetric] != @pc_global.asymmetric
