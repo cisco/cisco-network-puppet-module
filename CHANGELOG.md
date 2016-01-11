@@ -2,40 +2,6 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
-
-### New feature support
-#### Cisco Resources
-- `cisco_vxlan_global` type and provider.
-- `cisco_ace` type and provider.
-
-#### NetDev Resources
-- `search_domain` provider.
-- `network_trunk` provider.
-
-### Added
-- Extended `cisco_bgp` with the following attributes:
-  - `fast_external_fallover`
-  - `flush_routes`
-  - `isolate`
-  - `neighbor_down_fib_accelerate`
-  - `route_distinguisher`
-- Extended `cisco_bgp_af` with the following attributes:
-  - `default_metric`
-  - `distance_ebgp`, `distance_ibgp`, `distance_local`
-  - `inject_map`
-  - `route_target_both_auto`, `route_target_both_auto_evpn`
-  - `route_target_import`, `route_target_import_evpn`
-  - `route_target_export`, `route_target_export_evpn`
-  - `table_map`, `table_map_filter`
-  - `suppress_inactive`
-- Extended `cisco_interface` with the following attributes:
-  - `channel_group`
-- Extended `cisco_vrf` with the following attributes:
-  - `vni`
-  
-### Removed
-
 ## [1.1.0] - 2015-11-02
 
 ### New feature support
@@ -57,18 +23,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - radius global provider.
 - syslog_server provider.
 - syslog_setting provider.
-- snmp_user provider.
 
 ### Added
 - New documentation for developing beaker testcases: README-develop-beaker-scripts.md
 - Extended cisco_interface with the following attributes:
   - encapsulation dot1q
   - mtu
-  - speed
-  - duplex
   - switchport trunk allowed VLANs
   - switchport trunk native VLAN
-- Added support for network_interface from puppets netdev_stdlib
 - Rubocop enabled and passes (@robert-w-gries)
 - Gemfile now requires puppet version 4.0 or higher
 - Gemfile.lock added to gitignore
