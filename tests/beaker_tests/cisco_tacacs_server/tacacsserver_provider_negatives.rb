@@ -83,7 +83,6 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Setup switch for provider test :: #{result}")
-
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
