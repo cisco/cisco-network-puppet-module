@@ -13,6 +13,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `cisco_acl` type and provider
 - `cisco_evpn_vni` type and provider.
 - `cisco_interface_service_vni` type and provider
+- `cisco_interface_portchannel` type and provider
+- `cisco_portchannel_global` type and provider
 - `cisco_vni` type and provider.
 - `cisco_vxlan_global` type and provider.
 - `cisco_vxlan_vtep` type and provider.
