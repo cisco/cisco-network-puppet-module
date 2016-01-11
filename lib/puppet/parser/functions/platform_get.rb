@@ -1,7 +1,7 @@
 #
 # Cisco platform_get puppet manifest function.
 #
-# January, 2016 
+# January, 2016
 #
 # Copyright (c) 2015 Cisco and/or its affiliates.
 #
@@ -17,31 +17,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-module Puppet::Parser::Functions
-  newfunction(:platform_get, :type => :rvalue) do |args|
-    data = lookupvar('cisco') 
-    pi = data['hardware']['type']
-    # The following kind of string info is returned for Nexus.
-    # - Nexus9000 C9396PX Chassis
-    # - Nexus7000 C7010 (10 Slot) Chassis
-    # - Nexus 6001 Chassis
-    # - NX-OSv Chassis
-    case pi
-    when /Nexus\s?3\d\d\d/
-      cisco_hardware = 'n3k'
-    when /Nexus\s?5\d\d\d/
-      cisco_hardware = 'n5k'
-    when /Nexus\s?6\d\d\d/
-      cisco_hardware = 'n6k'
-    when /Nexus\s?7\d\d\d/
-      cisco_hardware = 'n7k'
-    when /Nexus\s?9\d\d\d/
-      cisco_hardware = 'n9k'
-    when /NX-OSv/
-      cisco_hardware = 'n9k'
-    else
-      raise Puppet::ParseError, "Unrecognized platform type: #{pi}\n"
+module Puppet
+  module Parser
+    # Function platform_get.  Returns platform string.
+    module Functions
+      newfunction(:platform_get, type: :rvalue) do |_args|
+        data = lookupvar('cisco')
+        pi = data['hardware']['type']
+        # The following kind of string info is returned for Nexus.
+        # - Nexus9000 C9396PX Chassis
+        # - Nexus7000 C7010 (10 Slot) Chassis
+        # - Nexus 6001 Chassis
+        # - NX-OSv Chassis
+        case pi
+        when /Nexus\s?3\d\d\d/
+          cisco_hardware = 'n3k'
+        when /Nexus\s?5\d\d\d/
+          cisco_hardware = 'n5k'
+        when /Nexus\s?6\d\d\d/
+          cisco_hardware = 'n6k'
+        when /Nexus\s?7\d\d\d/
+          cisco_hardware = 'n7k'
+        when /Nexus\s?9\d\d\d/
+          cisco_hardware = 'n9k'
+        when /NX-OSv/
+          cisco_hardware = 'n9k'
+        else
+          fail Puppet::ParseError, "Unrecognized platform type: #{pi}\n"
+        end
+        cisco_hardware
+      end
     end
-    cisco_hardware
   end
 end
