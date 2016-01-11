@@ -131,6 +131,7 @@ tests['create_ipv4_seq_10'] = {
 tests['destroy_ipv4_seq_10'] = {
   title_pattern:  'ipv4 beaker_1 10',
   manifest_props: "
+    'ensure'        => :absent
     'action'        => 'permit',
     'proto'         => 'tcp',
     'src_addr'      => '1.2.3.4 2.3.4.5',
