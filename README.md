@@ -158,6 +158,7 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_aaa_group_tacacs`](#type-cisco_aaa_group_tacacs)
 
 * ACL Types
+  * [`cisco_ace`](#type-cisco_ace)
   * [`cisco_acl`](#type-cisco_acl)
 
 * BGP Types
