@@ -50,9 +50,9 @@ node default {
       ensure                 => present,
       groups                 => ['network-operator'],
       auth_protocol          => 'md5',
-      auth_password          => 'XXSWW62ps',
+      auth_password          => 'defaulttest',
       priv_protocol          => 'aes128',
-      priv_password          => 'XXSWW62ps',
+      priv_password          => 'defaulttest',
       localized_key          => false,
   }
 }
@@ -87,9 +87,9 @@ node default {
       ensure                 => present,
       groups                 => ['network-operator'],
       auth_protocol          => 'sha',
-      auth_password          => 'XXSWW62ps',
+      auth_password          => 'defaulttest',
       priv_protocol          => 'des',
-      priv_password          => 'XXSWW62ps',
+      priv_password          => 'defaulttest',
       localized_key          => false,
   }
 }
@@ -106,7 +106,7 @@ node default {
   cisco_snmp_user { 'snmpuser1':
       ensure                 => present,
       auth_protocol          => #{SnmpUserLib::AUTHPROT_NEGATIVE},
-      auth_password          => 'XXSWW62ps',
+      auth_password          => 'defaulttest',
   }
 }
 EOF"
@@ -122,7 +122,7 @@ node default {
   cisco_snmp_user { 'snmpuser1':
       ensure                 => present,
       priv_protocol          => #{SnmpUserLib::PRIVPROT_NEGATIVE},
-      priv_password          => 'XXSWW62ps',
+      priv_password          => 'defaulttest',
   }
 }
 EOF"
