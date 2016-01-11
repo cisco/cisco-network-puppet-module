@@ -176,6 +176,7 @@ The following resources include cisco types and providers along with cisco provi
 * Interface Types
   * [`cisco_interface`](#type-cisco_interface)
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
+  * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
   * [`network_interface (netdev_stdlib)`](#type-network_interface)
 
 * NTP Types
@@ -221,10 +222,11 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_vtp`](#type-cisco_vtp)
   * [`network_trunk (netdev_stdlib)`](#type-network_trunk)
 
-* VRF Type
+* VRF Types
   * [`cisco_vrf`](#type-cisco_vrf)
 
-* VNI Type
+* VNI Types
+   * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
    * [`cisco_vni`](#type-cisco_vni)
 
 * VXLAN Types
@@ -246,6 +248,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_bgp_neighbor_af`](#type-cisco_bgp_neighbor_af)
 * [`cisco_interface`](#type-cisco_interface)
 * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
+* [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
 * [`cisco_ospf`](#type-cisco_ospf)
 * [`cisco_ospf_vrf`](#type-cisco_ospf_vrf)
 * [`cisco_snmp_community`](#type-cisco_snmp_community)
@@ -466,6 +469,18 @@ Enable/Disable the batching evaluation of prefix advertisements to all peers wit
 
 ##### `enforce_first_as`
 Enable/Disable enforces the neighbor autonomous system to be the first AS number listed in the AS path attribute for eBGP. Valid values are 'true', 'false', and 'default'.
+
+##### `event_history_cli`
+Enable/Disable cli event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
+
+##### `event_history_detail`
+Enable/Disable detail event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
+
+##### `event_history_events`
+Enable/Disable event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
+
+##### `event_history_periodic`
+Enable/Disable periodic event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
 
 ##### `fast_external_fallover`
 Enable/Disable immediately reset the session if the link to a directly connected BGP peer goes down. Valid values are 'true', 'false', and 'default'.
@@ -1022,7 +1037,30 @@ Enable/Disable autostate on the SVI interface. Valid values are 'true',
 Enable/Disable management on the SVI interface. Valid values are 'true', 'false', and 'default'.
 
 --
+### Type: cisco_interface_service_vni
 
+Manages a Cisco Network Interface Service VNI.
+
+#### Parameters
+
+##### Basic interface service vni config attributes
+
+###### `ensure`
+Determine whether the interface config should be present or not. Valid values are 'present' and 'absent'.
+
+###### `interface`
+Name of the interface where the service resides. Valid value is a string.
+
+###### `sid`
+The Service ID number. Valid value is an Integer.
+
+###### `encapsulation_profile_vni`
+The VNI Encapsulation Profile Name. Valid values are String or the keyword 'default'
+
+###### `shutdown`
+Shutdown state of the interface service vni. Valid values are 'true', 'false', or 'default'.
+
+--
 ### Type: `network_interface`
 
 Manages a puppet netdev_stdlib Network Interface. Any resource dependency should be run before the interface resource.

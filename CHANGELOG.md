@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `cisco_aaa_group_tacacs` type and provider.
 - `cisco_acl` type and provider
 - `cisco_evpn_vni` type and provider.
+- `cisco_interface_service_vni` type and provider
 - `cisco_vni` type and provider.
 - `cisco_vxlan_global` type and provider.
 - `cisco_vxlan_vtep` type and provider.
@@ -29,6 +30,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `isolate`
   - `neighbor_down_fib_accelerate`
   - `route_distinguisher`
+  - `event_history_cli`
+  - `event_history_detail`
+  - `event_history_events`
+  - `event_history_periodic`
 - Extended `cisco_bgp_af` with the following attributes:
   - `default_metric`
   - `distance_ebgp`, `distance_ibgp`, `distance_local`

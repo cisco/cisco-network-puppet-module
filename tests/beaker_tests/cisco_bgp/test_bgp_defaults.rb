@@ -92,6 +92,10 @@ expected_default_values = {
   'bestpath_med_non_deterministic'         => 'false',
   'disable_policy_batching'                => 'false',
   'enforce_first_as'                       => 'true',
+  'event_history_cli'                      => 'size_small',
+  'event_history_detail'                   => 'size_disable',
+  'event_history_events'                   => 'size_small',
+  'event_history_periodic'                 => 'size_small',
   'fast_external_fallover'                 => 'true',
   'flush_routes'                           => 'false',
   'isolate'                                => 'false',
@@ -171,7 +175,12 @@ test_name "TestCase :: #{testheader}" do
 
   # Remove properties that can only be used in the default vrf
   expected_default_values.delete('enforce_first_as')
+  expected_default_values.delete('event_history_cli')
+  expected_default_values.delete('event_history_detail')
+  expected_default_values.delete('event_history_events')
+  expected_default_values.delete('event_history_periodic')
   expected_default_values.delete('disable_policy_batching')
+
   stepinfo = "Apply resource ensure => present manifest (#{context})"
   step "TestStep :: #{stepinfo}" do
     on(master, BgpLib.create_bgp_manifest_present_vrf1)

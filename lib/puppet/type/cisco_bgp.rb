@@ -51,6 +51,10 @@ Puppet::Type.newtype(:cisco_bgp) do
       disable_policy_batching_ipv4           => 'xx',
       disable_policy_batching_ipv6           => 'yy',
       enforce_first_as                       => true,
+      event_history_cli                      => 'true',
+      event_history_detail                   => 'small',
+      event_history_events                   => 'large',
+      event_history_periodic                 => 'disable',
       fast_external_fallover                 => true,
       flush_routes                           => false,
       isolate                                => false,
@@ -323,6 +327,58 @@ Puppet::Type.newtype(:cisco_bgp) do
 
     newvalues(:true, :false, :default)
   end # property enforce_first_as
+
+  newproperty(:event_history_cli) do
+    desc "event_history_cli state. Valid values are True, False, size_small,
+          size_medium, size_large, size_disable or 'default'"
+
+    munge do |value|
+      value = 'size_small' if value == 'true'
+      value.to_sym
+    end
+
+    newvalues(:true, :false, :default,
+              :size_small, :size_medium, :size_large, :size_disable)
+  end # property event_history_cli
+
+  newproperty(:event_history_detail) do
+    desc "event_history_detail state. Valid values are True, False, size_small,
+          size_medium, size_large, size_disable or 'default'"
+
+    munge do |value|
+      value = 'size_disable' if value == 'true'
+      value.to_sym
+    end
+
+    newvalues(:true, :false, :default,
+              :size_small, :size_medium, :size_large, :size_disable)
+  end # property event_history_detail
+
+  newproperty(:event_history_events) do
+    desc "event_history_events state. Valid values are True, False, size_small,
+          size_medium, size_large, size_disable or 'default'"
+
+    munge do |value|
+      value = 'size_small' if value == 'true'
+      value.to_sym
+    end
+
+    newvalues(:true, :false, :default,
+              :size_small, :size_medium, :size_large, :size_disable)
+  end # property event_history_events
+
+  newproperty(:event_history_periodic) do
+    desc "event_history_periodic state. Valid values are True, False, size_small,
+          size_medium, size_large, size_disable or 'default'"
+
+    munge do |value|
+      value = 'size_small' if value == 'true'
+      value.to_sym
+    end
+
+    newvalues(:true, :false, :default,
+              :size_small, :size_medium, :size_large, :size_disable)
+  end # property event_history_periodic
 
   newproperty(:fast_external_fallover) do
     desc 'Enable/Disable immediately reset the session if the link ' \

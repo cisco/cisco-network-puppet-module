@@ -32,6 +32,7 @@ class ciscopuppet::demo_all {
   include ciscopuppet::demo_domain
   include ciscopuppet::demo_interface
   include ciscopuppet::demo_interface_portchannel
+  #include ciscopuppet::demo_interface_service_vni
   include ciscopuppet::demo_ntp
   include ciscopuppet::demo_ospf
   include ciscopuppet::demo_patching
