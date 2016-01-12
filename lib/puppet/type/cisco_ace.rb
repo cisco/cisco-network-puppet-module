@@ -146,7 +146,7 @@ Puppet::Type.newtype(:cisco_ace) do
 
   newproperty(:src_port) do
     desc 'source port to match src address port number. valid'\
-         ' port configuration should be 'eq 40' 'range 30 50' etc.'
+         ' port configuration should be eq 40 or range 30 50 etc.'
 
     validate do |src_port|
       fail 'src port should be eq , neq, lt, gt or '\
@@ -179,7 +179,7 @@ Puppet::Type.newtype(:cisco_ace) do
 
   newproperty(:dst_port) do
     desc 'Destination port to match src address port number. valid'\
-         ' port configuration should be 'eq 40' 'range 30 50' etc.'
+         ' port configuration should be eq 40 or range 30 50 etc.'
 
     validate do |dst_port|
       fail 'src port should be eq, neq, lt, gt or '\
