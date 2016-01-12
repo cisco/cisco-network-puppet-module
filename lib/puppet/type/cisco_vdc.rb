@@ -40,7 +40,7 @@ Puppet::Type.newtype(:cisco_vdc) do
   ~~~puppet
     cisco_vdc { 'default':
       ensure                        => present,
-      limit_resource_module_type    => 'm1',
+      limit_resource_module_type    => 'm1 m1xl',
     }
   ~~~
 
