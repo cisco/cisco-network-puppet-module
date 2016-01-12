@@ -357,7 +357,6 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
   # support a string of space-separated values in the manifest; however,
   # munge will transform the string into a nested array, hence the flatten.
   def route_target_import=(should_list)
-    puts "setter: #{should_list}"
     should_list = @af.default_route_target_import if should_list[0] == :default
     @property_flush[:route_target_import] = should_list.flatten
   end
@@ -376,7 +375,6 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
   # support a string of space-separated values in the manifest; however,
   # munge will transform the string into a nested array, hence the flatten.
   def route_target_import_evpn=(should_list)
-    puts "setter: #{should_list}"
     should_list = @af.default_route_target_import_evpn if should_list[0] == :default
     @property_flush[:route_target_import_evpn] = should_list.flatten
   end
@@ -395,7 +393,6 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
   # support a string of space-separated values in the manifest; however,
   # munge will transform the string into a nested array, hence the flatten.
   def route_target_export=(should_list)
-    puts "setter: #{should_list}"
     should_list = @af.default_route_target_export if should_list[0] == :default
     @property_flush[:route_target_export] = should_list.flatten
   end
@@ -414,7 +411,6 @@ Puppet::Type.type(:cisco_bgp_af).provide(:nxapi) do
   # support a string of space-separated values in the manifest; however,
   # munge will transform the string into a nested array, hence the flatten.
   def route_target_export_evpn=(should_list)
-    puts "setter: #{should_list}"
     should_list = @af.default_route_target_export_evpn if should_list[0] == :default
     @property_flush[:route_target_export_evpn] = should_list.flatten
   end

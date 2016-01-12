@@ -38,7 +38,7 @@ module NetworkInterfaceLib
   # A. Methods to create manifests for network_interface Puppet provider test cases.
 
   def self.create_defaults
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     network_interface { 'ethernet1/4':
       speed                        => 'auto',
@@ -50,7 +50,7 @@ EOF"
   end
 
   def self.create_non_defaults
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     network_interface { 'ethernet1/4':
       speed                        => '100m',

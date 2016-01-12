@@ -44,7 +44,7 @@ module RadiusGlobalLib
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_radius_global_manifest
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   radius_global { 'default':
     key                 => '44444444',
@@ -62,7 +62,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_radius_global_manifest_change
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   radius_global { 'default':
     key                 => '44444444',
@@ -80,7 +80,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_radius_global_manifest_change_removed
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   radius_global { 'default':
     key                 => 'unset',
