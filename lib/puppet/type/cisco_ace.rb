@@ -128,9 +128,9 @@ Puppet::Type.newtype(:cisco_ace) do
   end
 
   newproperty(:src_addr) do
-    desc "Source address to match against. Valid values are an IP"\
-         " address/prefix_len (10.0.0.0/8), "\
-         "an address group (addrgroup foo), or the keyword 'any'"
+    desc 'Source address to match against. Valid values are an IP'\
+         ' address/prefix_len (10.0.0.0/8), '\
+         'an address group (addrgroup foo), or the keyword any'
 
     validate do |src_addr|
       fail 'src_addr must be ip address/prefix_len (10.0.0.0/8), '\
@@ -161,8 +161,8 @@ Puppet::Type.newtype(:cisco_ace) do
   end
 
   newproperty(:dst_addr) do
-    desc "Destination address to match against. Valid values are an IP"\
-         " address/prefix_len (10.0.0.0/8), "\
+    desc 'Destination address to match against. Valid values are an IP'\
+         ' address/prefix_len (10.0.0.0/8), '\
          "an address group (addrgroup foo), or the keyword 'any'"
 
     validate do |dst_addr|
