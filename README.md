@@ -150,6 +150,7 @@ The following resources include cisco types and providers along with cisco provi
 
 * Miscellaneous Types
   * [`cisco_command_config`](#type-cisco_command_config)
+  * [`cisco_vdc`](#type-cisco_vdc)
 
 * AAA Types
   * [`cisco_aaa_authentication_login`](#type-cisco_aaa_authentication_login)
@@ -264,6 +265,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_snmp_user`](#type-cisco_snmp_user)
 * [`cisco_tacacs_server`](#type-cisco_tacacs_server)
 * [`cisco_tacacs_server_host`](#type-cisco_tacacs_server_host)
+* [`cisco_vdc`](#type-cisco_vdc)
 * [`cisco_vlan`](#type-cisco_vlan)
 * [`cisco_vni`](#type-cisco_vni)
 * [`cisco_vrf`](#type-cisco_vrf)
@@ -783,7 +785,7 @@ Specify multihop TTL for a remote peer. Valid values are integers between 2  and
 Specify the local-as number for the eBGP neighbor. Valid values are String or Integer in ASPLAIN or ASDOT notation, or 'default', which means not to configure it.
 
 ##### `log_neighbor_changes`
-Specify wether or not to enable log messages for neighbor up/down event. Valid values are 'enable', to enable it, 'disable' to disable it, or 'inherit' to use the configuration in the cisco_bgp type.
+Specify whether or not to enable log messages for neighbor up/down event. Valid values are 'enable', to enable it, 'disable' to disable it, or 'inherit' to use the configuration in the cisco_bgp type.
 
 ##### `low_memory_exempt`
 Specify whether or not to shut down this neighbor under memory pressure. Valid values are 'true' to exempt the neighbor from being shutdown, 'false' to shut it down, or 'default' to perform the default shutdown behavior"
@@ -1201,8 +1203,7 @@ Manages a VRF for an OSPF router.
 #### Parameters
 
 ##### `ensure`
-Determines whether the config should be present or not on the device. Valid
-values are 'present' and 'absent'.
+Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
 
 ##### `vrf`
 Name of the resource instance. Valid value is a string. The name 'default' is
@@ -1473,6 +1474,23 @@ Specifies a preshared key for the host. Valid values are 'clear', 'encrypted',
 "Specifies the preshared key password for the host. Valid value is a string.
 
 --
+### Type: cisco_vdc
+
+Manages a Cisco VDC (Virtual Device Context).
+
+#### Parameters
+
+##### `name`
+Name of the VDC. Valid value is a String or optional keyword 'default' when referencing the default VDC.
+*The current implementation restricts changes to the default VDC*.
+
+##### `ensure`
+Determines whether the config should be present or not. Valid values are 'present' and 'absent'.
+
+##### `limit_resource_module_type`
+This command restricts the allowed module-types in a given VDC. Valid values are String or keyword 'default'.
+
+--
 ### Type: cisco_vlan
 
 Manages a Cisco VLAN.
@@ -1483,8 +1501,7 @@ Manages a Cisco VLAN.
 ID of the Virtual LAN. Valid value is an integer.
 
 ##### `ensure`
-Determined wether the config should be present or not. Valid values are
-'present' and 'absent'.
+Determines whether the config should be present or not. Valid values are 'present' and 'absent'.
 
 ##### `vlan_name`
 The name of the VLAN. Valid values are a string or the keyword 'default'.
