@@ -23,6 +23,8 @@ module Puppet
     module Functions
       newfunction(:platform_get, type: :rvalue) do |_args|
         data = lookupvar('cisco')
+        fail Puppet::ParseError,
+             "Facter fact 'cisco' unavailable on this platform\n#{__FILE__}" if data.nil?
         pi = data['hardware']['type']
         # The following kind of string info is returned for Nexus.
         # - Nexus9000 C9396PX Chassis
@@ -38,12 +40,12 @@ module Puppet
           cisco_hardware = 'n6k'
         when /Nexus\s?7\d\d\d/
           cisco_hardware = 'n7k'
-        when /Nexus\s?9\d\d\d/
+        when /Nexus\s?8\d\d\d/
           cisco_hardware = 'n9k'
         when /NX-OSv/
           cisco_hardware = 'n9k'
         else
-          fail Puppet::ParseError, "Unrecognized platform type: #{pi}\n"
+          fail Puppet::ParseError, "Unrecognized platform type: #{pi}\n#{__FILE__}"
         end
         cisco_hardware
       end
