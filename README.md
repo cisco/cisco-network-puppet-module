@@ -396,7 +396,7 @@ Address Family Identifier (AFI). Required. Valid values are `ipv4` and `ipv6`.
 Sub Address Family Identifier (SAFI). Required. Valid values are `unicast` and `multicast`.
 
 ##### `additional_paths_install`
-install a backup path into the forwarding table and provide prefix 'independent convergence (PIC) in case of a PE-CE link failure. Valid values are true, false, or 'default'
+Install a backup path into the forwarding table and provide prefix 'independent convergence (PIC) in case of a PE-CE link failure. Valid values are true, false, or 'default'. This property is not supported on IOS XR.
 
 ##### `additional_paths_receive`
 Enables the receive capability of additional paths for all of the neighbors under this address family for which the capability has not been disabled.  Valid values are true, false, or 'default'
@@ -408,31 +408,31 @@ Configures the capability of selecting additional paths for a prefix. Valid valu
 Enables the send capability of additional paths for all of the neighbors under this address family for which the capability has not been disabled. Valid values are true, false, or 'default'
 
 ##### `advertise_l2vpn_evpn`
-advertise evpn routes. Valid values are true and false.
+Advertise evpn routes. Valid values are true and false. This property is not supported on IOS XR.
 
 ##### `client_to_client`
-Configure client-to-client route reflection. Valid values are true and false.
+Configure client-to-client route reflection. Valid values are true and false. On IOS XR, this property is only supported in the global BGP context.
 
 ##### `dampen_igp_metric`
-Specify dampen value for IGP metric-related changes, in seconds. Valid values are Integer, keyword 'default'.
+Specify dampen value for IGP metric-related changes, in seconds. Valid values are Integer, keyword 'default'. This property is not supported on IOS XR.
 
 ##### `dampening_state`
-Enable/disable route-flap dampening. Valid values are true, false or 'default'
+Enable/disable route-flap dampening. Valid values are true, false or 'default'. On IOS XR, this property is only supported in the global BGP context.
 
 ##### `dampening_half_time`
-Specify decay half-life in minutes for route-flap dampening. Valid values are Integer, keyword 'default'.
+Specify decay half-life in minutes for route-flap dampening. Valid values are Integer, keyword 'default'. On IOS XR, this property is only supported in the global BGP context.
 
 ##### `dampening_max_suppress_time`
-Specify max suppress time for route-flap dampening stable route. Valid values are Integer, keyword 'default'.
+Specify max suppress time for route-flap dampening stable route. Valid values are Integer, keyword 'default'. On IOS XR, this property is only supported in the global BGP context.
 
 ##### `dampening_reuse_time`
-Specify route reuse time for route-flap dampening. Valid values are Integer, keyword 'default'.
+Specify route reuse time for route-flap dampening. Valid values are Integer, keyword 'default'. On IOS XR, this property is only supported in the global BGP context.
 
 ##### `dampening_routemap`
-Specify route-map for route-flap dampening. Valid values are a string defining the name of the route-map.
+Specify route-map for route-flap dampening. Valid values are a string defining the name of the route-map. On IOS XR, this property is only supported in the global BGP context.
 
 ##### `dampening_suppress_time`
-Specify route suppress time for route-flap dampening. Valid values are Integer, keyword 'default'.
+Specify route suppress time for route-flap dampening. Valid values are Integer, keyword 'default'. On IOS XR, this property is only supported in the global BGP context.
 
 ##### Dampening Properties
 Note: dampening_routemap is mutually exclusive with dampening_half_time, reuse_time, suppress_time and max_suppress_time.
@@ -471,7 +471,10 @@ Example: IPv6 Networks Array
 ```
 
 ##### `next_hop_route_map`
-Configure route map for valid nexthops. Valid values are a string defining the name of the route-map.
+Configure a route map for valid nexthops. Valid values are a string defining the name of the route-map. This property is only supported on Nexus.
+
+##### `next_hop_route_policy`
+Specify the route policy for valid nexthops. Valid values are a string specifying the name of the route-map (the named route-map must have previously been defined). This property is only supported on IOS XR.
 
 ##### `redistribute`
 A list of redistribute directives. Multiple redistribute entries are allowed. The list must be in the form of a nested array: the first entry of each array defines the source-protocol to redistribute from; the second entry defines a route-map/route-policy name. A route-map/route-policy is highly advised but may be optional on some platforms, in which case it may be omitted from the array list.
