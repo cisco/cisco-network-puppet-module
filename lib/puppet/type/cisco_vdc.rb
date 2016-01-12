@@ -77,7 +77,7 @@ Puppet::Type.newtype(:cisco_vdc) do
 
   newproperty(:limit_resource_module_type) do
     desc 'Restrict VDC to specific module-types. Valid values are a String '\
-         "containing a list of module-types ('f3 m3'), or keyword 'default'"
+         "containing a list of module-types ('m1 m1xl'), or keyword 'default'"
 
     munge do |value|
       value = value.to_sym if value == 'default'
