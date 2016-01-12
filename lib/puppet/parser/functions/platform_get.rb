@@ -32,6 +32,8 @@ module Puppet
         # - Nexus 6001 Chassis
         # - NX-OSv Chassis
         case pi
+        when /Nexus\s?31\d\d/
+          cisco_hardware = 'n31k'
         when /Nexus\s?3\d\d\d/
           cisco_hardware = 'n3k'
         when /Nexus\s?5\d\d\d/
@@ -40,7 +42,7 @@ module Puppet
           cisco_hardware = 'n6k'
         when /Nexus\s?7\d\d\d/
           cisco_hardware = 'n7k'
-        when /Nexus\s?8\d\d\d/
+        when /Nexus\s?9\d\d\d/
           cisco_hardware = 'n9k'
         when /NX-OSv/
           cisco_hardware = 'n9k'
