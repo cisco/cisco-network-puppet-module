@@ -19,7 +19,6 @@
 Puppet::Type.newtype(:cisco_interface_portchannel) do
   @doc = %q(
     "Manages a Cisco PortChannel Interface.
-     Any resource dependency should be run before the interface resource.
 
      cisco_interface_portchannel {\"<interface>\":
        ..attributes..

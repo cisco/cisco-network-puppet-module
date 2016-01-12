@@ -276,8 +276,6 @@ test_name "TestCase :: #{testheader}" do
     id = 'default_properties_sym'
     tests[id][:desc] = '1.1 Default Properties'
     test_harness_portchannel_global(tests, id)
-  else
-    # do nothing
   end
 
   # no absent test for portchannel_global
@@ -296,8 +294,6 @@ test_name "TestCase :: #{testheader}" do
     id = 'non_default_properties_sym'
     tests[id][:desc] = '2.1 Non Default Properties'
     test_harness_portchannel_global(tests, id)
-  else
-    # do nothing
   end
 
   # no absent test for portchannel_global

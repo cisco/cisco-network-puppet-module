@@ -47,20 +47,20 @@ Puppet::Type.type(:cisco_interface_portchannel).provide(:nxapi) do
   INTF_PC_ALL_PROPS = INTF_PC_NON_BOOL_PROPS + INTF_PC_BOOL_PROPS
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self,
-                                            '@interface_portchannel',
+                                            '@nu',
                                             INTF_PC_NON_BOOL_PROPS)
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self,
-                                            '@interface_portchannel',
+                                            '@nu',
                                             INTF_PC_BOOL_PROPS)
 
   def initialize(value={})
     super(value)
-    @interface_portchannel =
+    @nu =
         Cisco::InterfacePortChannel.interfaces[@property_hash[:name]]
     @property_flush = {}
   end
 
-  def self.properties_get(interface_name, intf)
+  def self.properties_get(interface_name, nu_obj)
     debug "Checking instance, #{interface_name}."
     current_state = {
       interface: interface_name,
@@ -69,10 +69,10 @@ Puppet::Type.type(:cisco_interface_portchannel).provide(:nxapi) do
     }
     # Call node_utils getter for each property
     INTF_PC_NON_BOOL_PROPS.each do |prop|
-      current_state[prop] = intf.send(prop)
+      current_state[prop] = nu_obj.send(prop)
     end
     INTF_PC_BOOL_PROPS.each do |prop|
-      val = intf.send(prop)
+      val = nu_obj.send(prop)
       if val.nil?
         current_state[prop] = nil
       else
@@ -84,8 +84,8 @@ Puppet::Type.type(:cisco_interface_portchannel).provide(:nxapi) do
 
   def self.instances
     interfaces = []
-    Cisco::InterfacePortChannel.interfaces.each do |interface_name, intf|
-      interfaces << properties_get(interface_name, intf)
+    Cisco::InterfacePortChannel.interfaces.each do |interface_name, nu_obj|
+      interfaces << properties_get(interface_name, nu_obj)
     end
     interfaces
   end # self.instances
@@ -93,7 +93,7 @@ Puppet::Type.type(:cisco_interface_portchannel).provide(:nxapi) do
   def self.prefetch(resources)
     interfaces = instances
     resources.keys.each do |name|
-      provider = interfaces.find { |intf| intf.instance_name == name }
+      provider = interfaces.find { |nu_obj| nu_obj.instance_name == name }
       resources[name].provider = provider unless provider.nil?
     end
   end # self.prefetch
@@ -119,41 +119,24 @@ Puppet::Type.type(:cisco_interface_portchannel).provide(:nxapi) do
       next unless @resource[prop]
       send("#{prop}=", @resource[prop]) if new_interface
       unless @property_flush[prop].nil?
-        @interface_portchannel.send("#{prop}=", @property_flush[prop]) if
-          @interface_portchannel.respond_to?("#{prop}=")
+        @nu.send("#{prop}=", @property_flush[prop]) if
+          @nu.respond_to?("#{prop}=")
       end
     end
   end
 
   def flush
     if @property_flush[:ensure] == :absent
-      @interface_portchannel.destroy
-      @interface_portchannel = nil
+      @nu.destroy
+      @nu = nil
     else
       # Create/Update
-      if @interface_portchannel.nil?
+      if @nu.nil?
         new_interface = true
-        @interface_portchannel =
+        @nu =
             Cisco::InterfacePortChannel.new(@resource[:interface])
       end
       properties_set(new_interface)
     end
-    puts_config
   end
-
-  def puts_config
-    if @interface_portchannel.nil?
-      info "InterfacePortChannel=#{@resource[:interface]} is absent."
-      return
-    end
-
-    # Dump all current properties for this interface_portchannel
-    current = sprintf("\n%30s: %s", 'interface_portchannel',
-                      @interface_portchannel.name)
-    INTF_PC_ALL_PROPS.each do |prop|
-      current.concat(sprintf("\n%30s: %s", prop,
-                             @interface_portchannel.send(prop)))
-    end
-    debug current
-  end # puts_config
 end # Puppet::Type

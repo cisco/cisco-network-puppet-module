@@ -252,15 +252,5 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:nxapi) do
 
   def flush
     properties_set
-    puts_config
   end
-
-  def puts_config
-    # Dump all current properties for this global
-    current = sprintf("\n%30s: %s", 'name', instance_name)
-    PC_GLOBAL_ALL_PROPS.each do |prop|
-      current.concat(sprintf("\n%30s: %s", prop, @pc_global.send(prop)))
-    end
-    debug current
-  end # puts_config
-end   # Puppet::Type
+end # Puppet::Type

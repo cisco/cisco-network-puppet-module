@@ -14,7 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet::demo_portchannel_global {
+class ciscopuppet::demo_portchannel {
+
+  $port_hash_distribution = platform_get() ? {
+    /(n3k|n7k|n9k)/ => 'adaptive',
+    default => undef
+  }
+
+  $port_load_defer = platform_get() ? {
+    /(n3k|n7k|n9k)/ => true,
+    default => undef
+  }
 
   $asymmetric = platform_get() ? {
     'n7k'  => false,
@@ -22,8 +32,7 @@ class ciscopuppet::demo_portchannel_global {
   }
 
   $concatenation = platform_get() ? {
-    'n3k'  => true,
-    'n9k'  => true,
+    /(n3k|n9k)/ => true,
     default => undef
   }
 
@@ -33,8 +42,7 @@ class ciscopuppet::demo_portchannel_global {
   }
 
   $hash_poly = platform_get() ? {
-    'n5k'  => 'CRC10c',
-    'n6k'  => 'CRC10c',
+    /(n5k|n6k)/ => 'CRC10c',
     default => undef
   }
 
@@ -44,22 +52,28 @@ class ciscopuppet::demo_portchannel_global {
   }
 
   $resilient = platform_get() ? {
-    'n3k'  => false,
-    'n9k'  => false,
+    /(n3k|n9k)/ => false,
     default => undef
   }
 
   $rotate = platform_get() ? {
-    'n3k'  => '4',
-    'n7k'  => '4',
-    'n9k'  => '4',
+    /(n3k|n7k|n9k)/ => '4',
     default => undef
   }
 
   $symmetry = platform_get() ? {
-    'n3k'  => false,
-    'n9k'  => false,
+    /(n3k|n9k)/ => false,
     default => undef
+  }
+
+  cisco_interface_portchannel {'port-channel100':
+    ensure                    => 'present',
+    lacp_graceful_convergence => false,
+    lacp_max_bundle           => 10,
+    lacp_min_links            => 2,
+    lacp_suspend_individual   => false,
+    port_hash_distribution    => $port_hash_distribution,
+    port_load_defer           => $port_load_defer,
   }
 
   cisco_portchannel_global { 'default':

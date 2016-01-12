@@ -301,8 +301,6 @@ test_name "TestCase :: #{testheader}" do
     tests[id][:desc] = '1.2 Default Properties'
     tests[id][:ensure] = :absent
     test_harness_interface_portchannel(tests, id)
-  else
-    # do nothing
   end
 
   # -------------------------------------------------------------------
@@ -331,8 +329,6 @@ test_name "TestCase :: #{testheader}" do
     tests[id][:desc] = '2.2 Non Default Properties (absent)'
     tests[id][:ensure] = :absent
     test_harness_interface_portchannel(tests, id)
-  else
-    # do nothing
   end
 end
 
