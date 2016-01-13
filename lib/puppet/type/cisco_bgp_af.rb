@@ -204,8 +204,8 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   end
 
   newparam(:afi, namevar: true) do
-    desc 'BGP Address-family AFI (ipv4|ipv6). Valid values are string.'
-    newvalues(:ipv4, :ipv6)
+    desc 'BGP Address-family AFI (ipv4|ipv6|vpnv4|vpnv6). Valid values are string.'
+    newvalues(:ipv4, :ipv6, :vpnv4, :vpnv6)
   end
 
   newparam(:safi, namevar: true) do

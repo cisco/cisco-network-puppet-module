@@ -54,6 +54,7 @@
 # rubocop:disable Style/HashSyntax
 
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
+require File.expand_path('../../bgp/bgplib.rb', __FILE__)
 require File.expand_path('../bgpaflib.rb', __FILE__)
 # -----------------------------
 # Common settings and variables
@@ -71,12 +72,10 @@ UtilityLib.set_manifest_path(master, self)
 # Top-level keys set by caller:
 # tests[:master] - the master object
 # tests[:agent] - the agent object
-# tests[:show_cmd] - the common show command to use for test_show_run
 #
 tests = {
-  :master   => master,
-  :agent    => agent,
-  :show_cmd => 'show run bgp all',
+  :master => master,
+  :agent  => agent,
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -102,240 +101,331 @@ tests = {
 #   Can be used with :af for mixed title/af testing. If mixing, :af values will
 #   be merged with title values and override any duplicates. If omitted,
 #   :title_pattern will be set to 'id'.
-# tests[id][:af] - (Optional) defines the address-family values.
-#   Must use :title_pattern if :af is not specified. Useful for testing mixed
-#   title/af manifests
 # tests[id][:remote_as] - (Optional) allows explicit remote-as configuration
 #   for some ebgp/ibgp-only testing
 
 # default_properties
 #
-tests['default_properties'] = {
-  :desc           => '1.1 Default Properties',
-  :title_pattern  => '2 blue ipv4 unicast',
-  :manifest_props => "
-    additional_paths_install      => 'default',
-    additional_paths_receive      => 'default',
-    additional_paths_selection    => 'default',
-    additional_paths_send         => 'default',
-    advertise_l2vpn_evpn          => 'default',
-    client_to_client              => 'default',
-    dampen_igp_metric             => 'default',
-    dampening_state               => 'default',
-    dampening_half_time           => 'default',
-    dampening_max_suppress_time   => 'default',
-    dampening_reuse_time          => 'default',
-    dampening_suppress_time       => 'default',
-    default_information_originate => 'default',
-    maximum_paths                 => 'default',
-    maximum_paths_ibgp            => 'default',
-    next_hop_route_map            => 'default',
-    networks                      => 'default',
-    redistribute                  => 'default',
-    route_target_both_auto        => 'default',
-    route_target_both_auto_evpn   => 'default',
-    route_target_import           => 'default',
-    route_target_import_evpn      => 'default',
-    route_target_export           => 'default',
-    route_target_export_evpn      => 'default',
-    ",
 
-  :resource_props => {
-    'additional_paths_install'      => 'false',
-    'additional_paths_receive'      => 'false',
-    'additional_paths_send'         => 'false',
-    'advertise_l2vpn_evpn'          => 'false',
-    'client_to_client'              => 'true',
-    'dampen_igp_metric'             => '600',
-    'dampening_state'               => 'true',
-    'dampening_half_time'           => '15',
-    'dampening_max_suppress_time'   => '45',
-    'dampening_reuse_time'          => '750',
-    'dampening_suppress_time'       => '2000',
-    'default_information_originate' => 'false',
-    'maximum_paths'                 => '1',
-    'maximum_paths_ibgp'            => '1',
-    'route_target_both_auto'        => 'false',
-    'route_target_both_auto_evpn'   => 'false',
-  },
-}
+def remove_property(prop_symbol, test)
+  test[:manifest_props].delete(prop_symbol)
+  test[:resource_props].delete(prop_symbol.to_s)
+end
 
-# Special case: When dampening_routemap is set to default
-# it means that dampening is enabled without routemap.
-tests['default_dampening_routemap'] = {
-  :desc           => '1.2 Default dampening_routemap',
-  :title_pattern  => '2 blue ipv4 unicast',
-  :manifest_props => "
-    dampening_routemap            => 'default',
-    ",
+def remove_unsupported_properties(test, platform, vrf)
+  if platform == 'ios_xr' # remove properties not supported on XR
+    remove_property(:next_hop_route_map, test)
+    remove_property(:additional_paths_install, test)
+    remove_property(:dampen_igp_metric, test)
+    remove_property(:advertise_l2vpn_evpn, test)
 
-  :resource_props => {
-    'dampening_state'             => 'true',
-    'dampening_half_time'         => '15',
-    'dampening_max_suppress_time' => '45',
-    'dampening_reuse_time'        => '750',
-    'dampening_suppress_time'     => '2000',
-  },
-}
+    # TODO: marked in yaml as unsupported for XR (revisit)
+    remove_property(:default_information_originate, test)
+
+    # TODO: revisit when these props are handled in XR
+    remove_property(:route_target_both_auto, test)
+    remove_property(:route_target_both_auto_evpn, test)
+    remove_property(:route_target_import, test)
+    remove_property(:route_target_import_evpn, test)
+    remove_property(:route_target_export, test)
+    remove_property(:route_target_export_evpn, test)
+
+    # properties that are not supported under a vrf
+    if vrf != 'default'
+      remove_property(:client_to_client, test)
+      remove_property(:dampening_state, test)
+      remove_property(:dampening_half_time, test)
+      remove_property(:dampening_max_suppress_time, test)
+      remove_property(:dampening_reuse_time, test)
+      remove_property(:dampening_suppress_time, test)
+    end
+  end
+
+  return unless vrf == default
+
+  # properties that are ONLY supported under a vrf
+  remove_property(:advertise_l2vpn_evpn, test)
+  remove_property(:route_target_both_auto, test)
+  remove_property(:route_target_both_auto_evpn, test)
+  remove_property(:route_target_import, test)
+  remove_property(:route_target_import_evpn, test)
+  remove_property(:route_target_export, test)
+  remove_property(:route_target_export_evpn, test)
+end
+
+def test_default_properties(tests, platform, vrf, desc, present=true)
+  id = 'default_properties'
+  tests[id] = {
+    :desc           => "#{desc} (vrf '#{vrf}')",
+    :title_pattern  => "#{BgpLib::ASN} #{vrf} ipv4 unicast",
+    :manifest_props => {
+      :additional_paths_install      => 'default',
+      :additional_paths_receive      => 'default',
+      :additional_paths_selection    => 'default',
+      :additional_paths_send         => 'default',
+      :advertise_l2vpn_evpn          => 'default',
+      :client_to_client              => 'default',
+      :dampen_igp_metric             => 'default',
+      :dampening_state               => 'default',
+      :dampening_half_time           => 'default',
+      :dampening_max_suppress_time   => 'default',
+      :dampening_reuse_time          => 'default',
+      :dampening_suppress_time       => 'default',
+      :default_information_originate => 'default',
+      :maximum_paths                 => 'default',
+      :maximum_paths_ibgp            => 'default',
+      :next_hop_route_map            => 'default',
+      :networks                      => 'default',
+      :redistribute                  => 'default',
+      :route_target_both_auto        => 'default',
+      :route_target_both_auto_evpn   => 'default',
+      :route_target_import           => 'default',
+      :route_target_import_evpn      => 'default',
+      :route_target_export           => 'default',
+      :route_target_export_evpn      => 'default',
+    },
+
+    :resource_props => {
+      'additional_paths_install'      => 'false',
+      'additional_paths_receive'      => 'false',
+      'additional_paths_send'         => 'false',
+      'advertise_l2vpn_evpn'          => 'false',
+      'client_to_client'              => 'true',
+      'dampen_igp_metric'             => '600',
+      'dampening_state'               => 'true',
+      'dampening_half_time'           => '15',
+      'dampening_max_suppress_time'   => '45',
+      'dampening_reuse_time'          => '750',
+      'dampening_suppress_time'       => '2000',
+      'default_information_originate' => 'false',
+      'maximum_paths'                 => '1',
+      'maximum_paths_ibgp'            => '1',
+      'route_target_both_auto'        => 'false',
+      'route_target_both_auto_evpn'   => 'false',
+    },
+  }
+  tests[id][:ensure] = :absent unless present
+  test_harness_bgp_af(tests, id, platform, vrf)
+end
+
+def test_default_dampening_routemap(tests, platform, vrf, desc)
+  id = 'default_properties'
+
+  # Special case: When dampening_routemap is set to default
+  # it means that dampening is enabled without routemap.
+  tests[id] = {
+    :desc           => "#{desc} (vrf '#{vrf}')",
+    :title_pattern  => "#{BgpLib::ASN} #{vrf} ipv4 unicast",
+    :manifest_props => {
+      :dampening_routemap => 'default'
+    },
+
+    :resource_props => {
+      'dampening_state'             => 'true',
+      'dampening_half_time'         => '15',
+      'dampening_max_suppress_time' => '45',
+      'dampening_reuse_time'        => '750',
+      'dampening_suppress_time'     => '2000',
+    },
+  }
+  test_harness_bgp_af(tests, id, platform, vrf)
+end
 
 #
 # non_default_properties
 #
-tests['non_default_properties_A'] = {
-  :desc           => "2.1 Non Default Properties: 'A' commands",
-  :title_pattern  => '2 blue ipv4 unicast',
-  :manifest_props => "
-    additional_paths_install        => true,
-    additional_paths_receive        => true,
-    additional_paths_selection      => 'RouteMap',
-    additional_paths_send           => true,
-    advertise_l2vpn_evpn            => true,
-  ",
+def test_non_default_a(tests, platform, vrf, desc)
+  id = 'non_default_properties_A'
+  tests[id] = {
+    :desc           => "#{desc} (vrf '#{vrf}')",
+    :title_pattern  => "#{BgpLib::ASN} #{vrf} ipv4 unicast",
+    :manifest_props => {
+      :additional_paths_install   => true,
+      :additional_paths_receive   => true,
+      :additional_paths_selection => 'RouteMap',
+      :additional_paths_send      => true,
+      :advertise_l2vpn_evpn       => true,
+    },
 
-  :resource_props => {
-    'additional_paths_install'   => 'true',
-    'additional_paths_receive'   => 'true',
-    'additional_paths_selection' => 'RouteMap',
-    'additional_paths_send'      => 'true',
-    'advertise_l2vpn_evpn'       => 'true',
-  },
-}
+    :resource_props => {
+      'additional_paths_install'   => 'true',
+      'additional_paths_receive'   => 'true',
+      'additional_paths_selection' => 'RouteMap',
+      'additional_paths_send'      => 'true',
+      'advertise_l2vpn_evpn'       => 'true',
+    },
+  }
+  test_harness_bgp_af(tests, id, platform, vrf)
+end
 
-tests['non_default_properties_C'] = {
-  :desc           => "2.2 Non Default Properties: 'C' commands",
-  :title_pattern  => '2 blue ipv4 unicast',
-  :manifest_props => "
-    client_to_client => false,
-  ",
+def test_non_default_c(tests, platform, vrf, desc)
+  id = 'non_default_properties_C'
+  tests[id] = {
+    :desc           => "#{desc} (vrf '#{vrf}')",
+    :title_pattern  => "#{BgpLib::ASN} #{vrf} ipv4 unicast",
+    :manifest_props => {
+      :client_to_client => false
+    },
 
-  :resource_props => {
-    'client_to_client' => 'false'
-  },
-}
+    :resource_props => {
+      'client_to_client' => 'false'
+    },
+  }
+  test_harness_bgp_af(tests, id, platform, vrf)
+end
 
-tests['non_default_properties_D'] = {
-  :desc           => "2.3 Non Default Properties: 'D' commands",
-  :title_pattern  => '2 blue ipv4 unicast',
-  :manifest_props => "
-    dampen_igp_metric               => 200,
-    dampening_half_time             => 1,
-    dampening_max_suppress_time     => 4,
-    dampening_reuse_time            => 2,
-    dampening_suppress_time         => 3,
-    default_information_originate   => true,
-  ",
+def test_non_default_d(tests, platform, vrf, desc)
+  id = 'non_default_properties_D'
+  tests[id] = {
+    :desc           => "#{desc} (vrf '#{vrf}')",
+    :title_pattern  => "#{BgpLib::ASN} #{vrf} ipv4 unicast",
+    :manifest_props => {
+      :dampen_igp_metric             => 200,
+      :dampening_half_time           => 1,
+      :dampening_max_suppress_time   => 4,
+      :dampening_reuse_time          => 2,
+      :dampening_suppress_time       => 3,
+      :default_information_originate => true,
+    },
 
-  :resource_props => {
-    'dampen_igp_metric'             => '200',
-    'dampening_half_time'           => '1',
-    'dampening_max_suppress_time'   => '4',
-    'dampening_reuse_time'          => '2',
-    'dampening_suppress_time'       => '3',
-    'default_information_originate' => 'true',
-  },
-}
+    :resource_props => {
+      'dampen_igp_metric'             => '200',
+      'dampening_half_time'           => '1',
+      'dampening_max_suppress_time'   => '4',
+      'dampening_reuse_time'          => '2',
+      'dampening_suppress_time'       => '3',
+      'default_information_originate' => 'true',
+    },
+  }
+  test_harness_bgp_af(tests, id, platform, vrf)
+end
 
 # Special case: Just dampening_state, no properties.
-tests['non_default_properties_Dampening_true'] = {
-  :desc           => '2.3.1 Non-Default dampening true',
-  :title_pattern  => '2 blue ipv4 unicast',
-  :manifest_props => "
-    dampening_state               => 'true',
-    ",
+def test_non_default_dampening_true(tests, platform, vrf, desc)
+  id = 'non_default_properties_Dampening_true'
+  tests[id] = {
+    :desc           => "#{desc} (vrf '#{vrf}')",
+    :title_pattern  => "#{BgpLib::ASN} #{vrf} ipv4 unicast",
+    :manifest_props => {
+      :dampening_state => 'true'
+    },
 
-  :resource_props => {
-    'dampening_state'             => 'true',
-    'dampening_half_time'         => '15',
-    'dampening_max_suppress_time' => '45',
-    'dampening_reuse_time'        => '750',
-    'dampening_suppress_time'     => '2000',
-  },
-}
+    :resource_props => {
+      'dampening_state'             => 'true',
+      'dampening_half_time'         => '15',
+      'dampening_max_suppress_time' => '45',
+      'dampening_reuse_time'        => '750',
+      'dampening_suppress_time'     => '2000',
+    },
+  }
+  test_harness_bgp_af(tests, id, platform, vrf)
+end
 
-tests['non_default_properties_Dampening_false'] = {
-  :desc           => '2.3.2 Non-Default dampening false',
-  :title_pattern  => '2 blue ipv4 unicast',
-  :manifest_props => "
-    dampening_state               => 'false',
-    ",
+def test_non_default_dampening_false(tests, platform, vrf, desc)
+  id = 'non_default_properties_Dampening_false'
+  tests[id] = {
+    :desc           => "#{desc} (vrf '#{vrf}')",
+    :title_pattern  => "#{BgpLib::ASN} #{vrf} ipv4 unicast",
+    :manifest_props => {
+      :dampening_state => 'false'
+    },
 
-  :resource_props => {
-    'dampening_state' => 'false'
-  },
-}
+    :resource_props => {
+      'dampening_state' => 'false'
+    },
+  }
+  test_harness_bgp_af(tests, id, platform, vrf)
+end
 
 # Special case: When dampening_routemap is mutually exclusive
 # with other dampening properties.
-tests['non_default_properties_Dampening_routemap'] = {
-  :desc           => '2.3.3 Non-Default dampening_routemap',
-  :title_pattern  => '2 blue ipv4 unicast',
-  :manifest_props => "
-    dampening_routemap => 'RouteMap',
-    ",
+def test_non_default_dampening_routemap(tests, platform, vrf, desc)
+  id = 'non_default_properties_Dampening_routemap'
+  tests[id] = {
+    :desc           => "#{desc} (vrf '#{vrf}')",
+    :title_pattern  => "#{BgpLib::ASN} #{vrf} ipv4 unicast",
+    :manifest_props => {
+      :dampening_routemap => 'RouteMap'
+    },
 
-  :resource_props => {
-    'dampening_routemap' => 'RouteMap'
-  },
-}
+    :resource_props => {
+      'dampening_routemap' => 'RouteMap'
+    },
+  }
+  test_harness_bgp_af(tests, id, platform, vrf)
+end
 
-tests['non_default_properties_M'] = {
-  :desc           => "2.4 Non Default Properties: 'M' commands",
-  :title_pattern  => '2 blue ipv4 unicast',
-  :manifest_props => "
-    maximum_paths                   => 9,
-    maximum_paths_ibgp              => 9,
-  ",
+def test_non_default_m(tests, platform, vrf, desc)
+  id = 'non_default_properties_M'
+  tests[id] = {
+    :desc           => "#{desc} (vrf '#{vrf}')",
+    :title_pattern  => "#{BgpLib::ASN} #{vrf} ipv4 unicast",
+    :manifest_props => {
+      :maximum_paths      => 9,
+      :maximum_paths_ibgp => 9,
+    },
 
-  :resource_props => {
-    'ensure'             => 'present',
-    'maximum_paths'      => '9',
-    'maximum_paths_ibgp' => '9',
-  },
-}
+    :resource_props => {
+      'ensure'             => 'present',
+      'maximum_paths'      => '9',
+      'maximum_paths_ibgp' => '9',
+    },
+  }
+  test_harness_bgp_af(tests, id, platform, vrf)
+end
 
-networks = [['192.168.5.0/24', 'nrtemap1'], ['192.168.6.0/32']]
-tests['non_default_properties_N'] = {
-  :desc           => "2.5 Non Default Properties: 'N' commands",
-  :title_pattern  => '2 blue ipv4 unicast',
-  :manifest_props => "
-    networks                        => #{networks},
-    next_hop_route_map              => 'RouteMap',
-  ",
+def test_non_default_n(tests, platform, vrf, desc)
+  id = 'non_default_properties_N'
+  networks = [['192.168.5.0/24', 'RouteMap'], ['192.168.6.0/32']]
+  tests[id] = {
+    :desc           => "#{desc} (vrf '#{vrf}')",
+    :title_pattern  => "#{BgpLib::ASN} #{vrf} ipv4 unicast",
+    :manifest_props => {
+      :networks           => networks,
+      :next_hop_route_map => 'RouteMap',
+    },
 
-  :resource_props => {
-    'networks'           => "#{networks}",
-    'next_hop_route_map' => 'RouteMap',
-  },
-}
+    :resource_props => {
+      'networks'           => "#{networks}",
+      'next_hop_route_map' => 'RouteMap',
+    },
+  }
+  test_harness_bgp_af(tests, id, platform, vrf)
+end
 
-redistribute = [['static', 's_rmap'], ['eigrp 1', 'e_rmap']] # rubocop:disable Style/WordArray
-routetargetimport = ['1.2.3.4:55', '102:33']
-routetargetimportevpn = ['1.2.3.4:55', '102:33']
-routetargetexport = ['1.2.3.4:55', '102:33']
-routetargetexportevpn = ['1.2.3.4:55', '102:33']
-tests['non_default_properties_R'] = {
-  :desc           => "2.6 Non Default Properties: 'R' commands",
-  :title_pattern  => '2 blue ipv4 unicast',
-  :manifest_props => "
-    redistribute                => #{redistribute},
-    route_target_both_auto      => true,
-    route_target_both_auto_evpn => true,
-    route_target_import         => #{routetargetimport},
-    route_target_import_evpn    => #{routetargetimportevpn},
-    route_target_export         => #{routetargetexport},
-    route_target_export_evpn    => #{routetargetexportevpn},
-  ",
+def test_non_default_r(tests, platform, vrf, desc)
+  id = 'non_default_properties_R'
+  redistribute = [['static', 'RouteMap'], ['eigrp 1', 'RouteMap']] # rubocop:disable Style/WordArray
+  routetargetimport = ['1.2.3.4:55', '102:33']
+  routetargetimportevpn = ['1.2.3.4:55', '102:33']
+  routetargetexport = ['1.2.3.4:55', '102:33']
+  routetargetexportevpn = ['1.2.3.4:55', '102:33']
+  tests[id] = {
+    :desc           => "#{desc} (vrf '#{vrf}')",
+    :title_pattern  => "#{BgpLib::ASN} #{vrf} ipv4 unicast",
+    :manifest_props => {
+      :redistribute                => redistribute,
+      :route_target_both_auto      => true,
+      :route_target_both_auto_evpn => true,
+      :route_target_import         => routetargetimport,
+      :route_target_import_evpn    => routetargetimportevpn,
+      :route_target_export         => routetargetexport,
+      :route_target_export_evpn    => routetargetexportevpn,
+    },
 
-  :resource_props => {
-    'redistribute'                => "#{redistribute}",
-    'route_target_both_auto'      => 'true',
-    'route_target_both_auto_evpn' => 'true',
-    'route_target_import'         => "#{routetargetimport}",
-    'route_target_import_evpn'    => "#{routetargetimportevpn}",
-    'route_target_export'         => "#{routetargetexport}",
-    'route_target_export_evpn'    => "#{routetargetexportevpn}",
-  },
-}
+    :resource_props => {
+      'redistribute'                => "#{redistribute}",
+      'route_target_both_auto'      => 'true',
+      'route_target_both_auto_evpn' => 'true',
+      'route_target_import'         => "#{routetargetimport}",
+      'route_target_import_evpn'    => "#{routetargetimportevpn}",
+      'route_target_export'         => "#{routetargetexport}",
+      'route_target_export_evpn'    => "#{routetargetexportevpn}",
+    },
+  }
+
+  test_harness_bgp_af(tests, id, platform, vrf)
+end
 
 tests['title_patterns'] = {
   :manifest_props => '',
@@ -361,15 +451,21 @@ def af_pattern(tests, id, af)
 end
 
 # Create actual manifest for a given test scenario.
-def build_manifest_bgp_af(tests, id)
-  manifest = prop_hash_to_manifest(tests[id][:af])
+def build_manifest_bgp_af(tests, id, platform, vrf='default')
+  manifest_props = tests[id][:manifest_props]
+
+  # optionally merge properties from :af
+  manifest_props.merge!(tests[id][:af]) unless tests[id][:af].nil?
+
+  manifest = prop_hash_to_manifest(manifest_props)
+  extra_config = ''
   if tests[id][:ensure] == :absent
     state = 'ensure => absent,'
     tests[id][:resource] = { 'ensure' => 'absent' }
   else
     state = 'ensure => present,'
-    manifest += tests[id][:manifest_props]
     tests[id][:resource] = tests[id][:resource_props]
+    extra_config = get_dependency_manifest(platform, vrf)
   end
 
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
@@ -377,6 +473,9 @@ def build_manifest_bgp_af(tests, id)
                tests[id][:title_pattern])
   tests[id][:manifest] = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
   node 'default' {
+
+    #{extra_config}
+
     cisco_bgp_af { '#{tests[id][:title_pattern]}':
       #{state}
       #{manifest}
@@ -385,81 +484,185 @@ def build_manifest_bgp_af(tests, id)
 EOF"
 end
 
+# get extra manifest content to handle dependencies
+def get_dependency_manifest(platform, vrf)
+  extra_config = ''
+  if platform == 'ios_xr'
+    # XR requires the following before a vrf AF can be configured:
+    #   1. a global router_id
+    #   2. a global address family
+    #   3. route_distinguisher configured on the vrf
+    extra_config = "
+      cisco_bgp { '#{BgpLib::ASN} default':
+        ensure                                 => present,
+        router_id                              => '1.2.3.4',
+      }
+
+      cisco_bgp_af { '#{BgpLib::ASN} default vpnv4 unicast':
+        ensure                                 => present,
+      }"
+
+    # Ensure any needed route-policies are present.
+    # TODO: Replace this with cisco_route_policy config,
+    # when/if that is available.
+    extra_config += "
+      cisco_command_config { 'policy_config':
+        command => '
+          route-policy RouteMap
+            end-policy'
+      }"
+
+    if vrf != 'default'
+      extra_config += "
+      cisco_bgp { '#{BgpLib::ASN} #{vrf}':
+        ensure                                 => present,
+        route_distinguisher                    => auto,
+      }"
+    end
+  end
+  extra_config
+end
+
 # Wrapper for bgp_af specific settings prior to calling the
 # common test_harness.
-def test_harness_bgp_af(tests, id)
+def test_harness_bgp_af(tests, id, platform, vrf)
   af = bgp_title_pattern_munge(tests, id, 'bgp_af')
   logger.info("\n--------\nTest Case Address-Family ID: #{af}")
 
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
-  tests[id][:show_pattern] = af_pattern(tests, id, af)
   tests[id][:resource_cmd] = puppet_resource_cmd(af)
 
-  # Build the manifest for this test
-  build_manifest_bgp_af(tests, id)
+  remove_unsupported_properties(tests[id], platform, vrf)
 
-  test_harness_common(tests, id)
+  if tests[id][:manifest_props].empty?
+    logger.info("Skipping '#{tests[id][:desc]}' - no supported properties remain")
+  else
+    # Build the manifest for this test
+    build_manifest_bgp_af(tests, id, platform, vrf)
+
+    test_harness_common(tests, id)
+  end
+
   tests[id][:ensure] = nil
+end
+
+# TODO: Move to/update utilitylib.rb when test_bgpneighboraf is finished.
+def bgp_title_pattern_munge(tests, id, provider=nil)
+  title = tests[id][:title_pattern]
+  af = {}
+  props = tests[id][:manifest_props]
+  [:asn, :vrf, :neighbor, :afi, :safi].each do |key|
+    af[key] = props[key] if props.key?(key)
+  end
+
+  if title.nil?
+    puts 'no title'
+    return af
+  end
+
+  t = {}
+
+  case provider
+  when 'bgp_af'
+    t[:asn], t[:vrf], t[:afi], t[:safi] = title.split
+  when 'bgp_neighbor_af'
+    t[:asn], t[:vrf], t[:neighbor], t[:afi], t[:safi] = title.split
+  end
+  t.merge!(af)
+  t[:vrf] = 'default' if t[:vrf].nil?
+  t
 end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
-  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  node_feature_cleanup(agent, 'bgp')
+  platform = fact_on(agent, 'os.name')
 
-  # -----------------------------------
-  id = 'default_properties'
-  test_harness_bgp_af(tests, id)
+  %w(default blue).each do |vrf|
+    logger.info("\n#{'-' * 60}\nSection 1. "\
+                "Default Property Testing (vrf '#{vrf}')")
 
-  tests[id][:desc] = '1.1 Default Properties'
-  tests[id][:ensure] = :absent
-  test_harness_bgp_af(tests, id)
+    init_bgp(master, agent) # clean slate
 
-  test_harness_bgp_af(tests, 'default_dampening_routemap')
-  # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  node_feature_cleanup(agent, 'bgp')
+    # -----------------------------------
+    test_default_properties(tests, platform, vrf, '1.1 Ensure present')
 
-  test_harness_bgp_af(tests, 'non_default_properties_A')
-  test_harness_bgp_af(tests, 'non_default_properties_C')
-  test_harness_bgp_af(tests, 'non_default_properties_D')
-  test_harness_bgp_af(tests, 'non_default_properties_Dampening_routemap')
-  node_feature_cleanup(agent, 'bgp')
-  test_harness_bgp_af(tests, 'non_default_properties_Dampening_true')
-  test_harness_bgp_af(tests, 'non_default_properties_Dampening_false')
-  test_harness_bgp_af(tests, 'non_default_properties_M')
-  test_harness_bgp_af(tests, 'non_default_properties_N')
-  test_harness_bgp_af(tests, 'non_default_properties_R')
+    test_default_properties(tests, platform, vrf, '1.2 Ensure absent', false)
+
+    if platform != 'ios_xr'
+      test_default_dampening_routemap(
+        tests, platform, vrf, '1.3 Test dampening')
+    end
+
+    # -------------------------------------------------------------------
+    logger.info("\n#{'-' * 60}\nSection 2. "\
+                "Non Default Property Testing (vrf '#{vrf}')")
+
+    init_bgp(master, agent) # clean slate
+
+    test_non_default_a(
+      tests, platform, vrf, "2.1 Non Default Properties: 'A' commands")
+
+    test_non_default_c(
+      tests, platform, vrf, "2.2 Non Default Properties: 'C' commands")
+
+    test_non_default_d(
+      tests, platform, vrf, "2.3 Non Default Properties: 'D' commands")
+
+    # not supported on XR under a vrf
+    if platform != 'ios_xr' || vrf == 'default'
+      test_non_default_dampening_routemap(
+        tests, platform, vrf, '2.3.1 Non-Default dampening true')
+    end
+
+    init_bgp(master, agent) # clean slate
+
+    test_non_default_dampening_true(
+      tests, platform, vrf, '2.3.2 Non-Default dampening true')
+
+    test_non_default_dampening_false(
+      tests, platform, vrf, '2.3.3 Non-Default dampening false')
+
+    test_non_default_m(
+      tests, platform, vrf, "2.4 Non Default Properties: 'M' commands")
+
+    test_non_default_n(
+      tests, platform, vrf, "2.5 Non Default Properties: 'N' commands")
+
+    test_non_default_r(
+      tests, platform, vrf, "2.6 Non Default Properties: 'R' commands")
+  end
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
-  node_feature_cleanup(agent, 'bgp')
+  init_bgp(master, agent) # clean slate
 
   id = 'title_patterns'
   tests[id][:desc] = '3.1 Title Patterns'
-  tests[id][:title_pattern] = '2'
-  tests[id][:af] = { :afi => 'ipv4', :safi => 'unicast' }
-  test_harness_bgp_af(tests, id)
+  tests[id][:title_pattern] = BgpLib::ASN
+  tests[id][:manifest_props] = { :afi => 'ipv4', :safi => 'unicast' }
+  test_harness_bgp_af(tests, id, platform, 'default')
 
   # -----------------------------------
   tests[id][:desc] = '3.2 Title Patterns'
-  tests[id][:title_pattern] = '2 blue'
-  tests[id][:af] = { :afi => 'ipv4', :safi => 'unicast' }
-  test_harness_bgp_af(tests, id)
+  tests[id][:title_pattern] = "#{BgpLib::ASN} blue"
+  tests[id][:manifest_props] = { :afi => 'ipv4', :safi => 'unicast' }
+  test_harness_bgp_af(tests, id, platform, 'blue')
 
   # -----------------------------------
   tests[id][:desc] = '3.3 Title Patterns'
-  tests[id][:title_pattern] = '2 red ipv4'
-  tests[id][:af] = { :safi => 'unicast' }
-  test_harness_bgp_af(tests, id)
+  tests[id][:title_pattern] = "#{BgpLib::ASN} red ipv4"
+  tests[id][:manifest_props] = { :safi => 'unicast' }
+  test_harness_bgp_af(tests, id, platform, 'red')
 
   # -----------------------------------
   tests[id][:desc] = '3.4 Title Patterns'
-  tests[id][:title_pattern] = '2 yellow ipv4 unicast'
-  tests[id].delete(:af)
-  test_harness_bgp_af(tests, id)
+  tests[id][:title_pattern] = "#{BgpLib::ASN} yellow ipv4 unicast"
+  tests[id][:manifest_props] = {}
+  test_harness_bgp_af(tests, id, platform, 'yellow')
+
+  cleanup_bgp(master, agent)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

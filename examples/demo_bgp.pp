@@ -88,6 +88,7 @@ class ciscopuppet::demo_bgp {
     log_neighbor_changes                   => true,
     timer_bgp_keepalive                    => '60',
     timer_bgp_holdtime                     => '120',
+    route_distinguisher                    => auto,
   }
 
   # --------------------------------------------------------------------------#
@@ -96,23 +97,36 @@ class ciscopuppet::demo_bgp {
   $ipv4_networks = [['192.168.5.0/24', 'nrtemap1'], ['192.168.6.0/32']]
   $ipv4_redistribute = [['eigrp 1', 'e_rtmap_29'], ['ospf 3',  'o_rtmap']]
 
-  cisco_bgp_af { '55.77 blue ipv4 unicast':
+  $additional_paths_install = $operatingsystem ? {
+    'nexus' => true,
+    default => undef
+  }
+  $dampen_igp_metric = $operatingsystem ? {
+    'nexus' => 55,
+    default => undef
+  }
+  $default_information_originate = $operatingsystem ? {
+    'nexus' => true,
+    default => undef
+  }
+
+  cisco_bgp_af { '55.77 default ipv4 unicast':
     ensure                        => present,
     #asn                           => 55.77,
-    #vrf                           => 'blue',
+    #vrf                           => 'default',
     #afi                           => 'ipv4',
     #safi                          => 'unicast',
     # Properties
     client_to_client              => false,
-    default_information_originate => true,
+    default_information_originate => $default_information_originate,
     maximum_paths                 => '8',
     maximum_paths_ibgp            => '7',
     next_hop_route_map            => 'RouteMap',
-    additional_paths_install      => true,
+    additional_paths_install      => $additional_paths_install,
     additional_paths_receive      => true,
     additional_paths_selection    => 'RouteMap',
     additional_paths_send         => true,
-    dampen_igp_metric             => 55,
+    dampen_igp_metric             => $dampen_igp_metric,
 
     # dampening_routemap is mutually exclusive with
     # dampening_half_time, reuse_time, suppress_time
@@ -135,30 +149,45 @@ class ciscopuppet::demo_bgp {
 
   $ipv6_networks = [['192:168::5:0/112', 'nrtemap1'], ['192:168::6:0/112']]
   $ipv6_redistribute = [['eigrp 1', 'e_v6'], ['ospfv3 3',  'o_v6']]
+  $dampening_state = $operatingsystem ? {
+    'nexus' => true,
+    default => undef  # not supported on XR under a vrf
+  }
+  $routemap = $operatingsystem ? {
+    'nexus' => 'RouteMap',
+    default => undef  # not supported on XR under a vrf
+  }
+
+  if $operatingsystem == 'ios_xr' {
+    # For XR, we need to create the parent AF before the following AF.
+    cisco_bgp_af { '55.77 default vpnv6 unicast':
+      ensure                        => present,
+    }
+  }
+
   cisco_bgp_af { '55.77 blue ipv6 unicast':
     ensure                        => present,
 
     # Properties
-    client_to_client              => false,
-    default_information_originate => true,
+    default_information_originate => $default_information_originate,
     maximum_paths                 => '7',
     maximum_paths_ibgp            => '7',
-    next_hop_route_map            => 'RouteMap',
+    next_hop_route_map            => $routemap,
     additional_paths_receive      => true,
     additional_paths_selection    => 'RouteMap',
     additional_paths_send         => true,
-    dampen_igp_metric             => 55,
+    dampen_igp_metric             => $dampen_igp_metric,
 
     # dampening_routemap is mutually exclusive with
     # dampening_half_time, reuse_time, suppress_time
     # and max_suppress_time.
     #
-    dampening_state               => true,
+    dampening_state               => $dampening_state,
     #dampening_half_time           => 1,
     #dampening_reuse_time          => 2,
     #dampening_suppress_time       => 3,
     #dampening_max_suppress_time   => 4,
-    dampening_routemap            => 'RouteMap',
+    dampening_routemap            => $routemap,
 
     networks                      => $ipv6_networks,
     redistribute                  => $ipv6_redistribute,
@@ -270,6 +299,7 @@ class ciscopuppet::demo_bgp {
     transport_passive_only => false,
   }
 
+/*
   # --------------------------------------------------------------------------#
   # Configure Neighbor-level Address Family IPv4 Unicast
   # --------------------------------------------------------------------------#
@@ -356,4 +386,5 @@ class ciscopuppet::demo_bgp {
     unsuppress_map              => 'unsup_map',
     weight                      => 30,
   }
+*/
 }
