@@ -128,6 +128,10 @@ test_name "TestCase :: #{testheader}" do
                                  'switchport_mode'              => 'disabled',
                                  'switchport_vtp'               => 'false',
                                  'vrf'                          => 'test1',
+                                 'ipv4_acl_in'                  => 'foo-1',
+                                 'ipv4_acl_out'                 => 'foo-2',
+                                 'ipv6_acl_in'                  => 'foo-3',
+                                 'ipv6_acl_out'                 => 'foo-4',
                                },
                                false, self, logger)
     end
@@ -152,6 +156,10 @@ test_name "TestCase :: #{testheader}" do
                                  /speed 100/,
                                  /duplex full/,
                                  /vrf member test1/,
+                                 /ip access-group foo-1 in/,
+                                 /ip access-group foo-2 out/,
+                                 /ipv6 traffic-filter foo-3 in/,
+                                 /ipv6 traffic-filter foo-4 out/,
                                ],
                                false, self, logger)
     end

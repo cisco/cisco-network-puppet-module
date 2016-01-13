@@ -526,6 +526,174 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check interface instance absence on agent :: #{result}")
   end
 
+  # @step [Step] Requests manifest from the master server to the agent.
+  step 'TestStep :: Get negative test resource manifest from master' do
+    # Expected exit_code is 0 since this is a bash shell cmd.
+    on(master, RoutedIntfLib.create_routedintf_manifest_ipv4_acl_in_negative)
+
+    # Expected exit_code is 1 since this is a puppet agent cmd with error.
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
+      'agent -t', options)
+    on(agent, cmd_str, acceptable_exit_codes: [1])
+
+    logger.info("Get negative test resource manifest from master :: #{result}")
+  end
+
+  # @step [Step] Checks cisco_interface resource on agent using resource cmd.
+  step 'TestStep :: Check cisco_interface resource absence on agent' do
+    # Expected exit_code is 0 since this is a puppet resource cmd.
+    # Flag is set to true to check for absence of RegExp pattern in stdout.
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
+      "resource cisco_interface '#{test_intf}'", options)
+    on(agent, cmd_str) do
+      search_pattern_in_output(stdout,
+                               { 'ipv4_acl_in' => RoutedIntfLib::IPV4_ACL_IN__NEGATIVE },
+                               true, self, logger)
+    end
+
+    logger.info("Check cisco_interface resource absence on agent :: #{result}")
+  end
+
+  # @step [Step] Checks interface instance on agent using switch show cli cmds.
+  step 'TestStep :: Check interface instance absence on agent' do
+    # Expected exit_code is 0 since this is a vegas shell cmd.
+    # Flag is set to true to check for absence of RegExp pattern in stdout.
+    cmd_str = get_vshell_cmd("show running-config interface #{test_intf}")
+    on(agent, cmd_str) do
+      search_pattern_in_output(stdout,
+                               [/ip access-group/],
+                               true, self, logger)
+    end
+
+    logger.info("Check interface instance absence on agent :: #{result}")
+  end
+
+  # @step [Step] Requests manifest from the master server to the agent.
+  step 'TestStep :: Get negative test resource manifest from master' do
+    # Expected exit_code is 0 since this is a bash shell cmd.
+    on(master, RoutedIntfLib.create_routedintf_manifest_ipv4_acl_out_negative)
+
+    # Expected exit_code is 1 since this is a puppet agent cmd with error.
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
+      'agent -t', options)
+    on(agent, cmd_str, acceptable_exit_codes: [1])
+
+    logger.info("Get negative test resource manifest from master :: #{result}")
+  end
+
+  # @step [Step] Checks cisco_interface resource on agent using resource cmd.
+  step 'TestStep :: Check cisco_interface resource absence on agent' do
+    # Expected exit_code is 0 since this is a puppet resource cmd.
+    # Flag is set to true to check for absence of RegExp pattern in stdout.
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
+      "resource cisco_interface '#{test_intf}'", options)
+    on(agent, cmd_str) do
+      search_pattern_in_output(stdout,
+                               { 'ipv4_acl_out' => RoutedIntfLib::IPV4_ACL_OUT__NEGATIVE },
+                               true, self, logger)
+    end
+
+    logger.info("Check cisco_interface resource absence on agent :: #{result}")
+  end
+
+  # @step [Step] Checks interface instance on agent using switch show cli cmds.
+  step 'TestStep :: Check interface instance absence on agent' do
+    # Expected exit_code is 0 since this is a vegas shell cmd.
+    # Flag is set to true to check for absence of RegExp pattern in stdout.
+    cmd_str = get_vshell_cmd("show running-config interface #{test_intf}")
+    on(agent, cmd_str) do
+      search_pattern_in_output(stdout,
+                               [/ip access-group/],
+                               true, self, logger)
+    end
+
+    logger.info("Check interface instance absence on agent :: #{result}")
+  end
+
+  # @step [Step] Requests manifest from the master server to the agent.
+  step 'TestStep :: Get negative test resource manifest from master' do
+    # Expected exit_code is 0 since this is a bash shell cmd.
+    on(master, RoutedIntfLib.create_routedintf_manifest_ipv6_acl_in_negative)
+
+    # Expected exit_code is 1 since this is a puppet agent cmd with error.
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
+      'agent -t', options)
+    on(agent, cmd_str, acceptable_exit_codes: [1])
+
+    logger.info("Get negative test resource manifest from master :: #{result}")
+  end
+
+  # @step [Step] Checks cisco_interface resource on agent using resource cmd.
+  step 'TestStep :: Check cisco_interface resource absence on agent' do
+    # Expected exit_code is 0 since this is a puppet resource cmd.
+    # Flag is set to true to check for absence of RegExp pattern in stdout.
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
+      "resource cisco_interface '#{test_intf}'", options)
+    on(agent, cmd_str) do
+      search_pattern_in_output(stdout,
+                               { 'ipv6_acl_in' => RoutedIntfLib::IPV6_ACL_IN__NEGATIVE },
+                               true, self, logger)
+    end
+
+    logger.info("Check cisco_interface resource absence on agent :: #{result}")
+  end
+
+  # @step [Step] Checks interface instance on agent using switch show cli cmds.
+  step 'TestStep :: Check interface instance absence on agent' do
+    # Expected exit_code is 0 since this is a vegas shell cmd.
+    # Flag is set to true to check for absence of RegExp pattern in stdout.
+    cmd_str = get_vshell_cmd("show running-config interface #{test_intf}")
+    on(agent, cmd_str) do
+      search_pattern_in_output(stdout,
+                               [/ipv6 traffic-filter/],
+                               true, self, logger)
+    end
+
+    logger.info("Check interface instance absence on agent :: #{result}")
+  end
+
+  # @step [Step] Requests manifest from the master server to the agent.
+  step 'TestStep :: Get negative test resource manifest from master' do
+    # Expected exit_code is 0 since this is a bash shell cmd.
+    on(master, RoutedIntfLib.create_routedintf_manifest_ipv6_acl_out_negative)
+
+    # Expected exit_code is 1 since this is a puppet agent cmd with error.
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
+      'agent -t', options)
+    on(agent, cmd_str, acceptable_exit_codes: [1])
+
+    logger.info("Get negative test resource manifest from master :: #{result}")
+  end
+
+  # @step [Step] Checks cisco_interface resource on agent using resource cmd.
+  step 'TestStep :: Check cisco_interface resource absence on agent' do
+    # Expected exit_code is 0 since this is a puppet resource cmd.
+    # Flag is set to true to check for absence of RegExp pattern in stdout.
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
+      "resource cisco_interface '#{test_intf}'", options)
+    on(agent, cmd_str) do
+      search_pattern_in_output(stdout,
+                               { 'ipv6_acl_out' => RoutedIntfLib::IPV6_ACL_OUT__NEGATIVE },
+                               true, self, logger)
+    end
+
+    logger.info("Check cisco_interface resource absence on agent :: #{result}")
+  end
+
+  # @step [Step] Checks interface instance on agent using switch show cli cmds.
+  step 'TestStep :: Check interface instance absence on agent' do
+    # Expected exit_code is 0 since this is a vegas shell cmd.
+    # Flag is set to true to check for absence of RegExp pattern in stdout.
+    cmd_str = get_vshell_cmd("show running-config interface #{test_intf}")
+    on(agent, cmd_str) do
+      search_pattern_in_output(stdout,
+                               [/ipv6 traffic-filter/],
+                               true, self, logger)
+    end
+
+    logger.info("Check interface instance absence on agent :: #{result}")
+  end
+
   # TBD: CHANNEL-GROUP NEGATIVE TEST DOES NOT RETURN EXIT CODE [1]
   #
   # # @step [Step] Requests manifest from the master server to the agent.

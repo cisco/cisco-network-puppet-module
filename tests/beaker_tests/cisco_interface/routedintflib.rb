@@ -67,6 +67,10 @@ node default {
       switchport_autostate_exclude => 'default',
       switchport_vtp               => 'default',
       vrf                          => 'default',
+      ipv4_acl_in                  => 'default',
+      ipv4_acl_out                 => 'default',
+      ipv6_acl_in                  => 'default',
+      ipv6_acl_out                 => 'default',
   }}
 EOF"
     manifest_str
@@ -163,6 +167,10 @@ node default {
       switchport_autostate_exclude => false,
       switchport_vtp               => false,
       vrf                          => 'test1',
+      ipv4_acl_in                  => 'foo-1',
+      ipv4_acl_out                 => 'foo-2',
+      ipv6_acl_in                  => 'foo-3',
+      ipv6_acl_out                 => 'foo-4',
     }}
 EOF"
     manifest_str
@@ -388,6 +396,66 @@ node default {
     cisco_interface { 'ethernet1/4':
       ensure                       => present,
       channel_group                => #{RoutedIntfLib::CHANNEL_GROUP_NEGATIVE},
+    }
+}
+EOF"
+    manifest_str
+  end
+
+  # Method to create a manifest for RoutedINTF resource attribute 'ipv4_acl_in'.
+  # @param none [None] No input parameters exist.
+  # @result none [None] Returns no object.
+  def self.create_ipv4_acl_in_manifest_negative
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+    cisco_interface { 'ethernet1/4':
+      ensure                       => present,
+      ipv4_acl_in                  => #{RoutedIntfLib::IPV4_ACL_IN_NEGATIVE},
+    }
+}
+EOF"
+    manifest_str
+  end
+
+  # Method to create a manifest for RoutedINTF resource attribute 'ipv4_acl_out'.
+  # @param none [None] No input parameters exist.
+  # @result none [None] Returns no object.
+  def self.create_ipv4_acl_out_manifest_negative
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+    cisco_interface { 'ethernet1/4':
+      ensure                       => present,
+      ipv4_acl_out                 => #{RoutedIntfLib::IPV4_ACL_OUT_NEGATIVE},
+    }
+}
+EOF"
+    manifest_str
+  end
+
+  # Method to create a manifest for RoutedINTF resource attribute 'ipv6_acl_in'.
+  # @param none [None] No input parameters exist.
+  # @result none [None] Returns no object.
+  def self.create_ipv6_acl_in_manifest_negative
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+    cisco_interface { 'ethernet1/4':
+      ensure                       => present,
+      ipv6_acl_in                  => #{RoutedIntfLib::IPV6_ACL_IN_NEGATIVE},
+    }
+}
+EOF"
+    manifest_str
+  end
+
+  # Method to create a manifest for RoutedINTF resource attribute 'ipv6_acl_out'.
+  # @param none [None] No input parameters exist.
+  # @result none [None] Returns no object.
+  def self.create_ipv6_acl_out_manifest_negative
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+    cisco_interface { 'ethernet1/4':
+      ensure                       => present,
+      ipv6_acl_out                 => #{RoutedIntfLib::IPV6_ACL_OUT_NEGATIVE},
     }
 }
 EOF"
