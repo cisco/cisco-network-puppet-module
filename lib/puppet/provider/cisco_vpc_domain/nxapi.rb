@@ -81,6 +81,7 @@ Puppet::Type.type(:cisco_vpc_domain).provide(:nxapi) do
     Cisco::Vpc.domains.each do |domain_id, obj|
       domains << properties_get(domain_id, obj)
     end
+    puts "INSTS: domain #{domain_id} : #{domains}"
     domains
   end
 

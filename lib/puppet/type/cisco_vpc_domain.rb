@@ -69,8 +69,9 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
       fail 'VPC domain must be in the range 1..1000' unless
         range.include?(name.to_i)
     end
-    munge { |value| value.to_s }
-  end # param id
+    # We will retain the domain as a string and expect the provider
+    # to return string as well
+  end # param name
 
   ##############
   # Attributes #
@@ -137,7 +138,9 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
             elem.to_i.between?(1, 4095)
         end
       end
-      value = value.gsub!(/\s+/, '') # strip all spaces within and without
+      value.gsub!(/\s+/, '') # strip all spaces within and without
+      puts "dual-active intf exclude Value is #{value}"
+      value
     end
   end # property name
 
@@ -174,7 +177,9 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
             elem.to_i.between?(1, 4095)
         end
       end
-      value = value.gsub!(/\s+/, '') # strip all spaces within and without
+      value.gsub!(/\s+/, '') # strip all spaces within and without
+      puts "Peer GW exclude Value is #{value}"
+      value
     end
   end # property name
 end # Puppet::Type.newtype
