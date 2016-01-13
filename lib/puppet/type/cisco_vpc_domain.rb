@@ -23,9 +23,9 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
     cisco_vpc_domain {"<domain>":
       ..attributes..
     }
-  
+
     <domain> is the id of the vpc_domain.
-  
+
     Example:
       cisco_vpc_domain {"100":
         ensure                       => present,
@@ -38,7 +38,7 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
         layer3_peer_routing          => true,
         peer_gateway                 => true,
         peer_gateway_exclude_vlan_bridge_domain            => '10-20,500',
-  
+
       }
     )
 
@@ -66,12 +66,10 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
     desc 'VPC domain ID. Valid values are integer in the range 1-1000'
     range = *(1..1000)
     validate do |name|
-      fail "VPC domain must be in the range 1..1000" unless 
+      fail 'VPC domain must be in the range 1..1000' unless
         range.include?(name.to_i)
     end
-    munge do |name|
-      name.to_i
-    end
+    munge(&:to_i)
   end # param id
 
   ##############
@@ -81,17 +79,17 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
   ensurable
 
   newproperty(:auto_recovery) do
-    desc 'Auto Recovery enable/disable if peer is non-operational. 
-          Valid values are true/false or default'
+    desc 'Auto Recovery enable or disable if peer is non-operational.
+          Valid values are true, false or default'
     newvalues(:true, :false, :default)
   end # property name
 
   newproperty(:auto_recovery_reload_delay) do
-    desc 'Delay (in secs) before peer is assumed dead before attempting to 
+    desc 'Delay (in secs) before peer is assumed dead before attempting to
           recover VPCs. Valid values are integers in the range 240 .. 3600'
     validate do |value|
       if value != 'default'
-        fail('auto_recovery_reload_delay should be a value in the range 
+        fail('auto_recovery_reload_delay should be a value in the range
               240 .. 3600') unless value.to_i.between?(240, 3600)
       end
     end
@@ -103,21 +101,21 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
           Valid values are integers in the range 240 .. 3600'
     validate do |value|
       if value != 'default'
-        fail('delay_restore should be a value in the range 240 .. 3600') 
-          unless value.to_i.between?(240, 3600)
+        fail('delay_restore should be a value in the range 240 .. 3600') unless
+          value.to_i.between?(240, 3600)
       end
     end
     munge { |value| value == 'default' ? :default : value.to_i }
   end # property name
 
   newproperty(:delay_restore_interface_vlan) do
-    desc 'Delay (in secs) after peer link is restored to bring up Interface 
-          VLANs or Interface BDs. Valid values are integers in the 
+    desc 'Delay (in secs) after peer link is restored to bring up Interface
+          VLANs or Interface BDs. Valid values are integers in the
           range 240 .. 3600'
     validate do |value|
       if value != 'default'
-        fail('delay_restore should be a value in the range 240 .. 3600') 
-          unless value.to_i.between?(240, 3600)
+        fail('delay_restore should be a value in the range 240 .. 3600') unless
+          value.to_i.between?(240, 3600)
       end
     end
     munge { |value| value == 'default' ? :default : value.to_i }
@@ -130,10 +128,10 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
       # convert the string value to an array
       arr = /,/.match(str) ? value.split(/\s*,\s*/) : value.lines.to_a
       arr.each do |elem|
-        if match = /(\d+)\s+\-\s+(\d+)/.match(elem)
+        if (match = /(\d+)\s+\-\s+(\d+)/.match(elem))
           num1, num2 = match.captures
-          fail "Invalid range #{elem} in the input range #{value}" unless 
-            num1.to_i.between?(1,4095) and num2.to_i.between(1, 4095)
+          fail "Invalid range #{elem} in the input range #{value}" unless
+            num1.to_i.between?(1, 4095) && num2.to_i.between?(1, 4095)
         else
           fail "Invalid value #{elem} in the input range #{value}" unless
             elem.to_i.between?(1, 4095)
@@ -144,18 +142,18 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
   end # property name
 
   newproperty(:graceful_consistency_check) do
-    desc 'Graceful conistency check . Valid values are true/false or default'
+    desc 'Graceful conistency check . Valid values are true, false or default'
     newvalues(:true, :false, :default)
   end # property name
 
   newproperty(:layer3_peer_routing) do
-    desc 'Enable/Disable Layer3 peer routing . 
+    desc 'Enable or Disable Layer3 peer routing.
           Valid values are true/false or default'
     newvalues(:true, :false, :default)
   end # property name
 
   newproperty(:peer_gateway) do
-    desc 'Enable/Disable Layer3 forwarding for packets with peer gateway-mac. 
+    desc 'Enable or Disable Layer3 forwarding for packets with peer gateway-mac.
           Valid values are true/false or default'
     newvalues(:true, :false, :default)
   end # property name
@@ -167,10 +165,10 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
       # convert the string value to an array
       arr = /,/.match(str) ? value.split(/\s*,\s*/) : value.lines.to_a
       arr.each do |elem|
-        if match = /(\d+)\s+\-\s+(\d+)/.match(elem)
+        if (match = /(\d+)\s+\-\s+(\d+)/.match(elem))
           num1, num2 = match.captures
-          fail "Invalid range #{elem} in the input range #{value}" unless 
-            num1.to_i.between?(1,4095) and num2.to_i.between(1, 4095)
+          fail "Invalid range #{elem} in the input range #{value}" unless
+            num1.to_i.between?(1, 4095) && num2.to_i.between?(1, 4095)
         else
           fail "Invalid value #{elem} in the input range #{value}" unless
             elem.to_i.between?(1, 4095)
