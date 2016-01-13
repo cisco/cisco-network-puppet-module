@@ -75,6 +75,10 @@ class ciscopuppet::demo_bgp {
     timer_bgp_holdtime                     => '111',
   }
 
+  $confederation_id = $operatingsystem ? {
+    'nexus' => '66',
+    default => undef
+  }
   $confederation_peers = $operatingsystem ? {
     'nexus' => '12 11 13',
     default => undef
@@ -83,7 +87,7 @@ class ciscopuppet::demo_bgp {
   cisco_bgp { '55.77 blue':
     ensure                                 => present,
 
-    confederation_id                       => '66',
+    confederation_id                       => $confederation_id,
     confederation_peers                    => $confederation_peers,
     enforce_first_as                       => true,
     log_neighbor_changes                   => true,
