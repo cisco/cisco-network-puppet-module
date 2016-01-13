@@ -126,7 +126,7 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
           Valid value is a string of integer ranges from 1 .. 4095'
     munge do |value|
       # convert the string value to an array
-      arr = /,/.match(str) ? value.split(/\s*,\s*/) : value.lines.to_a
+      arr = /,/.match(value) ? value.split(/\s*,\s*/) : value.lines.to_a
       arr.each do |elem|
         if (match = /(\d+)\s+\-\s+(\d+)/.match(elem))
           num1, num2 = match.captures
@@ -163,7 +163,7 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
           Valid value is a string of integer ranges from 1 .. 4095'
     munge do |value|
       # convert the string value to an array
-      arr = /,/.match(str) ? value.split(/\s*,\s*/) : value.lines.to_a
+      arr = /,/.match(value) ? value.split(/\s*,\s*/) : value.lines.to_a
       arr.each do |elem|
         if (match = /(\d+)\s+\-\s+(\d+)/.match(elem))
           num1, num2 = match.captures

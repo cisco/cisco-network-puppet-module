@@ -46,7 +46,7 @@ Puppet::Type.type(:cisco_vpc_domain).provide(:nxapi) do
     :layer3_peer_routing,
     :peer_gateway,
   ]
-  VPC_ALL_PROPS = VPC_NON_BOOL_PROPS + VPC_BOOL_PROPS
+  VPC_PROPS = VPC_NON_BOOL_PROPS + VPC_BOOL_PROPS
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@vpc_domain',
                                             VPC_NON_BOOL_PROPS)
@@ -142,7 +142,7 @@ Puppet::Type.type(:cisco_vpc_domain).provide(:nxapi) do
 
     # Dump all current properties for this vpc_domain
     current = sprintf("\n%30s: %s", 'vpc_domain', instance_name)
-    VNI_PROPS.each do |prop|
+    VPC_PROPS.each do |prop|
       current.concat(sprintf("\n%30s: %s", prop, @vpc_domain.send(prop)))
     end
     debug current
