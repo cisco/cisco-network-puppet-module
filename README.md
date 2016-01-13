@@ -390,7 +390,7 @@ BGP autonomous system number. Required. Valid values are String, Integer in ASPL
 VRF name. Required. Valid values are string. The name 'default' is a valid VRF representing the global bgp.
 
 ##### `afi`
-Address Family Identifier (AFI). Required. Valid values are `ipv4` and `ipv6`.
+Address Family Identifier (AFI). Required. Valid values for Nexus are `ipv4` and `ipv6`.  Valid values for IOS XR are `ipv4`, `ipv6`, `vpnv4`, and `vpnv6`.
 
 ##### `safi`
 Sub Address Family Identifier (SAFI). Required. Valid values are `unicast` and `multicast`.
