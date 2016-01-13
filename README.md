@@ -471,10 +471,7 @@ Example: IPv6 Networks Array
 ```
 
 ##### `next_hop_route_map`
-Configure a route map for valid nexthops. Valid values are a string defining the name of the route-map. This property is only supported on Nexus.
-
-##### `next_hop_route_policy`
-Specify the route policy for valid nexthops. Valid values are a string specifying the name of the route-map (the named route-map must have previously been defined). This property is only supported on IOS XR.
+Configure a route map for valid nexthops. Valid values are a string defining the name of the route-map.
 
 ##### `redistribute`
 A list of redistribute directives. Multiple redistribute entries are allowed. The list must be in the form of a nested array: the first entry of each array defines the source-protocol to redistribute from; the second entry defines a route-map/route-policy name. A route-map/route-policy is highly advised but may be optional on some platforms, in which case it may be omitted from the array list.
