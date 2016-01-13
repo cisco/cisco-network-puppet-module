@@ -83,6 +83,7 @@ class ciscopuppet::demo_bgp {
   cisco_bgp { '55.77 blue':
     ensure                                 => present,
 
+    confederation_id                       => '66',
     confederation_peers                    => $confederation_peers,
     enforce_first_as                       => true,
     log_neighbor_changes                   => true,
@@ -234,7 +235,7 @@ class ciscopuppet::demo_bgp {
     local_as               => 55.88,
     log_neighbor_changes   => $log_neighbor_changes,
     low_memory_exempt      => $low_memory_exempt,
-    remote_as              => 12,
+    remote_as              => 120,
     remove_private_as      => $remove_private_as,
     shutdown               => true,
     suppress_4_byte_as     => true,
@@ -255,7 +256,7 @@ class ciscopuppet::demo_bgp {
     ebgp_multihop          => 2,
     log_neighbor_changes   => $log_neighbor_changes,
     low_memory_exempt      => $low_memory_exempt,
-    remote_as              => 12,
+    remote_as              => 130,
     remove_private_as      => $remove_private_as,
     shutdown               => true,
     suppress_4_byte_as     => true,
@@ -289,7 +290,7 @@ class ciscopuppet::demo_bgp {
     local_as               => 55.88,
     log_neighbor_changes   => $log_neighbor_changes,
     low_memory_exempt      => $low_memory_exempt,
-    remote_as              => 12,
+    remote_as              => 140,
     remove_private_as      => $remove_private_as,
     shutdown               => true,
     suppress_4_byte_as     => true,
@@ -299,7 +300,6 @@ class ciscopuppet::demo_bgp {
     transport_passive_only => false,
   }
 
-/*
   # --------------------------------------------------------------------------#
   # Configure Neighbor-level Address Family IPv4 Unicast
   # --------------------------------------------------------------------------#
@@ -386,5 +386,4 @@ class ciscopuppet::demo_bgp {
     unsuppress_map              => 'unsup_map',
     weight                      => 30,
   }
-*/
 }
