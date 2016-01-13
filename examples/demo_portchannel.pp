@@ -16,16 +16,6 @@
 
 class ciscopuppet::demo_portchannel {
 
-  $port_hash_distribution = platform_get() ? {
-    /(n3k|n7k|n9k)/ => 'adaptive',
-    default => undef
-  }
-
-  $port_load_defer = platform_get() ? {
-    /(n3k|n7k|n9k)/ => true,
-    default => undef
-  }
-
   $asymmetric = platform_get() ? {
     'n7k'  => false,
     default => undef
@@ -48,6 +38,16 @@ class ciscopuppet::demo_portchannel {
 
   $load_defer = platform_get() ? {
     'n7k'  => 100,
+    default => undef
+  }
+
+  $port_hash_distribution = platform_get() ? {
+    /(n3k|n7k|n9k)/ => 'adaptive',
+    default => undef
+  }
+
+  $port_load_defer = platform_get() ? {
+    /(n3k|n7k|n9k)/ => true,
     default => undef
   }
 
