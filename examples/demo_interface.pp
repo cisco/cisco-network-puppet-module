@@ -26,6 +26,10 @@ class ciscopuppet::demo_interface {
     speed                  => 100,
     duplex                 => 'full',
     vrf                    => 'test',
+    ipv4_acl_in            => 'foo-1',
+    ipv4_acl_out           => 'foo-2',
+    ipv6_acl_in            => 'foo-3',
+    ipv6_acl_out           => 'foo-4',
   }
 
   cisco_interface { 'Ethernet1/1.1':
