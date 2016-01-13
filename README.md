@@ -1158,12 +1158,10 @@ Manages configuration of a portchannel interface instance.
 #### Parameters
 
 ##### `ensure`
-Determine whether the config should be present or not. Valid values are
-'present' and 'absent'.
+Determine whether the config should be present or not. Valid values are 'present' and 'absent'.
 
 ##### `lacp_graceful_convergence`
-port-channel lacp graceful convergence. Valid values are true, false or 
-'default'.
+port-channel lacp graceful convergence. Valid values are true, false or 'default'.
 
 ##### `lacp_max_bundle`
 port-channel max-bundle. Valid values are Integer, keyword 'default'.
@@ -1175,12 +1173,10 @@ port-channel min-links. Valid values are Integer, keyword 'default'.
 lacp port-channel state. Valid values are true and false or 'default'.
 
 ##### `port_hash_distribution`
-port-channel per port hash-distribution. Valid values are 'adaptive', 
-'fixed' or the keyword 'default'.
+port-channel per port hash-distribution. Valid values are 'adaptive', 'fixed' or the keyword 'default'.
 
 ##### `port_load_defer`
-port-channel per port load-defer. Valid values are true, false or 
-'default'.
+port-channel per port load-defer. Valid values are true, false or 'default'.
 
 --
 ### Type: cisco_ospf
@@ -1259,33 +1255,25 @@ Manages configuration of a portchannel global parameters
 #### Parameters
 
 ##### `asymmetric`
-port-channel asymmetric hash. Valid values are true, false or 
-'default'.
+port-channel asymmetric hash. Valid values are true, false or 'default'.
 
 ##### `bundle_hash`
-port-channel bundle hash. Valid values are 'ip', 'ip-l4port',
-'ip-l4port-vlan', 'ip-vlan', 'l4port', 'mac', 'port', 'ip-only', 
-'port-only', 'ip-gre' or 'default'.
+port-channel bundle hash. Valid values are 'ip', 'ip-l4port', 'ip-l4port-vlan', 'ip-vlan', 'l4port', 'mac', 'port', 'ip-only', 'port-only', 'ip-gre' or 'default'.
 
 ##### `bundle_select`
-port-channel bundle select. Valid values are 'src', 'dst',
-'src-dst' or 'default'.
+port-channel bundle select. Valid values are 'src', 'dst', 'src-dst' or 'default'.
 
 ##### `concatenation`
-port-channel concatenation enable or disable. Valid values are true, 
-false or 'default'.
+port-channel concatenation enable or disable. Valid values are true, false or 'default'.
 
 ##### `hash_distribution`
-port-channel hash-distribution. Valid values are 'adaptive', 
-'fixed' or the keyword 'default'.
+port-channel hash-distribution. Valid values are 'adaptive', 'fixed' or the keyword 'default'.
 
 ##### `hash_poly`
-port-channel hash-polynomial. Valid values are 'CRC10a', 'CRC10b'
-''CRC10c', 'CRC10d' or the keyword 'default'.
+port-channel hash-polynomial. Valid values are 'CRC10a', 'CRC10b', 'CRC10c', 'CRC10d' or the keyword 'default'.
 
 ##### `load_defer`
-port-channel load-defer time interval. Valid values are integer or 
-'default'.
+port-channel load-defer time interval. Valid values are integer or 'default'.
 
 ##### `resilient`
 port-channel resilient mode. Valid values are true, false or 'default'.
@@ -1294,8 +1282,7 @@ port-channel resilient mode. Valid values are true, false or 'default'.
 port-channel hash input offset. Valid values are integer or 'default'.
 
 ##### `symmetry`
-port-channel symmetry hash. Valid values are true, false or 
-'default'.
+port-channel symmetry hash. Valid values are true, false or 'default'.
 
 --
 ### Type: cisco_snmp_community
