@@ -37,6 +37,7 @@ class ciscopuppet::demo_all {
   include ciscopuppet::demo_patching
   include ciscopuppet::demo_radius
   include ciscopuppet::demo_snmp
+  include ciscopuppet::demo_stp
   include ciscopuppet::demo_syslog
   include ciscopuppet::demo_tacacs_server
   include ciscopuppet::demo_tacacs_server_host
