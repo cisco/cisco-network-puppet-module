@@ -69,7 +69,7 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
       fail 'VPC domain must be in the range 1..1000' unless
         range.include?(name.to_i)
     end
-    munge { |value| value.to_i }
+    munge { |value| value.to_s }
   end # param id
 
   ##############

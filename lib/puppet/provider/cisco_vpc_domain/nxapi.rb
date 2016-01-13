@@ -61,7 +61,7 @@ Puppet::Type.type(:cisco_vpc_domain).provide(:nxapi) do
   end
 
   def self.properties_get(domain_id, v)
-    debug "Checking instance, domain #{domain_id}"
+    puts "Checking instance, domain #{domain_id}"
     current_state = {
       domain: domain_id,
       name:   domain_id,
@@ -72,6 +72,7 @@ Puppet::Type.type(:cisco_vpc_domain).provide(:nxapi) do
     VPC_PROPS.each do |prop|
       current_state[prop] = v.send(prop)
     end
+    puts "Current state: #{current_state}"
     new(current_state)
   end # self.properties_get
 
