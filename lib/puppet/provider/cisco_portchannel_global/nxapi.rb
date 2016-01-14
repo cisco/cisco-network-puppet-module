@@ -49,19 +49,19 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:nxapi) do
   ]
   PC_GLOBAL_ALL_PROPS = PC_GLOBAL_NON_BOOL_PROPS + PC_GLOBAL_BOOL_PROPS
 
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@pc_global',
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@nu',
                                             PC_GLOBAL_NON_BOOL_PROPS)
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@pc_global',
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@nu',
                                             PC_GLOBAL_BOOL_PROPS)
 
   def initialize(value={})
     super(value)
-    @pc_global = Cisco::PortChannelGlobal.globals[@property_hash[:name]]
+    @nu = Cisco::PortChannelGlobal.globals[@property_hash[:name]]
     @property_flush = {}
     debug 'Created provider instance of cisco_portchannel_global'
   end
 
-  def self.properties_get(global_id, v)
+  def self.properties_get(global_id, nu_obj)
     debug "Checking instance, global #{global_id}"
     current_state = {
       name: global_id
@@ -69,11 +69,11 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:nxapi) do
 
     # Call node_utils getter for each property
     PC_GLOBAL_NON_BOOL_PROPS.each do |prop|
-      current_state[prop] = v.send(prop)
+      current_state[prop] = nu_obj.send(prop)
     end
 
     PC_GLOBAL_BOOL_PROPS.each do |prop|
-      val = v.send(prop)
+      val = nu_obj.send(prop)
       if val.nil?
         current_state[prop] = nil
       else
@@ -85,8 +85,8 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:nxapi) do
 
   def self.instances
     globals = []
-    Cisco::PortChannelGlobal.globals.each do |global_id, v|
-      globals << properties_get(global_id, v)
+    Cisco::PortChannelGlobal.globals.each do |global_id, nu_obj|
+      globals << properties_get(global_id, nu_obj)
     end
     globals
   end
@@ -95,7 +95,7 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:nxapi) do
     globals = instances
 
     resources.keys.each do |id|
-      provider = globals.find { |global| global.instance_name == id }
+      provider = globals.find { |nu_obj| nu_obj.instance_name == id }
       resources[id].provider = provider unless provider.nil?
     end
   end # self.prefetch
@@ -108,8 +108,8 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:nxapi) do
     PC_GLOBAL_ALL_PROPS.each do |prop|
       next unless @resource[prop]
       unless @property_flush[prop].nil?
-        @pc_global.send("#{prop}=", @property_flush[prop]) if
-          @pc_global.respond_to?("#{prop}=")
+        @nu.send("#{prop}=", @property_flush[prop]) if
+          @nu.respond_to?("#{prop}=")
       end
     end
     # custom setters which require one-shot multi-param setters
@@ -118,7 +118,15 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:nxapi) do
     port_channel_load_balance_asym_rot_set
   end
 
-  # for n9k/n3k:
+  # We need special handling for boolean properties in our custom
+  # setters below. This helper method returns true if the property
+  # flush contains a TrueClass or FalseClass value.
+  def flush_boolean?(prop)
+    @property_flush[prop].is_a?(TrueClass) ||
+      @property_flush[prop].is_a?(FalseClass)
+  end
+
+  # some platforms require all 5 properties to be set in the manifest
   # port-channel load-balance src-dst ip rotate 4 concatenation symmetric
   # all the above properties will be set all at once so make sure
   # all the needed resources are present
@@ -135,37 +143,27 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:nxapi) do
     if @property_flush[:bundle_hash]
       bh = @property_flush[:bundle_hash]
     else
-      bh = @pc_global.bundle_hash
+      bh = @nu.bundle_hash
     end
     if @property_flush[:bundle_select]
       bs = @property_flush[:bundle_select]
     else
-      bs = @pc_global.bundle_select
+      bs = @nu.bundle_select
     end
-    # if the boolean values are same as before, puppet server will not send
-    # concatenation, but we need it, otherwise, it will be set to false in the
-    # config so send the previous value even if the config is same as before
-    if @property_flush[:concatenation].nil?
-      cc = @pc_global.concatenation
-    elsif @property_flush[:concatenation] != @pc_global.concatenation
+    if flush_boolean?(:concatenation)
       cc = @property_flush[:concatenation]
     else
-      cc = @pc_global.concatenation
+      cc = @nu.concatenation
     end
-    # if the boolean values are same as before, puppet server will not send
-    # symmetry, but we need it, otherwise, it will be set to false in the
-    # config so send the previous value even if the config is same as before
-    if @property_flush[:symmetry].nil?
-      sy = @pc_global.symmetry
-    elsif @property_flush[:symmetry] != @pc_global.symmetry
+    if flush_boolean?(:symmetry)
       sy = @property_flush[:symmetry]
     else
-      sy = @pc_global.symmetry
+      sy = @nu.symmetry
     end
     if @property_flush[:rotate]
       ro = @property_flush[:rotate]
     else
-      ro = @pc_global.rotate
+      ro = @nu.rotate
     end
     if ro > 0 && cc == false
       fail 'concatenation MUST be true when rotate is non-zero'
@@ -173,11 +171,11 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:nxapi) do
     if bs.to_s != 'src-dst' && sy == true
       fail 'Symmetric can be true only for src-dst bundle-select'
     end
-    @pc_global.send(:port_channel_load_balance=,
-                    bs.to_s, bh.to_s, nil, nil, sy, cc, ro)
+    @nu.send(:port_channel_load_balance=,
+             bs.to_s, bh.to_s, nil, nil, sy, cc, ro)
   end
 
-  # for n6k/n5k:
+  # some platforms require all 3 properties to be set in the manifest
   # port-channel load-balance ethernet source-dest-ip CRC10c
   # all the above properties will be set all at once so make sure
   # all the needed resources are present
@@ -192,23 +190,23 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:nxapi) do
     if @property_flush[:bundle_hash]
       bh = @property_flush[:bundle_hash]
     else
-      bh = @pc_global.bundle_hash
+      bh = @nu.bundle_hash
     end
     if @property_flush[:bundle_select]
       bs = @property_flush[:bundle_select]
     else
-      bs = @pc_global.bundle_select
+      bs = @nu.bundle_select
     end
     if @property_flush[:hash_poly]
       hp = @property_flush[:hash_poly]
     else
-      hp = @pc_global.hash_poly
+      hp = @nu.hash_poly
     end
-    @pc_global.send(:port_channel_load_balance=,
-                    bs.to_s, bh.to_s, hp.to_s, nil, nil, nil, nil)
+    @nu.send(:port_channel_load_balance=,
+             bs.to_s, bh.to_s, hp.to_s, nil, nil, nil, nil)
   end
 
-  # for n7k:
+  # some platforms require all 4 properties to be set in the manifest
   # port-channel load-balance src-dst ip rotate 4 asymmetric
   # all the above properties will be set all at once so make sure
   # all the needed resources are present
@@ -224,30 +222,25 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:nxapi) do
     if @property_flush[:bundle_hash]
       bh = @property_flush[:bundle_hash]
     else
-      bh = @pc_global.bundle_hash
+      bh = @nu.bundle_hash
     end
     if @property_flush[:bundle_select]
       bs = @property_flush[:bundle_select]
     else
-      bs = @pc_global.bundle_select
+      bs = @nu.bundle_select
     end
-    # if the boolean values are same as before, puppet server will not send
-    # asymmetric, but we need it, otherwise, it will be set to false in the
-    # config so send the previous value even if the config is same as before
-    if @property_flush[:asymmetric].nil?
-      as = @pc_global.asymmetric
-    elsif @property_flush[:asymmetric] != @pc_global.asymmetric
+    if flush_boolean?(:asymmetric)
       as = @property_flush[:asymmetric]
     else
-      as = @pc_global.asymmetric
+      as = @nu.asymmetric
     end
     if @property_flush[:rotate]
       ro = @property_flush[:rotate]
     else
-      ro = @pc_global.rotate
+      ro = @nu.rotate
     end
-    @pc_global.send(:port_channel_load_balance=,
-                    bs.to_s, bh.to_s, nil, as, nil, nil, ro)
+    @nu.send(:port_channel_load_balance=,
+             bs.to_s, bh.to_s, nil, as, nil, nil, ro)
   end
 
   def flush

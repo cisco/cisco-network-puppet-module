@@ -275,61 +275,42 @@ test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
   device = platform
   logger.info("#### This device is of type: #{device} #####")
+  resource_absent_cleanup(agent, 'cisco_interface_portchannel',
+                          'Setup switch for interface_portchannel provider test')
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
-  if device == 'n7k'
+  case device
+  when /n7k/
     id = 'default_properties_asym'
-    tests[id][:desc] = '1.1 Default Properties'
-    test_harness_interface_portchannel(tests, id)
-
-    tests[id][:desc] = '1.2 Default Properties'
-    tests[id][:ensure] = :absent
-    test_harness_interface_portchannel(tests, id)
-  elsif device == 'n5k' || device == 'n6k'
+  when /n5k|n6k/
     id = 'default_properties_eth'
-    tests[id][:desc] = '1.1 Default Properties'
-    test_harness_interface_portchannel(tests, id)
-
-    tests[id][:desc] = '1.2 Default Properties'
-    tests[id][:ensure] = :absent
-    test_harness_interface_portchannel(tests, id)
-  elsif device == 'n3k' || device == 'n9k'
+  when /n3k|n9k/
     id = 'default_properties_sym'
-    tests[id][:desc] = '1.1 Default Properties'
-    test_harness_interface_portchannel(tests, id)
-
-    tests[id][:desc] = '1.2 Default Properties'
-    tests[id][:ensure] = :absent
-    test_harness_interface_portchannel(tests, id)
   end
+
+  tests[id][:desc] = '1.1 Default Properties'
+  test_harness_interface_portchannel(tests, id)
+
+  tests[id][:desc] = '1.2 Default Properties'
+  tests[id][:ensure] = :absent
+  test_harness_interface_portchannel(tests, id)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  if device == 'n7k'
+  case device
+  when /n7k/
     id = 'non_default_properties_asym'
-    tests[id][:desc] = '2.1 Non Default Properties'
-    test_harness_interface_portchannel(tests, id)
-
-    tests[id][:desc] = '2.2 Non Default Properties (absent)'
-    tests[id][:ensure] = :absent
-    test_harness_interface_portchannel(tests, id)
-  elsif device == 'n5k' || device == 'n6k'
+  when /n5k|n6k/
     id = 'non_default_properties_eth'
-    tests[id][:desc] = '2.1 Non Default Properties'
-    test_harness_interface_portchannel(tests, id)
-
-    tests[id][:desc] = '2.2 Non Default Properties (absent)'
-    tests[id][:ensure] = :absent
-    test_harness_interface_portchannel(tests, id)
-  elsif device == 'n3k' || device == 'n9k'
+  when /n3k|n9k/
     id = 'non_default_properties_sym'
-    tests[id][:desc] = '2.1 Non Default Properties'
-    test_harness_interface_portchannel(tests, id)
-
-    tests[id][:desc] = '2.2 Non Default Properties (absent)'
-    tests[id][:ensure] = :absent
-    test_harness_interface_portchannel(tests, id)
   end
+  tests[id][:desc] = '2.1 Non Default Properties'
+  test_harness_interface_portchannel(tests, id)
+
+  tests[id][:desc] = '2.2 Non Default Properties (absent)'
+  tests[id][:ensure] = :absent
+  test_harness_interface_portchannel(tests, id)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

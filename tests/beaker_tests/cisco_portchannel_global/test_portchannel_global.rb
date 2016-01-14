@@ -264,19 +264,17 @@ test_name "TestCase :: #{testheader}" do
   logger.info("#### This device is of type: #{device} #####")
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
-  if device == 'n7k'
+  case device
+  when /n7k/
     id = 'default_properties_asym'
-    tests[id][:desc] = '1.1 Default Properties'
-    test_harness_portchannel_global(tests, id)
-  elsif device == 'n5k' || device == 'n6k'
+  when /n5k|n6k/
     id = 'default_properties_eth'
-    tests[id][:desc] = '1.1 Default Properties'
-    test_harness_portchannel_global(tests, id)
-  elsif device == 'n3k' || device == 'n9k'
+  when /n3k|n9k/
     id = 'default_properties_sym'
-    tests[id][:desc] = '1.1 Default Properties'
-    test_harness_portchannel_global(tests, id)
   end
+
+  tests[id][:desc] = '1.1 Default Properties'
+  test_harness_portchannel_global(tests, id)
 
   # no absent test for portchannel_global
 
@@ -286,14 +284,101 @@ test_name "TestCase :: #{testheader}" do
     id = 'non_default_properties_asym'
     tests[id][:desc] = '2.1 Non Default Properties'
     test_harness_portchannel_global(tests, id)
+
+    tests[id][:desc] = '2.2 Non Default Properties'
+    tests['non_default_properties_asym'][:manifest_props]['ip-l4port'] = 'ip-l4port-vlan'
+    tests['non_default_properties_asym'][:resource_props]['bundle_hash'] = 'ip-l4port-vlan'
+    test_harness_portchannel_global(tests, id)
+
+    tests[id][:desc] = '2.3 Non Default Properties'
+    tests['non_default_properties_asym'][:manifest_props]['ip-l4port-vlan'] = 'ip-vlan'
+    tests['non_default_properties_asym'][:resource_props]['bundle_hash'] = 'ip-vlan'
+    test_harness_portchannel_global(tests, id)
+
+    tests[id][:desc] = '2.4 Non Default Properties'
+    tests['non_default_properties_asym'][:manifest_props]['ip-vlan'] = 'l4port'
+    tests['non_default_properties_asym'][:resource_props]['bundle_hash'] = 'l4port'
+    test_harness_portchannel_global(tests, id)
+
+    tests[id][:desc] = '2.5 Non Default Properties'
+    tests['non_default_properties_asym'][:manifest_props]['l4port'] = 'mac'
+    tests['non_default_properties_asym'][:resource_props]['bundle_hash'] = 'mac'
+    tests['non_default_properties_asym'][:manifest_props]['dst'] = 'src'
+    tests['non_default_properties_asym'][:resource_props]['bundle_select'] = 'src'
+    test_harness_portchannel_global(tests, id)
+
   elsif device == 'n5k' || device == 'n6k'
     id = 'non_default_properties_eth'
     tests[id][:desc] = '2.1 Non Default Properties'
     test_harness_portchannel_global(tests, id)
+
+    tests[id][:desc] = '2.2 Non Default Properties'
+    tests['non_default_properties_eth'][:manifest_props]['mac'] = 'port'
+    tests['non_default_properties_eth'][:resource_props]['bundle_hash'] = 'port'
+    tests['non_default_properties_eth'][:manifest_props]['dst'] = 'src'
+    tests['non_default_properties_eth'][:resource_props]['bundle_select'] = 'src'
+    tests['non_default_properties_eth'][:manifest_props]['CRC10c'] = 'CRC10a'
+    tests['non_default_properties_eth'][:resource_props]['hash_poly'] = 'CRC10a'
+    test_harness_portchannel_global(tests, id)
+
+    tests[id][:desc] = '2.3 Non Default Properties'
+    tests['non_default_properties_eth'][:manifest_props]['port'] = 'port-only'
+    tests['non_default_properties_eth'][:resource_props]['bundle_hash'] = 'port-only'
+    tests['non_default_properties_eth'][:manifest_props]['src'] = 'src-dst'
+    tests['non_default_properties_eth'][:resource_props]['bundle_select'] = 'src-dst'
+    tests['non_default_properties_eth'][:manifest_props]['CRC10a'] = 'CRC10d'
+    tests['non_default_properties_eth'][:resource_props]['hash_poly'] = 'CRC10d'
+    test_harness_portchannel_global(tests, id)
+
+    tests[id][:desc] = '2.4 Non Default Properties'
+    tests['non_default_properties_eth'][:manifest_props]['port-only'] = 'ip-only'
+    tests['non_default_properties_eth'][:resource_props]['bundle_hash'] = 'ip-only'
+    test_harness_portchannel_global(tests, id)
+
   elsif device == 'n3k' || device == 'n9k'
     id = 'non_default_properties_sym'
     tests[id][:desc] = '2.1 Non Default Properties'
     test_harness_portchannel_global(tests, id)
+
+    tests[id][:desc] = '2.2 Non Default Properties'
+    tests['non_default_properties_sym'][:manifest_props]['true'] = 'false'
+    tests['non_default_properties_sym'][:manifest_props]['true'] = 'false'
+    tests['non_default_properties_sym'][:manifest_props]['true'] = 'false'
+    tests['non_default_properties_sym'][:manifest_props]['4'] = '0'
+    tests['non_default_properties_sym'][:manifest_props]['ip'] = 'ip-l4port-vlan'
+    tests['non_default_properties_sym'][:resource_props]['bundle_hash'] = 'ip-l4port-vlan'
+    tests['non_default_properties_sym'][:manifest_props]['src-dst'] = 'src'
+    tests['non_default_properties_sym'][:resource_props]['bundle_select'] = 'src'
+    tests['non_default_properties_sym'][:resource_props]['concatenation'] = 'false'
+    tests['non_default_properties_sym'][:resource_props]['resilient'] = 'false'
+    tests['non_default_properties_sym'][:resource_props]['symmetry'] = 'false'
+    tests['non_default_properties_sym'][:resource_props]['rotate'] = '0'
+    test_harness_portchannel_global(tests, id)
+
+    tests[id][:desc] = '2.3 Non Default Properties'
+    tests['non_default_properties_sym'][:manifest_props]['ip-l4port-vlan'] = 'ip-vlan'
+    tests['non_default_properties_sym'][:resource_props]['bundle_hash'] = 'ip-vlan'
+    tests['non_default_properties_sym'][:manifest_props]['src'] = 'dst'
+    tests['non_default_properties_sym'][:resource_props]['bundle_select'] = 'dst'
+    test_harness_portchannel_global(tests, id)
+
+    tests[id][:desc] = '2.4 Non Default Properties'
+    tests['non_default_properties_sym'][:manifest_props]['ip-vlan'] = 'l4port'
+    tests['non_default_properties_sym'][:resource_props]['bundle_hash'] = 'l4port'
+    tests['non_default_properties_sym'][:manifest_props]['dst'] = 'src-dst'
+    tests['non_default_properties_sym'][:resource_props]['bundle_select'] = 'src-dst'
+    test_harness_portchannel_global(tests, id)
+
+    tests[id][:desc] = '2.5 Non Default Properties'
+    tests['non_default_properties_sym'][:manifest_props]['l4port'] = 'mac'
+    tests['non_default_properties_sym'][:resource_props]['bundle_hash'] = 'mac'
+    test_harness_portchannel_global(tests, id)
+
+    tests[id][:desc] = '2.6 Non Default Properties'
+    tests['non_default_properties_sym'][:manifest_props]['mac'] = 'ip-gre'
+    tests['non_default_properties_sym'][:resource_props]['bundle_hash'] = 'ip-gre'
+    test_harness_portchannel_global(tests, id)
+
   end
 
   # no absent test for portchannel_global

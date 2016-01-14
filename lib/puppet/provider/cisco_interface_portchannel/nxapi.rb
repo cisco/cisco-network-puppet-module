@@ -133,8 +133,7 @@ Puppet::Type.type(:cisco_interface_portchannel).provide(:nxapi) do
       # Create/Update
       if @nu.nil?
         new_interface = true
-        @nu =
-            Cisco::InterfacePortChannel.new(@resource[:interface])
+        @nu = Cisco::InterfacePortChannel.new(@resource[:interface])
       end
       properties_set(new_interface)
     end
