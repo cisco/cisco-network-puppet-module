@@ -167,10 +167,10 @@ node default {
       switchport_autostate_exclude => false,
       switchport_vtp               => false,
       vrf                          => 'test1',
-      ipv4_acl_in                  => 'foo-1',
-      ipv4_acl_out                 => 'foo-2',
-      ipv6_acl_in                  => 'foo-3',
-      ipv6_acl_out                 => 'foo-4',
+      ipv4_acl_in                  => 'v4acl1',
+      ipv4_acl_out                 => 'v4acl2',
+      ipv6_acl_in                  => 'v6acl1',
+      ipv6_acl_out                 => 'v6acl2',
     }}
 EOF"
     manifest_str

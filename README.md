@@ -963,6 +963,22 @@ Shutdown state of the interface. Valid values are 'true', 'false', and
 Switchport mode of the interface. To make an interface Layer 3, set
 `switchport_mode` to 'disabled'. Valid values are 'disabled', 'access', 'tunnel', 'fex_fabric', 'trunk', and 'default'.
 
+###### `ipv4_acl_in`
+Apply ipv4 access list on the interface in ingress direction. Access-list should be present on the network device 
+prior this configuration. Valid values are string, keyword 'default'.
+
+###### `ipv4_acl_out`
+Apply ipv4 access list on the interface in egress direction. Access-list should be present on the network device 
+prior this configuration. Valid values are string, keyword 'default'.
+
+###### `ipv6_acl_in`
+Apply ipv6 access list on the interface in ingress direction. Access-list should be present on the network device 
+prior this configuration. Valid values are string, keyword 'default'.
+
+###### `ipv6_acl_out`
+Apply ipv6 access list on the interface in egress direction. Access-list should be present on the network device 
+prior this configuration. Valid values are string, keyword 'default'.
+
 ##### L2 interface config attributes
 
 ###### `access_vlan`
