@@ -37,7 +37,7 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
         graceful_consistency_check   => true,
         layer3_peer_routing          => true,
         peer_gateway                 => true,
-        peer_gateway_exclude_vlan_bridge_domain            => '10-20,500',
+        peer_gateway_exclude_vlan    => '10-20,500',
 
       }
     )
@@ -161,8 +161,33 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
     newvalues(:true, :false, :default)
   end # property name
 
-  newproperty(:peer_gateway_exclude_vlan_bridge_domain) do
-    desc 'Interface vlans or bds to exclude from peer gateway functionality
+  newproperty(:peer_gateway_exclude_bridge_domain) do
+    desc 'Interface bds to exclude from peer gateway functionality
+          Valid value is a string of integer ranges from 1 .. 16383'
+    #
+    # NOTE: This property depends on the availability of cisco_bridge_domain
+    #
+    munge do |value|
+      # convert the string value to an array
+      arr = /,/.match(value) ? value.split(/\s*,\s*/) : value.lines.to_a
+      arr.each do |elem|
+        if (match = /(\d+)\s+\-\s+(\d+)/.match(elem))
+          num1, num2 = match.captures
+          fail "Invalid range #{elem} in the input range #{value}" unless
+            num1.to_i.between?(1, 16383) && num2.to_i.between?(1, 16383)
+        else
+          fail "Invalid value #{elem} in the input range #{value}" unless
+            elem.to_i.between?(1, 16383)
+        end
+      end
+      value.gsub!(/\s+/, '') # strip all spaces within and without
+      puts "Peer GW exclude BD Value is #{value}"
+      value
+    end
+  end # property name
+
+  newproperty(:peer_gateway_exclude_vlan) do
+    desc 'Interface vlans to exclude from peer gateway functionality
           Valid value is a string of integer ranges from 1 .. 4095'
     munge do |value|
       # convert the string value to an array
@@ -178,8 +203,9 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
         end
       end
       value.gsub!(/\s+/, '') # strip all spaces within and without
-      puts "Peer GW exclude Value is #{value}"
+      puts "Peer GW exclude VLAN Value is #{value}"
       value
     end
   end # property name
+
 end # Puppet::Type.newtype

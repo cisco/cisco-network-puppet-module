@@ -38,7 +38,8 @@ Puppet::Type.type(:cisco_vpc_domain).provide(:nxapi) do
     :delay_restore,
     :delay_restore_interface_vlan,
     :dual_active_exclude_interface_vlan_bridge_domain,
-    :peer_gateway_exclude_vlan_bridge_domain,
+    :peer_gateway_exclude_bridge_domain,
+    :peer_gateway_exclude_vlan,
   ]
   VPC_BOOL_PROPS = [
     :auto_recovery,
@@ -72,7 +73,6 @@ Puppet::Type.type(:cisco_vpc_domain).provide(:nxapi) do
     VPC_PROPS.each do |prop|
       current_state[prop] = v.send(prop)
     end
-    puts "Current state: #{current_state}"
     new(current_state)
   end # self.properties_get
 
@@ -81,7 +81,6 @@ Puppet::Type.type(:cisco_vpc_domain).provide(:nxapi) do
     Cisco::Vpc.domains.each do |domain_id, obj|
       domains << properties_get(domain_id, obj)
     end
-    puts "INSTS: domain #{domain_id} : #{domains}"
     domains
   end
 
