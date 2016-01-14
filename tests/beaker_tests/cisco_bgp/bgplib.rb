@@ -32,6 +32,7 @@ module BgpLib
   VRF2        = 'red'
 
   # Create manifest ensure => present + 'default' property values
+  # rubocop:disable Metrics/MethodLength
   def self.create_bgp_manifest_present
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
@@ -43,7 +44,14 @@ module BgpLib
         cluster_id                             => 'default',
         confederation_id                       => 'default',
         confederation_peers                    => 'default',
+        disable_policy_batching                => 'default',
+        disable_policy_batching_ipv4           => 'default',
+        disable_policy_batching_ipv6           => 'default',
         enforce_first_as                       => 'default',
+        event_history_cli                      => 'default',
+        event_history_detail                   => 'default',
+        event_history_events                   => 'default',
+        event_history_periodic                 => 'default',
         fast_external_fallover                 => 'default',
         flush_routes                           => 'default',
         isolate                                => 'default',
@@ -79,6 +87,7 @@ module BgpLib
     EOF"
     manifest_str
   end
+  # rubocop:enable Metrics/MethodLength
 
   # Create manifest ensure => present + 'default' property values
   # for vrf1
@@ -175,6 +184,7 @@ module BgpLib
   end
 
   # Create manifest ensure => present + 'non-default' property values
+  # rubocop:disable Metrics/MethodLength
   def self.create_bgp_manifest_present_non_default
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
@@ -186,7 +196,14 @@ module BgpLib
         cluster_id                             => '10.0.0.1',
         confederation_id                       => '99',
         confederation_peers                    => '55 23.4 88 200.1',
+        disable_policy_batching                => 'true',
+        disable_policy_batching_ipv4           => 'xx',
+        disable_policy_batching_ipv6           => 'yy',
         enforce_first_as                       => 'true',
+        event_history_cli                      => 'size_medium',
+        event_history_detail                   => 'size_large',
+        event_history_events                   => 'size_disable',
+        event_history_periodic                 => 'false',
         fast_external_fallover                 => 'false',
         flush_routes                           => 'true',
         isolate                                => 'true',
@@ -222,6 +239,7 @@ module BgpLib
     EOF"
     manifest_str
   end
+  # rubocop:enable Metrics/MethodLength
 
   # Create manifest ensure => present + 'non-default' property values
   # for vrf1

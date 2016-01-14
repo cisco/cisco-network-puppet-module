@@ -37,6 +37,7 @@
 
 # Define various CONSTANTS used by beaker tests
 PUPPET_BINPATH = '/opt/puppetlabs/bin/puppet '
+FACTER_BINPATH = '/opt/puppetlabs/bin/facter '
 PUPPETMASTER_MANIFESTPATH = '/etc/puppetlabs/code/environments/production/manifests/site.pp'
 
 # These methods are defined outside of a module so that
@@ -390,6 +391,7 @@ end
 # test interface name to use for testing.
 # tests[:vdc] The default vdc name
 # tests[:intf] A compatible interface to use for MT-full testing.
+# rubocop:disable Metrics/MethodLength,Metrics/AbcSize
 def setup_mt_full_env(tests, testcase)
   # MT-full tests require a specific linecard. Search for a compatible
   # module and enable it.
@@ -431,6 +433,8 @@ def setup_mt_full_env(tests, testcase)
                 "Unable to allocate interface '#{intf}' to VDC")
   end
 
+  interface_cleanup(tests[:agent], intf)
+
   step "Add switchport config to #{intf}" do
     cmd = get_vshell_cmd("conf t ; int #{intf} ; #{tests[:config_switchport]}")
     on(agent, cmd, pty: true)
@@ -440,7 +444,13 @@ def setup_mt_full_env(tests, testcase)
     cmd = get_vshell_cmd("conf t ; #{tests[:config_bridge_domain]}")
     on(agent, cmd, pty: true)
   end if tests[:config_bridge_domain]
+
+  step 'Add encap profile global config' do
+    cmd = get_vshell_cmd("conf t ; #{tests[:config_encap_prof_global]}")
+    on(agent, cmd, pty: true)
+  end if tests[:config_encap_prof_global]
 end
+# rubocop:enable Metrics/MethodLength,Metrics/AbcSize
 
 # Helper to raise skip when prereqs are not met
 def prereq_skip(testheader, testcase, message)
@@ -473,13 +483,18 @@ def limit_resource_module_type_get(vdc, mod)
 end
 
 # Set limit-resource module-type
-def limit_resource_module_type_set(vdc, mod)
+def limit_resource_module_type_set(vdc, mod, default=false)
   # Turn off prompting
   cmd = get_vshell_cmd('terminal dont-ask persist')
   on(agent, cmd, pty: true)
 
-  cmd = get_vshell_cmd("conf t ; vdc #{vdc} ; "\
-                       "limit-resource module-type #{mod}")
+  if default
+    cmd = get_vshell_cmd("conf t ; vdc #{vdc} ; "\
+                         'no limit-resource module-type')
+  else
+    cmd = get_vshell_cmd("conf t ; vdc #{vdc} ; "\
+                         "limit-resource module-type #{mod}")
+  end
   on(agent, cmd, pty: true)
 
   # Reset dont-ask to default setting
@@ -509,4 +524,47 @@ def vdc_allocate_interface_set(vdc, intf)
   # Reset prompting to default state
   cmd = get_vshell_cmd('no terminal dont-ask persist')
   on(agent, cmd, pty: true)
+end
+
+# Facter command builder helper method
+def facter_cmd(cmd)
+  get_namespace_cmd(agent, FACTER_BINPATH + cmd, options)
+end
+
+# Used to cache the operation system information
+@cisco_os = nil
+# Use facter to return cisco operating system information
+def operating_system
+  return @cisco_os unless @cisco_os.nil?
+  @cisco_os = on(agent, facter_cmd('os.name')).stdout.chomp
+end
+
+# Used to cache the cisco hardware type
+@cisco_hardware = nil
+# Use facter to return cisco hardware type
+def platform
+  return @cisco_hardware unless @cisco_hardware.nil?
+  pi = on(agent, facter_cmd('-p cisco.hardware.type')).stdout.chomp
+  # The following kind of string info is returned for Nexus.
+  # - Nexus9000 C9396PX Chassis
+  # - Nexus7000 C7010 (10 Slot) Chassis
+  # - Nexus 6001 Chassis
+  # - NX-OSv Chassis
+  case pi
+  when /Nexus\s?3\d\d\d/
+    @cisco_hardware = 'n3k'
+  when /Nexus\s?5\d\d\d/
+    @cisco_hardware = 'n5k'
+  when /Nexus\s?6\d\d\d/
+    @cisco_hardware = 'n6k'
+  when /Nexus\s?7\d\d\d/
+    @cisco_hardware = 'n7k'
+  when /Nexus\s?9\d\d\d/
+    @cisco_hardware = 'n9k'
+  when /NX-OSv/
+    @cisco_hardware = 'n9k'
+  else
+    fail "Unrecognized platform type: #{pi}\n"
+  end
+  @cisco_hardware
 end
