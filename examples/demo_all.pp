@@ -35,6 +35,7 @@ class ciscopuppet::demo_all {
   include ciscopuppet::demo_ntp
   include ciscopuppet::demo_ospf
   include ciscopuppet::demo_patching
+  include ciscopuppet::demo_portchannel
   include ciscopuppet::demo_radius
   include ciscopuppet::demo_snmp
   include ciscopuppet::demo_syslog
