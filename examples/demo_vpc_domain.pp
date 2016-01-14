@@ -21,8 +21,6 @@ class ciscopuppet::demo_vpc_domain {
     auto_recovery_reload_delay   => 300,
     delay_restore                => 250,
     delay_restore_interface_vlan => 300,
-    delay_restore                => 250,
-    delay_restore_interface_vlan => 300,
     dual_active_exclude_interface_vlan_bridge_domain   => '10-30, 500',
     graceful_consistency_check   => true,
     peer_gateway                 => true,
@@ -31,7 +29,7 @@ class ciscopuppet::demo_vpc_domain {
     role_priority                => 32000,
     self_isolation               => false,
     shutdown                     => false,
-    system_mac                   => "01:0c:0d:11:22:33",
+    system_mac                   => "00:0c:0d:11:22:33",
     system_priority              => 32000,
   }
 }

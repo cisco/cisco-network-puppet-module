@@ -28,21 +28,21 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
 
     Example:
       cisco_vpc_domain {"100":
-        ensure                       => present,
-        auto_recovery                => true,
-        auto_recovery_reload_delay   => 300,
-        delay_restore                => 250,
-        delay_restore_interface_vlan => 250,
-        dual_active_exclude_interface_vlan_bridge_domain   => '10-20,500',
-        graceful_consistency_check   => true,
-        layer3_peer_routing          => true,
-        peer_gateway                 => true,
-        peer_gateway_exclude_vlan    => '10-20,500',
-        role_priority                => 1024,
-        self_isolation               => false,
-        shutdown                     => false,
-        system_mac                   => "01:0c:0d:11:22:33",
-        system_priority              => 32000,
+        ensure                                           => 'present',
+        auto_recovery                                    => 'true',
+        auto_recovery_reload_delay                       => '300',
+        delay_restore                                    => '250',
+        delay_restore_interface_vlan                     => '300',
+        dual_active_exclude_interface_vlan_bridge_domain => '10-30,500',
+        graceful_consistency_check                       => 'true',
+        layer3_peer_routing                              => 'true',
+        peer_gateway                                     => 'true',
+        peer_gateway_exclude_vlan                        => '500-1000,1100,1120',
+        role_priority                                    => '32000',
+        self_isolation                                   => 'false',
+        shutdown                                         => 'false',
+        system_mac                                       => '00:0c:0d:11:22:33',
+        system_priority                                  => '32000',
       }
     )
 
@@ -143,7 +143,6 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
         end
       end
       value.gsub!(/\s+/, '') # strip all spaces within and without
-      puts "dual-active intf exclude Value is #{value}"
       value
     end
   end # property name
@@ -178,14 +177,13 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
         if (match = /(\d+)\s+\-\s+(\d+)/.match(elem))
           num1, num2 = match.captures
           fail "Invalid range #{elem} in the input range #{value}" unless
-            num1.to_i.between?(1, 16383) && num2.to_i.between?(1, 16383)
+            num1.to_i.between?(1, 16_383) && num2.to_i.between?(1, 16_383)
         else
           fail "Invalid value #{elem} in the input range #{value}" unless
-            elem.to_i.between?(1, 16383)
+            elem.to_i.between?(1, 16_383)
         end
       end
       value.gsub!(/\s+/, '') # strip all spaces within and without
-      puts "Peer GW exclude BD Value is #{value}"
       value
     end
   end # property name
@@ -207,7 +205,6 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
         end
       end
       value.gsub!(/\s+/, '') # strip all spaces within and without
-      puts "Peer GW exclude VLAN Value is #{value}"
       value
     end
   end # property name
@@ -218,7 +215,7 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
     validate do |value|
       if value != 'default'
         fail('system_priority should be a value in the range 1 .. 65535') unless
-          value.to_i.between?(1, 65535)
+          value.to_i.between?(1, 65_535)
       end
     end
     munge { |value| value == 'default' ? :default : value.to_i }
@@ -245,10 +242,9 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
     validate do |value|
       if value != 'default'
         fail('system_priority should be a value in the range 1 .. 65535') unless
-          value.to_i.between?(1, 65535)
+          value.to_i.between?(1, 65_535)
       end
     end
     munge { |value| value == 'default' ? :default : value.to_i }
   end # property name
-
 end # Puppet::Type.newtype
