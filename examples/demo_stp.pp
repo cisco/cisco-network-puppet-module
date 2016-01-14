@@ -26,7 +26,7 @@ class ciscopuppet::demo_stp {
     default => undef
   }
 
-  cisco_portchannel_global { 'default':
+  cisco_stp_global { 'default':
     bpdufilter        => true,
     bpduguard         => true,
     bridge_assurance  => false,
