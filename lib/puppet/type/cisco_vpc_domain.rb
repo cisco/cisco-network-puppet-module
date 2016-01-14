@@ -38,7 +38,11 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
         layer3_peer_routing          => true,
         peer_gateway                 => true,
         peer_gateway_exclude_vlan    => '10-20,500',
-
+        role_priority                => 1024,
+        self_isolation               => false,
+        shutdown                     => false,
+        system_mac                   => "01:0c:0d:11:22:33",
+        system_priority              => 32000,
       }
     )
 
@@ -206,6 +210,45 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
       puts "Peer GW exclude VLAN Value is #{value}"
       value
     end
+  end # property name
+
+  newproperty(:role_priority) do
+    desc 'Priority to be used during vPC role selection of primary vs secondary
+          Valid values are integers in the range 1 .. 65535'
+    validate do |value|
+      if value != 'default'
+        fail('system_priority should be a value in the range 1 .. 65535') unless
+          value.to_i.between?(1, 65535)
+      end
+    end
+    munge { |value| value == 'default' ? :default : value.to_i }
+  end # property name
+
+  newproperty(:self_isolation) do
+    desc 'Enable or Disable self-isolation function for VPC.
+          Valid values are true, false or default'
+    newvalues(:true, :false, :default)
+  end # property name
+
+  newproperty(:shutdown) do
+    desc 'whether or not the VPC domain is shutdown'
+    newvalues(:true, :false, :default)
+  end # property shutdown
+
+  newproperty(:system_mac) do
+    desc 'VPC system mac. Valid values are in mac addresses format'
+    newvalues(/^([0-9a-f]{2}[:]){5}([0-9a-f]{2})$/)
+  end # property name
+
+  newproperty(:system_priority) do
+    desc 'VPC system priority. Valid values are integers in the range 1 .. 65535'
+    validate do |value|
+      if value != 'default'
+        fail('system_priority should be a value in the range 1 .. 65535') unless
+          value.to_i.between?(1, 65535)
+      end
+    end
+    munge { |value| value == 'default' ? :default : value.to_i }
   end # property name
 
 end # Puppet::Type.newtype

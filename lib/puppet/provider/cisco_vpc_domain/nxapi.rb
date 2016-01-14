@@ -40,12 +40,17 @@ Puppet::Type.type(:cisco_vpc_domain).provide(:nxapi) do
     :dual_active_exclude_interface_vlan_bridge_domain,
     :peer_gateway_exclude_bridge_domain,
     :peer_gateway_exclude_vlan,
+    :role_priority,
+    :system_mac,
+    :system_priority,
   ]
   VPC_BOOL_PROPS = [
     :auto_recovery,
     :graceful_consistency_check,
     :layer3_peer_routing,
     :peer_gateway,
+    :self_isolation,
+    :shutdown,
   ]
   VPC_PROPS = VPC_NON_BOOL_PROPS + VPC_BOOL_PROPS
 
