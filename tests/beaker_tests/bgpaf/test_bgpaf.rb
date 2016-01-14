@@ -141,7 +141,7 @@ def remove_unsupported_properties(test, platform, vrf)
     end
   end
 
-  return unless vrf == default
+  return unless vrf == 'default'
 
   # properties that are ONLY supported under a vrf
   remove_property(:advertise_l2vpn_evpn, test)
@@ -427,6 +427,36 @@ def test_non_default_r(tests, platform, vrf, desc)
   test_harness_bgp_af(tests, id, platform, vrf)
 end
 
+# test vpnv4/vpnv6 afis on XR
+def test_vpn_afis(tests, platform, desc)
+  init_bgp(master, agent) # clean slate
+
+  id = 'afi_safi'
+
+  # list of [global af, vrf af] pairs to test
+  afis = %w(vpnv4 vpnv6)
+  safis = %w(unicast multicast)
+
+  afis.each do |afi|
+    # create a global AF and a vrf AF
+    safis.each do |safi|
+      tests[id] = {
+        :desc           => "#{desc}: (#{afi} #{safi})",
+        :title_pattern  => "#{BgpLib::ASN} default #{afi} #{safi}",
+        :ensure         => :present,
+        :manifest_props => {},
+        :resource_props => { 'ensure' => 'present' },
+      }
+      tests[id][:resource_cmd] = puppet_resource_cmd(
+        bgp_title_pattern_munge(tests, id, 'bgp_af'))
+      build_manifest_bgp_af(tests, id, platform, 'default')
+
+      test_manifest(tests, id)
+      test_resource(tests, id)
+    end
+  end
+end
+
 tests['title_patterns'] = {
   :manifest_props => '',
   :resource_props => { 'ensure' => 'present' },
@@ -465,7 +495,7 @@ def build_manifest_bgp_af(tests, id, platform, vrf='default')
   else
     state = 'ensure => present,'
     tests[id][:resource] = tests[id][:resource_props]
-    extra_config = get_dependency_manifest(platform, vrf)
+    extra_config = get_dependency_manifest(platform, vrf, tests[id][:title_pattern])
   end
 
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
@@ -485,7 +515,7 @@ EOF"
 end
 
 # get extra manifest content to handle dependencies
-def get_dependency_manifest(platform, vrf)
+def get_dependency_manifest(platform, vrf, title_pattern)
   extra_config = ''
   if platform == 'ios_xr'
     # XR requires the following before a vrf AF can be configured:
@@ -496,11 +526,15 @@ def get_dependency_manifest(platform, vrf)
       cisco_bgp { '#{BgpLib::ASN} default':
         ensure                                 => present,
         router_id                              => '1.2.3.4',
-      }
-
-      cisco_bgp_af { '#{BgpLib::ASN} default vpnv4 unicast':
-        ensure                                 => present,
       }"
+
+    parent_title = "#{BgpLib::ASN} default vpnv4 unicast"
+    if parent_title != title_pattern
+      extra_config += "
+        cisco_bgp_af { '#{parent_title}':
+          ensure                                 => present,
+        }"
+    end
 
     # Ensure any needed route-policies are present.
     # TODO: Replace this with cisco_route_policy config,
@@ -532,9 +566,11 @@ def test_harness_bgp_af(tests, id, platform, vrf)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:resource_cmd] = puppet_resource_cmd(af)
 
+  props_empty = tests[id][:manifest_props].empty?
+
   remove_unsupported_properties(tests[id], platform, vrf)
 
-  if tests[id][:manifest_props].empty?
+  if !props_empty && tests[id][:manifest_props].empty?
     logger.info("Skipping '#{tests[id][:desc]}' - no supported properties remain")
   else
     # Build the manifest for this test
@@ -661,6 +697,8 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:title_pattern] = "#{BgpLib::ASN} yellow ipv4 unicast"
   tests[id][:manifest_props] = {}
   test_harness_bgp_af(tests, id, platform, 'yellow')
+
+  test_vpn_afis(tests, platform, '3.5 VPN AFIs') if platform == 'ios_xr'
 
   cleanup_bgp(master, agent)
 end
