@@ -15,21 +15,42 @@
 # limitations under the License.
 
 class ciscopuppet::demo_vpc_domain {
+
+  $auto_recovery = platform_get() ? {
+    'n7k'            => true,
+    default          => undef
+  }
+
+  $layer3_peer_routing = platform_get() ? {
+    'n7k'            => true,
+    default          => undef
+  }
+
+  $peer_gateway_exclude_vlan = platform_get() ? {
+    /(n5k|n6k|n7k)   => '500-1000, 1100, 1120',
+    default          => undef
+  }
+
+  $self_isolation = platform_get() ? {
+    'n7k'            => false,
+    default          => undef
+  }
+
   cisco_vpc_domain { '100' :
-    ensure                       => present,
-    auto_recovery                => true,
-    auto_recovery_reload_delay   => 300,
-    delay_restore                => 250,
-    delay_restore_interface_vlan => 300,
+    ensure                                             => present,
+    auto_recovery                                      => $auto_recovery,
+    auto_recovery_reload_delay                         => 300,
+    delay_restore                                      => 250,
+    delay_restore_interface_vlan                       => 300,
     dual_active_exclude_interface_vlan_bridge_domain   => '10-30, 500',
-    graceful_consistency_check   => true,
-    peer_gateway                 => true,
-    peer_gateway_exclude_vlan    => '500-1000, 1100, 1120',
-    layer3_peer_routing          => true,
-    role_priority                => 32000,
-    self_isolation               => false,
-    shutdown                     => false,
-    system_mac                   => "00:0c:0d:11:22:33",
-    system_priority              => 32000,
+    graceful_consistency_check                         => true,
+    layer3_peer_routing                                => $layer3_peer_routing,
+    peer_gateway                                       => true,
+    peer_gateway_exclude_vlan                          => $peer_gateway_exclude_vlan,
+    role_priority                                      => 32000,
+    self_isolation                                     => $self_isolation,
+    shutdown                                           => false,
+    system_mac                                         => "00:0c:0d:11:22:33",
+    system_priority                                    => 32000,
   }
 }
