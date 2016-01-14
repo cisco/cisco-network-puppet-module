@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `cisco_portchannel_global` type and provider
 - `cisco_vdc` type and provider.
 - `cisco_vni` type and provider.
+- `cisco_vrf_af` type and provider.
 - `cisco_vxlan_global` type and provider.
 - `cisco_vxlan_vtep` type and provider.
 
@@ -41,9 +42,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `default_metric`
   - `distance_ebgp`, `distance_ibgp`, `distance_local`
   - `inject_map`
-  - `route_target_both_auto`, `route_target_both_auto_evpn`
-  - `route_target_import`, `route_target_import_evpn`
-  - `route_target_export`, `route_target_export_evpn`
   - `table_map`, `table_map_filter`
   - `suppress_inactive`
 - Extended `cisco_interface` with the following attributes:
@@ -51,8 +49,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `ipv4_pim_sparse_mode`
   - `vlan_mapping`, `vlan_mapping_enable`
 - Extended `cisco_vrf` with the following attributes:
+  - `route_distinguisher`
   - `vni`
-  
+
 ### Removed
 
 ## [1.1.0] - 2015-11-02
