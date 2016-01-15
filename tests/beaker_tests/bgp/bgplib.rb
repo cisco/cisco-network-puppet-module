@@ -491,3 +491,35 @@ module BgpLib
     manifest_str
   end
 end
+
+# Initialize BGP (clean up + enable BGP)
+def init_bgp(master, agent)
+  tests = { master: master, agent: agent }
+  name = 'init'
+  tests[name] = {}
+  tests[name][:desc] = 'Initialize BGP'
+  tests[name][:manifest] = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    node 'default' {
+      resources { cisco_bgp: purge => true }
+      cisco_bgp { 'default':
+        ensure => present,
+        asn    => #{BgpLib::ASN},
+      }
+    }\nEOF"
+  tests[name][:code] = [0, 2, 6]
+  test_manifest(tests, name)
+end
+
+# Clean up BGP
+def cleanup_bgp(master, agent)
+  tests = { master: master, agent: agent }
+  name = 'cleanup'
+  tests[name] = {}
+  tests[name][:desc] = 'Clean up BGP'
+  tests[name][:manifest] = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    node 'default' {
+      resources { cisco_bgp: purge => true }
+    }\nEOF"
+  tests[name][:code] = [0, 2, 6]
+  test_manifest(tests, name)
+end
