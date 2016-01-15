@@ -27,13 +27,19 @@ class ciscopuppet::demo_stp {
   }
 
   cisco_stp_global { 'default':
-    bpdufilter        => true,
-    bpduguard         => true,
-    bridge_assurance  => false,
-    domain            => $domain,
-    fcoe              => $fcoe,
-    loopguard         => true,
-    mode              => 'mst',
-    pathcost          => 'long',
+    bpdufilter       => true,
+    bpduguard        => true,
+    bridge_assurance => false,
+    domain           => $domain,
+    fcoe             => $fcoe,
+    loopguard        => true,
+    mode             => 'mst',
+    mst_forward_time => 25,
+    mst_hello_time   => 5,
+    mst_max_age      => 35,
+    mst_max_hops     => 200,
+    mst_name         => 'nexus',
+    mst_revision     => 34,
+    pathcost         => 'long',
   }
 }

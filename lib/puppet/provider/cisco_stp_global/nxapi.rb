@@ -36,6 +36,12 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
   STP_GLOBAL_NON_BOOL_PROPS = [
     :domain,
     :mode,
+    :mst_forward_time,
+    :mst_hello_time,
+    :mst_max_age,
+    :mst_max_hops,
+    :mst_name,
+    :mst_revision,
     :pathcost,
   ]
   STP_GLOBAL_BOOL_PROPS = [
@@ -47,19 +53,19 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
   ]
   STP_GLOBAL_ALL_PROPS = STP_GLOBAL_NON_BOOL_PROPS + STP_GLOBAL_BOOL_PROPS
 
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@stp_global',
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@nu',
                                             STP_GLOBAL_NON_BOOL_PROPS)
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@stp_global',
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@nu',
                                             STP_GLOBAL_BOOL_PROPS)
 
   def initialize(value={})
     super(value)
-    @stp_global = Cisco::StpGlobal.globals[@property_hash[:name]]
+    @nu = Cisco::StpGlobal.globals[@property_hash[:name]]
     @property_flush = {}
     debug 'Created provider instance of cisco_stp_global'
   end
 
-  def self.properties_get(global_id, v)
+  def self.properties_get(global_id, nu_obj)
     debug "Checking instance, global #{global_id}"
     current_state = {
       name: global_id
@@ -67,11 +73,11 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
 
     # Call node_utils getter for each property
     STP_GLOBAL_NON_BOOL_PROPS.each do |prop|
-      current_state[prop] = v.send(prop)
+      current_state[prop] = nu_obj.send(prop)
     end
 
     STP_GLOBAL_BOOL_PROPS.each do |prop|
-      val = v.send(prop)
+      val = nu_obj.send(prop)
       if val.nil?
         current_state[prop] = nil
       else
@@ -83,8 +89,8 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
 
   def self.instances
     globals = []
-    Cisco::StpGlobal.globals.each do |global_id, v|
-      globals << properties_get(global_id, v)
+    Cisco::StpGlobal.globals.each do |global_id, nu_obj|
+      globals << properties_get(global_id, nu_obj)
     end
     globals
   end
@@ -93,7 +99,7 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
     globals = instances
 
     resources.keys.each do |id|
-      provider = globals.find { |global| global.instance_name == id }
+      provider = globals.find { |nu_obj| nu_obj.instance_name == id }
       resources[id].provider = provider unless provider.nil?
     end
   end # self.prefetch
@@ -106,8 +112,8 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
     STP_GLOBAL_ALL_PROPS.each do |prop|
       next unless @resource[prop]
       unless @property_flush[prop].nil?
-        @stp_global.send("#{prop}=", @property_flush[prop]) if
-          @stp_global.respond_to?("#{prop}=")
+        @nu.send("#{prop}=", @property_flush[prop]) if
+          @nu.respond_to?("#{prop}=")
       end
     end
   end

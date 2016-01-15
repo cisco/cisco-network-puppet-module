@@ -32,6 +32,12 @@ Puppet::Type.newtype(:cisco_stp_global) do
       fcoe              => false,
       loopguard         => true,
       mode              => 'mst',
+      mst_forward_time  => 25,
+      mst_hello_time    => 5,
+      mst_max_age       => 35,
+      mst_max_hops      => 200,
+      mst_name          => 'nexus',
+      mst_revision      => 34,
       pathcost          => 'long',
     }
   "
@@ -100,6 +106,86 @@ Puppet::Type.newtype(:cisco_stp_global) do
 
     newvalues(:mst, :'rapid-pvst', :default)
   end # property mode
+
+  newproperty(:mst_forward_time) do
+    desc 'Forward delay for the spanning tree'
+
+    munge do |value|
+      value = :default if value == 'default'
+      begin
+        value = Integer(value) unless value == :default
+      rescue
+        raise 'mst forward_time must be a valid integer, or default.'
+      end
+      value
+    end
+  end # property mst_forward_time
+
+  newproperty(:mst_hello_time) do
+    desc 'Hello interval for the spanning tree'
+
+    munge do |value|
+      value = :default if value == 'default'
+      begin
+        value = Integer(value) unless value == :default
+      rescue
+        raise 'mst hello_time must be a valid integer, or default.'
+      end
+      value
+    end
+  end # property mst_hello_time
+
+  newproperty(:mst_max_age) do
+    desc 'Max age interval for the spanning tree'
+
+    munge do |value|
+      value = :default if value == 'default'
+      begin
+        value = Integer(value) unless value == :default
+      rescue
+        raise 'mst max_age must be a valid integer, or default.'
+      end
+      value
+    end
+  end # property mst_max_age
+
+  newproperty(:mst_max_hops) do
+    desc 'Max hops value for the spanning tree'
+
+    munge do |value|
+      value = :default if value == 'default'
+      begin
+        value = Integer(value) unless value == :default
+      rescue
+        raise 'mst max_hops must be a valid integer, or default.'
+      end
+      value
+    end
+  end # property mst_max_hops
+
+  newproperty(:mst_name) do
+    desc "Configuration name. Valid values are string, keyword
+         'default'. "
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property mst_name
+
+  newproperty(:mst_revision) do
+    desc 'Configuration revision number'
+
+    munge do |value|
+      value = :default if value == 'default'
+      begin
+        value = Integer(value) unless value == :default
+      rescue
+        raise 'mst revision must be a valid integer, or default.'
+      end
+      value
+    end
+  end # property mst_revision
 
   newproperty(:pathcost) do
     desc 'Method to calculate default port path cost'

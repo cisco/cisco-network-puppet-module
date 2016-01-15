@@ -111,6 +111,12 @@ tests['default_properties_domain'] = {
     domain             => 'default',
     loopguard          => 'default',
     mode               => 'default',
+    mst_forward_time   => 'default',
+    mst_hello_time     => 'default',
+    mst_max_age        => 'default',
+    mst_max_hops       => 'default',
+    mst_name           => 'default',
+    mst_revision       => 'default',
     pathcost           => 'default',
   ",
   code:           [0, 2],
@@ -121,6 +127,12 @@ tests['default_properties_domain'] = {
     'domain'           => 'false',
     'loopguard'        => 'false',
     'mode'             => 'rapid-pvst',
+    'mst_forward_time' => '15',
+    'mst_hello_time'   => '2',
+    'mst_max_age'      => '20',
+    'mst_max_hops'     => '20',
+    'mst_name'         => 'false',
+    'mst_revision'     => '0',
     'pathcost'         => 'short',
   },
 }
@@ -134,6 +146,12 @@ tests['non_default_properties_domain'] = {
     domain             => '100',
     loopguard          => 'true',
     mode               => 'mst',
+    mst_forward_time   => '25',
+    mst_hello_time     => '5',
+    mst_max_age        => '35',
+    mst_max_hops       => '200',
+    mst_name           => 'nexus',
+    mst_revision       => '34',
     pathcost           => 'long',
   ",
   resource_props: {
@@ -143,6 +161,12 @@ tests['non_default_properties_domain'] = {
     'domain'           => '100',
     'loopguard'        => 'true',
     'mode'             => 'mst',
+    'mst_forward_time' => '25',
+    'mst_hello_time'   => '5',
+    'mst_max_age'      => '35',
+    'mst_max_hops'     => '200',
+    'mst_name'         => 'nexus',
+    'mst_revision'     => '34',
     'pathcost'         => 'long',
   },
 }
@@ -156,6 +180,12 @@ tests['default_properties_fcoe'] = {
     fcoe               => 'default',
     loopguard          => 'default',
     mode               => 'default',
+    mst_forward_time   => 'default',
+    mst_hello_time     => 'default',
+    mst_max_age        => 'default',
+    mst_max_hops       => 'default',
+    mst_name           => 'default',
+    mst_revision       => 'default',
     pathcost           => 'default',
   ",
   code:           [0, 2],
@@ -166,6 +196,12 @@ tests['default_properties_fcoe'] = {
     'fcoe'             => 'true',
     'loopguard'        => 'false',
     'mode'             => 'rapid-pvst',
+    'mst_forward_time' => '15',
+    'mst_hello_time'   => '2',
+    'mst_max_age'      => '20',
+    'mst_max_hops'     => '20',
+    'mst_name'         => 'false',
+    'mst_revision'     => '0',
     'pathcost'         => 'short',
   },
 }
@@ -179,6 +215,12 @@ tests['non_default_properties_fcoe'] = {
     fcoe               => 'false',
     loopguard          => 'true',
     mode               => 'mst',
+    mst_forward_time   => '25',
+    mst_hello_time     => '5',
+    mst_max_age        => '35',
+    mst_max_hops       => '200',
+    mst_name           => 'nexus',
+    mst_revision       => '34',
     pathcost           => 'long',
   ",
   resource_props: {
@@ -188,6 +230,12 @@ tests['non_default_properties_fcoe'] = {
     'fcoe'             => 'false',
     'loopguard'        => 'true',
     'mode'             => 'mst',
+    'mst_forward_time' => '25',
+    'mst_hello_time'   => '5',
+    'mst_max_age'      => '35',
+    'mst_max_hops'     => '200',
+    'mst_name'         => 'nexus',
+    'mst_revision'     => '34',
     'pathcost'         => 'long',
   },
 }
@@ -243,29 +291,30 @@ test_name "TestCase :: #{testheader}" do
   logger.info("#### This device is of type: #{device} #####")
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
-  if device == 'n7k' || device == 'n6k' || device == 'n5k'
+  case device
+  when /n5k|n6k|n7k/
     id = 'default_properties_domain'
-    tests[id][:desc] = '1.1 Default Properties'
-    test_harness_stp_global(tests, id)
-  elsif device == 'n3k' || device == 'n9k'
+  when /n3k|n9k/
     id = 'default_properties_fcoe'
-    tests[id][:desc] = '1.1 Default Properties'
-    test_harness_stp_global(tests, id)
   end
+
+  tests[id][:desc] = '1.1 Default Properties'
+  test_harness_stp_global(tests, id)
 
   # no absent test for stp_global
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  if device == 'n7k' || device == 'n6k' || device == 'n5k'
+
+  case device
+  when /n5k|n6k|n7k/
     id = 'non_default_properties_domain'
-    tests[id][:desc] = '2.1 Non Default Properties'
-    test_harness_stp_global(tests, id)
-  elsif device == 'n3k' || device == 'n9k'
+  when /n3k|n9k/
     id = 'non_default_properties_fcoe'
-    tests[id][:desc] = '2.1 Non Default Properties'
-    test_harness_stp_global(tests, id)
   end
+
+  tests[id][:desc] = '2.1 Non Default Properties'
+  test_harness_stp_global(tests, id)
 
   # no absent test for stp_global
 end
