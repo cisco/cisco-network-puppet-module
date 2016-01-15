@@ -54,6 +54,7 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     :switchport_trunk_allowed_vlan,
     :switchport_trunk_native_vlan,
     :vlan_mapping,
+    :vpc_id,
   ]
   INTF_BOOL_PROPS = [
     :ipv4_pim_sparse_mode,
@@ -66,6 +67,7 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     :svi_autostate,
     :svi_management,
     :vlan_mapping_enable,
+    :vpc_peer_link,
   ]
   INTF_ALL_PROPS = INTF_NON_BOOL_PROPS + INTF_BOOL_PROPS
 

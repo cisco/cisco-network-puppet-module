@@ -36,6 +36,14 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
         dual_active_exclude_interface_vlan_bridge_domain => '10-30,500',
         graceful_consistency_check                       => 'true',
         layer3_peer_routing                              => 'true',
+        peer_keepalive_dest                              => '1.1.1.1',
+        peer_keepalive_hold_timeout                      => 5,
+        peer_keepalive_interval                          => 1000,
+        peer_keepalive_interval_timeout                  => 3,
+        peer_keepalive_precedence                        => 5,
+        peer_keepalive_src                               => '1.1.1.2',
+        peer_keepalive_udp_port                          => 3200,
+        peer_keepalive_vrf                               => 'management',
         peer_gateway                                     => 'true',
         peer_gateway_exclude_vlan                        => '500-1000,1100,1120',
         role_priority                                    => '32000',
@@ -156,6 +164,87 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
     desc 'Enable or Disable Layer3 peer routing.
           Valid values are true/false or default'
     newvalues(:true, :false, :default)
+  end # property name
+
+  newproperty(:peer_keepalive_dest) do
+    desc 'Destination IPV4 address of the peer where Peer Keep-alives are terminated.
+          Valid values are IPV4 unicast address'
+    # use /x modifier to ignore whitespace in the regex which is split in 2 lines 
+    newvalues(/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}
+                (?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/x)
+  end # property name
+
+  newproperty(:peer_keepalive_hold_timeout) do
+    desc 'Peer keep-alive hold timeout in secs. Valid Values are integers in the 
+          range 3 .. 10'
+    validate do |value|
+      if value != 'default'
+        fail('pka hold_timeout should be a value in the range 3 .. 10') unless
+          value.to_i.between?(3, 10)
+      end
+    end
+    munge { |value| value == 'default' ? :default : value.to_i }
+  end # property name
+
+  newproperty(:peer_keepalive_interval) do
+    desc 'Peer keep-alive interval in millisecs. Valid Values are integers in the 
+          range 400 .. 10000'
+    validate do |value|
+      if value != 'default'
+        fail('pka interval should be a value in the range 400 .. 10000') unless
+          value.to_i.between?(400, 10000)
+      end
+    end
+    munge { |value| value == 'default' ? :default : value.to_i }
+  end # property name
+
+  newproperty(:peer_keepalive_interval_timeout) do
+    desc 'Peer keep-alive interval timeout. Valid Values are integers in the 
+          range 3 .. 20'
+    validate do |value|
+      if value != 'default'
+        fail('pka interval timeout should be a value in the range 3 .. 20') unless
+          value.to_i.between?(3, 20)
+      end
+    end
+    munge { |value| value == 'default' ? :default : value.to_i }
+  end # property name
+
+  newproperty(:peer_keepalive_precedence) do
+    desc 'Peer keep-alive precedence. Valid Values are integers in the 
+          range 0 .. 7'
+    validate do |value|
+      if value != 'default'
+        fail('pka precedence should be a value in the range 0 .. 7') unless
+          value.to_i.between?(0, 7)
+      end
+    end
+    munge { |value| value == 'default' ? :default : value.to_i }
+  end # property name
+
+  newproperty(:peer_keepalive_src) do
+    desc 'Source IPV4 address of this switch where Peer Keep-alives are Sourced.
+          Valid values are IPV4 unicast address'
+    # use /x modifier to ignore whitespace in the regex which is split in 2 lines 
+    newvalues(/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}
+                (?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/x)
+  end # property name
+
+  newproperty(:peer_keepalive_udp_port) do
+    desc 'Peer keep-alive udp port used for hellos. Valid Values are integers in the 
+          range 1024 .. 65000'
+    validate do |value|
+      if value != 'default'
+        fail('pka udp port should be a value in the range 1024 .. 65000') unless
+          value.to_i.between?(1024, 65000)
+      end
+    end
+    munge { |value| value == 'default' ? :default : value.to_i }
+  end # property name
+
+  newproperty(:peer_keepalive_vrf) do
+    desc 'Peer keep-alive VRF. Valid Values are string'
+    munge { |value| value == 'default' ? :default : value }
   end # property name
 
   newproperty(:peer_gateway) do

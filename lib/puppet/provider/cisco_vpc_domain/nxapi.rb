@@ -38,6 +38,14 @@ Puppet::Type.type(:cisco_vpc_domain).provide(:nxapi) do
     :delay_restore,
     :delay_restore_interface_vlan,
     :dual_active_exclude_interface_vlan_bridge_domain,
+    :peer_keepalive_dest,
+    :peer_keepalive_hold_timeout,
+    :peer_keepalive_interval,
+    :peer_keepalive_interval_timeout,
+    :peer_keepalive_precedence,
+    :peer_keepalive_src,
+    :peer_keepalive_udp_port,
+    :peer_keepalive_vrf,
     :peer_gateway_exclude_bridge_domain,
     :peer_gateway_exclude_vlan,
     :role_priority,
@@ -123,6 +131,64 @@ Puppet::Type.type(:cisco_vpc_domain).provide(:nxapi) do
           @vpc_domain.respond_to?("#{prop}=")
       end
     end
+    peer_keepalive_custom_set
+  end
+
+  def peer_keepalive_any?
+    @property_flush[:peer_keepalive_dest] ||
+      @property_flush[:peer_keepalive_hold_timeout] ||
+      @property_flush[:peer_keepalive_interval] ||
+      @property_flush[:peer_keepalive_interval_timeout] ||
+      @property_flush[:peer_keepalive_precedence] ||
+      @property_flush[:peer_keepalive_src] ||
+      @property_flush[:peer_keepalive_udp_port] ||
+      @property_flush[:peer_keepalive_vrf]
+  end
+
+  def peer_keepalive_custom_set
+    return unless peer_keepalive_any?
+    if @property_flush[:peer_keepalive_dest]
+      pka_dest = @property_flush[:peer_keepalive_dest]
+    else
+      pka_dest = @vpc_domain.peer_keepalive_dest
+    end
+    if @property_flush[:peer_keepalive_hold_timeout]
+      pka_hold_timeout = @property_flush[:peer_keepalive_hold_timeout]
+    else
+      pka_hold_timeout = @vpc_domain.peer_keepalive_hold_timeout
+    end
+    if @property_flush[:peer_keepalive_interval]
+      pka_interval = @property_flush[:peer_keepalive_interval]
+    else
+      pka_interval = @vpc_domain.peer_keepalive_interval
+    end
+    if @property_flush[:peer_keepalive_interval_timeout]
+      pka_timeout = @property_flush[:peer_keepalive_interval_timeout]
+    else
+      pka_timeout = @vpc_domain.peer_keepalive_interval_timeout
+    end
+    if @property_flush[:peer_keepalive_precedence]
+      pka_prec = @property_flush[:peer_keepalive_precedence]
+    else
+      pka_prec = @vpc_domain.peer_keepalive_precedence
+    end
+    if @property_flush[:peer_keepalive_src]
+      pka_src = @property_flush[:peer_keepalive_src]
+    else
+      pka_src = @vpc_domain.peer_keepalive_src
+    end
+    if @property_flush[:peer_keepalive_udp_port]
+      pka_udp_port = @property_flush[:peer_keepalive_udp_port]
+    else
+      pka_udp_port = @vpc_domain.peer_keepalive_udp_port
+    end
+    if @property_flush[:peer_keepalive_vrf]
+      pka_vrf = @property_flush[:peer_keepalive_vrf]
+    else
+      pka_vrf = @vpc_domain.peer_keepalive_vrf
+    end
+    @vpc_domain.peer_keepalive_set(pka_dest, pka_src, pka_vrf, pka_interval,
+                                   pka_timeout, pka_prec, pka_hold_timeout)
   end
 
   def flush

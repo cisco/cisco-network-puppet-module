@@ -58,7 +58,7 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 # -----------------------------
 # Common settings and variables
 # -----------------------------
-testheader = 'Resource cisco_portchannel_global'
+testheader = 'Resource cisco_vpc_domain'
 
 # Define PUPPETMASTER_MANIFESTPATH.
 
@@ -109,12 +109,10 @@ tests['default_properties'] = {
     auto_recovery_reload_delay                         => 'default',
     delay_restore                                      => 'default',
     delay_restore_interface_vlan                       => 'default',
-    dual_active_exclude_interface_vlan_bridge_domain   => 'default',
     graceful_consistency_check                         => 'default',
     peer_gateway                                       => 'default',
     role_priority                                      => 'default',
     shutdown                                           => 'default',
-    system_mac                                         => 'default',
     system_priority                                    => 'default',
 
   ",
@@ -124,12 +122,10 @@ tests['default_properties'] = {
     'auto_recovery_reload_delay'                         => '240',
     'delay_restore'                                      => '30',
     'delay_restore_interface_vlan'                       => '10',
-    'dual_active_exclude_interface_vlan_bridge_domain'   => '',
     'graceful_consistency_check'                         => 'true',
     'peer_gateway'                                       => 'false',
     'role_priority'                                      => '32667',
     'shutdown'                                           => 'false',
-    'system_mac'                                         => '',
     'system_priority'                                    => '32667',
   },
 }
@@ -143,6 +139,14 @@ tests['non_default_properties'] = {
     delay_restore_interface_vlan                       => '300',
     dual_active_exclude_interface_vlan_bridge_domain   => '10-30, 500',
     graceful_consistency_check                         => 'true',
+    peer_keepalive_dest                                => '1.1.1.1',
+    peer_keepalive_hold_timeout                        => 5,
+    peer_keepalive_interval                            => 1000,
+    peer_keepalive_interval_timeout                    => 3,
+    peer_keepalive_precedence                          => 5,
+    peer_keepalive_src                                 => '1.1.1.2',
+    peer_keepalive_udp_port                            => 3200,
+    peer_keepalive_vrf                                 => 'management',
     peer_gateway                                       => 'true',
     role_priority                                      => '1024',
     shutdown                                           => 'false',
@@ -156,8 +160,16 @@ tests['non_default_properties'] = {
     'auto_recovery_reload_delay'                         => '300',
     'delay_restore'                                      => '250',
     'delay_restore_interface_vlan'                       => '300',
-    'dual_active_exclude_interface_vlan_bridge_domain'   => '10-30, 500',
+    'dual_active_exclude_interface_vlan_bridge_domain'   => '10-30,500',
     'graceful_consistency_check'                         => 'true',
+    'peer_keepalive_dest'                                => '1.1.1.1',
+    'peer_keepalive_hold_timeout'                        => 5,
+    'peer_keepalive_interval'                            => 1000,
+    'peer_keepalive_interval_timeout'                    => 3,
+    'peer_keepalive_precedence'                          => 5,
+    'peer_keepalive_src'                                 => '1.1.1.2',
+    'peer_keepalive_udp_port'                            => 3200,
+    'peer_keepalive_vrf'                                 => 'management',
     'peer_gateway'                                       => 'true',
     'role_priority'                                      => '1024',
     'shutdown'                                           => 'false',
@@ -166,6 +178,52 @@ tests['non_default_properties'] = {
   },
 }
 
+tests['default_properties_n6k7k'] = {
+  title_pattern:  '200',
+  manifest_props: "
+    layer3_peer_routing                                => 'default',
+  ",
+  code:           [0, 2],
+  resource_props: {
+    'layer3_peer_routing'                              => 'false',
+  },
+}
+
+tests['non_default_properties_n6k7k'] = {
+  title_pattern:  '200',
+  manifest_props: "
+    layer3_peer_routing                                => 'true',
+    peer_gateway_exclude_vlan                          => '500-510, 1100, 1120',
+
+  ",
+  code:           [0, 2],
+  resource_props: {
+    'layer3_peer_routing'                              => 'true',
+    'peer_gateway_exclude_vlan'                        => '500-510,1100,1120',
+  },
+}
+
+tests['default_properties_n7k'] = {
+  title_pattern:  '200',
+  manifest_props: "
+    self_isolation                                     => 'default',
+  ",
+  code:           [0, 2],
+  resource_props: {
+    'self_isolation'                                   => 'false',
+  },
+}
+
+tests['non_default_properties_n7k'] = {
+  title_pattern:  '200',
+  manifest_props: "
+    self_isolation                                     => 'true',
+  ",
+  code:           [0, 2],
+  resource_props: {
+    'self_isolation'                                   => 'true',
+  },
+}
 
 
 #################################################################
@@ -175,7 +233,7 @@ tests['non_default_properties'] = {
 # Full command string for puppet resource command
 def puppet_resource_cmd
   cmd = PUPPET_BINPATH +
-        'resource cisco_portchannel_global'
+        'resource cisco_vpc_domain'
   get_namespace_cmd(agent, cmd, options)
 end
 
@@ -196,11 +254,11 @@ def build_manifest_vpc_domain(tests, id)
 EOF"
 end
 
-def test_harness_portchannel_global(tests, id)
+def test_harness_vpc_domain(tests, id)
   tests[id][:resource_cmd] = puppet_resource_cmd
 
   # Build the manifest for this test
-  build_manifest_portchannel_global(tests, id)
+  build_manifest_vpc_domain(tests, id)
 
   # test_harness_common(tests, id)
   test_manifest(tests, id)
@@ -220,47 +278,48 @@ test_name "TestCase :: #{testheader}" do
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
   id = 'default_properties'
-
-  tests[id][:desc] = '1.1 Default Properties'
-  # Add device specifics
-  if device =~ /(n6k|n7k)/
-    tests[id][:manifest_props]['layer3_peer_routing'] = 'default';
-    tests[id][:resource_props]['layer3_peer_routing'] = 'false';
-    tests[id][:manifest_props]['peer_gateway_exclude_vlan'] = 'default';
-    tests[id][:resource_props]['peer_gateway_exclude_vlan'] = '';
-  end
-  if device == 'n7k'
-    tests[id][:manifest_props]['self_isolation'] = 'default';
-    tests[id][:resource_props]['self_isolation'] = 'false';
-  end
+  tests[id][:desc] = '1.1 Default Properties on All Nexus Platforms'
   test_harness_vpc_domain(tests, id)
 
-  tests[id][:desc] = '1.2 Default Properties (absent)'
+  # Add device specifics
+  if device =~ /(n6k|n7k)/
+    id = 'default_properties_n6k7k'
+    tests[id][:desc] = '1.2 Default Properties exclusive to N6K and N7K'
+    test_harness_vpc_domain(tests, id)
+  end
+  if device == 'n7k'
+    id = 'default_properties_n7k'
+    tests[id][:desc] = '1.3 Default Properties exclusive to N7K'
+    test_harness_vpc_domain(tests, id)
+  end
+
+  id = 'default_properties'
+  tests[id][:desc] = '1.4 Default Properties (absent)'
   tests[id][:ensure] = :absent
   test_harness_vpc_domain(tests, id)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   id = 'non_default_properties'
+  tests[id][:desc] = '2.1 Non Default Properties on All Nexus Platforms'
+  test_harness_vpc_domain(tests, id)
 
-  tests[id][:desc] = '2.1 Non Default Properties'
   # Add device specifics
   if device =~ /(n6k|n7k)/
-    tests[id][:manifest_props]['layer3_peer_routing'] = 'true';
-    tests[id][:resource_props]['layer3_peer_routing'] = 'true';
-    tests[id][:manifest_props]['peer_gateway_exclude_vlan'] = '500-1000, 1100, 1120';
-    tests[id][:resource_props]['peer_gateway_exclude_vlan'] = '500-1000, 1100, 1120';
+    id = 'non_default_properties_n6k7k'
+    tests[id][:desc] = '2.2 Non Default Properties exclusive to N6K and N7K'
+    test_harness_vpc_domain(tests, id)
   end
   if device == 'n7k'
-    tests[id][:manifest_props]['self_isolation'] = 'false';
-    tests[id][:resource_props]['self_isolation'] = 'false';
+    id = 'non_default_properties_n7k'
+    tests[id][:desc] = '2.3 Non Default Properties exclusive to N7K'
+    test_harness_vpc_domain(tests, id)
   end
-  test_harness_vpc_domain(tests, id)
 
-  tests[id][:desc] = '2.2 Default Properties (absent)'
+  id = 'non_default_properties'
+  tests[id][:desc] = '2.4 Non Default Properties (absent)'
   tests[id][:ensure] = :absent
   test_harness_vpc_domain(tests, id)
-
 
 end
 
