@@ -43,6 +43,10 @@ module RoutedIntfLib
   TRUNK_NATIVE_NEGATIVE        = 'invalid'
   VRF_NEGATIVE                 = '~'
   CHANNEL_GROUP_NEGATIVE       = '-1'
+  IPV4_ACL_IN_NEGATIVE         = '~'
+  IPV4_ACL_OUT_NEGATIVE        = '~'
+  IPV6_ACL_IN_NEGATIVE         = '~'
+  IPV6_ACL_OUT_NEGATIVE        = '~'
 
   # A. Methods to create manifests for cisco_interface Puppet provider test cases.
   # Method to create a manifest for RoutedINTF resource attribute 'ensure' where
@@ -405,7 +409,7 @@ EOF"
   # Method to create a manifest for RoutedINTF resource attribute 'ipv4_acl_in'.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_ipv4_acl_in_manifest_negative
+  def self.create_routedintf_manifest_ipv4_acl_in_negative
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'ethernet1/4':
@@ -420,7 +424,7 @@ EOF"
   # Method to create a manifest for RoutedINTF resource attribute 'ipv4_acl_out'.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_ipv4_acl_out_manifest_negative
+  def self.create_routedintf_manifest_ipv4_acl_out_negative
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'ethernet1/4':
@@ -435,7 +439,7 @@ EOF"
   # Method to create a manifest for RoutedINTF resource attribute 'ipv6_acl_in'.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_ipv6_acl_in_manifest_negative
+  def self.create_routedintf_manifest_ipv6_acl_in_negative
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'ethernet1/4':
@@ -450,7 +454,7 @@ EOF"
   # Method to create a manifest for RoutedINTF resource attribute 'ipv6_acl_out'.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_ipv6_acl_out_manifest_negative
+  def self.create_routedintf_manifest_ipv6_acl_out_negative
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'ethernet1/4':

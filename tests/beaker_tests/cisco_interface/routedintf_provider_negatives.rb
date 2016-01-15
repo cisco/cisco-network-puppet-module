@@ -547,7 +547,7 @@ test_name "TestCase :: #{testheader}" do
       "resource cisco_interface '#{test_intf}'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
-                               { 'ipv4_acl_in' => RoutedIntfLib::IPV4_ACL_INNEGATIVE },
+                               { 'ipv4_acl_in' => RoutedIntfLib::IPV4_ACL_IN_NEGATIVE },
                                true, self, logger)
     end
 
@@ -589,7 +589,7 @@ test_name "TestCase :: #{testheader}" do
       "resource cisco_interface '#{test_intf}'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
-                               { 'ipv4_acl_out' => RoutedIntfLib::IPV4_ACL_OUTNEGATIVE },
+                               { 'ipv4_acl_out' => RoutedIntfLib::IPV4_ACL_OUT_NEGATIVE },
                                true, self, logger)
     end
 
@@ -631,7 +631,7 @@ test_name "TestCase :: #{testheader}" do
       "resource cisco_interface '#{test_intf}'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
-                               { 'ipv6_acl_in' => RoutedIntfLib::IPV6_ACL_INNEGATIVE },
+                               { 'ipv6_acl_in' => RoutedIntfLib::IPV6_ACL_IN_NEGATIVE },
                                true, self, logger)
     end
 
@@ -673,7 +673,7 @@ test_name "TestCase :: #{testheader}" do
       "resource cisco_interface '#{test_intf}'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
-                               { 'ipv6_acl_out' => RoutedIntfLib::IPV6_ACL_OUTNEGATIVE },
+                               { 'ipv6_acl_out' => RoutedIntfLib::IPV6_ACL_OUT_NEGATIVE },
                                true, self, logger)
     end
 
