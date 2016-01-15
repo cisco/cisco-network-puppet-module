@@ -102,21 +102,14 @@ tests = {
 #   :title_pattern will be set to 'id'.
 #
 
-tests['default_properties_domain'] = {
+tests['default_properties'] = {
   title_pattern:  'default',
   manifest_props: "
     bpdufilter         => 'default',
     bpduguard          => 'default',
     bridge_assurance   => 'default',
-    domain             => 'default',
     loopguard          => 'default',
     mode               => 'default',
-    mst_forward_time   => 'default',
-    mst_hello_time     => 'default',
-    mst_max_age        => 'default',
-    mst_max_hops       => 'default',
-    mst_name           => 'default',
-    mst_revision       => 'default',
     pathcost           => 'default',
   ",
   code:           [0, 2],
@@ -124,26 +117,41 @@ tests['default_properties_domain'] = {
     'bpdufilter'       => 'false',
     'bpduguard'        => 'false',
     'bridge_assurance' => 'true',
-    'domain'           => 'false',
     'loopguard'        => 'false',
     'mode'             => 'rapid-pvst',
+    'pathcost'         => 'short',
+  },
+}
+
+tests['default_properties_mst'] = {
+  title_pattern:  'default',
+  manifest_props: "
+    mode               => 'mst',
+    mst_forward_time   => 'default',
+    mst_hello_time     => 'default',
+    mst_max_age        => 'default',
+    mst_max_hops       => 'default',
+    mst_name           => 'default',
+    mst_revision       => 'default',
+  ",
+  code:           [0, 2],
+  resource_props: {
+    'mode'             => 'mst',
     'mst_forward_time' => '15',
     'mst_hello_time'   => '2',
     'mst_max_age'      => '20',
     'mst_max_hops'     => '20',
     'mst_name'         => 'false',
     'mst_revision'     => '0',
-    'pathcost'         => 'short',
   },
 }
 
-tests['non_default_properties_domain'] = {
+tests['non_default_properties'] = {
   title_pattern:  'default',
   manifest_props: "
     bpdufilter         => 'true',
     bpduguard          => 'true',
     bridge_assurance   => 'false',
-    domain             => '100',
     loopguard          => 'true',
     mode               => 'mst',
     mst_forward_time   => '25',
@@ -158,7 +166,6 @@ tests['non_default_properties_domain'] = {
     'bpdufilter'       => 'true',
     'bpduguard'        => 'true',
     'bridge_assurance' => 'false',
-    'domain'           => '100',
     'loopguard'        => 'true',
     'mode'             => 'mst',
     'mst_forward_time' => '25',
@@ -174,69 +181,42 @@ tests['non_default_properties_domain'] = {
 tests['default_properties_fcoe'] = {
   title_pattern:  'default',
   manifest_props: "
-    bpdufilter         => 'default',
-    bpduguard          => 'default',
-    bridge_assurance   => 'default',
     fcoe               => 'default',
-    loopguard          => 'default',
-    mode               => 'default',
-    mst_forward_time   => 'default',
-    mst_hello_time     => 'default',
-    mst_max_age        => 'default',
-    mst_max_hops       => 'default',
-    mst_name           => 'default',
-    mst_revision       => 'default',
-    pathcost           => 'default',
   ",
   code:           [0, 2],
   resource_props: {
-    'bpdufilter'       => 'false',
-    'bpduguard'        => 'false',
-    'bridge_assurance' => 'true',
     'fcoe'             => 'true',
-    'loopguard'        => 'false',
-    'mode'             => 'rapid-pvst',
-    'mst_forward_time' => '15',
-    'mst_hello_time'   => '2',
-    'mst_max_age'      => '20',
-    'mst_max_hops'     => '20',
-    'mst_name'         => 'false',
-    'mst_revision'     => '0',
-    'pathcost'         => 'short',
   },
 }
 
 tests['non_default_properties_fcoe'] = {
   title_pattern:  'default',
   manifest_props: "
-    bpdufilter         => 'true',
-    bpduguard          => 'true',
-    bridge_assurance   => 'false',
     fcoe               => 'false',
-    loopguard          => 'true',
-    mode               => 'mst',
-    mst_forward_time   => '25',
-    mst_hello_time     => '5',
-    mst_max_age        => '35',
-    mst_max_hops       => '200',
-    mst_name           => 'nexus',
-    mst_revision       => '34',
-    pathcost           => 'long',
   ",
   resource_props: {
-    'bpdufilter'       => 'true',
-    'bpduguard'        => 'true',
-    'bridge_assurance' => 'false',
     'fcoe'             => 'false',
-    'loopguard'        => 'true',
-    'mode'             => 'mst',
-    'mst_forward_time' => '25',
-    'mst_hello_time'   => '5',
-    'mst_max_age'      => '35',
-    'mst_max_hops'     => '200',
-    'mst_name'         => 'nexus',
-    'mst_revision'     => '34',
-    'pathcost'         => 'long',
+  },
+}
+
+tests['default_properties_domain'] = {
+  title_pattern:  'default',
+  manifest_props: "
+    domain             => 'default',
+  ",
+  code:           [0, 2],
+  resource_props: {
+    'domain'           => 'false',
+  },
+}
+
+tests['non_default_properties_domain'] = {
+  title_pattern:  'default',
+  manifest_props: "
+    domain             => '100',
+  ",
+  resource_props: {
+    'domain'           => '100',
   },
 }
 
@@ -291,6 +271,14 @@ test_name "TestCase :: #{testheader}" do
   logger.info("#### This device is of type: #{device} #####")
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
+  id = 'default_properties'
+  tests[id][:desc] = '1.1 Default Properties'
+  test_harness_stp_global(tests, id)
+
+  id = 'default_properties_mst'
+  tests[id][:desc] = '1.2 Default Properties'
+  test_harness_stp_global(tests, id)
+
   case device
   when /n5k|n6k|n7k/
     id = 'default_properties_domain'
@@ -298,13 +286,17 @@ test_name "TestCase :: #{testheader}" do
     id = 'default_properties_fcoe'
   end
 
-  tests[id][:desc] = '1.1 Default Properties'
+  tests[id][:desc] = '1.3 Switch specific default Properties'
   test_harness_stp_global(tests, id)
 
   # no absent test for stp_global
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
+
+  id = 'non_default_properties'
+  tests[id][:desc] = '2.1 Non Default Properties'
+  test_harness_stp_global(tests, id)
 
   case device
   when /n5k|n6k|n7k/
@@ -313,7 +305,7 @@ test_name "TestCase :: #{testheader}" do
     id = 'non_default_properties_fcoe'
   end
 
-  tests[id][:desc] = '2.1 Non Default Properties'
+  tests[id][:desc] = '2.2 Non Default Properties'
   test_harness_stp_global(tests, id)
 
   # no absent test for stp_global
