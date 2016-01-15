@@ -96,8 +96,20 @@ tests = {
 #   :title_pattern will be set to 'id'.
 #
 
-tests['default_properties_ipv4'] = {
-  title_pattern:  'ipv4 foo-1',
+tests['remove_ipv4_acl'] = {
+  title_pattern:  'ipv4 beaker_1',
+  manifest_props: "
+    stats_per_entry                  => 'false',
+    fragments                        => 'default',
+  ",
+  resource_props: {
+    'stats_per_entry' => 'false',
+    'fragments'       => '',
+  },
+}
+
+tests['create_ipv4_acl'] = {
+  title_pattern:  'ipv4 beaker_1',
   manifest_props: "
     stats_per_entry                  => 'false',
     fragments                        => 'default',
@@ -182,10 +194,34 @@ def build_manifest_ace(tests, id)
 EOF"
 end
 
+def build_manifest_acl(tests, id)
+  if tests[id][:ensure] == :absent
+    state = 'ensure => absent,'
+    manifest = tests[id][:manifest_props_absent]
+    tests[id][:resource] = {}
+  else
+    state = 'ensure => present,'
+    manifest = tests[id][:manifest_props]
+    tests[id][:resource] = tests[id][:resource_props]
+  end
+
+  tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
+  logger.debug("build_manifest_ace :: title_pattern:\n" +
+               tests[id][:title_pattern])
+  tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+  node 'default' {
+    cisco_acl { '#{tests[id][:title_pattern]}':
+      #{state}
+      #{manifest}
+    }
+  }
+EOF"
+end
+
 def test_harness_ace(tests, id)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:resource_cmd] = puppet_resource_cmd
-  tests[id][:desc] += " [ensure => #{tests[id][:ensure]}]"
+  #tests[id][:desc] = " [ensure => #{tests[id][:ensure]}]"
 
   # Build the manifest for this test
   build_manifest_ace(tests, id)
@@ -195,17 +231,32 @@ def test_harness_ace(tests, id)
   tests[id][:ensure] = nil
 end
 
+def test_harness_acl(tests, id)
+  tests[id][:ensure] = :present if tests[id][:ensure].nil?
+  tests[id][:resource_cmd] = puppet_resource_cmd
+  #tests[id][:desc] = " [ensure => #{tests[id][:ensure]}]"
+
+  # Build the manifest for this test
+  build_manifest_acl(tests, id)
+
+  test_harness_common(tests, id)
+  # add case
+  tests[id][:ensure] = nil
+end
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  # node_feature_cleanup(agent, 'acl')
+  # -- clean up acl --
+  id = 'remove_ipv4_acl'
+  tests[id][:desc] = '1.0 remove ipv4 beaker_1'
+  test_harness_acl(tests, id);
   # ------------create ipv4 foo-1 acl ------------------------
-  id = 'default_properties_ipv4'
+  id = 'create_ipv4_acl'
   tests[id][:desc] = '1.1 create ipv4 beaker_1'
-  test_harness_ace(tests, id)
+  test_harness_acl(tests, id)
 
   # ------------create ipv4 foo-1 sequence number 10--------
   id = 'create_ipv4_seq_10'
