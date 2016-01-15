@@ -177,6 +177,7 @@ The following resources include cisco types and providers along with cisco provi
 * Interface Types
   * [`cisco_interface`](#type-cisco_interface)
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
+  * [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
   * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
   * [`network_interface (netdev_stdlib)`](#type-network_interface)
 
@@ -190,6 +191,10 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_ospf_vrf`](#type-cisco_ospf_vrf)
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 
+* Portchannel Types
+  * [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
+  * [`cisco_portchannel_global`](#type-cisco_portchannel_global)
+  * 
 * RADIUS Types
   * [`radius (netdev_stdlib)`](#type-radius)
   * [`radius_global (netdev_stdlib)`](#type-radius_global)
@@ -249,9 +254,11 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_bgp_neighbor_af`](#type-cisco_bgp_neighbor_af)
 * [`cisco_interface`](#type-cisco_interface)
 * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
+* [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
 * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
 * [`cisco_ospf`](#type-cisco_ospf)
 * [`cisco_ospf_vrf`](#type-cisco_ospf_vrf)
+* [`cisco_portchannel_global`](#type-cisco_portchannel_global)
 * [`cisco_snmp_community`](#type-cisco_snmp_community)
 * [`cisco_snmp_group`](#type-cisco_snmp_group)
 * [`cisco_snmp_server`](#type-cisco_snmp_server)
@@ -1145,6 +1152,33 @@ Specifies the message_digest password. Valid value is a string.
 *Required*. Ospf area associated with this cisco_interface_ospf instance. Valid values are a string, formatted as an IP address (i.e. "0.0.0.0") or as an integer.
 
 --
+### Type: cisco_interface_portchannel
+Manages configuration of a portchannel interface instance.
+
+#### Parameters
+
+##### `ensure`
+Determine whether the config should be present or not. Valid values are 'present' and 'absent'.
+
+##### `lacp_graceful_convergence`
+port-channel lacp graceful convergence. Valid values are true, false or 'default'.
+
+##### `lacp_max_bundle`
+port-channel max-bundle. Valid values are Integer, keyword 'default'.
+
+##### `lacp_min_links`
+port-channel min-links. Valid values are Integer, keyword 'default'.
+
+##### `lacp_suspend_individual`
+lacp port-channel state. Valid values are true and false or 'default'.
+
+##### `port_hash_distribution`
+port-channel per port hash-distribution. Valid values are 'adaptive', 'fixed' or the keyword 'default'. This property is not supported on (Nexus 5|6k)
+
+##### `port_load_defer`
+port-channel per port load-defer. Valid values are true, false or 'default'. This property is not supported on (Nexus 5|6k)
+
+--
 ### Type: cisco_ospf
 Manages configuration of an ospf instance.
 
@@ -1213,6 +1247,42 @@ Valid values are an integer, in milliseconds, or the keyword 'default'.
 ##### `auto_cost`
 Specifies the reference bandwidth used to assign OSPF cost.
 Valid values are an integer, in Mbps, or the keyword 'default'.
+
+--
+### Type: cisco_portchannel_global
+Manages configuration of a portchannel global parameters
+
+#### Parameters
+
+##### `asymmetric`
+port-channel asymmetric hash. Valid values are true, false or 'default'. This property is supported only on (Nexus 7k)
+
+##### `bundle_hash`
+port-channel bundle hash. Valid values are 'ip', 'ip-l4port', 'ip-l4port-vlan', 'ip-vlan', 'l4port', 'mac', 'port', 'ip-only', 'port-only', 'ip-gre' or 'default'. 'port', 'ip-only', 'port-only', 'ip-gre' are not supported on (Nexus 7k). 'ip-l4port', 'ip-l4port-vlan', 'ip-vlan', 'l4port', 'ip-gre' are not supported on (Nexus 5|6k). 'port', 'ip-only', 'port-only' are not supported on (Nexus 3|9k)
+
+##### `bundle_select`
+port-channel bundle select. Valid values are 'src', 'dst', 'src-dst' or 'default'.
+
+##### `concatenation`
+port-channel concatenation enable or disable. Valid values are true, false or 'default'. This property is supported only on (Nexus 3|9k)
+
+##### `hash_distribution`
+port-channel hash-distribution. Valid values are 'adaptive', 'fixed' or the keyword 'default'. This property is supported only on (Nexus 7k)
+
+##### `hash_poly`
+port-channel hash-polynomial. Valid values are 'CRC10a', 'CRC10b', 'CRC10c', 'CRC10d' or the keyword 'default'. This property is supported only on (Nexus 5|6k)
+
+##### `load_defer`
+port-channel load-defer time interval. Valid values are integer or 'default'. This property is supported only on (Nexus 7k)
+
+##### `resilient`
+port-channel resilient mode. Valid values are true, false or 'default'. This property is supported only on (Nexus 3|9k)
+
+##### `rotate`
+port-channel hash input offset. Valid values are integer or 'default'. This property is not supported on (Nexus 5|6k)
+
+##### `symmetry`
+port-channel symmetry hash. Valid values are true, false or 'default'. This property is supported only on (Nexus 3|9k)
 
 --
 ### Type: cisco_snmp_community
