@@ -102,6 +102,10 @@ tests['remove_ipv4_acl'] = {
     stats_per_entry                  => 'false',
     fragments                        => 'default',
   ",
+  manifest_props_absent: "
+    stats_per_entry                  => 'false',
+    fragments                        => 'default',
+  ",
   resource_props: {
     'stats_per_entry' => 'false',
     'fragments'       => '',
@@ -173,7 +177,7 @@ end
 def build_manifest_ace(tests, id)
   if tests[id][:ensure] == :absent
     state = 'ensure => absent,'
-    manifest = tests[id][:manifest_props_absent]
+    # manifest = tests[id][:manifest_props_absent]
     tests[id][:resource] = {}
   else
     state = 'ensure => present,'
@@ -221,7 +225,7 @@ end
 def test_harness_ace(tests, id)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:resource_cmd] = puppet_resource_cmd
-  # tests[id][:desc] = " [ensure => #{tests[id][:ensure]}]"
+  tests[id][:desc] = " #{tests[id][:desc]}"
 
   # Build the manifest for this test
   build_manifest_ace(tests, id)
@@ -234,7 +238,7 @@ end
 def test_harness_acl(tests, id)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:resource_cmd] = puppet_resource_cmd
-  # tests[id][:desc] = " [ensure => #{tests[id][:ensure]}]"
+  tests[id][:desc] = " #{tests[id][:desc]}"
 
   # Build the manifest for this test
   build_manifest_acl(tests, id)
@@ -243,27 +247,33 @@ def test_harness_acl(tests, id)
   # add case
   tests[id][:ensure] = nil
 end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
+  logger.info("\n#{'-' * 60}\nSection 1. remove_ipv4_acl")
   # -- clean up acl --
   id = 'remove_ipv4_acl'
+  tests[id][:ensure] = :absent
   tests[id][:desc] = '1.0 remove ipv4 beaker_1'
   test_harness_acl(tests, id)
   # ------------create ipv4 foo-1 acl ------------------------
+  logger.info("\n#{'-' * 60}\nSection 1.1 create_ipv4_acl")
   id = 'create_ipv4_acl'
+  tests[id][:ensure] = nil
   tests[id][:desc] = '1.1 create ipv4 beaker_1'
   test_harness_acl(tests, id)
 
   # ------------create ipv4 foo-1 sequence number 10--------
+  logger.info("\n#{'-' * 60}\nSection 1.2 create_ipv4_seq_10")
   id = 'create_ipv4_seq_10'
   tests[id][:desc] = '1.2 create ipv4 beaker_1 seq 10'
   test_harness_ace(tests, id)
 
   # ------------destroy ipv4 foo-1 sequence number 10--------
+  logger.info("\n#{'-' * 60}\nSection 1.2 destroy_ipv4_seq_10")
   id = 'destroy_ipv4_seq_10'
   tests[id][:ensure] = :absent
   tests[id][:desc] = '1.3 destroy ipv4 beaker_1 seq 10'
