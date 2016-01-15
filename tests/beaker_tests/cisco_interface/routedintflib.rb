@@ -56,6 +56,7 @@ module RoutedIntfLib
   def self.create_routedintf_manifest_switchport_disabled
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
+
     cisco_interface { 'ethernet1/4':
       ensure                       => present,
       description                  => 'default',
@@ -147,6 +148,36 @@ EOF"
     manifest_str
   end
 
+  def self.create_routedintf_acl_manifest_nondefaults
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+    cisco_acl { 'ipv4 v4acl1':
+      ensure                      => present,
+      stats_per_entry             => false,
+      fragments                   => 'default'
+    }
+
+   cisco_acl { 'ipv4 v4acl2':
+      ensure                      => present,
+      stats_per_entry             => false,
+      fragments                   => 'default'
+    }
+
+   cisco_acl { 'ipv6 v6acl1':
+      ensure                      => present,
+      stats_per_entry             => false,
+      fragments                   => 'default'
+    }
+
+  cisco_acl { 'ipv6 v6acl2':
+      ensure                      => present,
+      stats_per_entry             => false,
+      fragments                   => 'default'
+    }}
+EOF"
+    manifest_str
+  end
+
   # Method to create a manifest for RoutedINTF resource attributes:
   # description, shutdown, switchport_mode, ipv4_address,
   # ipv4_netmask_length, ipv4_proxy_arp and ipv4_redirects.
@@ -155,6 +186,7 @@ EOF"
   def self.create_routedintf_manifest_nondefaults
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
+
     cisco_interface { 'ethernet1/4':
       ensure                       => present,
       description                  => 'Configured with Puppet',
