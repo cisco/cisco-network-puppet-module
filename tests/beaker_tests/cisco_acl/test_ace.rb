@@ -221,7 +221,7 @@ end
 def test_harness_ace(tests, id)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:resource_cmd] = puppet_resource_cmd
-  #tests[id][:desc] = " [ensure => #{tests[id][:ensure]}]"
+  # tests[id][:desc] = " [ensure => #{tests[id][:ensure]}]"
 
   # Build the manifest for this test
   build_manifest_ace(tests, id)
@@ -234,7 +234,7 @@ end
 def test_harness_acl(tests, id)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:resource_cmd] = puppet_resource_cmd
-  #tests[id][:desc] = " [ensure => #{tests[id][:ensure]}]"
+  # tests[id][:desc] = " [ensure => #{tests[id][:ensure]}]"
 
   # Build the manifest for this test
   build_manifest_acl(tests, id)
@@ -252,7 +252,7 @@ test_name "TestCase :: #{testheader}" do
   # -- clean up acl --
   id = 'remove_ipv4_acl'
   tests[id][:desc] = '1.0 remove ipv4 beaker_1'
-  test_harness_acl(tests, id);
+  test_harness_acl(tests, id)
   # ------------create ipv4 foo-1 acl ------------------------
   id = 'create_ipv4_acl'
   tests[id][:desc] = '1.1 create ipv4 beaker_1'
