@@ -187,8 +187,9 @@ Puppet::Type.type(:cisco_vpc_domain).provide(:nxapi) do
     else
       pka_vrf = @vpc_domain.peer_keepalive_vrf
     end
-    @vpc_domain.peer_keepalive_set(pka_dest, pka_src, pka_vrf, pka_interval,
-                                   pka_timeout, pka_prec, pka_hold_timeout)
+    @vpc_domain.peer_keepalive_set(pka_dest, pka_src, pka_udp_port, pka_vrf, 
+                                   pka_interval, pka_timeout, pka_prec, 
+                                   pka_hold_timeout)
   end
 
   def flush
