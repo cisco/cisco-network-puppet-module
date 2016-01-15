@@ -97,8 +97,8 @@ tests = {
 #
 
 tests['remove_ipv4_acl'] = {
-  title_pattern:  'ipv4 beaker_1',
-  manifest_props: "
+  title_pattern:         'ipv4 beaker_1',
+  manifest_props:        "
     stats_per_entry                  => 'false',
     fragments                        => 'default',
   ",
@@ -106,7 +106,7 @@ tests['remove_ipv4_acl'] = {
     stats_per_entry                  => 'false',
     fragments                        => 'default',
   ",
-  resource_props: {
+  resource_props:        {
     'stats_per_entry' => 'false',
     'fragments'       => '',
   },
