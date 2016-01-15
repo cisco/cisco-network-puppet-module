@@ -16,18 +16,13 @@
 
 class ciscopuppet::demo_vpc_domain {
 
-  $auto_recovery = platform_get() ? {
-    'n7k'            => true,
-    default          => undef
-  }
-
   $layer3_peer_routing = platform_get() ? {
-    'n7k'            => true,
+    /(n6k|n7k)/      => true,
     default          => undef
   }
 
   $peer_gateway_exclude_vlan = platform_get() ? {
-    /(n5k|n6k|n7k)   => '500-1000, 1100, 1120',
+    /(n6k|n7k)/      => '500-1000, 1100, 1120',
     default          => undef
   }
 
