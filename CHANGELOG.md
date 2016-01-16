@@ -15,6 +15,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `cisco_interface_service_vni` type and provider
 - `cisco_vdc` type and provider.
 - `cisco_vni` type and provider.
+- 'cisco_vpc_domain' type and provider
 - `cisco_vxlan_global` type and provider.
 - `cisco_vxlan_vtep` type and provider.
 
