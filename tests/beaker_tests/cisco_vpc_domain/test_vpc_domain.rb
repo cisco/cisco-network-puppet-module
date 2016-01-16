@@ -105,7 +105,6 @@ tests = {
 tests['default_properties'] = {
   title_pattern:  '200',
   manifest_props: "
-    auto_recovery                                      => 'default',
     auto_recovery_reload_delay                         => 'default',
     delay_restore                                      => 'default',
     delay_restore_interface_vlan                       => 'default',
@@ -118,7 +117,6 @@ tests['default_properties'] = {
   ",
   code:           [0, 2],
   resource_props: {
-    'auto_recovery'                                      => 'true',
     'auto_recovery_reload_delay'                         => '240',
     'delay_restore'                                      => '30',
     'delay_restore_interface_vlan'                       => '10',
@@ -133,7 +131,6 @@ tests['default_properties'] = {
 tests['non_default_properties'] = {
   title_pattern:  '200',
   manifest_props: "
-    auto_recovery                                      => 'true',
     auto_recovery_reload_delay                         => '300',
     delay_restore                                      => '250',
     delay_restore_interface_vlan                       => '300',
@@ -156,7 +153,6 @@ tests['non_default_properties'] = {
   ",
   code:           [0, 2],
   resource_props: {
-    'auto_recovery'                                      => 'true',
     'auto_recovery_reload_delay'                         => '300',
     'delay_restore'                                      => '250',
     'delay_restore_interface_vlan'                       => '300',
@@ -206,10 +202,12 @@ tests['non_default_properties_n6k7k'] = {
 tests['default_properties_n7k'] = {
   title_pattern:  '200',
   manifest_props: "
+    auto_recovery                                      => 'default',
     self_isolation                                     => 'default',
   ",
   code:           [0, 2],
   resource_props: {
+    'auto_recovery'                                    => 'true',
     'self_isolation'                                   => 'false',
   },
 }
@@ -217,10 +215,12 @@ tests['default_properties_n7k'] = {
 tests['non_default_properties_n7k'] = {
   title_pattern:  '200',
   manifest_props: "
+    auto_recovery                                      => 'false',
     self_isolation                                     => 'true',
   ",
   code:           [0, 2],
   resource_props: {
+    'auto_recovery'                                    => 'false',
     'self_isolation'                                   => 'true',
   },
 }
