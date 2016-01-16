@@ -56,4 +56,27 @@ class ciscopuppet::demo_vpc_domain {
     system_mac                                         => "00:0c:0d:11:22:33",
     system_priority                                    => 32000,
   }
+
+  cisco_interface { 'Ethernet1/1' :
+    channel_group   => 10,
+  }
+  
+  cisco_interface { 'port-channel10' :
+    switchport_mode => 'trunk',
+    vpc_id          => 5,
+    shutdown        => false, 
+    require         => [ Cisco_interface['Ethernet1/1'], Cisco_vpc_domain['100'] ]
+  }
+
+  cisco_interface { 'Ethernet1/2' :
+    channel_group   => 100,
+  }
+  
+  cisco_interface { 'port-channel100' :
+    switchport_mode => 'trunk',
+    vpc_peer_link   => true,
+    shutdown        => false,
+    require         => [ Cisco_interface['Ethernet1/2'], Cisco_vpc_domain['100'] ]
+  }
+
 }
