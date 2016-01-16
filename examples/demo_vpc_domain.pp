@@ -36,6 +36,12 @@ class ciscopuppet::demo_vpc_domain {
     default          => undef
   }
 
+  $shutdown = platform_get() ? {
+    /(n6k|n7k)/      => false,
+    default          => undef
+  }
+
+
   cisco_vpc_domain { '100' :
     ensure                                           => present,
     auto_recovery                                    => $auto_recovery,
@@ -57,7 +63,7 @@ class ciscopuppet::demo_vpc_domain {
     peer_gateway_exclude_vlan                        => $peer_gateway_excl_vlan,
     role_priority                                    => 32000,
     self_isolation                                   => $self_isolation,
-    shutdown                                         => false,
+    shutdown                                         => $shutdown,
     system_mac                                       => '00:0c:0d:11:22:33',
     system_priority                                  => 32000,
   }

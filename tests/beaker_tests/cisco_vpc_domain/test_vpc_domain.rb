@@ -111,20 +111,18 @@ tests['default_properties'] = {
     graceful_consistency_check                         => 'default',
     peer_gateway                                       => 'default',
     role_priority                                      => 'default',
-    shutdown                                           => 'default',
     system_priority                                    => 'default',
 
   ",
   code:           [0, 2],
   resource_props: {
-    'auto_recovery_reload_delay'                         => '240',
-    'delay_restore'                                      => '30',
-    'delay_restore_interface_vlan'                       => '10',
-    'graceful_consistency_check'                         => 'true',
-    'peer_gateway'                                       => 'false',
-    'role_priority'                                      => '32667',
-    'shutdown'                                           => 'false',
-    'system_priority'                                    => '32667',
+    'auto_recovery_reload_delay'   => '240',
+    'delay_restore'                => '30',
+    'delay_restore_interface_vlan' => '10',
+    'graceful_consistency_check'   => 'true',
+    'peer_gateway'                 => 'false',
+    'role_priority'                => '32667',
+    'system_priority'              => '32667',
   },
 }
 
@@ -146,31 +144,29 @@ tests['non_default_properties'] = {
     peer_keepalive_vrf                                 => 'management',
     peer_gateway                                       => 'true',
     role_priority                                      => '1024',
-    shutdown                                           => 'false',
     system_mac                                         => '00:0c:0d:11:22:33',
     system_priority                                    => '3000',
 
   ",
   code:           [0, 2],
   resource_props: {
-    'auto_recovery_reload_delay'                         => '300',
-    'delay_restore'                                      => '250',
-    'delay_restore_interface_vlan'                       => '300',
-    'dual_active_exclude_interface_vlan_bridge_domain'   => '10-30,500',
-    'graceful_consistency_check'                         => 'true',
-    'peer_keepalive_dest'                                => '1.1.1.1',
-    'peer_keepalive_hold_timeout'                        => '5',
-    'peer_keepalive_interval'                            => '1000',
-    'peer_keepalive_interval_timeout'                    => '3',
-    'peer_keepalive_precedence'                          => '5',
-    'peer_keepalive_src'                                 => '1.1.1.2',
-    'peer_keepalive_udp_port'                            => '3200',
-    'peer_keepalive_vrf'                                 => 'management',
-    'peer_gateway'                                       => 'true',
-    'role_priority'                                      => '1024',
-    'shutdown'                                           => 'false',
-    'system_mac'                                         => '00:0c:0d:11:22:33',
-    'system_priority'                                    => '3000',
+    'auto_recovery_reload_delay'                       => '300',
+    'delay_restore'                                    => '250',
+    'delay_restore_interface_vlan'                     => '300',
+    'dual_active_exclude_interface_vlan_bridge_domain' => '10-30,500',
+    'graceful_consistency_check'                       => 'true',
+    'peer_keepalive_dest'                              => '1.1.1.1',
+    'peer_keepalive_hold_timeout'                      => '5',
+    'peer_keepalive_interval'                          => '1000',
+    'peer_keepalive_interval_timeout'                  => '3',
+    'peer_keepalive_precedence'                        => '5',
+    'peer_keepalive_src'                               => '1.1.1.2',
+    'peer_keepalive_udp_port'                          => '3200',
+    'peer_keepalive_vrf'                               => 'management',
+    'peer_gateway'                                     => 'true',
+    'role_priority'                                    => '1024',
+    'system_mac'                                       => '00:0c:0d:11:22:33',
+    'system_priority'                                  => '3000',
   },
 }
 
@@ -178,10 +174,12 @@ tests['default_properties_n6k7k'] = {
   title_pattern:  '200',
   manifest_props: "
     layer3_peer_routing                                => 'default',
+    shutdown                                           => 'default',
   ",
   code:           [0, 2],
   resource_props: {
-    'layer3_peer_routing'                              => 'false',
+    'layer3_peer_routing' => 'false',
+    'shutdown'            => 'false',
   },
 }
 
@@ -190,12 +188,14 @@ tests['non_default_properties_n6k7k'] = {
   manifest_props: "
     layer3_peer_routing                                => 'true',
     peer_gateway_exclude_vlan                          => '500-510, 1100, 1120',
+    shutdown                                           => 'true',
 
   ",
   code:           [0, 2],
   resource_props: {
-    'layer3_peer_routing'                              => 'true',
-    'peer_gateway_exclude_vlan'                        => '500-510,1100,1120',
+    'layer3_peer_routing'       => 'true',
+    'peer_gateway_exclude_vlan' => '500-510,1100,1120',
+    'shutdown'                  => 'true',
   },
 }
 
@@ -207,8 +207,8 @@ tests['default_properties_n7k'] = {
   ",
   code:           [0, 2],
   resource_props: {
-    'auto_recovery'                                    => 'true',
-    'self_isolation'                                   => 'false',
+    'auto_recovery'  => 'true',
+    'self_isolation' => 'false',
   },
 }
 
@@ -220,11 +220,10 @@ tests['non_default_properties_n7k'] = {
   ",
   code:           [0, 2],
   resource_props: {
-    'auto_recovery'                                    => 'false',
-    'self_isolation'                                   => 'true',
+    'auto_recovery'  => 'false',
+    'self_isolation' => 'true',
   },
 }
-
 
 #################################################################
 # HELPER FUNCTIONS
@@ -320,7 +319,6 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:desc] = '2.4 Non Default Properties (absent)'
   tests[id][:ensure] = :absent
   test_harness_vpc_domain(tests, id)
-
 end
 
 logger.info("TestCase :: #{testheader} :: End")
