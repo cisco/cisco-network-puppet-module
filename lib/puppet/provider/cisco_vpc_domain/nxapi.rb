@@ -145,6 +145,7 @@ Puppet::Type.type(:cisco_vpc_domain).provide(:nxapi) do
       @property_flush[:peer_keepalive_vrf]
   end
 
+  # rubocop:disable Metrics/MethodLength
   def peer_keepalive_custom_set
     return unless peer_keepalive_any?
     if @property_flush[:peer_keepalive_dest]
@@ -187,10 +188,11 @@ Puppet::Type.type(:cisco_vpc_domain).provide(:nxapi) do
     else
       pka_vrf = @vpc_domain.peer_keepalive_vrf
     end
-    @vpc_domain.peer_keepalive_set(pka_dest, pka_src, pka_udp_port, pka_vrf, 
-                                   pka_interval, pka_timeout, pka_prec, 
+    @vpc_domain.peer_keepalive_set(pka_dest, pka_src, pka_udp_port, pka_vrf,
+                                   pka_interval, pka_timeout, pka_prec,
                                    pka_hold_timeout)
   end
+  # rubocop:enable Metrics/MethodLength
 
   def flush
     if @property_flush[:ensure] == :absent

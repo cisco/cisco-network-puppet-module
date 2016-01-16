@@ -169,13 +169,13 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
   newproperty(:peer_keepalive_dest) do
     desc 'Destination IPV4 address of the peer where Peer Keep-alives are terminated.
           Valid values are IPV4 unicast address'
-    # use /x modifier to ignore whitespace in the regex which is split in 2 lines 
+    # use /x modifier to ignore whitespace in the regex which is split in 2 lines
     newvalues(/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}
                 (?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/x)
   end # property name
 
   newproperty(:peer_keepalive_hold_timeout) do
-    desc 'Peer keep-alive hold timeout in secs. Valid Values are integers in the 
+    desc 'Peer keep-alive hold timeout in secs. Valid Values are integers in the
           range 3 .. 10'
     validate do |value|
       if value != 'default'
@@ -187,19 +187,19 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
   end # property name
 
   newproperty(:peer_keepalive_interval) do
-    desc 'Peer keep-alive interval in millisecs. Valid Values are integers in the 
+    desc 'Peer keep-alive interval in millisecs. Valid Values are integers in the
           range 400 .. 10000'
     validate do |value|
       if value != 'default'
         fail('pka interval should be a value in the range 400 .. 10000') unless
-          value.to_i.between?(400, 10000)
+          value.to_i.between?(400, 10_000)
       end
     end
     munge { |value| value == 'default' ? :default : value.to_i }
   end # property name
 
   newproperty(:peer_keepalive_interval_timeout) do
-    desc 'Peer keep-alive interval timeout. Valid Values are integers in the 
+    desc 'Peer keep-alive interval timeout. Valid Values are integers in the
           range 3 .. 20'
     validate do |value|
       if value != 'default'
@@ -211,7 +211,7 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
   end # property name
 
   newproperty(:peer_keepalive_precedence) do
-    desc 'Peer keep-alive precedence. Valid Values are integers in the 
+    desc 'Peer keep-alive precedence. Valid Values are integers in the
           range 0 .. 7'
     validate do |value|
       if value != 'default'
@@ -225,18 +225,18 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
   newproperty(:peer_keepalive_src) do
     desc 'Source IPV4 address of this switch where Peer Keep-alives are Sourced.
           Valid values are IPV4 unicast address'
-    # use /x modifier to ignore whitespace in the regex which is split in 2 lines 
+    # use /x modifier to ignore whitespace in the regex which is split in 2 lines
     newvalues(/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}
                 (?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/x)
   end # property name
 
   newproperty(:peer_keepalive_udp_port) do
-    desc 'Peer keep-alive udp port used for hellos. Valid Values are integers in the 
+    desc 'Peer keep-alive udp port used for hellos. Valid Values are integers in the
           range 1024 .. 65000'
     validate do |value|
       if value != 'default'
         fail('pka udp port should be a value in the range 1024 .. 65000') unless
-          value.to_i.between?(1024, 65000)
+          value.to_i.between?(1024, 65_000)
       end
     end
     munge { |value| value == 'default' ? :default : value.to_i }
