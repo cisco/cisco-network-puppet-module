@@ -16,12 +16,17 @@
 
 class ciscopuppet::demo_vpc_domain {
 
+  $auto_recovery = platform_get() ? {
+    'n7k'            => true,
+    default          => undef
+  }
+
   $layer3_peer_routing = platform_get() ? {
     /(n6k|n7k)/      => true,
     default          => undef
   }
 
-  $peer_gateway_exclude_vlan = platform_get() ? {
+  $peer_gateway_excl_vlan = platform_get() ? {
     /(n6k|n7k)/      => '500-1000, 1100, 1120',
     default          => undef
   }
@@ -32,51 +37,53 @@ class ciscopuppet::demo_vpc_domain {
   }
 
   cisco_vpc_domain { '100' :
-    ensure                                             => present,
-    auto_recovery                                      => $auto_recovery,
-    auto_recovery_reload_delay                         => 300,
-    delay_restore                                      => 250,
-    delay_restore_interface_vlan                       => 300,
-    dual_active_exclude_interface_vlan_bridge_domain   => '10-30, 500',
-    graceful_consistency_check                         => true,
-    layer3_peer_routing                                => $layer3_peer_routing,
-    peer_keepalive_dest                                => '1.1.1.1',
-    peer_keepalive_hold_timeout                        => 5,
-    peer_keepalive_interval                            => 1000,
-    peer_keepalive_interval_timeout                    => 3,
-    peer_keepalive_precedence                          => 5,
-    peer_keepalive_src                                 => '1.1.1.2',
-    peer_keepalive_udp_port                            => 3200,
-    peer_keepalive_vrf                                 => 'management',
-    peer_gateway                                       => true,
-    peer_gateway_exclude_vlan                          => $peer_gateway_exclude_vlan,
-    role_priority                                      => 32000,
-    self_isolation                                     => $self_isolation,
-    shutdown                                           => false,
-    system_mac                                         => "00:0c:0d:11:22:33",
-    system_priority                                    => 32000,
+    ensure                                           => present,
+    auto_recovery                                    => $auto_recovery,
+    auto_recovery_reload_delay                       => 300,
+    delay_restore                                    => 250,
+    delay_restore_interface_vlan                     => 300,
+    dual_active_exclude_interface_vlan_bridge_domain => '10-30, 500',
+    graceful_consistency_check                       => true,
+    layer3_peer_routing                              => $layer3_peer_routing,
+    peer_keepalive_dest                              => '1.1.1.1',
+    peer_keepalive_hold_timeout                      => 5,
+    peer_keepalive_interval                          => 1000,
+    peer_keepalive_interval_timeout                  => 3,
+    peer_keepalive_precedence                        => 5,
+    peer_keepalive_src                               => '1.1.1.2',
+    peer_keepalive_udp_port                          => 3200,
+    peer_keepalive_vrf                               => 'management',
+    peer_gateway                                     => true,
+    peer_gateway_exclude_vlan                        => $peer_gateway_excl_vlan,
+    role_priority                                    => 32000,
+    self_isolation                                   => $self_isolation,
+    shutdown                                         => false,
+    system_mac                                       => '00:0c:0d:11:22:33',
+    system_priority                                  => 32000,
   }
 
   cisco_interface { 'Ethernet1/1' :
-    channel_group   => 10,
+    require       => Cisco_vpc_domain['100'],
+    channel_group => 10,
   }
   
   cisco_interface { 'port-channel10' :
     switchport_mode => 'trunk',
     vpc_id          => 5,
-    shutdown        => false, 
-    require         => [ Cisco_interface['Ethernet1/1'], Cisco_vpc_domain['100'] ]
+    shutdown        => false,
+    require         => Cisco_interface['Ethernet1/1'],
   }
 
   cisco_interface { 'Ethernet1/2' :
-    channel_group   => 100,
+    channel_group => 100,
+    require       => Cisco_vpc_domain['100'],
   }
   
   cisco_interface { 'port-channel100' :
     switchport_mode => 'trunk',
     vpc_peer_link   => true,
     shutdown        => false,
-    require         => [ Cisco_interface['Ethernet1/2'], Cisco_vpc_domain['100'] ]
+    require         => Cisco_interface['Ethernet1/2'],
   }
 
 }
