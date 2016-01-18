@@ -31,11 +31,21 @@ class ciscopuppet::demo_vxlan {
   }
 
   cisco_vxlan_vtep { 'nve1':
-    ensure             => present,
-    description        => 'Configured by Puppet',
-    host_reachability  => 'evpn',
-    shutdown           => 'false',
-    source_interface   => 'loopback55',
+    ensure            => present,
+    description       => 'Configured by puppet',
+    host_reachability => 'evpn',
+    shutdown          => 'false',
+    source_interface  => 'loopback55',
+  }
+
+  cisco_vxlan_vtep_vni {'nve1 10005':
+    ensure              => present,
+    assoc_vrf           => false,
+    ingress_replication => 'static',
+    multicast_group     => 'default',
+    peer_ips            => ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
+    suppress_arp        => 'default',
   }
 }
+
 
