@@ -554,20 +554,6 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check cisco_interface resource absence on agent :: #{result}")
   end
 
-  # @step [Step] Checks interface instance on agent using switch show cli cmds.
-  step 'TestStep :: Check interface instance absence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd("show running-config interface #{test_intf}")
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               [/ip access-group/],
-                               true, self, logger)
-    end
-
-    logger.info("Check interface instance absence on agent :: #{result}")
-  end
-
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get negative test resource manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
@@ -594,20 +580,6 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Check cisco_interface resource absence on agent :: #{result}")
-  end
-
-  # @step [Step] Checks interface instance on agent using switch show cli cmds.
-  step 'TestStep :: Check interface instance absence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd("show running-config interface #{test_intf}")
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               [/ip access-group/],
-                               true, self, logger)
-    end
-
-    logger.info("Check interface instance absence on agent :: #{result}")
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
@@ -638,20 +610,6 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check cisco_interface resource absence on agent :: #{result}")
   end
 
-  # @step [Step] Checks interface instance on agent using switch show cli cmds.
-  step 'TestStep :: Check interface instance absence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd("show running-config interface #{test_intf}")
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               [/ipv6 traffic-filter/],
-                               true, self, logger)
-    end
-
-    logger.info("Check interface instance absence on agent :: #{result}")
-  end
-
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get negative test resource manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
@@ -678,20 +636,6 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Check cisco_interface resource absence on agent :: #{result}")
-  end
-
-  # @step [Step] Checks interface instance on agent using switch show cli cmds.
-  step 'TestStep :: Check interface instance absence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd("show running-config interface #{test_intf}")
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               [/ipv6 traffic-filter/],
-                               true, self, logger)
-    end
-
-    logger.info("Check interface instance absence on agent :: #{result}")
   end
 
   # TBD: CHANNEL-GROUP NEGATIVE TEST DOES NOT RETURN EXIT CODE [1]

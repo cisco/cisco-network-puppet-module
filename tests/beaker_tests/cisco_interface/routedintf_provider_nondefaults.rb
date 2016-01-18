@@ -101,17 +101,15 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
-
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config aclmgr')
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
+      'resource cisco_acl ', options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                [
-                                 /ip access-list v4acl1/,
-                                 /ip access-list v4acl2/,
-                                 /ipv6 access-list v6acl1/,
-                                 /ipv6 access-list v6acl2/,
+                                 /ipv4 v4acl1/,
+                                 /ipv4 v4acl2/,
+                                 /ipv6 v6acl1/,
+                                 /ipv6 v6acl2/,
                                ],
                                false, self, logger)
     end
@@ -182,10 +180,6 @@ test_name "TestCase :: #{testheader}" do
                                  /speed 100/,
                                  /duplex full/,
                                  /vrf member test1/,
-                                 /ip access-group v4acl1 in/,
-                                 /ip access-group v4acl2 out/,
-                                 /ipv6 traffic-filter v6acl1 in/,
-                                 /ipv6 traffic-filter v6acl2 out/,
                                ],
                                false, self, logger)
     end
