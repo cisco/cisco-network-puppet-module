@@ -88,6 +88,8 @@ cisco_nxapi (1.0.0)
 net_http_unix (0.2.1)
 ~~~
 
+*Please note: The `ciscopuppet` module requires a compatible `cisco_node_utils` gem. This is not an issue with release versions; however, when using a pre-release module it may be necessary to manually build a compatible gem. Please see the `cisco_node_utils` developer's guide for more information on building a `cisco_node_utils` gem:  [README-develop-node-utils-APIs.md](https://github.com/cisco/cisco-network-node-utils/blob/develop/docs/README-develop-node-utils-APIs.md#step-5-build-and-install-the-gem)*
+
 ##### Gem Persistence (bash-shell only)
 
 Please note that in the Nexus `bash-shell` environment these gems are currently not persistent across system reload. This persistence issue can be mitigated by simply defining a manifest entry for installing the `cisco_node_utils` gem via the package provider.
@@ -148,6 +150,7 @@ The following resources include cisco types and providers along with cisco provi
 
 * Miscellaneous Types
   * [`cisco_command_config`](#type-cisco_command_config)
+  * [`cisco_vdc`](#type-cisco_vdc)
 
 * AAA Types
   * [`cisco_aaa_authentication_login`](#type-cisco_aaa_authentication_login)
@@ -174,6 +177,8 @@ The following resources include cisco types and providers along with cisco provi
 * Interface Types
   * [`cisco_interface`](#type-cisco_interface)
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
+  * [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
+  * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
   * [`network_interface (netdev_stdlib)`](#type-network_interface)
 
 * NTP Types
@@ -186,6 +191,10 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_ospf_vrf`](#type-cisco_ospf_vrf)
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 
+* Portchannel Types
+  * [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
+  * [`cisco_portchannel_global`](#type-cisco_portchannel_global)
+  * 
 * RADIUS Types
   * [`radius (netdev_stdlib)`](#type-radius)
   * [`radius_global (netdev_stdlib)`](#type-radius_global)
@@ -199,6 +208,7 @@ The following resources include cisco types and providers along with cisco provi
   * [`network_snmp (netdev_stdlib)`](#type-network_snmp)
   * [`snmp_community (netdev_stdlib)`](#type-snmp_community)
   * [`snmp_notification (netdev_stdlib)`](#type-snmp_notification)
+  * [`snmp_notification_receiver (netdev_stdlib)`](#type-snmp_notification_receiver)
   * [`snmp_user (netdev_stdlib)`](#type-snmp_user)
 
 * SYSLOG Types
@@ -218,10 +228,11 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_vtp`](#type-cisco_vtp)
   * [`network_trunk (netdev_stdlib)`](#type-network_trunk)
 
-* VRF Type
+* VRF Types
   * [`cisco_vrf`](#type-cisco_vrf)
 
-* VNI Type
+* VNI Types
+   * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
    * [`cisco_vni`](#type-cisco_vni)
 
 * VXLAN Types
@@ -243,14 +254,18 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_bgp_neighbor_af`](#type-cisco_bgp_neighbor_af)
 * [`cisco_interface`](#type-cisco_interface)
 * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
+* [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
+* [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
 * [`cisco_ospf`](#type-cisco_ospf)
 * [`cisco_ospf_vrf`](#type-cisco_ospf_vrf)
+* [`cisco_portchannel_global`](#type-cisco_portchannel_global)
 * [`cisco_snmp_community`](#type-cisco_snmp_community)
 * [`cisco_snmp_group`](#type-cisco_snmp_group)
 * [`cisco_snmp_server`](#type-cisco_snmp_server)
 * [`cisco_snmp_user`](#type-cisco_snmp_user)
 * [`cisco_tacacs_server`](#type-cisco_tacacs_server)
 * [`cisco_tacacs_server_host`](#type-cisco_tacacs_server_host)
+* [`cisco_vdc`](#type-cisco_vdc)
 * [`cisco_vlan`](#type-cisco_vlan)
 * [`cisco_vni`](#type-cisco_vni)
 * [`cisco_vrf`](#type-cisco_vrf)
@@ -274,6 +289,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`search_domain`](#type-search_domain)
 * [`snmp_community`](#type-snmp_community)
 * [`snmp_notification`](#type-snmp_notification)
+* [`snmp_notification_receiver`](#type-snmp_notification_receiver)
 * [`snmp_user`](#type-snmp_user)
 * [`syslog_server`](#type-syslog_server)
 * [`syslog_setting`](#type-syslog_setting)
@@ -451,8 +467,29 @@ Routing domain confederation AS. Valid values are String, keyword 'default'.
 ##### `confederation_peers`
 AS confederation parameters. Valid values are String, keyword 'default'.
 
+##### `disable_policy_batching` 
+Enable/Disable the batching evaluation of prefix advertisements to all peers. Valid values are 'true', 'false', and 'default'.
+
+##### `disable_policy_batching_ipv4`
+Enable/Disable the batching evaluation of prefix advertisements to all peers with prefix list. Valid values are String, keyword 'default'.  
+
+##### `disable_policy_batching_ipv6`
+Enable/Disable the batching evaluation of prefix advertisements to all peers with prefix list. Valid values are String, keyword 'default'.  
+
 ##### `enforce_first_as`
 Enable/Disable enforces the neighbor autonomous system to be the first AS number listed in the AS path attribute for eBGP. Valid values are 'true', 'false', and 'default'.
+
+##### `event_history_cli`
+Enable/Disable cli event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
+
+##### `event_history_detail`
+Enable/Disable detail event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
+
+##### `event_history_events`
+Enable/Disable event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
+
+##### `event_history_periodic`
+Enable/Disable periodic event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
 
 ##### `fast_external_fallover`
 Enable/Disable immediately reset the session if the link to a directly connected BGP peer goes down. Valid values are 'true', 'false', and 'default'.
@@ -748,7 +785,7 @@ Specify multihop TTL for a remote peer. Valid values are integers between 2  and
 Specify the local-as number for the eBGP neighbor. Valid values are String or Integer in ASPLAIN or ASDOT notation, or 'default', which means not to configure it.
 
 ##### `log_neighbor_changes`
-Specify wether or not to enable log messages for neighbor up/down event. Valid values are 'enable', to enable it, 'disable' to disable it, or 'inherit' to use the configuration in the cisco_bgp type.
+Specify whether or not to enable log messages for neighbor up/down event. Valid values are 'enable', to enable it, 'disable' to disable it, or 'inherit' to use the configuration in the cisco_bgp type.
 
 ##### `low_memory_exempt`
 Specify whether or not to shut down this neighbor under memory pressure. Valid values are 'true' to exempt the neighbor from being shutdown, 'false' to shut it down, or 'default' to perform the default shutdown behavior"
@@ -969,6 +1006,9 @@ Enable/Disable negotiate auto on the interface. Valid values are 'true',
 
 ##### L3 interface config attributes
 
+###### `ipv4_pim_sparse_mode`
+Enables or disables ipv4 pim sparse mode on the interface. Valid values are 'true', 'false', and 'default'.
+
 ###### `ipv4_proxy_arp`
 Enables or disables proxy arp on the interface. Valid values are 'true', 'false', and 'default'.
 
@@ -983,6 +1023,16 @@ keyword 'default'.
 Network mask length of the IP address on the interface. Valid values are
 integer and keyword 'default'.
 
+###### `vlan_mapping`
+This property is a nested array of [original_vlan, translated_vlan] pairs. Valid values are an array specifying the mapped vlans or keyword 'default'; e.g.:
+
+```
+vlan_mapping => [[20, 21], [30, 31]]
+```
+
+###### `vlan_mapping_enable`
+Allows disablement of vlan_mapping on a given interface. Valid values are 'true', 'false', and 'default'.
+
 ###### `vrf`
 VRF member of the interface.  Valid values are a string or the keyword 'default'.
 
@@ -996,7 +1046,30 @@ Enable/Disable autostate on the SVI interface. Valid values are 'true',
 Enable/Disable management on the SVI interface. Valid values are 'true', 'false', and 'default'.
 
 --
+### Type: cisco_interface_service_vni
 
+Manages a Cisco Network Interface Service VNI.
+
+#### Parameters
+
+##### Basic interface service vni config attributes
+
+###### `ensure`
+Determine whether the interface config should be present or not. Valid values are 'present' and 'absent'.
+
+###### `interface`
+Name of the interface where the service resides. Valid value is a string.
+
+###### `sid`
+The Service ID number. Valid value is an Integer.
+
+###### `encapsulation_profile_vni`
+The VNI Encapsulation Profile Name. Valid values are String or the keyword 'default'
+
+###### `shutdown`
+Shutdown state of the interface service vni. Valid values are 'true', 'false', or 'default'.
+
+--
 ### Type: `network_interface`
 
 Manages a puppet netdev_stdlib Network Interface. Any resource dependency should be run before the interface resource.
@@ -1079,6 +1152,33 @@ Specifies the message_digest password. Valid value is a string.
 *Required*. Ospf area associated with this cisco_interface_ospf instance. Valid values are a string, formatted as an IP address (i.e. "0.0.0.0") or as an integer.
 
 --
+### Type: cisco_interface_portchannel
+Manages configuration of a portchannel interface instance.
+
+#### Parameters
+
+##### `ensure`
+Determine whether the config should be present or not. Valid values are 'present' and 'absent'.
+
+##### `lacp_graceful_convergence`
+port-channel lacp graceful convergence. Valid values are true, false or 'default'.
+
+##### `lacp_max_bundle`
+port-channel max-bundle. Valid values are Integer, keyword 'default'.
+
+##### `lacp_min_links`
+port-channel min-links. Valid values are Integer, keyword 'default'.
+
+##### `lacp_suspend_individual`
+lacp port-channel state. Valid values are true and false or 'default'.
+
+##### `port_hash_distribution`
+port-channel per port hash-distribution. Valid values are 'adaptive', 'fixed' or the keyword 'default'. This property is not supported on (Nexus 5|6k)
+
+##### `port_load_defer`
+port-channel per port load-defer. Valid values are true, false or 'default'. This property is not supported on (Nexus 5|6k)
+
+--
 ### Type: cisco_ospf
 Manages configuration of an ospf instance.
 
@@ -1099,8 +1199,7 @@ Manages a VRF for an OSPF router.
 #### Parameters
 
 ##### `ensure`
-Determines whether the config should be present or not on the device. Valid
-values are 'present' and 'absent'.
+Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
 
 ##### `vrf`
 Name of the resource instance. Valid value is a string. The name 'default' is
@@ -1148,6 +1247,42 @@ Valid values are an integer, in milliseconds, or the keyword 'default'.
 ##### `auto_cost`
 Specifies the reference bandwidth used to assign OSPF cost.
 Valid values are an integer, in Mbps, or the keyword 'default'.
+
+--
+### Type: cisco_portchannel_global
+Manages configuration of a portchannel global parameters
+
+#### Parameters
+
+##### `asymmetric`
+port-channel asymmetric hash. Valid values are true, false or 'default'. This property is supported only on (Nexus 7k)
+
+##### `bundle_hash`
+port-channel bundle hash. Valid values are 'ip', 'ip-l4port', 'ip-l4port-vlan', 'ip-vlan', 'l4port', 'mac', 'port', 'ip-only', 'port-only', 'ip-gre' or 'default'. 'port', 'ip-only', 'port-only', 'ip-gre' are not supported on (Nexus 7k). 'ip-l4port', 'ip-l4port-vlan', 'ip-vlan', 'l4port', 'ip-gre' are not supported on (Nexus 5|6k). 'port', 'ip-only', 'port-only' are not supported on (Nexus 3|9k)
+
+##### `bundle_select`
+port-channel bundle select. Valid values are 'src', 'dst', 'src-dst' or 'default'.
+
+##### `concatenation`
+port-channel concatenation enable or disable. Valid values are true, false or 'default'. This property is supported only on (Nexus 3|9k)
+
+##### `hash_distribution`
+port-channel hash-distribution. Valid values are 'adaptive', 'fixed' or the keyword 'default'. This property is supported only on (Nexus 7k)
+
+##### `hash_poly`
+port-channel hash-polynomial. Valid values are 'CRC10a', 'CRC10b', 'CRC10c', 'CRC10d' or the keyword 'default'. This property is supported only on (Nexus 5|6k)
+
+##### `load_defer`
+port-channel load-defer time interval. Valid values are integer or 'default'. This property is supported only on (Nexus 7k)
+
+##### `resilient`
+port-channel resilient mode. Valid values are true, false or 'default'. This property is supported only on (Nexus 3|9k)
+
+##### `rotate`
+port-channel hash input offset. Valid values are integer or 'default'. This property is not supported on (Nexus 5|6k)
+
+##### `symmetry`
+port-channel symmetry hash. Valid values are true, false or 'default'. This property is supported only on (Nexus 3|9k)
 
 --
 ### Type: cisco_snmp_community
@@ -1326,6 +1461,23 @@ Specifies a preshared key for the host. Valid values are 'clear', 'encrypted',
 "Specifies the preshared key password for the host. Valid value is a string.
 
 --
+### Type: cisco_vdc
+
+Manages a Cisco VDC (Virtual Device Context).
+
+#### Parameters
+
+##### `name`
+Name of the VDC. Valid value is a String or optional keyword 'default' when referencing the default VDC.
+*The current implementation restricts changes to the default VDC*.
+
+##### `ensure`
+Determines whether the config should be present or not. Valid values are 'present' and 'absent'.
+
+##### `limit_resource_module_type`
+This command restricts the allowed module-types in a given VDC. Valid values are String or keyword 'default'.
+
+--
 ### Type: cisco_vlan
 
 Manages a Cisco VLAN.
@@ -1336,8 +1488,7 @@ Manages a Cisco VLAN.
 ID of the Virtual LAN. Valid value is an integer.
 
 ##### `ensure`
-Determined wether the config should be present or not. Valid values are
-'present' and 'absent'.
+Determines whether the config should be present or not. Valid values are 'present' and 'absent'.
 
 ##### `vlan_name`
 The name of the VLAN. Valid values are a string or the keyword 'default'.
@@ -1674,6 +1825,40 @@ Manages an SNMP notification on a Cisco SNMP server.
 Determine whether the trap should be on or off. Valid
 values are true and false.
 
+### Type: snmp_notification_receiver
+
+Manages an SNMP user on an cisco SNMP server.
+
+#### Parameters
+
+##### `ensure`
+Determines whether the config should be present or not on the device. Valid
+values are 'present', and 'absent'.
+
+##### `name`
+IP address of the SNMP user. Valid value is a string.
+
+##### `port`
+SNMP UDP port number
+
+##### `username`
+Username to use for SNMPv3 privacy and authentication.  This is the community string for SNMPv1 and v2.
+
+##### `version`
+SNMP version [v1|v2|v3]
+
+##### `type`
+The type of receiver [traps|informs].
+
+##### `security`
+SNMPv3 security mode [auto|noauth|priv].
+
+##### `vrf`
+Interface to send SNMP data from, e.g. "management"
+
+##### `source_interface`
+Source interface to send SNMP data from, e.g. "ethernet 2/1".
+
 ### Type: snmp_user
 
 Manages an SNMP user on an cisco SNMP server.
@@ -1827,7 +2012,7 @@ Minimum Requirements:
 ## License
 
 ~~~text
-Copyright (c) 2014-2015 Cisco and/or its affiliates.
+Copyright (c) 2014-2016 Cisco and/or its affiliates.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2014-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@
 
 # Define various CONSTANTS used by beaker tests
 PUPPET_BINPATH = '/opt/puppetlabs/bin/puppet '
+FACTER_BINPATH = '/opt/puppetlabs/bin/facter '
 PUPPETMASTER_MANIFESTPATH = '/etc/puppetlabs/code/environments/production/manifests/site.pp'
 
 # These methods are defined outside of a module so that
@@ -124,6 +125,14 @@ rescue Beaker::DSL::Outcomes::PassTest
   logger.success("TestCase :: #{message} :: PASS")
 rescue Beaker::DSL::Outcomes::FailTest
   logger.error("TestCase :: #{message} :: FAIL")
+end
+
+# Raise a Beaker::DSL::Outcomes::SkipTest exception.
+# @param message [String] String object to represent testcase.
+# @param testcase [TestCase] An instance of Beaker::TestCase.
+# @result none [None] Returns no object.
+def raise_skip_exception(message, testcase)
+  testcase.skip_test("\nTestCase :: #{message} :: SKIP")
 end
 
 # Full command string for puppet agent
@@ -312,7 +321,18 @@ def node_feature_cleanup(agent, feature, stepinfo='feature cleanup',
   end
 end
 
-# Helper to remove all IP address configs from interfaces
+# Helper to nuke a single interface. This is needed to remove all
+# configurations from the interface.
+def interface_cleanup(agent, intf, stepinfo='Pre Clean:')
+  logger.debug("#{stepinfo} Interface cleanup #{intf}")
+
+  # exit codes: 0 = no changes, 2 = changes have occurred
+  clean = "conf t ; default interface #{intf}"
+  on(agent, get_vshell_cmd(clean), acceptable_exit_codes: [0, 2])
+end
+
+# Helper to remove all IP address configs from all interfaces. This is
+# needed to avoid IP conflicts with our test interface.
 def interface_ip_cleanup(agent, stepinfo='Pre Clean:')
   logger.debug("#{stepinfo} Interface IP cleanup")
   show_cmd = get_vshell_cmd('show ip interface brief')
@@ -362,4 +382,189 @@ def bgp_title_pattern_munge(tests, id, provider=nil)
   t.merge!(tests[id][:af])
   t[:vrf] = 'default' if t[:vrf].nil?
   t
+end
+
+# setup_mt_full_env
+# Check and set up prerequisites for Multi-Tenancy Full (MT-full) testing.
+# MT-full currently requires an F3 line module. This method will update
+# the tests hash with the names of the default vdc and also an appropriate
+# test interface name to use for testing.
+# tests[:vdc] The default vdc name
+# tests[:intf] A compatible interface to use for MT-full testing.
+# rubocop:disable Metrics/MethodLength,Metrics/AbcSize
+def setup_mt_full_env(tests, testcase)
+  # MT-full tests require a specific linecard. Search for a compatible
+  # module and enable it.
+
+  testheader = tests[:testheader] ? tests[:testheader] : 'setup_mt_full_env'
+  mod = 'f3'
+  step 'Check for Compatible Line Module' do
+    tests[:intf] = mt_full_interface
+    break if tests[:intf]
+    prereq_skip(testheader, testcase,
+                "MT-full tests require #{mod} or compatible line module")
+  end if tests[:intf].nil?
+  intf = tests[:intf]
+  logger.info("Test interface name is '#{intf}'")
+
+  step 'Get default VDC name' do
+    tests[:vdc] = default_vdc_name
+    break if tests[:vdc]
+    prereq_skip(testheader, testcase, 'Unable to determine default vdc name')
+  end if tests[:vdc].nil?
+  vdc = tests[:vdc]
+
+  step "Check for 'limit-resource module-type #{mod}'" do
+    break if limit_resource_module_type_get(vdc, mod)
+    logger.info("limit-resource module-type does not include '#{mod}', "\
+                'update it now...')
+    limit_resource_module_type_set(vdc, mod)
+    break if limit_resource_module_type_get(vdc, mod)
+    prereq_skip(testheader, testcase,
+                "Unable to set limit-resource module-type to '#{mod}'")
+  end
+
+  step "Verify that '#{intf}' is allocated to VDC" do
+    break if vdc_allocate_interface_get(vdc, intf)
+    logger.info("'#{intf}' is not allocated to VDC, allocate it now...")
+    vdc_allocate_interface_set(vdc, intf)
+    break if vdc_allocate_interface_get(vdc, intf)
+    prereq_skip(testheader, testcase,
+                "Unable to allocate interface '#{intf}' to VDC")
+  end
+
+  interface_cleanup(tests[:agent], intf)
+
+  step "Add switchport config to #{intf}" do
+    cmd = get_vshell_cmd("conf t ; int #{intf} ; #{tests[:config_switchport]}")
+    on(agent, cmd, pty: true)
+  end if tests[:config_switchport]
+
+  step 'Add bridge-domain global config' do
+    cmd = get_vshell_cmd("conf t ; #{tests[:config_bridge_domain]}")
+    on(agent, cmd, pty: true)
+  end if tests[:config_bridge_domain]
+
+  step 'Add encap profile global config' do
+    cmd = get_vshell_cmd("conf t ; #{tests[:config_encap_prof_global]}")
+    on(agent, cmd, pty: true)
+  end if tests[:config_encap_prof_global]
+end
+# rubocop:enable Metrics/MethodLength,Metrics/AbcSize
+
+# Helper to raise skip when prereqs are not met
+def prereq_skip(testheader, testcase, message)
+  logger.error("** PLATFORM PREREQUISITE NOT MET: #{message}")
+  raise_skip_exception(testheader, testcase)
+end
+
+# Return an interface name from the first MT-full compatible line module found
+def mt_full_interface
+  # Search for F3 card on device, create an interface name if found
+  cmd = get_vshell_cmd('sh mod')
+  out = on(agent, cmd, pty: true).stdout[/^(\d+)\s.*N7K-F3/]
+  slot = out.nil? ? nil : Regexp.last_match[1]
+  "ethernet#{slot}/1" unless slot.nil?
+end
+
+# Return the default vdc name
+def default_vdc_name
+  cmd = get_vshell_cmd('sh run vdc')
+  out = on(agent, cmd, pty: true).stdout[/^vdc (\S+) id 1$/]
+  out.nil? ? nil : Regexp.last_match[1]
+end
+
+# Check for presence of limit-resource module-type
+def limit_resource_module_type_get(vdc, mod)
+  cmd = get_vshell_cmd("sh vdc #{vdc} detail")
+  pat = Regexp.new("vdc supported linecards:.*(#{mod})")
+  out = on(agent, cmd, pty: true).stdout.match(pat)
+  out.nil? ? nil : Regexp.last_match[1]
+end
+
+# Set limit-resource module-type
+def limit_resource_module_type_set(vdc, mod, default=false)
+  # Turn off prompting
+  cmd = get_vshell_cmd('terminal dont-ask persist')
+  on(agent, cmd, pty: true)
+
+  if default
+    cmd = get_vshell_cmd("conf t ; vdc #{vdc} ; "\
+                         'no limit-resource module-type')
+  else
+    cmd = get_vshell_cmd("conf t ; vdc #{vdc} ; "\
+                         "limit-resource module-type #{mod}")
+  end
+  on(agent, cmd, pty: true)
+
+  # Reset dont-ask to default setting
+  cmd = get_vshell_cmd('no terminal dont-ask persist')
+  on(agent, cmd, pty: true)
+end
+
+# Check for presence of interface in vdc allocated interfaces
+def vdc_allocate_interface_get(vdc, intf)
+  intf_pat = "(#{intf}) " # note trailing space
+  cmd = get_vshell_cmd("sh vdc #{vdc} membership")
+  out = on(agent, cmd, pty: true).stdout.match(
+    Regexp.new(intf_pat, Regexp::IGNORECASE))
+  out.nil? ? nil : Regexp.last_match[1]
+end
+
+# Add interface to vdc's allocated interfaces
+def vdc_allocate_interface_set(vdc, intf)
+  # Turn off prompting
+  cmd = get_vshell_cmd('terminal dont-ask persist')
+  on(agent, cmd, pty: true)
+
+  cmd = get_vshell_cmd("conf t ; vdc #{vdc} ; "\
+                       "allocate interface #{intf}")
+  on(agent, cmd, pty: true)
+
+  # Reset prompting to default state
+  cmd = get_vshell_cmd('no terminal dont-ask persist')
+  on(agent, cmd, pty: true)
+end
+
+# Facter command builder helper method
+def facter_cmd(cmd)
+  get_namespace_cmd(agent, FACTER_BINPATH + cmd, options)
+end
+
+# Used to cache the operation system information
+@cisco_os = nil
+# Use facter to return cisco operating system information
+def operating_system
+  return @cisco_os unless @cisco_os.nil?
+  @cisco_os = on(agent, facter_cmd('os.name')).stdout.chomp
+end
+
+# Used to cache the cisco hardware type
+@cisco_hardware = nil
+# Use facter to return cisco hardware type
+def platform
+  return @cisco_hardware unless @cisco_hardware.nil?
+  pi = on(agent, facter_cmd('-p cisco.hardware.type')).stdout.chomp
+  # The following kind of string info is returned for Nexus.
+  # - Nexus9000 C9396PX Chassis
+  # - Nexus7000 C7010 (10 Slot) Chassis
+  # - Nexus 6001 Chassis
+  # - NX-OSv Chassis
+  case pi
+  when /Nexus\s?3\d\d\d/
+    @cisco_hardware = 'n3k'
+  when /Nexus\s?5\d\d\d/
+    @cisco_hardware = 'n5k'
+  when /Nexus\s?6\d\d\d/
+    @cisco_hardware = 'n6k'
+  when /Nexus\s?7\d\d\d/
+    @cisco_hardware = 'n7k'
+  when /Nexus\s?9\d\d\d/
+    @cisco_hardware = 'n9k'
+  when /NX-OSv/
+    @cisco_hardware = 'n9k'
+  else
+    fail "Unrecognized platform type: #{pi}\n"
+  end
+  @cisco_hardware
 end

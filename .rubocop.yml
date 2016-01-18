@@ -7,7 +7,7 @@ AllCops:
 
 # Baseline code complexity metrics - we should try and reduce these over time
 Metrics/AbcSize:
-  Max: 41
+  Max: 47
 
 Metrics/CyclomaticComplexity:
   Max: 16
@@ -16,7 +16,7 @@ Metrics/LineLength:
   Max: 167
 
 Metrics/MethodLength:
-  Max: 38
+  Max: 41
 
 Metrics/ModuleLength:
   Enabled: false

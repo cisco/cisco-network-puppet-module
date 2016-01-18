@@ -31,9 +31,11 @@ class ciscopuppet::demo_all {
   include ciscopuppet::demo_command_config
   include ciscopuppet::demo_domain
   include ciscopuppet::demo_interface
+  #include ciscopuppet::demo_interface_service_vni
   include ciscopuppet::demo_ntp
   include ciscopuppet::demo_ospf
   include ciscopuppet::demo_patching
+  include ciscopuppet::demo_portchannel
   include ciscopuppet::demo_radius
   include ciscopuppet::demo_snmp
   include ciscopuppet::demo_syslog

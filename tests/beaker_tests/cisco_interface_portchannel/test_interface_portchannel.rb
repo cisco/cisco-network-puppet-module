@@ -15,12 +15,12 @@
 ###############################################################################
 # TestCase Name:
 # -------------
-# test_acl.rb
+# test-interface_portchannel.rb
 #
 # TestCase Prerequisites:
 # -----------------------
-# This is a Puppet acl resource testcase for Puppet Agent on
-# Nexus devices.
+# This is a Puppet interface_portchannel resource testcase for Puppet Agent
+# on Nexus devices.
 # The test case assumes the following prerequisites are already satisfied:
 #   - Host configuration file contains agent and master information.
 #   - SSH is enabled on the N9K Agent.
@@ -29,7 +29,8 @@
 #
 # TestCase:
 # ---------
-# This ACL resource test verifies default values for all properties.
+# This interface_portchannel resource test verifies default values for all
+# properties.
 #
 # The following exit_codes are validated for Puppet, Vegas shell and
 # Bash shell commands.
@@ -57,7 +58,9 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 # -----------------------------
 # Common settings and variables
 # -----------------------------
-testheader = 'Resource cisco_acl'
+testheader = 'Resource cisco_interface_portchannel'
+
+# Define PUPPETMASTER_MANIFESTPATH.
 
 # The 'tests' hash is used to define all of the test data values and expected
 # results. It is also used to pass optional flags to the test methods when
@@ -70,9 +73,8 @@ testheader = 'Resource cisco_acl'
 # tests[:show_cmd] - the common show command to use for test_show_run
 #
 tests = {
-  master:   master,
-  agent:    agent,
-  show_cmd: 'show run section ip',
+  master: master,
+  agent:  agent,
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -98,85 +100,120 @@ tests = {
 #   Can be used with :af for mixed title/af testing. If mixing, :af values will
 #   be merged with title values and override any duplicates. If omitted,
 #   :title_pattern will be set to 'id'.
-# tests[id][:af] - (Optional) defines the address-family values.
-#   Must use :title_pattern if :af is not specified. Useful for testing mixed
-#   title/af manifests
 #
-tests['default_properties_ipv4'] = {
-  title_pattern:  'ipv4 beaker_1',
+
+tests['default_properties_asym'] = {
+  title_pattern:  'port-channel100',
   manifest_props: "
-    stats_per_entry                  => 'false',
-    fragments                        => 'default',
+    lacp_graceful_convergence     => 'default',
+    lacp_max_bundle               => 'default',
+    lacp_min_links                => 'default',
+    lacp_suspend_individual       => 'default',
+    port_hash_distribution        => 'default',
+    port_load_defer               => 'default',
+  ",
+  code:           [0, 2],
+  resource_props: {
+    'lacp_graceful_convergence' => 'true',
+    'lacp_max_bundle'           => '16',
+    'lacp_min_links'            => '1',
+    'lacp_suspend_individual'   => 'true',
+    'port_hash_distribution'    => 'false',
+    'port_load_defer'           => 'false',
+  },
+}
+
+tests['non_default_properties_asym'] = {
+  title_pattern:  'port-channel100',
+  manifest_props: "
+    lacp_graceful_convergence     => 'false',
+    lacp_max_bundle               => '10',
+    lacp_min_links                => '3',
+    lacp_suspend_individual       => 'false',
+    port_hash_distribution        => 'fixed',
+    port_load_defer               => 'true',
   ",
   resource_props: {
-    'stats_per_entry' => 'false',
-    'fragments'       => '',
+    'lacp_graceful_convergence' => 'false',
+    'lacp_max_bundle'           => '10',
+    'lacp_min_links'            => '3',
+    'lacp_suspend_individual'   => 'false',
+    'port_hash_distribution'    => 'fixed',
+    'port_load_defer'           => 'true',
   },
 }
 
-tests['default_properties_ipv6'] = {
-  title_pattern:  'ipv6 beaker_2',
+tests['default_properties_sym'] = {
+  title_pattern:  'port-channel100',
   manifest_props: "
-    stats_per_entry                  => 'false',
-    fragments                        => 'default',
+    lacp_graceful_convergence     => 'default',
+    lacp_max_bundle               => 'default',
+    lacp_min_links                => 'default',
+    lacp_suspend_individual       => 'default',
+    port_hash_distribution        => 'default',
+    port_load_defer               => 'default',
+  ",
+  code:           [0, 2],
+  resource_props: {
+    'lacp_graceful_convergence' => 'true',
+    'lacp_max_bundle'           => '32',
+    'lacp_min_links'            => '1',
+    'lacp_suspend_individual'   => 'true',
+    'port_hash_distribution'    => 'false',
+    'port_load_defer'           => 'false',
+  },
+}
+
+tests['non_default_properties_sym'] = {
+  title_pattern:  'port-channel100',
+  manifest_props: "
+    lacp_graceful_convergence     => 'false',
+    lacp_max_bundle               => '10',
+    lacp_min_links                => '3',
+    lacp_suspend_individual       => 'false',
+    port_hash_distribution        => 'fixed',
+    port_load_defer               => 'true',
   ",
   resource_props: {
-    'stats_per_entry' => 'false',
-    'fragments'       => '',
+    'lacp_graceful_convergence' => 'false',
+    'lacp_max_bundle'           => '10',
+    'lacp_min_links'            => '3',
+    'lacp_suspend_individual'   => 'false',
+    'port_hash_distribution'    => 'fixed',
+    'port_load_defer'           => 'true',
   },
 }
 
-tests['non_default_properties_ipv4'] = {
-  title_pattern:  'ipv4 beaker_3',
+tests['default_properties_eth'] = {
+  title_pattern:  'port-channel100',
   manifest_props: "
-    stats_per_entry                  => 'true',
-    fragments                        => 'permit-all',
+    lacp_graceful_convergence     => 'default',
+    lacp_max_bundle               => 'default',
+    lacp_min_links                => 'default',
+    lacp_suspend_individual       => 'default',
+  ",
+  code:           [0, 2],
+  resource_props: {
+    'lacp_graceful_convergence' => 'true',
+    'lacp_max_bundle'           => '16',
+    'lacp_min_links'            => '1',
+    'lacp_suspend_individual'   => 'true',
+  },
+}
+
+tests['non_default_properties_eth'] = {
+  title_pattern:  'port-channel100',
+  manifest_props: "
+    lacp_graceful_convergence     => 'false',
+    lacp_max_bundle               => '10',
+    lacp_min_links                => '3',
+    lacp_suspend_individual       => 'false',
   ",
   resource_props: {
-    'stats_per_entry' => 'true',
-    'fragments'       => 'permit-all',
-  },
-}
-
-tests['non_default_properties_ipv6'] = {
-  title_pattern:  'ipv6 beaker_4',
-  manifest_props: "
-    stats_per_entry                  => 'true',
-    fragments                        => 'deny-all',
-  ",
-  resource_props: {
-    'stats_per_entry' => 'true',
-    'fragments'       => 'deny-all',
-  },
-}
-
-tests['title_patterns_afi_only'] = {
-  manifest_props:        "
-    acl_name                         => 'beaker_afi_only',
-    stats_per_entry                  => 'false',
-    fragments                        => 'default',
-  ",
-  manifest_props_absent: "
-    acl_name                         => 'beaker_afi_only',
-  ",
-  resource_props:        {
-    'stats_per_entry' => 'false',
-    'fragments'       => '',
-  },
-}
-
-tests['title_patterns_acl_name_only'] = {
-  manifest_props:        "
-    afi                              => 'ipv4',
-    stats_per_entry                  => 'false',
-    fragments                        => 'default',
-  ",
-  manifest_props_absent: "
-    afi                              => 'ipv4',
-  ",
-  resource_props:        {
-    'stats_per_entry' => 'false',
-    'fragments'       => '',
+    'lacp_graceful_convergence' => 'false',
+    'lacp_max_bundle'           => '10',
+    'lacp_min_links'            => '3',
+    'lacp_suspend_individual'   => 'false',
   },
 }
 
@@ -186,14 +223,14 @@ tests['title_patterns_acl_name_only'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = PUPPET_BINPATH + 'resource cisco_acl'
+  cmd = PUPPET_BINPATH +
+        'resource cisco_interface_portchannel port-channel100'
   get_namespace_cmd(agent, cmd, options)
 end
 
-def build_manifest_acl(tests, id)
+def build_manifest_interface_portchannel(tests, id)
   if tests[id][:ensure] == :absent
     state = 'ensure => absent,'
-    manifest = tests[id][:manifest_props_absent]
     tests[id][:resource] = {}
   else
     state = 'ensure => present,'
@@ -202,11 +239,12 @@ def build_manifest_acl(tests, id)
   end
 
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
-  logger.debug("build_manifest_acl :: title_pattern:\n" +
-               tests[id][:title_pattern])
+  logger.debug(
+    "build_manifest_interface_portchannel :: title_pattern:\n" +
+             tests[id][:title_pattern])
   tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   node 'default' {
-    cisco_acl { '#{tests[id][:title_pattern]}':
+    cisco_interface_portchannel { 'port-channel100':
       #{state}
       #{manifest}
     }
@@ -214,15 +252,18 @@ def build_manifest_acl(tests, id)
 EOF"
 end
 
-def test_harness_acl(tests, id)
+def test_harness_interface_portchannel(tests, id)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:resource_cmd] = puppet_resource_cmd
   tests[id][:desc] += " [ensure => #{tests[id][:ensure]}]"
 
   # Build the manifest for this test
-  build_manifest_acl(tests, id)
+  build_manifest_interface_portchannel(tests, id)
 
-  test_harness_common(tests, id)
+  # test_harness_common(tests, id)
+  test_manifest(tests, id)
+  test_resource(tests, id)
+  test_idempotence(tests, id)
 
   tests[id][:ensure] = nil
 end
@@ -232,75 +273,44 @@ end
 #################################################################
 test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
+  device = platform
+  logger.info("#### This device is of type: #{device} #####")
+  resource_absent_cleanup(agent, 'cisco_interface_portchannel',
+                          'Setup switch for interface_portchannel provider test')
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  # node_feature_cleanup(agent, 'acl')
 
-  # -----------------------------------
-  id = 'default_properties_ipv4'
+  case device
+  when /n7k/
+    id = 'default_properties_asym'
+  when /n5k|n6k/
+    id = 'default_properties_eth'
+  when /n3k|n9k/
+    id = 'default_properties_sym'
+  end
+
   tests[id][:desc] = '1.1 Default Properties'
-  test_harness_acl(tests, id)
+  test_harness_interface_portchannel(tests, id)
 
   tests[id][:desc] = '1.2 Default Properties'
   tests[id][:ensure] = :absent
-  test_harness_acl(tests, id)
-
-  id = 'default_properties_ipv6'
-  tests[id][:desc] = '1.3 Default Properties'
-  test_harness_acl(tests, id)
-
-  tests[id][:desc] = '1.4 Default Properties'
-  tests[id][:ensure] = :absent
-  test_harness_acl(tests, id)
+  test_harness_interface_portchannel(tests, id)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  # node_feature_cleanup(agent, 'acl')
-
-  id = 'non_default_properties_ipv4'
+  case device
+  when /n7k/
+    id = 'non_default_properties_asym'
+  when /n5k|n6k/
+    id = 'non_default_properties_eth'
+  when /n3k|n9k/
+    id = 'non_default_properties_sym'
+  end
   tests[id][:desc] = '2.1 Non Default Properties'
-  test_harness_acl(tests, id)
+  test_harness_interface_portchannel(tests, id)
 
-  tests[id][:desc] = '2.2 Non Default Properties'
+  tests[id][:desc] = '2.2 Non Default Properties (absent)'
   tests[id][:ensure] = :absent
-  test_harness_acl(tests, id)
-
-  id = 'non_default_properties_ipv6'
-  tests[id][:desc] = '2.3 Non Default Properties'
-  test_harness_acl(tests, id)
-
-  tests[id][:desc] = '2.4 Non Default Properties'
-  tests[id][:ensure] = :absent
-  test_harness_acl(tests, id)
-
-  # -------------------------------------------------------------------
-  # logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
-
-  id = 'title_patterns_afi_only'
-  tests[id][:desc] = '3.1 Title Patterns'
-  tests[id][:title_pattern] = 'ipv4'
-  test_harness_acl(tests, id)
-
-  tests[id][:desc] = '3.2 Title Patterns'
-  tests[id][:ensure] = :absent
-  test_harness_acl(tests, id)
-
-  id = 'title_patterns_afi_only'
-  tests[id][:desc] = '3.3 Title Patterns'
-  tests[id][:title_pattern] = 'ipv6'
-  test_harness_acl(tests, id)
-
-  tests[id][:desc] = '3.4 Title Patterns'
-  tests[id][:ensure] = :absent
-  test_harness_acl(tests, id)
-
-  id = 'title_patterns_acl_name_only'
-  tests[id][:desc] = '3.5 Title Patterns'
-  tests[id][:title_pattern] = 'beaker_acl_name_only'
-  test_harness_acl(tests, id)
-
-  tests[id][:desc] = '3.6 Title Patterns'
-  tests[id][:ensure] = :absent
-  test_harness_acl(tests, id)
+  test_harness_interface_portchannel(tests, id)
 end
 
-logger.info('TestCase :: # {testheader} :: End')
+logger.info("TestCase :: #{testheader} :: End")

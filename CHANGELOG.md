@@ -12,6 +12,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `cisco_aaa_group_tacacs` type and provider.
 - `cisco_acl` type and provider
 - `cisco_evpn_vni` type and provider.
+- `cisco_interface_portchannel` type and provider
+- `cisco_interface_service_vni` type and provider
+- `cisco_portchannel_global` type and provider
+- `cisco_vdc` type and provider.
 - `cisco_vni` type and provider.
 - `cisco_vxlan_global` type and provider.
 - `cisco_vxlan_vtep` type and provider.
@@ -23,11 +27,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 - Extended `cisco_bgp` with the following attributes:
+  - `disable_policy_batching`, `disable_policy_batching_ipv4`, `disable_policy_batching_ipv6`
   - `fast_external_fallover`
   - `flush_routes`
   - `isolate`
   - `neighbor_down_fib_accelerate`
   - `route_distinguisher`
+  - `event_history_cli`
+  - `event_history_detail`
+  - `event_history_events`
+  - `event_history_periodic`
 - Extended `cisco_bgp_af` with the following attributes:
   - `default_metric`
   - `distance_ebgp`, `distance_ibgp`, `distance_local`
@@ -39,6 +48,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `suppress_inactive`
 - Extended `cisco_interface` with the following attributes:
   - `channel_group`
+  - `ipv4_pim_sparse_mode`
+  - `vlan_mapping`, `vlan_mapping_enable`
 - Extended `cisco_vrf` with the following attributes:
   - `vni`
   
@@ -63,9 +74,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - ntp_server provider.
 - radius provider.
 - radius global provider.
+- snmp_notification_receiver provider.
+- snmp_user provider.
 - syslog_server provider.
 - syslog_setting provider.
-- snmp_user provider.
 
 ### Added
 - New documentation for developing beaker testcases: README-develop-beaker-scripts.md
