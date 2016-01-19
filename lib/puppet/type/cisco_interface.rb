@@ -342,6 +342,46 @@ Puppet::Type.newtype(:cisco_interface) do
     end
   end # property vrf
 
+  newproperty(:ipv4_acl_in) do
+    desc "<L3 attribute> ipv4 ingress access list on the interface. Valid values
+          are string, keyword 'default'."
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property ipv4_acl_in
+
+  newproperty(:ipv4_acl_out) do
+    desc "<L3 attribute> ipv4 egress access list on the interface. Valid values
+          are string, keyword 'default'."
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property ipv4_acl_out
+
+  newproperty(:ipv6_acl_in) do
+    desc "<L3 attribute> ipv6 ingress access list on the interface. Valid values
+          are string, keyword 'default'."
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property ipv6_acl_in
+
+  newproperty(:ipv6_acl_out) do
+    desc "<L3 attribute> ipv6 egress access list on the interface. Valid values
+          are string, keyword 'default'."
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property ipv6_acl_out
+
   # validate ipv4 address and mask combination
   validate do
     if self[:ipv4_address] != :default &&

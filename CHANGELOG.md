@@ -53,6 +53,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `ipv4_arp_timeout`
   - `ipv4_pim_sparse_mode`
   - `vlan_mapping`, `vlan_mapping_enable`
+  - `ipv4_acl_in`, `ipv4_acl_out`, `ipv6_acl_in`, `ipv6_acl_out`
 - Extended `cisco_vrf` with the following attributes:
   - `vni`
   
