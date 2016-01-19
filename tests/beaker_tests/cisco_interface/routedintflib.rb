@@ -53,20 +53,20 @@ module RoutedIntfLib
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'ethernet1/4':
-      ensure                       => present,
-      description                  => 'default',
-      shutdown                     => false,
-      switchport_mode              => disabled,
-      ipv4_address                 => '192.168.1.1',
-      ipv4_netmask_length          => 16,
-      ipv4_proxy_arp               => 'default',
-      ipv4_redirects               => 'default',
-      mtu                          => 'default',
-      speed                        => 'auto',
-      duplex                       => 'auto',
-      switchport_autostate_exclude => 'default',
-      switchport_vtp               => 'default',
-      vrf                          => 'default',
+      ensure                        => present,
+      description                   => 'default',
+      shutdown                      => false,
+      switchport_mode               => disabled,
+      ipv4_address                  => '192.168.1.1',
+      ipv4_netmask_length           => 16,
+      ipv4_proxy_arp                => 'default',
+      ipv4_redirects                => 'default',
+      mtu                           => 'default',
+      speed                         => 'auto',
+      duplex                        => 'auto',
+      switchport_autostate_exclude  => 'default',
+      switchport_vtp                => 'default',
+      vrf                           => 'default',
   }}
 EOF"
     manifest_str
@@ -148,21 +148,23 @@ EOF"
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_interface { 'ethernet1/4':
-      ensure                       => present,
-      description                  => 'Configured with Puppet',
-      shutdown                     => true,
-      switchport_mode              => disabled,
-      ipv4_address                 => '192.168.1.1',
-      ipv4_netmask_length          => 16,
-      ipv4_pim_sparse_mode         => true,
-      ipv4_proxy_arp               => true,
-      ipv4_redirects               => false,
-      mtu                          => 1556,
-      speed                        => 100,
-      duplex                       => full,
-      switchport_autostate_exclude => false,
-      switchport_vtp               => false,
-      vrf                          => 'test1',
+      ensure                         => present,
+      description                    => 'Configured with Puppet',
+      shutdown                       => true,
+      switchport_mode                => disabled,
+      ipv4_address                   => '192.168.1.1',
+      ipv4_netmask_length            => 16,
+      ipv4_address_secondary         => '10.0.55.55',
+      ipv4_netmask_length_secondary  => 24,
+      ipv4_pim_sparse_mode           => true,
+      ipv4_proxy_arp                 => true,
+      ipv4_redirects                 => false,
+      mtu                            => 1556,
+      speed                          => 100,
+      duplex                         => full,
+      switchport_autostate_exclude   => false,
+      switchport_vtp                 => false,
+      vrf                            => 'test1',
     }}
 EOF"
     manifest_str

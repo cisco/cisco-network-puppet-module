@@ -49,6 +49,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `suppress_inactive`
 - Extended `cisco_interface` with the following attributes:
   - `channel_group`
+  - `ipv4_address_secondary`, `ipv4_netmask_length_secondary`
+  - `ipv4_arp_timeout`
   - `ipv4_pim_sparse_mode`
   - `vlan_mapping`, `vlan_mapping_enable`
 - Extended `cisco_vrf` with the following attributes:
