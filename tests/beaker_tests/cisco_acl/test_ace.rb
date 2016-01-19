@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -96,74 +96,72 @@ tests = {
 #   :title_pattern will be set to 'id'.
 #
 
-tests['remove_ipv4_acl'] = {
-  title_pattern:         'ipv4 beaker_1',
-  manifest_props:        "
-    stats_per_entry                  => 'false',
-    fragments                        => 'default',
+tests['ipv4_seq_10'] = {
+  desc:           '1.1 ipv4 beaker_1 seq 10',
+  title_pattern:  'ipv4 beaker_1 10',
+  manifest_props: "
+    action          => 'permit',
+    proto           => 'tcp',
+    src_addr        => '1.2.3.4 2.3.4.5',
+    src_port        => 'eq 40',
+    dst_addr        => '9.9.0.4/32',
+    dst_port        => 'range 32 56',
   ",
-  manifest_props_absent: "
-    stats_per_entry                  => 'false',
-    fragments                        => 'default',
-  ",
-  resource_props:        {
-    'stats_per_entry' => 'false',
-    'fragments'       => '',
+  resource:       {
+    'action'   => 'permit',
+    'proto'    => 'tcp',
+    'src_addr' => '1.2.3.4 2.3.4.5',
+    'src_port' => 'eq 40',
+    'dst_addr' => '9.9.0.4/32',
+    'dst_port' => 'range 32 56',
   },
 }
 
-tests['create_ipv4_acl'] = {
-  title_pattern:  'ipv4 beaker_1',
+tests['ipv4_seq_20'] = {
+  desc:           '1.2 ipv4 beaker_1 seq 20',
+  title_pattern:  'ipv4 beaker_1 20',
   manifest_props: "
-    stats_per_entry                  => 'false',
-    fragments                        => 'default',
+    action          => 'deny',
+    proto           => 'tcp',
+    src_addr        => 'any',
+    dst_addr        => 'any',
   ",
-  resource_props: {
-    'stats_per_entry' => 'false',
-    'fragments'       => '',
+  resource:       {
+    'action'   => 'deny',
+    'proto'    => 'tcp',
+    'src_addr' => 'any',
+    'dst_addr' => 'any',
   },
 }
 
-tests['create_ipv4_seq_10'] = {
-  title_pattern:  'ipv4 beaker_1 10',
+tests['ipv6_seq_10'] = {
+  desc:           '2.1 ipv6 beaker_6 seq 10',
+  title_pattern:  'ipv6 beaker_6 10',
   manifest_props: "
-    'action'        => 'permit',
-    'proto'         => 'tcp',
-    'src_addr'      => '1.2.3.4 2.3.4.5',
-    'src_port'      => 'eq 40',
-    'dst_addr'      => '9.9.0.4/32',
-    'dst_port'      => 'range 32 56',
+    action          => 'deny',
+    proto           => 'tcp',
+    src_addr        => 'any',
+    dst_addr        => 'any',
   ",
-  resource_props: "
-    'action'        => 'permit',
-    'proto'         => 'tcp',
-    'src_addr'      => '1.2.3.4 2.3.4.5',
-    'src_port'      => 'eq 40',
-    'dst_addr'      => '9.9.0.4/32',
-    'dst_port'      => 'range 32 56',
-  ",
+  resource:       {
+    'action'   => 'deny',
+    'proto'    => 'tcp',
+    'src_addr' => 'any',
+    'dst_addr' => 'any',
+  },
 }
 
-tests['destroy_ipv4_seq_10'] = {
-  title_pattern:  'ipv4 beaker_1 10',
+tests['ipv6_seq_20'] = {
+  desc:           '2.2 ipv6 beaker_6 seq 20',
+  title_pattern:  'ipv6 beaker_6 20',
   manifest_props: "
-    'ensure'        => :absent
-    'action'        => 'permit',
-    'proto'         => 'tcp',
-    'src_addr'      => '1.2.3.4 2.3.4.5',
-    'src_port'      => 'eq 40',
-    'dst_addr'      => '9.9.0.4/32',
-    'dst_port'      => 'range 32 56',
+    remark          => 'test remark',
   ",
-  resource_props: "
-    'action'        => 'permit',
-    'proto'         => 'tcp',
-    'src_addr'      => '1.2.3.4 2.3.4.5',
-    'src_port'      => 'eq 40',
-    'dst_addr'      => '9.9.0.4/32',
-    'dst_port'      => 'range 32 56',
-  ",
+  resource:       {
+    'remark' => 'test remark'
+  },
 }
+
 #################################################################
 # HELPER FUNCTIONS
 #################################################################
@@ -182,7 +180,6 @@ def build_manifest_ace(tests, id)
   else
     state = 'ensure => present,'
     manifest = tests[id][:manifest_props]
-    tests[id][:resource] = tests[id][:resource_props]
   end
 
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
@@ -191,30 +188,6 @@ def build_manifest_ace(tests, id)
   tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   node 'default' {
     cisco_ace { '#{tests[id][:title_pattern]}':
-      #{state}
-      #{manifest}
-    }
-  }
-EOF"
-end
-
-def build_manifest_acl(tests, id)
-  if tests[id][:ensure] == :absent
-    state = 'ensure => absent,'
-    manifest = tests[id][:manifest_props_absent]
-    tests[id][:resource] = {}
-  else
-    state = 'ensure => present,'
-    manifest = tests[id][:manifest_props]
-    tests[id][:resource] = tests[id][:resource_props]
-  end
-
-  tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
-  logger.debug("build_manifest_ace :: title_pattern:\n" +
-               tests[id][:title_pattern])
-  tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
-  node 'default' {
-    cisco_acl { '#{tests[id][:title_pattern]}':
       #{state}
       #{manifest}
     }
@@ -235,49 +208,33 @@ def test_harness_ace(tests, id)
   tests[id][:ensure] = nil
 end
 
-def test_harness_acl(tests, id)
-  tests[id][:ensure] = :present if tests[id][:ensure].nil?
-  tests[id][:resource_cmd] = puppet_resource_cmd
-  tests[id][:desc] = " #{tests[id][:desc]}"
-
-  # Build the manifest for this test
-  build_manifest_acl(tests, id)
-
-  test_harness_common(tests, id)
-  # add case
-  tests[id][:ensure] = nil
-end
-
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
-  # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 1. remove_ipv4_acl")
-  # -- clean up acl --
-  id = 'remove_ipv4_acl'
-  tests[id][:ensure] = :absent
-  tests[id][:desc] = '1.0 remove ipv4 beaker_1'
-  test_harness_acl(tests, id)
-  # ------------create ipv4 foo-1 acl ------------------------
-  logger.info("\n#{'-' * 60}\nSection 1.1 create_ipv4_acl")
-  id = 'create_ipv4_acl'
-  tests[id][:ensure] = nil
-  tests[id][:desc] = '1.1 create ipv4 beaker_1'
-  test_harness_acl(tests, id)
+  logger.info("\n#{'-' * 60}\nSection 0. Clean testbed")
+  resource_absent_cleanup(agent, 'cisco_acl', 'ACL CLEANUP :: ')
 
-  # ------------create ipv4 foo-1 sequence number 10--------
-  logger.info("\n#{'-' * 60}\nSection 1.2 create_ipv4_seq_10")
-  id = 'create_ipv4_seq_10'
-  tests[id][:desc] = '1.2 create ipv4 beaker_1 seq 10'
+  # ---------------------------------------------------------
+  logger.info("\n#{'-' * 60}\nSection 1. IPv4 ACE")
+  test_harness_ace(tests, 'ipv4_seq_10')
+
+  id = 'ipv4_seq_20'
+  test_harness_ace(tests, id)
+  tests[id][:ensure] = :absent
   test_harness_ace(tests, id)
 
-  # ------------destroy ipv4 foo-1 sequence number 10--------
-  logger.info("\n#{'-' * 60}\nSection 1.2 destroy_ipv4_seq_10")
-  id = 'destroy_ipv4_seq_10'
-  tests[id][:ensure] = :absent
-  tests[id][:desc] = '1.3 destroy ipv4 beaker_1 seq 10'
+  # ---------------------------------------------------------
+  logger.info("\n#{'-' * 60}\nSection 2. IPv6 ACE")
+  # ---------------------------------------------------------
+  test_harness_ace(tests, 'ipv6_seq_10')
+
+  id = 'ipv6_seq_20'
   test_harness_ace(tests, id)
+  tests[id][:ensure] = :absent
+  test_harness_ace(tests, id)
+  # ---------------------------------------------------------
+  resource_absent_cleanup(agent, 'cisco_acl', 'ACL CLEANUP :: ')
 end
 
 logger.info('TestCase :: # {testheader} :: End')

@@ -1,7 +1,7 @@
 #
-# Puppet resource type for acl
+# Puppet resource type for cisco_acl
 #
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

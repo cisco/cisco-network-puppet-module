@@ -1,8 +1,8 @@
-# Manages ACE configuration.
+# Manages configuration for cisco_ace
 #
-# July 2015
+# January 2016
 #
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -39,13 +39,16 @@ Puppet::Type.newtype(:cisco_ace) do
   Example:
 
   ~~~puppet
-    cisco_ace { 'ipv4 acl-foo-1 10':
-      action                                => permit,
-      proto                                 => tcp,
-      src_addr                              => 1.2.3.4 2.3.4.5,
-      src_port                              => eq 40,
-      dst_addr                              => 8.9.0.4/32,
-      dst_port                              => range 32 56,
+    cisco_ace { 'ipv4 my_ipv4_acl 10':
+      action                                => 'permit',
+      proto                                 => 'tcp',
+      src_addr                              => '1.2.3.4 2.3.4.5',
+      src_port                              => 'eq 40',
+      dst_addr                              => '8.9.0.4/32',
+      dst_port                              => 'range 32 56',
+    }
+    cisco_ace { 'ipv6 my_ipv6_acl 30':
+      remark                                => 'remark description',
     }
   ~~~
   "
@@ -87,16 +90,16 @@ Puppet::Type.newtype(:cisco_ace) do
   end
 
   newparam(:afi, namevar: true) do
-    desc 'The Address-Family Indentifier (ipv4|ipv6).'
+    desc 'The Address-Family Identifier (ipv4|ipv6).'
     newvalues(:ipv4, :ipv6)
   end
 
   newparam(:acl_name, namevar: true) do
-    desc 'acl_name '
+    desc 'Access Control List name'
   end
 
   newparam(:seqno, namevar: true) do
-    desc 'sequance number of ace'
+    desc 'Sequence number of the ACE'
   end
 
   ##############
@@ -121,26 +124,17 @@ Puppet::Type.newtype(:cisco_ace) do
       fail 'proto must be type String or Integer e.g tcp or 6' unless
         /\S+|\d+/.match(proto)
     end
-
-    munge do |protocol|
-      protocol
-    end
   end
 
   newproperty(:src_addr) do
     desc 'Source address to match against. Valid values are an IP'\
          ' address/prefix_len (10.0.0.0/8), '\
-         'an address group (addrgroup foo), or the keyword any'
+         'an address group (addrgroup my_group), or the keyword any'
 
     validate do |src_addr|
       fail 'src_addr must be ip address/prefix_len (10.0.0.0/8), '\
-      "address group (addrgroup foo), or keyword 'any'" unless
-      %r{/any|host \S+|\S+\/\d+|\S+ [:\.0-9a-fA-F]+|addrgroup \S+/}
-      .match(src_addr)
-    end
-
-    munge do |src_addr|
-      src_addr
+           "address group (addrgroup foo), or keyword 'any'" unless
+        %r{any|host \S+|\S+\/\d+|\S+ [:\.0-9a-fA-F]+|addrgroup \S+}.match(src_addr)
     end
   end
 
@@ -150,13 +144,8 @@ Puppet::Type.newtype(:cisco_ace) do
 
     validate do |src_port|
       fail 'src port should be eq , neq, lt, gt or '\
-        "range or portgroup object. src_port: #{src_port} " unless
-        %r{/eq \S+|neq \S+|lt \S+|gt \S+|range \S+ \S+|portgroup \S+/}
-        .match(src_port)
-    end
-
-    munge do |src_port|
-      src_port
+           "range or portgroup object. src_port: #{src_port} " unless
+        /eq \S+|neq \S+|lt \S+|gt \S+|range \S+ \S+|portgroup \S+/.match(src_port)
     end
   end
 
@@ -167,13 +156,8 @@ Puppet::Type.newtype(:cisco_ace) do
 
     validate do |dst_addr|
       fail 'src_addr must be ip address/prefix_len (10.0.0.0/8), '\
-      "address group (addrgroup foo), or keyword 'any'" unless
-      %r{any|host \S+|\S+\/\d+|\S+ [:\.0-9a-fA-F]+|addrgroup \S+}
-      .match(dst_addr)
-    end
-
-    munge do |dst_addr|
-      dst_addr
+           "address group (addrgroup foo), or keyword 'any'" unless
+        %r{any|host \S+|\S+\/\d+|\S+ [:\.0-9a-fA-F]+|addrgroup \S+}.match(dst_addr)
     end
   end
 
@@ -183,13 +167,12 @@ Puppet::Type.newtype(:cisco_ace) do
 
     validate do |dst_port|
       fail 'src port should be eq, neq, lt, gt or '\
-      "range or portgroup object dst_port: #{dst_port}" unless
-      %r{/eq \S+|neq \S+|lt \S+|gt \S+|range \S+ \S+|portgroup \S+/}
-      .match(dst_port)
+           "range or portgroup object dst_port: #{dst_port}" unless
+        /eq \S+|neq \S+|lt \S+|gt \S+|range \S+ \S+|portgroup \S+/.match(dst_port)
     end
+  end
 
-    munge do |dst_port|
-      dst_port
-    end
+  newproperty(:remark) do
+    desc 'A remark description for the ACL or ACE. Valid values are string'
   end
 end

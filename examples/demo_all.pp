@@ -27,6 +27,7 @@ class ciscopuppet::demo_all {
   # }
 
   include ciscopuppet::demo_aaa
+  include ciscopuppet::demo_acl
   include ciscopuppet::demo_bgp
   include ciscopuppet::demo_command_config
   include ciscopuppet::demo_domain
