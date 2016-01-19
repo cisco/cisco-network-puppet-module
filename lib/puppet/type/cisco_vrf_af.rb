@@ -115,13 +115,13 @@ Puppet::Type.newtype(:cisco_vrf_af) do
   end
 
   newparam(:afi, namevar: true) do
-    desc 'VRF Address-family AFI (ipv4|ipv6). Valid values are string.'
+    desc "VRF Address-family AFI. Valid values are 'ipv4 or 'ipv6'."
     newvalues(:ipv4, :ipv6)
   end
 
   newparam(:safi, namevar: true) do
-    desc 'VRF Address-family SAFI (unicast|multicast). Valid values are string.'\
-         "'multicast' is not supported on some platforms."
+    desc "VRF Address-family SAFI. Valid values are 'unicast' or 'multicast'."\
+         "Note: 'multicast' is not supported on some platforms."
     newvalues(:unicast, :multicast)
   end
 

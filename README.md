@@ -455,13 +455,16 @@ BGP autonomous system number.  Valid values are String, Integer in ASPLAIN or AS
 ##### `vrf`
 Name of the resource instance. Valid values are string. The name 'default' is a valid VRF representing the global bgp.
 
+<a name='bgp_rd'></a>
 ##### `route_distinguisher`
 VPN Route Distinguisher (RD). The RD is combined with the IPv4 or IPv6 prefix learned by the PE router to create a globally unique address. Valid values are a String in one of the route-distinguisher formats (ASN2:NN, ASN4:NN, or IPV4:NN); the keyword 'auto', or the keyword 'default'.
 
 *Please note:* The `route_distinguisher` property is typically configured within the VRF context configuration on most platforms (including NXOS) but it is tightly coupled to bgp and therefore configured within the BGP configuration on some platforms (XR for example). For this reason the `route_distinguisher` property has support (with limitations) in both `cisco_vrf` and `cisco_bgp` providers:
 
-* `cisco_bgp`: The property is fully supported on both NXOS and XR
-* `cisco_vrf`: The property is only supported on NXOS.
+* `cisco_bgp`: The property is fully supported on both NXOS and XR.
+* `cisco_vrf`: The property is only supported on NXOS. See: [cisco_vrf: route_distinguisher](#vrf_rd)
+
+*IMPORTANT: Choose only one provider to configure the `route_distinguisher` property on a given device. Using both providers simultaneously on the same device may have unpredictable results.*
 
 ##### `router_id`
 Router Identifier (ID) of the BGP router VRF instance. Valid values are string, and keyword 'default'.
@@ -1501,13 +1504,16 @@ not case-sensitive and overrides the title of the type.
 ##### `description`
 Description of the VRF. Valid value is string.
 
+<a name='vrf_rd'></a>
 ##### `route_distinguisher`
 VPN Route Distinguisher (RD). The RD is combined with the IPv4 or IPv6 prefix learned by the PE router to create a globally unique address. Valid values are a String in one of the route-distinguisher formats (ASN2:NN, ASN4:NN, or IPV4:NN); the keyword 'auto', or the keyword 'default'.
 
 *Please note:* The `route_distinguisher` property is typically configured within the VRF context configuration on most platforms (including NXOS) but it is tightly coupled to bgp and therefore configured within the BGP configuration on some platforms (XR for example). For this reason the `route_distinguisher` property has support (with limitations) in both `cisco_vrf` and `cisco_bgp` providers:
 
-* `cisco_bgp`: The property is fully supported on both NXOS and XR
+* `cisco_bgp`: The property is fully supported on both NXOS and XR. See: [cisco_bgp: route_distinguisher](#bgp_rd)
 * `cisco_vrf`: The property is only supported on NXOS.
+
+*IMPORTANT: Choose only one provider to configure the `route_distinguisher` property on a given device. Using both providers simultaneously on the same device may have unpredictable results.*
 
 ##### `shutdown`
 Shutdown state of the VRF. Valid values are 'true' and 'false'.
