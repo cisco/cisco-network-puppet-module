@@ -48,6 +48,9 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     :encapsulation_dot1q,
     :ipv4_address,
     :ipv4_netmask_length,
+    :ipv4_address_secondary,
+    :ipv4_netmask_length_secondary,
+    :ipv4_arp_timeout,
     :mtu,
     :speed,
     :duplex,
@@ -156,24 +159,44 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     ipv4_addr_mask_set
   end
 
-  def ipv4_addr_mask_set
-    # Combo property: ipv4 address/mask
-    return unless @property_flush[:ipv4_address] ||
-                  @property_flush[:ipv4_netmask_length] ||
-                  @resource[:ipv4_address] == :default
+  def ipv4_addr_mask_configure(secondary=false)
+    if secondary
+      v4_addr_prop = :ipv4_address_secondary
+      v4_mask_prop = :ipv4_netmask_length_secondary
+    else
+      v4_addr_prop = :ipv4_address
+      v4_mask_prop = :ipv4_netmask_length
+    end
 
-    if @resource[:ipv4_address] == :default
+    # Combo property: ipv4 address/mask
+    return unless @property_flush[v4_addr_prop] ||
+                  @property_flush[v4_mask_prop] ||
+                  @resource[v4_addr_prop] == :default
+
+    if @resource[v4_addr_prop] == :default
       addr = @interface.default_ipv4_address
     else
-      addr = @resource[:ipv4_address]
+      addr = @resource[v4_addr_prop]
     end
 
-    if @resource[:ipv4_netmask_length] == :default
+    if @resource[v4_mask_prop] == :default
       mask = @interface.default_ipv4_netmask_length
     else
-      mask = @resource[:ipv4_netmask_length]
+      mask = @resource[v4_mask_prop]
     end
-    @interface.ipv4_addr_mask_set(addr, mask)
+    @interface.ipv4_addr_mask_set(addr, mask, secondary)
+  end
+
+  def ipv4_addr_mask_set
+    # Primary addr/mask must be configured before secondary addr/mask.
+    # Secondary addr/mask must be removed before primary addr/mask.
+    if @resource[:ipv4_address] == :default
+      ipv4_addr_mask_configure(true)
+      ipv4_addr_mask_configure
+    else
+      ipv4_addr_mask_configure
+      ipv4_addr_mask_configure(true)
+    end
   end
 
   def vlan_mapping
@@ -199,7 +222,8 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     # flush other L3 properties because vrf will wipe them out
     l3_props = [
       :ipv4_proxy_arp, :ipv4_redirects,
-      :ipv4_address, :ipv4_netmask_length
+      :ipv4_address, :ipv4_netmask_length,
+      :ipv4_address_secondary, :ipv4_netmask_length_secondary
     ]
     l3_props.each do |prop|
       if @property_flush[prop].nil?

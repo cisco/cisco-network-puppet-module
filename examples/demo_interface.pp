@@ -16,20 +16,22 @@
 
 class ciscopuppet::demo_interface {
   cisco_interface { 'Ethernet1/1' :
-    shutdown               => true,
-    switchport_mode        => disabled,
-    description            => 'managed by puppet',
-    ipv4_address           => '192.168.55.55',
-    ipv4_netmask_length    => 24,
-    ipv4_pim_sparse_mode   => 24,
-    mtu                    => 1600,
-    speed                  => 100,
-    duplex                 => 'full',
-    vrf                    => 'test',
-    ipv4_acl_in            => 'v4acl1',
-    ipv4_acl_out           => 'v4acl2',
-    ipv6_acl_in            => 'v6acl1',
-    ipv6_acl_out           => 'v6acl2',
+    shutdown                       => true,
+    switchport_mode                => disabled,
+    description                    => 'managed by puppet',
+    ipv4_address                   => '192.168.55.5',
+    ipv4_netmask_length            => 24,
+    ipv4_address_secondary         => '192.168.88.1',
+    ipv4_netmask_length_secondary  => 24,
+    ipv4_pim_sparse_mode           => false,
+    mtu                            => 1600,
+    speed                          => 100,
+    duplex                         => 'full',
+    vrf                            => 'test',
+    ipv4_acl_in                    => 'v4acl1',
+    ipv4_acl_out                   => 'v4acl2',
+    ipv6_acl_in                    => 'v6acl1',
+    ipv6_acl_out                   => 'v6acl2',
   }
 
   cisco_interface { 'Ethernet1/1.1':
@@ -51,8 +53,9 @@ class ciscopuppet::demo_interface {
   }
 
   cisco_interface { 'Vlan22':
-    svi_autostate  => false,
-    svi_management => true,
+    svi_autostate    => false,
+    svi_management   => true,
+    ipv4_arp_timeout => 300,
   }
 
   network_interface { 'ethernet1/9':

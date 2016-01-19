@@ -1025,6 +1025,15 @@ keyword 'default'.
 Network mask length of the IP address on the interface. Valid values are
 integer and keyword 'default'.
 
+###### `ipv4_address_secondary`
+Secondary IP address of the interface. Valid values are a string of ipv4 address or the keyword 'default'.
+
+###### `ipv4_netmask_length_secondary`
+Network mask length of the secondary IP address on the interface. Valid values are integer and keyword 'default'.
+
+###### `ipv4_arp_timeout`
+Address Resolution Protocol (ARP) timeout value. Valid values are integer and keyword 'default'. Currently only supported on vlan interfaces.
+
 ###### `vlan_mapping`
 This property is a nested array of [original_vlan, translated_vlan] pairs. Valid values are an array specifying the mapped vlans or keyword 'default'; e.g.:
 
