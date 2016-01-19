@@ -46,6 +46,15 @@ Puppet::Type.newtype(:cisco_interface) do
      ipv4_pim_sparse_mode         => true,
      negotiate_auto               => true,
     }
+    cisco_interface { \"Ethernet1/17\" :
+     stp_bpdufilter               => 'enable',
+     stp_bpduguard                => 'enable',
+     stp_cost                     => 2000,
+     stp_guard                    => 'loop',
+     stp_link_type                => 'shared',
+     stp_port_priority            => 32,
+     stp_port_type                => 'network',
+    }
     cisco_interface { \"Ethernet9/1\" :
      switchport_mode              => 'trunk',
      vlan_mapping_enable          => 'false',
@@ -353,6 +362,71 @@ Puppet::Type.newtype(:cisco_interface) do
 
     newvalues(:true, :false, :default)
   end # property vlan_mapping_enable
+
+  ############################
+  # spanning-tree attributes #
+  ############################
+
+  newproperty(:stp_bpdufilter) do
+    desc 'Enable/Disable BPDU filtering for this interface.'
+
+    newvalues(:enable, :disable, :default)
+  end # property stp_bpdufilter
+
+  newproperty(:stp_bpduguard) do
+    desc 'Enable/Disable BPDU guard for this interface.'
+
+    newvalues(:enable, :disable, :default)
+  end # property stp_bpduguard
+
+  newproperty(:stp_cost) do
+    desc "Spanning tree port path cost for this interface. Valid values are
+          integer, keyword 'auto' or 'default'."
+
+    munge do |value|
+      value = :default if value == 'default'
+      value = :auto if value == 'auto'
+      begin
+        value = Integer(value) unless value == :default || value == :auto
+      rescue
+        raise 'stp_cost must be a valid integer, or auto or default.'
+      end
+      value
+    end
+  end # property stp_cost
+
+  newproperty(:stp_guard) do
+    desc 'Spanning-tree guard mode for this interface.'
+
+    newvalues(:loop, :none, :root, :default)
+  end # property stp_guard
+
+  newproperty(:stp_link_type) do
+    desc 'Link type for spanning tree tree protocol use.'
+
+    newvalues(:auto, :shared, :'point-to-point', :default)
+  end # property stp_link_type
+
+  newproperty(:stp_port_priority) do
+    desc "Spanning tree port priority for this interface. Valid values are
+          integer, keyword 'default'."
+
+    munge do |value|
+      value = :default if value == 'default'
+      begin
+        value = Integer(value) unless value == :default
+      rescue
+        raise 'stp_port_priority must be a valid integer, or default.'
+      end
+      value
+    end
+  end # property stp_port_priority
+
+  newproperty(:stp_port_type) do
+    desc 'Spanning tree port type for this interface.'
+
+    newvalues(:edge, :network, :normal, :'edge trunk', :default)
+  end # property stp_port_type
 
   ################
   # Autorequires #
