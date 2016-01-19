@@ -54,6 +54,10 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     :switchport_trunk_allowed_vlan,
     :switchport_trunk_native_vlan,
     :vlan_mapping,
+    :ipv4_acl_in,
+    :ipv4_acl_out,
+    :ipv6_acl_in,
+    :ipv6_acl_out,
   ]
   INTF_BOOL_PROPS = [
     :ipv4_pim_sparse_mode,
