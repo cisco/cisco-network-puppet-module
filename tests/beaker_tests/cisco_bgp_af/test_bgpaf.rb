@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2015 Cisco and/or its affiliates.
+# Copyright (c) 2015-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -134,12 +134,6 @@ tests['default_properties'] = {
     next_hop_route_map            => 'default',
     networks                      => 'default',
     redistribute                  => 'default',
-    route_target_both_auto        => 'default',
-    route_target_both_auto_evpn   => 'default',
-    route_target_import           => 'default',
-    route_target_import_evpn      => 'default',
-    route_target_export           => 'default',
-    route_target_export_evpn      => 'default',
     suppress_inactive             => 'default',
     table_map                     => 'default',
     table_map_filter              => 'default',
@@ -163,8 +157,6 @@ tests['default_properties'] = {
     'distance_local'                => '220',
     'maximum_paths'                 => '1',
     'maximum_paths_ibgp'            => '1',
-    'route_target_both_auto'        => 'false',
-    'route_target_both_auto_evpn'   => 'false',
     'suppress_inactive'             => 'false',
     'table_map_filter'              => 'false',
   },
@@ -340,31 +332,15 @@ tests['non_default_properties_N'] = {
 }
 
 redistribute = [['static', 's_rmap'], ['eigrp 1', 'e_rmap']] # rubocop:disable Style/WordArray
-routetargetimport = ['1.2.3.4:55', '102:33']
-routetargetimportevpn = ['1.2.3.4:55', '102:33']
-routetargetexport = ['1.2.3.4:55', '102:33']
-routetargetexportevpn = ['1.2.3.4:55', '102:33']
 tests['non_default_properties_R'] = {
   :desc           => "2.7 Non Default Properties: 'R' commands",
   :title_pattern  => '2 blue ipv4 unicast',
   :manifest_props => "
     redistribute                => #{redistribute},
-    route_target_both_auto      => true,
-    route_target_both_auto_evpn => true,
-    route_target_import         => #{routetargetimport},
-    route_target_import_evpn    => #{routetargetimportevpn},
-    route_target_export         => #{routetargetexport},
-    route_target_export_evpn    => #{routetargetexportevpn},
   ",
 
   :resource_props => {
-    'redistribute'                => "#{redistribute}",
-    'route_target_both_auto'      => 'true',
-    'route_target_both_auto_evpn' => 'true',
-    'route_target_import'         => "#{routetargetimport}",
-    'route_target_import_evpn'    => "#{routetargetimportevpn}",
-    'route_target_export'         => "#{routetargetexport}",
-    'route_target_export_evpn'    => "#{routetargetexportevpn}",
+    'redistribute' => "#{redistribute}"
   },
 }
 
@@ -445,7 +421,7 @@ end
 # Wrapper for bgp_af specific settings prior to calling the
 # common test_harness.
 def test_harness_bgp_af(tests, id)
-  af = bgp_title_pattern_munge(tests, id, 'bgp_af')
+  af = af_title_pattern_munge(tests, id, 'bgp_af')
   logger.info("\n--------\nTest Case Address-Family ID: #{af}")
 
   tests[id][:ensure] = :present if tests[id][:ensure].nil?

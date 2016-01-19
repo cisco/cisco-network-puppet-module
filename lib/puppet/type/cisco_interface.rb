@@ -37,14 +37,16 @@ Puppet::Type.newtype(:cisco_interface) do
      switchport_vtp               => true,
     }
     cisco_interface { \"Ethernet1/16\" :
-     shutdown                     => true,
-     description                  => \"routed port\",
-     ipv4_address                 => \"192.168.1.1\",
-     ipv4_netmask_length          => 24,
-     ipv4_redirects               => true,
-     ipv4_proxy_arp               => true,
-     ipv4_pim_sparse_mode         => true,
-     negotiate_auto               => true,
+     shutdown                       => true,
+     description                    => \"routed port\",
+     ipv4_address                   => \"192.168.1.1\",
+     ipv4_netmask_length            => 24,
+     ipv4_address_secondary         => \"192.168.2.1\",
+     ipv4_netmask_length_secondary  => 24,
+     ipv4_redirects                 => true,
+     ipv4_proxy_arp                 => true,
+     ipv4_pim_sparse_mode           => true,
+     negotiate_auto                 => true,
     }
     cisco_interface { \"Ethernet1/17\" :
      stp_bpdufilter               => 'enable',
@@ -72,6 +74,7 @@ Puppet::Type.newtype(:cisco_interface) do
     cisco_interface {\"Vlan98\":
      shutdown                     => true,
      description                  => \"svi interface\",
+     ipv4_arp_timeout             => 300,
      svi_autostate                => true,
      svi_management               => true,
     }"
@@ -273,12 +276,37 @@ Puppet::Type.newtype(:cisco_interface) do
     end
   end # property ipv4_address
 
+  newproperty(:ipv4_address_secondary) do
+    desc "<L3 attribute> Secondary IP address of the interface. Valid values are
+          string, keyword 'default'."
+
+    munge do |value|
+      value = :default if value == 'default'
+      valid_ipaddr = true
+      begin
+        if value != :default
+          tmp_value = IPAddr.new(value)
+          # check whether it is ipv4 address
+          valid_ipaddr = tmp_value.ipv4?
+        end
+      rescue
+        valid_ipaddr = false
+      end
+      # fail if it is not valid ipv4 address
+      fail("ipv4_address - #{@resource[:ipv4_address]} must be " \
+           "either a valid IPv4 address string or 'default'.") if
+           value != :default && valid_ipaddr == false
+      value
+    end
+  end # property ipv4_address_secondary
+
   newproperty(:ipv4_netmask_length) do
     desc "<L3 attribute> Network mask length of the IP address on the
           interface. Valid values are integer, keyword 'default'."
 
     munge do |value|
       begin
+        value = :default if value == 'default'
         value = Integer(value) unless value == :default
       rescue
         raise 'Network mask length must be a valid integer.'
@@ -289,6 +317,30 @@ Puppet::Type.newtype(:cisco_interface) do
     end
   end # property ipv4_netmask_length
 
+  newproperty(:ipv4_netmask_length_secondary) do
+    desc "<L3 attribute> Network mask length of the secondary IP address on the
+          interface. Valid values are integer, keyword 'default'."
+
+    munge do |value|
+      begin
+        value = :default if value == 'default'
+        value = Integer(value) unless value == :default
+      rescue
+        raise 'Network mask length must be a valid integer.'
+      end
+      fail('ipv4_netmask_length must be an integer between 0 and 32') if
+           (value != :default) && (value < 0 || value > 32)
+      value
+    end
+  end # property ipv4_netmask_length_secondary
+
+  newproperty(:ipv4_arp_timeout) do
+    desc "Configure Address Resolution Protocol (ARP) timeout. Valid values
+          are integer, keyword 'default'."
+
+    munge { |value| value == 'default' ? :default : value.to_i }
+  end # ipv4_arp_timeout
+
   newproperty(:vrf) do
     desc "<L3 attribute> VRF member of the interface. Valid values
           are string, keyword 'default'."
@@ -298,6 +350,46 @@ Puppet::Type.newtype(:cisco_interface) do
       value
     end
   end # property vrf
+
+  newproperty(:ipv4_acl_in) do
+    desc "<L3 attribute> ipv4 ingress access list on the interface. Valid values
+          are string, keyword 'default'."
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property ipv4_acl_in
+
+  newproperty(:ipv4_acl_out) do
+    desc "<L3 attribute> ipv4 egress access list on the interface. Valid values
+          are string, keyword 'default'."
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property ipv4_acl_out
+
+  newproperty(:ipv6_acl_in) do
+    desc "<L3 attribute> ipv6 ingress access list on the interface. Valid values
+          are string, keyword 'default'."
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property ipv6_acl_in
+
+  newproperty(:ipv6_acl_out) do
+    desc "<L3 attribute> ipv6 egress access list on the interface. Valid values
+          are string, keyword 'default'."
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property ipv6_acl_out
 
   # validate ipv4 address and mask combination
   validate do

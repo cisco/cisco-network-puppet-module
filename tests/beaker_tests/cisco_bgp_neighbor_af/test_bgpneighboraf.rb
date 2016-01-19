@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2015 Cisco and/or its affiliates.
+# Copyright (c) 2015-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -540,7 +540,7 @@ end
 # Wrapper for bgp_nbr_af specific settings prior to calling the
 # common test_harness.
 def test_harness_bgp_nbr_af(tests, id)
-  af = bgp_title_pattern_munge(tests, id, 'bgp_neighbor_af')
+  af = af_title_pattern_munge(tests, id, 'bgp_neighbor_af')
   logger.info("\n--------\nTest Case Address-Family ID: #{af}")
 
   # Set up remote-as if necessary

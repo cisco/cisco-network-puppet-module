@@ -60,6 +60,7 @@ node default {
       shutdown               => false,
       ipv4_address           => '192.168.1.1',
       ipv4_netmask_length    => 16,
+      ipv4_arp_timeout       => 'default',
     }
 }
 EOF"
@@ -103,6 +104,7 @@ node default {
       shutdown               => true,
       ipv4_address           => '192.168.1.1',
       ipv4_netmask_length    => 16,
+      ipv4_arp_timeout       => 300,
     }
 }
 EOF"
