@@ -1,9 +1,9 @@
 #
 # The NXAPI provider for cisco_ace.
 #
-# July, 2015
+# January 2016
 #
-# Copyright (c) 2015 Cisco and/or its affiliates.
+# Copyright (c) 2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ Puppet::Type.type(:cisco_ace).provide(:nxapi) do
   mk_resource_methods
 
   # Property symbol array for method auto-generation.
-  #
+  # Keep the props in 'action' order.
   ACL_NON_BOOL_PROPS = [
     :action,
     :proto,
@@ -43,6 +43,7 @@ Puppet::Type.type(:cisco_ace).provide(:nxapi) do
     :src_port,
     :dst_addr,
     :dst_port,
+    :remark,
   ]
 
   ACL_BOOL_PROPS = [
@@ -106,9 +107,9 @@ Puppet::Type.type(:cisco_ace).provide(:nxapi) do
     ace_instances = instances
     resources.keys.each do |name|
       provider = ace_instances.find do |ace|
-        resources[name][:afi] == ace.afi.to_s &&
-        resources[name][:acl_name] == ace.acl_name.to_s &&
-        resources[name][:seqno] == ace.seqno.to_i
+        resources[name][:afi].to_s == ace.afi.to_s &&
+        resources[name][:acl_name].to_s == ace.acl_name.to_s &&
+        resources[name][:seqno].to_i == ace.seqno.to_i
       end
       resources[name].provider = provider unless provider.nil?
     end
@@ -143,16 +144,28 @@ Puppet::Type.type(:cisco_ace).provide(:nxapi) do
     ace_set
   end
 
-  # Custom setters.
   # The following properties are setters and cannot be handled
   # by PuppetX::Cisco::AutoGen.mk_puppet_methods.
   def ace_set
     attrs = {}
-    [:action, :proto, :src_addr, :src_port, :dst_addr, :dst_port].each do |p|
-      attrs[p] = @property_flush[p] if @property_flush[p]
+    vars = [
+      :action,
+      :proto,
+      :src_addr,
+      :src_port,
+      :dst_addr,
+      :dst_port,
+    ]
+    if vars.any? { |p| @property_flush.key?(p) }
+      # At least one var has changed, get all vals from manifest
+      vars.each do |p|
+        attrs[p] = @resource[p]
+      end
+    else
+      attrs[:remark] = @property_flush[:remark] if @property_flush[:remark]
     end
     return if attrs.empty?
-    @ace.ace_set(@property_flush)
+    @ace.ace_set(attrs)
   end
 
   def flush
@@ -166,23 +179,6 @@ Puppet::Type.type(:cisco_ace).provide(:nxapi) do
                               @resource[:seqno])
       end
       properties_set(new_ace)
-      puts_config
     end
   end
-
-  def puts_config
-    if @ace.nil?
-      info "ace=#{@resource[:seqno]} is absent."
-      return
-    end
-
-    # Dump all current properties for this interface
-    current = sprintf("\n%30s: %s", 'afi', @ace.afi)
-    current.concat(sprintf("\n%30s: %s", 'acl_name', @ace.acl_name))
-    current.concat(sprintf("\n%30s: %s", 'seqno', @ace.seqno))
-    ACL_ALL_PROPS.each do |prop|
-      current.concat(sprintf("\n%30s: %s", prop, @ace.send(prop)))
-    end
-    debug current
-  end # puts_config
 end
