@@ -37,6 +37,7 @@
 
 # Define various CONSTANTS used by beaker tests
 PUPPET_BINPATH = '/opt/puppetlabs/bin/puppet '
+FACTER_BINPATH = '/opt/puppetlabs/bin/facter '
 PUPPETMASTER_MANIFESTPATH = '/etc/puppetlabs/code/environments/production/manifests/site.pp'
 
 # These methods are defined outside of a module so that
@@ -286,8 +287,10 @@ def resource_absent_cleanup(agent, res_name, stepinfo='absent clean')
   step "TestStep :: #{stepinfo}" do
     # set each resource to ensure=absent
     get_current_resource_instances(agent, res_name).each do |title|
+      next if title[/management/]
       cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
         "resource #{res_name} '#{title}' ensure=absent", options)
+      logger.info("  * #{stepinfo} Removing #{res_name} '#{title}'")
       on(agent, cmd_str, acceptable_exit_codes: [0])
     end
   end
@@ -360,7 +363,7 @@ def bgp_nbr_remote_as(agent, remote_as)
 end
 
 # If a [:title] exists merge it with the [:af] values to create a complete af.
-def bgp_title_pattern_munge(tests, id, provider=nil)
+def af_title_pattern_munge(tests, id, provider=nil)
   title = tests[id][:title_pattern]
   af = tests[id][:af]
 
@@ -377,6 +380,8 @@ def bgp_title_pattern_munge(tests, id, provider=nil)
     t[:asn], t[:vrf], t[:afi], t[:safi] = title.split
   when 'bgp_neighbor_af'
     t[:asn], t[:vrf], t[:neighbor], t[:afi], t[:safi] = title.split
+  when 'vrf_af'
+    t[:vrf], t[:afi], t[:safi] = title.split
   end
   t.merge!(tests[id][:af])
   t[:vrf] = 'default' if t[:vrf].nil?
@@ -390,6 +395,7 @@ end
 # test interface name to use for testing.
 # tests[:vdc] The default vdc name
 # tests[:intf] A compatible interface to use for MT-full testing.
+# rubocop:disable Metrics/MethodLength,Metrics/AbcSize
 def setup_mt_full_env(tests, testcase)
   # MT-full tests require a specific linecard. Search for a compatible
   # module and enable it.
@@ -431,6 +437,8 @@ def setup_mt_full_env(tests, testcase)
                 "Unable to allocate interface '#{intf}' to VDC")
   end
 
+  interface_cleanup(tests[:agent], intf)
+
   step "Add switchport config to #{intf}" do
     cmd = get_vshell_cmd("conf t ; int #{intf} ; #{tests[:config_switchport]}")
     on(agent, cmd, pty: true)
@@ -440,7 +448,13 @@ def setup_mt_full_env(tests, testcase)
     cmd = get_vshell_cmd("conf t ; #{tests[:config_bridge_domain]}")
     on(agent, cmd, pty: true)
   end if tests[:config_bridge_domain]
+
+  step 'Add encap profile global config' do
+    cmd = get_vshell_cmd("conf t ; #{tests[:config_encap_prof_global]}")
+    on(agent, cmd, pty: true)
+  end if tests[:config_encap_prof_global]
 end
+# rubocop:enable Metrics/MethodLength,Metrics/AbcSize
 
 # Helper to raise skip when prereqs are not met
 def prereq_skip(testheader, testcase, message)
@@ -473,13 +487,18 @@ def limit_resource_module_type_get(vdc, mod)
 end
 
 # Set limit-resource module-type
-def limit_resource_module_type_set(vdc, mod)
+def limit_resource_module_type_set(vdc, mod, default=false)
   # Turn off prompting
   cmd = get_vshell_cmd('terminal dont-ask persist')
   on(agent, cmd, pty: true)
 
-  cmd = get_vshell_cmd("conf t ; vdc #{vdc} ; "\
-                       "limit-resource module-type #{mod}")
+  if default
+    cmd = get_vshell_cmd("conf t ; vdc #{vdc} ; "\
+                         'no limit-resource module-type')
+  else
+    cmd = get_vshell_cmd("conf t ; vdc #{vdc} ; "\
+                         "limit-resource module-type #{mod}")
+  end
   on(agent, cmd, pty: true)
 
   # Reset dont-ask to default setting
@@ -509,4 +528,71 @@ def vdc_allocate_interface_set(vdc, intf)
   # Reset prompting to default state
   cmd = get_vshell_cmd('no terminal dont-ask persist')
   on(agent, cmd, pty: true)
+end
+
+# Facter command builder helper method
+def facter_cmd(cmd)
+  get_namespace_cmd(agent, FACTER_BINPATH + cmd, options)
+end
+
+# Used to cache the operation system information
+@cisco_os = nil
+# Use facter to return cisco operating system information
+def operating_system
+  return @cisco_os unless @cisco_os.nil?
+  @cisco_os = on(agent, facter_cmd('os.name')).stdout.chomp
+end
+
+# Used to cache the cisco hardware type
+@cisco_hardware = nil
+# Use facter to return cisco hardware type
+def platform
+  return @cisco_hardware unless @cisco_hardware.nil?
+  pi = on(agent, facter_cmd('-p cisco.hardware.type')).stdout.chomp
+  # The following kind of string info is returned for Nexus.
+  # - Nexus9000 C9396PX Chassis
+  # - Nexus7000 C7010 (10 Slot) Chassis
+  # - Nexus 6001 Chassis
+  # - NX-OSv Chassis
+  case pi
+  when /Nexus\s?3\d\d\d/
+    @cisco_hardware = 'n3k'
+  when /Nexus\s?5\d\d\d/
+    @cisco_hardware = 'n5k'
+  when /Nexus\s?6\d\d\d/
+    @cisco_hardware = 'n6k'
+  when /Nexus\s?7\d\d\d/
+    @cisco_hardware = 'n7k'
+  when /Nexus\s?9\d\d\d/
+    @cisco_hardware = 'n9k'
+  when /NX-OSv/
+    @cisco_hardware = 'n9k'
+  else
+    fail "Unrecognized platform type: #{pi}\n"
+  end
+  @cisco_hardware
+end
+
+# Helper to skip tests on unsupported platforms.
+# tests[:platform] - A platform regexp pattern for all tests (caller set)
+# tests[id][:platform] - A platform regexp pattern for specific test (caller set)
+# tests[:skipped] - A list of skipped tests (set by this method)
+def platform_supports_test(tests, id)
+  # Prefer specific test key over the all tests key
+  plat = tests[id][:platform] || tests[:platform]
+  return true if plat.nil? || platform.match(plat)
+  logger.error("#{tests[id][:desc]} :: #{id} :: SKIP")
+  logger.error("Platform type does not match testcase platform regexp: /#{plat}/")
+  tests[:skipped] ||= []
+  tests[:skipped] << tests[id][:desc]
+  false
+end
+
+def skipped_tests_summary(tests, testheader)
+  return unless tests[:skipped]
+  logger.info("\n#{'-' * 60}\n  SKIPPED TESTS SUMMARY\n#{'-' * 60}")
+  tests[:skipped].each do |desc|
+    logger.error(sprintf('%-40s :: SKIP', desc))
+  end
+  raise_skip_exception(testheader, self)
 end

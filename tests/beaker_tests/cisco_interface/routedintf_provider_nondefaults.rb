@@ -93,6 +93,30 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Setup switch for provider test :: #{result}")
   end
 
+  # @step [Step] create acl non defaults manifest.
+  step 'TestStep :: Create acl nondefaults manifest' do
+    # Expected exit_code is 0 since this is a bash shell cmd.
+    on(master, RoutedIntfLib.create_routedintf_acl_manifest_nondefaults)
+
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
+      'agent -t', options)
+    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
+      'resource cisco_acl ', options)
+    on(agent, cmd_str) do
+      search_pattern_in_output(stdout,
+                               [
+                                 /ipv4 v4acl1/,
+                                 /ipv4 v4acl2/,
+                                 /ipv6 v6acl1/,
+                                 /ipv6 v6acl2/,
+                               ],
+                               false, self, logger)
+    end
+
+    logger.info("create acl non defaults manifest :: #{result}")
+  end
+
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource nondefaults manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
@@ -114,20 +138,26 @@ test_name "TestCase :: #{testheader}" do
       "resource cisco_interface '#{test_intf}'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
-                               { 'ensure'                       => 'present',
-                                 'ipv4_address'                 => '192.168.1.1',
-                                 'ipv4_netmask_length'          => '16',
-                                 'ipv4_pim_sparse_mode'         => 'true',
-                                 'ipv4_proxy_arp'               => 'true',
-                                 'ipv4_redirects'               => 'false',
-                                 'mtu'                          => '1556',
-                                 'speed'                        => '100',
-                                 'duplex'                       => 'full',
-                                 'shutdown'                     => 'true',
-                                 'switchport_autostate_exclude' => 'false',
-                                 'switchport_mode'              => 'disabled',
-                                 'switchport_vtp'               => 'false',
-                                 'vrf'                          => 'test1',
+                               { 'ensure'                        => 'present',
+                                 'ipv4_address'                  => '192.168.1.1',
+                                 'ipv4_netmask_length'           => '16',
+                                 'ipv4_address_secondary'        => '10.0.55.55',
+                                 'ipv4_netmask_length_secondary' => '24',
+                                 'ipv4_pim_sparse_mode'          => 'true',
+                                 'ipv4_proxy_arp'                => 'true',
+                                 'ipv4_redirects'                => 'false',
+                                 'mtu'                           => '1556',
+                                 'speed'                         => '100',
+                                 'duplex'                        => 'full',
+                                 'shutdown'                      => 'true',
+                                 'switchport_autostate_exclude'  => 'false',
+                                 'switchport_mode'               => 'disabled',
+                                 'switchport_vtp'                => 'false',
+                                 'vrf'                           => 'test1',
+                                 'ipv4_acl_in'                   => 'v4acl1',
+                                 'ipv4_acl_out'                  => 'v4acl2',
+                                 'ipv6_acl_in'                   => 'v6acl1',
+                                 'ipv6_acl_out'                  => 'v6acl2',
                                },
                                false, self, logger)
     end

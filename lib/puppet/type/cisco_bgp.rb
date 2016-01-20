@@ -37,7 +37,6 @@ Puppet::Type.newtype(:cisco_bgp) do
   `<bgp-title>` is the title of the bgp resource.
 
   Example:
-
   ~~~puppet
     cisco_bgp { 'raleigh':
       ensure                                 => present,
@@ -48,7 +47,14 @@ Puppet::Type.newtype(:cisco_bgp) do
       cluster_id                             => '55',
       confederation_id                       => '77.6',
       confederation_peers                    => '77.6 88 99.4 200'
+      disable_policy_batching                => true,
+      disable_policy_batching_ipv4           => 'xx',
+      disable_policy_batching_ipv6           => 'yy',
       enforce_first_as                       => true,
+      event_history_cli                      => 'true',
+      event_history_detail                   => 'small',
+      event_history_events                   => 'large',
+      event_history_periodic                 => 'disable',
       fast_external_fallover                 => true,
       flush_routes                           => false,
       isolate                                => false,
@@ -278,12 +284,101 @@ Puppet::Type.newtype(:cisco_bgp) do
     newvalues(:true, :false, :default)
   end # property shutdown
 
+  newproperty(:disable_policy_batching) do
+    desc 'Enable/Disable the batching evaluation of prefix' \
+         'advertisements to all peers'
+
+    newvalues(:true, :false, :default)
+  end # property disable_policy_batching
+
+  newproperty(:disable_policy_batching_ipv4) do
+    desc "Enable/Disable the batching evaluation of prefix
+          advertisements to all peers. Valid values are String"
+
+    validate do |value|
+      fail("'disable_policy_batching_ipv4' value must be String") unless
+        value.is_a? String
+    end
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property disable_policy_batching_ipv4
+
+  newproperty(:disable_policy_batching_ipv6) do
+    desc "Enable/Disable the batching evaluation of prefix
+          advertisements to all peers. Valid values are String"
+
+    validate do |value|
+      fail("'disable_policy_batching_ipv6' value must be String") unless
+        value.is_a? String
+    end
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property disable_policy_batching_ipv6
+
   newproperty(:enforce_first_as) do
     desc 'Enable/Disable enforces the neighbor autonomous system ' \
          'to be the first AS number listed in the AS_path attribute for eBGP'
 
     newvalues(:true, :false, :default)
   end # property enforce_first_as
+
+  newproperty(:event_history_cli) do
+    desc "event_history_cli state. Valid values are True, False, size_small,
+          size_medium, size_large, size_disable or 'default'"
+
+    munge do |value|
+      value = 'size_small' if value == 'true'
+      value.to_sym
+    end
+
+    newvalues(:true, :false, :default,
+              :size_small, :size_medium, :size_large, :size_disable)
+  end # property event_history_cli
+
+  newproperty(:event_history_detail) do
+    desc "event_history_detail state. Valid values are True, False, size_small,
+          size_medium, size_large, size_disable or 'default'"
+
+    munge do |value|
+      value = 'size_disable' if value == 'true'
+      value.to_sym
+    end
+
+    newvalues(:true, :false, :default,
+              :size_small, :size_medium, :size_large, :size_disable)
+  end # property event_history_detail
+
+  newproperty(:event_history_events) do
+    desc "event_history_events state. Valid values are True, False, size_small,
+          size_medium, size_large, size_disable or 'default'"
+
+    munge do |value|
+      value = 'size_small' if value == 'true'
+      value.to_sym
+    end
+
+    newvalues(:true, :false, :default,
+              :size_small, :size_medium, :size_large, :size_disable)
+  end # property event_history_events
+
+  newproperty(:event_history_periodic) do
+    desc "event_history_periodic state. Valid values are True, False, size_small,
+          size_medium, size_large, size_disable or 'default'"
+
+    munge do |value|
+      value = 'size_small' if value == 'true'
+      value.to_sym
+    end
+
+    newvalues(:true, :false, :default,
+              :size_small, :size_medium, :size_large, :size_disable)
+  end # property event_history_periodic
 
   newproperty(:fast_external_fallover) do
     desc 'Enable/Disable immediately reset the session if the link ' \

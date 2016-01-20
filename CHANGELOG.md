@@ -10,9 +10,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `cisco_aaa_authorization_login_cfg_svc` type and provider.
 - `cisco_aaa_authorization_login_exec_svc` type and provider.
 - `cisco_aaa_group_tacacs` type and provider.
+- `cisco_ace` type and provider
 - `cisco_acl` type and provider
 - `cisco_evpn_vni` type and provider.
+- `cisco_interface_portchannel` type and provider
+- `cisco_interface_service_vni` type and provider
+- `cisco_portchannel_global` type and provider
+- `cisco_vdc` type and provider.
 - `cisco_vni` type and provider.
+- `cisco_vrf_af` type and provider.
 - `cisco_vxlan_global` type and provider.
 - `cisco_vxlan_vtep` type and provider.
 
@@ -23,27 +29,33 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 - Extended `cisco_bgp` with the following attributes:
+  - `disable_policy_batching`, `disable_policy_batching_ipv4`, `disable_policy_batching_ipv6`
   - `fast_external_fallover`
   - `flush_routes`
   - `isolate`
   - `neighbor_down_fib_accelerate`
   - `route_distinguisher`
+  - `event_history_cli`
+  - `event_history_detail`
+  - `event_history_events`
+  - `event_history_periodic`
 - Extended `cisco_bgp_af` with the following attributes:
   - `default_metric`
   - `distance_ebgp`, `distance_ibgp`, `distance_local`
   - `inject_map`
-  - `route_target_both_auto`, `route_target_both_auto_evpn`
-  - `route_target_import`, `route_target_import_evpn`
-  - `route_target_export`, `route_target_export_evpn`
   - `table_map`, `table_map_filter`
   - `suppress_inactive`
 - Extended `cisco_interface` with the following attributes:
   - `channel_group`
+  - `ipv4_address_secondary`, `ipv4_netmask_length_secondary`
+  - `ipv4_arp_timeout`
   - `ipv4_pim_sparse_mode`
   - `vlan_mapping`, `vlan_mapping_enable`
+  - `ipv4_acl_in`, `ipv4_acl_out`, `ipv6_acl_in`, `ipv6_acl_out`
 - Extended `cisco_vrf` with the following attributes:
+  - `route_distinguisher`
   - `vni`
-  
+
 ### Removed
 
 ## [1.1.0] - 2015-11-02
