@@ -51,7 +51,6 @@
 # instance attributes to verify resource properties.
 #
 ###############################################################################
-# rubocop:disable Style/HashSyntax
 
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 # -----------------------------
@@ -71,8 +70,8 @@ testheader = 'Resource cisco_vrf'
 #                    This key can be overridden by a tests[id][:platform] key
 #
 tests = {
-  master:   master,
-  agent:    agent,
+  master: master,
+  agent:  agent,
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -101,11 +100,11 @@ tests['default_properties'] = {
   desc:           '1.1 Default Properties',
   title_pattern:  'blue',
   manifest_props: {
-    description:  'default',
-    shutdown:     'default',
+    description: 'default',
+    shutdown:    'default',
   },
   resource:       {
-    'shutdown'    => 'false',
+    'shutdown' => 'false'
   },
 }
 
@@ -113,8 +112,8 @@ tests['non_default_properties_misc'] = {
   desc:           '2.1 Non Default Properties commands',
   title_pattern:  'blue',
   manifest_props: {
-    description:  'test desc',
-    shutdown:     'true',
+    description: 'test desc',
+    shutdown:    'true',
   },
   resource:       {
     'description' => 'test desc',
@@ -127,10 +126,10 @@ tests['non_default_properties_rd'] = {
   title_pattern:  'blue',
   platform:       'n(7|9)k',
   manifest_props: {
-    route_distinguisher:  '1:1',
+    route_distinguisher: '1:1'
   },
   resource:       {
-    'route_distinguisher' => '1:1',
+    'route_distinguisher' => '1:1'
   },
 }
 
@@ -139,10 +138,10 @@ tests['non_default_properties_vni'] = {
   title_pattern:  'blue',
   platform:       'n9k',
   manifest_props: {
-    vni:          '4096',
+    vni: '4096'
   },
   resource:       {
-    'vni'         => '4096',
+    'vni' => '4096'
   },
 }
 
@@ -203,4 +202,3 @@ test_name "TestCase :: #{testheader}" do
   skipped_tests_summary(tests, testheader)
 end
 logger.info("TestCase :: #{testheader} :: End")
-
