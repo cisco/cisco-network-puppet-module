@@ -1542,7 +1542,7 @@ VPN Route Distinguisher (RD). The RD is combined with the IPv4 or IPv6 prefix le
 *IMPORTANT: Choose only one provider to configure the `route_distinguisher` property on a given device. Using both providers simultaneously on the same device may have unpredictable results.*
 
 ##### `shutdown`
-Shutdown state of the VRF. Valid values are 'true' and 'false'.
+Shutdown state of the VRF. Valid values are 'true', 'false', and 'default'.
 
 ##### `vni`
 Specify virtual network identifier. Valid values are Integer or keyword 'default'.

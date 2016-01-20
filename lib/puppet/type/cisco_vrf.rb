@@ -74,6 +74,11 @@ Puppet::Type.newtype(:cisco_vrf) do
 
   newproperty(:description) do
     desc 'Description of the VRF. Valid value is string.'
+
+    munge do |val|
+      val = :default if val == 'default'
+      val
+    end
   end # property description
 
   newproperty(:route_distinguisher) do
@@ -97,8 +102,10 @@ Puppet::Type.newtype(:cisco_vrf) do
   end # property router_distinguisher
 
   newproperty(:shutdown) do
-    desc 'Shutdown state of the VRF.'
-    newvalues(:true, :false)
+    desc 'Shutdown state of the VRF. '\
+         'Valid values are true, false, or default'
+    munge(&:to_sym)
+    newvalues(:true, :false, :default)
   end # property shutdown
 
   newproperty(:vni) do
