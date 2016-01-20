@@ -73,7 +73,7 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
     desc 'ID of the Virtual Network Identifier. Valid values are integer.'
   end
 
-  newparam(:assoc_vrf, namevar: true) do
+  newparam(:assoc_vrf) do
     desc 'Associate vrf with the vni. Valid values are true or false.'
     defaultto(:false)
     newvalues(:true, :false)
@@ -85,6 +85,15 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
   ##############
 
   ensurable
+
+  # Overwrites the name method which by default returns only self[:name].
+  def name
+    "#{self[:interface]} #{self[:vni]}"
+  end
+
+  # Only needed to satisfy name parameter.
+  newparam(:name) do
+  end
 
   newproperty(:ingress_replication) do
     desc "Specify mechanism for host reachability advertisement. Valid values
@@ -137,11 +146,15 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
       self[:suppress_arp] = :default
       self[:peer_ips] = [:default]
     end
+
+    puts self[:multicast_group]
+    puts self[:ingress_replication] 
+=begin
     fail 'Only one of multicast-group and ingress-replication can be '\
           'configured for a member vni' unless
              self[:multicast_group] == :default ||
              self[:ingress_replication] == :default
-
+=end
     # peer_ips apply only when ingress_replication is static. Disable them
     # otherwise so that the config succeeds
     self[:peer_ips] = [:default] unless self[:ingress_replication] == :static
