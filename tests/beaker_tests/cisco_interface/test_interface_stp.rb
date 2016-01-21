@@ -105,13 +105,17 @@ tests = {
 tests['default_properties'] = {
   title_pattern:  'ethernet1/4',
   manifest_props: "
-    stp_bpdufilter       => 'default',
-    stp_bpduguard        => 'default',
-    stp_cost             => 'default',
-    stp_guard            => 'default',
-    stp_link_type        => 'default',
-    stp_port_priority    => 'default',
-    stp_port_type        => 'default',
+    stp_bpdufilter         => 'default',
+    stp_bpduguard          => 'default',
+    stp_cost               => 'default',
+    stp_guard              => 'default',
+    stp_link_type          => 'default',
+    stp_port_priority      => 'default',
+    stp_port_type          => 'default',
+    stp_mst_cost           => 'default',
+    stp_mst_port_priority  => 'default',
+    stp_vlan_cost          => 'default',
+    stp_vlan_port_priority => 'default',
   ",
   code:           [0, 2],
   resource_props: {
@@ -122,6 +126,10 @@ tests['default_properties'] = {
     'stp_link_type'     => 'auto',
     'stp_port_priority' => '128',
     'stp_port_type'     => 'false',
+    # 'stp_mst_cost' is nil when default
+    # 'stp_mst_port_priority' is nil when default
+    # 'stp_vlan_cost' is nil when default
+    # 'stp_vlan_port_priority' is nil when default
   },
 }
 
@@ -135,15 +143,23 @@ tests['non_default_properties'] = {
     stp_link_type        => 'shared',
     stp_port_priority    => '64',
     stp_port_type        => 'network',
+    stp_mst_cost           => [['0,2-4,6,8-12', '1000'], ['1000', '2568']],
+    stp_mst_port_priority  => [['0,2-11,20-33', '64'], ['1111', '160']],
+    stp_vlan_cost          => [['1-4,6,8-12', '1000'], ['1000', '2568']],
+    stp_vlan_port_priority => [['1-11,20-33', '64'], ['1111', '160']],
   ",
   resource_props: {
-    'stp_bpdufilter'    => 'enable',
-    'stp_bpduguard'     => 'enable',
-    'stp_cost'          => '2000',
-    'stp_guard'         => 'loop',
-    'stp_link_type'     => 'shared',
-    'stp_port_priority' => '64',
-    'stp_port_type'     => 'network',
+    'stp_bpdufilter'         => 'enable',
+    'stp_bpduguard'          => 'enable',
+    'stp_cost'               => '2000',
+    'stp_guard'              => 'loop',
+    'stp_link_type'          => 'shared',
+    'stp_port_priority'      => '64',
+    'stp_port_type'          => 'network',
+    'stp_mst_cost'           => "[['0,2-4,6,8-12', '1000'], ['1000', '2568']]",
+    'stp_mst_port_priority'  => "[['0,2-11,20-33', '64'], ['1111', '160']]",
+    'stp_vlan_cost'          => "[['1-4,6,8-12', '1000'], ['1000', '2568']]",
+    'stp_vlan_port_priority' => "[['1-11,20-33', '64'], ['1111', '160']]",
   },
 }
 
