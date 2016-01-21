@@ -231,6 +231,24 @@ Puppet::Type.newtype(:cisco_interface) do
     newvalues(:true, :false, :default)
   end # property negotiate_auto
 
+  newproperty(:vpc_id) do
+    desc 'Configure vPC id on this interface to make it a vPC link to a
+          downstream device. The vPC Peer switch must have an indentical
+          configuration to the same downstream device. Valid values are in
+          the range 1..4096'
+    range = *(1..4096)
+    validate do |id|
+      fail 'VPC ID must be in the range 1..4096' unless
+        range.include?(id.to_i)
+    end
+  end # property vpc_id
+
+  newproperty(:vpc_peer_link) do
+    desc 'Enable/Disable this interface as a VPC Peer-link. This is valid
+          only for port-channel interfaces. Valid values true or false'
+    newvalues(:true, :false)
+  end # property vpc_peer_link
+
   ########################################
   # Begin L3 interface config attributes #
   ########################################

@@ -44,6 +44,7 @@ class ciscopuppet::demo_all {
   include ciscopuppet::demo_tacacs_server
   include ciscopuppet::demo_tacacs_server_host
   include ciscopuppet::demo_vlan
+  include ciscopuppet::demo_vpc_domain
   include ciscopuppet::demo_vrf
   include ciscopuppet::demo_vtp
   include ciscopuppet::demo_snmp
