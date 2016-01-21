@@ -38,12 +38,12 @@ class ciscopuppet::demo_vxlan {
     source_interface  => 'loopback55',
   }
 
-  cisco_vxlan_vtep_vni {'nve1 10005':
+  cisco_vxlan_vtep_vni {'nve1 10006':
     ensure              => present,
     assoc_vrf           => false,
-    ingress_replication => 'static',
-    multicast_group     => 'default',
-    peer_ips            => ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
+    ingress_replication => 'default',
+    multicast_group     => undef,
+    peer_ips           => ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
     suppress_arp        => 'default',
   }
 }

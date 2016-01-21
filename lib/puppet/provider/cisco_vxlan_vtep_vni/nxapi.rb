@@ -70,7 +70,7 @@ Puppet::Type.type(:cisco_vxlan_vtep_vni).provide(:nxapi) do
       vni:       vni,
       assoc_vrf: vni_instance.assoc_vrf,
       ensure:    :present,
-      #peer_ips:  vni_instance.peer_list,
+      peer_ips:  vni_instance.peer_list,
     }
     # Call node_utils getter for each property
     VXLAN_VTEP_VNI_NON_BOOL_PROPS.each do |prop|
@@ -93,7 +93,7 @@ Puppet::Type.type(:cisco_vxlan_vtep_vni).provide(:nxapi) do
     Cisco::VxlanVtepVni.vnis.each do |interface, all_vnis|
       all_vnis.each do |vni, vni_instance|
         puts "vni = #{vni}"
-        puts "assoc_vrf = #{vni_instance.assoc_vrf}"
+ #       puts "assoc_vrf = #{vni_instance.assoc_vrf}"
         puts "vni_instance = #{vni_instance.inspect}"
         vnis << properties_get(interface, vni, vni_instance)
       end
@@ -103,9 +103,12 @@ Puppet::Type.type(:cisco_vxlan_vtep_vni).provide(:nxapi) do
 
   def self.prefetch(resources)
     vnis = instances
-
     resources.keys.each do |id|
-      provider = vnis.find { |vni| vni.instance_name == id }
+      provider = vnis.find do |vni|
+        vni.interface.to_s == resources[id][:interface].to_s &&
+        vni.vni == resources[id][:vni] &&
+        vni.assoc_vrf.to_s == resources[id][:assoc_vrf].to_s
+      end
       resources[id].provider = provider unless provider.nil?
     end
   end # self.prefetch
