@@ -104,7 +104,6 @@ Puppet::Type.newtype(:cisco_vrf) do
   newproperty(:shutdown) do
     desc 'Shutdown state of the VRF. '\
          'Valid values are true, false, or default'
-    munge(&:to_sym)
     newvalues(:true, :false, :default)
   end # property shutdown
 
