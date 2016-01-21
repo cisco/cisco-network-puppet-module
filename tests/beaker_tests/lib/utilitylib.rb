@@ -149,9 +149,9 @@ def prop_hash_to_manifest(attributes)
   attributes.each do |k, v|
     next if v.nil?
     if v.is_a?(String)
-      manifest_str += "       #{k} => '#{v.strip}',\n"
+      manifest_str += "    #{k} => '#{v.strip}',\n"
     else
-      manifest_str += "       #{k} => #{v},\n"
+      manifest_str += "    #{k} => #{v},\n"
     end
   end
   manifest_str

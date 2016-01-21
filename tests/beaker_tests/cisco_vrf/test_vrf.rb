@@ -134,7 +134,7 @@ tests['non_default_properties_rd'] = {
 }
 
 tests['non_default_properties_vni'] = {
-  desc:           '2.2 Non Default Properties VNI',
+  desc:           '2.3 Non Default Properties VNI',
   title_pattern:  'blue',
   platform:       'n9k',
   manifest_props: {
@@ -147,12 +147,19 @@ tests['non_default_properties_vni'] = {
 
 # Create actual manifest for a given test scenario.
 def build_manifest_vrf(tests, id)
-  tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
+  manifest = prop_hash_to_manifest(tests[id][:manifest_props])
+  if tests[id][:ensure] == :absent
+    state = 'ensure => absent,'
+    tests[id][:resource] = { 'ensure' => 'absent' }
+  else
+    state = 'ensure => present,'
+  end
 
+  tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
   tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   \nnode default {
   cisco_vrf { '#{tests[id][:title_pattern]}':
-  #{prop_hash_to_manifest(tests[id][:manifest_props])}
+    #{state}\n#{manifest}
   }\n}\nEOF"
 
   cmd = PUPPET_BINPATH + "resource cisco_vrf '#{tests[id][:title_pattern]}'"
