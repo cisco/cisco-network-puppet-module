@@ -287,7 +287,12 @@ def resource_absent_cleanup(agent, res_name, stepinfo='absent clean')
   step "TestStep :: #{stepinfo}" do
     # set each resource to ensure=absent
     get_current_resource_instances(agent, res_name).each do |title|
-      next if title[/management/]
+      case res_name
+      when /cisco_vrf/
+        next if title[/management/]
+      when /cisco_vlan/
+        next if title == '1'
+      end
       cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
         "resource #{res_name} '#{title}' ensure=absent", options)
       logger.info("  * #{stepinfo} Removing #{res_name} '#{title}'")
