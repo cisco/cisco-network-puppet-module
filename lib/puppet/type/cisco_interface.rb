@@ -56,6 +56,10 @@ Puppet::Type.newtype(:cisco_interface) do
      stp_link_type                => 'shared',
      stp_port_priority            => 32,
      stp_port_type                => 'network',
+     stp_mst_cost                 => [[0,2-4,6,8-12, 1000], [1000, 2568]],
+     stp_mst_port_priority        => [[0,2-11,20-33, 64], [1111, 160],
+     stp_vlan_cost                => [[1-4,6,8-12, 1000], [1000, 2568]],
+     stp_vlan_port_priority       => [[1-11,20-33, 64], [1111, 160],
     }
     cisco_interface { \"Ethernet9/1\" :
      switchport_mode              => 'trunk',
@@ -499,6 +503,48 @@ Puppet::Type.newtype(:cisco_interface) do
     newvalues(:auto, :shared, :'point-to-point', :default)
   end # property stp_link_type
 
+  newproperty(:stp_mst_cost, array_matching: :all) do
+    format = '[[mst_inst_list, cost], [mil, cost]]'
+    desc 'An array of [mst_instance_list, cost] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property stp_mst_cost
+
+  newproperty(:stp_mst_port_priority, array_matching: :all) do
+    format = '[[mst_inst_list, port_priority], [vr, port_priority]]'
+    desc 'An array of [mst_inst_list, port_priority] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property stp_mst_port_priority
+
   newproperty(:stp_port_priority) do
     desc "Spanning tree port priority for this interface. Valid values are
           integer, keyword 'default'."
@@ -520,6 +566,47 @@ Puppet::Type.newtype(:cisco_interface) do
     newvalues(:edge, :network, :normal, :'edge trunk', :default)
   end # property stp_port_type
 
+  newproperty(:stp_vlan_cost, array_matching: :all) do
+    format = '[[vlan_range, cost], [vr, cost]]'
+    desc 'An array of [vlan_range, cost] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property stp_vlan_cost
+
+  newproperty(:stp_vlan_port_priority, array_matching: :all) do
+    format = '[[vlan_range, port_priority], [vr, pp]]'
+    desc 'An array of [vlan_range, port_priority] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property stp_vlan_port_priority
   ################
   # Autorequires #
   ################

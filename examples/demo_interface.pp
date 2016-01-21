@@ -41,6 +41,16 @@ class ciscopuppet::demo_interface {
     default => undef
   }
 
+  $stp_mst_cost = platform_get() ? {
+    'n7k'  => [['0,2-4,6,8-12', '1000'], ['1000', '2568']],
+    default => undef
+  }
+
+  $stp_mst_port_priority = platform_get() ? {
+    'n7k'  => [['0,2-11,20-33', '64'], ['1111', '160']],
+    default => undef
+  }
+
   $stp_port_priority = platform_get() ? {
     'n7k'  => 64,
     default => undef
@@ -48,6 +58,16 @@ class ciscopuppet::demo_interface {
 
   $stp_port_type = platform_get() ? {
     'n7k'  => 'network',
+    default => undef
+  }
+
+  $stp_vlan_cost = platform_get() ? {
+    'n7k'  => [['1-4,6,8-12', '1000'], ['1000', '2568']],
+    default => undef
+  }
+
+  $stp_vlan_port_priority = platform_get() ? {
+    'n7k'  => [['1-11,20-33', '64'], ['1111', '160']],
     default => undef
   }
 
@@ -89,13 +109,17 @@ class ciscopuppet::demo_interface {
   }
 
   cisco_interface { 'Ethernet1/4':
-    stp_bpdufilter    => $stp_bpdufilter,
-    stp_bpduguard     => $stp_bpduguard,
-    stp_cost          => $stp_cost,
-    stp_guard         => $stp_guard,
-    stp_link_type     => $stp_link_type,
-    stp_port_priority => $stp_port_priority,
-    stp_port_type     => $stp_port_type,
+    stp_bpdufilter         => $stp_bpdufilter,
+    stp_bpduguard          => $stp_bpduguard,
+    stp_cost               => $stp_cost,
+    stp_guard              => $stp_guard,
+    stp_link_type          => $stp_link_type,
+    stp_port_priority      => $stp_port_priority,
+    stp_port_type          => $stp_port_type,
+    stp_mst_cost           => $stp_mst_cost,
+    stp_mst_port_priority  => $stp_mst_port_priority,
+    stp_vlan_cost          => $stp_vlan_cost,
+    stp_vlan_port_priority => $stp_vlan_port_priority,
   }
 
   cisco_interface { 'Vlan22':

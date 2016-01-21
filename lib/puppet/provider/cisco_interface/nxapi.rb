@@ -59,8 +59,12 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     :stp_cost,
     :stp_guard,
     :stp_link_type,
+    :stp_mst_cost,
+    :stp_mst_port_priority,
     :stp_port_priority,
     :stp_port_type,
+    :stp_vlan_cost,
+    :stp_vlan_port_priority,
     :switchport_trunk_allowed_vlan,
     :switchport_trunk_native_vlan,
     :vlan_mapping,
@@ -115,6 +119,10 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     end
     # nested array properties
     current_state[:vlan_mapping] = intf.vlan_mapping
+    current_state[:stp_mst_cost] = intf.stp_mst_cost
+    current_state[:stp_mst_port_priority] = intf.stp_mst_port_priority
+    current_state[:stp_vlan_cost] = intf.stp_vlan_cost
+    current_state[:stp_vlan_port_priority] = intf.stp_vlan_port_priority
     new(current_state)
   end # self.properties_get
 
@@ -204,6 +212,66 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
       ipv4_addr_mask_configure
       ipv4_addr_mask_configure(true)
     end
+  end
+
+  def stp_mst_cost
+    return @property_hash[:stp_mst_cost] if @resource[:stp_mst_cost].nil?
+    if @resource[:stp_mst_cost][0] == :default &&
+       @property_hash[:stp_mst_cost] == @interface.default_stp_mst_cost
+      return [:default]
+    else
+      @property_hash[:stp_mst_cost]
+    end
+  end
+
+  def stp_mst_cost=(should_list)
+    should_list = @interface.default_stp_mst_cost if should_list[0] == :default
+    @property_flush[:stp_mst_cost] = should_list
+  end
+
+  def stp_mst_port_priority
+    return @property_hash[:stp_mst_port_priority] if @resource[:stp_mst_port_priority].nil?
+    if @resource[:stp_mst_port_priority][0] == :default &&
+       @property_hash[:stp_mst_port_priority] == @interface.default_stp_mst_port_priority
+      return [:default]
+    else
+      @property_hash[:stp_mst_port_priority]
+    end
+  end
+
+  def stp_mst_port_priority=(should_list)
+    should_list = @interface.default_stp_mst_port_priority if should_list[0] == :default
+    @property_flush[:stp_mst_port_priority] = should_list
+  end
+
+  def stp_vlan_cost
+    return @property_hash[:stp_vlan_cost] if @resource[:stp_vlan_cost].nil?
+    if @resource[:stp_vlan_cost][0] == :default &&
+       @property_hash[:stp_vlan_cost] == @interface.default_stp_vlan_cost
+      return [:default]
+    else
+      @property_hash[:stp_vlan_cost]
+    end
+  end
+
+  def stp_vlan_cost=(should_list)
+    should_list = @interface.default_stp_vlan_cost if should_list[0] == :default
+    @property_flush[:stp_vlan_cost] = should_list
+  end
+
+  def stp_vlan_port_priority
+    return @property_hash[:stp_vlan_port_priority] if @resource[:stp_vlan_port_priority].nil?
+    if @resource[:stp_vlan_port_priority][0] == :default &&
+       @property_hash[:stp_vlan_port_priority] == @interface.default_stp_vlan_port_priority
+      return [:default]
+    else
+      @property_hash[:stp_vlan_port_priority]
+    end
+  end
+
+  def stp_vlan_port_priority=(should_list)
+    should_list = @interface.default_stp_vlan_port_priority if should_list[0] == :default
+    @property_flush[:stp_vlan_port_priority] = should_list
   end
 
   def vlan_mapping
