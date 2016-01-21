@@ -287,8 +287,10 @@ def resource_absent_cleanup(agent, res_name, stepinfo='absent clean')
   step "TestStep :: #{stepinfo}" do
     # set each resource to ensure=absent
     get_current_resource_instances(agent, res_name).each do |title|
+      next if title[/management/]
       cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
         "resource #{res_name} '#{title}' ensure=absent", options)
+      logger.info("  * #{stepinfo} Removing #{res_name} '#{title}'")
       on(agent, cmd_str, acceptable_exit_codes: [0])
     end
   end
@@ -361,7 +363,7 @@ def bgp_nbr_remote_as(agent, remote_as)
 end
 
 # If a [:title] exists merge it with the [:af] values to create a complete af.
-def bgp_title_pattern_munge(tests, id, provider=nil)
+def af_title_pattern_munge(tests, id, provider=nil)
   title = tests[id][:title_pattern]
   af = tests[id][:af]
 
@@ -378,6 +380,8 @@ def bgp_title_pattern_munge(tests, id, provider=nil)
     t[:asn], t[:vrf], t[:afi], t[:safi] = title.split
   when 'bgp_neighbor_af'
     t[:asn], t[:vrf], t[:neighbor], t[:afi], t[:safi] = title.split
+  when 'vrf_af'
+    t[:vrf], t[:afi], t[:safi] = title.split
   end
   t.merge!(tests[id][:af])
   t[:vrf] = 'default' if t[:vrf].nil?
@@ -567,4 +571,28 @@ def platform
     fail "Unrecognized platform type: #{pi}\n"
   end
   @cisco_hardware
+end
+
+# Helper to skip tests on unsupported platforms.
+# tests[:platform] - A platform regexp pattern for all tests (caller set)
+# tests[id][:platform] - A platform regexp pattern for specific test (caller set)
+# tests[:skipped] - A list of skipped tests (set by this method)
+def platform_supports_test(tests, id)
+  # Prefer specific test key over the all tests key
+  plat = tests[id][:platform] || tests[:platform]
+  return true if plat.nil? || platform.match(plat)
+  logger.error("#{tests[id][:desc]} :: #{id} :: SKIP")
+  logger.error("Platform type does not match testcase platform regexp: /#{plat}/")
+  tests[:skipped] ||= []
+  tests[:skipped] << tests[id][:desc]
+  false
+end
+
+def skipped_tests_summary(tests, testheader)
+  return unless tests[:skipped]
+  logger.info("\n#{'-' * 60}\n  SKIPPED TESTS SUMMARY\n#{'-' * 60}")
+  tests[:skipped].each do |desc|
+    logger.error(sprintf('%-40s :: SKIP', desc))
+  end
+  raise_skip_exception(testheader, self)
 end

@@ -3,7 +3,7 @@
 #
 # July 2015
 #
-# Copyright (c) 2015 Cisco and/or its affiliates.
+# Copyright (c) 2015-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ Puppet::Type.type(:cisco_vrf).provide(:nxapi) do
   # because the boolean-based methods are processed slightly different.
   VRF_NON_BOOL_PROPS = [
     :description,
+    :route_distinguisher,
     :vni,
   ]
   VRF_BOOL_PROPS = [
