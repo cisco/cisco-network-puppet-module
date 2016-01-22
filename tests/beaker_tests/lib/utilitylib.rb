@@ -51,13 +51,7 @@ PUPPETMASTER_MANIFESTPATH = '/etc/puppetlabs/code/environments/production/manife
 # @result namespacestr [String] Returns 'sudo ip netns exec vrf <cmd>'
 # command string for 'cisco' platform.
 def get_namespace_cmd(host, cmdstr, options)
-  case host['platform']
-  when /cisco/
-    agentvrf = options[:HOSTS][host.to_s.to_sym]['vrf']
-    return "sudo ip netns exec #{agentvrf} " + cmdstr
-  else
-    return cmdstr
-  end
+  return cmdstr
 end
 
 # Method to return the Vegas shell command string for a NXOS CLI command.
