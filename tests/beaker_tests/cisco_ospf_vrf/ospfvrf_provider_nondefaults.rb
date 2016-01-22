@@ -67,17 +67,8 @@ testheader = 'OSPFVRF Resource :: All Attributes NonDefaults'
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    cmd_str = get_vshell_cmd('conf t ; no feature ospf')
-    on(agent, cmd_str)
-
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config section ospf')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, [/feature ospf/],
-                               true, self, logger)
-    end
+    resource_absent_cleanup(agent, 'cisco_ospf_vrf',
+                            'Setup switch for cisco_ospf_vrf provider test')
 
     logger.info("Setup switch for provider test :: #{result}")
   end
@@ -138,20 +129,6 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check cisco_ospf_vrf resource presence on agent :: #{result}")
   end
 
-  # @step [Step] Checks ospfvrf instance on agent using switch show cli cmds.
-  step 'TestStep :: Check ospfvrf instance presence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config section ospf')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               [/router ospf test/, /vrf green/],
-                               false, self, logger)
-    end
-
-    logger.info("Check ospfvrf instance presence on agent :: #{result}")
-  end
-
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource absent manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
@@ -206,20 +183,6 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Check cisco_ospf_vrf resource absence on agent :: #{result}")
-  end
-
-  # @step [Step] Checks ospfvrf instance on agent using switch show cli cmds.
-  step 'TestStep :: Check ospfvrf instance absence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config section ospf')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               [/router ospf test/, /vrf green/],
-                               true, self, logger)
-    end
-
-    logger.info("Check ospfvrf instance absence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
