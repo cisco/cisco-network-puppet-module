@@ -936,11 +936,6 @@ are 'present' and 'absent'.
 ###### `interface`
 Name of the interface on the network element. Valid value is a string.
 
-###### `channel_group`
-channel_group is an aggregation of multiple physical interfaces that creates a logical interface. Valid values are 1 to 4096 and 'default'.
-
-Note: On some platforms a normal side-effect of adding the channel-group property is that an independent port-channel interface will be created; however, removing the channel-group configuration by itself will not also remove the port-channel interface. Therefore, the port-channel interface itself may be explicitly removed by using the `cisco_interface` provider with `ensure => absent`.
-
 ###### `description`
 Description of the interface. Valid values are a string or the keyword 'default'.
 
@@ -1055,6 +1050,32 @@ Enable/Disable autostate on the SVI interface. Valid values are 'true',
 
 ###### `svi_management`
 Enable/Disable management on the SVI interface. Valid values are 'true', 'false', and 'default'.
+
+--
+### Type: cisco_interface
+
+Manages a Cisco Network Interface Channel-group
+
+#### Parameters
+
+##### Basic interface channel-group config attributes
+
+###### `ensure`
+Determine whether the interface config should be present or not. Valid values are 'present' and 'absent'.
+
+###### `interface`
+Name of the interface where the service resides. Valid value is a string.
+
+###### `channel_group`
+channel_group is an aggregation of multiple physical interfaces that creates a logical interface. Valid values are 1 to 4096 and 'default'.
+
+Note: On some platforms a normal side-effect of adding the channel-group property is that an independent port-channel interface will be created; however, removing the channel-group configuration by itself will not also remove the port-channel interface. Therefore, the port-channel interface itself may be explicitly removed by using the `cisco_interface` provider with `ensure => absent`.
+
+###### `description`
+Description of the interface. Valid values are a string or the keyword 'default'.
+
+###### `shutdown`
+Shutdown state of the interface. Valid values are 'true', 'false', and 'default'.
 
 --
 ### Type: cisco_interface_service_vni

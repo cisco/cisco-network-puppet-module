@@ -334,35 +334,6 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check interface instance absence on agent :: #{result}")
   end
 
-  # @step [Step] Requests manifest from the master server to the agent.
-  step 'TestStep :: Get resource present manifest from master' do
-    # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master,
-       RoutedIntfLib.create_routedintf_manifest_channel_group)
-
-    # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
-    on(agent, cmd_str, acceptable_exit_codes: [2])
-
-    logger.info("Get resource present manifest from master :: #{result}")
-  end
-
-  # @step [Step] Checks cisco_interface resource on agent using resource cmd.
-  step 'TestStep :: Check cisco_interface resource presence on agent' do
-    # Expected exit_code is 0 since this is a puppet resource cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface '#{test_intf}'", options)
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               { 'ensure'        => 'present',
-                                 'channel_group' => '200' },
-                               false, self, logger)
-    end
-    logger.info("Check cisco_interface resource presence on agent :: #{result}")
-  end
-
   # Remove any stale config from test interface
   interface_cleanup(agent, test_intf)
 
