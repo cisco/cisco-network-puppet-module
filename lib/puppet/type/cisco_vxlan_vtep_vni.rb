@@ -72,12 +72,13 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
   newparam(:vni, namevar: true) do
     desc 'ID of the Virtual Network Identifier. Valid values are integer.'
   end
-  
+
   newparam(:assoc_vrf, namevar: true) do
     desc 'Associate vrf with the vni. Valid values are true or false.'
     defaultto(:false)
     newvalues(:true, :false)
-  end 
+  end
+
   # param id
 
   ##############
@@ -94,7 +95,7 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
   # Only needed to satisfy name parameter.
   newparam(:name) do
   end
-  
+
   newproperty(:ingress_replication) do
     desc "Specify mechanism for host reachability advertisement. Valid values
           are 'bgp', 'static', or 'default'"
@@ -137,6 +138,12 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
 
   # Multicast-group and ingress-replication are mutually exclusive properties.
   validate do
+    fail 'Only one of multicast-group or ingress-replication can be configured, '\
+        'not both' if self[:multicast_group] && self[:ingress_replication]
+    # peer_ips apply only when ingress_replication is static. Disable them
+    # otherwise so that the config succeeds
+    self[:peer_ips] = [:default] unless self[:ingress_replication] == :static
+
     # If user configures assoc-vrf, make sure ingress_replication,
     # multicast_group, peer_ips and suppress_arp are off so that the config
     # succeeds
@@ -146,11 +153,5 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
       self[:suppress_arp] = :default
       self[:peer_ips] = [:default]
     end
-
-  fail 'Only one of multicast-group or ingress-replication can be configured, '\
-        'not both' if self[:multicast_group] && self[:ingress_replication] 
-    # peer_ips apply only when ingress_replication is static. Disable them
-    # otherwise so that the config succeeds
-    self[:peer_ips] = [:default] unless self[:ingress_replication] == :static
   end
 end # Puppet::Type.newtype

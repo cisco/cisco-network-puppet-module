@@ -43,7 +43,7 @@ class ciscopuppet::demo_vxlan {
     assoc_vrf           => false,
     ingress_replication => 'default',
     multicast_group     => undef,
-    peer_ips           => ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
+    peer_ips            => ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
     suppress_arp        => 'default',
   }
 }

@@ -58,7 +58,6 @@ Puppet::Type.type(:cisco_vxlan_vtep_vni).provide(:nxapi) do
     @vtep_vni = Cisco::VxlanVtepVni.vnis[interface][vni] unless
       interface.nil? || vni.nil?
     @property_flush = {}
-    puts "property_hash = #{@property_hash}, vtep_vni = #{@vtep_vni}"
     debug 'Created provider instance of cisco_vxlan_vtep_vni.'
   end
 
@@ -84,7 +83,6 @@ Puppet::Type.type(:cisco_vxlan_vtep_vni).provide(:nxapi) do
         current_state[prop] = val ? :true : :false
       end
     end
-    puts "curent_state = #{current_state}"
     new(current_state)
   end # self.properties_get
 
@@ -92,9 +90,6 @@ Puppet::Type.type(:cisco_vxlan_vtep_vni).provide(:nxapi) do
     vnis = []
     Cisco::VxlanVtepVni.vnis.each do |interface, all_vnis|
       all_vnis.each do |vni, vni_instance|
-        puts "vni = #{vni}"
- #       puts "assoc_vrf = #{vni_instance.assoc_vrf}"
-        puts "vni_instance = #{vni_instance.inspect}"
         vnis << properties_get(interface, vni, vni_instance)
       end
     end
@@ -114,7 +109,6 @@ Puppet::Type.type(:cisco_vxlan_vtep_vni).provide(:nxapi) do
   end # self.prefetch
 
   def exists?
-    puts "exists? #{(@property_hash[:ensure] == :present)}"
     (@property_hash[:ensure] == :present)
   end
 
@@ -164,20 +158,13 @@ Puppet::Type.type(:cisco_vxlan_vtep_vni).provide(:nxapi) do
 
   def flush
     if @property_flush[:ensure] == :absent
-      puts "vni to be destroyed = #{@vtep_vni}"
       @vtep_vni.destroy
       @vtep_vni = nil
     else
       # Create/Update
       if @vtep_vni.nil?
         new_vni = true
-        puts "flush create..."
-        puts @resource[:interface]
-        puts @resource[:vni]
-        puts @resource[:assoc_vrf]
-        puts "flush create end..."
         @vtep_vni = Cisco::VxlanVtepVni.new(@resource[:interface], @resource[:vni], @resource[:assoc_vrf])
-        puts "created vni = #{@vtep_vni}"
       end
       properties_set(new_vni)
     end
