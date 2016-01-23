@@ -34,15 +34,31 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
   mk_resource_methods
 
   STP_GLOBAL_NON_BOOL_PROPS = [
-    :domain,
     :mode,
+    :bd_designated_priority,
+    :bd_forward_time,
+    :bd_hello_time,
+    :bd_max_age,
+    :bd_priority,
+    :bd_root_priority,
+    :domain,
+    :mst_designated_priority,
     :mst_forward_time,
     :mst_hello_time,
+    :mst_inst_vlan_map,
     :mst_max_age,
     :mst_max_hops,
     :mst_name,
+    :mst_priority,
     :mst_revision,
+    :mst_root_priority,
     :pathcost,
+    :vlan_designated_priority,
+    :vlan_forward_time,
+    :vlan_hello_time,
+    :vlan_max_age,
+    :vlan_priority,
+    :vlan_root_priority,
   ]
   STP_GLOBAL_BOOL_PROPS = [
     :bpdufilter,
@@ -84,6 +100,24 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
         current_state[prop] = val ? :true : :false
       end
     end
+    # nested array properties
+    current_state[:bd_designated_priority] = nu_obj.bd_designated_priority
+    current_state[:bd_forward_time] = nu_obj.bd_forward_time
+    current_state[:bd_hello_time] = nu_obj.bd_hello_time
+    current_state[:bd_max_age] = nu_obj.bd_max_age
+    current_state[:bd_priority] = nu_obj.bd_priority
+    current_state[:bd_designated_priority] = nu_obj.bd_designated_priority
+    current_state[:bd_root_priority] = nu_obj.bd_root_priority
+    current_state[:mst_designated_priority] = nu_obj.mst_designated_priority
+    current_state[:mst_inst_vlan_map] = nu_obj.mst_inst_vlan_map
+    current_state[:mst_priority] = nu_obj.mst_priority
+    current_state[:mst_root_priority] = nu_obj.mst_root_priority
+    current_state[:vlan_designated_priority] = nu_obj.vlan_designated_priority
+    current_state[:vlan_forward_time] = nu_obj.vlan_forward_time
+    current_state[:vlan_hello_time] = nu_obj.vlan_hello_time
+    current_state[:vlan_max_age] = nu_obj.vlan_max_age
+    current_state[:vlan_priority] = nu_obj.vlan_priority
+    current_state[:vlan_root_priority] = nu_obj.vlan_root_priority
     new(current_state)
   end # self.properties_get
 
@@ -116,6 +150,246 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
           @nu.respond_to?("#{prop}=")
       end
     end
+  end
+
+  def bd_designated_priority
+    return @property_hash[:bd_designated_priority] if @resource[:bd_designated_priority].nil?
+    if @resource[:bd_designated_priority][0] == :default &&
+       @property_hash[:bd_designated_priority] == @nu.default_bd_designated_priority
+      return [:default]
+    else
+      @property_hash[:bd_designated_priority]
+    end
+  end
+
+  def bd_designated_priority=(should_list)
+    should_list = @nu.default_bd_designated_priority if should_list[0] == :default
+    @property_flush[:bd_designated_priority] = should_list
+  end
+
+  def bd_forward_time
+    return @property_hash[:bd_forward_time] if @resource[:bd_forward_time].nil?
+    if @resource[:bd_forward_time][0] == :default &&
+       @property_hash[:bd_forward_time] == @nu.default_bd_forward_time
+      return [:default]
+    else
+      @property_hash[:bd_forward_time]
+    end
+  end
+
+  def bd_forward_time=(should_list)
+    should_list = @nu.default_bd_forward_time if should_list[0] == :default
+    @property_flush[:bd_forward_time] = should_list
+  end
+
+  def bd_hello_time
+    return @property_hash[:bd_hello_time] if @resource[:bd_hello_time].nil?
+    if @resource[:bd_hello_time][0] == :default &&
+       @property_hash[:bd_hello_time] == @nu.default_bd_hello_time
+      return [:default]
+    else
+      @property_hash[:bd_hello_time]
+    end
+  end
+
+  def bd_hello_time=(should_list)
+    should_list = @nu.default_bd_hello_time if should_list[0] == :default
+    @property_flush[:bd_hello_time] = should_list
+  end
+
+  def bd_max_age
+    return @property_hash[:bd_max_age] if @resource[:bd_max_age].nil?
+    if @resource[:bd_max_age][0] == :default &&
+       @property_hash[:bd_max_age] == @nu.default_bd_max_age
+      return [:default]
+    else
+      @property_hash[:bd_max_age]
+    end
+  end
+
+  def bd_max_age=(should_list)
+    should_list = @nu.default_bd_max_age if should_list[0] == :default
+    @property_flush[:bd_max_age] = should_list
+  end
+
+  def bd_priority
+    return @property_hash[:bd_priority] if @resource[:bd_priority].nil?
+    if @resource[:bd_priority][0] == :default &&
+       @property_hash[:bd_priority] == @nu.default_bd_priority
+      return [:default]
+    else
+      @property_hash[:bd_max_age]
+    end
+  end
+
+  def bd_priority=(should_list)
+    should_list = @nu.default_bd_priority if should_list[0] == :default
+    @property_flush[:bd_priority] = should_list
+  end
+
+  def bd_root_priority
+    return @property_hash[:bd_root_priority] if @resource[:bd_root_priority].nil?
+    if @resource[:bd_root_priority][0] == :default &&
+       @property_hash[:bd_root_priority] == @nu.default_bd_root_priority
+      return [:default]
+    else
+      @property_hash[:bd_root_priority]
+    end
+  end
+
+  def bd_root_priority=(should_list)
+    should_list = @nu.default_bd_root_priority if should_list[0] == :default
+    @property_flush[:bd_root_priority] = should_list
+  end
+
+  def mst_designated_priority
+    return @property_hash[:mst_designated_priority] if @resource[:mst_designated_priority].nil?
+    if @resource[:mst_designated_priority][0] == :default &&
+       @property_hash[:mst_designated_priority] == @nu.default_mst_designated_priority
+      return [:default]
+    else
+      @property_hash[:mst_designated_priority]
+    end
+  end
+
+  def mst_designated_priority=(should_list)
+    should_list = @nu.default_mst_designated_priority if should_list[0] == :default
+    @property_flush[:mst_designated_priority] = should_list
+  end
+
+  def mst_inst_vlan_map
+    return @property_hash[:mst_inst_vlan_map] if @resource[:mst_inst_vlan_map].nil?
+    if @resource[:mst_inst_vlan_map][0] == :default &&
+       @property_hash[:mst_inst_vlan_map] == @nu.default_mst_inst_vlan_map
+      return [:default]
+    else
+      @property_hash[:mst_inst_vlan_map]
+    end
+  end
+
+  def mst_inst_vlan_map=(should_list)
+    should_list = @nu.default_mst_inst_vlan_map if should_list[0] == :default
+    @property_flush[:mst_inst_vlan_map] = should_list
+  end
+
+  def mst_priority
+    return @property_hash[:mst_priority] if @resource[:mst_priority].nil?
+    if @resource[:mst_priority][0] == :default &&
+       @property_hash[:mst_priority] == @nu.default_mst_priority
+      return [:default]
+    else
+      @property_hash[:mst_priority]
+    end
+  end
+
+  def mst_priority=(should_list)
+    should_list = @nu.default_mst_priority if should_list[0] == :default
+    @property_flush[:mst_priority] = should_list
+  end
+
+  def mst_root_priority
+    return @property_hash[:mst_root_priority] if @resource[:mst_root_priority].nil?
+    if @resource[:mst_root_priority][0] == :default &&
+       @property_hash[:mst_root_priority] == @nu.default_mst_root_priority
+      return [:default]
+    else
+      @property_hash[:mst_root_priority]
+    end
+  end
+
+  def mst_root_priority=(should_list)
+    should_list = @nu.default_mst_root_priority if should_list[0] == :default
+    @property_flush[:mst_root_priority] = should_list
+  end
+
+  def vlan_designated_priority
+    return @property_hash[:vlan_designated_priority] if @resource[:vlan_designated_priority].nil?
+    if @resource[:vlan_designated_priority][0] == :default &&
+       @property_hash[:vlan_designated_priority] == @nu.default_vlan_designated_priority
+      return [:default]
+    else
+      @property_hash[:vlan_designated_priority]
+    end
+  end
+
+  def vlan_designated_priority=(should_list)
+    should_list = @nu.default_vlan_designated_priority if should_list[0] == :default
+    @property_flush[:vlan_designated_priority] = should_list
+  end
+
+  def vlan_forward_time
+    return @property_hash[:vlan_forward_time] if @resource[:vlan_forward_time].nil?
+    if @resource[:vlan_forward_time][0] == :default &&
+       @property_hash[:vlan_forward_time] == @nu.default_vlan_forward_time
+      return [:default]
+    else
+      @property_hash[:vlan_forward_time]
+    end
+  end
+
+  def vlan_forward_time=(should_list)
+    should_list = @nu.default_vlan_forward_time if should_list[0] == :default
+    @property_flush[:vlan_forward_time] = should_list
+  end
+
+  def vlan_hello_time
+    return @property_hash[:vlan_hello_time] if @resource[:vlan_hello_time].nil?
+    if @resource[:vlan_hello_time][0] == :default &&
+       @property_hash[:vlan_hello_time] == @nu.default_vlan_hello_time
+      return [:default]
+    else
+      @property_hash[:vlan_hello_time]
+    end
+  end
+
+  def vlan_hello_time=(should_list)
+    should_list = @nu.default_vlan_hello_time if should_list[0] == :default
+    @property_flush[:vlan_hello_time] = should_list
+  end
+
+  def vlan_max_age
+    return @property_hash[:vlan_max_age] if @resource[:vlan_max_age].nil?
+    if @resource[:vlan_max_age][0] == :default &&
+       @property_hash[:vlan_max_age] == @nu.default_vlan_max_age
+      return [:default]
+    else
+      @property_hash[:vlan_hello_time]
+    end
+  end
+
+  def vlan_max_age=(should_list)
+    should_list = @nu.default_vlan_max_age if should_list[0] == :default
+    @property_flush[:vlan_max_age] = should_list
+  end
+
+  def vlan_priority
+    return @property_hash[:vlan_priority] if @resource[:vlan_priority].nil?
+    if @resource[:vlan_priority][0] == :default &&
+       @property_hash[:vlan_priority] == @nu.default_vlan_priority
+      return [:default]
+    else
+      @property_hash[:vlan_priority]
+    end
+  end
+
+  def vlan_priority=(should_list)
+    should_list = @nu.default_vlan_priority if should_list[0] == :default
+    @property_flush[:vlan_priority] = should_list
+  end
+
+  def vlan_root_priority
+    return @property_hash[:vlan_root_priority] if @resource[:vlan_root_priority].nil?
+    if @resource[:vlan_root_priority][0] == :default &&
+       @property_hash[:vlan_root_priority] == @nu.default_vlan_root_priority
+      return [:default]
+    else
+      @property_hash[:vlan_root_priority]
+    end
+  end
+
+  def vlan_root_priority=(should_list)
+    should_list = @nu.default_vlan_root_priority if should_list[0] == :default
+    @property_flush[:vlan_root_priority] = should_list
   end
 
   def flush

@@ -25,20 +25,36 @@ Puppet::Type.newtype(:cisco_stp_global) do
     'default' is only acceptable name for this global config object.
     Example:
     cisco_portchannel_global { 'default':
-      bpdufilter        => true,
-      bpduguard         => true,
-      bridge_assurance  => false,
-      domain            => 100,
-      fcoe              => false,
-      loopguard         => true,
-      mode              => 'mst',
-      mst_forward_time  => 25,
-      mst_hello_time    => 5,
-      mst_max_age       => 35,
-      mst_max_hops      => 200,
-      mst_name          => 'nexus',
-      mst_revision      => 34,
-      pathcost          => 'long',
+      bd_designated_priority       => [['2-42', '40960'], ['83-92,1000-2300', '53248']],
+      bd_forward_time              => [['2-42', '26'], ['83-92,1000-2300', '20']],
+      bd_hello_time                => [['2-42', '6'], ['83-92,1000-2300', '9']],
+      bd_max_age                   => [['2-42', '26'], ['83-92,1000-2300', '20']],
+      bd_priority                  => [['2-42', '40960'], ['83-92,1000-2300', '53248']],
+      bd_root_priority             => [['2-42', '40960'], ['83-92,1000-2300', '53248']],
+      bpdufilter                   => true,
+      bpduguard                    => true,
+      bridge_assurance             => false,
+      domain                       => 100,
+      fcoe                         => false,
+      loopguard                    => true,
+      mode                         => 'mst',
+      mst_designated_priority      => [['2-42', '40960'], ['83-92,1000-2300', '53248']],
+      mst_forward_time             => 25,
+      mst_hello_time               => 5,
+      mst_inst_vlan_map            => [['2', '6-47'], ['92', '120-400']],
+      mst_max_age                  => 35,
+      mst_max_hops                 => 200,
+      mst_name                     => 'nexus',
+      mst_priority                 => [['2-42', '40960'], ['83-92,1000-2300', '53248']],
+      mst_revision                 => 34,
+      mst_root_priority            => [['2-42', '40960'], ['83-92,1000-2300', '53248']],
+      pathcost                     => 'long',
+      vlan_designated_priority     => [['1-42', '40960'], ['83-92,1000-2300', '53248']],
+      vlan_forward_time            => [['1-42', '19'], ['83-92,1000-2300', '13']],
+      vlan_hello_time              => [['1-42', '10'], ['83-92,1000-2300', '6']],
+      vlan_max_age                 => [['1-42', '21'], ['83-92,1000-2300', '13']],
+      vlan_priority                => [['1-42', '40960'], ['83-92,1000-2300', '53248']],
+      vlan_root_priority           => [['1-42', '40960'], ['83-92,1000-2300', '53248']],
     }
   "
   ###################
@@ -56,6 +72,132 @@ Puppet::Type.newtype(:cisco_stp_global) do
   ##############
   # Attributes #
   ##############
+
+  newproperty(:bd_designated_priority, array_matching: :all) do
+    format = '[[bd_inst_list, designated_priority], [bdil, dp]]'
+    desc 'An array of [bd_inst_list, designated_priority] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property bd_designated_priority
+
+  newproperty(:bd_forward_time, array_matching: :all) do
+    format = '[[bd_inst_list, forward_time], [bdil, ft]]'
+    desc 'An array of [bd_inst_list, forward_time] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property bd_forward_time
+
+  newproperty(:bd_hello_time, array_matching: :all) do
+    format = '[[bd_inst_list, hello_time], [bdil, ht]]'
+    desc 'An array of [bd_inst_list, hello_time] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property bd_hello_time
+
+  newproperty(:bd_max_age, array_matching: :all) do
+    format = '[[bd_inst_list, max_age], [bdil, ma]]'
+    desc 'An array of [bd_inst_list, max_age] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property bd_max_age
+
+  newproperty(:bd_priority, array_matching: :all) do
+    format = '[[bd_inst_list, priority], [bdil, pri]]'
+    desc 'An array of [bd_inst_list, priority] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property bd_priority
+
+  newproperty(:bd_root_priority, array_matching: :all) do
+    format = '[[bd_inst_list, root_priority], [bdil, pri]]'
+    desc 'An array of [bd_inst_list, root_priority] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property bd_root_priority
 
   newproperty(:bpdufilter) do
     desc 'Edge port (portfast) bpdu filter'
@@ -107,6 +249,27 @@ Puppet::Type.newtype(:cisco_stp_global) do
     newvalues(:mst, :'rapid-pvst', :default)
   end # property mode
 
+  newproperty(:mst_designated_priority, array_matching: :all) do
+    format = '[[mst_inst_list, designated_priority], [mil, pri]]'
+    desc 'An array of [mst_inst_list, designated_priority] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property mst_designated_priority
+
   newproperty(:mst_forward_time) do
     desc 'Forward delay for the spanning tree'
 
@@ -134,6 +297,27 @@ Puppet::Type.newtype(:cisco_stp_global) do
       value
     end
   end # property mst_hello_time
+
+  newproperty(:mst_inst_vlan_map, array_matching: :all) do
+    format = '[[mst_inst_list, vlan_map], [mil, vm]]'
+    desc 'An array of [mst_inst_list, vlan_map] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property mst_inst_vlan_map
 
   newproperty(:mst_max_age) do
     desc 'Max age interval for the spanning tree'
@@ -173,6 +357,27 @@ Puppet::Type.newtype(:cisco_stp_global) do
     end
   end # property mst_name
 
+  newproperty(:mst_priority, array_matching: :all) do
+    format = '[[mst_inst_list, priority], [mil, pri]]'
+    desc 'An array of [mst_inst_list, priority] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property mst_priority
+
   newproperty(:mst_revision) do
     desc 'Configuration revision number'
 
@@ -187,9 +392,156 @@ Puppet::Type.newtype(:cisco_stp_global) do
     end
   end # property mst_revision
 
+  newproperty(:mst_root_priority, array_matching: :all) do
+    format = '[[mst_inst_list, root_priority], [mil, pri]]'
+    desc 'An array of [mst_inst_list, root_priority] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property mst_root_priority
+
   newproperty(:pathcost) do
     desc 'Method to calculate default port path cost'
 
     newvalues(:long, :short, :default)
   end # property pathcost
+
+  newproperty(:vlan_designated_priority, array_matching: :all) do
+    format = '[[vlan_inst_list, designated_priority], [vil, pri]]'
+    desc 'An array of [vlan_inst_list, designated_priority] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property vlan_designated_priority
+
+  newproperty(:vlan_forward_time, array_matching: :all) do
+    format = '[[vlan_inst_list, forward_time], [vil, ft]]'
+    desc 'An array of [vlan_inst_list, forward_time] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property vlan_forward_time
+
+  newproperty(:vlan_hello_time, array_matching: :all) do
+    format = '[[vlan_inst_list, hello_time], [vil, ht]]'
+    desc 'An array of [vlan_inst_list, hello_time] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property vlan_hello_time
+
+  newproperty(:vlan_max_age, array_matching: :all) do
+    format = '[[vlan_inst_list, max_age], [vil, ma]]'
+    desc 'An array of [vlan_inst_list, max_age] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property vlan_max_age
+
+  newproperty(:vlan_priority, array_matching: :all) do
+    format = '[[vlan_inst_list, priority], [vil, pri]]'
+    desc 'An array of [vlan_inst_list, priority] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property vlan_priority
+
+  newproperty(:vlan_root_priority, array_matching: :all) do
+    format = '[[vlan_inst_list, root_priority], [vil, pri]]'
+    desc 'An array of [vlan_inst_list, root_priority] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property vlan_root_priority
 end # Puppet::Type.newtype
