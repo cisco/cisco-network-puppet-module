@@ -288,10 +288,12 @@ def resource_absent_cleanup(agent, res_name, stepinfo='absent clean')
     # set each resource to ensure=absent
     get_current_resource_instances(agent, res_name).each do |title|
       case res_name
-      when /cisco_vrf/
-        next if title[/management/]
+      when /cisco_interface/
+        next if /ethernet/.match(title)
       when /cisco_vlan/
         next if title == '1'
+      when /cisco_vrf/
+        next if title[/management/]
       end
       cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
         "resource #{res_name} '#{title}' ensure=absent", options)
