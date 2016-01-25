@@ -178,6 +178,7 @@ The following resources include cisco types and providers along with cisco provi
 
 * Interface Types
   * [`cisco_interface`](#type-cisco_interface)
+  * [`cisco_interface_channel_group`](#type-cisco_interface_channel_group)
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
   * [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
   * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
@@ -194,6 +195,7 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 
 * Portchannel Types
+  * [`cisco_interface_channel_group`](#type-cisco_interface_channel_group)
   * [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
   * [`cisco_portchannel_global`](#type-cisco_portchannel_global)
   * 
@@ -256,6 +258,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_bgp_neighbor`](#type-cisco_bgp_neighbor)
 * [`cisco_bgp_neighbor_af`](#type-cisco_bgp_neighbor_af)
 * [`cisco_interface`](#type-cisco_interface)
+* [`cisco_interface_channel_group`](#type-cisco_interface_channel_group)
 * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 * [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
 * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
