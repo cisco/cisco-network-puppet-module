@@ -330,12 +330,14 @@ end
 
 # Helper to nuke a single interface. This is needed to remove all
 # configurations from the interface.
-def interface_cleanup(agent, intf, stepinfo='Pre Clean:')
-  logger.debug("#{stepinfo} Interface cleanup #{intf}")
-
-  # exit codes: 0 = no changes, 2 = changes have occurred
-  clean = "conf t ; default interface #{intf}"
-  on(agent, get_vshell_cmd(clean), acceptable_exit_codes: [0, 2])
+def interface_cleanup(agent, intf, stepinfo='Interface Pre Clean:')
+  step "TestStep :: #{stepinfo}" do
+    cmd = "resource cisco_command_config 'interface_cleanup' "\
+          "command='default interface #{intf}'"
+    cmd = get_namespace_cmd(agent, PUPPET_BINPATH + cmd, options)
+    logger.info("  * #{stepinfo} Set '#{intf}' to default state")
+    on(agent, cmd, acceptable_exit_codes: [0, 2])
+  end
 end
 
 # Helper to remove all IP address configs from all interfaces. This is

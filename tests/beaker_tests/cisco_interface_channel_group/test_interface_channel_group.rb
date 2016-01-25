@@ -19,17 +19,13 @@
 #
 # TestCase Prerequisites:
 # -----------------------
-# This is a Puppet VRF resource testcase for Puppet Agent on
+# This is a Puppet cisco_interface_channel_group testcase for Puppet Agent on
 # Nexus devices.
 # The test case assumes the following prerequisites are already satisfied:
 #   - Host configuration file contains agent and master information.
 #   - SSH is enabled on the N9K Agent.
 #   - Puppet master/server is started.
 #   - Puppet agent certificate has been signed on the Puppet master/server.
-#
-# TestCase:
-# ---------
-# This VRF resource test verifies default values for all properties.
 #
 # The following exit_codes are validated for Puppet, Vegas shell and
 # Bash shell commands.
@@ -155,9 +151,6 @@ def test_harness_interface_channel_group(tests, id)
   return unless platform_supports_test(tests, id)
 
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
-
-  # Workaround for (ioctl) facter bug on n7k ***
-  tests[id][:code] = [0, 2] if platform[/n7k/]
 
   # Build the manifest for this test
   build_manifest_interface_channel_group(tests, id)

@@ -1052,7 +1052,7 @@ Enable/Disable autostate on the SVI interface. Valid values are 'true',
 Enable/Disable management on the SVI interface. Valid values are 'true', 'false', and 'default'.
 
 --
-### Type: cisco_interface
+### Type: cisco_interface_channel_group
 
 Manages a Cisco Network Interface Channel-group
 
