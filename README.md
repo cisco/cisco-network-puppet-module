@@ -1260,6 +1260,54 @@ Specifies the reference bandwidth used to assign OSPF cost.
 Valid values are an integer, in Mbps, or the keyword 'default'.
 
 --
+### Type: cisco_pim
+Manages configuration of an Protocol Independent Multicast (PIM) instance.
+
+#### Parameters
+
+##### `afi`
+Address Family Identifier (AFI). Required. Valid values are ipv4 and ipv6.
+
+##### `vrf`
+Name of the resource instance. Required. Valid values are string. The name 'default' is a valid VRF representing the global vrf.
+
+##### `ssm_range`
+Configure group ranges for Source Specific Multicast (SSM). Valid values are multicast addresses or the keyword ‘none’.
+
+--
+### Type: cisco_pim_grouplist
+Manages configuration of an Protocol Independent Multicast (PIM) static route processor (RP) address for a multicast group range.
+
+#### Parameters
+
+##### `afi`
+Address Family Identifier (AFI). Required. Valid values are ipv4 and ipv6.
+
+##### `vrf`
+Name of the resource instance. Required. Valid values are string. The name 'default' is a valid VRF representing the global vrf.
+
+##### `rp_addr`
+IP address of a router which is the route processor (RP) for a group range.. Required. Valid values are unicast addresses.
+
+##### `group`
+Specifies a group range for a static route processor (RP) address. Required. Valid values are multicast addresses.
+
+--
+### Type: cisco_pim_rp_address
+Manages configuration of an Protocol Independent Multicast (PIM) static route processor (RP) address instance.
+
+#### Parameters
+
+##### `afi`
+Address Family Identifier (AFI). Required. Valid values are ipv4 and ipv6.
+
+##### `vrf`
+Name of the resource instance. Required. Valid values are string. The name 'default' is a valid VRF representing the global vrf.
+
+##### `rp_addr`
+Configures a Protocol Independent Multicast (PIM) static route processor (RP) address. Required. Valid values are unicast addresses.
+
+--
 ### Type: cisco_portchannel_global
 Manages configuration of a portchannel global parameters
 

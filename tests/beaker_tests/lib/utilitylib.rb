@@ -393,6 +393,63 @@ def af_title_pattern_munge(tests, id, provider=nil)
   t
 end
 
+# If a [:title] exists merge it with the [:pim] values to create a complete pim.
+def pim_title_pattern_munge(tests, id)
+  title = tests[id][:title_pattern]
+  pim = tests[id][:pim]
+
+  if title.nil?
+    puts 'no title'
+    return pim
+  end
+
+  tests[id][:pim] = {} if pim.nil?
+  t = {}
+
+  t[:afi], t[:vrf] = title.split
+  t.merge!(tests[id][:pim])
+  t[:vrf] = 'default' if t[:vrf].nil?
+  t
+end
+
+# If a [:title] exists merge it with the [:pim_rp] values to create a complete pim.
+def pim_rp_title_pattern_munge(tests, id)
+  title = tests[id][:title_pattern]
+  pim_rp = tests[id][:pim_rp]
+
+  if title.nil?
+    puts 'no title'
+    return pim_rp
+  end
+
+  tests[id][:pim_rp] = {} if pim_rp.nil?
+  t = {}
+
+  t[:afi], t[:vrf], t[:rp_addr] = title.split
+  t.merge!(tests[id][:pim_rp])
+  t[:vrf] = 'default' if t[:vrf].nil?
+  t
+end
+
+# If a [:title] exists merge it with the [:pim_group] values to create a complete pim.
+def pim_group_title_pattern_munge(tests, id)
+  title = tests[id][:title_pattern]
+  pim_group = tests[id][:pim_group]
+
+  if title.nil?
+    puts 'no title'
+    return pim_group
+  end
+
+  tests[id][:pim_group] = {} if pim_group.nil?
+  t = {}
+
+  t[:afi], t[:vrf], t[:rp_addr], t[:group] = title.split
+  t.merge!(tests[id][:pim_group])
+  t[:vrf] = 'default' if t[:vrf].nil?
+  t
+end
+
 # setup_mt_full_env
 # Check and set up prerequisites for Multi-Tenancy Full (MT-full) testing.
 # MT-full currently requires an F3 line module. This method will update
