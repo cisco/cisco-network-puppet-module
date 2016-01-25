@@ -5,17 +5,17 @@
 This workflow map aids *users*, *developers* and *maintainers* of the ciscopuppet project in selecting the appropriate document(s) for their task.
 
 * User Guides
-  * [README-agent-install.md](docs/README-agent-install.md) : Agent Installation and Configuration Guide
-  * [README-beaker-agent-install.md](docs/README-beaker-agent-install.md) : Automated Agent Installation and Configuration
-  * [README-package-provider.md](docs/README-package-provider.md) : Cisco Nexus Package Management using the Package Provider
-  * [README-example-manifest.md](examples/README.md) : Example Demo Manifest User Guide
+  * [README-agent-install.md](https://github.com/cisco/cisco-network-puppet-module/blob/develop/docs/README-agent-install.md) : Agent Installation and Configuration Guide
+  * [README-beaker-agent-install.md](https://github.com/cisco/cisco-network-puppet-module/blob/develop/docs/README-beaker-agent-install.md) : Automated Agent Installation and Configuration
+  * [README-package-provider.md](https://github.com/cisco/cisco-network-puppet-module/blob/develop/docs/README-package-provider.md) : Cisco Nexus Package Management using the Package Provider
+  * [README-example-manifest.md](https://github.com/cisco/cisco-network-puppet-module/blob/develop/examples/README.md) : Example Demo Manifest User Guide
   * The remainder of this document is aimed at end users
 * Developer Guides
-  * [CONTRIBUTING.md](CONTRIBUTING.md) : Contribution guidelines
-  * [README-develop-types-providers.md](docs/README-develop-types-providers.md) : Developing new ciscopuppet Types and Providers
-  * [README-develop-beaker-scripts.md](docs/README-develop-beaker-scripts.md) : Developing new beaker test scripts for ciscopuppet
+  * [CONTRIBUTING.md](https://github.com/cisco/cisco-network-puppet-module/blob/develop/CONTRIBUTING.md) : Contribution guidelines
+  * [README-develop-types-providers.md](https://github.com/cisco/cisco-network-puppet-module/blob/develop/docs/README-develop-types-providers.md) : Developing new ciscopuppet Types and Providers
+  * [README-develop-beaker-scripts.md](https://github.com/cisco/cisco-network-puppet-module/blob/develop/docs/README-develop-beaker-scripts.md) : Developing new beaker test scripts for ciscopuppet
 * Maintainers Guides
-  * [README-maintainers.md](docs/README-maintainers.md) : Guidelines for core maintainers of the ciscopuppet project
+  * [README-maintainers.md](https://github.com/cisco/cisco-network-puppet-module/blob/develop/docs/README-maintainers.md) : Guidelines for core maintainers of the ciscopuppet project
   * All developer guides apply to maintainers as well
 
 Please see [Learning Resources](#learning-resources) for additional references.
@@ -159,10 +159,12 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_aaa_group_tacacs`](#type-cisco_aaa_group_tacacs)
 
 * ACL Types
+  * [`cisco_ace`](#type-cisco_ace)
   * [`cisco_acl`](#type-cisco_acl)
 
 * BGP Types
   * [`cisco_vrf`](#type-cisco_vrf)
+  * [`cisco_vrf_af`](#type-cisco_vrf_af)
   * [`cisco_bgp`](#type-cisco_bgp)
   * [`cisco_bgp_af`](#type-cisco_bgp_af)
   * [`cisco_bgp_neighbor`](#type-cisco_bgp_neighbor)
@@ -177,6 +179,7 @@ The following resources include cisco types and providers along with cisco provi
 * Interface Types
   * [`cisco_interface`](#type-cisco_interface)
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
+  * [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
   * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
   * [`network_interface (netdev_stdlib)`](#type-network_interface)
 
@@ -190,6 +193,10 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_ospf_vrf`](#type-cisco_ospf_vrf)
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 
+* Portchannel Types
+  * [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
+  * [`cisco_portchannel_global`](#type-cisco_portchannel_global)
+  * 
 * RADIUS Types
   * [`radius (netdev_stdlib)`](#type-radius)
   * [`radius_global (netdev_stdlib)`](#type-radius_global)
@@ -228,6 +235,7 @@ The following resources include cisco types and providers along with cisco provi
   
 * VRF Types
   * [`cisco_vrf`](#type-cisco_vrf)
+  * [`cisco_vrf_af`](#type-cisco_vrf_af)
 
 * VNI Types
    * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
@@ -252,9 +260,11 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_bgp_neighbor_af`](#type-cisco_bgp_neighbor_af)
 * [`cisco_interface`](#type-cisco_interface)
 * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
+* [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
 * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
 * [`cisco_ospf`](#type-cisco_ospf)
 * [`cisco_ospf_vrf`](#type-cisco_ospf_vrf)
+* [`cisco_portchannel_global`](#type-cisco_portchannel_global)
 * [`cisco_snmp_community`](#type-cisco_snmp_community)
 * [`cisco_snmp_group`](#type-cisco_snmp_group)
 * [`cisco_snmp_server`](#type-cisco_snmp_server)
@@ -266,6 +276,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_vpc_domain`](#type-cisco_vpc_domain)
 * [`cisco_vni`](#type-cisco_vni)
 * [`cisco_vrf`](#type-cisco_vrf)
+* [`cisco_vrf_af`](#type-cisco_vrf_af)
 * [`cisco_vtp`](#type-cisco_vtp)
 * [`cisco_vxlan_global`](#type-cisco_vxlan_global)
 * [`cisco_vxlan_vtep`](#type-cisco_vxlan_vtep)
@@ -449,8 +460,16 @@ BGP autonomous system number.  Valid values are String, Integer in ASPLAIN or AS
 ##### `vrf`
 Name of the resource instance. Valid values are string. The name 'default' is a valid VRF representing the global bgp.
 
+<a name='bgp_rd'></a>
 ##### `route_distinguisher`
 VPN Route Distinguisher (RD). The RD is combined with the IPv4 or IPv6 prefix learned by the PE router to create a globally unique address. Valid values are a String in one of the route-distinguisher formats (ASN2:NN, ASN4:NN, or IPV4:NN); the keyword 'auto', or the keyword 'default'.
+
+*Please note:* The `route_distinguisher` property is typically configured within the VRF context configuration on most platforms (including NXOS) but it is tightly coupled to bgp and therefore configured within the BGP configuration on some platforms (XR for example). For this reason the `route_distinguisher` property has support (with limitations) in both `cisco_vrf` and `cisco_bgp` providers:
+
+* `cisco_bgp`: The property is fully supported on both NXOS and XR.
+* `cisco_vrf`: The property is only supported on NXOS. See: [cisco_vrf: route_distinguisher](#vrf_rd)
+
+*IMPORTANT: Choose only one provider to configure the `route_distinguisher` property on a given device. Using both providers simultaneously on the same device may have unpredictable results.*
 
 ##### `router_id`
 Router Identifier (ID) of the BGP router VRF instance. Valid values are string, and keyword 'default'.
@@ -709,15 +728,6 @@ redistribute => [['direct'],
                  ['rip 4']]
 ```
 
-##### `route target both auto`
-(iBGP only) Enable/Disable the route-target 'auto' setting for both import and export target communities. Valid values are true, false, or 'default'.
-
-##### `route target both auto evpn`
-(iBGP only, EVPN only) Enable/Disable the EVPN route-target 'auto' setting for both import and export target communities. Valid values are true, false, or 'default'.
-
-##### `route_target_import`
-Sets the route-target import extended communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
-
 ##### `suppress_inactive`
 Advertises only active routes to peersy. Valid values are true, false, or 'default'.
 
@@ -726,23 +736,6 @@ Apply table-map to filter routes downloaded into URIB. Valid values are a string
 
 ##### `table_map_filter`
 Filters routes rejected by the route map and does not download them to the RIB. Valid values are true, false, or 'default'.
-
-Examples:
-
-~~puppet
-route_target_import => ['1.2.3.4:5', '33:55']
-route_target_export => '4:4 66:66'
-route_target_export_evpn => '5:5'
-\~~~
-
-##### `route_target_import_evpn`
-(EVPN only) Sets the route-target import extended communities for EVPN. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
-
-##### `route_target_export`
-Sets the route-target export extended communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
-
-##### `route_target_export_evpn`
-(EVPN only) Sets the route-target export extended communities for EVPN. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
 
 --
 ### Type: cisco_bgp_neighbor
@@ -969,6 +962,22 @@ Shutdown state of the interface. Valid values are 'true', 'false', and
 Switchport mode of the interface. To make an interface Layer 3, set
 `switchport_mode` to 'disabled'. Valid values are 'disabled', 'access', 'tunnel', 'fex_fabric', 'trunk', and 'default'.
 
+###### `ipv4_acl_in`
+Apply ipv4 access list on the interface in ingress direction. Access-list should be present on the network device 
+prior this configuration. Valid values are string, keyword 'default'.
+
+###### `ipv4_acl_out`
+Apply ipv4 access list on the interface in egress direction. Access-list should be present on the network device 
+prior this configuration. Valid values are string, keyword 'default'.
+
+###### `ipv6_acl_in`
+Apply ipv6 access list on the interface in ingress direction. Access-list should be present on the network device 
+prior this configuration. Valid values are string, keyword 'default'.
+
+###### `ipv6_acl_out`
+Apply ipv6 access list on the interface in egress direction. Access-list should be present on the network device 
+prior this configuration. Valid values are string, keyword 'default'.
+
 ##### L2 interface config attributes
 
 ###### `access_vlan`
@@ -1019,6 +1028,15 @@ keyword 'default'.
 ###### `ipv4_netmask_length`
 Network mask length of the IP address on the interface. Valid values are
 integer and keyword 'default'.
+
+###### `ipv4_address_secondary`
+Secondary IP address of the interface. Valid values are a string of ipv4 address or the keyword 'default'.
+
+###### `ipv4_netmask_length_secondary`
+Network mask length of the secondary IP address on the interface. Valid values are integer and keyword 'default'.
+
+###### `ipv4_arp_timeout`
+Address Resolution Protocol (ARP) timeout value. Valid values are integer and keyword 'default'. Currently only supported on vlan interfaces.
 
 ###### `vlan_mapping`
 This property is a nested array of [original_vlan, translated_vlan] pairs. Valid values are an array specifying the mapped vlans or keyword 'default'; e.g.:
@@ -1155,6 +1173,33 @@ Specifies the message_digest password. Valid value is a string.
 *Required*. Ospf area associated with this cisco_interface_ospf instance. Valid values are a string, formatted as an IP address (i.e. "0.0.0.0") or as an integer.
 
 --
+### Type: cisco_interface_portchannel
+Manages configuration of a portchannel interface instance.
+
+#### Parameters
+
+##### `ensure`
+Determine whether the config should be present or not. Valid values are 'present' and 'absent'.
+
+##### `lacp_graceful_convergence`
+port-channel lacp graceful convergence. Valid values are true, false or 'default'.
+
+##### `lacp_max_bundle`
+port-channel max-bundle. Valid values are Integer, keyword 'default'.
+
+##### `lacp_min_links`
+port-channel min-links. Valid values are Integer, keyword 'default'.
+
+##### `lacp_suspend_individual`
+lacp port-channel state. Valid values are true and false or 'default'.
+
+##### `port_hash_distribution`
+port-channel per port hash-distribution. Valid values are 'adaptive', 'fixed' or the keyword 'default'. This property is not supported on (Nexus 5|6k)
+
+##### `port_load_defer`
+port-channel per port load-defer. Valid values are true, false or 'default'. This property is not supported on (Nexus 5|6k)
+
+--
 ### Type: cisco_ospf
 Manages configuration of an ospf instance.
 
@@ -1223,6 +1268,42 @@ Valid values are an integer, in milliseconds, or the keyword 'default'.
 ##### `auto_cost`
 Specifies the reference bandwidth used to assign OSPF cost.
 Valid values are an integer, in Mbps, or the keyword 'default'.
+
+--
+### Type: cisco_portchannel_global
+Manages configuration of a portchannel global parameters
+
+#### Parameters
+
+##### `asymmetric`
+port-channel asymmetric hash. Valid values are true, false or 'default'. This property is supported only on (Nexus 7k)
+
+##### `bundle_hash`
+port-channel bundle hash. Valid values are 'ip', 'ip-l4port', 'ip-l4port-vlan', 'ip-vlan', 'l4port', 'mac', 'port', 'ip-only', 'port-only', 'ip-gre' or 'default'. 'port', 'ip-only', 'port-only', 'ip-gre' are not supported on (Nexus 7k). 'ip-l4port', 'ip-l4port-vlan', 'ip-vlan', 'l4port', 'ip-gre' are not supported on (Nexus 5|6k). 'port', 'ip-only', 'port-only' are not supported on (Nexus 3|9k)
+
+##### `bundle_select`
+port-channel bundle select. Valid values are 'src', 'dst', 'src-dst' or 'default'.
+
+##### `concatenation`
+port-channel concatenation enable or disable. Valid values are true, false or 'default'. This property is supported only on (Nexus 3|9k)
+
+##### `hash_distribution`
+port-channel hash-distribution. Valid values are 'adaptive', 'fixed' or the keyword 'default'. This property is supported only on (Nexus 7k)
+
+##### `hash_poly`
+port-channel hash-polynomial. Valid values are 'CRC10a', 'CRC10b', 'CRC10c', 'CRC10d' or the keyword 'default'. This property is supported only on (Nexus 5|6k)
+
+##### `load_defer`
+port-channel load-defer time interval. Valid values are integer or 'default'. This property is supported only on (Nexus 7k)
+
+##### `resilient`
+port-channel resilient mode. Valid values are true, false or 'default'. This property is supported only on (Nexus 3|9k)
+
+##### `rotate`
+port-channel hash input offset. Valid values are integer or 'default'. This property is not supported on (Nexus 5|6k)
+
+##### `symmetry`
+port-channel symmetry hash. Valid values are true, false or 'default'. This property is supported only on (Nexus 3|9k)
 
 --
 ### Type: cisco_snmp_community
@@ -1459,11 +1540,70 @@ not case-sensitive and overrides the title of the type.
 ##### `description`
 Description of the VRF. Valid value is string.
 
+<a name='vrf_rd'></a>
+##### `route_distinguisher`
+VPN Route Distinguisher (RD). The RD is combined with the IPv4 or IPv6 prefix learned by the PE router to create a globally unique address. Valid values are a String in one of the route-distinguisher formats (ASN2:NN, ASN4:NN, or IPV4:NN); the keyword 'auto', or the keyword 'default'.
+
+*Please note:* The `route_distinguisher` property is typically configured within the VRF context configuration on most platforms (including NXOS) but it is tightly coupled to bgp and therefore configured within the BGP configuration on some platforms (XR for example). For this reason the `route_distinguisher` property has support (with limitations) in both `cisco_vrf` and `cisco_bgp` providers:
+
+* `cisco_bgp`: The property is fully supported on both NXOS and XR. See: [cisco_bgp: route_distinguisher](#bgp_rd)
+* `cisco_vrf`: The property is only supported on NXOS.
+
+*IMPORTANT: Choose only one provider to configure the `route_distinguisher` property on a given device. Using both providers simultaneously on the same device may have unpredictable results.*
+
 ##### `shutdown`
 Shutdown state of the VRF. Valid values are 'true' and 'false'.
 
 ##### `vni`
 Specify virtual network identifier. Valid values are Integer or keyword 'default'.
+
+--
+### Type: cisco_vrf_af
+
+Manages Cisco Virtual Routing and Forwarding (VRF) Address-Family configuration.
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid
+values are 'present' and 'absent'. Default value is 'present'.
+
+##### `name`
+Name of the VRF. Required. Valid value is a string of non-whitespace characters. It is
+not case-sensitive and overrides the title of the type.
+
+##### `afi`
+Address-Family Identifier (AFI). Required. Valid values are 'ipv4' or 'ipv6'.
+
+##### `safi`
+Sub Address-Family Identifier (SAFI). Required. Valid values are `unicast` or `multicast`.
+*`multicast` is not supported on some platforms.*
+
+##### `route target both auto`
+Enable/Disable the route-target 'auto' setting for both import and export target communities. Valid values are true, false, or 'default'.
+
+##### `route target both auto evpn`
+(EVPN only) Enable/Disable the EVPN route-target 'auto' setting for both import and export target communities. Valid values are true, false, or 'default'.
+
+##### `route_target_import`
+Sets the route-target import extended communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
+route_target Examples:
+
+~~puppet
+route_target_import => ['1.2.3.4:5', '33:55']
+route_target_export => '4:4 66:66'
+route_target_export_evpn => '5:5'
+\~~~
+
+##### `route_target_import_evpn`
+(EVPN only) Sets the route-target import extended communities for EVPN. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
+##### `route_target_export`
+Sets the route-target export extended communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
+##### `route_target_export_evpn`
+(EVPN only) Sets the route-target export extended communities for EVPN. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
 
 --
 ### Type: cisco_vtp
