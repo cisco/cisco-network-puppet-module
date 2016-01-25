@@ -289,7 +289,7 @@ def resource_absent_cleanup(agent, res_name, stepinfo='absent clean')
     get_current_resource_instances(agent, res_name).each do |title|
       case res_name
       when /cisco_interface/
-        next if /ethernet/.match(title)
+        next if title[/ethernet/i]
       when /cisco_vlan/
         next if title == '1'
       when /cisco_vrf/

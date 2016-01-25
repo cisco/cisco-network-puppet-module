@@ -15,7 +15,7 @@
 ###############################################################################
 # TestCase Name:
 # -------------
-# test-cisco_command_config.rb
+# test_command_config.rb
 #
 # TestCase Prerequisites:
 # -----------------------
@@ -96,7 +96,7 @@ tests['configure_bgp'] = {
   puppet_resource: 'cisco_bgp',
   platform:        'n(3|5|6|7|9)k',
   # Command indentation is very important!
-  # Make sure config appears exactly how it nvgens on the switch.
+  # Make sure config appears exactly how it nvgens on the node.
   manifest_props:  "
     command                  => '
       feature bgp
@@ -142,6 +142,66 @@ tests['configure_bgp'] = {
     'timer_bestpath_limit_always'            => 'true',
     'timer_bgp_keepalive'                    => '33',
     'timer_bgp_holdtime'                     => '190',
+  },
+}
+
+tests['configure_bgp_af'] = {
+  puppet_resource: 'cisco_bgp_af',
+  platform:        'n(3|5|6|7|9)k',
+  # Command indentation is very important!
+  # Make sure config appears exactly how it nvgens on the node.
+  manifest_props:  "
+    command                  => '
+      feature bgp
+      router bgp 55
+        address-family ipv4 unicast
+          dampening',
+  ",
+  resource_props:  {
+    'ensure'                      => 'present',
+    'dampening_state'             => 'true',
+    'dampening_half_time'         => '15',
+    'dampening_max_suppress_time' => '45',
+    'dampening_reuse_time'        => '750',
+    'dampening_suppress_time'     => '2000',
+  },
+}
+
+tests['configure_bgp_neighbor'] = {
+  puppet_resource: 'cisco_bgp_neighbor',
+  platform:        'n(3|5|6|7|9)k',
+  # Command indentation is very important!
+  # Make sure config appears exactly how it nvgens on the node.
+  manifest_props:  "
+    command                  => '
+      feature bgp
+      router bgp 55
+        neighbor 1.1.1.1
+          timers 90 270',
+  ",
+  resource_props:  {
+    'ensure'           => 'present',
+    'timers_keepalive' => '90',
+    'timers_holdtime'  => '270',
+  },
+}
+
+tests['configure_bgp_neighbor_af'] = {
+  puppet_resource: 'cisco_bgp_neighbor_af',
+  platform:        'n(3|5|6|7|9)k',
+  # Command indentation is very important!
+  # Make sure config appears exactly how it nvgens on the node.
+  manifest_props:  "
+    command                  => '
+      feature bgp
+      router bgp 55
+        neighbor 1.1.1.1
+          address-family ipv6 unicast
+            capability additional-paths send',
+  ",
+  resource_props:  {
+    'ensure'                => 'present',
+    'additional_paths_send' => 'enable',
   },
 }
 
@@ -194,9 +254,7 @@ def test_harness_cisco_command_config(tests, id)
   # Build the manifest for this test
   build_manifest_cisco_command_config(tests, id)
 
-  test_manifest(tests, id)
-  test_resource(tests, id)
-  test_idempotence(tests, id)
+  test_harness_common(tests, id)
 
   tests[id][:ensure] = nil
 end
@@ -219,8 +277,20 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:desc] = '1.1 Apply BGP Config'
   test_harness_cisco_command_config(tests, id)
 
+  id = 'configure_bgp_af'
+  tests[id][:desc] = '1.2 Apply BGP AF Config'
+  test_harness_cisco_command_config(tests, id)
+
+  id = 'configure_bgp_neighbor'
+  tests[id][:desc] = '1.3 Apply BGP Neighbor Config'
+  test_harness_cisco_command_config(tests, id)
+
+  id = 'configure_bgp_neighbor_af'
+  tests[id][:desc] = '1.4 Apply BGP Neighbor AF Config'
+  test_harness_cisco_command_config(tests, id)
+
   id = 'configure_loopback_interface'
-  tests[id][:desc] = '1.2 Apply INTERFACE Config'
+  tests[id][:desc] = '1.5 Apply INTERFACE Config'
   test_harness_cisco_command_config(tests, id)
 end
 
