@@ -62,18 +62,27 @@ require File.expand_path('../ospfintflib.rb', __FILE__)
 result = 'PASS'
 testheader = 'OSPFINTF Resource :: All Attributes Defaults'
 
-if ethernet_info_get.nil? || ethernet_info_get[:slot].nil?
-  msg = 'Unable to find suitable ethernet module required for this test.'
-  prereq_skip(testheader, self, msg)
+# Local tests hash and helper method used to dynamically find an available
+# interface for cisco_interface_ospf tests.
+tests = { intf_type: 'ethernet', agent: agent, testheader: testheader }
+def find_ospf_interface(tests)
+  if tests[:ethernet]
+    intf = tests[:ethernet]
+  else
+    intf = find_interface(tests)
+    # cache for later tests
+    tests[:ethernet] = intf
+  end
+  intf
 end
-interface = "ethernet#{ethernet_info_get[:slot]}/1"
+interface = find_ospf_interface(tests)
 
 # @test_name [TestCase] Executes defaults testcase for OSPFINTF Resource.
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
     resource_absent_cleanup(agent, 'cisco_interface_ospf',
-                            'Setup switch for cisco_ospf provider test')
+                            'Setup switch for cisco_interface_ospf provider test')
 
     logger.info("Setup switch for provider test :: #{result}")
   end
@@ -106,7 +115,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface_ospf \"#{interface} test\"", options)
+      "resource cisco_interface_ospf '#{interface} test'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ensure'                => 'present',
@@ -140,7 +149,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface_ospf \"#{interface} test\"", options)
+      "resource cisco_interface_ospf '#{interface} test'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ensure'                => 'present',

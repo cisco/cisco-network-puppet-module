@@ -287,8 +287,10 @@ def resource_absent_cleanup(agent, res_name, stepinfo='absent clean')
   step "TestStep :: #{stepinfo}" do
     # set each resource to ensure=absent
     get_current_resource_instances(agent, res_name).each do |title|
+      puts "resource name: #{res_name}"
       case res_name
-      when /cisco_interface/
+      # Anchors needed to ensure only cisco_interface matches.
+      when /^cisco_interface$/
         next if title[/ethernet/i]
       when /cisco_vlan/
         next if title == '1'
@@ -480,16 +482,6 @@ def mt_full_interface
   "ethernet#{slot}/1" unless slot.nil?
 end
 
-# Return ethernet slot and port information from the first line module found.
-def ethernet_info_get
-  info = {}
-  cmd = get_vshell_cmd('sh mod')
-  out = on(agent, cmd, pty: true).stdout[/^(\d+)\s+([1-9]+)\s.*(Eth|Sup)/i]
-  info[:slot] = out.nil? ? nil : Regexp.last_match[1]
-  info[:ports] = out.nil? ? nil : Regexp.last_match[2]
-  info
-end
-
 # Return the default vdc name
 def default_vdc_name
   cmd = get_vshell_cmd('sh run vdc')
@@ -614,4 +606,25 @@ def skipped_tests_summary(tests, testheader)
     logger.error(sprintf('%-40s :: SKIP', desc))
   end
   raise_skip_exception(testheader, self)
+end
+
+def find_interface(tests, id=nil, skipcheck=true)
+  # Prefer specific test key over the all tests key
+  if id
+    type = tests[id][:intf_type] || tests[:intf_type]
+  else
+    type = tests[:intf_type]
+  end
+
+  case type
+  when /ethernet/i, /dot1q/
+    all = get_current_resource_instances(tests[:agent], 'cisco_interface')
+    intf = all.grep(%r{ethernet\d+\/\d+})[0]
+  end
+
+  if skipcheck && intf.nil?
+    msg = 'Unable to find suitable interface module for this test.'
+    prereq_skip(tests[:testheader], self, msg)
+  end
+  intf
 end
