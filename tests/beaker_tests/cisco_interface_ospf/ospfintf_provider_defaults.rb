@@ -62,21 +62,27 @@ require File.expand_path('../ospfintflib.rb', __FILE__)
 result = 'PASS'
 testheader = 'OSPFINTF Resource :: All Attributes Defaults'
 
+# Local tests hash and helper method used to dynamically find an available
+# interface for cisco_interface_ospf tests.
+tests = { intf_type: 'ethernet', agent: agent, testheader: testheader }
+def find_ospf_interface(tests)
+  if tests[:ethernet]
+    intf = tests[:ethernet]
+  else
+    intf = find_interface(tests)
+    # cache for later tests
+    tests[:ethernet] = intf
+  end
+  intf
+end
+interface = find_ospf_interface(tests)
+
 # @test_name [TestCase] Executes defaults testcase for OSPFINTF Resource.
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    cmd_str = get_vshell_cmd('conf t ; no feature ospf')
-    on(agent, cmd_str)
-
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config section ospf')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, [/feature ospf/],
-                               true, self, logger)
-    end
+    resource_absent_cleanup(agent, 'cisco_interface_ospf',
+                            'Setup switch for cisco_interface_ospf provider test')
 
     logger.info("Setup switch for provider test :: #{result}")
   end
@@ -84,7 +90,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource present manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, OspfIntfLib.create_ospfintf_manifest_present)
+    on(master, OspfIntfLib.create_ospfintf_manifest_present(interface))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
@@ -109,7 +115,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface_ospf 'ethernet1/4 test'", options)
+      "resource cisco_interface_ospf '#{interface} test'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ensure'                => 'present',
@@ -125,30 +131,10 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check cisco_intf_ospf resource presence on agent :: #{result}")
   end
 
-  # @step [Step] Checks ospfintf instance on agent using switch show cli cmds.
-  step 'TestStep :: Check ospfintf instance presence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config ospf')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               [
-                                 /router ospf test/,
-                                 %r{interface Ethernet1/4},
-                                 /ip ospf cost 1/,
-                                 /ip ospf dead-interval 40/,
-                                 /ip router ospf test area 0.0.0.1/,
-                               ],
-                               false, self, logger)
-    end
-
-    logger.info("Check ospfintf instance presence on agent :: #{result}")
-  end
-
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource absent manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, OspfIntfLib.create_ospfintf_manifest_absent)
+    on(master, OspfIntfLib.create_ospfintf_manifest_absent(interface))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
@@ -163,7 +149,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface_ospf 'ethernet1/4 test'", options)
+      "resource cisco_interface_ospf '#{interface} test'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ensure'                => 'present',
@@ -177,26 +163,6 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Check cisco_intf_ospf resource absence on agent :: #{result}")
-  end
-
-  # @step [Step] Checks ospfintf instance on agent using switch show cli cmds.
-  step 'TestStep :: Check ospfintf instance absence on agent' do
-    # Expected exit_code is 16 since this is a vegas shell cmd with exec error.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config ospf')
-    on(agent, cmd_str, acceptable_exit_codes: [16]) do
-      search_pattern_in_output(stdout,
-                               [
-                                 /router ospf test/,
-                                 %r{interface Ethernet1/4},
-                                 /ip ospf cost 1/,
-                                 /ip ospf dead-interval 40/,
-                                 /ip router ospf test area 0.0.0.1/,
-                               ],
-                               true, self, logger)
-    end
-
-    logger.info("Check ospfintf instance absence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
