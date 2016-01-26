@@ -287,7 +287,6 @@ def resource_absent_cleanup(agent, res_name, stepinfo='absent clean')
   step "TestStep :: #{stepinfo}" do
     # set each resource to ensure=absent
     get_current_resource_instances(agent, res_name).each do |title|
-      puts "resource name: #{res_name}"
       case res_name
       # Anchors needed to ensure only cisco_interface matches.
       when /^cisco_interface$/
