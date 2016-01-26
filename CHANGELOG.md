@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `cisco_ace` type and provider
 - `cisco_acl` type and provider
 - `cisco_evpn_vni` type and provider.
+- `cisco_interface_channel_group` type and provider
 - `cisco_interface_portchannel` type and provider
 - `cisco_interface_service_vni` type and provider
 - `cisco_portchannel_global` type and provider
@@ -46,7 +47,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `table_map`, `table_map_filter`
   - `suppress_inactive`
 - Extended `cisco_interface` with the following attributes:
-  - `channel_group`
   - `ipv4_address_secondary`, `ipv4_netmask_length_secondary`
   - `ipv4_arp_timeout`
   - `ipv4_pim_sparse_mode`

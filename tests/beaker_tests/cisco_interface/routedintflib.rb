@@ -81,18 +81,6 @@ EOF"
     manifest_str
   end
 
-  def self.create_routedintf_manifest_channel_group
-    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
-node default {
-    cisco_interface { 'ethernet1/4':
-      ensure                       => present,
-      switchport_mode              => disabled,
-      channel_group                => 200,
-  }}
-EOF"
-    manifest_str
-  end
-
   # Method to create a manifest for RoutedINTF resource attribute 'ensure' where
   # 'ensure' is set to present and 'switchport_mode' is set to access.
   # @param none [None] No input parameters exist.
@@ -419,21 +407,6 @@ node default {
       shutdown                     => false,
       switchport_mode              => disabled,
       vrf                          => #{RoutedIntfLib::VRF_NEGATIVE},
-    }
-}
-EOF"
-    manifest_str
-  end
-
-  # Method to create a manifest for RoutedINTF resource attribute 'channel-group'.
-  # @param none [None] No input parameters exist.
-  # @result none [None] Returns no object.
-  def self.create_channel_group_manifest_negative
-    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
-node default {
-    cisco_interface { 'ethernet1/4':
-      ensure                       => present,
-      channel_group                => #{RoutedIntfLib::CHANNEL_GROUP_NEGATIVE},
     }
 }
 EOF"
