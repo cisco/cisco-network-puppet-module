@@ -1,9 +1,9 @@
 # Manages a Cisco Virtual Tunnel Endpoint (VTEP) to Virtual Network
 # Identifier (VNI) binding.
 #
-# December 2015
+# January 2016
 #
-# Copyright (c) 2013-2015 Cisco and/or its affiliates.
+# Copyright (c) 2013-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,12 +29,12 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
 
   Example:
     cisco_vxlan_vtep_vni {'nve1 10000':
-      ensure      		=> present,
-      assoc_vrf			=> false,
-      ingress_replication       => 'static',
-      multicast_group		=> '224.1.1.1 224.1.1.200',
-      peer_ips			=> ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
-      suppress-arp		=> true,
+      ensure              => present,
+      assoc_vrf           => false,
+      ingress_replication => 'static',
+      multicast_group     => '224.1.1.1 224.1.1.200',
+      peer_list            => ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
+      suppress-arp        => true,
     }"
 
   ###################
@@ -114,12 +114,12 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
     end
   end # property name
 
-  newproperty(:peer_ips, array_matching: :all) do
+  newproperty(:peer_list, array_matching: :all) do
     desc 'A list of static ip addresses for ingress-replication static' \
          "valid values are an array of strings and keyword 'default'."
 
     validate do |value|
-      fail "peer_ips #{value} must be string" unless
+      fail "peer_list #{value} must be string" unless
         value.kind_of?(String) || value == :default
     end
 
@@ -140,18 +140,18 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
   validate do
     fail 'Only one of multicast-group or ingress-replication can be configured, '\
         'not both' if self[:multicast_group] && self[:ingress_replication]
-    # peer_ips apply only when ingress_replication is static. Disable them
+    # peer_list apply only when ingress_replication is static. Disable them
     # otherwise so that the config succeeds
-    self[:peer_ips] = [:default] unless self[:ingress_replication] == :static
+    self[:peer_list] = [:default] unless self[:ingress_replication] == :static
 
     # If user configures assoc-vrf, make sure ingress_replication,
-    # multicast_group, peer_ips and suppress_arp are off so that the config
+    # multicast_group, peer_list and suppress_arp are off so that the config
     # succeeds
     if self[:assoc_vrf] == :true
       self[:ingress_replication] = :default
       self[:multicast_group] = :default
       self[:suppress_arp] = :default
-      self[:peer_ips] = [:default]
+      self[:peer_list] = [:default]
     end
   end
 end # Puppet::Type.newtype

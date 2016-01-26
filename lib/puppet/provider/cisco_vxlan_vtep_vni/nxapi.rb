@@ -34,6 +34,9 @@ Puppet::Type.type(:cisco_vxlan_vtep_vni).provide(:nxapi) do
   mk_resource_methods
 
   # Property symbol array for method auto-generation.
+  VXLAN_VTEP_VNI_ARRAY_FLAT_PROPS = [
+    :peer_list,
+  ]
   # NOTE: For maintainability please keep this list in alphabetical order.
   VXLAN_VTEP_VNI_NON_BOOL_PROPS = [
     :ingress_replication,
@@ -44,8 +47,11 @@ Puppet::Type.type(:cisco_vxlan_vtep_vni).provide(:nxapi) do
     :suppress_arp
   ]
 
-  VXLAN_VTEP_VNI_ALL_PROPS = VXLAN_VTEP_VNI_NON_BOOL_PROPS + VXLAN_VTEP_VNI_BOOL_PROPS
+  VXLAN_VTEP_VNI_ALL_PROPS = 
+    VXLAN_VTEP_VNI_ARRAY_FLAT_PROPS + VXLAN_VTEP_VNI_NON_BOOL_PROPS + VXLAN_VTEP_VNI_BOOL_PROPS
 
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:array_flat, self, '@vtep_vni',
+                                            VXLAN_VTEP_VNI_ARRAY_FLAT_PROPS)
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@vtep_vni',
                                             VXLAN_VTEP_VNI_NON_BOOL_PROPS)
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@vtep_vni',
@@ -69,9 +75,12 @@ Puppet::Type.type(:cisco_vxlan_vtep_vni).provide(:nxapi) do
       vni:       vni,
       assoc_vrf: vni_instance.assoc_vrf,
       ensure:    :present,
-      peer_ips:  vni_instance.peer_list,
+      peer_list:  vni_instance.peer_list,
     }
     # Call node_utils getter for each property
+    VXLAN_VTEP_VNI_ARRAY_FLAT_PROPS.each do |prop|
+      current_state[prop] = vni_instance.send(prop)
+    end
     VXLAN_VTEP_VNI_NON_BOOL_PROPS.each do |prop|
       current_state[prop] = vni_instance.send(prop)
     end
@@ -133,6 +142,8 @@ Puppet::Type.type(:cisco_vxlan_vtep_vni).provide(:nxapi) do
           @vtep_vni.respond_to?("#{prop}=")
       end
     end
+  end
+=begin
     # node utils is named peer_list= instead of peer_ips=
     return unless @resource[:peer_ips]
     self.peer_ips = @resource[:peer_ips] if new_vni
@@ -155,7 +166,7 @@ Puppet::Type.type(:cisco_vxlan_vtep_vni).provide(:nxapi) do
     end
     @property_flush[:peer_ips] = set_value
   end
-
+=end
   def flush
     if @property_flush[:ensure] == :absent
       @vtep_vni.destroy
@@ -164,24 +175,10 @@ Puppet::Type.type(:cisco_vxlan_vtep_vni).provide(:nxapi) do
       # Create/Update
       if @vtep_vni.nil?
         new_vni = true
-        @vtep_vni = Cisco::VxlanVtepVni.new(@resource[:interface], @resource[:vni], @resource[:assoc_vrf])
+        assoc_vrf = @resource[:assoc_vrf] == :true ? true : false
+        @vtep_vni = Cisco::VxlanVtepVni.new(@resource[:interface], @resource[:vni], assoc_vrf)
       end
       properties_set(new_vni)
     end
-    puts_config
   end
-
-  def puts_config
-    if @vtep_vni.nil?
-      info "Vxlan Vtep Vni=#{@resource[:vni]} is absent."
-      return
-    end
-
-    # Dump all current properties for this vni
-    current = sprintf("\n%30s: %s", 'vtep_vni', instance_name)
-    VXLAN_VTEP_VNI_ALL_PROPS.each do |prop|
-      current.concat(sprintf("\n%30s: %s", prop, @vtep_vni.send(prop)))
-    end
-    debug current
-  end # puts_config
 end   # Puppet::Type
