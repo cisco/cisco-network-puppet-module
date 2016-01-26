@@ -45,18 +45,18 @@ module OspfIntfLib
   # 'ensure' is set to present.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_ospfintf_manifest_present
+  def self.create_ospfintf_manifest_present(intf)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf { 'test':
     ensure                   => present,
   }
 
-  cisco_interface { 'ethernet1/4':
+  cisco_interface { \"#{intf}\":
     switchport_mode          => disabled,
   }
 
-  cisco_interface_ospf { 'ethernet1/4 test':
+  cisco_interface_ospf { \"#{intf} test\":
     ensure                   => present,
     area                     => '1',
     cost                     => '1',
@@ -73,20 +73,20 @@ EOF"
   # @param area is used to set the area for the manifest
   # @param intf is used to optionally specify the interface to use
   # @result manifest_str is the newly constructed manifest
-  def self.create_ospfintf_area_manifest(area, intf='ethernet1/4')
+  def self.create_ospfintf_area_manifest(area, intf)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf { 'test':
     ensure                   => present,
   }
 
-  cisco_interface { '#{intf}':
+  cisco_interface { \"#{intf}\":
     switchport_mode          => disabled,
   }
 
-  cisco_interface_ospf { '#{intf} test':
+  cisco_interface_ospf { \"#{intf} test\":
     ensure                   => present,
-    area                     => '#{area}',
+    area                     => \"#{area}\",
   }
 }
 EOF"
@@ -97,10 +97,10 @@ EOF"
   # 'ensure' is set to absent.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_ospfintf_manifest_absent
+  def self.create_ospfintf_manifest_absent(intf)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
-  cisco_interface_ospf { 'ethernet1/4 test':
+  cisco_interface_ospf { \"#{intf} test\":
     ensure                   => absent,
   }
 
@@ -116,18 +116,18 @@ EOF"
   # ensure, cost, dead_interval, hello_interval, area and passive_interface.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_ospfintf_manifest_nondefaults
+  def self.create_ospfintf_manifest_nondefaults(intf)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf { 'test':
     ensure                   => present,
   }
 
-  cisco_interface { 'ethernet1/4':
+  cisco_interface { \"#{intf}\":
     switchport_mode          => disabled,
   }
 
-  cisco_interface_ospf { 'ethernet1/4 test':
+  cisco_interface_ospf { \"#{intf} test\":
     ensure                   => present,
     area                     => '100',
     cost                     => '100',
@@ -143,18 +143,18 @@ EOF"
   # Method to create a manifest for OSPFINTF resource attribute 'cost'.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_ospfintf_manifest_cost_negative
+  def self.create_ospfintf_manifest_cost_negative(intf)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf { 'test':
     ensure                   => present,
   }
 
-  cisco_interface { 'ethernet1/4':
+  cisco_interface { \"#{intf}\":
     switchport_mode          => disabled,
   }
 
-  cisco_interface_ospf { 'ethernet1/4 test':
+  cisco_interface_ospf { \"#{intf} test\":
     ensure                   => present,
     area                     => 1,
     cost                     => #{OspfIntfLib::COST_NEGATIVE},
@@ -167,18 +167,18 @@ EOF"
   # Method to create a manifest for OSPFINTF resource attribute 'hello_interval'.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_ospfintf_manifest_hellointerval_negative
+  def self.create_ospfintf_manifest_hellointerval_negative(intf)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf { 'test':
     ensure                   => present,
   }
 
-  cisco_interface { 'ethernet1/4':
+  cisco_interface { \"#{intf}\":
     switchport_mode          => disabled,
   }
 
-  cisco_interface_ospf { 'ethernet1/4 test':
+  cisco_interface_ospf { \"#{intf} test\":
     ensure                   => present,
     area                     => '1',
     hello_interval           => #{OspfIntfLib::HELLOINTERVAL_NEGATIVE},
@@ -191,18 +191,18 @@ EOF"
   # Method to create a manifest for OSPFINTF resource attribute 'dead_interval'.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_ospfintf_manifest_deadinterval_negative
+  def self.create_ospfintf_manifest_deadinterval_negative(intf)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf { 'test':
     ensure                   => present,
   }
 
-  cisco_interface { 'ethernet1/4':
+  cisco_interface { \"#{intf}\":
     switchport_mode          => disabled,
   }
 
-  cisco_interface_ospf { 'ethernet1/4 test':
+  cisco_interface_ospf { \"#{intf} test\":
     ensure                   => present,
     area                     => '1',
     dead_interval            => #{OspfIntfLib::DEADINTERVAL_NEGATIVE},
@@ -215,18 +215,18 @@ EOF"
   # Method to create a manifest for OSPFINTF resource attribute 'passive_intf'.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_ospfintf_manifest_passiveintf_negative
+  def self.create_ospfintf_manifest_passiveintf_negative(intf)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_ospf { 'test':
     ensure                   => present,
   }
 
-  cisco_interface { 'ethernet1/4':
+  cisco_interface { \"#{intf}\":
     switchport_mode          => disabled,
   }
 
-  cisco_interface_ospf { 'ethernet1/4 test':
+  cisco_interface_ospf { \"#{intf} test\":
     ensure                   => present,
     area                     => '1',
     passive_interface        => #{OspfIntfLib::PASSIVEINTF_NEGATIVE},

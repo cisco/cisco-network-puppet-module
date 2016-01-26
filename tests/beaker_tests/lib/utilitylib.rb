@@ -480,6 +480,16 @@ def mt_full_interface
   "ethernet#{slot}/1" unless slot.nil?
 end
 
+# Return ethernet slot and port information from the first line module found.
+def ethernet_info_get
+  info = {}
+  cmd = get_vshell_cmd('sh mod')
+  out = on(agent, cmd, pty: true).stdout[/^(\d+)\s+([1-9]+)\s.*(Eth|Sup)/i]
+  info[:slot] = out.nil? ? nil : Regexp.last_match[1]
+  info[:ports] = out.nil? ? nil : Regexp.last_match[2]
+  info
+end
+
 # Return the default vdc name
 def default_vdc_name
   cmd = get_vshell_cmd('sh run vdc')
