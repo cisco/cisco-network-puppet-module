@@ -290,6 +290,8 @@ def resource_absent_cleanup(agent, res_name, stepinfo='absent clean')
       case res_name
       when /cisco_interface/
         next if title[/ethernet/i]
+      when /cisco_snmp_user/
+        next if title[/devops/i]
       when /cisco_vlan/
         next if title == '1'
       when /cisco_vrf/
