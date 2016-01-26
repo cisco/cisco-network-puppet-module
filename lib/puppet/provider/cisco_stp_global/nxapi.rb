@@ -353,7 +353,7 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
        @property_hash[:vlan_max_age] == @nu.default_vlan_max_age
       return [:default]
     else
-      @property_hash[:vlan_hello_time]
+      @property_hash[:vlan_max_age]
     end
   end
 
