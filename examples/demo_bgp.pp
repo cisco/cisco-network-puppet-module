@@ -1,6 +1,6 @@
 # Manifest to demo cisco_bgp provider
 #
-# Copyright (c) 2015 Cisco and/or its affiliates.
+# Copyright (c) 2015-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -45,10 +45,19 @@ class ciscopuppet::demo_bgp {
     ensure                                 => present,
 
     router_id                              => '192.168.0.66',
+    # route_distinguisher is not supported on all platforms
+    # route_distinguisher                    => 'auto',
     cluster_id                             => '55',
     confederation_id                       => '33',
     confederation_peers                    => '99 88 200.1',
+    disable_policy_batching                => true,
+    disable_policy_batching_ipv4           => 'my_v4_pfx_list',
+    disable_policy_batching_ipv6           => 'my_v6_pfx_list',
     enforce_first_as                       => false,
+    event_history_cli                      => 'size_small',
+    event_history_detail                   => 'size_medium',
+    event_history_events                   => 'size_large',
+    event_history_periodic                 => 'size_disable',
     maxas_limit                            => $maxas_limit,
     suppress_fib_pending                   => $suppress_fib_pending,
     log_neighbor_changes                   => false,
@@ -101,6 +110,7 @@ class ciscopuppet::demo_bgp {
   # --------------------------------------------------------------------------#
   $ipv4_networks = [['192.168.5.0/24', 'nrtemap1'], ['192.168.6.0/32']]
   $ipv4_redistribute = [['eigrp 1', 'e_rtmap_29'], ['ospf 3',  'o_rtmap']]
+  $ipv4_injectmap = [['nyc', 'sfo'], ['sjc', 'sfo', 'copy-attributes']]
 
   $additional_paths_install = $operatingsystem ? {
     'nexus' => true,
@@ -132,6 +142,14 @@ class ciscopuppet::demo_bgp {
     additional_paths_selection    => 'RouteMap',
     additional_paths_send         => true,
     dampen_igp_metric             => $dampen_igp_metric,
+    default_metric                => 50,
+    distance_ebgp                 => 30,
+    distance_ibgp                 => 60,
+    distance_local                => 90,
+    inject_map                    => $ipv4_injectmap, 
+    suppress_inactive             => true,
+    table_map                     => 'TableMap',
+    table_map_filter              => true,
 
     # dampening_routemap is mutually exclusive with
     # dampening_half_time, reuse_time, suppress_time
@@ -154,6 +172,8 @@ class ciscopuppet::demo_bgp {
 
   $ipv6_networks = [['192:168::5:0/112', 'nrtemap1'], ['192:168::6:0/112']]
   $ipv6_redistribute = [['eigrp 1', 'e_v6'], ['ospfv3 3',  'o_v6']]
+  $ipv6_injectmap = [['nyc', 'sfo'], ['sjc', 'sfo', 'copy-attributes']]
+
   $dampening_state = $operatingsystem ? {
     'nexus' => true,
     default => undef  # not supported on XR under a vrf
@@ -182,6 +202,14 @@ class ciscopuppet::demo_bgp {
     additional_paths_selection    => 'RouteMap',
     additional_paths_send         => true,
     dampen_igp_metric             => $dampen_igp_metric,
+    default_metric                => 50,
+    distance_ebgp                 => 30,
+    distance_ibgp                 => 60,
+    distance_local                => 90,
+    inject_map                    => $ipv6_injectmap, 
+    suppress_inactive             => true,
+    table_map                     => 'TableMap',
+    table_map_filter              => true,
 
     # dampening_routemap is mutually exclusive with
     # dampening_half_time, reuse_time, suppress_time

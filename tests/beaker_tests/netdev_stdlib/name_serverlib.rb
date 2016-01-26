@@ -45,7 +45,7 @@ module NameServerLib
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_name_server_manifest_present
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   name_server {'7.7.7.7':
     ensure => present,
@@ -60,7 +60,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_name_server_manifest_absent
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     name_server {'7.7.7.7':
       ensure => absent,
@@ -75,7 +75,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_name_server_manifest_negative
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   name_server {'7.7.7.7':
     ensure => #{NameServerLib::ENSURE_NEGATIVE},

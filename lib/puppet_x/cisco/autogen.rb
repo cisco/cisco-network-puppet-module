@@ -2,7 +2,7 @@
 #
 # April 2015
 #
-# Copyright (c) 2015 Cisco and/or its affiliates.
+# Copyright (c) 2015-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,6 +23,9 @@ module PuppetX
       # "nu_name" refers to node_utils
       def self.mk_puppet_methods(mtype, klass, nu_name, props)
         case mtype
+        when :array_flat
+          mk_puppet_getters_array_flat(klass, nu_name, props)
+          mk_puppet_setters_array_flat(klass, nu_name, props)
         when :non_bool
           mk_puppet_getters_non_bool(klass, nu_name, props)
           mk_puppet_setters_non_bool(klass, nu_name, props)
@@ -31,6 +34,59 @@ module PuppetX
           mk_puppet_setters_bool(klass, nu_name, props)
         end
       end
+
+      # Auto-generator for puppet single-level array-based GETTER methods
+      # These properties expect a flat array but optionally support a string
+      # of space-separated values in the manifest.
+      def self.mk_puppet_getters_array_flat(klass, nu_name, props)
+        props.each do |prop|
+          klass.instance_eval do
+            # def foo_array_flat
+            #   return @property_hash[:foo_array_flat] if @resource[:foo_array_flat].nil?
+            #   if @resource[:foo_array_flat][0] == :default &&
+            #      @property_hash[:foo_array_flat] == @nu.default_foo_array_flat
+            #     return [:default]
+            #   else
+            #     @property_hash[:foo_array_flat]
+            #   end
+            # end
+            define_method(prop) do
+              return @property_hash[prop] if @resource[prop].nil?
+              if @resource[prop][0] == :default &&
+                 @property_hash[prop] == instance_variable_get(nu_name).send("default_#{prop}")
+                return [:default]
+              else
+                @property_hash[prop]
+              end
+            end
+          end
+        end
+      end # mk_puppet_getters_array_flat
+
+      # Auto-generator for puppet single-level array-based SETTER methods.
+      # These properties expect a flat array but optionally support a string
+      # of space-separated values in the manifest; however, munge will transform
+      # the string into a nested array, hence the flatten.
+      def self.mk_puppet_setters_array_flat(klass, nu_name, props)
+        props.each do |prop|
+          klass.instance_eval do
+            # def foo_array_flat=(val)
+            #   fail '@property_flush not defined' if
+            #     @property_flush.nil?
+            #   val = @nu.default_foo_array_flat if
+            #     val[0] == :default
+            #   @property_flush[:foo_array_flat] = val.flatten
+            # end
+            define_method("#{prop}=") do |val|
+              fail '@property_flush not defined' if
+                instance_variable_get(:@property_flush).nil?
+              val = instance_variable_get(nu_name).send("default_#{prop}") if
+                val == [:default]
+              @property_flush[prop] = val.flatten
+            end
+          end
+        end
+      end # mk_puppet_setters_array_flat
 
       # Auto-generator for puppet non-boolean-based GETTER methods
       def self.mk_puppet_getters_non_bool(klass, nu_name, props)

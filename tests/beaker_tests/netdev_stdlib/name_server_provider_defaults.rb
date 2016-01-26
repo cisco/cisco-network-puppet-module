@@ -62,23 +62,14 @@ testheader = 'NAME_SERVER Resource :: All Attributes Defaults'
 test_name "TestCase :: #{testheader}" do
   ## @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
-    # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
-    UtilityLib.set_manifest_path(master, self)
+    # Make sure name server is not configured before test starts.
+    on(master, NameServerLib.create_name_server_manifest_absent)
 
-    # Let's check and make sure that an expected default group/role is present
-    # and an unexpected non-default group/role is absent
-
-    # Exit codes: 2 if config existed prior, 0 if nothing changed
-    cmd_str = UtilityLib.get_vshell_cmd('conf t ; no ip name-server 7.7.7.7')
+    # Expected exit_code is 0,2 since server may or may not be configured.
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
+      'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config section name-server')
-    on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [/name-server 7\.7\.7\.7$/],
-                                          true, self, logger)
-    end
     logger.info("Setup switch for provider test :: #{result}")
   end
 
@@ -88,7 +79,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, NameServerLib.create_name_server_manifest_present)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -99,29 +90,14 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check name_server resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'resource name_server 7.7.7.7', options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, { 'ensure' => 'present' },
-                                          false, self, logger)
+      search_pattern_in_output(stdout, { 'ensure' => 'present' },
+                               false, self, logger)
     end
 
     logger.info("Check name_server resource presence on agent :: #{result}")
-  end
-
-  # @step [Step] Checks name_server instance on agent using switch show cli
-  # cmds.
-  step 'TestStep :: Check name_server instance presence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config section ' \
-                                        'name-server')
-    on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [/name-server 7\.7\.7\.7/],
-                                          false, self, logger)
-    end
-
-    logger.info("Check name_server instance presence on agent :: #{result}")
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
@@ -130,7 +106,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, NameServerLib.create_name_server_manifest_absent)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
                                            'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -141,33 +117,18 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check name_server resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'resource name_server 7.7.7.7', options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, { 'ensure' => 'present' },
-                                          true, self, logger)
+      search_pattern_in_output(stdout, { 'ensure' => 'present' },
+                               true, self, logger)
     end
 
     logger.info("Check name_server resource absence on agent :: #{result}")
   end
 
-  # @step [Step] Checks name_server instance on agent using switch show cli
-  # cmds.
-  step 'TestStep :: Check name_server instance absence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config section ' \
-                                        'name-server')
-    on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [/name-server 7\.7\.7\.7/],
-                                          true, self, logger)
-    end
-
-    logger.info("Check name_server instance absence on agent :: #{result}")
-  end
-
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

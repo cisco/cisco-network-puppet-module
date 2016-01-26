@@ -2,7 +2,7 @@
 #
 # May 2013
 #
-# Copyright (c) 2013-2015 Cisco and/or its affiliates.
+# Copyright (c) 2013-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -37,13 +37,21 @@ Puppet::Type.newtype(:cisco_interface) do
      switchport_vtp               => true,
     }
     cisco_interface { \"Ethernet1/16\" :
-     shutdown                     => true,
-     description                  => \"routed port\",
-     ipv4_address                 => \"192.168.1.1\",
-     ipv4_netmask_length          => 24,
-     ipv4_redirects               => true,
-     ipv4_proxy_arp               => true,
-     negotiate_auto               => true,
+     shutdown                       => true,
+     description                    => \"routed port\",
+     ipv4_address                   => \"192.168.1.1\",
+     ipv4_netmask_length            => 24,
+     ipv4_address_secondary         => \"192.168.2.1\",
+     ipv4_netmask_length_secondary  => 24,
+     ipv4_redirects                 => true,
+     ipv4_proxy_arp                 => true,
+     ipv4_pim_sparse_mode           => true,
+     negotiate_auto                 => true,
+    }
+    cisco_interface { \"Ethernet9/1\" :
+     switchport_mode              => 'trunk',
+     vlan_mapping_enable          => 'false',
+     vlan_mapping                 => [[20, 21], [30, 31]],
     }
     cisco_interface { \"loopback42\" :
      description                  => \"logical interface\",
@@ -57,6 +65,7 @@ Puppet::Type.newtype(:cisco_interface) do
     cisco_interface {\"Vlan98\":
      shutdown                     => true,
      description                  => \"svi interface\",
+     ipv4_arp_timeout             => 300,
      svi_autostate                => true,
      svi_management               => true,
     }"
@@ -98,6 +107,13 @@ Puppet::Type.newtype(:cisco_interface) do
   #######################################
 
   ensurable
+
+  newproperty(:channel_group) do
+    desc "channel_group is an aggregation of multiple physical interfaces
+          that creates a logical interface. Valid values are 1 to 4096."
+
+    munge { |value| value == 'default' ? :default : value.to_i }
+  end # property channel_group
 
   newproperty(:description) do
     desc "Description of the interface. Valid values are string, keyword
@@ -202,9 +218,34 @@ Puppet::Type.newtype(:cisco_interface) do
     newvalues(:true, :false, :default)
   end # property negotiate_auto
 
+  newproperty(:vpc_id) do
+    desc 'Configure vPC id on this interface to make it a vPC link to a
+          downstream device. The vPC Peer switch must have an indentical
+          configuration to the same downstream device. Valid values are in
+          the range 1..4096'
+    range = *(1..4096)
+    validate do |id|
+      fail 'VPC ID must be in the range 1..4096' unless
+        range.include?(id.to_i)
+    end
+  end # property vpc_id
+
+  newproperty(:vpc_peer_link) do
+    desc 'Enable/Disable this interface as a VPC Peer-link. This is valid
+          only for port-channel interfaces. Valid values true or false'
+    newvalues(:true, :false)
+  end # property vpc_peer_link
+
   ########################################
   # Begin L3 interface config attributes #
   ########################################
+
+  newproperty(:ipv4_pim_sparse_mode) do
+    desc '<L3 attribute> Enables or disables ipv4 pim sparse mode '\
+         'on the interface.'
+
+    newvalues(:true, :false, :default)
+  end # property ipv4_pim_sparse_mode
 
   newproperty(:ipv4_proxy_arp) do
     desc "<L3 attribute> Enables or disables proxy arp on the
@@ -244,12 +285,37 @@ Puppet::Type.newtype(:cisco_interface) do
     end
   end # property ipv4_address
 
+  newproperty(:ipv4_address_secondary) do
+    desc "<L3 attribute> Secondary IP address of the interface. Valid values are
+          string, keyword 'default'."
+
+    munge do |value|
+      value = :default if value == 'default'
+      valid_ipaddr = true
+      begin
+        if value != :default
+          tmp_value = IPAddr.new(value)
+          # check whether it is ipv4 address
+          valid_ipaddr = tmp_value.ipv4?
+        end
+      rescue
+        valid_ipaddr = false
+      end
+      # fail if it is not valid ipv4 address
+      fail("ipv4_address - #{@resource[:ipv4_address]} must be " \
+           "either a valid IPv4 address string or 'default'.") if
+           value != :default && valid_ipaddr == false
+      value
+    end
+  end # property ipv4_address_secondary
+
   newproperty(:ipv4_netmask_length) do
     desc "<L3 attribute> Network mask length of the IP address on the
           interface. Valid values are integer, keyword 'default'."
 
     munge do |value|
       begin
+        value = :default if value == 'default'
         value = Integer(value) unless value == :default
       rescue
         raise 'Network mask length must be a valid integer.'
@@ -260,6 +326,30 @@ Puppet::Type.newtype(:cisco_interface) do
     end
   end # property ipv4_netmask_length
 
+  newproperty(:ipv4_netmask_length_secondary) do
+    desc "<L3 attribute> Network mask length of the secondary IP address on the
+          interface. Valid values are integer, keyword 'default'."
+
+    munge do |value|
+      begin
+        value = :default if value == 'default'
+        value = Integer(value) unless value == :default
+      rescue
+        raise 'Network mask length must be a valid integer.'
+      end
+      fail('ipv4_netmask_length must be an integer between 0 and 32') if
+           (value != :default) && (value < 0 || value > 32)
+      value
+    end
+  end # property ipv4_netmask_length_secondary
+
+  newproperty(:ipv4_arp_timeout) do
+    desc "Configure Address Resolution Protocol (ARP) timeout. Valid values
+          are integer, keyword 'default'."
+
+    munge { |value| value == 'default' ? :default : value.to_i }
+  end # ipv4_arp_timeout
+
   newproperty(:vrf) do
     desc "<L3 attribute> VRF member of the interface. Valid values
           are string, keyword 'default'."
@@ -269,6 +359,46 @@ Puppet::Type.newtype(:cisco_interface) do
       value
     end
   end # property vrf
+
+  newproperty(:ipv4_acl_in) do
+    desc "<L3 attribute> ipv4 ingress access list on the interface. Valid values
+          are string, keyword 'default'."
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property ipv4_acl_in
+
+  newproperty(:ipv4_acl_out) do
+    desc "<L3 attribute> ipv4 egress access list on the interface. Valid values
+          are string, keyword 'default'."
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property ipv4_acl_out
+
+  newproperty(:ipv6_acl_in) do
+    desc "<L3 attribute> ipv6 ingress access list on the interface. Valid values
+          are string, keyword 'default'."
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property ipv6_acl_in
+
+  newproperty(:ipv6_acl_out) do
+    desc "<L3 attribute> ipv6 egress access list on the interface. Valid values
+          are string, keyword 'default'."
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property ipv6_acl_out
 
   # validate ipv4 address and mask combination
   validate do
@@ -301,6 +431,38 @@ Puppet::Type.newtype(:cisco_interface) do
 
     newvalues(:true, :false, :default)
   end # property svi_management
+
+  ################
+  # vlan mapping #
+  ################
+
+  newproperty(:vlan_mapping, array_matching: :all) do
+    format = '[[original_vlan, translated_vlan], [orig2, tran2]]'
+    desc 'An array of [original_vlan, translated_vlan] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property vlan_mapping
+
+  newproperty(:vlan_mapping_enable) do
+    desc 'Enable/Disable vlan mapping on the interface. '\
+         "Valid values are 'true', 'false', and 'default'."
+
+    newvalues(:true, :false, :default)
+  end # property vlan_mapping_enable
 
   ################
   # Autorequires #

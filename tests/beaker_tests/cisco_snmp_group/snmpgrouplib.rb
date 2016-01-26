@@ -35,7 +35,7 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 module SnmpGroupLib
   # Create a manifest describing SNMP group default state.
   def self.create_snmpgroup_manifest_defaults
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_snmp_group { 'network-admin':
     ensure => 'present',
@@ -51,7 +51,7 @@ EOF"
 
   # Negative test #1 - try to create a group that does not exist.
   def self.create_snmpgroup_manifest_negative_1
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_snmp_group { 'go-jackets':
     ensure => 'present',
@@ -63,7 +63,7 @@ EOF"
 
   # Negative test #2 - try to delete a group that exists.
   def self.create_snmpgroup_manifest_negative_2
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   cisco_snmp_group { 'network-operator':
     ensure => 'absent',

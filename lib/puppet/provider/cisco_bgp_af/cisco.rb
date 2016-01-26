@@ -3,7 +3,7 @@
 #
 # August 2015 Rich Wellum
 #
-# Copyright (c) 2015 Cisco and/or its affiliates.
+# Copyright (c) 2015-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -45,15 +45,17 @@ Puppet::Type.type(:cisco_bgp_af).provide(:cisco) do
     :dampening_reuse_time,
     :dampening_routemap,
     :dampening_suppress_time,
+    :default_metric,
+    :distance_ebgp,
+    :distance_ibgp,
+    :distance_local,
+    :inject_map,
     :maximum_paths,
     :maximum_paths_ibgp,
     :networks,
     :next_hop_route_map,
     :redistribute,
-    :route_target_import,
-    :route_target_import_evpn,
-    :route_target_export,
-    :route_target_export_evpn,
+    :table_map,
   ]
 
   BGP_AF_BOOL_PROPS = [
@@ -64,8 +66,8 @@ Puppet::Type.type(:cisco_bgp_af).provide(:cisco) do
     :client_to_client,
     :default_information_originate,
     :dampening_state,
-    :route_target_both_auto,
-    :route_target_both_auto_evpn,
+    :suppress_inactive,
+    :table_map_filter,
   ]
 
   BGP_AF_ALL_PROPS = BGP_AF_NON_BOOL_PROPS + BGP_AF_BOOL_PROPS
@@ -107,6 +109,7 @@ Puppet::Type.type(:cisco_bgp_af).provide(:cisco) do
     # networks/redistribute use nested arrays, thus require special handling
     current_state[:networks] = obj.networks
     current_state[:redistribute] = obj.redistribute
+    current_state[:inject_map] = obj.inject_map
     new(current_state)
   end # self.properties_get
 
@@ -161,6 +164,8 @@ Puppet::Type.type(:cisco_bgp_af).provide(:cisco) do
     end
     # Custom set methods
     dampening_set
+    distance_set
+    table_map_set
   end
 
   # Property 'dampening' helper and custom setter methods
@@ -236,6 +241,66 @@ Puppet::Type.type(:cisco_bgp_af).provide(:cisco) do
     end
   end
 
+  def distance_set
+    return unless
+      @property_flush[:distance_ebgp] ||
+      @property_flush[:distance_ibgp] ||
+      @property_flush[:distance_local]
+
+    if @property_flush[:distance_ebgp]
+      ebgp = @property_flush[:distance_ebgp]
+    else
+      ebgp = @af.distance_ebgp
+    end
+
+    if @property_flush[:distance_ibgp]
+      ibgp = @property_flush[:distance_ibgp]
+    else
+      ibgp = @af.distance_ibgp
+    end
+
+    if @property_flush[:distance_local]
+      local = @property_flush[:distance_local]
+    else
+      local = @af.distance_local
+    end
+    @af.distance_set(ebgp, ibgp, local)
+  end
+
+  def table_map_set
+    return unless
+      @property_flush[:table_map] ||
+      @property_flush[:table_map_filter]
+
+    if @property_flush[:table_map]
+      map = @property_flush[:table_map]
+    else
+      map = @af.table_map
+    end
+
+    if @property_flush[:table_map_filter]
+      filter = @property_flush[:table_map_filter]
+    else
+      filter = @af.table_map_filter
+    end
+    @af.table_map_set(map, filter)
+  end
+
+  def inject_map
+    return @property_hash[:inject_map] if @resource[:inject_map].nil?
+    if @resource[:inject_map][0] == :default &&
+       @property_hash[:inject_map] == @af.default_inject_map
+      return [:default]
+    else
+      @property_hash[:inject_map]
+    end
+  end
+
+  def inject_map=(should_list)
+    should_list = @af.default_inject_map if should_list[0] == :default
+    @property_flush[:inject_map] = should_list
+  end
+
   # Networks requires a custom getter and setter because we are
   # working with arrays.  When the manifest entry is set to default,
   # puppet creates an array with the symbol default. [:default].
@@ -270,82 +335,6 @@ Puppet::Type.type(:cisco_bgp_af).provide(:cisco) do
   def redistribute=(should_list)
     should_list = @af.default_redistribute if should_list[0] == :default
     @property_flush[:redistribute] = should_list
-  end
-
-  def route_target_import
-    return @property_hash[:route_target_import] if @resource[:route_target_import].nil?
-    if @resource[:route_target_import][0] == :default &&
-       @property_hash[:route_target_import] == @af.default_route_target_import
-      return [:default]
-    else
-      @property_hash[:route_target_import]
-    end
-  end
-
-  # route_target setters: These properties expect a flat array but optionally
-  # support a string of space-separated values in the manifest; however,
-  # munge will transform the string into a nested array, hence the flatten.
-  def route_target_import=(should_list)
-    puts "setter: #{should_list}"
-    should_list = @af.default_route_target_import if should_list[0] == :default
-    @property_flush[:route_target_import] = should_list.flatten
-  end
-
-  def route_target_import_evpn
-    return @property_hash[:route_target_import_evpn] if @resource[:route_target_import].nil?
-    if @resource[:route_target_import_evpn][0] == :default &&
-       @property_hash[:route_target_import_evpn] == @af.default_route_target_import
-      return [:default]
-    else
-      @property_hash[:route_target_import_evpn]
-    end
-  end
-
-  # route_target setters: These properties expect a flat array but optionally
-  # support a string of space-separated values in the manifest; however,
-  # munge will transform the string into a nested array, hence the flatten.
-  def route_target_import_evpn=(should_list)
-    puts "setter: #{should_list}"
-    should_list = @af.default_route_target_import_evpn if should_list[0] == :default
-    @property_flush[:route_target_import_evpn] = should_list.flatten
-  end
-
-  def route_target_export
-    return @property_hash[:route_target_export] if @resource[:route_target_import].nil?
-    if @resource[:route_target_export][0] == :default &&
-       @property_hash[:route_target_export] == @af.default_route_target_import
-      return [:default]
-    else
-      @property_hash[:route_target_export]
-    end
-  end
-
-  # route_target setters: These properties expect a flat array but optionally
-  # support a string of space-separated values in the manifest; however,
-  # munge will transform the string into a nested array, hence the flatten.
-  def route_target_export=(should_list)
-    puts "setter: #{should_list}"
-    should_list = @af.default_route_target_export if should_list[0] == :default
-    @property_flush[:route_target_export] = should_list.flatten
-  end
-
-  def route_target_export_evpn
-    return @property_hash[:route_target_export_evpn] if @resource[:route_target_import].nil?
-    if @resource[:route_target_export_evpn][0] == :default &&
-       @property_hash[:route_target_export_evpn] == @af.default_route_target_import
-      return [:default]
-    else
-      @property_hash[:route_target_export_evpn]
-    end
-  end
-
-  # route_target setters: These properties expect a flat array but optionally
-  # support a string of space-separated values in the manifest; however,
-  # munge will transform the string into a nested array, hence the flatten.
-  def route_target_export_evpn=(should_list)
-    puts "setter: #{should_list}"
-    should_list = @af.default_route_target_export_evpn if should_list[0] == :default
-    @property_flush[:route_target_export_evpn] = should_list.flatten
   end
 
   def flush
