@@ -1,9 +1,9 @@
 #
-# The NXAPI provider for cisco_vrf.
+# The NXAPI provider for cisco_interface_channel_group.
 #
-# July 2015
+# January 2016
 #
-# Copyright (c) 2015-2016 Cisco and/or its affiliates.
+# Copyright (c) 2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
-Puppet::Type.type(:cisco_vrf).provide(:nxapi) do
-  desc 'The NXAPI provider for cisco_vrf.'
+Puppet::Type.type(:cisco_interface_channel_group).provide(:nxapi) do
+  desc 'The NXAPI provider for cisco_interface_channel_group.'
 
   confine feature: :cisco_node_utils
   defaultfor operatingsystem: :nexus
@@ -36,56 +36,63 @@ Puppet::Type.type(:cisco_vrf).provide(:nxapi) do
 
   # Property symbol arrays for method auto-generation. There are separate arrays
   # because the boolean-based methods are processed slightly different.
-  VRF_NON_BOOL_PROPS = [
+  # Note: channel_group should always process first.
+  INTF_CG_NON_BOOL_PROPS = [
+    :channel_group,
     :description,
-    :route_distinguisher,
-    :vni,
   ]
-  VRF_BOOL_PROPS = [
+  INTF_CG_BOOL_PROPS = [
     :shutdown
   ]
-  VRF_ALL_PROPS = VRF_NON_BOOL_PROPS + VRF_BOOL_PROPS
+  INTF_CG_ALL_PROPS = INTF_CG_NON_BOOL_PROPS + INTF_CG_BOOL_PROPS
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@nu',
-                                            VRF_NON_BOOL_PROPS)
+                                            INTF_CG_NON_BOOL_PROPS)
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@nu',
-                                            VRF_BOOL_PROPS)
+                                            INTF_CG_BOOL_PROPS)
 
   def initialize(value={})
     super(value)
-    @nu = Cisco::Vrf.vrfs[@property_hash[:name]]
+    @nu = Cisco::InterfaceChannelGroup.interfaces[@property_hash[:name]]
     @property_flush = {}
   end
 
-  def self.properties_get(vrf, nu_obj)
-    debug "Checking VRF #{vrf}."
+  def self.properties_get(intf_name, nu_obj)
+    debug "Checking instance, #{intf_name}."
     current_state = {
-      name:   vrf,
-      ensure: :present,
+      interface: intf_name,
+      name:      intf_name,
+      ensure:    :present,
     }
     # Call node_utils getter for each property
-    VRF_NON_BOOL_PROPS.each do |prop|
+    INTF_CG_NON_BOOL_PROPS.each do |prop|
       current_state[prop] = nu_obj.send(prop)
     end
-    VRF_BOOL_PROPS.each do |prop|
+    INTF_CG_BOOL_PROPS.each do |prop|
       val = nu_obj.send(prop)
-      current_state[prop] = val.nil? ? nil : val.to_s.to_sym
+      if val.nil?
+        current_state[prop] = nil
+      else
+        current_state[prop] = val ? :true : :false
+      end
     end
     new(current_state)
   end # self.properties_get
 
   def self.instances
-    vrfs = []
-    Cisco::Vrf.vrfs.each do |vrf, nu_obj|
-      vrfs << properties_get(vrf, nu_obj)
+    all_intf = []
+    Cisco::InterfaceChannelGroup.interfaces.each do |intf_name, nu_obj|
+      begin
+        all_intf << properties_get(intf_name, nu_obj)
+      end
     end
-    vrfs
+    all_intf
   end # self.instances
 
   def self.prefetch(resources)
-    vrfs = instances
+    all_intf = instances
     resources.keys.each do |name|
-      provider = vrfs.find { |vrf| vrf.name == name }
+      provider = all_intf.find { |intf| intf.instance_name == name }
       resources[name].provider = provider unless provider.nil?
     end
   end # self.prefetch
@@ -102,20 +109,18 @@ Puppet::Type.type(:cisco_vrf).provide(:nxapi) do
     @property_flush[:ensure] = :absent
   end
 
-  def properties_set(new_vrf=false)
-    VRF_ALL_PROPS.each do |prop|
-      # if the manifest defined the property value, we
-      # need to update using the setter accordingly.
+  def instance_name
+    interface
+  end
+
+  def properties_set(new_interface=false)
+    INTF_CG_ALL_PROPS.each do |prop|
       next unless @resource[prop]
-      if new_vrf
-        # set property_flush for the new object
-        send("#{prop}=", @resource[prop])
+      send("#{prop}=", @resource[prop]) if new_interface
+      unless @property_flush[prop].nil?
+        @nu.send("#{prop}=", @property_flush[prop]) if
+          @nu.respond_to?("#{prop}=")
       end
-      next if @property_flush[prop].nil?
-      # calling setters of the node utility gem using
-      # values in property_flush
-      @nu.send("#{prop}=", @property_flush[prop]) if
-      @nu.respond_to?("#{prop}=")
     end
   end
 
@@ -126,10 +131,10 @@ Puppet::Type.type(:cisco_vrf).provide(:nxapi) do
     else
       # Create/Update
       if @nu.nil?
-        new_vrf = true
-        @nu = Cisco::Vrf.new(@resource[:name])
+        new_interface = true
+        @nu = Cisco::InterfaceChannelGroup.new(@resource[:interface])
       end
-      properties_set(new_vrf)
+      properties_set(new_interface)
     end
   end
 end # Puppet::Type
