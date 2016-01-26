@@ -19,8 +19,13 @@ class ciscopuppet::demo_ospf {
     ensure => present,
   }
 
+  # Pre-clean interface, set to L3
+  cisco_interface { 'Ethernet1/4':
+    switchport_mode                => 'disabled',
+  }
+
   $md_password = '046E1803362E595C260E0B240619050A2D'
-  cisco_interface_ospf { 'Ethernet1/1 Sample':
+  cisco_interface_ospf { 'Ethernet1/4 Sample':
     ensure                         => present,
     area                           => 200,
     cost                           => '200',

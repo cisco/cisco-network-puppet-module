@@ -154,7 +154,7 @@ def test_harness_vlan_mapping(tests, id)
   build_manifest_vlan_mapping(tests, id)
 
   # Workaround for (ioctl) facter bug on n7k ***
-  tests[id][:code] = [0, 2]
+  tests[id][:code] = [0, 2] if platform[/n7k/]
 
   test_harness_common(tests, id)
   tests[id][:ensure] = nil

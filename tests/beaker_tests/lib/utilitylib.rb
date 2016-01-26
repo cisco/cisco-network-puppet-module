@@ -149,9 +149,9 @@ def prop_hash_to_manifest(attributes)
   attributes.each do |k, v|
     next if v.nil?
     if v.is_a?(String)
-      manifest_str += "       #{k} => '#{v.strip}',\n"
+      manifest_str += "    #{k} => '#{v.strip}',\n"
     else
-      manifest_str += "       #{k} => #{v},\n"
+      manifest_str += "    #{k} => #{v},\n"
     end
   end
   manifest_str
@@ -287,7 +287,14 @@ def resource_absent_cleanup(agent, res_name, stepinfo='absent clean')
   step "TestStep :: #{stepinfo}" do
     # set each resource to ensure=absent
     get_current_resource_instances(agent, res_name).each do |title|
-      next if title[/management/]
+      case res_name
+      when /cisco_interface/
+        next if title[/ethernet/i]
+      when /cisco_vlan/
+        next if title == '1'
+      when /cisco_vrf/
+        next if title[/management/]
+      end
       cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
         "resource #{res_name} '#{title}' ensure=absent", options)
       logger.info("  * #{stepinfo} Removing #{res_name} '#{title}'")
@@ -325,12 +332,14 @@ end
 
 # Helper to nuke a single interface. This is needed to remove all
 # configurations from the interface.
-def interface_cleanup(agent, intf, stepinfo='Pre Clean:')
-  logger.debug("#{stepinfo} Interface cleanup #{intf}")
-
-  # exit codes: 0 = no changes, 2 = changes have occurred
-  clean = "conf t ; default interface #{intf}"
-  on(agent, get_vshell_cmd(clean), acceptable_exit_codes: [0, 2])
+def interface_cleanup(agent, intf, stepinfo='Interface Pre Clean:')
+  step "TestStep :: #{stepinfo}" do
+    cmd = "resource cisco_command_config 'interface_cleanup' "\
+          "command='default interface #{intf}'"
+    cmd = get_namespace_cmd(agent, PUPPET_BINPATH + cmd, options)
+    logger.info("  * #{stepinfo} Set '#{intf}' to default state")
+    on(agent, cmd, acceptable_exit_codes: [0, 2])
+  end
 end
 
 # Helper to remove all IP address configs from all interfaces. This is

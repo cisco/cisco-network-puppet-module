@@ -187,7 +187,7 @@ def test_harness_vrf_af(tests, id)
                              "resource cisco_vrf_af '#{af.values.join(' ')}'"
 
   # Workaround for (ioctl) facter bug on n7k ***
-  tests[id][:code] = [0, 2]
+  tests[id][:code] = [0, 2] if platform[/n7k/]
 
   # Build the manifest for this test
   build_manifest_vrf_af(tests, id)

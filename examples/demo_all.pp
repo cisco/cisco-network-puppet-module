@@ -46,6 +46,5 @@ class ciscopuppet::demo_all {
   include ciscopuppet::demo_vpc_domain
   include ciscopuppet::demo_vrf
   include ciscopuppet::demo_vtp
-  include ciscopuppet::demo_snmp
   include ciscopuppet::demo_vxlan
 }
