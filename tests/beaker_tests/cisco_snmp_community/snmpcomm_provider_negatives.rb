@@ -63,19 +63,8 @@ testheader = 'SNMPCOMMUNITY Resource :: All Attributes Negatives'
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
-    # Expected exit_code is 252 since this is a vegas shell cmd with no change.
-    # Or expected exit_code is 0 since this is a vegas shell cmd with change.
-    cmd_str = get_vshell_cmd('conf t ; no snmp-server community test')
-    on(agent, cmd_str, acceptable_exit_codes: [0, 252])
-
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config snmp')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               [/snmp-server community test group network-operator/],
-                               true, self, logger)
-    end
+    resource_absent_cleanup(agent, 'cisco_snmp_community',
+                            'Setup switch for cisco_snmp_community provider test')
 
     logger.info("Setup switch for provider test :: #{result}")
   end
@@ -108,20 +97,6 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check cisco_snmp_comm resource absence on agent :: #{result}")
   end
 
-  # @step [Step] Checks snmpcomm instance on agent using switch show cli cmds.
-  step 'TestStep :: Check snmpcomm instance absence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config snmp')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               [/snmp-server community test group #{SnmpCommLib::GROUP_NEGATIVE}/],
-                               true, self, logger)
-    end
-
-    logger.info("Check snmpcomm instance absence on agent :: #{result}")
-  end
-
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get negative test resource manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
@@ -148,20 +123,6 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Check cisco_snmp_comm resource absence on agent :: #{result}")
-  end
-
-  # @step [Step] Checks snmpcomm instance on agent using switch show cli cmds.
-  step 'TestStep :: Check snmpcomm instance absence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config snmp')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               [/snmp-server community test use-acl #{SnmpCommLib::ACL_NEGATIVE}/],
-                               true, self, logger)
-    end
-
-    logger.info("Check snmpcomm instance absence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
