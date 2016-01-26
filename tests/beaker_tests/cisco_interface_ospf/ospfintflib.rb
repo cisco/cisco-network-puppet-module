@@ -52,7 +52,7 @@ node default {
     ensure                   => present,
   }
 
-  cisco_interface { \"#{intf}\":
+  cisco_interface { '#{intf}':
     switchport_mode          => disabled,
   }
 
@@ -80,11 +80,11 @@ node default {
     ensure                   => present,
   }
 
-  cisco_interface { \"#{intf}\":
+  cisco_interface { '#{intf}':
     switchport_mode          => disabled,
   }
 
-  cisco_interface_ospf { \"#{intf} test\":
+  cisco_interface_ospf { '#{intf} test':
     ensure                   => present,
     area                     => \"#{area}\",
   }
@@ -100,7 +100,7 @@ EOF"
   def self.create_ospfintf_manifest_absent(intf)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
-  cisco_interface_ospf { \"#{intf} test\":
+  cisco_interface_ospf { '#{intf} test':
     ensure                   => absent,
   }
 
@@ -123,11 +123,11 @@ node default {
     ensure                   => present,
   }
 
-  cisco_interface { \"#{intf}\":
+  cisco_interface { '#{intf}':
     switchport_mode          => disabled,
   }
 
-  cisco_interface_ospf { \"#{intf} test\":
+  cisco_interface_ospf { '#{intf} test':
     ensure                   => present,
     area                     => '100',
     cost                     => '100',
@@ -150,11 +150,11 @@ node default {
     ensure                   => present,
   }
 
-  cisco_interface { \"#{intf}\":
+  cisco_interface { '#{intf}':
     switchport_mode          => disabled,
   }
 
-  cisco_interface_ospf { \"#{intf} test\":
+  cisco_interface_ospf { '#{intf} test':
     ensure                   => present,
     area                     => 1,
     cost                     => #{OspfIntfLib::COST_NEGATIVE},
@@ -174,11 +174,11 @@ node default {
     ensure                   => present,
   }
 
-  cisco_interface { \"#{intf}\":
+  cisco_interface { '#{intf}':
     switchport_mode          => disabled,
   }
 
-  cisco_interface_ospf { \"#{intf} test\":
+  cisco_interface_ospf { '#{intf} test':
     ensure                   => present,
     area                     => '1',
     hello_interval           => #{OspfIntfLib::HELLOINTERVAL_NEGATIVE},
@@ -198,11 +198,11 @@ node default {
     ensure                   => present,
   }
 
-  cisco_interface { \"#{intf}\":
+  cisco_interface { '#{intf}':
     switchport_mode          => disabled,
   }
 
-  cisco_interface_ospf { \"#{intf} test\":
+  cisco_interface_ospf { '#{intf} test':
     ensure                   => present,
     area                     => '1',
     dead_interval            => #{OspfIntfLib::DEADINTERVAL_NEGATIVE},
@@ -222,11 +222,11 @@ node default {
     ensure                   => present,
   }
 
-  cisco_interface { \"#{intf}\":
+  cisco_interface { '#{intf}':
     switchport_mode          => disabled,
   }
 
-  cisco_interface_ospf { \"#{intf} test\":
+  cisco_interface_ospf { '#{intf} test':
     ensure                   => present,
     area                     => '1',
     passive_interface        => #{OspfIntfLib::PASSIVEINTF_NEGATIVE},
