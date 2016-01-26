@@ -232,6 +232,9 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_vtp`](#type-cisco_vtp)
   * [`network_trunk (netdev_stdlib)`](#type-network_trunk)
 
+* VPC Types
+  * [`cisco_vpc_domain`](#type-cisco_vpc_domain)
+  
 * VRF Types
   * [`cisco_vrf`](#type-cisco_vrf)
   * [`cisco_vrf_af`](#type-cisco_vrf_af)
@@ -273,6 +276,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_tacacs_server_host`](#type-cisco_tacacs_server_host)
 * [`cisco_vdc`](#type-cisco_vdc)
 * [`cisco_vlan`](#type-cisco_vlan)
+* [`cisco_vpc_domain`](#type-cisco_vpc_domain)
 * [`cisco_vni`](#type-cisco_vni)
 * [`cisco_vrf`](#type-cisco_vrf)
 * [`cisco_vrf_af`](#type-cisco_vrf_af)
@@ -1042,6 +1046,12 @@ vlan_mapping => [[20, 21], [30, 31]]
 ###### `vlan_mapping_enable`
 Allows disablement of vlan_mapping on a given interface. Valid values are 'true', 'false', and 'default'.
 
+###### `vpc_id`
+Configure the vPC ID on this interface to make it a vPC link. The peer switch should configure a corresponding interface with the same vPC ID inorder for the downstream device to add these links as part of the same port-channel. The vpc_id can generally be configured only on interfaces which are themselves port-channels (usually a single member port-channel). However, on the Nexus 7000 series a physical port can be configured as a vPC link. Valid values are integers in the range 1 .. 4096. By default, interface is not configured with any vpc_id.
+
+###### `vpc_peer_link`
+Configure this port-channel interface to be a vPC peer-link. A vPC peer-link is essential to the working of the vPC complex, not only for establishing the peer connectivity for control message exchange, but also for providing redundancy when vPC links fail. Valid values are 'true' or 'false'. Default value: false.
+
 ###### `vrf`
 VRF member of the interface.  Valid values are a string or the keyword 'default'.
 
@@ -1660,6 +1670,84 @@ Instance of vni, valid value is integer.
 
 ##### `mapped_vlan`
 The VLAN ID that will map to the VNI.
+
+--
+### Type: cisco_vpc_domain
+Manages the vPC domain configuration of a Cisco device
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+##### `domain`
+vPC domain ID. Valid values are integer in the range 1-1000. There is no default value, this is a 'name' parameter.
+
+##### `auto_recovery`
+Auto Recovery enable or disable if peer is non-operational. Valid values are true, false or default. This parameter is available only on Nexus 7000 series. Default value: true.
+
+##### `auto_recovery_reload_delay`
+Delay (in secs) before peer is assumed dead before attempting to recover vPCs. Valid values are integers in the range 240 .. 3600. Default value: 240
+
+##### `delay_restore`
+Delay (in secs) after peer link is restored to bring up vPCs. Valid values are integers in the range 1 .. 3600. Default vlaue: 30
+
+##### `delay_restore_interface_vlan`
+Delay (in secs) after peer link is restored to bring up Interface VLANs or Interface BDs. Valid values are integers in the
+range 1 .. 3600. Default value: 10
+
+##### `dual_active_exclude_interface_vlan_bridge_domain`
+Interface VLANs or BDs to exclude from suspension when dual-active. Valid value is a string of integer ranges from 1 .. 4095. There is no default value.
+
+##### `graceful_consistency_check`
+Graceful conistency check . Valid values are true, false or default. Default value: true
+
+##### `layer3_peer_routing`
+Enable or Disable Layer3 peer routing. Valid values are true/false or default. Default value: false
+
+##### `peer_keepalive_dest`
+Destination IPV4 address of the peer where Peer Keep-alives are terminated. Valid values are IPV4 unicast address. There is no default value.
+
+##### `peer_keepalive_hold_timeout`
+Peer keep-alive hold timeout in secs. Valid Values are integers in the range 3 .. 10. Default value: 3
+
+##### `peer_keepalive_interval`
+Peer keep-alive interval in millisecs. Valid Values are integers in the range 400 .. 10000. Default value: 1000
+
+##### `peer_keepalive_interval_timeout`
+Peer keep-alive interval timeout. Valid Values are integers in the range 3 .. 20. Default value: 5
+
+##### `peer_keepalive_precedence`
+Peer keep-alive precedence. Valid Values are integers in the range 0 .. 7. Default value: 6
+
+##### `peer_keepalive_src`
+Source IPV4 address of this switch where Peer Keep-alives are Sourced. Valid values are IPV4 unicast address. There is no default value.
+
+##### `peer_keepalive_udp_port`
+Peer keep-alive udp port used for hellos. Valid Values are integers in the range 1024 .. 65000. Default value: 3200
+
+##### `peer_keepalive_vrf`
+Peer keep-alive VRF. Valid Values are string. There is no default value.
+
+##### `peer_gateway`
+Enable or Disable Layer3 forwarding for packets with peer gateway-mac. Valid values are true/false or default. Default: false
+
+##### `peer_gateway_exclude_vlan`
+Interface vlans to exclude from peer gateway functionality. Valid value is a string of integer ranges from 1 .. 4095. This parameter is available only in Nexus 5000, Nexus 6000 and Nexus 7000 series. There is no default value.
+
+##### `role_priority`
+Priority to be used during vPC role selection of primary vs secondary. Valid values are integers in the range 1 .. 65535. Default value: 32667
+
+##### `self_isolation`
+Enable or Disable self-isolation function for vPC. Valid values are true, false or default. This parameter is available only in Nexus 7000 series. Default value: false
+
+##### `shutdown`
+Whether or not the vPC domain is shutdown. This property is not avialable on Nexus 9000 and Nexus 3000 series. Default value: false
+
+##### `system_mac`
+vPC system mac. Valid values are in mac addresses format. There is no default value.
+
+##### `system_priority`
+vPC system priority. Valid values are integers in the range 1 .. 65535. Default value: 32667
 
 --
 ### Type: cisco_vxlan_global
