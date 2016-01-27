@@ -117,7 +117,7 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
   newproperty(:peer_list, array_matching: :all) do
     desc 'A list of static ip addresses for ingress-replication static' \
          "valid values are an array of strings and keyword 'default'."
-
+=begin
     validate do |value|
       fail "peer_list #{value} must be string" unless
         value.kind_of?(String) || value == :default
@@ -127,6 +127,24 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
       value = :default if value == 'default'
       value
     end
+=end
+    validate do |value|
+      begin
+        puts "value = #{value}, class = #{value.class}"
+        value = PuppetX::Cisco::Utils.process_network_mask(value.to_s)
+        value
+      rescue
+        raise "'peer-ip' must be a valid ip address"
+      end
+    end
+
+    munge do |value|
+      value == 'default' ? :default : value
+    end
+
+#    def insync?(is)
+ #     (is.size == should.flatten.size && is.sort == should.flatten.sort)
+  #  end
   end
 
   newproperty(:suppress_arp) do
