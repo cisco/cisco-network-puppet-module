@@ -14,37 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet::demo_stp {
-
-  $bd_designated_priority = platform_get() ? {
-    'n7k' => [['2-42', '40960'], ['83-92,1000-2300', '53248']],
-    default => undef
-  }
-
-  $bd_forward_time = platform_get() ? {
-    'n7k' => [['2-42', '26'], ['83-92,1000-2300', '20']],
-    default => undef
-  }
-
-  $bd_hello_time = platform_get() ? {
-    'n7k' => [['2-42', '6'], ['83-92,1000-2300', '9']],
-    default => undef
-  }
-
-  $bd_max_age = platform_get() ? {
-    'n7k' => [['2-42', '26'], ['83-92,1000-2300', '20']],
-    default => undef
-  }
-
-  $bd_priority = platform_get() ? {
-    'n7k' => [['2-42', '40960'], ['83-92,1000-2300', '53248']],
-    default => undef
-  }
-
-  $bd_root_priority = platform_get() ? {
-    'n7k' => [['2-42', '40960'], ['83-92,1000-2300', '53248']],
-    default => undef
-  }
+class ciscopuppet::demo_stp_vlan {
 
   $domain = platform_get() ? {
     /(n5k|n6k|n7k)/ => 100,
@@ -56,13 +26,16 @@ class ciscopuppet::demo_stp {
     default => undef
   }
 
+  $sys_bd_cmd = platform_get() ? {
+    'n7k'  => 'system bridge-domain none',
+    default => undef
+  }
+
+  cisco_command_config { 'system-bd-none':
+    command => $sys_bd_cmd,
+  }
+
   cisco_stp_global { 'default':
-    bd_designated_priority   => $bd_designated_priority,
-    bd_forward_time          => $bd_forward_time,
-    bd_hello_time            => $bd_hello_time,
-    bd_max_age               => $bd_max_age,
-    bd_priority              => $bd_priority,
-    bd_root_priority         => $bd_root_priority,
     bpdufilter               => true,
     bpduguard                => true,
     bridge_assurance         => false,
