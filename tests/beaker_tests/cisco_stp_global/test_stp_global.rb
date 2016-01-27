@@ -105,12 +105,18 @@ tests = {
 tests['default_properties'] = {
   title_pattern:  'default',
   manifest_props: "
-    bpdufilter         => 'default',
-    bpduguard          => 'default',
-    bridge_assurance   => 'default',
-    loopguard          => 'default',
-    mode               => 'default',
-    pathcost           => 'default',
+    bpdufilter               => 'default',
+    bpduguard                => 'default',
+    bridge_assurance         => 'default',
+    loopguard                => 'default',
+    mode                     => 'default',
+    pathcost                 => 'default',
+    vlan_designated_priority => 'default',
+    vlan_forward_time        => 'default',
+    vlan_hello_time          => 'default',
+    vlan_max_age             => 'default',
+    vlan_priority            => 'default',
+    vlan_root_priority       => 'default',
   ",
   code:           [0, 2],
   resource_props: {
@@ -120,61 +126,95 @@ tests['default_properties'] = {
     'loopguard'        => 'false',
     'mode'             => 'rapid-pvst',
     'pathcost'         => 'short',
+    # 'vlan_designated_priority' is nil when default
+    # 'vlan_forward_time' is nil when default
+    # 'vlan_hello_time' is nil when default
+    # 'vlan_max_age' is nil when default
+    # 'vlan_priority' is nil when default
+    # 'vlan_root_priority' is nil when default
   },
 }
 
 tests['default_properties_mst'] = {
   title_pattern:  'default',
   manifest_props: "
-    mode               => 'mst',
-    mst_forward_time   => 'default',
-    mst_hello_time     => 'default',
-    mst_max_age        => 'default',
-    mst_max_hops       => 'default',
-    mst_name           => 'default',
-    mst_revision       => 'default',
+    mode                    => 'mst',
+    mst_designated_priority => 'default',
+    mst_forward_time        => 'default',
+    mst_hello_time          => 'default',
+    mst_inst_vlan_map       => 'default',
+    mst_max_age             => 'default',
+    mst_max_hops            => 'default',
+    mst_name                => 'default',
+    mst_priority            => 'default',
+    mst_revision            => 'default',
+    mst_root_priority       => 'default',
   ",
   code:           [0, 2],
   resource_props: {
     'mode'             => 'mst',
+    # 'mst_designated_priority' is nil when default
     'mst_forward_time' => '15',
     'mst_hello_time'   => '2',
+    # 'mst_inst_vlan_map' is nil when default
     'mst_max_age'      => '20',
     'mst_max_hops'     => '20',
     'mst_name'         => 'false',
+    # 'mst_priority' is nil when default
     'mst_revision'     => '0',
+    # 'mst_root_priority' is nil when default
   },
 }
 
 tests['non_default_properties'] = {
   title_pattern:  'default',
   manifest_props: "
-    bpdufilter         => 'true',
-    bpduguard          => 'true',
-    bridge_assurance   => 'false',
-    loopguard          => 'true',
-    mode               => 'mst',
-    mst_forward_time   => '25',
-    mst_hello_time     => '5',
-    mst_max_age        => '35',
-    mst_max_hops       => '200',
-    mst_name           => 'nexus',
-    mst_revision       => '34',
-    pathcost           => 'long',
+    bpdufilter               => 'true',
+    bpduguard                => 'true',
+    bridge_assurance         => 'false',
+    loopguard                => 'true',
+    mode                     => 'mst',
+    mst_designated_priority  => [['2-42', '4096'], ['83-92,100-230', '53248']],
+    mst_forward_time         => '25',
+    mst_hello_time           => '5',
+    mst_inst_vlan_map        => [['2', '6-47'], ['92', '120-400']],
+    mst_max_age              => '35',
+    mst_max_hops             => '200',
+    mst_name                 => 'nexus',
+    mst_priority             => [['2-42', '4096'], ['83-92,100-230', '53248']],
+    mst_revision             => '34',
+    mst_root_priority        => [['2-42', '4096'], ['83-92,100-230', '53248']],
+    pathcost                 => 'long',
+    vlan_designated_priority => [['1-42', '40960'], ['83-92,100-230', '53248']],
+    vlan_forward_time        => [['1-42', '19'], ['83-92,100-230', '13']],
+    vlan_hello_time          => [['1-42', '10'], ['83-92,100-230', '6']],
+    vlan_max_age             => [['1-42', '21'], ['83-92,100-230', '13']],
+    vlan_priority            => [['1-42', '40960'], ['83-92,100-230', '53248']],
+    vlan_root_priority       => [['1-42', '40960'], ['83-92,100-230', '53248']],
   ",
   resource_props: {
-    'bpdufilter'       => 'true',
-    'bpduguard'        => 'true',
-    'bridge_assurance' => 'false',
-    'loopguard'        => 'true',
-    'mode'             => 'mst',
-    'mst_forward_time' => '25',
-    'mst_hello_time'   => '5',
-    'mst_max_age'      => '35',
-    'mst_max_hops'     => '200',
-    'mst_name'         => 'nexus',
-    'mst_revision'     => '34',
-    'pathcost'         => 'long',
+    'bpdufilter'               => 'true',
+    'bpduguard'                => 'true',
+    'bridge_assurance'         => 'false',
+    'loopguard'                => 'true',
+    'mode'                     => 'mst',
+    'mst_designated_priority'  => "[['2-42', '4096'], ['83-92,100-230', '53248']]",
+    'mst_forward_time'         => '25',
+    'mst_hello_time'           => '5',
+    'mst_inst_vlan_map'        => "[['2', '6-47'], ['92', '120-400']]",
+    'mst_max_age'              => '35',
+    'mst_max_hops'             => '200',
+    'mst_name'                 => 'nexus',
+    'mst_priority'             => "[['2-42', '4096'], ['83-92,100-230', '53248']]",
+    'mst_revision'             => '34',
+    'mst_root_priority'        => "[['2-42', '4096'], ['83-92,100-230', '53248']]",
+    'pathcost'                 => 'long',
+    'vlan_designated_priority' => "[['1-42', '40960'], ['83-92,100-230', '53248']]",
+    'vlan_forward_time'        => "[['1-42', '19'], ['83-92,100-230', '13']]",
+    'vlan_hello_time'          => "[['1-42', '10'], ['83-92,100-230', '6']]",
+    'vlan_max_age'             => "[['1-42', '21'], ['83-92,100-230', '13']]",
+    'vlan_priority'            => "[['1-42', '40960'], ['83-92,100-230', '53248']]",
+    'vlan_root_priority'       => "[['1-42', '40960'], ['83-92,100-230', '53248']]",
   },
 }
 
@@ -185,7 +225,7 @@ tests['default_properties_fcoe'] = {
   ",
   code:           [0, 2],
   resource_props: {
-    'fcoe'             => 'true',
+    'fcoe' => 'true'
   },
 }
 
@@ -195,7 +235,7 @@ tests['non_default_properties_fcoe'] = {
     fcoe               => 'false',
   ",
   resource_props: {
-    'fcoe'             => 'false',
+    'fcoe' => 'false'
   },
 }
 
@@ -206,7 +246,7 @@ tests['default_properties_domain'] = {
   ",
   code:           [0, 2],
   resource_props: {
-    'domain'           => 'false',
+    'domain' => 'false'
   },
 }
 
@@ -216,7 +256,49 @@ tests['non_default_properties_domain'] = {
     domain             => '100',
   ",
   resource_props: {
-    'domain'           => '100',
+    'domain' => '100'
+  },
+}
+
+tests['default_properties_bd_domain'] = {
+  title_pattern:  'default',
+  manifest_props: "
+    bd_designated_priority => 'default',
+    bd_forward_time        => 'default',
+    bd_hello_time          => 'default',
+    bd_max_age             => 'default',
+    bd_priority            => 'default',
+    bd_root_priority       => 'default',
+  ",
+  code:           [0, 2],
+  resource_props: {
+    # 'bd_designated_priority' is nil when default
+    # 'bd_forward_time' is nil when default
+    # 'bd_hello_time' is nil when default
+    # 'bd_max_age' is nil when default
+    # 'bd_priority' is nil when default
+    # 'bd_root_priority' is nil when default
+  },
+}
+
+tests['non_default_properties_bd_domain'] = {
+  title_pattern:  'default',
+  manifest_props: "
+    bd_designated_priority => [['2-42', '40960'], ['83-92,1000-2300', '53248']],
+    bd_forward_time        => [['2-42', '26'], ['83-92,1000-2300', '20']],
+    bd_hello_time          => [['2-42', '6'], ['83-92,1000-2300', '9']],
+    bd_max_age             => [['2-42', '26'], ['83-92,1000-2300', '20']],
+    bd_priority            => [['2-42', '40960'], ['83-92,1000-2300', '53248']],
+    bd_root_priority       => [['2-42', '40960'], ['83-92,1000-2300', '53248']],
+  ",
+  code:           [0, 2],
+  resource_props: {
+    'bd_designated_priority' => "[['2-42', '40960'], ['83-92,1000-2300', '53248']]",
+    'bd_forward_time'        => "[['2-42', '26'], ['83-92,1000-2300', '20']]",
+    'bd_hello_time'          => "['2-42', '6'], ['83-92,1000-2300', '9']]",
+    'bd_max_age'             => "[['2-42', '26'], ['83-92,1000-2300', '20']]",
+    'bd_priority'            => "[['2-42', '40960'], ['83-92,1000-2300', '53248']]",
+    'bd_root_priority'       => "[['2-42', '40960'], ['83-92,1000-2300', '53248']]",
   },
 }
 
@@ -273,11 +355,11 @@ test_name "TestCase :: #{testheader}" do
 
   id = 'default_properties'
   tests[id][:desc] = '1.1 Default Properties'
-  test_harness_stp_global(tests, id)
+  #test_harness_stp_global(tests, id)
 
   id = 'default_properties_mst'
   tests[id][:desc] = '1.2 Default Properties'
-  test_harness_stp_global(tests, id)
+  #test_harness_stp_global(tests, id)
 
   case device
   when /n5k|n6k|n7k/
@@ -289,6 +371,13 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:desc] = '1.3 Switch specific default Properties'
   test_harness_stp_global(tests, id)
 
+  case device
+  when /n7k/
+    id = 'default_properties_bd_domain'
+  end
+
+  tests[id][:desc] = '1.4 Switch specific bd domain default Properties'
+  test_harness_stp_global(tests, id)
   # no absent test for stp_global
 
   # -------------------------------------------------------------------
@@ -296,7 +385,7 @@ test_name "TestCase :: #{testheader}" do
 
   id = 'non_default_properties'
   tests[id][:desc] = '2.1 Non Default Properties'
-  test_harness_stp_global(tests, id)
+  #test_harness_stp_global(tests, id)
 
   case device
   when /n5k|n6k|n7k/
@@ -308,6 +397,13 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:desc] = '2.2 Non Default Properties'
   test_harness_stp_global(tests, id)
 
+  case device
+  when /n7k/
+    id = 'non_default_properties_bd_domain'
+  end
+
+  tests[id][:desc] = '2.3 Switch specific bd domain non default Properties'
+  test_harness_stp_global(tests, id)
   # no absent test for stp_global
 end
 

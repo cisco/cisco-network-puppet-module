@@ -106,7 +106,6 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
     current_state[:bd_hello_time] = nu_obj.bd_hello_time
     current_state[:bd_max_age] = nu_obj.bd_max_age
     current_state[:bd_priority] = nu_obj.bd_priority
-    current_state[:bd_designated_priority] = nu_obj.bd_designated_priority
     current_state[:bd_root_priority] = nu_obj.bd_root_priority
     current_state[:mst_designated_priority] = nu_obj.mst_designated_priority
     current_state[:mst_inst_vlan_map] = nu_obj.mst_inst_vlan_map
@@ -218,7 +217,7 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
        @property_hash[:bd_priority] == @nu.default_bd_priority
       return [:default]
     else
-      @property_hash[:bd_max_age]
+      @property_hash[:bd_priority]
     end
   end
 
