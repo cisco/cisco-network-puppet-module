@@ -38,12 +38,15 @@ class ciscopuppet::demo_interface {
     encapsulation_dot1q => 20,
   }
 
+  cisco_interface_channel_group { 'Ethernet1/2':
+    channel_group   => 200,
+  }
+
   cisco_interface { 'Ethernet1/2':
     description     => 'default',
     shutdown        => 'default',
     access_vlan     => 'default',
     switchport_mode => access,
-    channel_group   => 200,
   }
 
   cisco_interface { 'Ethernet1/3':

@@ -288,8 +288,11 @@ def resource_absent_cleanup(agent, res_name, stepinfo='absent clean')
     # set each resource to ensure=absent
     get_current_resource_instances(agent, res_name).each do |title|
       case res_name
-      when /cisco_interface/
+      # Anchors needed to ensure only cisco_interface matches.
+      when /^cisco_interface$/
         next if title[/ethernet/i]
+      when /cisco_snmp_user/
+        next if title[/devops/i]
       when /cisco_vlan/
         next if title == '1'
       when /cisco_vrf/
@@ -604,4 +607,25 @@ def skipped_tests_summary(tests, testheader)
     logger.error(sprintf('%-40s :: SKIP', desc))
   end
   raise_skip_exception(testheader, self)
+end
+
+def find_interface(tests, id=nil, skipcheck=true)
+  # Prefer specific test key over the all tests key
+  if id
+    type = tests[id][:intf_type] || tests[:intf_type]
+  else
+    type = tests[:intf_type]
+  end
+
+  case type
+  when /ethernet/i, /dot1q/
+    all = get_current_resource_instances(tests[:agent], 'cisco_interface')
+    intf = all.grep(%r{ethernet\d+\/\d+})[0]
+  end
+
+  if skipcheck && intf.nil?
+    msg = 'Unable to find suitable interface module for this test.'
+    prereq_skip(tests[:testheader], self, msg)
+  end
+  intf
 end
