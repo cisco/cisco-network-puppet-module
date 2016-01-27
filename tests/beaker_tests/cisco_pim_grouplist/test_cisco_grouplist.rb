@@ -147,10 +147,7 @@ def test_harness_cisco_pim_grouplist(tests, id)
 
   # Build the manifest for this test
   build_manifest_cisco_pim_grouplist(tests, id)
-
-  test_manifest(tests, id)
-  test_resource(tests, id)
-  test_idempotence(tests, id)
+  test_harness_common(tests, id)
   tests[id][:ensure] = nil
 end
 

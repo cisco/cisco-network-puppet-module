@@ -31,13 +31,20 @@ Puppet::Type.type(:cisco_pim).provide(:nxapi) do
 
   mk_resource_methods
 
-  PIM_ALL_PROPS = [
+  PIM_NON_BOOL_PROPS = [
     :ssm_range
   ]
 
+  PIM_BOOL_PROPS = [
+  ]
+
+  PIM_ALL_PROPS = PIM_NON_BOOL_PROPS + PIM_BOOL_PROPS
+
   # Dynamic method generation for getters & setters
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@pim',
-                                            PIM_ALL_PROPS)
+                                            PIM_NON_BOOL_PROPS)
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@pim',
+                                            PIM_BOOL_PROPS)
 
   def initialize(value={})
     super(value)

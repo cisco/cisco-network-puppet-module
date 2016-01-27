@@ -45,8 +45,8 @@ Puppet::Type.type(:cisco_pim_grouplist).provide(:nxapi) do
     rp_addr = @property_hash[:rp_addr]
     group = @property_hash[:group]
     rp_addr_and_group = [rp_addr, group]
-    @pim_grouplists = Cisco::PimGroupList.group_lists[afi][vrf][rp_addr_and_group] unless afi.nil? && vrf.nil? &&
-                                                                                          rp_addr.nil? && group.nil?
+    @pim_grouplists = Cisco::PimGroupList.group_lists[afi][vrf][rp_addr_and_group] unless
+                                      afi.nil? && vrf.nil? && rp_addr.nil? && group.nil?
     @property_flush = {}
   end
 

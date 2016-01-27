@@ -1266,7 +1266,7 @@ Manages configuration of an Protocol Independent Multicast (PIM) instance.
 #### Parameters
 
 ##### `afi`
-Address Family Identifier (AFI). Required. Valid values are ipv4 and ipv6.
+Address Family Identifier (AFI). Required. Valid value is ipv4.
 
 ##### `vrf`
 Name of the resource instance. Required. Valid values are string. The name 'default' is a valid VRF representing the global vrf.

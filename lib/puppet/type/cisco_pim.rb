@@ -119,7 +119,7 @@ Puppet::Type.newtype(:cisco_pim) do
 
   newparam(:afi, namevar: true) do
     desc 'The Address-Family Indentifier (ipv4|ipv6).'
-    newvalues(:ipv4, :ipv6)
+    newvalues(:ipv4)
   end
 
   newparam(:vrf, namevar: true) do

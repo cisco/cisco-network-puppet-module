@@ -140,7 +140,7 @@ Puppet::Type.newtype(:cisco_pim_rp_address) do
 
     validate do |ip|
       begin
-        IPAddr.new(ip) unless ip.empty?
+        IPAddr.new(ip)
       rescue
         raise 'Rp Address is not a valid IP address.'
       end

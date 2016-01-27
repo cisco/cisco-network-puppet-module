@@ -73,9 +73,8 @@ testheader = 'Resource cisco_pim'
 # tests[:show_cmd] - the common show command to use for test_show_run
 #
 tests = {
-  master:   master,
-  agent:    agent,
-  show_cmd: 'show run pim all',
+  master: master,
+  agent:  agent,
 }
 # tests[id] keys set by caller and used by test_harness_common:
 #
@@ -190,9 +189,7 @@ def test_harness_cisco_pim(tests, id)
   # Build the manifest for this test
   build_manifest_cisco_pim(tests, id)
 
-  test_manifest(tests, id)
-  test_resource(tests, id)
-  test_idempotence(tests, id)
+  test_harness_common(tests, id)
   tests[id][:ensure] = nil
 end
 
