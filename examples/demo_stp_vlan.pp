@@ -36,6 +36,7 @@ class ciscopuppet::demo_stp_vlan {
   }
 
   cisco_stp_global { 'default':
+    require                  => Cisco_command_config['system-bd-none'],
     bpdufilter               => true,
     bpduguard                => true,
     bridge_assurance         => false,
