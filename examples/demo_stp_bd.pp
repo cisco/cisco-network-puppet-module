@@ -32,7 +32,7 @@ class ciscopuppet::demo_stp_bd {
   }
 
   $bd_max_age = platform_get() ? {
-    'n7k' => [['2-42', '26'], ['83-92,1000-2300', '20']],
+    'n7k' => [['2-42', '26'], ['83-92,1000-2300', '21']],
     default => undef
   }
 
@@ -46,61 +46,6 @@ class ciscopuppet::demo_stp_bd {
     default => undef
   }
 
-  $stp_bpdufilter = platform_get() ? {
-    'n7k'  => 'enable',
-    default => undef
-  }
-
-  $stp_bpduguard = platform_get() ? {
-    'n7k'  => 'enable',
-    default => undef
-  }
-
-  $stp_cost = platform_get() ? {
-    'n7k'  => 2000,
-    default => undef
-  }
-
-  $stp_guard = platform_get() ? {
-    'n7k'  => 'loop',
-    default => undef
-  }
-
-  $stp_link_type = platform_get() ? {
-    'n7k'  => 'shared',
-    default => undef
-  }
-
-  $stp_mst_cost = platform_get() ? {
-    'n7k'  => [['0,2-4,6,8-12', '1000'], ['1000', '2568']],
-    default => undef
-  }
-
-  $stp_mst_port_priority = platform_get() ? {
-    'n7k'  => [['0,2-11,20-33', '64'], ['1111', '160']],
-    default => undef
-  }
-
-  $stp_port_priority = platform_get() ? {
-    'n7k'  => 64,
-    default => undef
-  }
-
-  $stp_port_type = platform_get() ? {
-    'n7k'  => 'network',
-    default => undef
-  }
-
-  $stp_vlan_cost = platform_get() ? {
-    'n7k'  => [['1-4,6,8-12', '1000'], ['1000', '2568']],
-    default => undef
-  }
-
-  $stp_vlan_port_priority = platform_get() ? {
-    'n7k'  => [['1-11,20-33', '64'], ['1111', '160']],
-    default => undef
-  }
-
   $sys_bd_cmd = platform_get() ? {
     'n7k'  => 'system bridge-domain all',
     default => undef
@@ -111,26 +56,11 @@ class ciscopuppet::demo_stp_bd {
   }
 
   cisco_stp_global { 'default':
-    require                  => Cisco_command_config['system-bd-all'],
-    bd_designated_priority   => $bd_designated_priority,
-    bd_forward_time          => $bd_forward_time,
-    bd_hello_time            => $bd_hello_time,
-    bd_max_age               => $bd_max_age,
-    bd_priority              => $bd_priority,
-    bd_root_priority         => $bd_root_priority,
-  }
-
-  cisco_interface { 'Ethernet1/4':
-    stp_bpdufilter         => $stp_bpdufilter,
-    stp_bpduguard          => $stp_bpduguard,
-    stp_cost               => $stp_cost,
-    stp_guard              => $stp_guard,
-    stp_link_type          => $stp_link_type,
-    stp_port_priority      => $stp_port_priority,
-    stp_port_type          => $stp_port_type,
-    stp_mst_cost           => $stp_mst_cost,
-    stp_mst_port_priority  => $stp_mst_port_priority,
-    stp_vlan_cost          => $stp_vlan_cost,
-    stp_vlan_port_priority => $stp_vlan_port_priority,
+    bd_designated_priority => $bd_designated_priority,
+    bd_forward_time        => $bd_forward_time,
+    bd_hello_time          => $bd_hello_time,
+    bd_max_age             => $bd_max_age,
+    bd_priority            => $bd_priority,
+    bd_root_priority       => $bd_root_priority,
   }
 }
