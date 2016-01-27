@@ -17,6 +17,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'ipaddr'
+begin
+  require 'puppet_x/cisco/cmnutils'
+rescue LoadError # seen on master, not on agent
+  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..',
+                                     'puppet_x', 'cisco', 'cmnutils.rb'))
+end
+
 Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
   @doc = "Manages a Cisco Virtual Tunnel Endpoint (VTEP) to Virtual Network
   Identifier (VNI) mapping.
@@ -115,36 +124,29 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
   end # property name
 
   newproperty(:peer_list, array_matching: :all) do
-    desc 'A list of static ip addresses for ingress-replication static' \
-         "valid values are an array of strings and keyword 'default'."
-=begin
-    validate do |value|
-      fail "peer_list #{value} must be string" unless
-        value.kind_of?(String) || value == :default
-    end
+    desc 'Set the ingress-replication static peer list. Valid values are '\
+         'an Array, a space-separated String of ip addresses, or the '\
+         "keyword 'default'."
 
-    munge do |value|
-      value = :default if value == 'default'
-      value
-    end
-=end
-    validate do |value|
-      begin
-        puts "value = #{value}, class = #{value.class}"
-        value = PuppetX::Cisco::Utils.process_network_mask(value.to_s)
-        value
-      rescue
-        raise "'peer-ip' must be a valid ip address"
+    match_error = 'must be specified as a valid ip address'
+    validate do |peer_list|
+      peer_list.split.each do |value|
+        begin
+          value == 'default' || value == :default ||
+            PuppetX::Cisco::Utils.process_network_mask(value)
+        rescue
+          fail "Ingress-replication peer value '#{value}' #{match_error}"
+        end
       end
     end
 
-    munge do |value|
-      value == 'default' ? :default : value
+    munge do |peer_list|
+      peer_list == 'default' ? :default : peer_list.split
     end
 
-#    def insync?(is)
- #     (is.size == should.flatten.size && is.sort == should.flatten.sort)
-  #  end
+    def insync?(is)
+      (is.size == should.flatten.size && is.sort == should.flatten.sort)
+    end
   end
 
   newproperty(:suppress_arp) do
@@ -158,18 +160,19 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
   validate do
     fail 'Only one of multicast-group or ingress-replication can be configured, '\
         'not both' if self[:multicast_group] && self[:ingress_replication]
-    # peer_list apply only when ingress_replication is static. Disable them
-    # otherwise so that the config succeeds
-    self[:peer_list] = [:default] unless self[:ingress_replication] == :static
+    # peer_list applies only when ingress_replication is static.
+    fail 'peer_list applies only for ingress replication static' if
+        self[:peer_list] && self[:ingress_replication] != :static
 
-    # If user configures assoc-vrf, make sure ingress_replication,
-    # multicast_group, peer_list and suppress_arp are off so that the config
-    # succeeds
-    if self[:assoc_vrf] == :true
-      self[:ingress_replication] = :default
-      self[:multicast_group] = :default
-      self[:suppress_arp] = :default
-      self[:peer_list] = [:default]
-    end
+    # If user configures assoc-vrf, ingress_replication, multicast_group,
+    # peer_list and suppress_arp should be off.
+    assoc_vrf_incompatible_props = self[:ingress_replication] ||
+                                   self[:multicast_group] ||
+                                   self[:suppress_arp] ||
+                                   self[:peer_list]
+
+    fail 'if assoc_vrf is true, ingress_replication, multicast_group, '\
+          'peer_list & suppress_arp should be off.' if
+           self[:assoc_vrf] == :true && assoc_vrf_incompatible_props
   end
 end # Puppet::Type.newtype

@@ -46,8 +46,8 @@ Puppet::Type.type(:cisco_vxlan_global).provide(:nxapi) do
 
   def initialize(value={})
     super(value)
-    @vxlan_global = Cisco::VxlanGlobal.new if Cisco::VxlanGlobal.enabled
-    @property_flush = {}
+  @vxlan_global = Cisco::VxlanGlobal.new if Cisco::Feature.fabric_forwarding_enabled?  
+  @property_flush = {}
   end
 
   def self.properties_get(vxlan_global)
@@ -65,8 +65,8 @@ Puppet::Type.type(:cisco_vxlan_global).provide(:nxapi) do
 
   def self.instances
     vxlan_globals = []
-    return vxlan_globals unless Cisco::VxlanGlobal.enabled
-
+    return vxlan_globals unless Cisco::Feature.fabric_forwarding_enabled?
+    
     vxlan_global = Cisco::VxlanGlobal.new
 
     vxlan_globals << properties_get(vxlan_global)

@@ -35,7 +35,7 @@ Puppet::Type.type(:cisco_vxlan_vtep_vni).provide(:nxapi) do
 
   # Property symbol array for method auto-generation.
   VXLAN_VTEP_VNI_ARRAY_FLAT_PROPS = [
-    :peer_list,
+    :peer_list
   ]
   # NOTE: For maintainability please keep this list in alphabetical order.
   VXLAN_VTEP_VNI_NON_BOOL_PROPS = [
@@ -47,7 +47,7 @@ Puppet::Type.type(:cisco_vxlan_vtep_vni).provide(:nxapi) do
     :suppress_arp
   ]
 
-  VXLAN_VTEP_VNI_ALL_PROPS = 
+  VXLAN_VTEP_VNI_ALL_PROPS =
     VXLAN_VTEP_VNI_ARRAY_FLAT_PROPS + VXLAN_VTEP_VNI_NON_BOOL_PROPS + VXLAN_VTEP_VNI_BOOL_PROPS
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:array_flat, self, '@vtep_vni',
@@ -64,7 +64,6 @@ Puppet::Type.type(:cisco_vxlan_vtep_vni).provide(:nxapi) do
     @vtep_vni = Cisco::VxlanVtepVni.vnis[interface][vni] unless
       interface.nil? || vni.nil?
     @property_flush = {}
-    debug 'Created provider instance of cisco_vxlan_vtep_vni.'
   end
 
   def self.properties_get(interface, vni, vni_instance)
@@ -75,7 +74,6 @@ Puppet::Type.type(:cisco_vxlan_vtep_vni).provide(:nxapi) do
       vni:       vni,
       assoc_vrf: vni_instance.assoc_vrf,
       ensure:    :present,
-      peer_list:  vni_instance.peer_list,
     }
     # Call node_utils getter for each property
     VXLAN_VTEP_VNI_ARRAY_FLAT_PROPS.each do |prop|
@@ -136,37 +134,17 @@ Puppet::Type.type(:cisco_vxlan_vtep_vni).provide(:nxapi) do
   def properties_set(new_vni=false)
     VXLAN_VTEP_VNI_ALL_PROPS.each do |prop|
       next unless @resource[prop]
-      send("#{prop}=", @resource[prop]) if new_vni
-      unless @property_flush[prop].nil?
-        @vtep_vni.send("#{prop}=", @property_flush[prop]) if
-          @vtep_vni.respond_to?("#{prop}=")
+      if new_vni
+        # Set @property_flush for the current object
+        send("#{prop}=", @resource[prop])
       end
+      next if @property_flush[prop].nil?
+      # Call the AutoGen setters for the @vtep_vni node_utils object.
+      @vtep_vni.send("#{prop}=", @property_flush[prop]) if
+        @vtep_vni.respond_to?("#{prop}=")
     end
   end
-=begin
-    # node utils is named peer_list= instead of peer_ips=
-    return unless @resource[:peer_ips]
-    self.peer_ips = @resource[:peer_ips] if new_vni
-    @vtep_vni.peer_list = @property_flush[:peer_ips] unless
-      @property_flush[:peer_ips].nil?
-  end
 
-  # can't autogen peer_ips, special array handling
-  def peer_ips
-    return [:default] if @resource[:peer_ips] &&
-                         @resource[:peer_ips][0] == :default &&
-                         @property_hash[:peer_ips] ==
-                         @vtep_vni.default_peer_list
-    @property_hash[:peer_ips]
-  end
-
-  def peer_ips=(set_value)
-    if set_value.is_a?(Array) && set_value[0] == :default
-      set_value = @vtep_vni.default_peer_list
-    end
-    @property_flush[:peer_ips] = set_value
-  end
-=end
   def flush
     if @property_flush[:ensure] == :absent
       @vtep_vni.destroy
