@@ -135,7 +135,7 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
           value == 'default' || value == :default ||
             PuppetX::Cisco::Utils.process_network_mask(value)
         rescue
-          fail "Ingress-replication peer value '#{value}' #{match_error}"
+          raise "Ingress-replication peer value '#{value}' #{match_error}"
         end
       end
     end
