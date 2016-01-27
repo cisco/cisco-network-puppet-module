@@ -240,6 +240,7 @@ module BgpLib
   # rubocop:enable Metrics/MethodLength
 
   # creat manifest for difference on platform
+  # support on n9k not n7k seperate the test
   def self.create_bgp_manifest_present_non_default_diff
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
