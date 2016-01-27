@@ -113,7 +113,7 @@ expected_values = {
   'timer_bgp_holdtime'                     => '110',
 }
 
-expected_value_vrf1_diff = {
+expected_values_diff = {
   'ensure'                       => 'present',
   'disable_policy_batching_ipv4' => 'xx',
   'disable_policy_batching_ipv6' => 'yy',
