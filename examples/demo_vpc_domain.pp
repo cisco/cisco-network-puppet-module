@@ -68,11 +68,11 @@ class ciscopuppet::demo_vpc_domain {
     system_priority                                  => 32000,
   }
 
-  cisco_interface { 'Ethernet1/1' :
+  cisco_interface_channel_group { 'Ethernet1/1':
     require       => Cisco_vpc_domain['100'],
     channel_group => 10,
   }
-  
+
   cisco_interface { 'port-channel10' :
     switchport_mode => 'trunk',
     vpc_id          => 5,
@@ -80,11 +80,11 @@ class ciscopuppet::demo_vpc_domain {
     require         => Cisco_interface['Ethernet1/1'],
   }
 
-  cisco_interface { 'Ethernet1/2' :
-    channel_group => 100,
+  cisco_interface_channel_group { 'Ethernet1/2':
     require       => Cisco_vpc_domain['100'],
+    channel_group => 100,
   }
-  
+
   cisco_interface { 'port-channel100' :
     switchport_mode => 'trunk',
     vpc_peer_link   => true,
