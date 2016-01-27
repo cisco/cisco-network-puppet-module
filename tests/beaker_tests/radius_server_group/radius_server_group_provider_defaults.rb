@@ -73,7 +73,7 @@ test_name "TestCase :: #{testheader}" do
     on(agent, cmd_str)
     cmd_str = get_vshell_cmd('conf t ; radius-server host 3.3.3.3')
     on(agent, cmd_str)
-    cmd_str = get_vshell_cmd('conf t ; radius-server host 4.4.4.4')
+    cmd_str = get_vshell_cmd('conf t ; radius-server host 2002::4')
     on(agent, cmd_str)
 
     logger.info('Setup switch for provider')
@@ -130,7 +130,7 @@ test_name "TestCase :: #{testheader}" do
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                false, self, logger)
-      search_pattern_in_output(stdout, { 'servers' => '\[\'2.2.2.2\', \'4.4.4.4\'\]' },
+      search_pattern_in_output(stdout, { 'servers' => '\[\'2.2.2.2\', \'2002::4\'\]' },
                                false, self, logger)
     end
 
