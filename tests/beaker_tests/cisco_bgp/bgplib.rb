@@ -197,8 +197,6 @@ module BgpLib
         confederation_id                       => '99',
         confederation_peers                    => '55 23.4 88 200.1',
         disable_policy_batching                => 'true',
-        disable_policy_batching_ipv4           => 'xx',
-        disable_policy_batching_ipv6           => 'yy',
         enforce_first_as                       => 'true',
         event_history_cli                      => 'size_medium',
         event_history_detail                   => 'size_large',
@@ -208,7 +206,6 @@ module BgpLib
         flush_routes                           => 'true',
         isolate                                => 'true',
         maxas_limit                            => '50',
-        neighbor_down_fib_accelerate           => 'true',
         shutdown                               => 'true',
 
         suppress_fib_pending                   => 'true',
@@ -237,9 +234,27 @@ module BgpLib
       }
     }
     EOF"
+
     manifest_str
   end
   # rubocop:enable Metrics/MethodLength
+
+  # creat manifest for difference on platform
+  def self.create_bgp_manifest_present_non_default_diff
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+    node 'default' {
+      cisco_bgp { 'default':
+        ensure                                 => present,
+        asn                                    => #{BgpLib::ASN},
+        vrf                                    => 'default',
+        disable_policy_batching_ipv4           => 'xx',
+        disable_policy_batching_ipv6           => 'yy',
+        neighbor_down_fib_accelerate           => 'true',
+      }
+    }
+    EOF"
+    manifest_str
+  end
 
   # Create manifest ensure => present + 'non-default' property values
   # for vrf1
@@ -256,7 +271,6 @@ module BgpLib
         confederation_id                       => '33',
         confederation_peers                    => '99 88 200.1',
         maxas_limit                            => '55',
-        neighbor_down_fib_accelerate           => 'true',
 
         suppress_fib_pending                   => 'false',
         log_neighbor_changes                   => 'false',
@@ -287,6 +301,21 @@ module BgpLib
     manifest_str
   end
 
+  # create manifest for difference on the platform
+  def self.create_bgp_manifest_present_non_default_vrf1_diff
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+    node 'default' {
+      cisco_bgp { 'default':
+        ensure                                 => present,
+        asn                                    => #{BgpLib::ASN},
+        vrf                                    => #{BgpLib::VRF1},
+        neighbor_down_fib_accelerate           => 'true'
+      }
+    }
+  EOF"
+    manifest_str
+  end
+
   # Create manifest ensure => present + 'non-default' property values
   # for vrf2
   def self.create_bgp_manifest_present_non_default_vrf2
@@ -302,7 +331,6 @@ module BgpLib
         confederation_id                       => '32.88',
         confederation_peers                    => '55 23.4 88 200.1',
         maxas_limit                            => '60',
-        neighbor_down_fib_accelerate           => 'true',
 
         suppress_fib_pending                   => 'false',
         log_neighbor_changes                   => 'false',

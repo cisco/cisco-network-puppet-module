@@ -138,6 +138,13 @@ test_name "TestCase :: #{testheader}" do
   # vrf => 'default
   # (all_other_attributes => default values)
 
+  # delete properties unsupported on platform
+  device = platform
+  if device =~ /(n5k|n6k|n7k)/
+    expected_default_values.delete('neighbor_down_fib_accelerate')
+  end
+
+  puts "#{expected_default_values}"
   method_list = %w(
     create_bgp_manifest_title_pattern1
     create_bgp_manifest_title_pattern2
@@ -198,17 +205,17 @@ test_name "TestCase :: #{testheader}" do
     create_bgp_manifest_title_pattern7_remove
     create_bgp_manifest_title_pattern8_remove)
 
+  # Remove Properties that can only be used in the default_vrf
+  expected_default_values.delete('enforce_first_as')
+  expected_default_values.delete('event_history_cli')
+  expected_default_values.delete('event_history_detail')
+  expected_default_values.delete('event_history_events')
+  expected_default_values.delete('event_history_periodic')
+  expected_default_values.delete('disable_policy_batching')
+
   method_present_list.zip(method_absent_list) do |mp, ma|
     current_manifest_present = BgpLib.send("#{mp}")
     current_manifest_absent = BgpLib.send("#{ma}")
-
-    # Remove Properties that can only be used in the default_vrf
-    expected_default_values.delete('enforce_first_as')
-    expected_default_values.delete('event_history_cli')
-    expected_default_values.delete('event_history_detail')
-    expected_default_values.delete('event_history_events')
-    expected_default_values.delete('event_history_periodic')
-    expected_default_values.delete('disable_policy_batching')
 
     stepinfo = "Apply title patterns manifest: #{mp}"
     step "TestStep :: #{stepinfo}" do

@@ -440,7 +440,7 @@ end
 #################################################################
 test_name "TestCase :: #{testheader}" do
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  node_feature_cleanup(agent, 'bgp')
+  resource_absent_cleanup(agent, 'cisco_bgp', 'BGP CLEAN :: ')
 
   # -----------------------------------
   id = 'default_properties'
@@ -453,13 +453,13 @@ test_name "TestCase :: #{testheader}" do
   test_harness_bgp_af(tests, 'default_dampening_routemap')
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  node_feature_cleanup(agent, 'bgp')
+  resource_absent_cleanup(agent, 'cisco_bgp', 'BGP CLEAN :: ')
 
   test_harness_bgp_af(tests, 'non_default_properties_A')
   test_harness_bgp_af(tests, 'non_default_properties_C')
   test_harness_bgp_af(tests, 'non_default_properties_D')
   test_harness_bgp_af(tests, 'non_default_properties_Dampening_routemap')
-  node_feature_cleanup(agent, 'bgp')
+  resource_absent_cleanup(agent, 'cisco_bgp', 'BGP CLEAN :: ')
   test_harness_bgp_af(tests, 'non_default_properties_Dampening_true')
   test_harness_bgp_af(tests, 'non_default_properties_Dampening_false')
   test_harness_bgp_af(tests, 'non_default_properties_I')
@@ -471,7 +471,7 @@ test_name "TestCase :: #{testheader}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
-  node_feature_cleanup(agent, 'bgp')
+  resource_absent_cleanup(agent, 'cisco_bgp', 'BGP CLEAN :: ')
 
   id = 'title_patterns'
   tests[id][:desc] = '3.1 Title Patterns'

@@ -563,7 +563,7 @@ end
 test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  node_feature_cleanup(agent, 'bgp')
+  resource_absent_cleanup(agent, 'cisco_bgp', 'BGP CLEAN :: ')
 
   # -----------------------------------
   id = 'default_properties'
@@ -571,10 +571,12 @@ test_name "TestCase :: #{testheader}" do
 
   tests[id][:ensure] = :absent
   test_harness_bgp_nbr_af(tests, id)
+  # skip unsupported properties
+  device = platform
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  node_feature_cleanup(agent, 'bgp')
+  resource_absent_cleanup(agent, 'cisco_bgp', 'BGP CLEAN :: ')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_A1')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_A2')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_A3')
@@ -582,7 +584,9 @@ test_name "TestCase :: #{testheader}" do
   test_harness_bgp_nbr_af(tests, 'non_default_properties_M')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_N')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_S1')
-  test_harness_bgp_nbr_af(tests, 'non_default_properties_S2')
+  if device =~ /(n3k|n9k)/
+    test_harness_bgp_nbr_af(tests, 'non_default_properties_S2')
+  end
   test_harness_bgp_nbr_af(tests, 'non_default_properties_S3')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_W')
 
@@ -595,7 +599,7 @@ test_name "TestCase :: #{testheader}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
-  node_feature_cleanup(agent, 'bgp')
+  resource_absent_cleanup(agent, 'cisco_bgp', 'BGP CLEAN :: ')
 
   id = 'title_patterns'
   tests[id][:desc] = '3.1 Title Patterns'
@@ -631,7 +635,7 @@ test_name "TestCase :: #{testheader}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 4. L2VPN Default Property Testing")
-  node_feature_cleanup(agent, 'bgp')
+  resource_absent_cleanup(agent, 'cisco_bgp', 'BGP CLEAN :: ')
 
   # -----------------------------------
   id = 'default_properties_l2vpn'
@@ -642,12 +646,14 @@ test_name "TestCase :: #{testheader}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 5. L2VPN  Non Default Property Testing")
-  node_feature_cleanup(agent, 'bgp')
+  resource_absent_cleanup(agent, 'cisco_bgp', 'BGP CLEAN :: ')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_A1_l2vpn')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_M_l2vpn')
   test_harness_bgp_nbr_af(tests, 'non_default_properties_S1_l2vpn')
-  test_harness_bgp_nbr_af(tests, 'non_default_properties_S2_l2vpn')
-  test_harness_bgp_nbr_af(tests, 'non_default_properties_S3_l2vpn')
+  if device =~ /(n3k|n9k)/
+    test_harness_bgp_nbr_af(tests, 'non_default_properties_S2_l2vpn')
+    test_harness_bgp_nbr_af(tests, 'non_default_properties_S3_l2vpn')
+  end
 
   # Special Cases
   test_harness_bgp_nbr_af(tests, 'non_default_properties_ibgp_only_l2vpn')
@@ -655,7 +661,7 @@ test_name "TestCase :: #{testheader}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 6. L2VPN Title Pattern Testing")
-  node_feature_cleanup(agent, 'bgp')
+  resource_absent_cleanup(agent, 'cisco_bgp', 'BGP CLEAN :: ')
 
   id = 'title_patterns'
   tests[id][:desc] = '6.1 Title Patterns'

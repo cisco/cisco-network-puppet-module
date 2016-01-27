@@ -135,6 +135,12 @@ test_name "TestCase :: #{testheader}" do
   # Default VRF Test Cases
   # ----------------------
 
+  # delete properties not support on platform
+  device = platform
+  if device =~ /(n5k|n6k|n7k)/
+    expected_default_values.delete('neighbor_down_fib_accelerate')
+  end
+
   stepinfo = 'Apply resource ensure => present manifest'
   step "TestStep :: #{stepinfo}" do
     on(master, BgpLib.create_bgp_manifest_present)
@@ -146,16 +152,6 @@ test_name "TestCase :: #{testheader}" do
   step "TestStep :: #{stepinfo}" do
     on(agent, resource_default) do
       search_pattern_in_output(stdout, expected_default_values,
-                               test[:present], self, logger)
-    end
-    logger.info("#{stepinfo} :: #{result}")
-  end
-
-  stepinfo = 'Check bgp instance output on agent'
-  step "TestStep :: #{stepinfo}" do
-    on(agent, show_run_bgp) do
-      search_pattern_in_output(stdout,
-                               [/router bgp #{BgpLib::ASN}/],
                                test[:present], self, logger)
     end
     logger.info("#{stepinfo} :: #{result}")
@@ -197,16 +193,6 @@ test_name "TestCase :: #{testheader}" do
     logger.info("#{stepinfo} :: #{result}")
   end
 
-  stepinfo = "Check bgp instance output on agent (#{context})"
-  step "TestStep :: #{stepinfo}" do
-    on(agent, show_run_bgp) do
-      search_pattern_in_output(stdout,
-                               [/router bgp #{BgpLib::ASN}/, /vrf #{BgpLib::VRF1}/],
-                               test[:present], self, logger)
-    end
-    logger.info("#{stepinfo} :: #{result}")
-  end
-
   stepinfo = "Verify Idempotence (#{context})"
   step "TestStep :: #{stepinfo}" do
     on(agent, puppet_cmd, acceptable_exit_codes: [0])
@@ -226,16 +212,6 @@ test_name "TestCase :: #{testheader}" do
   step "TestStep :: #{stepinfo})" do
     on(agent, resource_vrf2) do
       search_pattern_in_output(stdout, expected_default_values,
-                               test[:present], self, logger)
-    end
-    logger.info("#{stepinfo} :: #{result}")
-  end
-
-  stepinfo = "Check bgp instance output on agent (#{context})"
-  step "TestStep :: #{stepinfo}" do
-    on(agent, show_run_bgp) do
-      search_pattern_in_output(stdout,
-                               [/router bgp #{BgpLib::ASN}/, /vrf #{BgpLib::VRF2}/],
                                test[:present], self, logger)
     end
     logger.info("#{stepinfo} :: #{result}")
@@ -278,7 +254,7 @@ test_name "TestCase :: #{testheader}" do
     logger.info("#{stepinfo} :: #{result}")
   end
 
-  stepinfo = "Verify resource is absent using puppet (#{context}"
+  stepinfo = "Verify resource is absent using puppet (#{context})"
   step "TestStep :: #{stepinfo})" do
     on(agent, resource_vrf2) do
       search_pattern_in_output(stdout, expected_default_values,
@@ -289,7 +265,14 @@ test_name "TestCase :: #{testheader}" do
 
   context = 'vrf default'
 
-  stepinfo = "Verify resource is absent using puppet (#{context}"
+  stepinfo = "Apply resource ensure => absent manifest (#{context})"
+  step "TestStep :: #{stepinfo}" do
+    on(master, BgpLib.create_bgp_manifest_absent)
+    on(agent, puppet_cmd, acceptable_exit_codes: [2])
+    logger.info("#{stepinfo} :: #{result}")
+  end
+
+  stepinfo = "Verify resource is absent using puppet (#{context})"
   step "TestStep :: #{stepinfo})" do
     on(agent, resource_default) do
       search_pattern_in_output(stdout, expected_default_values,
