@@ -65,7 +65,7 @@ EOF"
 node default {
   radius_server_group { 'red':
     ensure    => 'present',
-    servers   => ['2.2.2.2','4.4.4.4']
+    servers   => ['2.2.2.2','2002::4']
   }
 }
 EOF"
