@@ -185,7 +185,16 @@ module BgpLib
 
   # Create manifest ensure => present + 'non-default' property values
   # rubocop:disable Metrics/MethodLength
-  def self.create_bgp_manifest_present_non_default
+  def self.create_bgp_manifest_present_non_default(platform)
+    conditional_props = ''
+    if platform =~ /(n3k|n9k)/
+      conditional_props <<
+        "disable_policy_batching_ipv4           => 'xx',
+         disable_policy_batching_ipv6           => 'yy',
+         neighbor_down_fib_accelerate           => 'true',
+        "
+    end
+
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'default':
@@ -231,6 +240,8 @@ module BgpLib
         # Timer Properties
         timer_bgp_keepalive                    => '45',
         timer_bgp_holdtime                     => '110',
+
+        #{conditional_props}
       }
     }
     EOF"
@@ -239,27 +250,15 @@ module BgpLib
   end
   # rubocop:enable Metrics/MethodLength
 
-  # creat manifest for difference on platform
-  # support on n9k not n7k seperate the test
-  def self.create_bgp_manifest_present_non_default_diff
-    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
-    node 'default' {
-      cisco_bgp { 'default':
-        ensure                                 => present,
-        asn                                    => #{BgpLib::ASN},
-        vrf                                    => 'default',
-        disable_policy_batching_ipv4           => 'xx',
-        disable_policy_batching_ipv6           => 'yy',
-        neighbor_down_fib_accelerate           => 'true',
-      }
-    }
-    EOF"
-    manifest_str
-  end
-
   # Create manifest ensure => present + 'non-default' property values
   # for vrf1
-  def self.create_bgp_manifest_present_non_default_vrf1
+  def self.create_bgp_manifest_present_non_default_vrf1(platform)
+    conditional_props = ''
+    if platform =~ /(n3k|n9k)/
+      conditional_props <<
+        "neighbor_down_fib_accelerate           => 'true',"
+    end
+
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'default':
@@ -296,24 +295,11 @@ module BgpLib
         # Timer Properties
         timer_bgp_keepalive                    => '46',
         timer_bgp_holdtime                     => '111',
+
+        #{conditional_props}
       }
     }
     EOF"
-    manifest_str
-  end
-
-  # create manifest for difference on the platform
-  def self.create_bgp_manifest_present_non_default_vrf1_diff
-    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
-    node 'default' {
-      cisco_bgp { 'default':
-        ensure                                 => present,
-        asn                                    => #{BgpLib::ASN},
-        vrf                                    => #{BgpLib::VRF1},
-        neighbor_down_fib_accelerate           => 'true'
-      }
-    }
-  EOF"
     manifest_str
   end
 

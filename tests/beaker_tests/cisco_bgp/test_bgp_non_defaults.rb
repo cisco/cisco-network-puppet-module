@@ -113,12 +113,12 @@ expected_values = {
   'timer_bgp_holdtime'                     => '110',
 }
 
-expected_values_diff = {
-  'ensure'                       => 'present',
-  'disable_policy_batching_ipv4' => 'xx',
-  'disable_policy_batching_ipv6' => 'yy',
-  'neighbor_down_fib_accelerate' => 'true',
-}
+device = platform
+if device =~ /(n3k|n9k)/
+  expected_values['disable_policy_batching_ipv4'] = 'xx'
+  expected_values['disable_policy_batching_ipv6'] = 'yy'
+  expected_values['neighbor_down_fib_acceleratie'] = 'true'
+end
 
 expected_values_vrf1 = {
   'ensure'                                 => 'present',
@@ -148,10 +148,9 @@ expected_values_vrf1 = {
   'timer_bgp_holdtime'                     => '111',
 }
 
-expected_values_vrf1_diff = {
-  'ensure'                       => 'present',
-  'neighbor_down_fib_accelerate' => 'true',
-}
+if device =~ /(n3k|n9k)/
+  expected_values_vrf1['neighbor_down_fib_accelerate'] = 'true'
+end
 
 expected_values_vrf2 = {
   'ensure'                                 => 'present',
@@ -211,7 +210,7 @@ test_name "TestCase :: #{testheader}" do
 
   stepinfo = 'Apply resource ensure => present manifest'
   step "TestStep :: #{stepinfo}" do
-    on(master, BgpLib.create_bgp_manifest_present_non_default)
+    on(master, BgpLib.create_bgp_manifest_present_non_default(device))
     on(agent, puppet_cmd, acceptable_exit_codes: [2])
     logger.info("#{stepinfo} :: #{result}")
   end
@@ -231,29 +230,6 @@ test_name "TestCase :: #{testheader}" do
     logger.info("#{stepinfo} :: #{result}")
   end
 
-  if device =~ /(n3k|n9k)/
-    stepinfo = 'Apply resource ensure => present manifest'
-    step "TestStep :: #{stepinfo}" do
-      on(master, BgpLib.create_bgp_manifest_present_non_default_diff)
-      on(agent, puppet_cmd, acceptable_exit_codes: [2])
-      logger.info("#{stepinfo} :: #{result}")
-    end
-
-    stepinfo = "Check cisco_bgp resource using 'puppet resource' comand"
-    step "TestStep :: #{stepinfo}" do
-      on(agent, resource_default) do
-        search_pattern_in_output(stdout, expected_values_diff,
-                                 test[:present], self, logger)
-      end
-      logger.info("#{stepinfo} :: #{result}")
-    end
-
-    stepinfo = 'Verify Idempotence'
-    step "TestStep :: #{stepinfo}" do
-      on(agent, puppet_cmd, acceptable_exit_codes: [0])
-      logger.info("#{stepinfo} :: #{result}")
-    end
-  end
   # --------------------------
   # Non-Default VRF Test Cases
   # --------------------------
@@ -262,7 +238,7 @@ test_name "TestCase :: #{testheader}" do
 
   stepinfo = "Apply resource ensure => present manifest (#{context})"
   step "TestStep :: #{stepinfo}" do
-    on(master, BgpLib.create_bgp_manifest_present_non_default_vrf1)
+    on(master, BgpLib.create_bgp_manifest_present_non_default_vrf1(device))
     on(agent, puppet_cmd, acceptable_exit_codes: [2])
     logger.info("#{stepinfo} :: #{result}")
   end
@@ -280,32 +256,6 @@ test_name "TestCase :: #{testheader}" do
   step "TestStep :: #{stepinfo}" do
     on(agent, puppet_cmd, acceptable_exit_codes: [0])
     logger.info("#{stepinfo} :: #{result}")
-  end
-
-  context = "vrf #{BgpLib::VRF1} diff"
-
-  if device =~ /(n3k|n9k)/
-    stepinfo = "Apply resource ensure => present manifest (#{context})"
-    step "TestStep :: #{stepinfo}" do
-      on(master, BgpLib.create_bgp_manifest_present_non_default_vrf1_diff)
-      on(agent, puppet_cmd, acceptable_exit_codes: [2])
-      logger.info("#{stepinfo} :: #{result}")
-    end
-
-    stepinfo = "Check cisco_bgp resource output on agent (#{context}"
-    step "TestStep :: #{stepinfo})" do
-      on(agent, resource_vrf1) do
-        search_pattern_in_output(stdout, expected_values_vrf1_diff,
-                                 test[:present], self, logger)
-      end
-      logger.info("#{stepinfo} :: #{result}")
-    end
-
-    stepinfo = "Verify Idempotence (#{context})"
-    step "TestStep :: #{stepinfo}" do
-      on(agent, puppet_cmd, acceptable_exit_codes: [0])
-      logger.info("#{stepinfo} :: #{result}")
-    end
   end
 
   context = "vrf #{BgpLib::VRF2}"
