@@ -16,9 +16,10 @@
 
 class ciscopuppet::demo_vlan {
   cisco_vlan { '220':
-    ensure    => present,
-    vlan_name => 'newtest',
-    shutdown  => true,
-    state     => 'active',
+    ensure     => present,
+    vlan_name  => 'newtest',
+    mapped_vni => 22000,
+    shutdown   => true,
+    state      => 'active',
   }
 }
