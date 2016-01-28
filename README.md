@@ -480,43 +480,43 @@ Routing domain confederation AS. Valid values are String, keyword 'default'. On 
 AS confederation parameters. Valid values are String, keyword 'default'. On IOS XR, this property is only supported in the global BGP context.
 
 ##### `disable_policy_batching` 
-Enable/Disable the batching evaluation of prefix advertisements to all peers. Valid values are 'true', 'false', and 'default'.
+Enable/Disable the batching evaluation of prefix advertisements to all peers. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 
 ##### `disable_policy_batching_ipv4`
-Enable/Disable the batching evaluation of prefix advertisements to all peers with prefix list. Valid values are String, keyword 'default'.  
+Enable/Disable the batching evaluation of prefix advertisements to all peers with prefix list. Valid values are String, keyword 'default'. This property is not supported on IOS XR.
 
 ##### `disable_policy_batching_ipv6`
-Enable/Disable the batching evaluation of prefix advertisements to all peers with prefix list. Valid values are String, keyword 'default'.  
+Enable/Disable the batching evaluation of prefix advertisements to all peers with prefix list. Valid values are String, keyword 'default'. This property is not supported on IOS XR.
 
 ##### `enforce_first_as`
 Enable/Disable enforces the neighbor autonomous system to be the first AS number listed in the AS path attribute for eBGP. Valid values are 'true', 'false', and 'default'.
 
 ##### `event_history_cli`
-Enable/Disable cli event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
+Enable/Disable cli event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. This property is not supported on IOS XR.
 
 ##### `event_history_detail`
-Enable/Disable detail event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
+Enable/Disable detail event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. This property is not supported on IOS XR.
 
 ##### `event_history_events`
-Enable/Disable event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
+Enable/Disable event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. This property is not supported on IOS XR.
 
 ##### `event_history_periodic`
-Enable/Disable periodic event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
+Enable/Disable periodic event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. This property is not supported on IOS XR.
 
 ##### `fast_external_fallover`
 Enable/Disable immediately reset the session if the link to a directly connected BGP peer goes down. Valid values are 'true', 'false', and 'default'.
 
 ##### `flush_routes`
-Enable/Disable flush routes in RIB upon controlled restart. Valid values are 'true', 'false', and 'default'.
+Enable/Disable flush routes in RIB upon controlled restart. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 
 ##### `isolate`
-Enable/Disable isolate this router from BGP perspective. Valid values are 'true', 'false', and 'default'.
+Enable/Disable isolate this router from BGP perspective. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 
 ##### `maxas_limit`
 Specify Maximum number of AS numbers allowed in the AS-path attribute. Valid values are integers between 1 and 512, or keyword 'default' to disable this property. This property is not supported on IOS XR.
 
 ##### `neighbor_down_fib_accelerate`
-Enable/Disable handle BGP neighbor down event, due to various reasons. Valid values are 'true', 'false', and 'default'.
+Enable/Disable handle BGP neighbor down event, due to various reasons. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 
 ##### `shutdown`
 Administratively shutdown the BGP protocol. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
@@ -638,10 +638,10 @@ Specify route suppress time for route-flap dampening. Valid values are Integer, 
 Note: dampening_routemap is mutually exclusive with dampening_half_time, reuse_time, suppress_time and max_suppress_time.
 
 ##### `default_information_originate`
-`default-information originate`. Valid values are true and false.
+`default-information originate`. Valid values are true and false. This property is not supported on IOS XR.
 
 ##### `default_metric`
-Sets default metrics for routes redistributed into BGP. Valid values are Integer or keyword 'default'.
+Sets default metrics for routes redistributed into BGP. Valid values are Integer or keyword 'default'. This property is not supported on IOS XR.
 
 ##### `distance_ebgp`
 Sets the administrative distance for eBGP routes. Valid values are Integer or keyword 'default'.
@@ -653,7 +653,7 @@ Sets the administrative distance for iBGP routes. Valid values are Integer or ke
 Sets the administrative distance for local BGP routes. Valid values are Integer or keyword 'default'.
 
 ##### `inject_map`
-An array of route-map names which will specify prefixes to inject. Each array entry must first specify the inject-map name, secondly an exist-map name, and optionally the `copy-attributes` keyword which indicates that attributes should be copied from the aggregate.
+An array of route-map names which will specify prefixes to inject. Each array entry must first specify the inject-map name, secondly an exist-map name, and optionally the `copy-attributes` keyword which indicates that attributes should be copied from the aggregate. This property is not supported on IOS XR.
 
 For example, the following array will create three separate inject-maps for `lax_inject_map`, `nyc_inject_map` (with copy-attributes), and `fsd_exist_map`:
 
@@ -696,7 +696,7 @@ Example: IPv6 Networks Array
 ```
 
 ##### `next_hop_route_map`
-Configure a route map for valid nexthops. Valid values are a string defining the name of the route-map.
+Configure a route map for valid nexthops. Valid values are a string defining the name of the route-map. On IOS XR, this property is only supported in the global BGP context.
 
 ##### `redistribute`
 A list of redistribute directives. Multiple redistribute entries are allowed. The list must be in the form of a nested array: the first entry of each array defines the source-protocol to redistribute from; the second entry defines a route-map/route-policy name. A route-map/route-policy is highly advised but may be optional on some platforms, in which case it may be omitted from the array list.
@@ -725,13 +725,13 @@ redistribute => [['direct'],
 ```
 
 ##### `suppress_inactive`
-Advertises only active routes to peersy. Valid values are true, false, or 'default'.
+Advertises only active routes to peersy. Valid values are true, false, or 'default'. This property is not supported on IOS XR.
 
 ##### `table_map`
 Apply table-map to filter routes downloaded into URIB. Valid values are a string.
 
 ##### `table_map_filter`
-Filters routes rejected by the route map and does not download them to the RIB. Valid values are true, false, or 'default'.
+Filters routes rejected by the route map and does not download them to the RIB. Valid values are true, false, or 'default'. This property is not supported on IOS XR.
 
 --
 ### Type: cisco_bgp_neighbor
@@ -839,11 +839,17 @@ Neighbor Address Family Identifier (AFI). Required. Valid values are string. Val
 ##### `safi`
 Neighbor Sub Address Family Identifier (SAFI). Required. Valid values are string. Valid neighbor SAFIs are `unicast` and `multicast`. Note that some AFI/SAFI address-families may not be supported with some neighbors; e.g. an ipv6 neighbor may not support an ipv4 multicast address-family.
 
+##### `additional_paths_receive`
+`capability additional-paths receive`. Valid values are `enable` for basic command enablement; `disable` for disabling the command at the neighbor_af level (it adds the `disable` keyword to the basic command); and `inherit` to remove the command at this level (the command value is inherited from a higher BGP layer). This property is not supported on IOS XR.
+
+##### `additional_paths_send`
+`capability additional-paths send`. Valid values are `enable` for basic command enablement; `disable` for disabling the command at the neighbor_af level (it adds the `disable` keyword to the basic command); and `inherit` to remove the command at this level (the command value is inherited from a higher BGP layer). This property is not supported on IOS XR.
+
 ##### `advertise_map_exist`
-Conditional route advertisement. This property requires two route maps: an advertise-map and an exist-map. Valid values are an array specifying both the advertise-map name and the exist-map name, or simply 'default'; e.g. `['my_advertise_map', 'my_exist_map']`. This command is mutually exclusive with the advertise_map_non_exist property.
+Conditional route advertisement. This property requires two route maps: an advertise-map and an exist-map. Valid values are an array specifying both the advertise-map name and the exist-map name, or simply 'default'; e.g. `['my_advertise_map', 'my_exist_map']`. This command is mutually exclusive with the advertise_map_non_exist property. This property is not supported on IOS XR.
 
 ##### `advertise_map_non_exist`
-Conditional route advertisement. This property requires two route maps: an advertise-map and a non-exist-map. Valid values are an array specifying both the advertise-map name and the non-exist-map name, or simply 'default'; e.g. `['my_advertise_map', 'my_non_exist_map']`. This command is mutually exclusive with the advertise_map_exist property.
+Conditional route advertisement. This property requires two route maps: an advertise-map and a non-exist-map. Valid values are an array specifying both the advertise-map name and the non-exist-map name, or simply 'default'; e.g. `['my_advertise_map', 'my_non_exist_map']`. This command is mutually exclusive with the advertise_map_exist property. This property is not supported on IOS XR.
 
 ##### `allowas_in`
 `allowas-in`. Valid values are true, false, or an integer value, which enables the command with a specific max-occurrences value. Related: `allowas_in_max`.
@@ -854,12 +860,6 @@ Optional max-occurrences value for `allowas_in`. Valid values are an integer val
 ##### `as_override`
 `as-override`. Valid values are true, false, or 'default'.
 
-##### `additional_paths_receive`
-`capability additional-paths receive`. Valid values are `enable` for basic command enablement; `disable` for disabling the command at the neighbor_af level (it adds the `disable` keyword to the basic command); and `inherit` to remove the command at this level (the command value is inherited from a higher BGP layer).
-
-##### `additional_paths_send`
-`capability additional-paths send`. Valid values are `enable` for basic command enablement; `disable` for disabling the command at the neighbor_af level (it adds the `disable` keyword to the basic command); and `inherit` to remove the command at this level (the command value is inherited from a higher BGP layer).
-
 ##### `default_originate`
 `default-originate`. Valid values are True, False, or 'default'. Related: `default_originate_route_map`.
 
@@ -867,10 +867,10 @@ Optional max-occurrences value for `allowas_in`. Valid values are an integer val
 Optional route-map for the `default_originate` property. Can be used independently or in conjunction with `default_originate`. Valid values are a string defining a route-map name, or 'default'.
 
 ##### `filter_list_in`
-Valid values are a string defining a filter-list name, or 'default'.
+Valid values are a string defining a filter-list name, or 'default'. This property is not supported on IOS XR.
 
 ##### `filter_list_out`
-Valid values are a string defining a filter-list name, or 'default'.
+Valid values are a string defining a filter-list name, or 'default'. This property is not supported on IOS XR.
 
 ##### `max_prefix_limit`
 `maximum-prefix` limit value. Valid values are an integer value or 'default'. Related: `max_prefix_threshold`, `max_prefix_interval`, and `max_prefix_warning`.
@@ -888,13 +888,13 @@ Optional warning-only keyword. Valid values are True, False, or 'default'. Requi
 `next-hop-self`. Valid values are True, False, or 'default'.
 
 ##### `next_hop_third_party`
-`next-hop-third-party`. Valid values are True, False, or 'default'.
+`next-hop-third-party`. Valid values are True, False, or 'default'. This property is not supported on IOS XR.
 
 ##### `prefix_list_in`
-Valid values are a string defining a prefix-list name, or 'default'.
+Valid values are a string defining a prefix-list name, or 'default'. This property is not supported on IOS XR.
 
 ##### `prefix_list_out`
-Valid values are a string defining a prefix-list name, or 'default'.
+Valid values are a string defining a prefix-list name, or 'default'. This property is not supported on IOS XR.
 
 ##### `route_map_in`
 Valid values are a string defining a route-map name, or 'default'.
@@ -912,13 +912,13 @@ Valid values are a string defining a route-map name, or 'default'.
 `soft-reconfiguration inbound`. Valid values are `enable` for basic command enablement; `always` to add the `always` keyword to the basic command; and `inherit` to remove the command at this level (the command value is inherited from a higher BGP layer).
 
 ##### `soo`
-Site-of-origin. Valid values are a string defining a VPN extcommunity or 'default'.
+Site-of-origin. Valid values are a string defining a VPN extcommunity or 'default'. This property is not supported on IOS XR.
 
 ##### `suppress_inactive`
-`suppress-inactive` Valid values are True, False, or 'default'.
+`suppress-inactive` Valid values are True, False, or 'default'. This property is not supported on IOS XR.
 
 ##### `unsuppress_map`
-`unsuppress-map`. Valid values are a string defining a route-map name or 'default'.
+`unsuppress-map`. Valid values are a string defining a route-map name or 'default'. This property is not supported on IOS XR.
 
 ##### `weight`
 `weight` value. Valid values are an integer value or 'default'.
@@ -948,10 +948,10 @@ Note: On some platforms a normal side-effect of adding the channel-group propert
 Description of the interface. Valid values are a string or the keyword 'default'.
 
 ###### `duplex`
-Duplex of the interface. Valid values are 'full', and 'auto'.
+Duplex of the interface. Valid values are 'full', and 'auto'. This property is not supported on IOS XR.
 
 ###### `speed`
-Speed of the interface. Valid values are 100, 1000, 10000, 40000, 1000000, and 'auto'.
+Speed of the interface. Valid values are 100, 1000, 10000, 40000, 1000000, and 'auto'. This property is not supported on IOS XR.
 
 ###### `shutdown`
 Shutdown state of the interface. Valid values are 'true', 'false', and
@@ -959,7 +959,7 @@ Shutdown state of the interface. Valid values are 'true', 'false', and
 
 ###### `switchport_mode`
 Switchport mode of the interface. To make an interface Layer 3, set
-`switchport_mode` to 'disabled'. Valid values are 'disabled', 'access', 'tunnel', 'fex_fabric', 'trunk', and 'default'.
+`switchport_mode` to 'disabled'. Valid values are 'disabled', 'access', 'tunnel', 'fex_fabric', 'trunk', and 'default'. This property is not supported on IOS XR.
 
 ###### `ipv4_acl_in`
 Apply ipv4 access list on the interface in ingress direction. Access-list should be present on the network device 
@@ -980,8 +980,7 @@ prior this configuration. Valid values are string, keyword 'default'.
 ##### L2 interface config attributes
 
 ###### `access_vlan`
-The VLAN ID assigned to the interface. Valid values are an integer or the keyword
-'default'.
+The VLAN ID assigned to the interface. Valid values are an integer or the keyword 'default'. This property is not supported on IOS XR.
 
 ##### `encapsulation_dot1q`
 Enable IEEE 802.1Q encapsulation of traffic on a specified subinterface.
@@ -992,27 +991,27 @@ Maximum Trasnmission Unit size for frames received and sent on the specified
 interface. Valid value is an integer.
 
 ##### `switchport_autostate_exclude`
-Exclude this port for the SVI link calculation. Valid values are 'true', 'false', and 'default'.
+Exclude this port for the SVI link calculation. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 
 ##### `switchport_trunk_allowed_vlan`
 The allowed VLANs for the specified Ethernet interface. Valid values are
-string, keyword 'default'.
+string, keyword 'default'. This property is not supported on IOS XR.
 
 ##### `switchport_trunk_native_vlan`
-The Native VLAN assigned to the switch port. Valid values are integer, keyword 'default'.
+The Native VLAN assigned to the switch port. Valid values are integer, keyword 'default'. This property is not supported on IOS XR.
 
 ###### `switchport_vtp`
 Enable or disable VTP on the interface. Valid values are 'true', 'false',
-and 'default'.
+and 'default'. This property is not supported on IOS XR.
 
 ###### `negotiate_auto`
 Enable/Disable negotiate auto on the interface. Valid values are 'true',
-'false', and 'default'.
+'false', and 'default'. This property is not supported on IOS XR.
 
 ##### L3 interface config attributes
 
 ###### `ipv4_pim_sparse_mode`
-Enables or disables ipv4 pim sparse mode on the interface. Valid values are 'true', 'false', and 'default'.
+Enables or disables ipv4 pim sparse mode on the interface. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 
 ###### `ipv4_proxy_arp`
 Enables or disables proxy arp on the interface. Valid values are 'true', 'false', and 'default'.
@@ -1035,7 +1034,7 @@ Secondary IP address of the interface. Valid values are a string of ipv4 address
 Network mask length of the secondary IP address on the interface. Valid values are integer and keyword 'default'.
 
 ###### `ipv4_arp_timeout`
-Address Resolution Protocol (ARP) timeout value. Valid values are integer and keyword 'default'. Currently only supported on vlan interfaces.
+Address Resolution Protocol (ARP) timeout value. Valid values are integer and keyword 'default'. Currently only supported on vlan interfaces. This property is not supported on IOS XR as IOS XR does not support vlan interfaces.
 
 ###### `vlan_mapping`
 This property is a nested array of [original_vlan, translated_vlan] pairs. Valid values are an array specifying the mapped vlans or keyword 'default'; e.g.:
@@ -1044,8 +1043,10 @@ This property is a nested array of [original_vlan, translated_vlan] pairs. Valid
 vlan_mapping => [[20, 21], [30, 31]]
 ```
 
+This property is not supported on IOS XR.
+
 ###### `vlan_mapping_enable`
-Allows disablement of vlan_mapping on a given interface. Valid values are 'true', 'false', and 'default'.
+Allows disablement of vlan_mapping on a given interface. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 
 ###### `vrf`
 VRF member of the interface.  Valid values are a string or the keyword 'default'.
@@ -1054,15 +1055,15 @@ VRF member of the interface.  Valid values are a string or the keyword 'default'
 
 ###### `svi_autostate`
 Enable/Disable autostate on the SVI interface. Valid values are 'true',
-'false', and 'default'.
+'false', and 'default'. This property is not supported on IOS XR.
 
 ###### `svi_management`
-Enable/Disable management on the SVI interface. Valid values are 'true', 'false', and 'default'.
+Enable/Disable management on the SVI interface. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 
 --
 ### Type: cisco_interface_service_vni
 
-Manages a Cisco Network Interface Service VNI.
+Manages a Cisco Network Interface Service VNI. This type is not supported on IOS XR.
 
 #### Parameters
 
