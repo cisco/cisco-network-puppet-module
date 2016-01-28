@@ -50,6 +50,7 @@ node default {
   cisco_vlan { '128':
     ensure         => present,
     state          => 'default',
+    mapped_vni     => 'default',
     shutdown       => 'default',
   }
 }
@@ -83,6 +84,7 @@ node default {
     ensure         => present,
     vlan_name      => 'DESCR-VLAN0128',
     state          => 'suspend',
+    mapped_vni     => '128000',
     shutdown       => 'true',
   }
 }

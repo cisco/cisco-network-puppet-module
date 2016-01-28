@@ -99,10 +99,11 @@ test_name "TestCase :: #{testheader}" do
       "resource cisco_vlan '128'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
-                               { 'ensure'    => 'present',
-                                 'shutdown'  => 'true',
-                                 'state'     => 'suspend',
-                                 'vlan_name' => 'DESCR-VLAN0128' },
+                               { 'ensure'     => 'present',
+                                 'mapped_vni' => '128000',
+                                 'shutdown'   => 'true',
+                                 'state'      => 'suspend',
+                                 'vlan_name'  => 'DESCR-VLAN0128' },
                                false, self, logger)
     end
 
