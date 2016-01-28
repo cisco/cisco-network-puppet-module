@@ -68,8 +68,6 @@ testheader = 'Resource cisco_vdc properties'
 # Top-level keys set by caller:
 # tests[:master] - the master object
 # tests[:agent] - the agent object
-# tests[:config_bridge_domain] - the bridge-domain configuration
-# tests[:config_switchport] - the interface switchport configuration
 #
 tests = {
   master:     master,
