@@ -54,7 +54,7 @@
 # rubocop:disable Style/HashSyntax
 
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-require File.expand_path('../../bgp/bgplib.rb', __FILE__)
+require File.expand_path('../../cisco_bgp/bgplib.rb', __FILE__)
 require File.expand_path('../bgpaflib.rb', __FILE__)
 # -----------------------------
 # Common settings and variables
@@ -114,13 +114,11 @@ def remove_unsupported_properties(test, platform, vrf)
     remove_property(:additional_paths_install, test)
     remove_property(:advertise_l2vpn_evpn, test)
     remove_property(:dampen_igp_metric, test)
+    remove_property(:default_information_originate, test)
     remove_property(:default_metric, test)
     remove_property(:inject_map, test)
     remove_property(:suppress_inactive, test)
     remove_property(:table_map_filter, test)
-
-    # TODO: marked in yaml as unsupported for XR (revisit)
-    remove_property(:default_information_originate, test)
 
     # properties that are not supported under a vrf
     if vrf != 'default'
@@ -130,6 +128,7 @@ def remove_unsupported_properties(test, platform, vrf)
       remove_property(:dampening_max_suppress_time, test)
       remove_property(:dampening_reuse_time, test)
       remove_property(:dampening_suppress_time, test)
+      remove_property(:next_hop_route_map, test)
     end
   end
 
@@ -449,12 +448,12 @@ def test_non_default_t(tests, platform, vrf, desc)
     :desc           => "#{desc} (vrf '#{vrf}')",
     :title_pattern  => "#{BgpLib::ASN} #{vrf} ipv4 unicast",
     :manifest_props => {
-      :table_map        => 'sjc',
+      :table_map        => 'RouteMap',
       :table_map_filter => 'true',
     },
 
     :resource_props => {
-      'table_map'        => 'sjc',
+      'table_map'        => 'RouteMap',
       'table_map_filter' => 'true',
     },
   }

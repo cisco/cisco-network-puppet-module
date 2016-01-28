@@ -37,6 +37,9 @@ module BgpLib
     if platform != 'ios_xr'
       conditional_props <<
         "bestpath_med_non_deterministic         => 'default',
+         disable_policy_batching                => 'default',
+         disable_policy_batching_ipv4           => 'default',
+         disable_policy_batching_ipv6           => 'default',
          event_history_cli                      => 'default',
          event_history_detail                   => 'default',
          event_history_events                   => 'default',
@@ -68,9 +71,6 @@ module BgpLib
         cluster_id                             => 'default',
         confederation_id                       => 'default',
         confederation_peers                    => 'default',
-        disable_policy_batching                => 'default',
-        disable_policy_batching_ipv4           => 'default',
-        disable_policy_batching_ipv6           => 'default',
         enforce_first_as                       => 'default',
         fast_external_fallover                 => 'default',
         log_neighbor_changes                   => 'default',
@@ -116,6 +116,9 @@ module BgpLib
     if platform != 'ios_xr'
       conditional_props =
        "bestpath_med_non_deterministic         => 'true',
+        disable_policy_batching                => 'true',
+        disable_policy_batching_ipv4           => 'xx',
+        disable_policy_batching_ipv6           => 'yy',
         event_history_cli                      => 'size_medium',
         event_history_detail                   => 'size_large',
         event_history_events                   => 'size_disable',
@@ -142,9 +145,6 @@ module BgpLib
         cluster_id                             => '10.0.0.1',
         confederation_id                       => '99',
         confederation_peers                    => '55 23.4 88 200.1',
-        disable_policy_batching                => 'true',
-        disable_policy_batching_ipv4           => 'xx',
-        disable_policy_batching_ipv6           => 'yy',
         enforce_first_as                       => 'true',
         fast_external_fallover                 => 'false',
         log_neighbor_changes                   => 'true',
