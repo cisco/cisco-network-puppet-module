@@ -287,7 +287,7 @@ tests['non_default_properties_bd_domain'] = {
     bd_designated_priority => [['2-42', '40960'], ['83-92,1000-2300', '53248']],
     bd_forward_time        => [['2-42', '26'], ['83-92,1000-2300', '20']],
     bd_hello_time          => [['2-42', '6'], ['83-92,1000-2300', '9']],
-    bd_max_age             => [['2-42', '26'], ['83-92,1000-2300', '20']],
+    bd_max_age             => [['2-42', '26'], ['83-92,1000-2300', '21']],
     bd_priority            => [['2-42', '40960'], ['83-92,1000-2300', '53248']],
     bd_root_priority       => [['2-42', '40960'], ['83-92,1000-2300', '53248']],
   ",
@@ -295,8 +295,8 @@ tests['non_default_properties_bd_domain'] = {
   resource_props: {
     'bd_designated_priority' => "[['2-42', '40960'], ['83-92,1000-2300', '53248']]",
     'bd_forward_time'        => "[['2-42', '26'], ['83-92,1000-2300', '20']]",
-    'bd_hello_time'          => "['2-42', '6'], ['83-92,1000-2300', '9']]",
-    'bd_max_age'             => "[['2-42', '26'], ['83-92,1000-2300', '20']]",
+    'bd_hello_time'          => "[['2-42', '6'], ['83-92,1000-2300', '9']]",
+    'bd_max_age'             => "[['2-42', '26'], ['83-92,1000-2300', '21']]",
     'bd_priority'            => "[['2-42', '40960'], ['83-92,1000-2300', '53248']]",
     'bd_root_priority'       => "[['2-42', '40960'], ['83-92,1000-2300', '53248']]",
   },
@@ -355,11 +355,11 @@ test_name "TestCase :: #{testheader}" do
 
   id = 'default_properties'
   tests[id][:desc] = '1.1 Default Properties'
-  #test_harness_stp_global(tests, id)
+  test_harness_stp_global(tests, id)
 
   id = 'default_properties_mst'
   tests[id][:desc] = '1.2 Default Properties'
-  #test_harness_stp_global(tests, id)
+  test_harness_stp_global(tests, id)
 
   case device
   when /n5k|n6k|n7k/
@@ -374,10 +374,9 @@ test_name "TestCase :: #{testheader}" do
   case device
   when /n7k/
     id = 'default_properties_bd_domain'
+    tests[id][:desc] = '1.4 Switch specific bd domain default Properties'
+    #test_harness_stp_global(tests, id)
   end
-
-  tests[id][:desc] = '1.4 Switch specific bd domain default Properties'
-  test_harness_stp_global(tests, id)
   # no absent test for stp_global
 
   # -------------------------------------------------------------------
@@ -385,7 +384,7 @@ test_name "TestCase :: #{testheader}" do
 
   id = 'non_default_properties'
   tests[id][:desc] = '2.1 Non Default Properties'
-  #test_harness_stp_global(tests, id)
+  test_harness_stp_global(tests, id)
 
   case device
   when /n5k|n6k|n7k/
@@ -400,10 +399,9 @@ test_name "TestCase :: #{testheader}" do
   case device
   when /n7k/
     id = 'non_default_properties_bd_domain'
+    tests[id][:desc] = '2.3 Switch specific bd domain non default Properties'
+    #test_harness_stp_global(tests, id)
   end
-
-  tests[id][:desc] = '2.3 Switch specific bd domain non default Properties'
-  test_harness_stp_global(tests, id)
   # no absent test for stp_global
 end
 
