@@ -149,9 +149,9 @@ def prop_hash_to_manifest(attributes)
   attributes.each do |k, v|
     next if v.nil?
     if v.is_a?(String)
-      manifest_str += "    #{k} => '#{v.strip}',\n"
+      manifest_str += sprintf("    %-30s => '#{v.strip}',\n", k)
     else
-      manifest_str += "    #{k} => #{v},\n"
+      manifest_str += sprintf("    %-30s => #{v},\n", k)
     end
   end
   manifest_str
@@ -333,9 +333,46 @@ def node_feature_cleanup(agent, feature, stepinfo='feature cleanup',
   end
 end
 
+# Helper to toggle 'system default switchport'
+def system_default_switchport(agent, state=false,
+                              stepinfo='system default switchport')
+  step "TestStep :: #{stepinfo}" do
+    state = state ? ' ' : 'no '
+    cmd = "command='#{state}system default switchport'"
+    cmd = "resource cisco_command_config 'sys_def_switchport' #{cmd}"
+    logger.info("Pre Clean: puppet #{cmd}")
+    cmd = get_namespace_cmd(agent, PUPPET_BINPATH + cmd, options)
+    on(agent, cmd, acceptable_exit_codes: [0, 2])
+  end
+end
+
+# Helper to toggle 'system default switchport shutdown'
+def system_default_switchport_shutdown(agent, state=false,
+                                       stepinfo='system default switchport shutdown')
+  step "TestStep :: #{stepinfo}" do
+    state = state ? ' ' : 'no '
+    cmd = "command='#{state}system default switchport shutdown'"
+    cmd = "resource cisco_command_config 'sys_def_sw_shut' #{cmd}"
+    logger.info("Pre Clean: puppet #{cmd}")
+    cmd = get_namespace_cmd(agent, PUPPET_BINPATH + cmd, options)
+    on(agent, cmd, acceptable_exit_codes: [0, 2])
+  end
+end
+
+# Helper for creating / removing an ACL
+def config_acl(agent, afi, acl, state, stepinfo='ACL:')
+  step "TestStep :: #{stepinfo}" do
+    state = state ? 'present' : 'absent'
+    cmd = "resource cisco_acl '#{afi} #{acl}' ensure=#{state}"
+    logger.info("Setup: puppet #{cmd}")
+    cmd = get_namespace_cmd(agent, PUPPET_BINPATH + cmd, options)
+    on(agent, cmd, acceptable_exit_codes: [0, 2])
+  end
+end
+
 # Helper to nuke a single interface. This is needed to remove all
 # configurations from the interface.
-def interface_cleanup(agent, intf, stepinfo='Interface Pre Clean:')
+def interface_cleanup(agent, intf, stepinfo='Pre Clean:')
   step "TestStep :: #{stepinfo}" do
     cmd = "resource cisco_command_config 'interface_cleanup' "\
           "command='default interface #{intf}'"
@@ -609,6 +646,7 @@ def skipped_tests_summary(tests, testheader)
   raise_skip_exception(testheader, self)
 end
 
+# Find a test interface on the agent.
 def find_interface(tests, id=nil, skipcheck=true)
   # Prefer specific test key over the all tests key
   if id
@@ -620,7 +658,7 @@ def find_interface(tests, id=nil, skipcheck=true)
   case type
   when /ethernet/i, /dot1q/
     all = get_current_resource_instances(tests[:agent], 'cisco_interface')
-    intf = all.grep(%r{ethernet\d+\/\d+})[0]
+    intf = all.grep(%r{ethernet\d+/\d+})[0]
   end
 
   if skipcheck && intf.nil?
