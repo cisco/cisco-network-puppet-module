@@ -346,6 +346,19 @@ def system_default_switchport(agent, state=false,
   end
 end
 
+# Helper to toggle 'system default switchport shutdown'
+def system_default_switchport_shutdown(agent, state=false,
+                                       stepinfo='system default switchport shutdown')
+  step "TestStep :: #{stepinfo}" do
+    state = state ? ' ' : 'no '
+    cmd = "command='#{state}system default switchport shutdown'"
+    cmd = "resource cisco_command_config 'sys_def_sw_shut' #{cmd}"
+    logger.info("Pre Clean: puppet #{cmd}")
+    cmd = get_namespace_cmd(agent, PUPPET_BINPATH + cmd, options)
+    on(agent, cmd, acceptable_exit_codes: [0, 2])
+  end
+end
+
 # Helper for creating / removing an ACL
 def config_acl(agent, afi, acl, state, stepinfo='ACL:')
   step "TestStep :: #{stepinfo}" do

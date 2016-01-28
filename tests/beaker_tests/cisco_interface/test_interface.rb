@@ -92,11 +92,14 @@ tests = {
 #   that permits re-use of the properties for both :present and :absent testing
 #   without destroying the hash
 # tests[id][:sys_def_switchport] - (Optional) Specifies state of 'system default switchport'
+# tests[id][:sys_def_sw_shut] - (Optional) Specifies state of 'system default switchport shutdown'.
+#    This is only meaningful for L2 interfaces.
 # tests[id][:title_pattern] - (Optional) defines the manifest title.
 #
 tests['L3_default'] = {
   desc:               '1.1 (L3) Default Properties',
   intf_type:          'ethernet',
+  preclean:           true,
   sys_def_switchport: false,
   manifest_props:     {
     duplex:                        'default',
@@ -109,7 +112,6 @@ tests['L3_default'] = {
     switchport_trunk_allowed_vlan: 'default',
     switchport_trunk_native_vlan:  'default',
     switchport_vtp:                'default',
-    vlan_mapping_enable:           'default',
   },
   resource:           {
     'duplex'                        => 'auto',
@@ -122,7 +124,6 @@ tests['L3_default'] = {
     'switchport_trunk_allowed_vlan' => '1-4094',
     'switchport_trunk_native_vlan'  => '1',
     'switchport_vtp'                => 'false',
-    'vlan_mapping_enable'           => 'true',
   },
 }
 
@@ -199,10 +200,12 @@ tests['L3_ACL'] = {
 tests['L2_access_default'] = {
   desc:               '2.1 (L2) Access Default',
   intf_type:          'ethernet',
+  preclean:           true,
   sys_def_switchport: true,
+  sys_def_sw_shut:    true,
   manifest_props:     {
     shutdown:        'default',
-    switchport_mode: 'default',
+    switchport_mode: 'access',
   },
   resource:           {
     'shutdown'        => 'true',
@@ -213,7 +216,8 @@ tests['L2_access_default'] = {
 tests['L2_access'] = {
   desc:               '2.2 (L2) Access Properties',
   intf_type:          'ethernet',
-  sys_def_switchport: false,
+  sys_def_switchport: true,
+  sys_def_sw_shut:    true,
   manifest_props:     {
     access_vlan:     '128',
     shutdown:        'false',
@@ -230,7 +234,9 @@ tests['L2_access'] = {
 tests['L2_trunk_default'] = {
   desc:               '3.1 (L2) Trunk Default',
   intf_type:          'ethernet',
-  sys_def_switchport: false,
+  preclean:           true,
+  sys_def_switchport: true,
+  sys_def_sw_shut:    true,
   manifest_props:     {
     shutdown:                      'default',
     switchport_mode:               'trunk',
@@ -239,7 +245,7 @@ tests['L2_trunk_default'] = {
 
   },
   resource:           {
-    'shutdown'                      => 'false',
+    'shutdown'                      => 'true',
     'switchport_mode'               => 'trunk',
     'switchport_trunk_allowed_vlan' => '1-4094',
     'switchport_trunk_native_vlan'  => '1',
@@ -249,9 +255,9 @@ tests['L2_trunk_default'] = {
 tests['L2_trunk'] = {
   desc:               '3.2 (L2) Trunk',
   intf_type:          'ethernet',
-  sys_def_switchport: false,
+  sys_def_switchport: true,
   manifest_props:     {
-    shutdown:                      'true',
+    shutdown:                      'false',
     switchport_mode:               'trunk',
     switchport_trunk_allowed_vlan: '30,40',
     switchport_trunk_native_vlan:  '20',
@@ -259,7 +265,7 @@ tests['L2_trunk'] = {
 
   },
   resource:           {
-    'shutdown'                      => 'true',
+    'shutdown'                      => 'false',
     'switchport_mode'               => 'trunk',
     'switchport_trunk_allowed_vlan' => '30,40',
     'switchport_trunk_native_vlan'  => '20',
@@ -274,7 +280,7 @@ tests['SVI_default'] = {
     svi_management: 'default',
   },
   resource:       {
-    'svi_autostate'  => 'false',
+    'svi_autostate'  => 'true',
     'svi_management' => 'false',
   },
 }
@@ -283,18 +289,20 @@ tests['SVI'] = {
   desc:           '4.2 (SVI) Non Default Properties',
   intf_type:      'vlan',
   manifest_props: {
-    svi_autostate:  'true',
+    svi_autostate:  'false',
     svi_management: 'true',
   },
   resource:       {
-    'svi_autostate'  => 'true',
+    'svi_autostate'  => 'false',
     'svi_management' => 'true',
   },
 }
 
 tests['negotiate'] = {
   desc:               '5.1 negotiate-auto',
+  platform:           'n(5|6|7|9)k',
   intf_type:          'ethernet',
+  preclean:           true,
   sys_def_switchport: false,
   manifest_props:     {
     switchport_mode: 'disabled',
@@ -308,6 +316,7 @@ tests['negotiate'] = {
 tests['speed_dup_mtu'] = {
   desc:               '5.2 Speed/Duplex/MTU',
   intf_type:          'ethernet',
+  preclean:           true,
   sys_def_switchport: false,
   manifest_props:     {
     switchport_mode: 'disabled',
@@ -350,7 +359,7 @@ def create_interface_title(tests, id)
   when /vlan/
     intf = tests[:svi_name]
   end
-  logger.info("Using interface: #{intf}")
+  logger.info("\nUsing interface: #{intf}")
   tests[id][:title_pattern] = intf
 end
 
@@ -389,6 +398,19 @@ def sys_def_switchport?(tests, id)
   tests[:sys_def_switchport] = state
 end
 
+# Helper for 'system default switchport shutdown'
+def sys_def_switchport_shutdown?(tests, id)
+  return unless tests[id].key?(:sys_def_sw_shut)
+
+  state = tests[id][:sys_def_sw_shut]
+  # cached state
+  return if tests[:sys_def_sw_shut] == state
+
+  system_default_switchport_shutdown(agent, state)
+  # cache for later tests
+  tests[:sys_def_sw_shut] = state
+end
+
 # Helper for setting up ACL dependencies
 def acl?(tests, id)
   tests[id][:acl].each { |acl, afi| config_acl(agent, afi, acl, true) } if
@@ -413,7 +435,7 @@ def test_harness_interface(tests, id)
 
   tests[id][:code] = [0, 2]
 
-  interface_cleanup(agent, tests[:ethernet]) if tests[:ethernet]
+  interface_cleanup(agent, tests[id][:title_pattern]) if tests[id][:preclean]
 
   test_harness_common(tests, id)
   tests[id][:ensure] = nil
@@ -425,8 +447,6 @@ end
 test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. (L3) Property Testing")
-
-  tests[:title_pattern] =
   test_harness_interface(tests, 'L3_default')
   test_harness_interface(tests, 'L3_sub_int')
   test_harness_interface(tests, 'L3_misc')
@@ -455,5 +475,6 @@ test_name "TestCase :: #{testheader}" do
 
   # -------------------------------------------------------------------
   interface_cleanup(agent, tests[:ethernet]) if tests[:ethernet]
+  skipped_tests_summary(tests, testheader)
 end
 logger.info("TestCase :: #{testheader} :: End")
