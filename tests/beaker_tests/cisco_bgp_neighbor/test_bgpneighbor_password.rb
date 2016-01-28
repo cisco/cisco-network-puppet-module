@@ -107,7 +107,7 @@ test_name "TestCase :: #{testheader}" do
       if type == :md5 || type == 'md5'
         tests[id][:resource]['password'] = encr_pw
       else
-        tests[id][:resource]['password'] = UtilityLib::IGNORE_VALUE
+        tests[id][:resource]['password'] = IGNORE_VALUE
       end
     else
       tests[id][:resource]['password'] = encr_pw
@@ -137,7 +137,7 @@ test_name "TestCase :: #{testheader}" do
     test_manifest(tests, id)
 
     tests[id][:desc] = '1.4 Verify password has been removed on the box'
-    tests[id][:resource] = { 'password' => UtilityLib::IGNORE_VALUE }
+    tests[id][:resource] = { 'password' => IGNORE_VALUE }
     test_resource(tests, id, true)
   end
 

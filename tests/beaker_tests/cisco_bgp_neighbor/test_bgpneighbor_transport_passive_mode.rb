@@ -57,7 +57,6 @@ require File.expand_path('../bgpneighborlib.rb', __FILE__)
 result = 'PASS'
 testheader = 'BGP Neighbor Resource :: transport_passive_mode property'
 id = 'test_green'
-UtilityLib.set_manifest_path(master, self)
 tests = {
   :master => master,
   :agent  => agent,
@@ -95,10 +94,10 @@ test_name "TestCase :: #{testheader}" do
     }
 
     resource_cmd_str =
-      UtilityLib::PUPPET_BINPATH +
+      PUPPET_BINPATH +
       'resource cisco_bgp_neighbor ' + "'#{BgpLib::ASN} #{vrf} #{neighbor}'"
     tests[id][:resource_cmd] =
-      UtilityLib.get_namespace_cmd(agent, resource_cmd_str, options)
+      get_namespace_cmd(agent, resource_cmd_str, options)
     tests[id][:desc] = "1.1 Apply manifest with mode '#{mode}'"
 
     create_bgpneighbor_manifest(tests, id)
@@ -141,7 +140,7 @@ test_name "TestCase :: #{testheader}" do
   cleanup_bgp(tests, id)
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

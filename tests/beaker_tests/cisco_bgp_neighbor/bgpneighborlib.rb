@@ -15,7 +15,7 @@
 
 # Require UtilityLib.rb path.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-require File.expand_path('../../bgp/bgplib.rb', __FILE__)
+require File.expand_path('../../cisco_bgp/bgplib.rb', __FILE__)
 
 # Method to create a manifest for bgp neighbor with attributes:
 # @param name [String] Name of the bgp neighbor.
@@ -33,7 +33,7 @@ end
 # Initialize BGP (clean up + enable BGP)
 def init_bgp(tests, name)
   tests[name][:desc] = 'Initialize BGP'
-  tests[name][:manifest] = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+  tests[name][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       resources { cisco_bgp: purge => true }
       cisco_bgp { 'default':
@@ -48,7 +48,7 @@ end
 # Clean up BGP
 def cleanup_bgp(tests, name)
   tests[name][:desc] = 'Clean up BGP'
-  tests[name][:manifest] = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+  tests[name][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       resources { cisco_bgp: purge => true }
     }\nEOF"

@@ -246,7 +246,7 @@ test_name "TestCase :: #{testheader}" do
     create_bgpneighbor_manifest(tests, id)
     test_manifest(tests, id)
     stash_resource = tests[id][:resource]
-    tests[id][:resource] = { 'description' => UtilityLib::IGNORE_VALUE }
+    tests[id][:resource] = { 'description' => IGNORE_VALUE }
     test_resource(tests, id, true)
     tests[id][:resource] = stash_resource # restore
 
