@@ -112,12 +112,10 @@ tests['default_properties_ingress_replication'] = {
   title_pattern:  'nve1 10000',
   manifest_props: "
     ingress_replication => 'default',
-    peer_ips            => 'default',
     suppress_arp        => 'default',
   ",
   resource_props: {
-    'peer_ips'     => "['default']",
-    'suppress_arp' => 'false',
+    'suppress_arp' => 'false'
   },
 }
 
@@ -125,24 +123,63 @@ tests['default_properties_multicast_group'] = {
   title_pattern:  'nve1 10000',
   manifest_props: "
     multicast_group => 'default',
-    peer_ips        => 'default',
     suppress_arp    => 'default',
   ",
   resource_props: {
-    'peer_ips'     => "['default']",
-    'suppress_arp' => 'false',
+    'suppress_arp' => 'false'
   },
 }
-tests['ingress_replication_static'] = {
+
+tests['ingress_replication_static_peer_list_empty'] = {
   title_pattern:  'nve1 10000',
   manifest_props: "
     ingress_replication => 'static',
-    peer_ips            => ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
+    peer_list           => [],
     suppress_arp        => 'default'
   ",
   resource_props: {
     'ingress_replication' => 'static',
-    'peer_ips'            => "['1.1.1.1', '2.2.2.2', '3.3.3.3']",
+    'suppress_arp'        => 'false',
+  },
+}
+
+tests['peer_list'] = {
+  title_pattern:  'nve1 10000',
+  manifest_props: "
+    ingress_replication => 'static',
+    peer_list           => ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
+    suppress_arp        => 'default'
+  ",
+  resource_props: {
+    'ingress_replication' => 'static',
+    'peer_list'           => "['1.1.1.1', '2.2.2.2', '3.3.3.3']",
+    'suppress_arp'        => 'false',
+  },
+}
+
+tests['peer_list_change_add'] = {
+  title_pattern:  'nve1 10000',
+  manifest_props: "
+    ingress_replication => 'static',
+    peer_list           => ['1.1.1.1', '6.6.6.6', '3.3.3.3', '4.4.4.4'],
+    suppress_arp        => 'default'
+  ",
+  resource_props: {
+    'ingress_replication' => 'static',
+    'peer_list'           => "['1.1.1.1', '3.3.3.3', '4.4.4.4', '6.6.6.6']",
+    'suppress_arp'        => 'false',
+  },
+}
+
+tests['peer_list_default'] = {
+  title_pattern:  'nve1 10000',
+  manifest_props: "
+    ingress_replication => 'static',
+    peer_list           => 'default',
+    suppress_arp        => 'default'
+  ",
+  resource_props: {
+    'ingress_replication' => 'static',
     'suppress_arp'        => 'false',
   },
 }
@@ -151,12 +188,10 @@ tests['ingress_replication_bgp'] = {
   title_pattern:  'nve1 10000',
   manifest_props: "
     ingress_replication => 'bgp',
-    peer_ips            => 'default',
     suppress_arp        => 'default'
   ",
   resource_props: {
     'ingress_replication' => 'bgp',
-    'peer_ips'            => "['default']",
     'suppress_arp'        => 'false',
   },
 }
@@ -165,12 +200,10 @@ tests['multicast_group'] = {
   title_pattern:  'nve1 10000',
   manifest_props: "
     multicast_group => '224.1.1.1',
-    peer_ips        => 'default',
     suppress_arp    => 'default'
   ",
   resource_props: {
     'multicast_group' => '224.1.1.1',
-    'peer_ips'        => "['default']",
     'suppress_arp'    => 'false',
   },
 }
@@ -181,8 +214,7 @@ tests['suppress_arp_true'] = {
     suppress_arp => 'true'
   ",
   resource_props: {
-    'peer_ips'     => "['default']",
-    'suppress_arp' => 'true',
+    'suppress_arp' => 'true'
   },
 }
 
@@ -192,8 +224,7 @@ tests['suppress_arp_false'] = {
     suppress_arp => 'false'
   ",
   resource_props: {
-    'peer_ips'     => "['default']",
-    'suppress_arp' => 'false',
+    'suppress_arp' => 'false'
   },
 }
 
@@ -259,15 +290,12 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
-  #-------------
-  id = 'preclean'
-  tests[id][:desc] = 'Preclean'
-  tests[id][:ensure] = :absent
-  test_harness_cisco_vxlan_vtep_vni(tests, id)
-
-  # -------------------------------------------------------------------
+  #-------------------------------------------------------------------
+  resource_absent_cleanup(agent, 'cisco_vxlan_vtep_vni',
+                          'Setup switch for cisco_vxlan_vtep_vni provider test')
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
+  # -------------------------------------------------------------------
   id = 'default_properties_ingress_replication'
   tests[id][:desc] = '1.1 Default Properties Ingress Replication'
   test_harness_cisco_vxlan_vtep_vni(tests, id)
@@ -287,25 +315,40 @@ test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
-  id = 'ingress_replication_static'
+  id = 'ingress_replication_static_peer_list_empty'
   tests[id][:desc] = '2.1 Ingress Replication Static'
   test_harness_cisco_vxlan_vtep_vni(tests, id)
 
+  id = 'peer_list'
+  tests[id][:desc] = '2.2 Peer List'
+  test_harness_cisco_vxlan_vtep_vni(tests, id)
+
+  id = 'peer_list_change_add'
+  tests[id][:desc] = '2.3 Peer List Change Add'
+  test_harness_cisco_vxlan_vtep_vni(tests, id)
+
+  id = 'peer_list_default'
+  tests[id][:desc] = '2.4 Peer List Default'
+  test_harness_cisco_vxlan_vtep_vni(tests, id)
+
   id = 'ingress_replication_bgp'
-  tests[id][:desc] = '2.2 Ingress Replication BGP'
+  tests[id][:desc] = '2.5 Ingress Replication BGP'
   test_harness_cisco_vxlan_vtep_vni(tests, id)
 
   id = 'multicast_group'
-  tests[id][:desc] = '2.3 Multicast Group'
+  tests[id][:desc] = '2.6 Multicast Group'
   test_harness_cisco_vxlan_vtep_vni(tests, id)
 
   id = 'suppress_arp_true'
-  tests[id][:desc] = '2.4 Suppress ARP'
+  tests[id][:desc] = '2.7 Suppress ARP'
   test_harness_cisco_vxlan_vtep_vni(tests, id)
 
   id = 'suppress_arp_false'
-  tests[id][:desc] = '2.5 Suppress ARP'
+  tests[id][:desc] = '2.8 Suppress ARP'
   test_harness_cisco_vxlan_vtep_vni(tests, id)
+
+  resource_absent_cleanup(agent, 'cisco_vxlan_vtep_vni',
+                          'Setup switch for cisco_vxlan_vtep_vni provider test')
 end
 
 logger.info('TestCase :: # {testheader} :: End')

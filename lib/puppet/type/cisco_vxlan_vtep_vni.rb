@@ -41,10 +41,17 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
       ensure              => present,
       assoc_vrf           => false,
       ingress_replication => 'static',
-      multicast_group     => '224.1.1.1 224.1.1.200',
-      peer_list            => ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
+      peer_list           => ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
+      suppress-arp        => false,
+    }
+
+    cisco_vxlan_vtep_vni {'nve1 20000':
+      ensure              => present,
+      assoc_vrf           => false,
+      multicast_group     => '224.1.1.1'
       suppress-arp        => true,
-    }"
+    }
+"
 
   ###################
   # Resource Naming #

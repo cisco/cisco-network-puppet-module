@@ -29,6 +29,7 @@ Puppet::Type.newtype(:cisco_vlan) do
     cisco_vlan {\"200\":
       ensure     => present,
       vlan_name  => 'red',
+      mapped_vni => 20000,
       state      => 'active',
       shutdown   => 'true',
     }"

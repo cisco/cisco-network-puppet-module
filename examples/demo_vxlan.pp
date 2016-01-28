@@ -25,11 +25,6 @@ class ciscopuppet::demo_vxlan {
     dup_host_mac_detection_timeout        => '10',
   }
 
-  cisco_vni { '10001':
-    ensure      => present,
-    mapped_vlan => '101',
-  }
-
   cisco_vxlan_vtep { 'nve1':
     ensure            => present,
     description       => 'Configured by puppet',
@@ -43,7 +38,7 @@ class ciscopuppet::demo_vxlan {
     assoc_vrf           => false,
     ingress_replication => 'static',
     multicast_group     => undef,
-    peer_ips            => ['1.1.1.3', '2.2.2.2', '3.3.3.3'],
+    peer_list           => ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
     suppress_arp        => 'default',
   }
   
@@ -52,7 +47,6 @@ class ciscopuppet::demo_vxlan {
     assoc_vrf           => false,
     ingress_replication => undef,
     multicast_group     => '224.1.1.1',
-    peer_ips            => 'default',
     suppress_arp        => 'default',
   }
 }
