@@ -58,9 +58,7 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 # Common settings and variables
 # -----------------------------
 testheader = 'Resource cisco_interface (switchport trunk)'
-
-# Define PUPPETMASTER_MANIFESTPATH.
-UtilityLib.set_manifest_path(master, self)
+platform = fact_on(agent, 'os.name')
 
 # The 'tests' hash is used to define all of the test data values and expected
 # results. It is also used to pass optional flags to the test methods when
@@ -143,8 +141,8 @@ end
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = UtilityLib::PUPPET_BINPATH + 'resource cisco_interface'
-  UtilityLib.get_namespace_cmd(agent, cmd, options)
+  cmd = PUPPET_BINPATH + 'resource cisco_interface'
+  get_namespace_cmd(agent, cmd, options)
 end
 
 def build_default_values(testcase)
@@ -184,7 +182,7 @@ def build_manifest_interface(tests, id)
   testcase[:title_pattern] = id if testcase[:title_pattern].nil?
   logger.debug("build_manifest_interface :: title_pattern:\n" +
                testcase[:title_pattern])
-  testcase[:manifest] = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+  testcase[:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   node 'default' {
     cisco_interface { '#{testcase[:title_pattern]}':
       #{state}
