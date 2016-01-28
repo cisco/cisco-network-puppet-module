@@ -300,7 +300,7 @@ tests['SVI'] = {
 
 tests['negotiate'] = {
   desc:               '5.1 negotiate-auto',
-  platform:           'n(5|6|7|9)k',
+  platform:           'n(5|6|7)k',
   intf_type:          'ethernet',
   preclean:           true,
   sys_def_switchport: false,
