@@ -185,7 +185,16 @@ module BgpLib
 
   # Create manifest ensure => present + 'non-default' property values
   # rubocop:disable Metrics/MethodLength
-  def self.create_bgp_manifest_present_non_default
+  def self.create_bgp_manifest_present_non_default(platform)
+    conditional_props = ''
+    if platform =~ /(n3k|n9k)/
+      conditional_props <<
+        "disable_policy_batching_ipv4           => 'xx',
+         disable_policy_batching_ipv6           => 'yy',
+         neighbor_down_fib_accelerate           => 'true',
+        "
+    end
+
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'default':
@@ -197,8 +206,6 @@ module BgpLib
         confederation_id                       => '99',
         confederation_peers                    => '55 23.4 88 200.1',
         disable_policy_batching                => 'true',
-        disable_policy_batching_ipv4           => 'xx',
-        disable_policy_batching_ipv6           => 'yy',
         enforce_first_as                       => 'true',
         event_history_cli                      => 'size_medium',
         event_history_detail                   => 'size_large',
@@ -208,7 +215,6 @@ module BgpLib
         flush_routes                           => 'true',
         isolate                                => 'true',
         maxas_limit                            => '50',
-        neighbor_down_fib_accelerate           => 'true',
         shutdown                               => 'true',
 
         suppress_fib_pending                   => 'true',
@@ -234,16 +240,25 @@ module BgpLib
         # Timer Properties
         timer_bgp_keepalive                    => '45',
         timer_bgp_holdtime                     => '110',
+
+        #{conditional_props}
       }
     }
     EOF"
+
     manifest_str
   end
   # rubocop:enable Metrics/MethodLength
 
   # Create manifest ensure => present + 'non-default' property values
   # for vrf1
-  def self.create_bgp_manifest_present_non_default_vrf1
+  def self.create_bgp_manifest_present_non_default_vrf1(platform)
+    conditional_props = ''
+    if platform =~ /(n3k|n9k)/
+      conditional_props <<
+        "neighbor_down_fib_accelerate           => 'true',"
+    end
+
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
     node 'default' {
       cisco_bgp { 'default':
@@ -256,7 +271,6 @@ module BgpLib
         confederation_id                       => '33',
         confederation_peers                    => '99 88 200.1',
         maxas_limit                            => '55',
-        neighbor_down_fib_accelerate           => 'true',
 
         suppress_fib_pending                   => 'false',
         log_neighbor_changes                   => 'false',
@@ -281,6 +295,8 @@ module BgpLib
         # Timer Properties
         timer_bgp_keepalive                    => '46',
         timer_bgp_holdtime                     => '111',
+
+        #{conditional_props}
       }
     }
     EOF"
@@ -302,7 +318,6 @@ module BgpLib
         confederation_id                       => '32.88',
         confederation_peers                    => '55 23.4 88 200.1',
         maxas_limit                            => '60',
-        neighbor_down_fib_accelerate           => 'true',
 
         suppress_fib_pending                   => 'false',
         log_neighbor_changes                   => 'false',

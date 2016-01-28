@@ -84,8 +84,6 @@ expected_values = {
   'confederation_id'                       => '99',
   'confederation_peers'                    => '55 23.4 88 200.1',
   'disable_policy_batching'                => 'true',
-  'disable_policy_batching_ipv4'           => 'xx',
-  'disable_policy_batching_ipv6'           => 'yy',
   'enforce_first_as'                       => 'true',
   'event_history_cli'                      => 'size_medium',
   'event_history_detail'                   => 'size_large',
@@ -95,7 +93,6 @@ expected_values = {
   'flush_routes'                           => 'true',
   'isolate'                                => 'true',
   'maxas_limit'                            => '50',
-  'neighbor_down_fib_accelerate'           => 'true',
   'shutdown'                               => 'true',
   'suppress_fib_pending'                   => 'true',
   'log_neighbor_changes'                   => 'true',
@@ -116,6 +113,13 @@ expected_values = {
   'timer_bgp_holdtime'                     => '110',
 }
 
+device = platform
+if device =~ /(n3k|n9k)/
+  expected_values['disable_policy_batching_ipv4'] = 'xx'
+  expected_values['disable_policy_batching_ipv6'] = 'yy'
+  expected_values['neighbor_down_fib_acceleratie'] = 'true'
+end
+
 expected_values_vrf1 = {
   'ensure'                                 => 'present',
   'route_distinguisher'                    => 'auto',
@@ -127,7 +131,6 @@ expected_values_vrf1 = {
   'suppress_fib_pending'                   => 'false',
   'log_neighbor_changes'                   => 'false',
   'maxas_limit'                            => '55',
-  'neighbor_down_fib_accelerate'           => 'true',
   'bestpath_always_compare_med'            => 'true',
   'bestpath_aspath_multipath_relax'        => 'true',
   'bestpath_compare_routerid'              => 'true',
@@ -145,6 +148,10 @@ expected_values_vrf1 = {
   'timer_bgp_holdtime'                     => '111',
 }
 
+if device =~ /(n3k|n9k)/
+  expected_values_vrf1['neighbor_down_fib_accelerate'] = 'true'
+end
+
 expected_values_vrf2 = {
   'ensure'                                 => 'present',
   'route_distinguisher'                    => '1.1.1.1:1',
@@ -156,7 +163,6 @@ expected_values_vrf2 = {
   'suppress_fib_pending'                   => 'false',
   'log_neighbor_changes'                   => 'false',
   'maxas_limit'                            => '60',
-  'neighbor_down_fib_accelerate'           => 'true',
   'bestpath_always_compare_med'            => 'false',
   'bestpath_aspath_multipath_relax'        => 'false',
   'bestpath_compare_routerid'              => 'false',
@@ -199,9 +205,12 @@ test_name "TestCase :: #{testheader}" do
   # Default VRF Test Cases
   # ----------------------
 
+  # delete properties not support on platforms
+  device = platform
+
   stepinfo = 'Apply resource ensure => present manifest'
   step "TestStep :: #{stepinfo}" do
-    on(master, BgpLib.create_bgp_manifest_present_non_default)
+    on(master, BgpLib.create_bgp_manifest_present_non_default(device))
     on(agent, puppet_cmd, acceptable_exit_codes: [2])
     logger.info("#{stepinfo} :: #{result}")
   end
@@ -210,16 +219,6 @@ test_name "TestCase :: #{testheader}" do
   step "TestStep :: #{stepinfo}" do
     on(agent, resource_default) do
       search_pattern_in_output(stdout, expected_values,
-                               test[:present], self, logger)
-    end
-    logger.info("#{stepinfo} :: #{result}")
-  end
-
-  stepinfo = 'Check bgp instance output on agent'
-  step "TestStep :: #{stepinfo}" do
-    on(agent, show_run_bgp) do
-      search_pattern_in_output(stdout,
-                               [/router bgp #{BgpLib::ASN}/],
                                test[:present], self, logger)
     end
     logger.info("#{stepinfo} :: #{result}")
@@ -239,7 +238,7 @@ test_name "TestCase :: #{testheader}" do
 
   stepinfo = "Apply resource ensure => present manifest (#{context})"
   step "TestStep :: #{stepinfo}" do
-    on(master, BgpLib.create_bgp_manifest_present_non_default_vrf1)
+    on(master, BgpLib.create_bgp_manifest_present_non_default_vrf1(device))
     on(agent, puppet_cmd, acceptable_exit_codes: [2])
     logger.info("#{stepinfo} :: #{result}")
   end
@@ -248,16 +247,6 @@ test_name "TestCase :: #{testheader}" do
   step "TestStep :: #{stepinfo})" do
     on(agent, resource_vrf1) do
       search_pattern_in_output(stdout, expected_values_vrf1,
-                               test[:present], self, logger)
-    end
-    logger.info("#{stepinfo} :: #{result}")
-  end
-
-  stepinfo = "Check bgp instance output on agent (#{context})"
-  step "TestStep :: #{stepinfo}" do
-    on(agent, show_run_bgp) do
-      search_pattern_in_output(stdout,
-                               [/router bgp #{BgpLib::ASN}/, /vrf #{BgpLib::VRF1}/],
                                test[:present], self, logger)
     end
     logger.info("#{stepinfo} :: #{result}")
@@ -282,16 +271,6 @@ test_name "TestCase :: #{testheader}" do
   step "TestStep :: #{stepinfo})" do
     on(agent, resource_vrf2) do
       search_pattern_in_output(stdout, expected_values_vrf2,
-                               test[:present], self, logger)
-    end
-    logger.info("#{stepinfo} :: #{result}")
-  end
-
-  stepinfo = "Check bgp instance output on agent (#{context})"
-  step "TestStep :: #{stepinfo}" do
-    on(agent, show_run_bgp) do
-      search_pattern_in_output(stdout,
-                               [/router bgp #{BgpLib::ASN}/, /vrf #{BgpLib::VRF2}/],
                                test[:present], self, logger)
     end
     logger.info("#{stepinfo} :: #{result}")
@@ -375,6 +354,13 @@ test_name "TestCase :: #{testheader}" do
   end
 
   context = 'vrf default'
+
+  stepinfo = "Apply resource ensure => absent manifest (#{context})"
+  step "TestStep :: #{stepinfo}" do
+    on(master, BgpLib.create_bgp_manifest_absent)
+    on(agent, puppet_cmd, acceptable_exit_codes: [2])
+    logger.info("#{stepinfo} :: #{result}")
+  end
 
   stepinfo = "Verify resource is absent using puppet (#{context}"
   step "TestStep :: #{stepinfo})" do

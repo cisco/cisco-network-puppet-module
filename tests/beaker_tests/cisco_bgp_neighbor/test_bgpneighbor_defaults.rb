@@ -116,7 +116,7 @@ end
 
 test_name "TestCase :: #{testheader}" do
   stepinfo = 'Setup switch for provider test'
-  node_feature_cleanup(agent, 'bgp', stepinfo)
+  resource_absent_cleanup(agent, 'cisco_bgp', 'BGP CLEAN :: ')
   logger.info("TestStep :: #{stepinfo} :: #{result}")
 
   tests[id] = {}

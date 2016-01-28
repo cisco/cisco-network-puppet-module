@@ -67,7 +67,7 @@ tests = {
 
 test_name "TestCase :: #{testheader}" do
   stepinfo = 'Setup switch for provider test'
-  node_feature_cleanup(agent, 'bgp', stepinfo)
+  resource_absent_cleanup(agent, 'cisco_bgp', 'BGP CLEAN :: ')
   logger.info("TestStep :: #{stepinfo} :: #{result}")
 
   asn = 42
@@ -86,7 +86,6 @@ test_name "TestCase :: #{testheader}" do
         :dynamic_capability     => :true,
         :ebgp_multihop          => 2,
         :local_as               => 42,
-        :log_neighbor_changes   => :enable,
         :low_memory_exempt      => :true,
         :remote_as              => 12.1,
         :remove_private_as      => :all,
@@ -104,7 +103,6 @@ test_name "TestCase :: #{testheader}" do
         'dynamic_capability'     => 'true',
         'ebgp_multihop'          => '2',
         'local_as'               => '42',
-        'log_neighbor_changes'   => 'enable',
         'low_memory_exempt'      => 'true',
         'remote_as'              => '12.1',
         'remove_private_as'      => 'all',
@@ -136,6 +134,12 @@ test_name "TestCase :: #{testheader}" do
       tests[id][:resource]['maximum_peers'] = '2'
     end
 
+    device = platform
+    if device =~ /(n3k|n9k)/
+      tests[id][:manifest_props][:log_neighbor_changes] = :enable
+      tests[id][:resource]['log_neighbor_changes'] = 'enable'
+    end
+
     tests[id][:desc] =
       '1.1 Apply manifest with non-default attributes, and test harness'
     create_bgpneighbor_manifest(tests, id)
@@ -154,7 +158,6 @@ test_name "TestCase :: #{testheader}" do
       :dynamic_capability     => 'true',
       :ebgp_multihop          => '2',
       :local_as               => '42',
-      :log_neighbor_changes   => 'enable',
       :low_memory_exempt      => 'true',
       :remote_as              => '12.1',
       :remove_private_as      => 'all',
@@ -172,6 +175,9 @@ test_name "TestCase :: #{testheader}" do
       tests[id][:manifest_props][:maximum_peers] = '2'
     end
 
+    if device =~ /(n3k|n9k)/
+      tests[id][:manifest_props][:log_neighbor_changes] = 'enable'
+    end
     create_bgpneighbor_manifest(tests, id)
     # In this case, nothing changed, we would expect the puppet run return 0,
     tests[id][:code] = [0]
@@ -190,7 +196,6 @@ test_name "TestCase :: #{testheader}" do
       :dynamic_capability     => 'false',
       :ebgp_multihop          => 'default',
       :local_as               => 1.1,
-      :log_neighbor_changes   => 'disable',
       :low_memory_exempt      => 'false',
       :remote_as              => 1.1,
       :remove_private_as      => 'disable',
@@ -207,7 +212,6 @@ test_name "TestCase :: #{testheader}" do
       'dynamic_capability'     => 'false',
       'ebgp_multihop'          => 'false',
       'local_as'               => '1.1',
-      'log_neighbor_changes'   => 'disable',
       'low_memory_exempt'      => 'false',
       'remote_as'              => '1.1',
       'remove_private_as'      => 'disable',
@@ -223,6 +227,13 @@ test_name "TestCase :: #{testheader}" do
     tests[id][:show_pattern] = [/description/]
     tests[id][:state] = true
     tests[id][:code] = nil
+
+    # support on different platform
+    if device =~ /(n3k|n9k)/
+      tests[id][:manifest_props][:log_neighbor_changes] = 'disable'
+      tests[id][:resource]['log_neighbor_changes'] = 'disable'
+    end
+
     create_bgpneighbor_manifest(tests, id)
     test_harness_common(tests, id)
 
