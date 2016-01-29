@@ -198,7 +198,8 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_interface_channel_group`](#type-cisco_interface_channel_group)
   * [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
   * [`cisco_portchannel_global`](#type-cisco_portchannel_global)
-  * 
+  * [`port_channel (netdev_stdlib)`](#type-port_channel)
+
 * RADIUS Types
   * [`radius (netdev_stdlib)`](#type-radius)
   * [`radius_global (netdev_stdlib)`](#type-radius_global)
@@ -294,6 +295,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`network_snmp`](#type-network_snmp)
 * [`ntp_config`](#type-ntp_config)
 * [`ntp_server`](#type-ntp_server)
+* [`port_channel`](#type-port_channel)
 * [`radius`](#type-radius)
 * [`radius_global`](#type-radius_global)
 * [`radius_server`](#type-radius_server)
@@ -1954,6 +1956,25 @@ Determines whether or not the config should be present on the device. Valid valu
 
 ##### `name`
 Hostname or address of the NTP server.  Valid value is a string.
+
+### Type: port_channel
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `id`
+Channel group ID. eg 100. Valid value is an integer.
+
+##### `interfaces`
+Array of Physical Interfaces that are part of the port channel. An array of valid interface names.
+
+##### `minimum_links`
+Number of active links required for port channel to be up. Valid value is an integer.
+
+##### `name`
+Name of the port channel. eg port-channel100. Valid value is a string.
 
 ### Type: radius
 
