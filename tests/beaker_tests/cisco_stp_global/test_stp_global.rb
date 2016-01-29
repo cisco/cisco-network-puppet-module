@@ -375,7 +375,7 @@ test_name "TestCase :: #{testheader}" do
   when /n7k/
     id = 'default_properties_bd_domain'
     tests[id][:desc] = '1.4 Switch specific bd domain default Properties'
-    #test_harness_stp_global(tests, id)
+    # test_harness_stp_global(tests, id)
   end
   # no absent test for stp_global
 
@@ -400,7 +400,7 @@ test_name "TestCase :: #{testheader}" do
   when /n7k/
     id = 'non_default_properties_bd_domain'
     tests[id][:desc] = '2.3 Switch specific bd domain non default Properties'
-    #test_harness_stp_global(tests, id)
+    # test_harness_stp_global(tests, id)
   end
   # no absent test for stp_global
 end
