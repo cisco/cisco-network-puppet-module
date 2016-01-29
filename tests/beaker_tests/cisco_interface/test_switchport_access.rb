@@ -193,7 +193,7 @@ def build_manifest_interface(tests, id)
 EOF"
 end
 
-def invalid_absent_intf?(interface)
+def invalid_absent_intf?(interface, platform)
   interface =~ /ethernet/ && platform == 'nexus'
 end
 
@@ -219,7 +219,7 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
-  if fact_on(agent, 'os.name') == 'ios_xr'
+  if platform == 'ios_xr'
     skip_test('switchport is not supported on this platform')
   end
   tests = generate_tests_hash(agent)
@@ -236,7 +236,7 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:desc] = '1.1 Default Properties'
   test_harness_interface(tests, id)
 
-  unless invalid_absent_intf?(tests[id][:title_pattern])
+  unless invalid_absent_intf?(tests[id][:title_pattern], platform)
     tests[id][:desc] = '1.2 Default Properties'
     tests[id][:ensure] = :absent
     test_harness_interface(tests, id)
