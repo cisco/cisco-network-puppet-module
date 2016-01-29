@@ -136,6 +136,7 @@ tests['default_properties'] = {
 tests['non_default_properties'] = {
   title_pattern:  'ethernet1/4',
   manifest_props: "
+    switchport_mode      => 'trunk',
     stp_bpdufilter       => 'enable',
     stp_bpduguard        => 'enable',
     stp_cost             => '2000',
@@ -149,6 +150,7 @@ tests['non_default_properties'] = {
     stp_vlan_port_priority => [['1-11,20-33', '64'], ['1111', '160']],
   ",
   resource_props: {
+    'switchport_mode'        => 'trunk',
     'stp_bpdufilter'         => 'enable',
     'stp_bpduguard'          => 'enable',
     'stp_cost'               => '2000',
@@ -214,20 +216,16 @@ test_name "TestCase :: #{testheader}" do
   logger.info("#### This device is of type: #{device} #####")
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
-  if device == 'n7k'
-    id = 'default_properties'
-    tests[id][:desc] = '1.1 Default Properties'
-    test_harness_interface_stp(tests, id)
-  end
+  id = 'default_properties'
+  tests[id][:desc] = '1.1 Default Properties'
+  test_harness_interface_stp(tests, id)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
-  if device == 'n7k'
-    id = 'non_default_properties'
-    tests[id][:desc] = '2.1 Non Default Properties'
-    test_harness_interface_stp(tests, id)
-  end
+  id = 'non_default_properties'
+  tests[id][:desc] = '2.1 Non Default Properties'
+  test_harness_interface_stp(tests, id)
 end
 
 logger.info("TestCase :: #{testheader} :: End")
