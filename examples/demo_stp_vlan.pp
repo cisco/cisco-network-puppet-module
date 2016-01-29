@@ -26,61 +26,6 @@ class ciscopuppet::demo_stp_vlan {
     default => undef
   }
 
-  $stp_bpdufilter = platform_get() ? {
-    'n7k'  => 'enable',
-    default => undef
-  }
-
-  $stp_bpduguard = platform_get() ? {
-    'n7k'  => 'enable',
-    default => undef
-  }
-
-  $stp_cost = platform_get() ? {
-    'n7k'  => 2000,
-    default => undef
-  }
-
-  $stp_guard = platform_get() ? {
-    'n7k'  => 'loop',
-    default => undef
-  }
-
-  $stp_link_type = platform_get() ? {
-    'n7k'  => 'shared',
-    default => undef
-  }
-
-  $stp_mst_cost = platform_get() ? {
-    'n7k'  => [['0,2-4,6,8-12', '1000'], ['1000', '2568']],
-    default => undef
-  }
-
-  $stp_mst_port_priority = platform_get() ? {
-    'n7k'  => [['0,2-11,20-33', '64'], ['1111', '160']],
-    default => undef
-  }
-
-  $stp_port_priority = platform_get() ? {
-    'n7k'  => 64,
-    default => undef
-  }
-
-  $stp_port_type = platform_get() ? {
-    'n7k'  => 'network',
-    default => undef
-  }
-
-  $stp_vlan_cost = platform_get() ? {
-    'n7k'  => [['1-4,6,8-12', '1000'], ['1000', '2568']],
-    default => undef
-  }
-
-  $stp_vlan_port_priority = platform_get() ? {
-    'n7k'  => [['1-11,20-33', '64'], ['1111', '160']],
-    default => undef
-  }
-
   $sys_bd_all_cmd = platform_get() ? {
     'n7k'  => 'system bridge-domain all',
     default => undef
@@ -98,6 +43,7 @@ class ciscopuppet::demo_stp_vlan {
   cisco_command_config { 'system-bd-none':
     command => $sys_bd_none_cmd,
   }
+
   cisco_stp_global { 'default':
     bpdufilter               => true,
     bpduguard                => true,
@@ -126,16 +72,17 @@ class ciscopuppet::demo_stp_vlan {
   }
 
   cisco_interface { 'Ethernet1/4':
-    stp_bpdufilter         => $stp_bpdufilter,
-    stp_bpduguard          => $stp_bpduguard,
-    stp_cost               => $stp_cost,
-    stp_guard              => $stp_guard,
-    stp_link_type          => $stp_link_type,
-    stp_port_priority      => $stp_port_priority,
-    stp_port_type          => $stp_port_type,
-    stp_mst_cost           => $stp_mst_cost,
-    stp_mst_port_priority  => $stp_mst_port_priority,
-    stp_vlan_cost          => $stp_vlan_cost,
-    stp_vlan_port_priority => $stp_vlan_port_priority,
+    switchport_mode        => trunk,
+    stp_bpdufilter         => 'enable',
+    stp_bpduguard          => 'enable',
+    stp_cost               => 2000,
+    stp_guard              => 'loop',
+    stp_link_type          => 'shared',
+    stp_port_priority      => 64,
+    stp_port_type          => 'network',
+    stp_mst_cost           => [['0,2-4,6,8-12', '1000'], ['1000', '2568']],
+    stp_mst_port_priority  => [['0,2-11,20-33', '64'], ['1111', '160']],
+    stp_vlan_cost          => [['1-4,6,8-12', '1000'], ['1000', '2568']],
+    stp_vlan_port_priority => [['1-11,20-33', '64'], ['1111', '160']],
   }
 }
