@@ -61,6 +61,33 @@ configure terminal
 end
 ~~~
 
+### Configure IOS XR
+
+You must enable the gRPC feature, start the third-party network namespace (TPNNS) sshd server, and allow passwordless sudo for admin users, so that the Beaker workstation can access the Puppet agent during testing.
+
+**Example:**
+
+~~~
+configure
+grpc port 57777
+commit
+end
+~~~
+
+~~~bash
+run bash
+service sshd_tpnns start
+chkconfig --add sshd_tpnns
+~~~
+
+In bash, run `visudo` and change the sudoers file as follows:
+
+~~~diff
+ #includedir /etc/sudoers.d
+-%sudo ALL=(ALL) ALL
++%sudo ALL=(ALL) NOPASSWD: ALL
+~~~
+
 ## <a name="beaker-config">Beaker Server Configuration</a>
 
 The following commands should be run on your Beaker workstation.
@@ -80,12 +107,24 @@ Replace the `< >` markers with specific information.
 
 ```bash
 HOSTS:
-    <agent1>:
+    <XR agent>:
         roles:
             - agent
         platform: cisco-7-x86_64
         ip: <fully qualified domain name>
-        grpc_port <grpc port number for XR switch>
+        grpc_port: <grpc port number, such as 57777 or 57799
+        ssh:
+          auth_methods: ["password"]
+          # SSHd for third-party network namespace (TPNNS) uses port 57722
+          port: 57722
+          user: <configured admin username>
+          password: <configured admin password>
+
+    <Nexus agent>:
+        roles:
+            - agent
+        platform: cisco-5-x86_64
+        ip: <fully qualified domain name>
         vrf: <vrf used for beaker workstation and puppet master ip reachability>
         ssh:
           auth_methods: ["password"]
@@ -95,10 +134,10 @@ HOSTS:
         #target: guestshell
 
 
-    #<agent2>:
+    #<agent3>:
     #  <...>
 
-    #<agent3>:
+    #<agent4>:
     #  <...>
 
     <master>:
@@ -118,11 +157,11 @@ Here is a sample `host.cfg` file where `< >` markers have been replaced with act
 
 ```bash
 HOSTS:
-    agent1:
+    nx-agent:
         roles:
             - agent
-        platform: cisco-7-x86_64
-        ip: agent1.domain.com
+        platform: cisco-5-x86_64
+        ip: nx-agent.domain.com
         vrf: management
         #target: guestshell
         ssh:
@@ -134,13 +173,13 @@ HOSTS:
         roles:
             - agent
         platform: cisco-7-x86_64
-        ip: xr_agent.domain.com
-        vrf: tpnns
+        ip: xr-agent.domain.com
         grpc_port: 57777
         ssh:
           auth_methods: ["password"]
-          user: root
-          password: password
+          port: 57722
+          user: admin
+          password: adminpassword
 
     puppetmaster1:
         roles:

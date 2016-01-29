@@ -59,14 +59,18 @@ IGNORE_VALUE = :ignore_value
 def get_namespace_cmd(host, cmdstr, options)
   case host['platform']
   when /cisco/
-    agentvrf = options[:HOSTS][host.to_s.to_sym]['vrf']
-    grpc_port = options[:HOSTS][host.to_s.to_sym]['grpc_port']
+    agentvrf = options[:HOSTS][host.to_s.to_sym][:vrf]
+    grpc_port = options[:HOSTS][host.to_s.to_sym][:grpc_port]
     if grpc_port.nil?
+      # Nexus
       return "sudo ip netns exec #{agentvrf} " + cmdstr
     else
+      # IOS XR
       # TODO: remove this workaround when we have grpc UDS support
-      node_var = "export NODE=\"127.0.0.1:#{grpc_port} root lab\""
-      return "#{node_var} && ip netns exec #{agentvrf} " + cmdstr
+      user = options[:HOSTS][host.to_s.to_sym][:ssh][:user]
+      pass = options[:HOSTS][host.to_s.to_sym][:ssh][:password]
+      node_var = "NODE=\"127.0.0.1:#{grpc_port} #{user} #{pass}\""
+      return "sudo #{node_var} " + cmdstr
     end
   else
     return cmdstr
