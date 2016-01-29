@@ -45,8 +45,9 @@ class ciscopuppet::demo_interface {
     ipv4_netmask_length_secondary  => 24,
     ipv4_pim_sparse_mode           => false,
     mtu                            => 1600,
-    speed                          => 100,
-    duplex                         => 'full',
+    # Removed because of too many differences between platforms and linecards
+    # speed                          => 100,
+    # duplex                         => 'full',
     vrf                            => 'test',
     ipv4_acl_in                    => 'v4acl1',
     ipv4_acl_out                   => 'v4acl2',
@@ -83,8 +84,9 @@ class ciscopuppet::demo_interface {
 
   network_interface { 'ethernet1/9':
     description => 'default',
-    duplex      => 'auto',
-    speed       => '100m',
+    # Removed because of too many differences between platforms and linecards
+    # duplex      => 'auto',
+    # speed       => '100m',
   }
   #  Requires F3 or newer linecards
   # cisco_interface { 'Ethernet9/1':
