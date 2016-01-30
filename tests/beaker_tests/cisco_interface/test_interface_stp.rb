@@ -214,6 +214,8 @@ test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
   device = platform
   logger.info("#### This device is of type: #{device} #####")
+  resource_absent_cleanup(agent, 'cisco_interface',
+                          'Setup switch for interface provider test')
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
   id = 'default_properties'
