@@ -63,9 +63,25 @@ testheader = 'SNMPGROUP Resource :: All Attributes Negatives'
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
-    # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
-    UtilityLib.set_manifest_path(master, self)
+    # In NX-OS there's no direct configuration of SNMP groups.
+    # Instead SNMP groups correspond to user roles, and our Puppet provider
+    # for cisco_snmp_group provides read-only access.
 
+    # Let's check and make sure that an expected default group/role is present
+    # and an unexpected non-default group/role is absent
+
+    # Expected exit_code is 0 since this is a vegas shell cmd.
+    cmd_str = get_vshell_cmd('show snmp group | i Role')
+    on(agent, cmd_str) do
+      # Flag is set to false to check for presence of RegExp pattern in stdout.
+      search_pattern_in_output(stdout,
+                               [/Role: *network-operator/],
+                               false, self, logger)
+      # Flag is set to true to check for absence of RegExp pattern in stdout.
+      search_pattern_in_output(stdout,
+                               [/Role: *go-jackets/],
+                               true, self, logger)
+    end
     logger.info("Setup switch for provider test :: #{result}")
   end
 
@@ -116,6 +132,24 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Check cisco_snmp_group resource state on agent :: #{result}")
+  end
+
+  # @step [Step] Checks snmpgroup instance on agent using switch show cli cmds.
+  step 'TestStep :: Check snmpgroup instance state in CLI' do
+    # Expected exit_code is 0 since this is a vegas shell cmd.
+    cmd_str = get_vshell_cmd('show snmp group | i Role')
+    on(agent, cmd_str) do
+      # Flag is set to false to check for presence of RegExp pattern in stdout.
+      search_pattern_in_output(stdout,
+                               [/Role: *network-operator/],
+                               false, self, logger)
+      # Flag is set to true to check for absence of RegExp pattern in stdout.
+      search_pattern_in_output(stdout,
+                               [/Role: *go-jackets/],
+                               true, self, logger)
+    end
+
+    logger.info("Check snmpgroup instance state in CLI:: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.

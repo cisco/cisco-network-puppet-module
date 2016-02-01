@@ -1,6 +1,6 @@
 # Manifest to demo cisco_bgp provider
 #
-# Copyright (c) 2015 Cisco and/or its affiliates.
+# Copyright (c) 2015-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,7 +23,8 @@ class ciscopuppet::demo_bgp {
     ensure                                 => present,
 
     router_id                              => '192.168.0.66',
-    route_distinguisher                    => 'auto',
+    # route_distinguisher is not supported on all platforms
+    # route_distinguisher                    => 'auto',
     cluster_id                             => '55',
     confederation_id                       => '33',
     confederation_peers                    => '99 88 200.1',
@@ -91,12 +92,6 @@ class ciscopuppet::demo_bgp {
     distance_local                => 90,
     inject_map                    => $ipv4_injectmap, 
     suppress_inactive             => true,
-    route_target_import           => ['55:33', '102:33'],
-    route_target_import_evpn      => ['55:33', '102:33'],
-    route_target_export           => ['1.2.3.4:55', '102:33'],
-    route_target_export_evpn      => ['1.2.3.4:55', '102:33'],
-    route_target_both_auto        => false,
-    route_target_both_auto_evpn   => true,
     table_map                     => 'TableMap',
     table_map_filter              => true,
 
@@ -142,12 +137,6 @@ class ciscopuppet::demo_bgp {
     distance_local                => 90,
     inject_map                    => $ipv6_injectmap, 
     suppress_inactive             => true,
-    route_target_import           => ['55:33', '102:33'],
-    route_target_import_evpn      => ['55:33', '102:33'],
-    route_target_export           => ['1.2.3.4:55', '102:33'],
-    route_target_export_evpn      => ['1.2.3.4:55', '102:33'],
-    route_target_both_auto        => false,
-    route_target_both_auto_evpn   => true,
     table_map                     => 'TableMap',
     table_map_filter              => true,
 
