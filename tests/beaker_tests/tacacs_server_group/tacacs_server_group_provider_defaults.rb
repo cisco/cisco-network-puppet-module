@@ -62,19 +62,16 @@ testheader = 'tacacs_server_group Resource :: All Attributes Defaults'
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider' do
-    on(master, TacacsServerGroupLib.create_tacacs_server_group_manifest_absent)
+    resource_absent_cleanup(agent, 'tacacs_server')
+    resource_absent_cleanup(agent, 'tacacs_server_group')
+
+    # Expected exit_code is 0 since this is a bash shell cmd.
+    on(master, TacacsServerGroupLib.create_tacacs_server_setup)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
-
-    cmd_str = get_vshell_cmd('conf t ; tacacs-server host 2.2.2.2')
-    on(agent, cmd_str)
-    cmd_str = get_vshell_cmd('conf t ; tacacs-server host 3.3.3.3')
-    on(agent, cmd_str)
-    cmd_str = get_vshell_cmd('conf t ; tacacs-server host 4.4.4.4')
-    on(agent, cmd_str)
 
     logger.info('Setup switch for provider')
   end
@@ -130,7 +127,7 @@ test_name "TestCase :: #{testheader}" do
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                false, self, logger)
-      search_pattern_in_output(stdout, { 'servers' => '\[\'2.2.2.2\', \'4.4.4.4\'\]' },
+      search_pattern_in_output(stdout, { 'servers' => '\[\'2.2.2.2\', \'2004::44\'\]' },
                                false, self, logger)
     end
 

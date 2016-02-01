@@ -2177,11 +2177,6 @@ Number of seconds before the timeout period ends
 
 ### Type: tacacs_server
 
-##### `enable`
-Enable or disable tacacs functionality [true|false]
-
-### Type: tacacs_server
-
 ##### `ensure`
 Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
 
@@ -2192,7 +2187,7 @@ Encryption key (plaintext or in hash form depending on key_format)
 Encryption key format [0-7]
 
 ##### `name`
-Hostname or IP address of the Syslog server.  Valid value is a string.
+Hostname or IPv4/IPv6 address of the Syslog server.  Valid value is a string.
 
 ##### `port`
 The port of the tacacs server.
