@@ -2134,7 +2134,7 @@ format (in case of true) or cleartext (in case of false). Valid values are 'true
 Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
 
 ##### `name`
-Hostname or address of the Syslog server.  Valid value is a string.
+Hostname or IPv4/IPv6 address of the Syslog server.  Valid value is a string.
 
 ##### `serverity_level`
 Syslog severity level to log.  Valid value is an integer.
