@@ -113,6 +113,7 @@ tests['default_properties'] = {
     pathcost                 => 'default',
     vlan_designated_priority => 'default',
     vlan_forward_time        => 'default',
+    vlan_hello_time          => 'default',
     vlan_max_age             => 'default',
     vlan_priority            => 'default',
     vlan_root_priority       => 'default',
@@ -127,6 +128,7 @@ tests['default_properties'] = {
     'pathcost'         => 'short',
     # 'vlan_designated_priority' is nil when default
     # 'vlan_forward_time' is nil when default
+    # 'vlan_hello_time' is nil when default
     # 'vlan_max_age' is nil when default
     # 'vlan_priority' is nil when default
     # 'vlan_root_priority' is nil when default
@@ -164,17 +166,6 @@ tests['default_properties_mst'] = {
   },
 }
 
-tests['default_properties_vht'] = {
-  title_pattern:  'default',
-  manifest_props: "
-    vlan_hello_time          => 'default',
-  ",
-  code:           [0, 2],
-  resource_props: {
-    # 'vlan_hello_time' is nil when default
-  },
-}
-
 tests['non_default_properties'] = {
   title_pattern:  'default',
   manifest_props: "
@@ -196,6 +187,7 @@ tests['non_default_properties'] = {
     pathcost                 => 'long',
     vlan_designated_priority => [['1-42', '40960'], ['83-92,100-230', '53248']],
     vlan_forward_time        => [['1-42', '19'], ['83-92,100-230', '13']],
+    vlan_hello_time          => [['1-42', '10'], ['83-92,100-230', '6']],
     vlan_max_age             => [['1-42', '21'], ['83-92,100-230', '13']],
     vlan_priority            => [['1-42', '40960'], ['83-92,100-230', '53248']],
     vlan_root_priority       => [['1-42', '40960'], ['83-92,100-230', '53248']],
@@ -219,6 +211,7 @@ tests['non_default_properties'] = {
     'pathcost'                 => 'long',
     'vlan_designated_priority' => "[['1-42', '40960'], ['83-92,100-230', '53248']]",
     'vlan_forward_time'        => "[['1-42', '19'], ['83-92,100-230', '13']]",
+    'vlan_hello_time'          => "[['1-42', '10'], ['83-92,100-230', '6']]",
     'vlan_max_age'             => "[['1-42', '21'], ['83-92,100-230', '13']]",
     'vlan_priority'            => "[['1-42', '40960'], ['83-92,100-230', '53248']]",
     'vlan_root_priority'       => "[['1-42', '40960'], ['83-92,100-230', '53248']]",
@@ -264,16 +257,6 @@ tests['non_default_properties_domain'] = {
   ",
   resource_props: {
     'domain' => '100'
-  },
-}
-
-tests['non_default_properties_vht'] = {
-  title_pattern:  'default',
-  manifest_props: "
-    vlan_hello_time          => [['1-42', '10'], ['83-92,100-230', '6']],
-  ",
-  resource_props: {
-    'vlan_hello_time' => "[['1-42', '10'], ['83-92,100-230', '6']]"
   },
 }
 
@@ -389,16 +372,9 @@ test_name "TestCase :: #{testheader}" do
   test_harness_stp_global(tests, id)
 
   case device
-  when /n3k|n7k|n9k/
-    id = 'default_properties_vht'
-    tests[id][:desc] = '1.4 Switch specific vlan hello-time default Property'
-    test_harness_stp_global(tests, id)
-  end
-
-  case device
   when /n7k/
     id = 'default_properties_bd_domain'
-    tests[id][:desc] = '1.5 Switch specific bridge domain default Properties'
+    tests[id][:desc] = '1.4 Switch specific bridge domain default Properties'
     # test_harness_stp_global(tests, id)
   end
   # no absent test for stp_global
@@ -421,16 +397,9 @@ test_name "TestCase :: #{testheader}" do
   test_harness_stp_global(tests, id)
 
   case device
-  when /n3k|n7k|n9k/
-    id = 'non_default_properties_vht'
-    tests[id][:desc] = '2.3 Switch specific vlan hello-time non default Property'
-    test_harness_stp_global(tests, id)
-  end
-
-  case device
   when /n7k/
     id = 'non_default_properties_bd_domain'
-    tests[id][:desc] = '2.4 Switch specific bridge domain non default Properties'
+    tests[id][:desc] = '2.3 Switch specific bridge domain non default Properties'
     # test_harness_stp_global(tests, id)
   end
   # no absent test for stp_global
