@@ -58,9 +58,7 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 # Common settings and variables
 # -----------------------------
 testheader = 'Resource cisco_interface (switchport access)'
-
-# Define PUPPETMASTER_MANIFESTPATH.
-UtilityLib.set_manifest_path(master, self)
+platform = fact_on(agent, 'os.name')
 
 # The 'tests' hash is used to define all of the test data values and expected
 # results. It is also used to pass optional flags to the test methods when
@@ -144,8 +142,8 @@ end
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = UtilityLib::PUPPET_BINPATH + 'resource cisco_interface'
-  UtilityLib.get_namespace_cmd(agent, cmd, options)
+  cmd = PUPPET_BINPATH + 'resource cisco_interface'
+  get_namespace_cmd(agent, cmd, options)
 end
 
 def build_default_values(testcase)
@@ -185,7 +183,7 @@ def build_manifest_interface(tests, id)
   testcase[:title_pattern] = id if testcase[:title_pattern].nil?
   logger.debug("build_manifest_interface :: title_pattern:\n" +
                testcase[:title_pattern])
-  testcase[:manifest] = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+  testcase[:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   node 'default' {
     cisco_interface { '#{testcase[:title_pattern]}':
       #{state}
@@ -195,7 +193,7 @@ def build_manifest_interface(tests, id)
 EOF"
 end
 
-def invalid_absent_intf?(interface)
+def invalid_absent_intf?(interface, platform)
   interface =~ /ethernet/ && platform == 'nexus'
 end
 
@@ -221,7 +219,7 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
-  if fact_on(agent, 'os.name') == 'ios_xr'
+  if platform == 'ios_xr'
     skip_test('switchport is not supported on this platform')
   end
   tests = generate_tests_hash(agent)
@@ -238,7 +236,7 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:desc] = '1.1 Default Properties'
   test_harness_interface(tests, id)
 
-  unless invalid_absent_intf?(tests[id][:title_pattern])
+  unless invalid_absent_intf?(tests[id][:title_pattern], platform)
     tests[id][:desc] = '1.2 Default Properties'
     tests[id][:ensure] = :absent
     test_harness_interface(tests, id)

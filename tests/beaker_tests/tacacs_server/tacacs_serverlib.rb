@@ -45,7 +45,7 @@ module TacacsServerLib
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_tacacs_server_manifest_present
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   tacacs_server { '8.8.8.8':
     ensure              => 'present',
@@ -64,7 +64,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_tacacs_server_manifest_present_change
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   tacacs_server { '8.8.8.8':
     ensure              => 'present',
@@ -83,7 +83,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_tacacs_server_manifest_absent
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     tacacs_server {'8.8.8.8':
       ensure => absent,

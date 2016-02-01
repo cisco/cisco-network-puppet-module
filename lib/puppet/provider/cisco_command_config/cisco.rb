@@ -37,7 +37,7 @@ Puppet::Type.type(:cisco_command_config).provide(:cisco) do
   end
 
   def command
-    running_config_str = @node.show('show running-config all')
+    running_config_str = @node.get(command: 'show running-config all')
 
     # Sanitize configs and create config hashes.
     running_hash  = Cisco::ConfigParser::Configuration.new(running_config_str)
@@ -71,7 +71,7 @@ Puppet::Type.type(:cisco_command_config).provide(:cisco) do
 
   def command=(cmds)
     return if cmds.empty?
-    output = @node.config(cmds)
+    output = @node.set(values: cmds)
     debug "Output from node:\n#{output}" unless output.nil?
 
   rescue Cisco::CliError => e
