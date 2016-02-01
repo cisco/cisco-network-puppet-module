@@ -1992,7 +1992,7 @@ Encryption key format [0-7].  Valid value is an integer.
 Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
 
 ##### `name`
-Name of the radius server.  Valid value is a string.
+IPv4/IPv6 address of the radius server.  Valid value is a string.
 
 ##### `auth_port`
 Port number to use for authentication.  Valid value is an integer.

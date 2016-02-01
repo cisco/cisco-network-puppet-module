@@ -15,6 +15,26 @@
 # limitations under the License.
 
 class ciscopuppet::demo_interface {
+  cisco_acl { 'ipv4 v4acl1':
+    before => Cisco_interface['Ethernet1/1'],
+    ensure => 'present',
+  }
+
+  cisco_acl { 'ipv4 v4acl2':
+    before => Cisco_interface['Ethernet1/1'],
+    ensure => 'present',
+  }
+
+  cisco_acl { 'ipv6 v6acl1':
+    before => Cisco_interface['Ethernet1/1'],
+    ensure => 'present',
+  }
+
+  cisco_acl { 'ipv6 v6acl2':
+    before => Cisco_interface['Ethernet1/1'],
+    ensure => 'present',
+  }
+
   cisco_interface { 'Ethernet1/1' :
     shutdown                       => true,
     switchport_mode                => disabled,
@@ -25,8 +45,9 @@ class ciscopuppet::demo_interface {
     ipv4_netmask_length_secondary  => 24,
     ipv4_pim_sparse_mode           => false,
     mtu                            => 1600,
-    speed                          => 100,
-    duplex                         => 'full',
+    # Removed because of too many differences between platforms and linecards
+    # speed                          => 100,
+    # duplex                         => 'full',
     vrf                            => 'test',
     ipv4_acl_in                    => 'v4acl1',
     ipv4_acl_out                   => 'v4acl2',
@@ -42,14 +63,14 @@ class ciscopuppet::demo_interface {
     channel_group   => 200,
   }
 
-  cisco_interface { 'Ethernet1/2':
+  cisco_interface { 'Ethernet1/3':
     description     => 'default',
     shutdown        => 'default',
     access_vlan     => 'default',
     switchport_mode => access,
   }
 
-  cisco_interface { 'Ethernet1/3':
+  cisco_interface { 'Ethernet1/4':
     switchport_mode               => trunk,
     switchport_trunk_allowed_vlan => '20, 30',
     switchport_trunk_native_vlan  => 40,
@@ -63,8 +84,9 @@ class ciscopuppet::demo_interface {
 
   network_interface { 'ethernet1/9':
     description => 'default',
-    duplex      => 'auto',
-    speed       => '100m',
+    # Removed because of too many differences between platforms and linecards
+    # duplex      => 'auto',
+    # speed       => '100m',
   }
   #  Requires F3 or newer linecards
   # cisco_interface { 'Ethernet9/1':

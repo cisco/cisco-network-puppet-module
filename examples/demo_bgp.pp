@@ -19,6 +19,17 @@ class ciscopuppet::demo_bgp {
   # --------------------------------------------------------------------------#
   # Configure Global BGP                                                      #
   # --------------------------------------------------------------------------#
+
+  $disable_policy_batching_ipv4 = platform_get() ? {
+    /(n3k|n9k)/ => 'my_v4_pfx_list',
+    default => undef
+  }
+
+  $disable_policy_batching_ipv6 = platform_get() ? {
+    /(n3k|n9k)/ => 'my_v6_pfx_list',
+    default => undef
+  }
+ 
   cisco_bgp { '55.77 blue':
     ensure                                 => present,
 
@@ -29,8 +40,8 @@ class ciscopuppet::demo_bgp {
     confederation_id                       => '33',
     confederation_peers                    => '99 88 200.1',
     disable_policy_batching                => true,
-    disable_policy_batching_ipv4           => 'my_v4_pfx_list',
-    disable_policy_batching_ipv6           => 'my_v6_pfx_list',
+    disable_policy_batching_ipv4           => $disable_policy_batching_ipv4,
+    disable_policy_batching_ipv6           => $disable_policy_batching_ipv6,
     enforce_first_as                       => false,
     event_history_cli                      => 'size_small',
     event_history_detail                   => 'size_medium',
@@ -158,6 +169,12 @@ class ciscopuppet::demo_bgp {
   #---------------------------------------------------------------------------#
   # Configure BGP IPv4 Neighbors
   #---------------------------------------------------------------------------#
+
+  $log_neighbor_changes = platform_get() ? {
+    /(n3k|n9k)/ => disable,
+    default => undef
+  }
+
   cisco_bgp_neighbor {'55.77 blue 1.1.1.1':
     ensure                 => present,
 
@@ -168,7 +185,7 @@ class ciscopuppet::demo_bgp {
     dynamic_capability     => true,
     ebgp_multihop          => 2,
     local_as               => 55.77,
-    log_neighbor_changes   => disable,
+    log_neighbor_changes   => $log_neighbor_changes,
     low_memory_exempt      => false,
     remote_as              => 12,
     remove_private_as      => 'all',
@@ -189,7 +206,7 @@ class ciscopuppet::demo_bgp {
     capability_negotiation => true,
     dynamic_capability     => true,
     ebgp_multihop          => 2,
-    log_neighbor_changes   => disable,
+    log_neighbor_changes   => $log_neighbor_changes,
     low_memory_exempt      => false,
     remote_as              => 12,
     remove_private_as      => 'all',
@@ -223,7 +240,7 @@ class ciscopuppet::demo_bgp {
     dynamic_capability     => true,
     ebgp_multihop          => 2,
     local_as               => 55.77,
-    log_neighbor_changes   => disable,
+    log_neighbor_changes   => $log_neighbor_changes,
     low_memory_exempt      => false,
     remote_as              => 12,
     remove_private_as      => 'all',
@@ -238,6 +255,12 @@ class ciscopuppet::demo_bgp {
   # --------------------------------------------------------------------------#
   # Configure Neighbor-level Address Family IPv4 Unicast
   # --------------------------------------------------------------------------#
+
+  $soft_reconfiguration_in = platform_get() ? {
+    /(n3k|n9k)/ => 'always',
+    default => 'enable'
+  }
+ 
   cisco_bgp_neighbor_af { '55.77 blue 1.1.1.1 ipv4 unicast':
     ensure                      => present,
 
@@ -259,7 +282,7 @@ class ciscopuppet::demo_bgp {
     route_map_in                => 'rm_in',
     route_map_out               => 'rm_out',
     send_community              => 'extended',
-    soft_reconfiguration_in     => 'always',
+    soft_reconfiguration_in     => $soft_reconfiguration_in,
     soo                         => '3:3',
     suppress_inactive           => true,
     unsuppress_map              => 'unsup_map',
@@ -288,7 +311,7 @@ class ciscopuppet::demo_bgp {
     route_map_in                => 'rm_in',
     route_map_out               => 'rm_out',
     send_community              => 'extended',
-    soft_reconfiguration_in     => 'always',
+    soft_reconfiguration_in     => $soft_reconfiguration_in,
     soo                         => '3:3',
     suppress_inactive           => true,
     unsuppress_map              => 'unsup_map',
@@ -315,7 +338,7 @@ class ciscopuppet::demo_bgp {
     route_map_out               => 'rm_out',
     route_reflector_client      => true,
     send_community              => 'extended',
-    soft_reconfiguration_in     => 'always',
+    soft_reconfiguration_in     => $soft_reconfiguration_in,
     soo                         => '3:3',
     suppress_inactive           => true,
     unsuppress_map              => 'unsup_map',
