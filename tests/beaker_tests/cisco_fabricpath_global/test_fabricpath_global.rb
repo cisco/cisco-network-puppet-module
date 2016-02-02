@@ -59,9 +59,6 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 # -----------------------------
 testheader = 'Resource cisco_fabricpath_global'
 
-# Define PUPPETMASTER_MANIFESTPATH.
-UtilityLib.set_manifest_path(master, self)
-
 # The 'tests' hash is used to define all of the test data values and expected
 # results. It is also used to pass optional flags to the test methods when
 # necessary.
@@ -75,17 +72,18 @@ UtilityLib.set_manifest_path(master, self)
 tests = {
   master:   master,
   agent:    agent,
-  show_cmd: 'show run fabricpath',
+  platform: 'n(5|6|7)k',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
 #
 # tests[id] keys set by caller:
+# tests[id][:platform] - a regexp pattern to match against supported platforms.
+#                        This key overrides a tests[:platform] key
 # tests[id][:desc] - a string to use with logs & debugs
 # tests[id][:manifest] - the complete manifest, as used by test_harness_common
 # tests[id][:resource] - a hash of expected states, used by test_resource
 # tests[id][:resource_cmd] - 'puppet resource' command to use with test_resource
-# tests[id][:show_pattern] - array of regexp patterns to use with test_show_cmd
 # tests[id][:ensure] - (Optional) set to :present or :absent before calling
 # tests[id][:code] - (Optional) override the default exit code in some tests.
 #
@@ -101,9 +99,6 @@ tests = {
 #   Can be used with :af for mixed title/af testing. If mixing, :af values will
 #   be merged with title values and override any duplicates. If omitted,
 #   :title_pattern will be set to 'id'.
-# tests[id][:af] - (Optional) defines the address-family values.
-#   Must use :title_pattern if :af is not specified. Useful for testing mixed
-#   title/af manifests
 #
 tests['default_properties'] = {
   title_pattern:  'default',
@@ -129,6 +124,7 @@ tests['default_properties'] = {
 
 tests['default_properties_exclusive'] = {
   title_pattern:  'default',
+  platform: 'n7k',
   manifest_props: "
     aggregate_multicast_routes     => 'default',
     linkup_delay_always            => 'default',
@@ -177,6 +173,7 @@ tests['non_default_properties'] = {
 
 tests['non_default_properties_exclusive'] = {
   title_pattern:  'default',
+  platform: 'n7k',
   manifest_props: "
     aggregate_multicast_routes     => 'true',
     linkup_delay_always            => 'false',
@@ -205,7 +202,8 @@ tests['non_default_properties_exclusive'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  UtilityLib::PUPPET_BINPATH + 'resource cisco_fabricpath_global'
+  cmd = PUPPET_BINPATH + 'resource cisco_fabricpath_global'
+  get_namespace_cmd(agent, cmd, options)
 end
 
 def build_manifest_fabricpath_global(tests, id)
@@ -221,7 +219,7 @@ def build_manifest_fabricpath_global(tests, id)
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
   logger.debug("build_manifest_fabricpath_global :: title_pattern:\n" +
                tests[id][:title_pattern])
-  tests[id][:manifest] = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+  tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   node 'default' {
     cisco_fabricpath_global { '#{tests[id][:title_pattern]}':
       #{state}
@@ -232,9 +230,9 @@ EOF"
 end
 
 def test_harness_fabricpath_global(tests, id)
-  tests[id][:ensure] = :present if tests[id][:ensure].nil?
+  return unless platform_supports_test(tests, id)
+
   tests[id][:resource_cmd] = puppet_resource_cmd
-  tests[id][:desc] += " [ensure => #{tests[id][:ensure]}]"
 
   # Build the manifest for this test
   build_manifest_fabricpath_global(tests, id)
@@ -253,17 +251,10 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
-  # -------------------------------------------------------------------
-  #  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  #  tests[id][:desc] = '1.0 Cleanup using absent'
-  #  tests[id][:ensure] = :absent
-  #  test_harness_fabricpath_global(tests, id)
-  device = device_type
+  device = platform
   logger.info("#### This device is of type: #{device} #####")
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  node_featureset_cleanup(agent, 'fabricpath', 'cleanup', false)
 
-  # -----------------------------------
   id = 'default_properties'
   tests[id][:desc] = '1.1 Default Properties'
   test_harness_fabricpath_global(tests, id)
@@ -272,26 +263,18 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:ensure] = :absent
   test_harness_fabricpath_global(tests, id)
 
-  # -------------------------------------------------------------------
-  if device == :N7K
-    logger.info("\n#{'-' * 60}\nSection 2. Default Property Testing exclusive")
+  logger.info("\n#{'-' * 60}\nSection 2. Default Property Testing exclusive")
 
-    # -----------------------------------
-    id = 'default_properties_exclusive'
-    tests[id][:desc] = '2.1 Default Properties exclusive to Platform'
-    test_harness_fabricpath_global(tests, id)
+  id = 'default_properties_exclusive'
+  tests[id][:desc] = '2.1 Default Properties exclusive to Platform'
+  test_harness_fabricpath_global(tests, id)
 
-    tests[id][:desc] = '2.2 Default Properties exclusive to Platform (absent)'
-    tests[id][:ensure] = :absent
-    test_harness_fabricpath_global(tests, id)
-  else
-    logger.info("\n#{'-' * 60}\n"\
-                "Skipping for #{device} Section 2. Default Property exclusive")
-  end
-  # -------------------------------------------------------------------
+  tests[id][:desc] = '2.2 Default Properties exclusive to Platform (absent)'
+  tests[id][:ensure] = :absent
+  test_harness_fabricpath_global(tests, id)
+
   logger.info("\n#{'-' * 60}\nSection 3. Non Default Property Testing")
 
-  # -----------------------------------
   id = 'non_default_properties'
   tests[id][:desc] = '3.1 Non Default Properties'
   test_harness_fabricpath_global(tests, id)
@@ -300,39 +283,15 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:ensure] = :absent
   test_harness_fabricpath_global(tests, id)
 
-  # -------------------------------------------------------------------
-  if device == :N7K
-    logger.info("\n#{'-' * 60}\nSection 4. Non Default Property Testing excl")
+  logger.info("\n#{'-' * 60}\nSection 4. Non Default Property Testing excl")
 
-    # -----------------------------------
-    id = 'default_properties_exclusive'
-    tests[id][:desc] = '4.1 Non Default Properties exclusive to Platform'
-    test_harness_fabricpath_global(tests, id)
+  id = 'default_properties_exclusive'
+  tests[id][:desc] = '4.1 Non Default Properties exclusive to Platform'
+  test_harness_fabricpath_global(tests, id)
 
-    tests[id][:desc] = '4.2 Non Default Properties exclusive to Platform (abs)'
-    tests[id][:ensure] = :absent
-    test_harness_fabricpath_global(tests, id)
-  else
-    logger.info("\n#{'-' * 60}\n"\
-                "Skipping for #{device} Section 4. Non Default Property excl")
-  end
-
-  # -------------------------------------------------------------------
-  # FUTURE
-  # logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
-  # node_featureset_cleanup(agent, 'fabricpath')
-
-  # id = 'title_patterns'
-  # tests[id][:desc] = '3.1 Title Patterns'
-  # tests[id][:title_pattern] = '2'
-  # tests[id][:af] = { :vrf => 'default', :afi => 'ipv4', :safi => 'unicast' }
-  # test_harness_fabricpath_global(tests, id)
-
-  # id = 'title_patterns'
-  # tests[id][:desc] = '3.2 Title Patterns'
-  # tests[id][:title_pattern] = '2 blue'
-  # tests[id][:af] = { :afi => 'ipv4', :safi => 'unicast' }
-  # test_harness_fabricpath_global(tests, id)
+  tests[id][:desc] = '4.2 Non Default Properties exclusive to Platform (abs)'
+  tests[id][:ensure] = :absent
+  test_harness_fabricpath_global(tests, id)
 end
 
 logger.info('TestCase :: # {testheader} :: End')

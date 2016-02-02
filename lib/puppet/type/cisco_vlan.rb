@@ -89,6 +89,16 @@ Puppet::Type.newtype(:cisco_vlan) do
     end
   end # property name
 
+  newproperty(:mode) do
+    desc 'Mode of the VLAN. Valid values are "CE" (Classical Ethernet) or 
+          "fabricpath". Default value is CE'
+
+    newvalues(
+      :CE,
+      :fabricpath,
+      :default)
+  end # property mode
+
   newproperty(:state) do
     desc 'State of the VLAN.'
 
