@@ -1953,7 +1953,7 @@ Source interface for the NTP server.  Valid value is a string.
 Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
 
 ##### `name`
-Hostname or address of the NTP server.  Valid value is a string.
+Hostname or IPv4/IPv6 address of the NTP server.  Valid value is a string.
 
 ### Type: radius
 
