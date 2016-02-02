@@ -77,7 +77,7 @@ class ciscopuppet::demo_vpc_domain {
     switchport_mode => 'trunk',
     vpc_id          => 5,
     shutdown        => false,
-    require         => Cisco_interface['Ethernet1/1'],
+    require         => Cisco_interface_channel_group['Ethernet1/1'],
   }
 
   cisco_interface_channel_group { 'Ethernet1/2':
@@ -89,7 +89,7 @@ class ciscopuppet::demo_vpc_domain {
     switchport_mode => 'trunk',
     vpc_peer_link   => true,
     shutdown        => false,
-    require         => Cisco_interface['Ethernet1/2'],
+    require         => Cisco_interface_channel_group['Ethernet1/2'],
   }
 
 }

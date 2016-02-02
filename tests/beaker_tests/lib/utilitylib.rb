@@ -149,9 +149,9 @@ def prop_hash_to_manifest(attributes)
   attributes.each do |k, v|
     next if v.nil?
     if v.is_a?(String)
-      manifest_str += "    #{k} => '#{v.strip}',\n"
+      manifest_str += sprintf("    %-30s => '#{v.strip}',\n", k)
     else
-      manifest_str += "    #{k} => #{v},\n"
+      manifest_str += sprintf("    %-30s => #{v},\n", k)
     end
   end
   manifest_str
@@ -333,9 +333,90 @@ def node_feature_cleanup(agent, feature, stepinfo='feature cleanup',
   end
 end
 
+# Helper to configure switchport mode
+def config_switchport_mode(agent, mode, stepinfo='switchport mode: ')
+  step "TestStep :: #{stepinfo}" do
+    cmd = "switchport ; switchport mode #{mode}"
+    command_config(agent, cmd, cmd)
+  end
+end
+
+# Helper to toggle 'system default switchport'
+def system_default_switchport(agent, state=false,
+                              stepinfo='system default switchport')
+  step "TestStep :: #{stepinfo}" do
+    state = state ? ' ' : 'no '
+    cmd = "#{state}system default switchport"
+    command_config(agent, cmd, cmd)
+  end
+end
+
+# Helper to toggle 'system default switchport shutdown'
+def system_default_switchport_shutdown(agent, state=false,
+                                       stepinfo='system default switchport shutdown')
+  step "TestStep :: #{stepinfo}" do
+    state = state ? ' ' : 'no '
+    cmd = "#{state}system default switchport shutdown"
+    command_config(agent, cmd, cmd)
+  end
+end
+
+# Helper for creating / removing an ACL
+def config_acl(agent, afi, acl, state, stepinfo='ACL:')
+  step "TestStep :: #{stepinfo}" do
+    state = state ? 'present' : 'absent'
+    cmd = "resource cisco_acl '#{afi} #{acl}' ensure=#{state}"
+    logger.info("Setup: puppet #{cmd}")
+    cmd = get_namespace_cmd(agent, PUPPET_BINPATH + cmd, options)
+    on(agent, cmd, acceptable_exit_codes: [0, 2])
+  end
+end
+
+# Helper for creating / removing bridge-domain configs
+# 1. Remove any existing bridge-domain config unless it contains our test_bd
+# 2. Remove vlan with test_bd id
+# 3. Add bridge-domain configs
+def config_bridge_domain(agent, test_bd, stepinfo='bridge-domain config:')
+  step stepinfo do
+    # Find current bridge-domain
+    # NOTE: This should convert to using puppet resource, however, the cli
+    # does not allow changes to bridge-domain without removing existing BD's,
+    # which means we are stuck with vsh for now.
+    cmd = get_vshell_cmd('show run bridge-domain')
+    out = on(agent, cmd).stdout
+    bds = out.scan(/^bridge-domain \d+ /)
+    return if bds.include?("bridge-domain #{test_bd} ")
+
+    bds.each do |bd|
+      command_config(agent, "no #{bd}", "remove #{bd}")
+    end
+
+    if (sys_bd = out[/^system bridge-domain .*/])
+      command_config(agent, "no #{sys_bd}", "remove #{sys_bd}")
+    end
+
+    # Remove vlan
+    cmd = "resource cisco_vlan '#{test_bd}' ensure=absent"
+    cmd = get_namespace_cmd(agent, PUPPET_BINPATH + cmd, options)
+    on(agent, cmd, acceptable_exit_codes: [0, 2])
+
+    # Configure bridge-domain
+    cmd = "system bridge-domain #{test_bd} ; bridge-domain #{test_bd}"
+    command_config(agent, cmd, cmd)
+  end
+end
+
+# Helper for creating / removing encap profile vni (global) configs
+def config_encap_profile_vni_global(agent, cmd,
+                                    stepinfo='encap profile vni global:')
+  step stepinfo do
+    command_config(agent, cmd, cmd)
+  end
+end
+
 # Helper to nuke a single interface. This is needed to remove all
 # configurations from the interface.
-def interface_cleanup(agent, intf, stepinfo='Interface Pre Clean:')
+def interface_cleanup(agent, intf, stepinfo='Pre Clean:')
   step "TestStep :: #{stepinfo}" do
     cmd = "resource cisco_command_config 'interface_cleanup' "\
           "command='default interface #{intf}'"
@@ -400,6 +481,63 @@ def af_title_pattern_munge(tests, id, provider=nil)
   t
 end
 
+# If a [:title] exists merge it with the [:pim] values to create a complete pim.
+def pim_title_pattern_munge(tests, id)
+  title = tests[id][:title_pattern]
+  pim = tests[id][:pim]
+
+  if title.nil?
+    puts 'no title'
+    return pim
+  end
+
+  tests[id][:pim] = {} if pim.nil?
+  t = {}
+
+  t[:afi], t[:vrf] = title.split
+  t.merge!(tests[id][:pim])
+  t[:vrf] = 'default' if t[:vrf].nil?
+  t
+end
+
+# If a [:title] exists merge it with the [:pim_rp] values to create a complete pim.
+def pim_rp_title_pattern_munge(tests, id)
+  title = tests[id][:title_pattern]
+  pim_rp = tests[id][:pim_rp]
+
+  if title.nil?
+    puts 'no title'
+    return pim_rp
+  end
+
+  tests[id][:pim_rp] = {} if pim_rp.nil?
+  t = {}
+
+  t[:afi], t[:vrf], t[:rp_addr] = title.split
+  t.merge!(tests[id][:pim_rp])
+  t[:vrf] = 'default' if t[:vrf].nil?
+  t
+end
+
+# If a [:title] exists merge it with the [:pim_group] values to create a complete pim.
+def pim_group_title_pattern_munge(tests, id)
+  title = tests[id][:title_pattern]
+  pim_group = tests[id][:pim_group]
+
+  if title.nil?
+    puts 'no title'
+    return pim_group
+  end
+
+  tests[id][:pim_group] = {} if pim_group.nil?
+  t = {}
+
+  t[:afi], t[:vrf], t[:rp_addr], t[:group] = title.split
+  t.merge!(tests[id][:pim_group])
+  t[:vrf] = 'default' if t[:vrf].nil?
+  t
+end
+
 # setup_mt_full_env
 # Check and set up prerequisites for Multi-Tenancy Full (MT-full) testing.
 # MT-full currently requires an F3 line module. This method will update
@@ -407,7 +545,7 @@ end
 # test interface name to use for testing.
 # tests[:vdc] The default vdc name
 # tests[:intf] A compatible interface to use for MT-full testing.
-# rubocop:disable Metrics/MethodLength,Metrics/AbcSize
+# rubocop:disable Metrics/AbcSize
 def setup_mt_full_env(tests, testcase)
   # MT-full tests require a specific linecard. Search for a compatible
   # module and enable it.
@@ -451,22 +589,24 @@ def setup_mt_full_env(tests, testcase)
 
   interface_cleanup(tests[:agent], intf)
 
-  step "Add switchport config to #{intf}" do
-    cmd = get_vshell_cmd("conf t ; int #{intf} ; #{tests[:config_switchport]}")
-    on(agent, cmd, pty: true)
-  end if tests[:config_switchport]
+  config_switchport_mode(agent, tests[:switchport_mode]) if
+    tests[:switchport_mode]
 
-  step 'Add bridge-domain global config' do
-    cmd = get_vshell_cmd("conf t ; #{tests[:config_bridge_domain]}")
-    on(agent, cmd, pty: true)
-  end if tests[:config_bridge_domain]
+  config_bridge_domain(agent, tests[:bridge_domain]) if
+    tests[:bridge_domain]
 
-  step 'Add encap profile global config' do
-    cmd = get_vshell_cmd("conf t ; #{tests[:config_encap_prof_global]}")
-    on(agent, cmd, pty: true)
-  end if tests[:config_encap_prof_global]
+  config_encap_profile_vni_global(agent, tests[:encap_prof_global]) if
+    tests[:encap_prof_global]
 end
-# rubocop:enable Metrics/MethodLength,Metrics/AbcSize
+# rubocop:enable Metrics/AbcSize
+
+# Helper for command_config calls
+def command_config(agent, cmd, msg='')
+  logger.info("\n#{msg}")
+  cmd = "resource cisco_command_config 'cc' command='#{cmd}'"
+  cmd = get_namespace_cmd(agent, PUPPET_BINPATH + cmd, options)
+  on(agent, cmd, acceptable_exit_codes: [0, 2])
+end
 
 # Helper to raise skip when prereqs are not met
 def prereq_skip(testheader, testcase, message)
@@ -609,6 +749,7 @@ def skipped_tests_summary(tests, testheader)
   raise_skip_exception(testheader, self)
 end
 
+# Find a test interface on the agent.
 def find_interface(tests, id=nil, skipcheck=true)
   # Prefer specific test key over the all tests key
   if id
@@ -620,7 +761,7 @@ def find_interface(tests, id=nil, skipcheck=true)
   case type
   when /ethernet/i, /dot1q/
     all = get_current_resource_instances(tests[:agent], 'cisco_interface')
-    intf = all.grep(%r{ethernet\d+\/\d+})[0]
+    intf = all.grep(%r{ethernet\d+/\d+})[0]
   end
 
   if skipcheck && intf.nil?
