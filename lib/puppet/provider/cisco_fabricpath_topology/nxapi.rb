@@ -60,7 +60,7 @@ Puppet::Type.type(:cisco_fabricpath_topology).provide(:nxapi) do
 
   def self.instances
     topos = []
-    Cisco::Topo.topos.each { |topo_id, t|
+    Cisco::FabricpathTopo.topos.each { |topo_id, t|
       topos << get_properties(topo_id, t)
     }
     return topos
@@ -126,7 +126,7 @@ Puppet::Type.type(:cisco_fabricpath_topology).provide(:nxapi) do
       # Create/Update
       if @topo.nil?
         new_topo = true
-        @topo = Cisco::Topo.new(@resource[:topo_id])
+        @topo = Cisco::FabricpathTopo.new(@resource[:topo_id])
       end
       set_properties(new_topo)
     end
