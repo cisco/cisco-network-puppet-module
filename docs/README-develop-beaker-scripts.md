@@ -63,9 +63,9 @@ end
 
 ### Configure IOS XR
 
-You must enable the gRPC feature, start the third-party network namespace (TPNNS) sshd server, and allow passwordless sudo for admin users, so that the Beaker workstation can access the Puppet agent during testing.
+#### Enable gRPC server
 
-**Example:**
+[Enable the gRPC server](http://www.cisco.com/c/en/us/td/docs/iosxr/ncs5500/DataModels/b-Datamodels-cg-ncs5500/b-Datamodels-cg-ncs5500_chapter_010.html#concept_700172ED7CF44313B0D7E521B2983F32) and select a port for it to listen on. Example:
 
 ~~~
 configure
@@ -74,18 +74,40 @@ commit
 end
 ~~~
 
+#### Start SSHd for TPNNS
+
+IOS XR provides an SSH server daemon that runs within the [third-party network namespace (TPNNS)](http://www.cisco.com/c/en/us/td/docs/iosxr/AppHosting/AH_Config_Guide/AH_User_Guide_chapter_00.html#concept_B8195E8C04EF4900BF51B2F3832F52AE), which is where the Puppet agent needs to run. Start this daemon from the IOS XR bash shell:
+
 ~~~bash
 run bash
 service sshd_tpnns start
 chkconfig --add sshd_tpnns
 ~~~
 
-In bash, run `visudo` and change the sudoers file as follows:
+Note that this daemon listens on port 57722 rather than the SSH default port of 22. You will configure `hosts.cfg` to specify this port for Beaker's use [below](#beaker-config), but if you want to manually SSH to the node, you will need to specify the port number as well:
+
+~~~bash
+ssh devops@192.168.122.222 -p 57722
+~~~
+
+#### Configure a user for passwordless sudo
+
+`sshd_tpnns` doesn't allow login as root, but the Puppet agent needs to run with root permissions. Beaker needs to be able to log in as a user that can transparently invoke `sudo` without a password prompt. There are several ways you can edit the `/etc/sudoers` file (using `visudo` from the Bash prompt) to permit this:
+
+Enable passwordless sudo for all users in group `sudo` (which includes all configured IOS XR users in IOS XR group `root-lr`, including the root-system user created at boot time):
 
 ~~~diff
  #includedir /etc/sudoers.d
 -%sudo ALL=(ALL) ALL
 +%sudo ALL=(ALL) NOPASSWD: ALL
+~~~
+
+Or, enable passwordless sudo only for a specific user, such as 'devops':
+
+~~~diff
+ #includedir /etc/sudoers.d
+ %sudo ALL=(ALL) ALL
++devops ALL=(ALL) NOPASSWD: ALL
 ~~~
 
 ## <a name="beaker-config">Beaker Server Configuration</a>
@@ -101,13 +123,13 @@ $ cd cisco-network-puppet-module/tests/beaker_tests/
 
 Under the `beaker_tests` directory, create file named `host.cfg` and add the following content.
 
-Note: If running puppet on XR, specify the gRPC port number configured on the switch.
+Note: If running puppet on IOS XR, specify the gRPC port number configured on the switch.
 
 Replace the `< >` markers with specific information.
 
 ```bash
 HOSTS:
-    <XR agent>:
+    <IOS XR agent>:
         roles:
             - agent
         platform: cisco-7-x86_64
