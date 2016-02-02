@@ -63,22 +63,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider' do
     logger.info('Setup switch for provider')
-
-    # Make sure radius server is not configured before test starts.
-    on(master, RadiusServerLib.create_radius_server_manifest_absent)
-
-    # Expected exit_code is 0,2 since server may or may not be configured.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
-    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
-
-    # Make sure radius server is not configured before test starts.
-    on(master, RadiusServerLib.create_radius_server_manifest_absent_ipv6)
-
-    # Expected exit_code is 0,2 since server may or may not be configured.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
-    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
+    resource_absent_cleanup(agent, 'radius_server')
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
