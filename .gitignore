@@ -4,3 +4,4 @@ log/
 pkg/
 Gemfile.lock
 *~
+hosts.cfg
