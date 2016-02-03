@@ -1,5 +1,7 @@
-# Manifest to demo base profile 
-# 
+# Manifest to demo domain providers
+#
+# Copyright (c) 2015 Cisco and/or its affiliates.
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -12,8 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet::demo_profile::base {
-  include ciscopuppet::install
-  include ciscopuppet::cisco::demo_repo
-  include ciscopuppet::cisco::demo_cisco_patch_rpm
+class ciscopuppet::netdev::demo_domain {
+  domain_name { 'demo.cisco.com':
+    ensure => present,
+  }
+
+  name_server { '8.8.8.8':
+    ensure => present,
+  }
+
+  network_dns { 'settings':
+    domain  => 'demo.cisco.com',
+    search  => ['test.com', 'test.net'],
+    servers => ['8.8.8.8', '2001:4860:4860::8888'],
+  }
+
 }

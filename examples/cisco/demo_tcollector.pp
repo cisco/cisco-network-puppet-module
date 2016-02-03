@@ -1,4 +1,4 @@
-# Manifest to demo base profile 
+# Manifest to demo tcollector monitoring application 
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,8 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet::demo_profile::base {
-  include ciscopuppet::install
-  include ciscopuppet::cisco::demo_repo
-  include ciscopuppet::cisco::demo_cisco_patch_rpm
+class ciscopuppet::cisco::demo_tcollector {
+  package { 'tcollector':
+    ensure => present,
+  }
+  file { '/etc/sysconfig/tcollector' :
+    ensure  => file,
+    content => template('ciscopuppet/tcollector.conf.erb'),
+    owner   => 'root',
+    group   => root,
+    mode    => 'ug+rwx',
+  }
+  service { 'tcollector':
+    ensure => running,
+  }
 }

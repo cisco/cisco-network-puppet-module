@@ -15,5 +15,5 @@
 # limitations under the License.
 
 node 'cisco_bgpv4_device_name' {
-  include ciscopuppet::demo_bgp_ipv4
+  include ciscopuppet::cisco::demo_bgp_ipv4
 }

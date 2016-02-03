@@ -1,5 +1,7 @@
-# Manifest to demo base profile 
-# 
+# Manifest to demo cisco_interface provider
+#
+# Copyright (c) 2014-2016 Cisco and/or its affiliates.
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -12,8 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet::demo_profile::base {
-  include ciscopuppet::install
-  include ciscopuppet::cisco::demo_repo
-  include ciscopuppet::cisco::demo_cisco_patch_rpm
+class ciscopuppet::netdev::demo_port_channel {
+  port_channel { 'port-channel100':
+    ensure        => 'present',
+    id            => '100',
+    interfaces    => ['ethernet1/8', 'ethernet1/9'],
+    minimum_links => '3',
+  }
 }

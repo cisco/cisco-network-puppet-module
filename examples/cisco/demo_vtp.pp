@@ -1,5 +1,7 @@
-# Manifest to demo base profile 
-# 
+# Manifest to demo cisco_vtp provider
+#
+# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -12,8 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet::demo_profile::base {
-  include ciscopuppet::install
-  include ciscopuppet::cisco::demo_repo
-  include ciscopuppet::cisco::demo_cisco_patch_rpm
+class ciscopuppet::cisco::demo_vtp {
+  cisco_vtp { 'default':
+    ensure   => present,
+    domain   => 'cisco1234',
+    password => 'test1234',
+    version  => 2,
+    filename => 'bootflash:/vlan.dat'
+  }
 }
