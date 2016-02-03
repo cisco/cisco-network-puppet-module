@@ -53,7 +53,7 @@
 ###############################################################################
 # rubocop:disable Style/HashSyntax
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-require File.expand_path('../../bgp/bgplib.rb', __FILE__)
+require File.expand_path('../../cisco_bgp/bgplib.rb', __FILE__)
 
 # -----------------------------
 # Common settings and variables
@@ -119,8 +119,6 @@ def remove_unsupported_properties(test, platform, vrf)
     remove_property(test, :next_hop_third_party)
     remove_property(test, :prefix_list_in)
     remove_property(test, :prefix_list_out)
-    remove_property(test, :route_map_in)
-    remove_property(test, :route_map_out)
     remove_property(test, :suppress_inactive)
   end
 end
@@ -550,6 +548,14 @@ def get_dependency_manifest(platform, af, remote)
         route_distinguisher                    => auto,
       }"
     end
+    extra_config += "
+      cisco_command_config { 'policy_config':
+        command => '
+          route-policy rm_in
+            end-policy
+          route-policy rm_out
+            end-policy'
+      }"
   else
     if remote != nil
       extra_config = "
@@ -599,7 +605,7 @@ end
 # Wrapper for bgp_nbr_af specific settings prior to calling the
 # common test_harness.
 def test_harness_bgp_nbr_af(tests, id, platform)
-  af = bgp_title_pattern_munge(tests, id, 'bgp_neighbor_af')
+  af = af_title_pattern_munge(tests, id, 'bgp_neighbor_af')
   logger.info("\n--------\nTest Case Address-Family ID: #{af}")
 
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
@@ -620,6 +626,7 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
+  platform = fact_on(agent, 'os.name')
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   init_bgp(master, agent)
