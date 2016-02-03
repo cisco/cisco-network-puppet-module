@@ -276,12 +276,10 @@ tests['SVI_default'] = {
   desc:           '4.1 (SVI) Default Properties',
   intf_type:      'vlan',
   manifest_props: {
-    svi_autostate:  'default',
-    svi_management: 'default',
+    svi_management: 'default'
   },
   resource:       {
-    'svi_autostate'  => 'true',
-    'svi_management' => 'false',
+    'svi_management' => 'false'
   },
 }
 
@@ -289,12 +287,34 @@ tests['SVI'] = {
   desc:           '4.2 (SVI) Non Default Properties',
   intf_type:      'vlan',
   manifest_props: {
-    svi_autostate:  'false',
-    svi_management: 'true',
+    svi_management: 'true'
   },
   resource:       {
-    'svi_autostate'  => 'false',
-    'svi_management' => 'true',
+    'svi_management' => 'true'
+  },
+}
+
+tests['SVI_autostate_default'] = {
+  desc:           '4.3 (SVI) Default SVI Autostate Property',
+  platform:       'n(3|7|9)k',
+  intf_type:      'vlan',
+  manifest_props: {
+    svi_autostate: 'default'
+  },
+  resource:       {
+    'svi_autostate' => 'true'
+  },
+}
+
+tests['SVI_autostate'] = {
+  desc:           '4.4 (SVI) Non Default SVI Autostate Property',
+  platform:       'n(3|7|9)k',
+  intf_type:      'vlan',
+  manifest_props: {
+    svi_autostate: 'false'
+  },
+  resource:       {
+    'svi_autostate' => 'false'
   },
 }
 
@@ -306,10 +326,10 @@ tests['negotiate'] = {
   sys_def_switchport: false,
   manifest_props:     {
     switchport_mode: 'disabled',
-    negotiate_auto:  'false',
+    # negotiate_auto:  'false',, # TBD: Needs plat awareness
   },
   resource:           {
-    'negotiate_auto' => 'false'
+    # 'negotiate_auto' => 'false'
   },
 }
 
@@ -429,6 +449,7 @@ def test_harness_interface(tests, id)
 
   # Set up system default switchport
   sys_def_switchport?(tests, id)
+  sys_def_switchport_shutdown?(tests, id)
 
   # Set up ACL
   acl?(tests, id)
@@ -467,6 +488,8 @@ test_name "TestCase :: #{testheader}" do
   interface_cleanup(agent, tests[:svi_name])
   test_harness_interface(tests, 'SVI_default')
   test_harness_interface(tests, 'SVI')
+  test_harness_interface(tests, 'SVI_autostate_default')
+  test_harness_interface(tests, 'SVI_autostate')
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 5. MISC Property Testing")
