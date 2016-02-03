@@ -77,7 +77,7 @@ Puppet::Type.type(:cisco_fabricpath_topology).provide(:nxapi) do
 
   def initialize(value={})
     super(value)
-    @topo = Cisco::Topo.topos[@property_hash[:name]]
+    @topo = Cisco::FabricpathTopo.topos[@property_hash[:name]]
     @property_flush = {}
     debug "Created provider instance of cisco_fabricpath_topology."
     debug "property hash #{@property_hash}"
