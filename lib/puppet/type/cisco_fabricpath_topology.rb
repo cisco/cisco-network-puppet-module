@@ -76,12 +76,12 @@ Puppet::Type.newtype(:cisco_fabricpath_topology) do
   # Attributes #
   ##############
 
-  newproperty(:member_vlans, :array_matching => :all) do
+  newproperty(:member_vlans) do
     desc "ID of the member VLAN(s). Valid values are integer /integer ranges."
 
   end # param id
 
-  newproperty(:member_vnis, :array_matching => :all) do
+  newproperty(:member_vnis) do
     desc 'ID of the member VNI(s). Valid values are integer /integer ranges.
          This property is dependent on Cisco_bridge_domain'
 
