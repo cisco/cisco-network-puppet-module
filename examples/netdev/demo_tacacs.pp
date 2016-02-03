@@ -1,4 +1,4 @@
-# Class to install Cisco gems 
+# Manifest to demo the netdev tacacs provider
 #
 # Copyright (c) 2014-2016 Cisco and/or its affiliates.
 #
@@ -14,20 +14,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet::install (String $repo = 'https://rubygems.org', String $proxy = '') {
-
-  # Process proxy settings 
-  if $proxy == '' {
-    $opts = {}
-  }
-  else {
-    $opts = { '--http-proxy' => $proxy }
+class ciscopuppet::netdev::demo_tacacs {
+  tacacs {'default':
+    enabled  => true,
   }
 
-  package { 'cisco_node_utils' :
-    ensure          => present,
-    provider        => 'gem',
-    source          => $repo,
-    install_options => $opts,
+  tacacs_global { 'default':
+    enable              => true,
+    key                 => '44444444',
+    key_format          => '7',
+    timeout             => '2',
+  }
+
+  tacacs_server_group { 'red':
+    ensure    => 'present',
+    servers   => ['2.2.2.2','3.3.3.3']
+  }
+
+  tacacs_server { '8.8.8.8':
+    ensure              => 'present',
+    key                 => '44444444',
+    key_format          => '7',
+    port                => '48',
+    timeout             => '2',
   }
 }

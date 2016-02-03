@@ -1,17 +1,6 @@
-# Demo Role Edge Switch Manifest
+# Manifest to demo cisco_interface_service_vni provider
 #
-# Roles: (E) = Edge, (I) = Internal
-#  
-#            +------------+
-#            | Role: (E)  |
-#            +------------+
-#             |          |
-#             |          |
-#   +------------+   +------------+
-#   | Role: (I)  |   | Role: (I)  |
-#   +------------+   +------------+
-#
-# Copyright (c) 2014-2016 Cisco and/or its affiliates.
+# Copyright (c) 2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,6 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet::demo_role::edge_switch inherits ciscopuppet::demo_role {
-  include ciscopuppet::demo_profile::bgp
+class ciscopuppet::cisco::demo_interface_service_vni {
+  cisco_interface_service_vni { 'Ethernet9/2 344' :
+    encapsulation_profile_vni   => 'vni_500_5000',
+    shutdown                    => true,
+  }
+  cisco_interface_service_vni { 'Ethernet9/2 491' :
+    encapsulation_profile_vni   => 'vni_600_6000',
+    shutdown                    => 'default',
+  }
 }

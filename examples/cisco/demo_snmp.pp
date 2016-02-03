@@ -1,15 +1,4 @@
-# Demo Role Edge Switch Manifest
-#
-# Roles: (E) = Edge, (I) = Internal
-#  
-#            +------------+
-#            | Role: (E)  |
-#            +------------+
-#             |          |
-#             |          |
-#   +------------+   +------------+
-#   | Role: (I)  |   | Role: (I)  |
-#   +------------+   +------------+
+# Manifest to demo cisco_snmp* providers
 #
 # Copyright (c) 2014-2016 Cisco and/or its affiliates.
 #
@@ -25,6 +14,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet::demo_role::edge_switch inherits ciscopuppet::demo_role {
-  include ciscopuppet::demo_profile::bgp
+class ciscopuppet::cisco::demo_snmp {
+  cisco_snmp_server { 'default':
+    aaa_user_cache_timeout => 200,
+    global_enforce_priv    => true,
+  }
+
+  cisco_snmp_group { 'network-admin':
+    ensure => present,
+  }
+
+  cisco_snmp_community { 'setcom':
+    ensure => present,
+    group  => 'network-admin',
+    acl    => 'testcomacl',
+  }
+
+  cisco_snmp_user { 'v3test':
+    ensure => present,
+    groups => ['network-admin'],
+  }
 }

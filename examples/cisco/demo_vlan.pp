@@ -1,15 +1,4 @@
-# Demo Role Edge Switch Manifest
-#
-# Roles: (E) = Edge, (I) = Internal
-#  
-#            +------------+
-#            | Role: (E)  |
-#            +------------+
-#             |          |
-#             |          |
-#   +------------+   +------------+
-#   | Role: (I)  |   | Role: (I)  |
-#   +------------+   +------------+
+# Manifest to demo cisco_vlan provider
 #
 # Copyright (c) 2014-2016 Cisco and/or its affiliates.
 #
@@ -25,6 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet::demo_role::edge_switch inherits ciscopuppet::demo_role {
-  include ciscopuppet::demo_profile::bgp
+class ciscopuppet::cisco::demo_vlan {
+  cisco_vlan { '220':
+    ensure    => present,
+    vlan_name => 'newtest',
+    shutdown  => true,
+    state     => 'active',
+  }
 }

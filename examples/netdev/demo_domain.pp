@@ -1,17 +1,6 @@
-# Demo Role Edge Switch Manifest
+# Manifest to demo domain providers
 #
-# Roles: (E) = Edge, (I) = Internal
-#  
-#            +------------+
-#            | Role: (E)  |
-#            +------------+
-#             |          |
-#             |          |
-#   +------------+   +------------+
-#   | Role: (I)  |   | Role: (I)  |
-#   +------------+   +------------+
-#
-# Copyright (c) 2014-2016 Cisco and/or its affiliates.
+# Copyright (c) 2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,6 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet::demo_role::edge_switch inherits ciscopuppet::demo_role {
-  include ciscopuppet::demo_profile::bgp
+class ciscopuppet::netdev::demo_domain {
+  domain_name { 'demo.cisco.com':
+    ensure => present,
+  }
+
+  name_server { '8.8.8.8':
+    ensure => present,
+  }
+
+  network_dns { 'settings':
+    domain  => 'demo.cisco.com',
+    search  => ['test.com', 'test.net'],
+    servers => ['8.8.8.8', '2001:4860:4860::8888'],
+  }
+
 }

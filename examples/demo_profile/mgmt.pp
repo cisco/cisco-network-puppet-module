@@ -13,6 +13,6 @@
 # limitations under the License.
 
 class ciscopuppet::demo_profile::mgmt {
-  include ciscopuppet::demo_tacacs_server
-  include ciscopuppet::demo_snmp
+  include ciscopuppet::cisco::demo_tacacs_server
+  include ciscopuppet::cisco::demo_snmp
 }

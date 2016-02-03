@@ -1,15 +1,4 @@
-# Demo Role Edge Switch Manifest
-#
-# Roles: (E) = Edge, (I) = Internal
-#  
-#            +------------+
-#            | Role: (E)  |
-#            +------------+
-#             |          |
-#             |          |
-#   +------------+   +------------+
-#   | Role: (I)  |   | Role: (I)  |
-#   +------------+   +------------+
+# Manifest to demo cisco_command_config provider
 #
 # Copyright (c) 2014-2016 Cisco and/or its affiliates.
 #
@@ -25,6 +14,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet::demo_role::edge_switch inherits ciscopuppet::demo_role {
-  include ciscopuppet::demo_profile::bgp
+class ciscopuppet::cisco::demo_command_config {
+
+  cisco_command_config { 'loop42':
+    command => "
+      interface loopback42
+        description configured by puppet 
+        ip address 192.168.1.42/24
+    "
+  }
+
+  cisco_command_config { 'system-switchport-default':
+    command => 'no system default switchport'
+  }
+
+  cisco_command_config { 'route42':
+    command => 'ip route 192.168.42.42/32 Null0',
+  }
 }

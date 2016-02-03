@@ -1,15 +1,4 @@
-# Demo Role Edge Switch Manifest
-#
-# Roles: (E) = Edge, (I) = Internal
-#  
-#            +------------+
-#            | Role: (E)  |
-#            +------------+
-#             |          |
-#             |          |
-#   +------------+   +------------+
-#   | Role: (I)  |   | Role: (I)  |
-#   +------------+   +------------+
+# Manifest to demo cisco_tacacs_server_host provider.
 #
 # Copyright (c) 2014-2016 Cisco and/or its affiliates.
 #
@@ -25,6 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet::demo_role::edge_switch inherits ciscopuppet::demo_role {
-  include ciscopuppet::demo_profile::bgp
+class ciscopuppet::cisco::demo_tacacs_server_host {
+
+  cisco_tacacs_server_host { 'tachost':
+    ensure              => present,
+    port                => 90,
+    timeout             => 39,
+    encryption_type     => 'encrypted',
+    encryption_password => 'test123',
+  }
+
+  cisco_tacacs_server_host { '1.1.2.6':
+    ensure  => absent,
+    port    => 65,
+    timeout => 30,
+  }
 }
