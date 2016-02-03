@@ -87,6 +87,14 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
 
   newparam(:vni, namevar: true) do
     desc 'ID of the Virtual Network Identifier. Valid values are integer.'
+    munge do |value|
+      begin
+        value = Integer(value)
+      rescue
+        raise 'VNI is not a number.'
+      end # rescue
+      value
+    end
   end
 
   newparam(:assoc_vrf, namevar: true) do
@@ -178,8 +186,8 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
                                    self[:suppress_arp] ||
                                    self[:peer_list]
 
-    fail 'if assoc_vrf is true, ingress_replication, multicast_group, '\
-          'peer_list & suppress_arp should be off.' if
+    fail 'ingress_replication, multicast_group, peer_list & suppress_arp' \
+          ' cannot be set when assoc_vrf is true.' if
            self[:assoc_vrf] == :true && assoc_vrf_incompatible_props
   end
 end # Puppet::Type.newtype

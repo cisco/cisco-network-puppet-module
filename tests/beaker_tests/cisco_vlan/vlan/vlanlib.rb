@@ -44,15 +44,27 @@ module VlanLib
   # 'ensure' is set to present.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_stdvlan_manifest_present
+  def self.create_stdvlan_manifest_present(test_mapped_vni)
+    if test_mapped_vni
+      manifest = "
+        cisco_vlan { '128':
+          ensure         => present,
+          state          => 'default',
+          mapped_vni     => 'default',
+          shutdown       => 'default',
+        }"
+    else
+      manifest = "
+        cisco_vlan { '128':
+          ensure         => present,
+          state          => 'default',
+          shutdown       => 'default',
+        }"
+    end
+
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
-  cisco_vlan { '128':
-    ensure         => present,
-    state          => 'default',
-    mapped_vni     => 'default',
-    shutdown       => 'default',
-  }
+  #{manifest}
 }
 EOF"
     manifest_str
@@ -77,16 +89,29 @@ EOF"
   # vlan_name, state and shutdown.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_stdvlan_manifest_nondefaults
+  def self.create_stdvlan_manifest_nondefaults(test_mapped_vni)
+    if test_mapped_vni
+      manifest = "
+        cisco_vlan { '128':
+          ensure         => present,
+          vlan_name      => 'DESCR-VLAN0128',
+          state          => 'suspend',
+          mapped_vni     => '128000',
+          shutdown       => 'true',
+         }"
+    else
+      manifest = "
+        cisco_vlan { '128':
+          ensure         => present,
+          vlan_name      => 'DESCR-VLAN0128',
+          state          => 'suspend',
+          shutdown       => 'true',
+        }"
+    end
+
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
-  cisco_vlan { '128':
-    ensure         => present,
-    vlan_name      => 'DESCR-VLAN0128',
-    state          => 'suspend',
-    mapped_vni     => '128000',
-    shutdown       => 'true',
-  }
+  #{manifest}
 }
 EOF"
     manifest_str
@@ -141,14 +166,27 @@ EOF"
   # 'ensure' is set to present.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_extvlan_manifest_present
+  def self.create_extvlan_manifest_present(test_mapped_vni)
+    if test_mapped_vni
+      manifest = "
+        cisco_vlan { '2400':
+          ensure         => present,
+          state          => 'default',
+          mapped_vni     => 'default',
+          shutdown       => 'default',
+        }"
+    else
+      manifest = "
+        cisco_vlan { '2400':
+          ensure         => present,
+          state          => 'default',
+          shutdown       => 'default',
+        }"
+    end
+
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
-  cisco_vlan { '2400':
-    ensure         => present,
-    state          => 'default',
-    shutdown       => 'default',
-  }
+  #{manifest}
 }
 EOF"
     manifest_str
@@ -174,14 +212,27 @@ EOF"
   # Extended VLANs cannot be shutdown.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_extvlan_manifest_nondefaults
+  def self.create_extvlan_manifest_nondefaults(test_mapped_vni)
+    if test_mapped_vni
+      manifest = "
+        cisco_vlan { '2400':
+          ensure         => present,
+          mapped_vni     => '24000',
+          vlan_name      => 'DESCR-VLAN2400',
+          state          => 'suspend',
+         }"
+    else
+      manifest = "
+        cisco_vlan { '2400':
+          ensure         => present,
+          vlan_name      => 'DESCR-VLAN2400',
+          state          => 'suspend',
+        }"
+    end
+
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
-  cisco_vlan { '2400':
-    ensure         => present,
-    vlan_name      => 'DESCR-VLAN2400',
-    state          => 'suspend',
-  }
+  #{manifest}
 }
 EOF"
     manifest_str

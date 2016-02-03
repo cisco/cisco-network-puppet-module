@@ -81,7 +81,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource nondefaults manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, VlanLib.create_extvlan_manifest_nondefaults)
+    on(master, VlanLib.create_extvlan_manifest_nondefaults(platform.match('n9k')))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
@@ -99,10 +99,11 @@ test_name "TestCase :: #{testheader}" do
       "resource cisco_vlan '2400'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
-                               { 'ensure'    => 'present',
-                                 'shutdown'  => 'false',
-                                 'state'     => 'suspend',
-                                 'vlan_name' => 'DESCR-VLAN2400' },
+                               { 'ensure'     => 'present',
+                                 'mapped_vni' => ('24000' if platform.match('n9k')),
+                                 'shutdown'   => 'false',
+                                 'state'      => 'suspend',
+                                 'vlan_name'  => 'DESCR-VLAN2400' }.reject { |_k, v| v.nil? },
                                false, self, logger)
     end
 

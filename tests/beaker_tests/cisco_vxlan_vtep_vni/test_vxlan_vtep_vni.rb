@@ -15,7 +15,7 @@
 ###############################################################################
 # TestCase Name:
 # -------------
-# test-cisco_vxlan_vtep_vni.rb
+# test_cisco_vxlan_vtep_vni.rb
 #
 # TestCase Prerequisites:
 # -----------------------
@@ -70,8 +70,9 @@ testheader = 'Resource cisco_vxlan_vtep_vni'
 # tests[:agent] - the agent object
 #
 tests = {
-  master: master,
-  agent:  agent,
+  master:   master,
+  agent:    agent,
+  platform: 'n(3|9)k',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -100,14 +101,6 @@ tests = {
 #   Must use :title_pattern if :af is not specified. Useful for testing mixed
 #   title/af manifests
 #
-
-tests['preclean'] = {
-  title_pattern:  'nve1 10000',
-  manifest_props: '',
-  code:           [0, 2],
-  resource_props: {},
-}
-
 tests['default_properties_ingress_replication'] = {
   title_pattern:  'nve1 10000',
   manifest_props: "
@@ -115,6 +108,7 @@ tests['default_properties_ingress_replication'] = {
     suppress_arp        => 'default',
   ",
   resource_props: {
+    # 'ingress_replication' not set.
     'suppress_arp' => 'false'
   },
 }
@@ -126,6 +120,7 @@ tests['default_properties_multicast_group'] = {
     suppress_arp    => 'default',
   ",
   resource_props: {
+    # 'multicast_group' not set.
     'suppress_arp' => 'false'
   },
 }
@@ -139,6 +134,7 @@ tests['ingress_replication_static_peer_list_empty'] = {
   ",
   resource_props: {
     'ingress_replication' => 'static',
+    # 'peer_list' not set.
     'suppress_arp'        => 'false',
   },
 }
@@ -180,6 +176,7 @@ tests['peer_list_default'] = {
   ",
   resource_props: {
     'ingress_replication' => 'static',
+    # 'peer_list' not set.
     'suppress_arp'        => 'false',
   },
 }
