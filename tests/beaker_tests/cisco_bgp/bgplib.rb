@@ -83,6 +83,9 @@ module BgpLib
         bestpath_med_confed                    => 'default',
         bestpath_med_missing_as_worst          => 'default',
 
+        # nsr
+        nsr                                    => 'default',
+
         # Graceful Restart Properties
         graceful_restart                       => 'default',
         graceful_restart_timers_restart        => 'default',
@@ -157,6 +160,9 @@ module BgpLib
         bestpath_med_confed                    => 'true',
         bestpath_med_missing_as_worst          => 'true',
 
+        # nsr
+        nsr                                    => 'false',
+
         # Timer Properties
         timer_bgp_keepalive                    => '45',
         timer_bgp_holdtime                     => '110',
@@ -190,6 +196,7 @@ module BgpLib
         graceful_restart_timers_stalepath_time => '311',
         maxas_limit                            => '55',
         neighbor_down_fib_accelerate           => 'true',
+        nsr                                    => 'true',
         suppress_fib_pending                   => 'false',
         timer_bestpath_limit                   => '255',
         timer_bestpath_limit_always            => 'true',
@@ -238,6 +245,7 @@ module BgpLib
         graceful_restart_timers_stalepath_time => '312',
         maxas_limit                            => '60',
         neighbor_down_fib_accelerate           => 'true',
+        nsr                                    => 'false',
         suppress_fib_pending                   => 'false',
         timer_bestpath_limit                   => '115',
         timer_bestpath_limit_always            => 'false',

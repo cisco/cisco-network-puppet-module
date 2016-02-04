@@ -111,6 +111,8 @@ if platform != 'ios_xr'
   expected_default_values['suppress_fib_pending']           = 'false'
   expected_default_values['timer_bestpath_limit']           = '300'
   expected_default_values['timer_bestpath_limit_always']    = 'false'
+else
+  expected_default_values['nsr']                            = 'false'
 end
 
 # Used to clarify true/false values for UtilityLib args.
@@ -162,6 +164,7 @@ test_name "TestCase :: #{testheader}" do
     expected_default_values.delete('graceful_restart')
     expected_default_values.delete('graceful_restart_timers_restart')
     expected_default_values.delete('graceful_restart_timers_stalepath_time')
+    expected_default_values.delete('nsr')
   end
 
   context = "vrf #{BgpLib::VRF1}"
@@ -233,6 +236,7 @@ test_name "TestCase :: #{testheader}" do
     logger.info("#{stepinfo} :: #{result}")
   end
 
+=begin
   stepinfo = "Verify resource is absent using puppet (#{context}"
   step "TestStep :: #{stepinfo})" do
     on(agent, resource_vrf1) do
@@ -270,6 +274,7 @@ test_name "TestCase :: #{testheader}" do
     end
     logger.info("#{stepinfo} :: #{result}")
   end
+=end
 end
 
 logger.info("TestCase :: #{testheader} :: End")

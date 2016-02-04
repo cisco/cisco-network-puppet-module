@@ -70,6 +70,7 @@ class ciscopuppet::demo_bgp {
     bestpath_med_confed                    => true,
     bestpath_med_missing_as_worst          => true,
     bestpath_med_non_deterministic         => $bestpath_med_non_deterministic,
+    nsr                                    => false,
     timer_bestpath_limit                   => $timer_bestpath_limit,
     timer_bestpath_limit_always            => $timer_bestpath_limit_always,
 

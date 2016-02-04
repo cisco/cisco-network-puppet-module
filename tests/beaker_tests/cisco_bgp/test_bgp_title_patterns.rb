@@ -79,11 +79,7 @@ platform = fact_on(agent, 'os.name')
 expected_default_values = {
   'ensure'                                 => 'present',
   'fast_external_fallover'                 => 'true',
-  'flush_routes'                           => 'false',
-  'isolate'                                => 'false',
-  'disable_policy_batching'                => 'false',
   'enforce_first_as'                       => 'true',
-  'log_neighbor_changes'                   => 'false',
   'bestpath_always_compare_med'            => 'false',
   'bestpath_aspath_multipath_relax'        => 'false',
   'bestpath_compare_routerid'              => 'false',
@@ -98,18 +94,24 @@ expected_default_values = {
 }
 if platform != 'ios_xr'
   expected_default_values['bestpath_med_non_deterministic'] = 'false'
+  expected_default_values['disable_policy_batching']        = 'false'
   expected_default_values['event_history_cli']              = 'size_small'
   expected_default_values['event_history_detail']           = 'false'
   expected_default_values['event_history_events']           = 'size_small'
   expected_default_values['event_history_periodic']         = 'size_small'
+  expected_default_values['flush_routes']                   = 'false'
   expected_default_values['graceful_restart']               = 'true'
   expected_default_values['graceful_restart_helper']        = 'false'
+  expected_default_values['isolate']                        = 'false'
+  expected_default_values['log_neighbor_changes']           = 'false'
   expected_default_values['maxas_limit']                    = 'false'
   expected_default_values['neighbor_down_fib_accelerate']   = 'false'
   expected_default_values['shutdown']                       = 'false'
   expected_default_values['suppress_fib_pending']           = 'false'
   expected_default_values['timer_bestpath_limit']           = '300'
   expected_default_values['timer_bestpath_limit_always']    = 'false'
+else
+  expected_default_values['nsr']                            = 'false'
 end
 
 # Used to clarify true/false values for UtilityLib args.
@@ -176,6 +178,7 @@ test_name "TestCase :: #{testheader}" do
     end
   end
 
+
   # Validate manifests that create a cisco_bgp resource with the following
   # attributes using various title patterns.
   #
@@ -211,6 +214,7 @@ test_name "TestCase :: #{testheader}" do
       expected_default_values.delete('graceful_restart')
       expected_default_values.delete('graceful_restart_timers_restart')
       expected_default_values.delete('graceful_restart_timers_stalepath_time')
+      expected_default_values.delete('nsr')
     end
 
     stepinfo = "Apply title patterns manifest: #{mp}"
@@ -252,6 +256,9 @@ test_name "TestCase :: #{testheader}" do
   # asn => #{BgpLib::ASN_ASDOT}
   # vrf => #{BgpLib::VRF1}
   # (all_other_attributes => default values)
+
+  cleanup_bgp(master, agent)
+  logger.info("cleanup bgp")
 
   method_present_list = %w(
     create_bgp_manifest_title_pattern9
