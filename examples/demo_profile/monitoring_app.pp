@@ -14,5 +14,5 @@
 
 class ciscopuppet::demo_profile::monitoring_app {
   $tsd_ip_address='10.1.1.2'
-  include ciscopuppet::demo_tcollector
+  include ciscopuppet::cisco::demo_tcollector
 }
