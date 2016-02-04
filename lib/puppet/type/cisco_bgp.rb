@@ -81,7 +81,7 @@ Puppet::Type.newtype(:cisco_bgp) do
       graceful_restart_timers_stalepath_time => 310,
       graceful_restart_helper                => true,
 
-      # Nonstop Routing (NSR) 
+      # Nonstop Routing (NSR)
       nsr                                    => false,
 
       # Timer Properties
@@ -488,10 +488,10 @@ Puppet::Type.newtype(:cisco_bgp) do
   end # property bestpath_med_non_deterministic
 
   newproperty(:nsr) do
-    desc "Enable/Disable nsr"
+    desc 'Enable/Disable nsr'
 
     newvalues(:true, :false, :default)
-  end # property Nonstop routing 
+  end # property Nonstop routing
 
   newproperty(:timer_bestpath_limit) do
     desc "Specify timeout for the first best path after a restart, in seconds.

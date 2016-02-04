@@ -236,7 +236,6 @@ test_name "TestCase :: #{testheader}" do
     logger.info("#{stepinfo} :: #{result}")
   end
 
-=begin
   stepinfo = "Verify resource is absent using puppet (#{context}"
   step "TestStep :: #{stepinfo})" do
     on(agent, resource_vrf1) do
@@ -274,7 +273,6 @@ test_name "TestCase :: #{testheader}" do
     end
     logger.info("#{stepinfo} :: #{result}")
   end
-=end
 end
 
 logger.info("TestCase :: #{testheader} :: End")

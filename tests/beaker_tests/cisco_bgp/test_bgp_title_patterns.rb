@@ -178,7 +178,6 @@ test_name "TestCase :: #{testheader}" do
     end
   end
 
-
   # Validate manifests that create a cisco_bgp resource with the following
   # attributes using various title patterns.
   #
@@ -256,9 +255,6 @@ test_name "TestCase :: #{testheader}" do
   # asn => #{BgpLib::ASN_ASDOT}
   # vrf => #{BgpLib::VRF1}
   # (all_other_attributes => default values)
-
-  cleanup_bgp(master, agent)
-  logger.info("cleanup bgp")
 
   method_present_list = %w(
     create_bgp_manifest_title_pattern9
