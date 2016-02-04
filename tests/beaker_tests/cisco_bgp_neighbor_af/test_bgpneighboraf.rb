@@ -70,8 +70,8 @@ testheader = 'Resource cisco_bgp_neighbor_af'
 # tests[:agent] - the agent object
 #
 tests = {
-  :master   => master,
-  :agent    => agent,
+  :master => master,
+  :agent  => agent,
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -107,20 +107,19 @@ def remove_property(test, prop_symbol)
   test[:resource_props].delete(prop_symbol.to_s)
 end
 
-def remove_unsupported_properties(test, platform, vrf)
-  if platform == 'ios_xr'
-    remove_property(test, :additional_paths_receive)
-    remove_property(test, :additional_paths_send)
-    remove_property(test, :advertise_map_exist)
-    remove_property(test, :advertise_map_non_exist)
-    remove_property(test, :disable_peer_as_check)
-    remove_property(test, :filter_list_in)
-    remove_property(test, :filter_list_out)
-    remove_property(test, :next_hop_third_party)
-    remove_property(test, :prefix_list_in)
-    remove_property(test, :prefix_list_out)
-    remove_property(test, :suppress_inactive)
-  end
+def remove_unsupported_properties(test, platform)
+  return if platform == 'nexus'
+  remove_property(test, :additional_paths_receive)
+  remove_property(test, :additional_paths_send)
+  remove_property(test, :advertise_map_exist)
+  remove_property(test, :advertise_map_non_exist)
+  remove_property(test, :disable_peer_as_check)
+  remove_property(test, :filter_list_in)
+  remove_property(test, :filter_list_out)
+  remove_property(test, :next_hop_third_party)
+  remove_property(test, :prefix_list_in)
+  remove_property(test, :prefix_list_out)
+  remove_property(test, :suppress_inactive)
 end
 
 tests['default_properties'] = {
@@ -166,14 +165,14 @@ tests['default_properties_l2vpn'] = {
   :desc           => '4.1 Default Properties',
   :title_pattern  => "#{BgpLib::ASN} default 1.1.1.1 l2vpn evpn",
   :manifest_props => {
-    :allowas_in                  => 'default',
-    :allowas_in_max              => 'default',
-    :disable_peer_as_check       => 'default',
-    :max_prefix_limit            => 'default',
-    :max_prefix_threshold        => 'default',
-    :max_prefix_interval         => 'default',
-    :route_reflector_client      => 'default',
-    :send_community              => 'default',
+    :allowas_in             => 'default',
+    :allowas_in_max         => 'default',
+    :disable_peer_as_check  => 'default',
+    :max_prefix_limit       => 'default',
+    :max_prefix_threshold   => 'default',
+    :max_prefix_interval    => 'default',
+    :route_reflector_client => 'default',
+    :send_community         => 'default',
   },
 
   # default_properties
@@ -325,7 +324,7 @@ tests['non_default_properties_S1_l2vpn'] = {
   :desc           => "5.6.1 Non Default Properties: 'S1' commands",
   :title_pattern  => "#{BgpLib::ASN} default 1.1.1.1 l2vpn evpn",
   :manifest_props => {
-    :send_community    => 'extended',
+    :send_community => 'extended'
   },
   :resource_props => {
     'ensure'         => 'present',
@@ -337,7 +336,7 @@ tests['non_default_properties_S2'] = {
   :desc           => "2.6.2 Non Default Properties: 'S2' commands",
   :title_pattern  => "#{BgpLib::ASN} blue 1.1.1.1 ipv4 unicast",
   :manifest_props => {
-    :soft_reconfiguration_in => 'always',
+    :soft_reconfiguration_in => 'always'
   },
   :resource_props => {
     'ensure'                  => 'present',
@@ -349,7 +348,7 @@ tests['non_default_properties_S2_l2vpn'] = {
   :desc           => "5.6.2 Non Default Properties: 'S2' commands",
   :title_pattern  => "#{BgpLib::ASN} default 1.1.1.1 l2vpn evpn",
   :manifest_props => {
-    :soft_reconfiguration_in => 'always',
+    :soft_reconfiguration_in => 'always'
   },
   :resource_props => {
     'ensure'                  => 'present',
@@ -361,7 +360,7 @@ tests['non_default_properties_S3'] = {
   :desc           => "2.6.3 Non Default Properties: 'S3' commands",
   :title_pattern  => "#{BgpLib::ASN} blue 1.1.1.1 ipv4 unicast",
   :manifest_props => {
-    :soft_reconfiguration_in => 'enable',
+    :soft_reconfiguration_in => 'enable'
   },
   :resource_props => {
     'ensure'                  => 'present',
@@ -373,7 +372,7 @@ tests['non_default_properties_S3_l2vpn'] = {
   :desc           => "5.6.3 Non Default Properties: 'S3' commands",
   :title_pattern  => "#{BgpLib::ASN} default 1.1.1.1 l2vpn evpn",
   :manifest_props => {
-    :soft_reconfiguration_in => 'enable',
+    :soft_reconfiguration_in => 'enable'
   },
   :resource_props => {
     'ensure'                  => 'present',
@@ -385,7 +384,7 @@ tests['non_default_properties_W'] = {
   :desc           => "2.7 Non Default Properties: 'W' commands",
   :title_pattern  => "#{BgpLib::ASN} blue 1.1.1.1 ipv4 unicast",
   :manifest_props => {
-    :weight => 30,
+    :weight => 30
   },
   :resource_props => {
     'ensure' => 'present',
@@ -398,7 +397,7 @@ tests['non_default_properties_ebgp_only'] = {
   :title_pattern  => "#{BgpLib::ASN} yellow 3.3.3.3 ipv4 unicast",
   :remote_as      => 3,
   :manifest_props => {
-    :as_override => true,
+    :as_override => true
   },
   :resource_props => {
     'as_override' => 'true'
@@ -410,7 +409,7 @@ tests['non_default_properties_ibgp_only'] = {
   :title_pattern  => "#{BgpLib::ASN} green 2.2.2.2 ipv4 unicast",
   :remote_as      => "#{BgpLib::ASN}",
   :manifest_props => {
-    :route_reflector_client => true,
+    :route_reflector_client => true
   },
   :resource_props => {
     'route_reflector_client' => 'true'
@@ -422,7 +421,7 @@ tests['non_default_properties_ibgp_only_l2vpn'] = {
   :title_pattern  => "#{BgpLib::ASN} default 2.2.2.2 l2vpn evpn",
   :remote_as      => "#{BgpLib::ASN}",
   :manifest_props => {
-    :route_reflector_client => true,
+    :route_reflector_client => true
   },
   :resource_props => {
     'route_reflector_client' => 'true'
@@ -433,7 +432,7 @@ tests['non_default_properties_vrf_only'] = {
   :desc           => "2.11 Non Default Properties: 'vrf only' commands",
   :title_pattern  => "#{BgpLib::ASN} purple 4.4.4.4 ipv4 unicast",
   :manifest_props => {
-    :soo => '3:3',
+    :soo => '3:3'
   },
   :resource_props => {
     'soo' => '3:3'
@@ -444,7 +443,7 @@ tests['non_default_misc_maps_part_1'] = {
   :desc           => '2.12.1 Non Default Misc Map commands Part 1',
   :title_pattern  => "#{BgpLib::ASN} default 1.1.1.1 ipv4 unicast",
   :manifest_props => {
-    :advertise_map_exist => ['admap', 'exist_map'],
+    :advertise_map_exist => %w('admap' 'exist_map'),
     :filter_list_in      => 'flin',
     :filter_list_out     => 'flout',
     :prefix_list_in      => 'pfx_in',
@@ -467,12 +466,12 @@ tests['non_default_misc_maps_part_1_l2vpn'] = {
   :desc           => '5.12.1 Non Default Misc Map commands Part 1',
   :title_pattern  => "#{BgpLib::ASN} default 1.1.1.1 l2vpn evpn",
   :manifest_props => {
-    :filter_list_in      => 'flin',
-    :filter_list_out     => 'flout',
-    :prefix_list_in      => 'pfx_in',
-    :prefix_list_out     => 'pfx_out',
-    :route_map_in        => 'rm_in',
-    :route_map_out       => 'rm_out',
+    :filter_list_in  => 'flin',
+    :filter_list_out => 'flout',
+    :prefix_list_in  => 'pfx_in',
+    :prefix_list_out => 'pfx_out',
+    :route_map_in    => 'rm_in',
+    :route_map_out   => 'rm_out',
   },
   :resource_props => {
     'filter_list_in'  => 'flin',
@@ -488,7 +487,7 @@ tests['non_default_misc_maps_part_2'] = {
   :desc           => '2.12.2 Non Default Misc Map commands Part 2',
   :title_pattern  => "#{BgpLib::ASN} default 2.2.2.2 ipv4 unicast",
   :manifest_props => {
-    :advertise_map_non_exist => ['admap', 'non_exist_map'],
+    :advertise_map_non_exist => %w('admap' 'non_exist_map')
   },
   :resource_props => {
     'advertise_map_non_exist' => '..admap., .non_exist_map..'
@@ -519,7 +518,7 @@ def get_dependency_manifest(platform, af, remote)
     #   2. a global address family
     #   3. route_distinguisher configured on the vrf
     #   4. remote-as is required for neightbor
-    remote = 2 if remote == nil
+    remote = 2 if remote.nil?
     if af[:vrf] == 'default'
       extra_config = "
       cisco_bgp { '#{af[:asn]} #{af[:vrf]}':
@@ -557,7 +556,7 @@ def get_dependency_manifest(platform, af, remote)
             end-policy'
       }"
   else
-    if remote != nil
+    if remote
       extra_config = "
       cisco_bgp { '#{af[:asn]} #{af[:vrf]}':
         ensure                                 => present,
@@ -573,7 +572,7 @@ end
 
 # Create actual manifest for a given test scenario.
 def build_manifest_bgp_nbr_af(tests, id, af, platform)
-  remove_unsupported_properties(tests[id], platform, af[:vrf])
+  remove_unsupported_properties(tests[id], platform)
   manifest_props = tests[id][:manifest_props]
   manifest = prop_hash_to_manifest(manifest_props)
 
@@ -611,7 +610,7 @@ def test_harness_bgp_nbr_af(tests, id, platform)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:resource_cmd] = puppet_resource_cmd(af)
 
-  if platform == 'ios_xr' and af[:vrf] != 'default'
+  if platform == 'ios_xr' && af[:vrf] != 'default'
     logger.info("\n--------\nSkip Case Address-Family ID: #{af} for ios_xr")
   else
     # Build the manifest for this test
