@@ -33,7 +33,7 @@ Puppet::Type.type(:cisco_vlan).provide(:nxapi) do
 
   mk_resource_methods
 
-  VLAN_NON_BOOL_PROPS = [:vlan_name, :state]
+  VLAN_NON_BOOL_PROPS = [:mode, :vlan_name, :state]
   VLAN_BOOL_PROPS = [:shutdown]
   VLAN_ALL_PROPS = VLAN_NON_BOOL_PROPS + VLAN_BOOL_PROPS
 
