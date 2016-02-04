@@ -145,13 +145,14 @@ end
 # attributes: hash of property names and values
 # return: a manifest friendly string of property names / values
 def prop_hash_to_manifest(attributes)
+  return '' if attributes.nil?
   manifest_str = ''
   attributes.each do |k, v|
     next if v.nil?
     if v.is_a?(String)
-      manifest_str += sprintf("    %-30s => '#{v.strip}',\n", k)
+      manifest_str += sprintf("    %-40s => '#{v.strip}',\n", k)
     else
-      manifest_str += sprintf("    %-30s => #{v},\n", k)
+      manifest_str += sprintf("    %-40s => #{v},\n", k)
     end
   end
   manifest_str
@@ -284,7 +285,7 @@ end
 # @param agent [String] the agent that is going to run the test
 # @param res_name [String] the resource name that will be cleaned up
 def resource_absent_cleanup(agent, res_name, stepinfo='absent clean')
-  step "TestStep :: #{stepinfo}" do
+  step "\n--------\n * TestStep :: #{stepinfo}" do
     # set each resource to ensure=absent
     get_current_resource_instances(agent, res_name).each do |title|
       case res_name
@@ -455,87 +456,159 @@ def bgp_nbr_remote_as(agent, remote_as)
   on(agent, get_vshell_cmd(cfg_str))
 end
 
-# If a [:title] exists merge it with the [:af] values to create a complete af.
-def af_title_pattern_munge(tests, id, provider=nil)
+# puppet_resource_title_pattern_munge
+# Some providers support complex title patterns, in which case parameters
+# ('newparameter' methods from the type file) can obtain their values from
+# either explicit assignments or from the title pattern itself; e.g.
+#
+#  (params from title)                        (non-title params)
+# cisco_bgp { '55 red':    -equivalent to-   cisco_bgp { '55':
+#                                              vrf => 'red'
+#
+# The 'puppet resource' tests need the "title params" syntax, so this helper
+# is used to create an appropriate title by merging a partial title from
+# [:title_pattern] with the [:title_params] values.
+#
+def puppet_resource_title_pattern_munge(tests, id)
   title = tests[id][:title_pattern]
-  af = tests[id][:af]
+  params = tests[id][:title_params]
+  return params if title.nil?
 
-  if title.nil?
-    puts 'no title'
-    return af
-  end
-
-  tests[id][:af] = {} if af.nil?
+  tests[id][:title_params] = {} if params.nil?
   t = {}
-
-  case provider
-  when 'bgp_af'
+  case tests[:resource_name]
+  when 'cisco_bgp'
+    t[:asn], t[:vrf] = title.split
+  when 'cisco_bgp_af'
     t[:asn], t[:vrf], t[:afi], t[:safi] = title.split
-  when 'bgp_neighbor_af'
+  when 'cisco_bgp_neighbor'
+    t[:asn], t[:vrf], t[:neighbor] = title.split
+  when 'cisco_bgp_neighbor_af'
     t[:asn], t[:vrf], t[:neighbor], t[:afi], t[:safi] = title.split
-  when 'vrf_af'
+  when 'cisco_pim'
+    t[:afi], t[:vrf] = title.split
+  when 'cisco_pim_grouplist'
+    t[:afi], t[:vrf], t[:rp_addr], t[:group] = title.split
+  when 'cisco_pim_rp_address'
+    t[:afi], t[:vrf], t[:rp_addr] = title.split
+  when 'cisco_vrf_af'
     t[:vrf], t[:afi], t[:safi] = title.split
   end
-  t.merge!(tests[id][:af])
+  t.merge!(tests[id][:title_params])
   t[:vrf] = 'default' if t[:vrf].nil?
   t
 end
 
-# If a [:title] exists merge it with the [:pim] values to create a complete pim.
-def pim_title_pattern_munge(tests, id)
-  title = tests[id][:title_pattern]
-  pim = tests[id][:pim]
+# Helper method to create a puppet resource command string for providers
+# that use complex title patterns (bgp, vrf_af, etc).
+# [:title_pattern] (required) This string will become the entire cmd string
+#                  if there are no :title_params
+# [:title_params] (optional) This hash will be merged with the :title_pattern
+#                  to create the cmd string
+def puppet_resource_cmd_from_params(tests, id)
+  fail 'tests[:resource_name] is not defined' unless tests[:resource_name]
+  params = tests[id][:title_params]
+  stepinfo = 'Create resource command title string:'\
+             "\n  [:resource_name] '#{tests[:resource_name]}'"\
+             "\n  [:title_pattern] '#{tests[id][:title_pattern]}'"
+  stepinfo += "\n  [:title_params]  #{params}" if params
 
-  if title.nil?
-    puts 'no title'
-    return pim
+  step "\n--------\n#{stepinfo}" do
+    # Create puppet resource cmd string. This is used to test
+    # a specific resource instance output using 'puppet resource'
+    if params
+      title_string = puppet_resource_title_pattern_munge(tests, id).values.join(' ')
+    else
+      title_string = tests[id][:title_pattern]
+    end
+
+    cmd = PUPPET_BINPATH + "resource #{tests[:resource_name]} '#{title_string}'"
+
+    logger.info("\ntitle_string: '#{title_string}'")
+    tests[id][:resource_cmd] = get_namespace_cmd(agent, cmd, options)
   end
-
-  tests[id][:pim] = {} if pim.nil?
-  t = {}
-
-  t[:afi], t[:vrf] = title.split
-  t.merge!(tests[id][:pim])
-  t[:vrf] = 'default' if t[:vrf].nil?
-  t
 end
 
-# If a [:title] exists merge it with the [:pim_rp] values to create a complete pim.
-def pim_rp_title_pattern_munge(tests, id)
-  title = tests[id][:title_pattern]
-  pim_rp = tests[id][:pim_rp]
+# Create manifest and resource command strings for a given test scenario.
+# Test hash keys used by this method:
+# [:resource_name] (REQUIRED) This is the resource name to use in the manifest
+#   the for puppet resource command strings
+# [:manifest_props] (REQUIRED) This is a hash of properties to use in building
+#   the manifest; they are also used to populate [:resource] when that key is
+#   not defined.
+# [:resource] (OPTIONAL) This is a hash of properties to use for validating the
+#   output from puppet resource.
+# [:title_pattern] (OPTIONAL) The title pattern to use in the manifest
+# [:title_params] (OPTIONAL) Complex title patterns can be combined with
+#   parameter keys in the manifest. When these are used the puppet resource
+#   command string becomes a combination of the title pattern and these params.
+#
+def create_manifest_and_resource(tests, id)
+  fail 'tests[:resource_name] is not defined' unless tests[:resource_name]
+  tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
 
-  if title.nil?
-    puts 'no title'
-    return pim_rp
+  # Create the cmd string for puppet_resource
+  puppet_resource_cmd_from_params(tests, id)
+
+  # Create any title-params manifest entries. Typically only used
+  # for title-pattern testing
+  manifest = prop_hash_to_manifest(tests[id][:title_params])
+
+  # Setup the ensure state, manifest string, and resource command state
+  if tests[id][:ensure] == :absent
+    state = 'ensure => absent,'
+    tests[id][:resource] = { 'ensure' => 'absent' }
+  else
+    state = 'ensure => present,'
+    # Create the property string for the manifest
+    manifest += prop_hash_to_manifest(tests[id][:manifest_props]) if
+      tests[id][:manifest_props]
+
+    # Automatically create a hash of expected states for puppet resource
+    # -or- use a static hash
+    tests[id][:resource] = tests[id][:manifest_props] unless
+      tests[id][:resource]
   end
 
-  tests[id][:pim_rp] = {} if pim_rp.nil?
-  t = {}
-
-  t[:afi], t[:vrf], t[:rp_addr] = title.split
-  t.merge!(tests[id][:pim_rp])
-  t[:vrf] = 'default' if t[:vrf].nil?
-  t
+  tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+  \nnode default {
+  #{tests[:resource_name]} { '#{tests[id][:title_pattern]}':
+    #{state}\n#{manifest}
+  }\n}\nEOF"
 end
 
-# If a [:title] exists merge it with the [:pim_group] values to create a complete pim.
-def pim_group_title_pattern_munge(tests, id)
-  title = tests[id][:title_pattern]
-  pim_group = tests[id][:pim_group]
+# test_harness_run
+#
+# This method is a front-end for test_harness_common & create_manifest_and_resource,
+# as well as testbed cleanup.
+def test_harness_run(tests, id)
+  return unless platform_supports_test(tests, id)
 
-  if title.nil?
-    puts 'no title'
-    return pim_group
+  tests[id][:ensure] = :present if tests[id][:ensure].nil?
+
+  # Build the manifest for this test
+  create_manifest_and_resource(tests, id)
+
+  resource_absent_cleanup(agent, tests[id][:preclean]) if
+    tests[id][:preclean]
+
+  # Set up remote-as if necessary
+  bgp_nbr_remote_as(agent, tests[id][:remote_as]) if tests[id][:remote_as]
+
+  test_harness_common(tests, id)
+  tests[id][:ensure] = nil
+end
+
+# test_title_patterns
+#
+#
+def test_title_patterns(tests, id, titles)
+  titles.keys.each do |desc|
+    tests[id][:desc] = "#{desc} Title Pattern Test"
+    tests[id][:title_pattern] = titles[desc][:title_pattern]
+    tests[id][:title_params] = titles[desc][:title_params]
+    test_harness_run(tests, id)
   end
-
-  tests[id][:pim_group] = {} if pim_group.nil?
-  t = {}
-
-  t[:afi], t[:vrf], t[:rp_addr], t[:group] = title.split
-  t.merge!(tests[id][:pim_group])
-  t[:vrf] = 'default' if t[:vrf].nil?
-  t
 end
 
 # setup_mt_full_env
@@ -545,12 +618,11 @@ end
 # test interface name to use for testing.
 # tests[:vdc] The default vdc name
 # tests[:intf] A compatible interface to use for MT-full testing.
-# rubocop:disable Metrics/AbcSize
 def setup_mt_full_env(tests, testcase)
   # MT-full tests require a specific linecard. Search for a compatible
   # module and enable it.
 
-  testheader = tests[:testheader] ? tests[:testheader] : 'setup_mt_full_env'
+  testheader = tests[:resource_name]
   mod = 'f3'
   step 'Check for Compatible Line Module' do
     tests[:intf] = mt_full_interface
@@ -610,6 +682,7 @@ end
 
 # Helper to raise skip when prereqs are not met
 def prereq_skip(testheader, testcase, message)
+  testheader = '' if testheader.nil?
   logger.error("** PLATFORM PREREQUISITE NOT MET: #{message}")
   raise_skip_exception(testheader, testcase)
 end
@@ -733,20 +806,20 @@ def platform_supports_test(tests, id)
   # Prefer specific test key over the all tests key
   plat = tests[id][:platform] || tests[:platform]
   return true if plat.nil? || platform.match(plat)
-  logger.error("#{tests[id][:desc]} :: #{id} :: SKIP")
+  logger.error("\n#{tests[id][:desc]} :: #{id} :: SKIP")
   logger.error("Platform type does not match testcase platform regexp: /#{plat}/")
   tests[:skipped] ||= []
   tests[:skipped] << tests[id][:desc]
   false
 end
 
-def skipped_tests_summary(tests, testheader)
+def skipped_tests_summary(tests)
   return unless tests[:skipped]
   logger.info("\n#{'-' * 60}\n  SKIPPED TESTS SUMMARY\n#{'-' * 60}")
   tests[:skipped].each do |desc|
     logger.error(sprintf('%-40s :: SKIP', desc))
   end
-  raise_skip_exception(testheader, self)
+  raise_skip_exception(tests[:resource_name], self)
 end
 
 # Find a test interface on the agent.
@@ -766,7 +839,7 @@ def find_interface(tests, id=nil, skipcheck=true)
 
   if skipcheck && intf.nil?
     msg = 'Unable to find suitable interface module for this test.'
-    prereq_skip(tests[:testheader], self, msg)
+    prereq_skip(tests[:resource_name], self, msg)
   end
   intf
 end

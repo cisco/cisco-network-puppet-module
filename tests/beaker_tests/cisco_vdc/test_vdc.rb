@@ -70,9 +70,9 @@ testheader = 'Resource cisco_vdc properties'
 # tests[:agent] - the agent object
 #
 tests = {
-  master:     master,
-  agent:      agent,
-  testheader: testheader,
+  master:        master,
+  agent:         agent,
+  resource_name: 'cisco_vdc',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -144,6 +144,8 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:manifest_props] = { limit_resource_module_type: 'default' }
   build_manifest_vdc(tests, id)
   test_manifest(tests, id)
+
+  skipped_tests_summary(tests)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

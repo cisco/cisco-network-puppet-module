@@ -206,6 +206,6 @@ test_name "TestCase :: #{testheader}" do
 
   # -------------------------------------------------------------------
   resource_absent_cleanup(agent, 'cisco_vrf', 'VRF CLEAN :: ')
-  skipped_tests_summary(tests, testheader)
+  skipped_tests_summary(tests)
 end
 logger.info("TestCase :: #{testheader} :: End")

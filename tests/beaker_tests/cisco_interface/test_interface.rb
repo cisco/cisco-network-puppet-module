@@ -498,6 +498,6 @@ test_name "TestCase :: #{testheader}" do
 
   # -------------------------------------------------------------------
   interface_cleanup(agent, tests[:ethernet]) if tests[:ethernet]
-  skipped_tests_summary(tests, testheader)
+  skipped_tests_summary(tests)
 end
 logger.info("TestCase :: #{testheader} :: End")

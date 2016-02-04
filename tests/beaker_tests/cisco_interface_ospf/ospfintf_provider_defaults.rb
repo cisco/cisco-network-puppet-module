@@ -64,7 +64,11 @@ testheader = 'OSPFINTF Resource :: All Attributes Defaults'
 
 # Local tests hash and helper method used to dynamically find an available
 # interface for cisco_interface_ospf tests.
-tests = { intf_type: 'ethernet', agent: agent, testheader: testheader }
+tests = {
+  intf_type:     'ethernet',
+  agent:         agent,
+  resource_name: 'cisco_interface_ospf',
+}
 def find_ospf_interface(tests)
   if tests[:ethernet]
     intf = tests[:ethernet]

@@ -87,7 +87,7 @@ testheader = 'Resource cisco_interface_service_vni'
 tests = {
   master:            master,
   agent:             agent,
-  testheader:        testheader,
+  resource_name:     'cisco_interface_service_vni',
   sid:               22,
   encap_prof_global: 'encapsulation profile vni vni_500_5000 ; '\
                      'dot1q 500 vni 5000',
