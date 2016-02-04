@@ -76,8 +76,13 @@ class ciscopuppet::cisco::demo_interface {
     switchport_trunk_native_vlan  => 40,
   }
 
+  $svi_autostate = platform_get() ? {
+    /(n5k|n6k)/  => undef,
+    default      => false
+  }
+
   cisco_interface { 'Vlan22':
-    svi_autostate    => false,
+    svi_autostate    => $svi_autostate,
     svi_management   => true,
     ipv4_arp_timeout => 300,
   }
