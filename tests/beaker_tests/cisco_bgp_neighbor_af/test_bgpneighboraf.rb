@@ -487,7 +487,7 @@ tests['non_default_misc_maps_part_2'] = {
   :desc           => '2.12.2 Non Default Misc Map commands Part 2',
   :title_pattern  => "#{BgpLib::ASN} default 2.2.2.2 ipv4 unicast",
   :manifest_props => {
-    :advertise_map_non_exist => %w('admap' 'non_exist_map')
+    :advertise_map_non_exist => %w(admap non_exist_map)
   },
   :resource_props => {
     'advertise_map_non_exist' => '..admap., .non_exist_map..'
