@@ -15,11 +15,11 @@
 ###############################################################################
 # TestCase Name:
 # -------------
-# test-fabricpath_global.rb
+# test-fabricpath_topology.rb
 #
 # TestCase Prerequisites:
 # -----------------------
-# This is a Puppet fabricpath_global resource testcase for Puppet Agent on
+# This is a Puppet fabricpath_topology resource testcase for Puppet Agent on
 # Nexus devices.
 # The test case assumes the following prerequisites are already satisfied:
 #   - Host configuration file contains agent and master information.
@@ -57,7 +57,7 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 # -----------------------------
 # Common settings and variables
 # -----------------------------
-testheader = 'Resource cisco_fabricpath_global'
+testheader = 'Resource cisco_fabricpath_topology'
 
 # The 'tests' hash is used to define all of the test data values and expected
 # results. It is also used to pass optional flags to the test methods when
@@ -100,99 +100,15 @@ tests = {
 #   be merged with title values and override any duplicates. If omitted,
 #   :title_pattern will be set to 'id'.
 #
-tests['default_properties'] = {
-  title_pattern:  'default',
-  manifest_props: "
-    allocate_delay                 => 'default',
-    graceful_merge                 => 'default',
-    linkup_delay                   => 'default',
-    loadbalance_unicast_layer      => 'default',
-    loadbalance_unicast_has_vlan   => 'default',
-    transition_delay               => 'default',
-  ",
-  resource_props: {
-    'allocate_delay'               => '10',
-    'graceful_merge'               => 'enable',
-    'linkup_delay'                 => '10',
-    'loadbalance_unicast_layer'    => 'mixed',
-    'loadbalance_unicast_has_vlan' => 'true',
-    'transition_delay'             => '10',
-  },
-}
-
-tests['default_properties_exclusive'] = {
-  title_pattern:  'default',
-  platform:       'n7k',
-  manifest_props: "
-    aggregate_multicast_routes     => 'default',
-    linkup_delay_always            => 'default',
-    linkup_delay_enable            => 'default',
-    loadbalance_multicast_rotate   => 'default',
-    loadbalance_multicast_has_vlan => 'default',
-    loadbalance_unicast_rotate     => 'default',
-    mode                           => 'default',
-    ttl_multicast                  => 'default',
-    ttl_unicast                    => 'default',
-  ",
-  resource_props: {
-    'aggregate_multicast_routes'     => 'false',
-    'linkup_delay_always'            => 'false',
-    'linkup_delay_enable'            => 'true',
-    'loadbalance_multicast_rotate'   => '1',
-    'loadbalance_multicast_has_vlan' => 'true',
-    'loadbalance_unicast_rotate'     => '1',
-    'mode'                           => 'normal',
-    'ttl_multicast'                  => '32',
-    'ttl_unicast'                    => '32',
-  },
-}
-
 tests['non_default_properties'] = {
-  title_pattern:  'default',
+  title_pattern:  '10',
   manifest_props: "
-    allocate_delay                 => '30',
-    graceful_merge                 => 'disable',
-    linkup_delay                   => '20',
-    loadbalance_unicast_layer      => 'layer4',
-    loadbalance_unicast_has_vlan   => 'true',
-    switch_id                      => '100',
-    transition_delay               => '25',
+    member_vlans       => '10-20,30-40,100',
+    topo_name          => 'Topo-1',
   ",
   resource_props: {
-    'allocate_delay'               => '30',
-    'graceful_merge'               => 'disable',
-    'linkup_delay'                 => '20',
-    'loadbalance_unicast_layer'    => 'layer4',
-    'loadbalance_unicast_has_vlan' => 'true',
-    'switch_id'                    => '100',
-    'transition_delay'             => '25',
-  },
-}
-
-tests['non_default_properties_exclusive'] = {
-  title_pattern:  'default',
-  platform:       'n7k',
-  manifest_props: "
-    aggregate_multicast_routes     => 'true',
-    linkup_delay_always            => 'false',
-    linkup_delay_enable            => 'false',
-    loadbalance_multicast_rotate   => '3',
-    loadbalance_multicast_has_vlan => 'true',
-    loadbalance_unicast_rotate     => '5',
-    mode                           => 'transit',
-    ttl_multicast                  => '20',
-    ttl_unicast                    => '20',
-  ",
-  resource_props: {
-    'aggregate_multicast_routes'     => 'true',
-    'linkup_delay_always'            => 'false',
-    'linkup_delay_enable'            => 'false',
-    'loadbalance_multicast_rotate'   => '3',
-    'loadbalance_multicast_has_vlan' => 'true',
-    'loadbalance_unicast_rotate'     => '5',
-    'mode'                           => 'transit',
-    'ttl_multicast'                  => '20',
-    'ttl_unicast'                    => '20',
+    'member_vlans'     => '10-20,30-40,100',
+    'topo_name'        => 'Topo-1',
   },
 }
 
@@ -202,11 +118,11 @@ tests['non_default_properties_exclusive'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = PUPPET_BINPATH + 'resource cisco_fabricpath_global'
+  cmd = PUPPET_BINPATH + 'resource cisco_fabricpath_topology'
   get_namespace_cmd(agent, cmd, options)
 end
 
-def build_manifest_fabricpath_global(tests, id)
+def build_manifest_fabricpath_topology(tests, id)
   if tests[id][:ensure] == :absent
     state = 'ensure => absent,'
     tests[id][:resource] = {}
@@ -217,11 +133,11 @@ def build_manifest_fabricpath_global(tests, id)
   end
 
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
-  logger.debug("build_manifest_fabricpath_global :: title_pattern:\n" +
+  logger.debug("build_manifest_fabricpath_topology :: title_pattern:\n" +
                tests[id][:title_pattern])
   tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   node 'default' {
-    cisco_fabricpath_global { '#{tests[id][:title_pattern]}':
+    cisco_fabricpath_topology { '#{tests[id][:title_pattern]}':
       #{state}
       #{manifest}
     }
@@ -229,13 +145,13 @@ def build_manifest_fabricpath_global(tests, id)
 EOF"
 end
 
-def test_harness_fabricpath_global(tests, id)
+def test_harness_fabricpath_topology(tests, id)
   return unless platform_supports_test(tests, id)
 
   tests[id][:resource_cmd] = puppet_resource_cmd
 
   # Build the manifest for this test
-  build_manifest_fabricpath_global(tests, id)
+  build_manifest_fabricpath_topology(tests, id)
 
   # FUTURE
   # test_harness_common(tests, id)
@@ -251,49 +167,20 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
-  resource_absent_cleanup(agent, 'cisco_fabricpath_global',
-                          'Setup for cisco_fabricpath_global provider test')
+  resource_absent_cleanup(agent, 'cisco_fabricpath_topology',
+                          'Setup for cisco_fabricpath_topology provider test')
   device = platform
   logger.info("#### This device is of type: #{device} #####")
-  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-
-  id = 'default_properties'
-  tests[id][:desc] = '1.1 Default Properties'
-  test_harness_fabricpath_global(tests, id)
-
-  tests[id][:desc] = '1.2 Default Properties (absent)'
-  tests[id][:ensure] = :absent
-  test_harness_fabricpath_global(tests, id)
-
-  logger.info("\n#{'-' * 60}\nSection 2. Default Property Testing exclusive")
-
-  id = 'default_properties_exclusive'
-  tests[id][:desc] = '2.1 Default Properties exclusive to Platform'
-  test_harness_fabricpath_global(tests, id)
-
-  tests[id][:desc] = '2.2 Default Properties exclusive to Platform (absent)'
-  tests[id][:ensure] = :absent
-  test_harness_fabricpath_global(tests, id)
-
-  logger.info("\n#{'-' * 60}\nSection 3. Non Default Property Testing")
+  logger.info("\n#{'-' * 60}\nSection 1. Non Default Property Testing")
 
   id = 'non_default_properties'
-  tests[id][:desc] = '3.1 Non Default Properties'
-  test_harness_fabricpath_global(tests, id)
+  tests[id][:desc] = '1.1 Non Default Properties'
+  test_harness_fabricpath_topology(tests, id)
 
-  tests[id][:desc] = '3.2 Non Default Properties (absent)'
+  tests[id][:desc] = '1.2 Non Default Properties (absent)'
   tests[id][:ensure] = :absent
-  test_harness_fabricpath_global(tests, id)
+  test_harness_fabricpath_topology(tests, id)
 
-  logger.info("\n#{'-' * 60}\nSection 4. Non Default Property Testing excl")
-
-  id = 'default_properties_exclusive'
-  tests[id][:desc] = '4.1 Non Default Properties exclusive to Platform'
-  test_harness_fabricpath_global(tests, id)
-
-  tests[id][:desc] = '4.2 Non Default Properties exclusive to Platform (abs)'
-  tests[id][:ensure] = :absent
-  test_harness_fabricpath_global(tests, id)
 end
 
 logger.info('TestCase :: # {testheader} :: End')

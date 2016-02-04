@@ -16,6 +16,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'ipaddr'
+begin
+  require 'puppet_x/cisco/cmnutils'
+rescue LoadError # seen on master, not on agent
+  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..',
+                                     'puppet_x', 'cisco', 'cmnutils.rb'))
+end
+
 Puppet::Type.newtype(:cisco_fabricpath_topology) do
   @doc = %q{Manages a Cisco fabricpath Topology.
 
@@ -79,11 +88,21 @@ Puppet::Type.newtype(:cisco_fabricpath_topology) do
   newproperty(:member_vlans) do
     desc "ID of the member VLAN(s). Valid values are integer /integer ranges."
 
+    munge do |value|
+      value = PuppetX::Cisco::Utils.range_summarize(value)
+      value
+    end
+
   end # param id
 
   newproperty(:member_vnis) do
     desc 'ID of the member VNI(s). Valid values are integer /integer ranges.
          This property is dependent on Cisco_bridge_domain'
+
+    munge do |value|
+      value = PuppetX::Cisco::Utils.range_summarize(value)
+      value
+    end
 
   end # param id
 
