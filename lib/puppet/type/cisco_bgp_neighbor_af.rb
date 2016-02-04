@@ -211,11 +211,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
         fail("BGP asn #{value} must be specified in ASPLAIN or ASDOT notation")
       end
     end
-
-    munge do |value|
-      value = PuppetX::Cisco::BgpUtils.process_asnum(value.to_s)
-      value
-    end
+    munge(&:to_s)
   end
 
   newparam(:vrf, namevar: true) do
@@ -281,6 +277,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
          "'default'."
     munge do |value|
       value = :default if value == 'default'
+      value = Integer(value) unless value == :default
       value
     end
   end
@@ -354,6 +351,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     desc "max_prefix_interval state. Valid values are an integer or 'default'."
     munge do |value|
       value = :default if value == 'default'
+      value = Integer(value) unless value == :default
       value
     end
   end
@@ -362,6 +360,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     desc "max_prefix_limit state. Valid values are an integer or 'default'."
     munge do |value|
       value = :default if value == 'default'
+      value = Integer(value) unless value == :default
       value
     end
   end
@@ -370,6 +369,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     desc "max_prefix_threshold state. Valid values are an integer or 'default'."
     munge do |value|
       value = :default if value == 'default'
+      value = Integer(value) unless value == :default
       value
     end
   end
@@ -482,6 +482,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     desc "weight state. Valid values are an integer or 'default'."
     munge do |value|
       value = :default if value == 'default'
+      value = Integer(value) unless value == :default
       value
     end
   end

@@ -25,6 +25,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 #### NetDev Resources
 - `network_trunk` provider.
+- `port_channel` provider.
 - `search_domain` provider.
 - `snmp_notification` provider.
 
