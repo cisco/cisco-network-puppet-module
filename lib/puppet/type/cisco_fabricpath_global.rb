@@ -132,7 +132,7 @@ Puppet::Type.newtype(:cisco_fabricpath_global) do
           value.to_i.between?(0, 15)
       end
     end
-    munge { |value| value == 'default' ? :default : value }
+    munge { |value| value == 'default' ? :default : value.to_i }
   end # loadbalance_multicast_rotate
 
   newproperty(:loadbalance_unicast_has_vlan) do
@@ -161,7 +161,7 @@ Puppet::Type.newtype(:cisco_fabricpath_global) do
           value.to_i.between?(0, 15)
       end
     end
-    munge { |value| value == 'default' ? :default : value }
+    munge { |value| value == 'default' ? :default : value.to_i }
   end # loadbalance_unicast_rotate
 
   newproperty(:linkup_delay_always) do
