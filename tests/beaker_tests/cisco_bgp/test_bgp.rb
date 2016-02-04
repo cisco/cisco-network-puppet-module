@@ -14,15 +14,14 @@
 # limitations under the License.
 ###############################################################################
 #
-# See README-beaker-script-ref.md for information regarding:
+# See README-develop-beaker-scripts.md (Section: Test Script Variable Reference)
+# for information regarding:
 #  - test script general prequisites
 #  - command return codes
 #  - A description of the 'tests' hash and its usage
 #
 ###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-
-testheader = 'Resource cisco_bgp'
 
 # Test hash top-level keys
 asn = '1'
@@ -103,8 +102,7 @@ tests[:default] = {
 tests[:default_plat_1] = {
   desc:           '1.2 Default Properties Platform-specific Part 1',
   platform:       'n(3|9)k',
-  title_pattern:  "#{asn} default",
-  code:           [0, 2],
+  title_pattern:  "#{asn} red",
   manifest_props: {
     neighbor_down_fib_accelerate: 'default'
   },
@@ -192,11 +190,19 @@ tests[:title_patterns] = {
   resource:       { 'ensure' => 'present' },
 }
 
-# Title Pattern Test Hash
-titles = {}
-titles['T.1'] = {
-  title_pattern: '2',
+tests[:title_patterns_1] = {
+  desc:          'T.1 Title Pattern',
+  preclean:      'cisco_bgp',
+  title_pattern: 'new_york',
+  title_params:  { asn: '11.4', vrf: 'red' },
+  resource:      { 'ensure' => 'present' },
+}
+
+tests[:title_patterns_2] = {
+  desc:          'T.2 Title Pattern',
+  title_pattern: '11.4',
   title_params:  { vrf: 'blue' },
+  resource:      { 'ensure' => 'present' },
 }
 
 # This helper tests a test case in vrf context. This allows for testing a vrf
@@ -213,7 +219,7 @@ end
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name "TestCase :: #{testheader}" do
+test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
@@ -250,11 +256,12 @@ test_name "TestCase :: #{testheader}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 4. Title Pattern Testing")
-  test_title_patterns(tests, :title_patterns, titles)
+  test_harness_run(tests, :title_patterns_1)
+  test_harness_run(tests, :title_patterns_2)
 
   # -------------------------------------------------------------------
   resource_absent_cleanup(agent, 'cisco_bgp')
   skipped_tests_summary(tests)
 end
 
-logger.info("TestCase :: #{testheader} :: End")
+logger.info("TestCase :: #{tests[:resource_name]} :: End")

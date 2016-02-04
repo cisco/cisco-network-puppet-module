@@ -14,15 +14,14 @@
 # limitations under the License.
 ###############################################################################
 #
-# See README-beaker-script-ref.md for information regarding:
+# See README-develop-beaker-scripts.md (Section: Test Script Variable Reference)
+# for information regarding:
 #  - test script general prequisites
 #  - command return codes
 #  - A description of the 'tests' hash and its usage
 #
 ###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-
-testheader = 'Resource cisco_vrf_af'
 
 # Test hash top-level keys
 tests = {
@@ -77,26 +76,32 @@ tests[:non_def_rt] = {
   },
 }
 
-tests[:title_patterns] = {
-  preclean:       'cisco_bgp',
-  manifest_props: {},
-  resource:       { 'ensure' => 'present' },
+tests[:title_patterns_1] = {
+  desc:          'T.1 Title Pattern',
+  preclean:      'cisco_vrf',
+  title_pattern: 'new_york',
+  title_params:  { vrf: 'red', afi: 'ipv4', safi: 'unicast' },
+  resource:      { 'ensure' => 'present' },
 }
-# Title Pattern Test Hash
-titles = {}
-titles['T.1'] = {
-  title_pattern: 'red',
+
+tests[:title_patterns_2] = {
+  desc:          'T.2 Title Pattern',
+  title_pattern: 'blue',
   title_params:  { afi: 'ipv4', safi: 'unicast' },
+  resource:      { 'ensure' => 'present' },
 }
-titles['T.2'] = {
-  title_pattern: 'blue ipv4',
+
+tests[:title_patterns_3] = {
+  desc:          'T.3 Title Pattern',
+  title_pattern: 'cyan ipv4',
   title_params:  { safi: 'unicast' },
+  resource:      { 'ensure' => 'present' },
 }
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name "TestCase :: #{testheader}" do
+test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   id = :default_rt
@@ -111,10 +116,12 @@ test_name "TestCase :: #{testheader}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
-  test_title_patterns(tests, :title_patterns, titles)
+  test_harness_run(tests, :title_patterns_1)
+  test_harness_run(tests, :title_patterns_2)
+  test_harness_run(tests, :title_patterns_3)
 
   # -----------------------------------
   resource_absent_cleanup(agent, 'cisco_vrf')
   skipped_tests_summary(tests)
 end
-logger.info("TestCase :: #{testheader} :: End")
+logger.info("TestCase :: #{tests[:resource_name]} :: End")

@@ -14,15 +14,14 @@
 # limitations under the License.
 ###############################################################################
 #
-# See README-beaker-script-ref.md for information regarding:
+# See README-develop-beaker-scripts.md (Section: Test Script Variable Reference)
+# for information regarding:
 #  - test script general prequisites
 #  - command return codes
 #  - A description of the 'tests' hash and its usage
 #
 ###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-
-testheader = 'Resource cisco_pim_rp_address'
 
 # Test hash top-level keys
 tests = {
@@ -32,39 +31,45 @@ tests = {
 }
 
 # Test hash test cases
-tests[:title_patterns] = {
-  preclean:       'cisco_pim_rp_address',
-  manifest_props: {},
-  resource:       { 'ensure' => 'present' },
+tests[:title_patterns_1] = {
+  desc:          'T.1 Title Pattern',
+  preclean:      'cisco_pim_rp_address',
+  title_pattern: 'new_york',
+  title_params:  { afi: 'ipv4', vrf: 'red', rp_addr: '1.1.1.1' },
+  resource:      { 'ensure' => 'present' },
 }
 
-titles = {}
-titles['T.1'] = {
-  title_pattern: 'new_york',
-  title_params:  { afi: 'ipv4', vrf: 'blue', rp_addr: '1.1.1.1' },
-}
-titles['T.2'] = {
+tests[:title_patterns_2] = {
+  desc:          'T.2 Title Pattern',
   title_pattern: 'ipv4',
-  title_params:  { vrf: 'cyan', rp_addr: '2.2.2.2' },
+  title_params:  { vrf: 'blue', rp_addr: '1.1.1.1' },
+  resource:      { 'ensure' => 'present' },
 }
-titles['T.3'] = {
-  title_pattern: 'ipv4 green',
-  title_params:  { rp_addr: '3.3.3.3' },
+
+tests[:title_patterns_3] = {
+  desc:          'T.3 Title Pattern',
+  title_pattern: 'ipv4 cyan',
+  title_params:  { rp_addr: '1.1.1.1' },
+  resource:      { 'ensure' => 'present' },
 }
-titles['T.4'] = {
-  title_pattern: 'ipv4 yellow 4.4.4.4'
+
+tests[:title_patterns_4] = {
+  desc:          'T.4 Title Pattern',
+  title_pattern: 'ipv4 magenta 1.1.1.1',
+  resource:      { 'ensure' => 'present' },
 }
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name "TestCase :: #{testheader}" do
+test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Title Pattern Testing")
-  test_title_patterns(tests, :title_patterns, titles)
-
-  # -----------------------------------
+  test_harness_run(tests, :title_patterns_1)
+  test_harness_run(tests, :title_patterns_2)
+  test_harness_run(tests, :title_patterns_3)
+  test_harness_run(tests, :title_patterns_4)
+  # -------------------------------------------------------------------
   resource_absent_cleanup(agent, 'cisco_pim_rp_address')
 end
-
-logger.info("TestCase :: #{testheader} :: End")
+logger.info("TestCase :: #{tests[:resource_name]} :: End")

@@ -14,15 +14,14 @@
 # limitations under the License.
 ###############################################################################
 #
-# See README-beaker-script-ref.md for information regarding:
+# See README-develop-beaker-scripts.md (Section: Test Script Variable Reference)
+# for information regarding:
 #  - test script general prequisites
 #  - command return codes
 #  - A description of the 'tests' hash and its usage
 #
 ###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-
-testheader = 'Resource cisco_bgp_neighbor_af'
 
 # Test hash top-level keys
 tests = {
@@ -205,31 +204,41 @@ tests[:non_def_ibgp_only] = {
   manifest_props: { route_reflector_client: 'true' },
 }
 
-tests[:title_patterns] = {
-  preclean:       'cisco_bgp',
-  manifest_props: {},
-  resource:       { 'ensure' => 'present' },
+tests[:title_patterns_1] = {
+  desc:          'T.1 Title Pattern',
+  preclean:      'cisco_bgp',
+  title_pattern: 'new_york',
+  title_params:  { asn: '11.4', vrf: 'red', neighbor: '1.1.1.1',
+                   afi: 'ipv4', safi: 'unicast' },
+  resource:      { 'ensure' => 'present' },
 }
 
-# Title Pattern Test Hash
-titles = {}
-titles['T.1'] = {
-  title_pattern: '2 blue',
-  title_params:  { neighbor: '1.1.1.1', afi: 'ipv4', safi: 'unicast' },
+tests[:title_patterns_2] = {
+  desc:          'T.2 Title Pattern',
+  title_pattern: '11.4',
+  title_params:  { vrf: 'blue', neighbor: '1.1.1.1',
+                   afi: 'ipv4', safi: 'unicast' },
+  resource:      { 'ensure' => 'present' },
 }
-titles['T.2'] = {
-  title_pattern: '2 cyan 2.2.2.2',
+
+tests[:title_patterns_3] = {
+  desc:          'T.3 Title Pattern',
+  title_pattern: '11.4 cyan 1.1.1.1',
   title_params:  { afi: 'ipv4', safi: 'unicast' },
+  resource:      { 'ensure' => 'present' },
 }
-titles['T.3'] = {
-  title_pattern: '2 green 3.3.3.3 ipv4',
+
+tests[:title_patterns_4] = {
+  desc:          'T.4 Title Pattern',
+  title_pattern: '11.4 magenta 1.1.1.1 ipv4',
   title_params:  { safi: 'unicast' },
+  resource:      { 'ensure' => 'present' },
 }
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name "TestCase :: #{testheader}" do
+test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   test_harness_run(tests, :default)
@@ -272,17 +281,6 @@ test_name "TestCase :: #{testheader}" do
   resource_absent_cleanup(agent, 'cisco_bgp', 'BGP CLEAN :: ')
   title = '2 default 1.1.1.1 l2vpn evpn'
   [
-    # Commented test cases are not supported by l2vpn/evpn
-    # :non_def_A2,
-    # :non_def_A3,
-    # :non_def_D1,
-    # :non_def_N,
-    # :non_def_S4,
-    # :non_def_W,
-    # :non_def_vrf_only,
-    # :non_def_misc_maps_2,
-    # :non_def_misc_maps_3,
-    # :non_def_ebgp_only,
     :non_def_A1,
     :non_def_D2,
     :non_def_M,
@@ -301,11 +299,13 @@ test_name "TestCase :: #{testheader}" do
   end
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
-  test_title_patterns(tests, :title_patterns, titles)
+  test_harness_run(tests, :title_patterns_1)
+  test_harness_run(tests, :title_patterns_2)
+  test_harness_run(tests, :title_patterns_3)
+  test_harness_run(tests, :title_patterns_4)
 
   # -----------------------------------
   resource_absent_cleanup(agent, 'cisco_bgp')
   skipped_tests_summary(tests)
 end
-
-logger.info("TestCase :: #{testheader} :: End")
+logger.info("TestCase :: #{tests[:resource_name]} :: End")

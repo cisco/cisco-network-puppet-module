@@ -14,15 +14,14 @@
 # limitations under the License.
 ###############################################################################
 #
-# See README-beaker-script-ref.md for information regarding:
+# See README-develop-beaker-scripts.md (Section: Test Script Variable Reference)
+# for information regarding:
 #  - test script general prequisites
 #  - command return codes
 #  - A description of the 'tests' hash and its usage
 #
 ###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-
-testheader = 'Resource cisco_pim'
 
 # Test hash top-level keys
 tests = {
@@ -49,36 +48,42 @@ tests[:non_def_S2] = {
   },
 }
 
-tests[:title_patterns] = {
+# Note: The [:manifest_props] key is not normally needed for title_pattern
+# testing but cisco_pim will fail this test without it because cisco_pim can
+# exist as an empty object with no property state; in which case the manifest
+# test will fail because it won't detect any changes. For this reason we
+# include at least one property.
+#
+tests[:title_patterns_1] = {
+  desc:           'T.1 Title Pattern',
   preclean:       'cisco_pim',
+  title_pattern:  'new_york',
+  title_params:   { afi: 'ipv4', vrf: 'red' },
   manifest_props: { ssm_range: '224.0.0.0/8 225.0.0.0/8' },
   resource:       { 'ensure' => 'present' },
 }
 
-titles = {}
-titles['T.1'] = {
-  title_pattern: 'new_york',
-  title_params:  { afi: 'ipv4', vrf: 'blue' },
-}
-titles['T.2'] = {
-  title_pattern: 'ipv4',
-  title_params:  { vrf: 'cyan' },
+tests[:title_patterns_2] = {
+  desc:           'T.2 Title Pattern',
+  title_pattern:  'ipv4',
+  title_params:   { vrf: 'blue' },
+  manifest_props: { ssm_range: '224.0.0.0/8 225.0.0.0/8' },
+  resource:       { 'ensure' => 'present' },
 }
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name "TestCase :: #{testheader}" do
+test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Non Default Property Testing")
   test_harness_run(tests, :non_def_S1)
   test_harness_run(tests, :non_def_S2)
-
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Title Pattern Testing")
-  test_title_patterns(tests, :title_patterns, titles)
-
+  test_harness_run(tests, :title_patterns_1)
+  test_harness_run(tests, :title_patterns_2)
   # -----------------------------------
   resource_absent_cleanup(agent, 'cisco_pim')
 end
-logger.info("TestCase :: #{testheader} :: End")
+logger.info("TestCase :: #{tests[:resource_name]} :: End")

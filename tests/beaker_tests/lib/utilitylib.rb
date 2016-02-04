@@ -577,10 +577,22 @@ def create_manifest_and_resource(tests, id)
   }\n}\nEOF"
 end
 
+# test_harness_dependencies
+#
+# This method is used for additional testbed setup beyond the basics
+# used by most tests.
+def test_harness_dependencies(tests, id)
+  # BGP remote-as configuration
+  bgp_nbr_remote_as(agent, tests[id][:remote_as]) if tests[id][:remote_as]
+end
+
 # test_harness_run
 #
-# This method is a front-end for test_harness_common & create_manifest_and_resource,
-# as well as testbed cleanup.
+# This method is a front-end for test_harness_common.
+# - Creates manifests
+# - Creates puppet resource title strings
+# - Cleans resource
+# - Sets up additional dependencies
 def test_harness_run(tests, id)
   return unless platform_supports_test(tests, id)
 
@@ -592,23 +604,11 @@ def test_harness_run(tests, id)
   resource_absent_cleanup(agent, tests[id][:preclean]) if
     tests[id][:preclean]
 
-  # Set up remote-as if necessary
-  bgp_nbr_remote_as(agent, tests[id][:remote_as]) if tests[id][:remote_as]
+  # Check for additional pre-requisites
+  test_harness_dependencies(tests, id)
 
   test_harness_common(tests, id)
   tests[id][:ensure] = nil
-end
-
-# test_title_patterns
-#
-#
-def test_title_patterns(tests, id, titles)
-  titles.keys.each do |desc|
-    tests[id][:desc] = "#{desc} Title Pattern Test"
-    tests[id][:title_pattern] = titles[desc][:title_pattern]
-    tests[id][:title_params] = titles[desc][:title_params]
-    test_harness_run(tests, id)
-  end
 end
 
 # setup_mt_full_env
