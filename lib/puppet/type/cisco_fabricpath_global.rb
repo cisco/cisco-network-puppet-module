@@ -158,7 +158,7 @@ Puppet::Type.newtype(:cisco_fabricpath_global) do
     validate do |value|
       if value != 'default'
         fail('rotate amount should be a value in the range 0..15') unless
-          value.between?(0, 15)
+          value.to_i.between?(0, 15)
       end
     end
     munge { |value| value == 'default' ? :default : value }

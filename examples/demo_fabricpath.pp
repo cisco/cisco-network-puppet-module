@@ -17,25 +17,25 @@
 class ciscopuppet::demo_fabricpath {
 
   if platform_get() == 'n7k' {
-    $aggregate_multicast_routes     => true,
-    $linkup_delay_always            => false,
-    $linkup_delay_enable            => false,
-    $loadbalance_multicast_rotate   => '3',
-    $loadbalance_multicast_has_vlan => true,
-    $loadbalance_unicast_rotate     => '5',
-    $mode                           => 'transit',
-    $ttl_multicast                  => '20',
-    $ttl_unicast                    => '20',
+    $aggregate_multicast_routes     = true
+    $linkup_delay_always            = false
+    $linkup_delay_enable            = false
+    $loadbalance_multicast_rotate   = '3'
+    $loadbalance_multicast_has_vlan = true
+    $loadbalance_unicast_rotate     = '5'
+    $mode                           = 'transit'
+    $ttl_multicast                  = '20'
+    $ttl_unicast                    = '20'
   } else {
-    $aggregate_multicast_routes     => undef,
-    $linkup_delay_always            => undef,
-    $linkup_delay_enable            => undef,
-    $loadbalance_multicast_rotate   => undef,
-    $loadbalance_multicast_has_vlan => undef,
-    $loadbalance_unicast_rotate     => undef,
-    $mode                           => undef,
-    $ttl_multicast                  => undef,
-    $ttl_unicast                    => undef,
+    $aggregate_multicast_routes     = undef
+    $linkup_delay_always            = undef
+    $linkup_delay_enable            = undef
+    $loadbalance_multicast_rotate   = undef
+    $loadbalance_multicast_has_vlan = undef
+    $loadbalance_unicast_rotate     = undef
+    $mode                           = undef
+    $ttl_multicast                  = undef
+    $ttl_unicast                    = undef
   }
 
 
