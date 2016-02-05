@@ -26,7 +26,7 @@ rescue LoadError # seen on master, not on agent
 end
 
 Puppet::Type.newtype(:cisco_fabricpath_topology) do
-  @doc = %q{Manages a Cisco fabricpath Topology.
+  @doc = "Manages a Cisco fabricpath Topology.
 
   cisco_fabricpath_topology {'<topo_id>':
     ..attributes..
@@ -42,7 +42,7 @@ Puppet::Type.newtype(:cisco_fabricpath_topology) do
       member_vnis  => ['5000-5010', '10000']
     }
 
-  }
+  "
 
   ensurable
 
@@ -53,7 +53,7 @@ Puppet::Type.newtype(:cisco_fabricpath_topology) do
   # Parse out the title to fill in the attributes in these
   # patterns. These attributes can be overwritten later.
   def self.title_patterns
-    identity = lambda { |x| x }
+    identity = ->(x) { x }
     patterns = []
 
     # Below pattern matches both parts of the full composite name.
@@ -61,24 +61,24 @@ Puppet::Type.newtype(:cisco_fabricpath_topology) do
       /^(\d+)$/,
       [
         [:topo_id, identity]
-      ]
+      ],
     ]
-    return patterns
+    patterns
   end
 
-  newparam(:topo_id, :namevar => true) do
+  newparam(:topo_id, namevar: true) do
     desc 'ID of the fabricpath topology. Valid values are integer in the range
           1-63. Value of 0 is reserved for default topology.'
 
-    validate { |id|
+    validate do |id|
       valid_ids = 1..63
 
       if id.to_i == 0
-        warning("Cannot make changes to the default Topology.")
-      elsif !valid_ids.include?(id.to_i) 
-        fail("ID is not in the valid range.")
+        warning('Cannot make changes to the default Topology.')
+      elsif !valid_ids.include?(id.to_i)
+        fail('ID is not in the valid range.')
       end # if
-    }
+    end
   end # param id
 
   ##############
@@ -86,13 +86,12 @@ Puppet::Type.newtype(:cisco_fabricpath_topology) do
   ##############
 
   newproperty(:member_vlans) do
-    desc "ID of the member VLAN(s). Valid values are integer /integer ranges."
+    desc 'ID of the member VLAN(s). Valid values are integer /integer ranges.'
 
     munge do |value|
       value = PuppetX::Cisco::Utils.range_summarize(value)
       value
     end
-
   end # param id
 
   newproperty(:member_vnis) do
@@ -103,14 +102,11 @@ Puppet::Type.newtype(:cisco_fabricpath_topology) do
       value = PuppetX::Cisco::Utils.range_summarize(value)
       value
     end
-
   end # param id
 
-
   newproperty(:topo_name) do
-    desc "Descriptive name of the topology. Valid values are string"
+    desc 'Descriptive name of the topology. Valid values are string'
 
     munge { |value| value == 'default' ? :default : value }
   end # property topo_name
-
 end # Puppet::Type.newtype

@@ -26,44 +26,41 @@ rescue LoadError # seen on master, not on agent
 end
 
 Puppet::Type.type(:cisco_fabricpath_topology).provide(:nxapi) do
-  desc "The new NXAPI provider."
+  desc 'The new NXAPI provider.'
 
-  confine :feature => :cisco_node_utils
-  defaultfor :operatingsystem => :nexus
+  confine feature: :cisco_node_utils
+  defaultfor operatingsystem: :nexus
 
   mk_resource_methods
 
-  TOPO_NON_BOOL_PROPS = [ :member_vlans, :topo_name ]
+  TOPO_NON_BOOL_PROPS = [:member_vlans, :topo_name]
   TOPO_ALL_PROPS = TOPO_NON_BOOL_PROPS
 
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, "@topo",
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@topo',
                                             TOPO_NON_BOOL_PROPS)
 
-  def self.get_properties(topo_id, t)
+  def self.properties_get(topo_id, t)
     debug "Checking instance, topo #{topo_id}"
     current_state = {
-      :topo_id      => topo_id,
-      :name         => topo_id,
-      :member_vlans => [],
-      :ensure       => :present,
+      topo_id:      topo_id,
+      name:         topo_id,
+      member_vlans: [],
+      ensure:       :present,
     }
 
     # Call node_utils getter for each property
-    TOPO_NON_BOOL_PROPS.each { |prop|
+    TOPO_NON_BOOL_PROPS.each do |prop|
       current_state[prop] = t.send(prop)
-      if prop == :member_vlans
-        debug "Got #{prop} array #{current_state[prop]}"
-      end
-    }
+    end
     new(current_state)
-  end # self.get_properties
+  end # self.properties_get
 
   def self.instances
     topos = []
-    Cisco::FabricpathTopo.topos.each { |topo_id, t|
-      topos << get_properties(topo_id, t)
-    }
-    return topos
+    Cisco::FabricpathTopo.topos.each do |topo_id, t|
+      topos << properties_get(topo_id, t)
+    end
+    topos
   end
 
   def self.prefetch(resources)
@@ -79,13 +76,13 @@ Puppet::Type.type(:cisco_fabricpath_topology).provide(:nxapi) do
     super(value)
     @topo = Cisco::FabricpathTopo.topos[@property_hash[:name]]
     @property_flush = {}
-    debug "Created provider instance of cisco_fabricpath_topology."
+    debug 'Created provider instance of cisco_fabricpath_topology.'
     debug "property hash #{@property_hash}"
     debug "resource hash #{@resource}"
   end
 
   def exists?
-    return (@property_hash[:ensure] == :present)
+    (@property_hash[:ensure] == :present)
   end
 
   def create
@@ -98,24 +95,21 @@ Puppet::Type.type(:cisco_fabricpath_topology).provide(:nxapi) do
 
   def instance_name
     debug "returning topo-id #{topo_id} for inst_name"
-    return topo_id
+    topo_id
   end
 
-  def set_properties(new_topo=false)
-    TOPO_ALL_PROPS.each { |prop|
+  def properties_set(new_topo=false)
+    TOPO_ALL_PROPS.each do |prop|
       next if prop == :state # no setter for topo state
-      if @resource[prop]
-        if new_topo
-          self.send("#{prop}=", @resource[prop])
-        end
-        debug "prop set is #{prop}"
-        debug "prop flush is #{@property_flush[prop]}"
-        unless @property_flush[prop].nil?
-          @topo.send("#{prop}=", @property_flush[prop]) if
-            @topo.respond_to?("#{prop}=")
-        end
+      next unless @resource[prop]
+      send("#{prop}=", @resource[prop]) if new_topo
+      debug "prop set is #{prop}"
+      debug "prop flush is #{@property_flush[prop]}"
+      unless @property_flush[prop].nil?
+        @topo.send("#{prop}=", @property_flush[prop]) if
+          @topo.respond_to?("#{prop}=")
       end
-    }
+    end
   end
 
   def flush
@@ -128,7 +122,7 @@ Puppet::Type.type(:cisco_fabricpath_topology).provide(:nxapi) do
         new_topo = true
         @topo = Cisco::FabricpathTopo.new(@resource[:topo_id])
       end
-      set_properties(new_topo)
+      properties_set(new_topo)
     end
     puts_config
   end
@@ -140,11 +134,10 @@ Puppet::Type.type(:cisco_fabricpath_topology).provide(:nxapi) do
     end
 
     # Dump all current properties for this topo
-    current = sprintf("\n%30s: %s", "topo", instance_name)
-    TOPO_ALL_PROPS.each { |prop|
+    current = sprintf("\n%30s: %s", 'topo', instance_name)
+    TOPO_ALL_PROPS.each do |prop|
       current.concat(sprintf("\n%30s: %s", prop, @topo.send(prop)))
-    }
+    end
     debug current
   end # puts_config
-
-end   #Puppet::Type
+end   # Puppet::Type
