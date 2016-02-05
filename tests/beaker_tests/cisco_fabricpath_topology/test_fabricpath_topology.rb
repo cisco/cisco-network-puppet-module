@@ -107,8 +107,8 @@ tests['non_default_properties'] = {
     topo_name          => 'Topo-1',
   ",
   resource_props: {
-    'member_vlans'     => '10-20,30-40,100',
-    'topo_name'        => 'Topo-1',
+    'member_vlans' => '10-20,30-40,100',
+    'topo_name'    => 'Topo-1',
   },
 }
 
@@ -180,7 +180,6 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:desc] = '1.2 Non Default Properties (absent)'
   tests[id][:ensure] = :absent
   test_harness_fabricpath_topology(tests, id)
-
 end
 
 logger.info('TestCase :: # {testheader} :: End')
