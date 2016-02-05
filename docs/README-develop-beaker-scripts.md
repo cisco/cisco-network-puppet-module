@@ -922,7 +922,7 @@ The beaker tests will validate tests using return codes from bash and puppet com
 
 ## <a name="tests">The `tests` hash</a>
 
-The tests hash is a convenient container for common and custom test variables. Common variables that are used by all test cases are defined as top-level keys, while each test case is a top-level key with the test case variables defined as the key-value; for example:
+The `tests` hash is a convenient container for common and custom test variables. Common variables that are used by all test cases are defined as top-level keys, while each test case is a top-level key with the test case variables defined as the key-value; for example:
 
 ```ruby
 # A top-level key for common variables
