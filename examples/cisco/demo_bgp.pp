@@ -223,7 +223,7 @@ class ciscopuppet::cisco::demo_bgp {
 
     #Properties
     description => 'config_for_rr_client',
-    remote_as   => 3604557,
+    remote_as   => '55.77',
     shutdown    => false,
   }
 
