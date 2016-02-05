@@ -1,0 +1,6 @@
+#!/bin/bash
+
+[ -n "$GIT_DIR" ] || export GIT_DIR="$(git rev-parse --show-toplevel 2>/dev/null)/.git"
+. "$GIT_DIR"/hooks/hook_lib
+
+[ -x "$REPO_DIR"/bin/git/update-hooks ] && "$REPO_DIR"/bin/git/update-hooks
