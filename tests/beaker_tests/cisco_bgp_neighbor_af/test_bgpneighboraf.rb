@@ -113,13 +113,16 @@ def remove_unsupported_properties(test, platform)
   remove_property(test, :additional_paths_send)
   remove_property(test, :advertise_map_exist)
   remove_property(test, :advertise_map_non_exist)
+  remove_property(test, :default_originate_route_map)
   remove_property(test, :disable_peer_as_check)
   remove_property(test, :filter_list_in)
   remove_property(test, :filter_list_out)
   remove_property(test, :next_hop_third_party)
   remove_property(test, :prefix_list_in)
   remove_property(test, :prefix_list_out)
+  remove_property(test, :soo)
   remove_property(test, :suppress_inactive)
+  remove_property(test, :unsuppress_map)
 end
 
 tests['default_properties'] = {
@@ -521,10 +524,6 @@ def get_dependency_manifest(platform, af, remote_as)
     remote_as = 2 if remote_as.nil?
     if af[:vrf] == 'default'
       extra_config = "
-      cisco_bgp { '#{af[:asn]} #{af[:vrf]}':
-        ensure                                 => present,
-      }
-
       cisco_bgp_af { '#{af[:asn]} #{af[:vrf]} #{af[:afi]} #{af[:safi]}':
         ensure                                 => present,
       }
@@ -534,17 +533,29 @@ def get_dependency_manifest(platform, af, remote_as)
         remote_as                              => #{remote_as},
       }"
     else
+      if af[:afi] == 'ipv6'
+        global_afi = 'vpnv6'
+      else
+        global_afi = 'vpnv4'
+      end
       extra_config = "
       cisco_bgp { '#{af[:asn]}':
         ensure                                 => present,
         router_id                              => '1.2.3.4',
       }
-      cisco_bgp_af { '#{af[:asn]} #{af[:vrf]} #{af[:afi]} #{af[:safi]}':
+      cisco_bgp_af { '#{af[:asn]} default #{global_afi} #{af[:safi]}':
         ensure                                 => present,
       }
       cisco_bgp { '#{af[:asn]} #{af[:vrf]}':
         ensure                                 => present,
         route_distinguisher                    => auto,
+      }
+      cisco_bgp_af { '#{af[:asn]} #{af[:vrf]} #{af[:afi]} #{af[:safi]}':
+        ensure                                 => present,
+      }
+      cisco_bgp_neighbor { '#{af[:asn]} #{af[:vrf]} #{af[:neighbor]}':
+        ensure                                 => present,
+        remote_as                              => #{remote_as},
       }"
     end
     extra_config += "
@@ -558,9 +569,6 @@ def get_dependency_manifest(platform, af, remote_as)
   else
     if remote_as
       extra_config = "
-      cisco_bgp { '#{af[:asn]} #{af[:vrf]}':
-        ensure                                 => present,
-      }
       cisco_bgp_neighbor { '#{af[:asn]} #{af[:vrf]} #{af[:neighbor]}':
         ensure                                 => present,
         remote_as                              => #{remote_as},
@@ -574,6 +582,10 @@ end
 def build_manifest_bgp_nbr_af(tests, id, af, platform)
   remove_unsupported_properties(tests[id], platform)
   manifest_props = tests[id][:manifest_props]
+
+  # optionally merge properties from :af
+  manifest_props.merge!(tests[id][:af]) unless tests[id][:af].nil?
+
   manifest = prop_hash_to_manifest(manifest_props)
 
   extra_config = ''
@@ -593,7 +605,7 @@ def build_manifest_bgp_nbr_af(tests, id, af, platform)
   node 'default' {
     #{extra_config}
 
-    cisco_bgp_neighbor_af { '#{af[:asn]} #{af[:vrf]} #{af[:neighbor]} #{af[:afi]} #{af[:safi]}':
+    cisco_bgp_neighbor_af { '#{tests[id][:title_pattern]}':
       #{state}
       #{manifest}
     }
@@ -610,15 +622,11 @@ def test_harness_bgp_nbr_af(tests, id, platform)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:resource_cmd] = puppet_resource_cmd(af)
 
-  if platform == 'ios_xr' && af[:vrf] != 'default'
-    logger.info("\n--------\nSkip Case Address-Family ID: #{af} for ios_xr")
-  else
-    # Build the manifest for this test
-    build_manifest_bgp_nbr_af(tests, id, af, platform)
+  # Build the manifest for this test
+  build_manifest_bgp_nbr_af(tests, id, af, platform)
 
-    test_harness_common(tests, id)
-    tests[id][:ensure] = nil
-  end
+  test_harness_common(tests, id)
+  tests[id][:ensure] = nil
 end
 
 #################################################################
@@ -636,14 +644,16 @@ test_name "TestCase :: #{testheader}" do
 
   tests[id][:ensure] = :absent
   test_harness_bgp_nbr_af(tests, id, platform)
-  cleanup_bgp(master, agent)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   init_bgp(master, agent)
   test_harness_bgp_nbr_af(tests, 'non_default_properties_A1', platform)
+  cleanup_bgp(master, agent)
   test_harness_bgp_nbr_af(tests, 'non_default_properties_A2', platform)
+  cleanup_bgp(master, agent)
   test_harness_bgp_nbr_af(tests, 'non_default_properties_A3', platform)
+  cleanup_bgp(master, agent)
   test_harness_bgp_nbr_af(tests, 'non_default_properties_D', platform)
   test_harness_bgp_nbr_af(tests, 'non_default_properties_M', platform)
   test_harness_bgp_nbr_af(tests, 'non_default_properties_N', platform)
@@ -658,7 +668,6 @@ test_name "TestCase :: #{testheader}" do
   test_harness_bgp_nbr_af(tests, 'non_default_properties_vrf_only', platform)
   test_harness_bgp_nbr_af(tests, 'non_default_misc_maps_part_1', platform)
   test_harness_bgp_nbr_af(tests, 'non_default_misc_maps_part_2', platform)
-  cleanup_bgp(master, agent)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
@@ -684,6 +693,7 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:desc] = '3.3 Title Patterns'
   tests[id][:title_pattern] = "#{BgpLib::ASN} green 3.3.3.3"
   tests[id][:af] = { :afi => 'ipv4', :safi => 'unicast' }
+  tests[id][:manifest_props] = {}
   test_harness_bgp_nbr_af(tests, id, platform)
 
   # -----------------------------------
@@ -699,7 +709,6 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:manifest_props] = {}
   tests[id].delete(:af)
   test_harness_bgp_nbr_af(tests, id, platform)
-  cleanup_bgp(master, agent)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 4. L2VPN Default Property Testing")
@@ -711,7 +720,6 @@ test_name "TestCase :: #{testheader}" do
 
   tests[id][:ensure] = :absent
   test_harness_bgp_nbr_af(tests, id, platform)
-  cleanup_bgp(master, agent)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 5. L2VPN  Non Default Property Testing")
@@ -725,7 +733,6 @@ test_name "TestCase :: #{testheader}" do
   # Special Cases
   test_harness_bgp_nbr_af(tests, 'non_default_properties_ibgp_only_l2vpn', platform)
   test_harness_bgp_nbr_af(tests, 'non_default_misc_maps_part_1_l2vpn', platform)
-  cleanup_bgp(master, agent)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 6. L2VPN Title Pattern Testing")
