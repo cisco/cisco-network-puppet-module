@@ -17,7 +17,7 @@
 class ciscopuppet::demo_fabricpath {
 
   if platform_get() =~ /n(3|9)k/ {
-    warning("This platform does not support fabricpath feature")
+    warning('This platform does not support fabricpath feature')
   } else {
     if platform_get() == 'n7k' {
       $aggregate_multicast_routes     = true
@@ -47,7 +47,7 @@ class ciscopuppet::demo_fabricpath {
       graceful_merge                 => 'enable',
       linkup_delay                   => '20',
       loadbalance_unicast_layer      => 'layer4',
-      loadbalance_unicast_has_vlan   => 'true',
+      loadbalance_unicast_has_vlan   => true,
       switch_id                      => '100',
       transition_delay               => '25',
       aggregate_multicast_routes     => $aggregate_multicast_routes,
@@ -62,21 +62,21 @@ class ciscopuppet::demo_fabricpath {
     }
   
     cisco_vlan { '10':
-      ensure                         => present,
-      mode                           => 'fabricpath',
-      shutdown                       => false,
+      ensure   => present,
+      mode     => 'fabricpath',
+      shutdown => false,
     }
   
     cisco_fabricpath_topology { '10':
-      ensure                         => present,
-      topo_name                      => 'Topo-10',
-      member_vlans                   => '10-20, 13, 25, 26-30'
+      ensure       => present,
+      topo_name    => 'Topo-10',
+      member_vlans => '10-20, 25, 27-30'
     }
   
     cisco_interface { 'Ethernet1/1':
-      ensure                         => present,
-      switchport_mode                => 'fabricpath',
-      shutdown                       => false,
+      ensure          => present,
+      switchport_mode => 'fabricpath',
+      shutdown        => false,
     }
-  } 
+  }
 }
