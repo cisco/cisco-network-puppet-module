@@ -84,12 +84,6 @@ tests[:default] = {
   },
 }
 
-# L2VPN / EVPN
-if platform[/n(5|7|9)k/]
-  tests[:default][:manifest_props][:advertise_l2vpn_evpn] = 'default'
-  tests[:default][:resource]['advertise_l2vpn_evpn'] = 'false'
-end
-
 # Special case: When dampening_routemap is set to default
 # it means that dampening is enabled without routemap.
 tests[:default_dampening_routemap] = {
@@ -119,7 +113,6 @@ tests[:non_def_A] = {
     additional_paths_receive:   'true',
     additional_paths_selection: 'RouteMap',
     additional_paths_send:      'true',
-    advertise_l2vpn_evpn:       'true',
   },
 }
 
@@ -238,6 +231,14 @@ tests[:non_def_T] = {
     table_map_filter: 'true',
   },
 }
+
+# L2VPN / EVPN
+if platform[/n(5|7|9)k/]
+  tests[:default][:manifest_props][:advertise_l2vpn_evpn] = 'default'
+  tests[:default][:resource]['advertise_l2vpn_evpn'] = 'false'
+
+  tests[:non_def_A][:manifest_props][:advertise_l2vpn_evpn] = 'true'
+end
 
 tests[:title_patterns_1] = {
   desc:          'T.1 Title Pattern',
