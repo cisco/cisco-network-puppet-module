@@ -108,6 +108,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, id)
 
   tests[id][:ensure] = :absent
+  tests[id].delete(:preclean)
   test_harness_run(tests, id)
 
   # -------------------------------------------------------------------
