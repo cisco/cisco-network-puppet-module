@@ -510,7 +510,7 @@ def puppet_resource_cmd(af)
   get_namespace_cmd(agent, cmd, options)
 end
 
-def get_dependency_manifest(platform, af, remote)
+def get_dependency_manifest(platform, af, remote_as)
   extra_config = ''
   if platform == 'ios_xr'
     # XR requires the following before a vrf AF can be configured:
@@ -518,7 +518,7 @@ def get_dependency_manifest(platform, af, remote)
     #   2. a global address family
     #   3. route_distinguisher configured on the vrf
     #   4. remote-as is required for neightbor
-    remote = 2 if remote.nil?
+    remote_as = 2 if remote_as.nil?
     if af[:vrf] == 'default'
       extra_config = "
       cisco_bgp { '#{af[:asn]} #{af[:vrf]}':
@@ -531,7 +531,7 @@ def get_dependency_manifest(platform, af, remote)
 
       cisco_bgp_neighbor { '#{af[:asn]} #{af[:vrf]} #{af[:neighbor]}':
         ensure                                 => present,
-        remote_as                              => #{remote},
+        remote_as                              => #{remote_as},
       }"
     else
       extra_config = "
@@ -556,14 +556,14 @@ def get_dependency_manifest(platform, af, remote)
             end-policy'
       }"
   else
-    if remote
+    if remote_as
       extra_config = "
       cisco_bgp { '#{af[:asn]} #{af[:vrf]}':
         ensure                                 => present,
       }
       cisco_bgp_neighbor { '#{af[:asn]} #{af[:vrf]} #{af[:neighbor]}':
         ensure                                 => present,
-        remote_as                              => #{remote},
+        remote_as                              => #{remote_as},
       }"
     end
   end
