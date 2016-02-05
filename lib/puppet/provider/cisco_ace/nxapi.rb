@@ -43,10 +43,21 @@ Puppet::Type.type(:cisco_ace).provide(:nxapi) do
     :src_port,
     :dst_addr,
     :dst_port,
+    :tcp_flags,
+    :precedence,
+    :dscp,
+    :time_range,
+    :packet_length,
+    :ttl,
+    :http_method,
+    :tcp_options_length,
+    :redirect,
     :remark,
   ]
 
   ACL_BOOL_PROPS = [
+    :established,
+    :log,
   ]
 
   ACL_ALL_PROPS = ACL_NON_BOOL_PROPS + ACL_BOOL_PROPS
@@ -155,6 +166,17 @@ Puppet::Type.type(:cisco_ace).provide(:nxapi) do
       :src_port,
       :dst_addr,
       :dst_port,
+      :tcp_flags,
+      :establsihed,
+      :precedence,
+      :dscp,
+      :time_range,
+      :packet_length,
+      :ttl,
+      :http_method,
+      :tcp_option_length,
+      :redirect,
+      :log,
     ]
     if vars.any? { |p| @property_flush.key?(p) }
       # At least one var has changed, get all vals from manifest

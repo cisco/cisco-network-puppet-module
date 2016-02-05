@@ -134,6 +134,47 @@ tests['ipv4_seq_20'] = {
   },
 }
 
+tests['ipv4_seq_30'] = {
+  desc:           '1.2 ipv4 beaker_1 seq 30',
+  title_pattern:  'ipv4 beaker_1 30',
+  manifest_props: "
+    action               => 'permit',
+    proto                => 'tcp',
+    src_addr             => '1.2.3.4 2.3.4.5',
+    src_port             => 'eq 40',
+    dst_addr             => '8.9.0.4/32',
+    dst_port             => 'range 32 56',
+    tcp_flags            => 'ack syn fin'
+    dscp                 => 'af11',
+    established          => 'false',
+    http-method          => 'post',
+    packet-length        => 'range 80 1000',
+    tcp-option-length    => '20',
+    time-range           => 'my_range',
+    ttl                  => '153',
+    redirect             => 'Ethernet1/1,Ethernet1/2,port-channel1',
+    log                  => 'false',
+  ",
+  resource:       {
+    'action'             => 'permit',
+    'proto'              => 'tcp',
+    'src_addr'           => '1.2.3.4 2.3.4.5',
+    'src_port'           => 'eq 40',
+    'dst_addr'           => '8.9.0.4/32',
+    'dst_port'           => 'range 32 56',
+    'tcp_flags'          => 'ack syn fin'
+    'dscp'               => 'af11',
+    'established'        => 'false',
+    'http-method'        => 'post',
+    'packet-length'      => 'range 80 1000',
+    'tcp-option-length'  => '20',
+    'time-range'         => 'my_range',
+    'ttl'                => '153',
+    'redirect'           => 'Ethernet1/1,Ethernet1/2,port-channel1',
+    'log'                => 'false',
+  },
+}
+
 tests['ipv6_seq_10'] = {
   desc:           '2.1 ipv6 beaker_6 seq 10',
   title_pattern:  'ipv6 beaker_6 10',

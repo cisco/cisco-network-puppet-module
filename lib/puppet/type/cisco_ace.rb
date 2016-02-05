@@ -50,6 +50,24 @@ Puppet::Type.newtype(:cisco_ace) do
     cisco_ace { 'ipv6 my_ipv6_acl 30':
       remark                                => 'remark description',
     }
+    cisco_ace { 'ipv4 my_ipv4_acl 20':
+        action                                => 'permit',
+        proto                                 => 'tcp',
+        src_addr                              => '1.2.3.4 2.3.4.5',
+        src_port                              => 'eq 40',
+        dst_addr                              => '8.9.0.4/32',
+        dst_port                              => 'range 32 56',
+        tcp_flags                             => 'ack syn fin'
+        dscp                                  => 'af11',
+        established                           => 'false',
+        http-method                           => 'post',
+        packet-length                         => 'range 80 1000',
+        tcp-option-length                     => '20',
+        time-range                            => 'my_range',
+        ttl                                   => '153',
+        redirect                              => 'Ethernet1/1,Ethernet1/2,port-channel1',
+        log                                   => 'false',
+    }
   ~~~
   "
 
@@ -162,7 +180,7 @@ Puppet::Type.newtype(:cisco_ace) do
   end
 
   newproperty(:dst_port) do
-    desc 'Destination port to match src address port number. valid'\
+    desc 'Destination port to match src address port number. Valid'\
          ' port configuration should be eq 40 or range 30 50 etc.'
 
     validate do |dst_port|
@@ -174,5 +192,103 @@ Puppet::Type.newtype(:cisco_ace) do
 
   newproperty(:remark) do
     desc 'A remark description for the ACL or ACE. Valid values are string'
+  end
+
+  newproperty(:tcp_flags) do
+    desc 'TCP flags or control bits. Valid value is a whitespace separated'\
+         ' list of the following flags: urg, ack, psh, rst, syn, fin.'
+
+    validate do |tcp_flags|
+      fail 'tcp_flags should be a whitespace separated list of zero or more'\
+           ' of the following flags: urg, ack, psh, rst, syn, fin: #tcp_flags}' \
+           unless /(ack *|fin *|urg *|syn *|psh *|rst *)*/.match(tcp_flags) \
+           || tcp_flags.nil?
+    end
+  end
+
+  newproperty(:established) do
+    desc 'Match established connections'
+    newvalues(:true, :false)
+  end
+
+  newproperty(:precedence) do
+    desc 'Match packets with given precedence value. Valid values are '\
+         '[0-7]|critical|flash|flash-override|immediate|internet|network|'\
+         'priority|routine'
+
+    validate do |precedence|
+      fail 'precedence must be one of [0-7]|critical|flash|flash-override|'\
+           'immediate|internet|network|priority|routine "#precedence' unless \
+           /^([0-7]|critical|flash|flash-override|immediate|internet|network|priority|routine)$/.match(precedence)
+    end
+  end
+
+  newproperty(:dscp) do
+    desc 'Match packets with given dscp value. Valid values are '\
+         '<0-63>|af11|af12|af13|af21|af22|af23|af31|af32|af33|af41|af42|af43|'\
+         'cs1|cs2|cs3|cs4|cs5|cs6|cs7|default|ef'
+
+    validate do |dscp|
+      fail 'dscp must be one of <0-63>|af11|af12|af13|af21|af22|af23|af31|'\
+           'af32|af33|af41|af42|af43|cs1|cs2|cs3|cs4|cs5|cs6|cs7|default|ef'\
+           ' : #dscp' unless \
+           /^([0-9]|[1-5][0-9]|6[0-3]|af[1-4][1-3]|cs[1-7]|default|ef)$/.match(dscp)
+    end
+  end
+
+  newproperty(:time_range) do
+    desc 'Match on time range. Valid values are string'
+  end
+
+  newproperty(:packet_length) do
+    desc 'Match packets based on layer 3 packet length. '\
+         'Packet Length should be eq 40 or range 100 250 etc. '\
+         'Min. Packet Length is 20 and Max. is 9210'
+
+    validate do |packet_length|
+      fail 'packet length should be eq, neq, lt, gt or '\
+           'range: #{packet_length}' unless
+        /eq \S+|neq \S+|lt \S+|gt \S+|range \S+ \S+/.match(packet_length)
+    end
+  end
+
+  newproperty(:ttl) do
+    desc 'Match packets with given TTL value. Valid values are bw 0 and 255'
+
+    validate do |ttl|
+      fail 'TTL must be between 0 and 255: #ttl' \
+           unless ttl.to_f.between(0, 255)
+    end
+  end
+
+  newproperty(:http_method) do
+    desc 'Match packets based on http-method. Valid values are '\
+         '[1-7]|connect|delete|get|head|post|put|trace'
+
+    validate do |http_method|
+      fail 'http_method must be one of [1-7]|connect|delete|get|head|post|'\
+           'put|trace :#http_method' unless \
+           /^([1-7]|connect|delete|get|head|post|put|trace)$/.match(http_method)
+    end
+  end
+
+  newproperty(:tcp_option_length) do
+    desc 'Match on TCP options size. Valid values are multiples of 4 between 0 and 40'
+
+    validate do |tcp_option_length|
+      fail 'tcp_option_length should be a multiple of 4 between 0 and 40'\
+           ' :#tcp_option_length' \
+           unless /^(0|4|8|12|16|20|24|28|32|36|40)$/.match(tcp_option_length)
+    end
+  end
+
+  newproperty(:redirect) do
+    desc 'Redirect to interface(s). Syntax example: redirect Ethernet1/1,'\
+         'Ethernet1/2,port-channel1'
+  end
+
+  newproperty(:log) do
+    desc 'Log matches against this entry'
+    newvalues(:true, :false)
   end
 end
