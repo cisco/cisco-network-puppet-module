@@ -379,15 +379,6 @@ def interface_ip_cleanup(agent, stepinfo='Pre Clean:')
   on(agent, get_vshell_cmd(clean), acceptable_exit_codes: [0, 2])
 end
 
-# bgp neighbor remote-as configuration helper
-def bgp_nbr_remote_as(agent, remote_as)
-  asn, vrf, nbr, remote = remote_as.split
-  vrf = (vrf == 'default') ? '' : "vrf #{vrf} ;"
-  cfg_str = "conf t ; router bgp #{asn} ; #{vrf} " \
-            "neighbor #{nbr} ; remote-as #{remote}"
-  on(agent, get_vshell_cmd(cfg_str))
-end
-
 # If a [:title] exists merge it with the [:af] values to create a complete af.
 def af_title_pattern_munge(tests, id, provider=nil)
   title = tests[id][:title_pattern]
