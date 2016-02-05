@@ -40,7 +40,6 @@ tests[:default] = {
     additional_paths_receive:      'default',
     additional_paths_selection:    'default',
     additional_paths_send:         'default',
-    advertise_l2vpn_evpn:          'default',
     client_to_client:              'default',
     dampen_igp_metric:             'default',
     dampening_state:               'default',
@@ -67,7 +66,6 @@ tests[:default] = {
     'additional_paths_install'      => 'false',
     'additional_paths_receive'      => 'false',
     'additional_paths_send'         => 'false',
-    'advertise_l2vpn_evpn'          => 'false',
     'client_to_client'              => 'true',
     'dampen_igp_metric'             => '600',
     'dampening_state'               => 'true',
@@ -85,6 +83,12 @@ tests[:default] = {
     'table_map_filter'              => 'false',
   },
 }
+
+# L2VPN / EVPN
+if platform[/n(5|7|9)k/]
+  tests[:default][:manifest_props][:advertise_l2vpn_evpn] = 'default'
+  tests[:default][:resource]['advertise_l2vpn_evpn'] = 'false'
+end
 
 # Special case: When dampening_routemap is set to default
 # it means that dampening is enabled without routemap.
