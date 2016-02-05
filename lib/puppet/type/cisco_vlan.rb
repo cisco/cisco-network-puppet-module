@@ -29,6 +29,7 @@ Puppet::Type.newtype(:cisco_vlan) do
     cisco_vlan {\"200\":
       ensure     => present,
       vlan_name  => 'red',
+      mapped_vni => 20000,
       state      => 'active',
       shutdown   => 'true',
     }"
@@ -84,6 +85,19 @@ Puppet::Type.newtype(:cisco_vlan) do
         value = String(value) unless value == :default
       rescue
         raise 'Name is not a valid string.'
+      end # rescue
+      value
+    end
+  end # property name
+
+  newproperty(:mapped_vni) do
+    desc 'The VNI id that is mapped to the VLAN. Valid values are integer.'
+    munge do |value|
+      begin
+        value = :default if value == 'default'
+        value = Integer(value) unless value == :default
+      rescue
+        raise 'mapped_vni must be an integer.'
       end # rescue
       value
     end

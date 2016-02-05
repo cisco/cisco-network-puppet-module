@@ -43,5 +43,8 @@ class ciscopuppet::demo_all_cisco {
   include ciscopuppet::cisco::demo_vpc_domain
   include ciscopuppet::cisco::demo_vrf
   include ciscopuppet::cisco::demo_vtp
-  include ciscopuppet::cisco::demo_vxlan
+  # Conditionally include ciscopuppet::demo_vxlan 
+  if platform_get() =~ /n(3|9)k/ { 
+    include ciscopuppet::cisco::demo_vxlan 
+  }
 }
