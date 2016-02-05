@@ -320,7 +320,7 @@ tests['SVI_autostate'] = {
 
 tests['negotiate'] = {
   desc:               '5.1 negotiate-auto',
-  platform:           'n(5|6|7|9)k',
+  platform:           'n(5|6|7)k',
   intf_type:          'ethernet',
   preclean:           true,
   sys_def_switchport: false,
@@ -498,6 +498,6 @@ test_name "TestCase :: #{testheader}" do
 
   # -------------------------------------------------------------------
   interface_cleanup(agent, tests[:ethernet]) if tests[:ethernet]
-  skipped_tests_summary(tests, testheader)
+  skipped_tests_summary(tests)
 end
 logger.info("TestCase :: #{testheader} :: End")

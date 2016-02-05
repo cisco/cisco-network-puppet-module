@@ -89,7 +89,7 @@ testheader = 'Resource cisco_interface: vlan_mapping properties'
 tests = {
   master:          master,
   agent:           agent,
-  testheader:      testheader,
+  resource_name:   'cisco_interface',
   bridge_domain:   '199',
   switchport_mode: 'trunk',
 }
