@@ -277,25 +277,27 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :non_def_ibgp_only)
 
   # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 3. L2VPN Property Testing")
-  resource_absent_cleanup(agent, 'cisco_bgp', 'BGP CLEAN :: ')
-  title = '2 default 1.1.1.1 l2vpn evpn'
-  [
-    :non_def_A1,
-    :non_def_D2,
-    :non_def_M,
-    :non_def_S1,
-    :non_def_S2,
-    :non_def_S3,
-    :non_def_misc_maps_1,
-  ].each do |id|
-    tests[id][:title_pattern] = title
-    test_harness_run(tests, id)
-  end
+  if platform[/n(5|7|9)k/]
+    logger.info("\n#{'-' * 60}\nSection 3. L2VPN Property Testing")
+    resource_absent_cleanup(agent, 'cisco_bgp', 'BGP CLEAN :: ')
+    title = '2 default 1.1.1.1 l2vpn evpn'
+    [
+      :non_def_A1,
+      :non_def_D2,
+      :non_def_M,
+      :non_def_S1,
+      :non_def_S2,
+      :non_def_S3,
+      :non_def_misc_maps_1,
+    ].each do |id|
+      tests[id][:title_pattern] = title
+      test_harness_run(tests, id)
+    end
 
-  [:non_def_ibgp_only].each do |id|
-    tests[id][:title_pattern].gsub!(/ipv4 unicast/, 'l2vpn evpn')
-    test_harness_run(tests, id)
+    [:non_def_ibgp_only].each do |id|
+      tests[id][:title_pattern].gsub!(/ipv4 unicast/, 'l2vpn evpn')
+      test_harness_run(tests, id)
+    end
   end
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
