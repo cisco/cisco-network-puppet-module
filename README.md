@@ -247,6 +247,7 @@ The following resources include cisco types and providers along with cisco provi
 * VXLAN Types
   * [`cisco_vxlan_global`](#type-cisco_vxlan_global)
   * [`cisco_vxlan_vtep`](#type-cisco_vxlan_vtep)
+  * [`cisco_vxlan_vtep_vni`](#type-cisco_vxlan_vtep_vni)
 
 --
 ### <a name="resource-by-name">Cisco Resource Type Catalog (by Name)<a>
@@ -1585,6 +1586,9 @@ ID of the Virtual LAN. Valid value is an integer.
 ##### `ensure`
 Determines whether the config should be present or not. Valid values are 'present' and 'absent'.
 
+##### `mapped_vni`
+The Virtual Network Identifier (VNI) id that is mapped to the VLAN. Valid values are integer and keyword 'default'.
+
 ##### `vlan_name`
 The name of the VLAN. Valid values are a string or the keyword 'default'.
 
@@ -1705,21 +1709,6 @@ VTP file name. Valid values are a string or the keyword 'default'.
 
 ##### `password`
 Password for the VTP domain. Valid values are a string or the keyword 'default'.
-
---
-### Type: cisco_vni
-Manages the VNI (Virtual Network Identifier) configuration of a Cisco device.
-
-#### Parameters
-
-##### `ensure`
-Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
-
-##### `name`
-Instance of vni, valid value is integer.
-
-##### `mapped_vlan`
-The VLAN ID that will map to the VNI.
 
 --
 ### Type: cisco_vpc_domain
@@ -1848,6 +1837,36 @@ Administratively shutdown the NVE interface. Valid values are true, false or key
 
 ##### `source_interface`
 Specify the loopback interface whose IP address should be used for the NVE interface. Valid values are string or keyword 'default'.
+
+--
+### Type: cisco_vxlan_vtep_vni
+Creates a Virtual Network Identifier member (VNI) for an NVE overlay interface.
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `interface`
+Name of the nve interface on the network element. Valid values are string.
+
+##### `vni`
+ID of the Virtual Network Identifier. Valid values are integer.
+
+##### `assoc_vrf`
+This attribute is used to identify and separate processing VNIs that are associated with a VRF and used for routing. The VRF and VNI specified with this command must match the configuration of the VNI under the VRF. Valid values are true or false.
+
+##### `ingress_replication`
+Specifies mechanism for host reachability advertisement. Valid values are 'bgp', 'static', or 'default'.
+
+##### `multicast_group`
+The multicast group (range) of the VNI. Valid values are string and keyword 'default'.
+
+##### `peer_list`
+Set the ingress-replication static peer list. Valid values are an Array, a space-separated String of ip addresses, or the keyword 'default'.
+
+##### `suppress_arp`
+Suppress arp under layer 2 VNI. Valid values are true, false, or 'default'.
 
 --
 ### NetDev StdLib Resource Type Details
