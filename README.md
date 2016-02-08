@@ -285,6 +285,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_vtp`](#type-cisco_vtp)
 * [`cisco_vxlan_global`](#type-cisco_vxlan_global)
 * [`cisco_vxlan_vtep`](#type-cisco_vxlan_vtep)
+* [`cisco_vxlan_vtep_vni`](#type-cisco_vxlan_vtep_vni)
 
 ### <a name="resource-by-name-netdev">NetDev StdLib Resource Type Catalog (by Name)<a>
 
