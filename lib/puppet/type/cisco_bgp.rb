@@ -488,10 +488,10 @@ Puppet::Type.newtype(:cisco_bgp) do
   end # property bestpath_med_non_deterministic
 
   newproperty(:nsr) do
-    desc 'Enable/Disable nsr'
+    desc 'Enable/Disable Non-Stop Routing (NSR)'
 
     newvalues(:true, :false, :default)
-  end # property Nonstop routing
+  end # property Non-Stop Routing (NSR)
 
   newproperty(:timer_bestpath_limit) do
     desc "Specify timeout for the first best path after a restart, in seconds.

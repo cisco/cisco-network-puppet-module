@@ -116,7 +116,7 @@ if platform != 'ios_xr'
   expected_values['timer_bestpath_limit']           = '255'
   expected_values['timer_bestpath_limit_always']    = 'true'
 else
-  expected_values['nsr'] = 'false'
+  expected_values['nsr'] = 'true'
 end
 
 expected_values_vrf1 = {
@@ -148,8 +148,6 @@ if platform != 'ios_xr'
   expected_values_vrf1['suppress_fib_pending']                   = 'false'
   expected_values_vrf1['timer_bestpath_limit']                   = '255'
   expected_values_vrf1['timer_bestpath_limit_always']            = 'true'
-else
-  expected_values_vrf1['nsr']                                    = 'false'
 end
 
 expected_values_vrf2 = {
@@ -181,8 +179,6 @@ if platform != 'ios_xr'
   expected_values_vrf2['suppress_fib_pending']                   = 'false'
   expected_values_vrf2['timer_bestpath_limit']                   = '115'
   expected_values_vrf2['timer_bestpath_limit_always']            = 'false'
-else
-  expected_values_vrf2['nsr']                                    = 'false'
 end
 
 # Used to clarify true/false values for UtilityLib args.
@@ -229,11 +225,6 @@ test_name "TestCase :: #{testheader}" do
   # Non-Default VRF Test Cases
   # --------------------------
 
-  if platform == 'ios_xr'
-    # XR does not support these properties under a non-default vrf
-    expected_values_vrf1.delete('nsr')
-  end
-
   context = "vrf #{BgpLib::VRF1}"
 
   stepinfo = "Apply resource ensure => present manifest (#{context})"
@@ -256,11 +247,6 @@ test_name "TestCase :: #{testheader}" do
   step "TestStep :: #{stepinfo}" do
     on(agent, puppet_cmd, acceptable_exit_codes: [0])
     logger.info("#{stepinfo} :: #{result}")
-  end
-
-  if platform == 'ios_xr'
-    # XR does not support these properties under a non-default vrf
-    expected_values_vrf2.delete('nsr')
   end
 
   context = "vrf #{BgpLib::VRF2}"

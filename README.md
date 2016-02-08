@@ -518,6 +518,9 @@ Specify Maximum number of AS numbers allowed in the AS-path attribute. Valid val
 ##### `neighbor_down_fib_accelerate`
 Enable/Disable handle BGP neighbor down event, due to various reasons. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 
+##### `Non-Stop Routing (NSR)`
+Enable\Disable Non-Stop Routing. Valid values are 'true', 'false', and 'default'. This property is not supported on Nexus.
+
 ##### `shutdown`
 Administratively shutdown the BGP protocol. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 

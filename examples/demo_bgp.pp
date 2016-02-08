@@ -41,6 +41,11 @@ class ciscopuppet::demo_bgp {
     default => undef
   }
 
+  $nsr = $operatingsystem ? {
+    'ios_xr' => false,
+    default  => undef
+  }
+
   cisco_bgp { '55.77 default':
     ensure                                 => present,
 
@@ -70,7 +75,7 @@ class ciscopuppet::demo_bgp {
     bestpath_med_confed                    => true,
     bestpath_med_missing_as_worst          => true,
     bestpath_med_non_deterministic         => $bestpath_med_non_deterministic,
-    nsr                                    => false,
+    nsr                                    => $nsr,
     timer_bestpath_limit                   => $timer_bestpath_limit,
     timer_bestpath_limit_always            => $timer_bestpath_limit_always,
 

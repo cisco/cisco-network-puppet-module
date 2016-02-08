@@ -36,33 +36,33 @@ module BgpLib
     conditional_props = ''
     if platform != 'ios_xr'
       conditional_props <<
-        "bestpath_med_non_deterministic         => 'default',
-         disable_policy_batching                => 'default',
-         disable_policy_batching_ipv4           => 'default',
-         disable_policy_batching_ipv6           => 'default',
-         event_history_cli                      => 'default',
-         event_history_detail                   => 'default',
-         event_history_events                   => 'default',
-         event_history_periodic                 => 'default',
-         flush_routes                           => 'default',
-         graceful_restart_helper                => 'default',
-         isolate                                => 'default',
-         maxas_limit                            => 'default',
-         neighbor_down_fib_accelerate           => 'default',
-         shutdown                               => 'default',
-         suppress_fib_pending                   => 'default',
-         timer_bestpath_limit                   => 'default',
-         timer_bestpath_limit_always            => 'default',
+        "bestpath_med_non_deterministic => 'default',
+         disable_policy_batching        => 'default',
+         disable_policy_batching_ipv4   => 'default',
+         disable_policy_batching_ipv6   => 'default',
+         event_history_cli              => 'default',
+         event_history_detail           => 'default',
+         event_history_events           => 'default',
+         event_history_periodic         => 'default',
+         flush_routes                   => 'default',
+         graceful_restart_helper        => 'default',
+         isolate                        => 'default',
+         maxas_limit                    => 'default',
+         neighbor_down_fib_accelerate   => 'default',
+         shutdown                       => 'default',
+         suppress_fib_pending           => 'default',
+         timer_bestpath_limit           => 'default',
+         timer_bestpath_limit_always    => 'default',
          "
     else
       conditional_props <<
         "# Nonstop Routing (NSR)
-        nsr                                    => 'default',"
+        nsr                             => 'default',"
     end
 
     if vrf != 'default'
       conditional_props <<
-        "route_distinguisher                    => 'default',"
+        "route_distinguisher            => 'default',"
     end
 
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
@@ -120,28 +120,28 @@ module BgpLib
     conditional_props = ''
     if platform != 'ios_xr'
       conditional_props =
-       "bestpath_med_non_deterministic         => 'true',
-        disable_policy_batching                => 'true',
-        disable_policy_batching_ipv4           => 'xx',
-        disable_policy_batching_ipv6           => 'yy',
-        event_history_cli                      => 'size_medium',
-        event_history_detail                   => 'size_large',
-        event_history_events                   => 'size_disable',
-        event_history_periodic                 => 'false',
-        flush_routes                           => 'true',
-        graceful_restart_helper                => 'true',
-        isolate                                => 'true',
-        maxas_limit                            => '50',
-        neighbor_down_fib_accelerate           => 'true',
-        shutdown                               => 'true',
-        suppress_fib_pending                   => 'true',
-        timer_bestpath_limit                   => '255',
-        timer_bestpath_limit_always            => 'true',
+       "bestpath_med_non_deterministic => 'true',
+        disable_policy_batching        => 'true',
+        disable_policy_batching_ipv4   => 'xx',
+        disable_policy_batching_ipv6   => 'yy',
+        event_history_cli              => 'size_medium',
+        event_history_detail           => 'size_large',
+        event_history_events           => 'size_disable',
+        event_history_periodic         => 'false',
+        flush_routes                   => 'true',
+        graceful_restart_helper        => 'true',
+        isolate                        => 'true',
+        maxas_limit                    => '50',
+        neighbor_down_fib_accelerate   => 'true',
+        shutdown                       => 'true',
+        suppress_fib_pending           => 'true',
+        timer_bestpath_limit           => '255',
+        timer_bestpath_limit_always    => 'true',
         "
     else
       conditional_props <<
         "# Nonstop Routing (NSR)
-        nsr                                    => 'false',"
+        nsr                            => 'true',"
     end
 
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
