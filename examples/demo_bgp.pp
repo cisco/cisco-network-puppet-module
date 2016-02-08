@@ -333,89 +333,75 @@ class ciscopuppet::demo_bgp {
   }
 
   # --------------------------------------------------------------------------#
-  # Configure Neighbor-level Address Family IPv4 Unicast
+  # Configure Neighbor-level Address Family IPv4 Unicast (default vrf)
   # --------------------------------------------------------------------------#
+  cisco_bgp_af { '55.77 default ipv4 unicast':
+    ensure                                 => present,
+  }
+  cisco_bgp_neighbor { '55.77 default 1.1.1.1':
+    ensure                                 => present,
+    remote_as                              => 2,
+  }
+
+  cisco_bgp_neighbor_af { '55.77 default ipv4 unicast':
+    ensure                      => present,
+
+    # Properties
+    allows_in                   => 'default',
+    allowas_in_max              => 5,
+    default_originate           => 'my_def_map',
+    max_prefix_limit            => 100,
+    max_prefix_threshold        => 50,
+    max_prefix_interval         => 30,
+    next_hop_self               => true,
+    prefix_list_in              => 'pfx_in',
+    prefix_list_out             => 'pfx_out',
+    route_map_in                => 'rm_in',
+    route_map_out               => 'rm_out',
+    send_community              => 'extended',
+    soft_reconfiguration_in     => 'always',
+    weight                      => 30,
+  }
+ 
+  # --------------------------------------------------------------------------#
+  # Configure Neighbor-level Address Family IPv4 Unicast (non-default vrf)
+  # --------------------------------------------------------------------------#
+  cisco_bgp { '55.77':
+    ensure                                 => present,
+    router_id                              => '1.2.3.4',
+  }
+  cisco_bgp_af { '55.77 default vpnv4 unicast':
+    ensure                                 => present,
+  }
+  cisco_bgp { '55.77 blue':
+    ensure                                 => present,
+    route_distinguisher                    => auto,
+  }
+  cisco_bgp_af { '55.77 blue ipv4 unicast':
+    ensure                                 => present,
+  }
+  cisco_bgp_neighbor { '55.77 blue 1.1.1.1':
+    ensure                                 => present,
+    remote_as                              => 2,
+  }
+        
   cisco_bgp_neighbor_af { '55.77 blue 1.1.1.1 ipv4 unicast':
     ensure                      => present,
 
     # Properties
-    additional_paths_receive    => 'enable',
-    additional_paths_send       => 'disable',
+    allows_in                   => 'default',
     allowas_in_max              => 5,
-    default_originate_route_map => 'my_def_map',
-    disable_peer_as_check       => true,
-    filter_list_in              => 'flin',
-    filter_list_out             => 'flout',
-    max_prefix_limit            => 100,
-    max_prefix_threshold        => 50,
-    max_prefix_interval         => 30,
-    next_hop_self               => true,
-    next_hop_third_party        => false,
-    prefix_list_in              => 'pfx_in',
-    prefix_list_out             => 'pfx_out',
-    route_map_in                => 'rm_in',
-    route_map_out               => 'rm_out',
-    send_community              => 'extended',
-    soft_reconfiguration_in     => 'always',
-    soo                         => '3:3',
-    suppress_inactive           => true,
-    unsuppress_map              => 'unsup_map',
-    weight                      => 30,
-  }
-
-  cisco_bgp_neighbor_af { '55.77 blue 2.2.2.2 ipv4 unicast':
-    ensure                      => present,
-
-    # Properties
-    additional_paths_receive    => 'enable',
-    additional_paths_send       => 'disable',
-    allowas_in_max              => 5,
+    default_originate           => 'my_def_map',
     as_override                 => true,
-    default_originate_route_map => 'my_def_map',
     disable_peer_as_check       => true,
-    filter_list_in              => 'flin',
-    filter_list_out             => 'flout',
     max_prefix_limit            => 100,
     max_prefix_threshold        => 50,
     max_prefix_interval         => 30,
     next_hop_self               => true,
-    next_hop_third_party        => false,
-    prefix_list_in              => 'pfx_in',
-    prefix_list_out             => 'pfx_out',
     route_map_in                => 'rm_in',
     route_map_out               => 'rm_out',
     send_community              => 'extended',
     soft_reconfiguration_in     => 'always',
-    soo                         => '3:3',
-    suppress_inactive           => true,
-    unsuppress_map              => 'unsup_map',
-    weight                      => 30,
-  }
-
-  cisco_bgp_neighbor_af { '55.77 blue 3.3.3.3 ipv4 unicast':
-    ensure                      => present,
-    # Properties
-    additional_paths_receive    => 'enable',
-    additional_paths_send       => 'disable',
-    allowas_in_max              => 5,
-    default_originate_route_map => 'my_def_map',
-    filter_list_in              => 'flin',
-    filter_list_out             => 'flout',
-    max_prefix_limit            => 100,
-    max_prefix_threshold        => 50,
-    max_prefix_interval         => 30,
-    next_hop_self               => true,
-    next_hop_third_party        => false,
-    prefix_list_in              => 'pfx_in',
-    prefix_list_out             => 'pfx_out',
-    route_map_in                => 'rm_in',
-    route_map_out               => 'rm_out',
-    route_reflector_client      => true,
-    send_community              => 'extended',
-    soft_reconfiguration_in     => 'always',
-    soo                         => '3:3',
-    suppress_inactive           => true,
-    unsuppress_map              => 'unsup_map',
     weight                      => 30,
   }
 }
