@@ -62,7 +62,7 @@ module BgpLib
 
     if vrf != 'default'
       conditional_props <<
-        "route_distinguisher            => 'default',"
+        "route_distinguisher                    => 'default',"
     end
 
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
