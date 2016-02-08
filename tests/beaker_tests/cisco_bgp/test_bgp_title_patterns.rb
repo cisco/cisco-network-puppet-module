@@ -256,6 +256,7 @@ test_name "TestCase :: #{testheader}" do
   # vrf => #{BgpLib::VRF1}
   # (all_other_attributes => default values)
 
+  cleanup_bgp(master, agent)
   method_present_list = %w(
     create_bgp_manifest_title_pattern9
     create_bgp_manifest_title_pattern10
