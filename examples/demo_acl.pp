@@ -16,29 +16,48 @@
 
 class ciscopuppet::demo_acl {
   cisco_acl { 'ipv4 my_ipv4_acl':
-    ensure                 => 'present'
-    stats_per_entry        => false,
-    fragments              => 'permit'
+    ensure          => 'present',
+    stats_per_entry => false,
+    fragments       => 'permit'
   }
   cisco_ace { 'ipv4 my_ipv4_acl 10':
-    ensure                 => 'present',
-    action                 => 'permit',
-    proto                  => 'tcp',
-    src_addr               => '1.2.3.4 2.3.4.5',
-    src_port               => 'eq 40',
-    dst_addr               => '8.9.0.4/32',
-    dst_port               => 'range 32 56',
+    ensur    => 'present',
+    action   => 'permit',
+    proto    => 'tcp',
+    src_addr => '1.2.3.4 2.3.4.5',
+    src_port => 'eq 40',
+    dst_addr => '8.9.0.4/32',
+    dst_port => 'range 32 56',
   }
-
   cisco_acl { 'ipv6 my_ipv6_acl':
     ensure                 => 'present'
   }
   cisco_ace { 'ipv6 my_ipv6_acl 85':
-    ensure                 => 'present',
-    src_addr               => 'any',
-    dst_addr               => 'any',
+    ensure   => 'present',
+    action   => 'permit',
+    proto    => 'tcp',
+    src_addr => 'any',
+    dst_addr => 'any',
   }
   cisco_ace { 'ipv6 my_ipv6_acl 89':
-    remark                 => 'my ace remark',
+    remark => 'my ace remark',
+  }
+  cisco_ace { 'ipv4 my_ipv4_acl 20':
+    action            => 'permit',
+    proto             => 'tcp',
+    src_addr          => '1.2.3.4 2.3.4.5',
+    src_port          => 'eq 40',
+    dst_addr          => '8.9.0.4/32',
+    dst_port          => 'range 32 56',
+    tcp_flags         => 'ack syn fin',
+    dscp              => 'af11',
+    established       => false,
+    http_method       => 'post',
+    packet_length     => 'range 80 1000',
+    tcp_option_length => '20',
+    time_range        => 'my_range',
+    ttl               => '153',
+    redirect          => 'Ethernet1/1,Ethernet1/2,port-channel1',
+    log               => false,
   }
 }
