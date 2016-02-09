@@ -335,10 +335,10 @@ class ciscopuppet::demo_bgp {
   # --------------------------------------------------------------------------#
   # Configure Neighbor-level Address Family IPv4 Unicast (default vrf)
   # --------------------------------------------------------------------------#
-  cisco_bgp_af { '55.77 default ipv4 unicast':
-    ensure                                 => present,
-  }
   if $operatingsystem == 'ios_xr' {
+    cisco_bgp_af { '55.77 default ipv4 unicast':
+      ensure                                 => present,
+    }
     cisco_bgp_neighbor { '55.77 default 1.1.1.1':
       ensure                                 => present,
       remote_as                              => 2,
