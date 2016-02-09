@@ -21,6 +21,7 @@ class ciscopuppet::demo_fabricpath {
       $aggregate_multicast_routes     = true
       $linkup_delay_always            = false
       $linkup_delay_enable            = false
+      $loadbalance_algorithm          = 'symmetric'
       $loadbalance_multicast_rotate   = '3'
       $loadbalance_multicast_has_vlan = true
       $loadbalance_unicast_rotate     = '5'
@@ -31,6 +32,7 @@ class ciscopuppet::demo_fabricpath {
       $aggregate_multicast_routes     = undef
       $linkup_delay_always            = undef
       $linkup_delay_enable            = undef
+      $loadbalance_algorithm          = 'source'
       $loadbalance_multicast_rotate   = undef
       $loadbalance_multicast_has_vlan = undef
       $loadbalance_unicast_rotate     = undef
@@ -51,6 +53,7 @@ class ciscopuppet::demo_fabricpath {
       aggregate_multicast_routes     => $aggregate_multicast_routes,
       linkup_delay_always            => $linkup_delay_always,
       linkup_delay_enable            => $linkup_delay_enable,
+      loadbalance_algorithm          => $loadbalance_algorithm,
       loadbalance_multicast_rotate   => $loadbalance_multicast_rotate,
       loadbalance_multicast_has_vlan => $loadbalance_multicast_has_vlan,
       loadbalance_unicast_rotate     => $loadbalance_unicast_rotate,
