@@ -135,43 +135,43 @@ tests['ipv4_seq_20'] = {
 }
 
 tests['ipv4_seq_30'] = {
-  desc:           '1.2 ipv4 beaker_1 seq 30',
+  desc:           '1.3 ipv4 beaker_1 seq 30',
   title_pattern:  'ipv4 beaker_1 30',
   manifest_props: "
-    action               => 'permit',
-    proto                => 'tcp',
-    src_addr             => '1.2.3.4 2.3.4.5',
-    src_port             => 'eq 40',
-    dst_addr             => '8.9.0.4/32',
-    dst_port             => 'range 32 56',
-    tcp_flags            => 'ack syn fin'
-    dscp                 => 'af11',
-    established          => true,
-    http_method          => 'post',
-    packet-length        => 'range 80 1000',
-    tcp-option-length    => '20',
-    time_range           => 'my_range',
-    ttl                  => '153',
-    redirect             => 'Ethernet1/1,Ethernet1/2,port-channel1',
-    log                  => false,
+    action            => 'permit',
+    proto             => 'tcp',
+    src_addr          => '1.2.3.4 2.3.4.5',
+    src_port          => 'eq 40',
+    dst_addr          => '8.9.0.4/32',
+    dst_port          => 'range 32 56',
+    tcp_flags         => 'ack syn fin'
+    precedence        => 'flash',
+    established       => true,
+    http_method       => 'post',
+    packet_length     => 'range 80 1000',
+    tcp_option_length => '20',
+    time_range        => 'my_range',
+    ttl               => '153',
+    redirect          => 'Ethernet1/1,Ethernet1/2,port-channel1',
+    log               => false,
   ",
   resource:       {
-    'action'             => 'permit',
-    'proto'              => 'tcp',
-    'src_addr'           => '1.2.3.4 2.3.4.5',
-    'src_port'           => 'eq 40',
-    'dst_addr'           => '8.9.0.4/32',
-    'dst_port'           => 'range 32 56',
-    'tcp_flags'          => 'ack syn fin',
-    'dscp'               => 'af11',
-    'established'        => true,
-    'http_method'        => 'post',
-    'packet-length'      => 'range 80 1000',
-    'tcp-option-length'  => '20',
-    'time_range'         => 'my_range',
-    'ttl'                => '153',
-    'redirect'           => 'Ethernet1/1,Ethernet1/2,port-channel1',
-    'log'                => false,
+    'action'            => 'permit',
+    'proto'             => 'tcp',
+    'src_addr'          => '1.2.3.4 2.3.4.5',
+    'src_port'          => 'eq 40',
+    'dst_addr'          => '8.9.0.4/32',
+    'dst_port'          => 'range 32 56',
+    'tcp_flags'         => 'ack syn fin',
+    'precedence'        => 'flash',
+    'established'       => true,
+    'http_method'       => 'post',
+    'packet_length'     => 'range 80 1000',
+    'tcp_option_length' => '20',
+    'time_range'        => 'my_range',
+    'ttl'               => '153',
+    'redirect'          => 'Ethernet1/1,Ethernet1/2,port-channel1',
+    'log'               => false,
   },
 }
 
@@ -200,6 +200,39 @@ tests['ipv6_seq_20'] = {
   ",
   resource:       {
     'remark' => 'test remark'
+  },
+}
+
+tests['ipv6_seq_30'] = {
+  desc:           '2.3 ipv4 beaker_6 seq 30',
+  title_pattern:  'ipv6 beaker_6 30',
+  manifest_props: "
+    action            => 'permit',
+    proto             => 'tcp',
+    src_addr          => 'any',
+    src_port          => 'eq 40',
+    dst_addr          => 'any',
+    dst_port          => 'range 32 56',
+    tcp_flags         => 'ack syn fin'
+    dscp              => 'af12',
+    established       => false,
+    packet_length     => 'range 80 1000',
+    time_range        => 'my_range',
+    log               => true,
+  ",
+  resource:       {
+    'action'        => 'permit',
+    'proto'         => 'tcp',
+    'src_addr'      => '1.2.3.4 2.3.4.5',
+    'src_port'      => 'eq 40',
+    'dst_addr'      => '8.9.0.4/32',
+    'dst_port'      => 'range 32 56',
+    'tcp_flags'     => 'ack syn fin',
+    'dscp'          => 'af12',
+    'established'   => false,
+    'packet_length' => 'range 80 1000',
+    'time_range'    => 'my_range',
+    'log'           => true,
   },
 }
 
@@ -265,6 +298,11 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:ensure] = :absent
   test_harness_ace(tests, id)
 
+  # id = 'ipv4_seq_30'
+  # test_harness_ace(tests, id)
+  # tests[id][:ensure] = :absent
+  # test_harness_ace(tests, id)
+
   # ---------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. IPv6 ACE")
   # ---------------------------------------------------------
@@ -274,6 +312,12 @@ test_name "TestCase :: #{testheader}" do
   test_harness_ace(tests, id)
   tests[id][:ensure] = :absent
   test_harness_ace(tests, id)
+
+  # id = 'ipv6_seq_30'
+  # test_harness_ace(tests, id)
+  # tests[id][:ensure] = :absent
+  # test_harness_ace(tests, id)
+
   # ---------------------------------------------------------
   resource_absent_cleanup(agent, 'cisco_acl', 'ACL CLEANUP :: ')
 end

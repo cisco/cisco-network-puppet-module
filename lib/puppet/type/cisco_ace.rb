@@ -87,7 +87,7 @@ Puppet::Type.newtype(:cisco_ace) do
           [:acl_name, identity],
           [:seqno, identity],
         ],
-      ],
+      ]
     ]
   end
 
