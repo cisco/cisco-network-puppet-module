@@ -1,8 +1,8 @@
 # Manages a Cisco fabricpath Topology.
 #
-# Sep 2015
+# February, 2016
 #
-# Copyright (c) 2013-2015 Cisco and/or its affiliates.
+# Copyright (c) 2013-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -50,8 +50,6 @@ Puppet::Type.newtype(:cisco_fabricpath_topology) do
   # Resource Naming #
   ###################
 
-  # Parse out the title to fill in the attributes in these
-  # patterns. These attributes can be overwritten later.
   def self.title_patterns
     identity = ->(x) { x }
     patterns = []

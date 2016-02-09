@@ -176,6 +176,10 @@ The following resources include cisco types and providers along with cisco provi
   * [`network_dns (netdev_stdlib)`](#type-network_dns)
   * [`search_domain (netdev_stdlib)`](#type-search_domain)
 
+* Fabricpath Types
+  * [`cisco_fabricpath_global`](#type-cisco_fabricpath_global)
+  * [`cisco_fabricpath_topology`](#type-cisco_fabricpath_topology)
+
 * Interface Types
   * [`cisco_interface`](#type-cisco_interface)
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
@@ -255,6 +259,8 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_bgp_af`](#type-cisco_bgp_af)
 * [`cisco_bgp_neighbor`](#type-cisco_bgp_neighbor)
 * [`cisco_bgp_neighbor_af`](#type-cisco_bgp_neighbor_af)
+* [`cisco_fabricpath_global`](#type-cisco_fabricpath_global)
+* [`cisco_fabricpath_topology`](#type-cisco_fabricpath_topology)
 * [`cisco_interface`](#type-cisco_interface)
 * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 * [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
@@ -921,6 +927,77 @@ Site-of-origin. Valid values are a string defining a VPN extcommunity or 'defaul
 `weight` value. Valid values are an integer value or 'default'.
 
 --
+### Type: cisco_fabricpath_global
+##### `name`
+ID of the fabricpath global config. The only valid value is keyword 'default'.
+
+##### `aggregate_multicast_routes`
+Aggregate Multicast Routes on same tree in the topology. Valid values are true/false and keyword 'default'. Default value: false.
+
+##### `allocate_delay`
+Fabricpath Timers Allocate Delay in seconds. Valid values are integers from 1..1200 and keyword 'default'. Default value: 10.
+
+##### `graceful_merge`
+Graceful merge for conflicting switch-id or FTAG allocation. Valid values are enable/disable and keyword 'default'. Default value: true.
+
+##### `linkup_delay`
+Fabricpath Timers Link-up Delay in seconds. Valid values are integers from 1..1200 and keyword 'default'. Default value: 10.
+
+##### `loadbalance_algorithm`
+Fabricpath ECMP loadbalancing alogorithm. Valid values are 'destination', 'source', 'source-destination', 'symmetric' and the keyword 'default'. Default is symmetric for Nexus 7000 series and source-destination for others.
+
+##### `loadbalance_multicast_has_vlan`
+Multicast Loadbalance flow parameters - include vlan or not. Valid values are true or false and keyword 'default'. Default value: true. This parameter is valid only on Nexus 7000 series platform.
+
+##### `loadbalance_multicast_rotate`
+Multicast Loadbalance flow parameters -  rotate amount in bytes. Valid values are integer in range 0..15 and keyword 'default'. Default value: 1. This parameter is valid only on Nexus 7000 series platform.
+
+##### `loadbalance_unicast_has_vlan`
+Unicast Loadbalance flow parameters - include vlan or not. Valid values are true/false and keyword 'default'. Default value: 1.
+
+##### `loadbalance_unicast_layer`
+Unicast Loadbalance flow parameters - layer. Valid values are : layer2, layer3,
+layer4, mixed, and keyword 'default'. Default value: mixed.
+
+##### `loadbalance_unicast_rotate`
+Unicast Loadbalance flow parameters - rotate amount in bytes. Valid values are Integers in range 0..15 and keyword 'default'. Default value: 1.
+
+##### `linkup_delay_always`
+Fabricpath Timers Link-up delay always. This configuration introduces a linkup delay always whether the link is administratively brought up or whether it is restored after events such as a module reload. Valid values are true/false. Default: true.
+
+##### `linkup_delay_enable`
+Fabricpath Timers Link-up delay enable. Valid values are true/false and keyword 'default'. Default value: true.
+
+##### `mode`
+Mode of operation of this switch w.r.t to segmentation. Valid values are normal/transit and keyword 'default'. Default: normal.
+
+##### `switch_id`
+The fabricpath switch_id. This parameter can be used to over-ride the automatically assigned switch-id for this switch. Valid values are integers from 1..4094. 
+
+##### `transition_delay`
+Fabricpath Timers Transition Delay in seconds. Valid values are integers from 1..1200 and keyword 'default'. Default value: 10.
+
+##### `ttl_multicast`
+Fabricpath Multicast TTL value. Valid values are integers from 1..64 and keyword 'default'. Default value: 32. This parameter is valid only on Nexus 7000 series platform.
+
+##### `ttl_unicast`
+Fabricpath Unicast TTL value. Valid values are integers from 1..64 and keyword 'default'. Default value: 32. This parameter is valid only on Nexus 7000 series platform.
+
+--
+### Type: cisco_fabricpath_topology
+Manages a Cisco fabricpath Topology
+
+##### `topo_id`
+ID of the fabricpath topology. Valid values are integers in the range 1-63. 
+Value of 0 is reserved for default topology.
+
+##### `member_vlans`
+ID of the VLAN(s) tha are members of this topology. Valid values are integer/integer ranges.
+
+##### `topo_name`
+Descriptive name of the topology. Valid values are string
+
+--
 ### Type: cisco_interface
 
 Manages a Cisco Network Interface. Any resource dependency should be run before the interface resource.
@@ -956,7 +1033,7 @@ Shutdown state of the interface. Valid values are 'true', 'false', and
 
 ###### `switchport_mode`
 Switchport mode of the interface. To make an interface Layer 3, set
-`switchport_mode` to 'disabled'. Valid values are 'disabled', 'access', 'tunnel', 'fex_fabric', 'trunk', and 'default'.
+`switchport_mode` to 'disabled'. Valid values are 'disabled', 'access', 'tunnel', 'fex_fabric', 'trunk', 'fabricpath' and 'default'.
 
 ###### `ipv4_acl_in`
 Apply ipv4 access list on the interface in ingress direction. Access-list should be present on the network device 
@@ -1500,6 +1577,10 @@ ID of the Virtual LAN. Valid value is an integer.
 
 ##### `ensure`
 Determines whether the config should be present or not. Valid values are 'present' and 'absent'.
+
+##### `mode`
+Determines mode of the VLAN. Valid values are 'CE', 'fabricpath' and 
+keyword 'default'.
 
 ##### `vlan_name`
 The name of the VLAN. Valid values are a string or the keyword 'default'.

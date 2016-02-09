@@ -127,6 +127,7 @@ tests['default_properties_exclusive'] = {
     aggregate_multicast_routes     => 'default',
     linkup_delay_always            => 'default',
     linkup_delay_enable            => 'default',
+    loadbalance_algorithm          => 'default',
     loadbalance_multicast_rotate   => 'default',
     loadbalance_multicast_has_vlan => 'default',
     loadbalance_unicast_rotate     => 'default',
@@ -138,6 +139,7 @@ tests['default_properties_exclusive'] = {
     'aggregate_multicast_routes'     => 'false',
     'linkup_delay_always'            => 'false',
     'linkup_delay_enable'            => 'true',
+    'loadbalance_algorithm'          => 'symmetric',
     'loadbalance_multicast_rotate'   => '1',
     'loadbalance_multicast_has_vlan' => 'true',
     'loadbalance_unicast_rotate'     => '1',
@@ -153,6 +155,7 @@ tests['non_default_properties'] = {
     allocate_delay                 => '30',
     graceful_merge                 => 'disable',
     linkup_delay                   => '20',
+    loadbalance_algorithm          => 'source',
     loadbalance_unicast_layer      => 'layer4',
     loadbalance_unicast_has_vlan   => 'true',
     switch_id                      => '100',
@@ -162,6 +165,7 @@ tests['non_default_properties'] = {
     'allocate_delay'               => '30',
     'graceful_merge'               => 'disable',
     'linkup_delay'                 => '20',
+    'loadbalance_algorithm'        => 'source',
     'loadbalance_unicast_layer'    => 'layer4',
     'loadbalance_unicast_has_vlan' => 'true',
     'switch_id'                    => '100',
@@ -237,12 +241,7 @@ def test_harness_fabricpath_global(tests, id)
   # Build the manifest for this test
   build_manifest_fabricpath_global(tests, id)
 
-  # FUTURE
-  # test_harness_common(tests, id)
-
-  test_manifest(tests, id)
-  test_resource(tests, id)
-  test_idempotence(tests, id)
+  test_harness_common(tests, id)
 
   tests[id][:ensure] = nil
 end

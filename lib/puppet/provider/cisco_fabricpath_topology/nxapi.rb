@@ -1,8 +1,8 @@
 # The NXAPI provider for cisco fabricapth topology.
 #
-# January, 2016
+# February, 2016
 #
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2014-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -38,14 +38,19 @@ Puppet::Type.type(:cisco_fabricpath_topology).provide(:nxapi) do
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@topo',
                                             TOPO_NON_BOOL_PROPS)
+  def initialize(value={})
+    super(value)
+    @topo = Cisco::FabricpathTopo.topos[@property_hash[:name]]
+    @property_flush = {}
+    debug 'Created provider instance of cisco_fabricpath_topology.'
+  end
 
   def self.properties_get(topo_id, t)
     debug "Checking instance, topo #{topo_id}"
     current_state = {
-      topo_id:      topo_id,
-      name:         topo_id,
-      member_vlans: [],
-      ensure:       :present,
+      topo_id: topo_id,
+      name:    topo_id,
+      ensure:  :present,
     }
 
     # Call node_utils getter for each property
@@ -72,15 +77,6 @@ Puppet::Type.type(:cisco_fabricpath_topology).provide(:nxapi) do
     end
   end # self.prefetch
 
-  def initialize(value={})
-    super(value)
-    @topo = Cisco::FabricpathTopo.topos[@property_hash[:name]]
-    @property_flush = {}
-    debug 'Created provider instance of cisco_fabricpath_topology.'
-    debug "property hash #{@property_hash}"
-    debug "resource hash #{@resource}"
-  end
-
   def exists?
     (@property_hash[:ensure] == :present)
   end
@@ -103,8 +99,6 @@ Puppet::Type.type(:cisco_fabricpath_topology).provide(:nxapi) do
       next if prop == :state # no setter for topo state
       next unless @resource[prop]
       send("#{prop}=", @resource[prop]) if new_topo
-      debug "prop set is #{prop}"
-      debug "prop flush is #{@property_flush[prop]}"
       unless @property_flush[prop].nil?
         @topo.send("#{prop}=", @property_flush[prop]) if
           @topo.respond_to?("#{prop}=")

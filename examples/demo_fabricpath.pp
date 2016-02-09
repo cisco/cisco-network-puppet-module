@@ -16,9 +16,7 @@
 
 class ciscopuppet::demo_fabricpath {
 
-  if platform_get() =~ /n(3|9)k/ {
-    warning('This platform does not support fabricpath feature')
-  } else {
+  if platform_get() =~ /n(5|6|7)k/ {
     if platform_get() == 'n7k' {
       $aggregate_multicast_routes     = true
       $linkup_delay_always            = false
@@ -78,5 +76,7 @@ class ciscopuppet::demo_fabricpath {
       switchport_mode => 'fabricpath',
       shutdown        => false,
     }
+  } else {
+    warning('This platform does not support fabricpath feature')
   }
 }

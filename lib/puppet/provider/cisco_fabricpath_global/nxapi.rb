@@ -1,8 +1,8 @@
 # The NXAPI provider for cisco_fabricapth_global
 #
-# November, 2015
+# February, 2016
 #
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2014-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ rescue LoadError # seen on master, not on agent
 end
 
 Puppet::Type.type(:cisco_fabricpath_global).provide(:nxapi) do
-  desc 'The new NXAPI provider.'
+  desc 'The NXAPI provider.'
 
   confine feature: :cisco_node_utils
   defaultfor operatingsystem: :nexus
@@ -37,6 +37,7 @@ Puppet::Type.type(:cisco_fabricpath_global).provide(:nxapi) do
     :allocate_delay,
     :graceful_merge,
     :linkup_delay,
+    :loadbalance_algorithm,
     :loadbalance_multicast_rotate,
     :loadbalance_unicast_layer,
     :loadbalance_unicast_rotate,

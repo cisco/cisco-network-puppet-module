@@ -100,14 +100,16 @@ tests = {
 #   be merged with title values and override any duplicates. If omitted,
 #   :title_pattern will be set to 'id'.
 #
+# member_vlans property below is intentionally mixed to test range_summarize()
+#
 tests['non_default_properties'] = {
   title_pattern:  '10',
   manifest_props: "
-    member_vlans       => '10-20,30-40,100',
+    member_vlans       => '10-20, 30, 14, 31, 100-110',
     topo_name          => 'Topo-1',
   ",
   resource_props: {
-    'member_vlans' => '10-20,30-40,100',
+    'member_vlans' => '10-20,30-31,100-110',
     'topo_name'    => 'Topo-1',
   },
 }
@@ -153,12 +155,7 @@ def test_harness_fabricpath_topology(tests, id)
   # Build the manifest for this test
   build_manifest_fabricpath_topology(tests, id)
 
-  # FUTURE
-  # test_harness_common(tests, id)
-
-  test_manifest(tests, id)
-  test_resource(tests, id)
-  test_idempotence(tests, id)
+  test_harness_common(tests, id)
 
   tests[id][:ensure] = nil
 end
