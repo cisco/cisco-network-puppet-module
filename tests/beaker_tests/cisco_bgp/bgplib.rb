@@ -54,6 +54,10 @@ module BgpLib
          timer_bestpath_limit                   => 'default',
          timer_bestpath_limit_always            => 'default',
          "
+    else
+      conditional_props <<
+        "# Nonstop Routing (NSR)
+        nsr                             => 'default',"
     end
 
     if vrf != 'default'
@@ -82,6 +86,7 @@ module BgpLib
         bestpath_cost_community_ignore         => 'default',
         bestpath_med_confed                    => 'default',
         bestpath_med_missing_as_worst          => 'default',
+
 
         # Graceful Restart Properties
         graceful_restart                       => 'default',
@@ -133,6 +138,10 @@ module BgpLib
         timer_bestpath_limit                   => '255',
         timer_bestpath_limit_always            => 'true',
         "
+    else
+      conditional_props <<
+        "# Nonstop Routing (NSR)
+        nsr                            => 'true',"
     end
 
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}

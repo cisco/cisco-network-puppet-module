@@ -115,6 +115,8 @@ if platform != 'ios_xr'
   expected_values['suppress_fib_pending']           = 'true'
   expected_values['timer_bestpath_limit']           = '255'
   expected_values['timer_bestpath_limit_always']    = 'true'
+else
+  expected_values['nsr'] = 'true'
 end
 
 expected_values_vrf1 = {

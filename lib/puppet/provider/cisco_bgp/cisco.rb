@@ -74,6 +74,7 @@ Puppet::Type.type(:cisco_bgp).provide(:cisco) do
     :isolate,
     :log_neighbor_changes,
     :neighbor_down_fib_accelerate,
+    :nsr,
     :shutdown,
     :suppress_fib_pending,
     :timer_bestpath_limit_always,
