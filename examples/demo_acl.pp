@@ -35,6 +35,8 @@ class ciscopuppet::demo_acl {
   }
   cisco_ace { 'ipv6 my_ipv6_acl 85':
     ensure                 => 'present',
+    action                 => 'permit',
+    proto                  => 'tcp',
     src_addr               => 'any',
     dst_addr               => 'any',
   }
