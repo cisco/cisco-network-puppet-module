@@ -335,10 +335,10 @@ class ciscopuppet::demo_bgp {
   # --------------------------------------------------------------------------#
   # Configure Neighbor-level Address Family IPv4 Unicast (default vrf)
   # --------------------------------------------------------------------------#
+  cisco_bgp_af { '55.77 default ipv4 unicast':
+    ensure                                 => present,
+  }
   if $operatingsystem == 'ios_xr' {
-    cisco_bgp_af { '55.77 default ipv4 unicast':
-      ensure                                 => present,
-    }
     cisco_bgp_neighbor { '55.77 default 1.1.1.1':
       ensure                                 => present,
       remote_as                              => 2,
@@ -367,21 +367,21 @@ class ciscopuppet::demo_bgp {
   # --------------------------------------------------------------------------#
   # Configure Neighbor-level Address Family IPv4 Unicast (non-default vrf)
   # --------------------------------------------------------------------------#
+  cisco_bgp { '55.77':
+    ensure                                 => present,
+    router_id                              => '1.2.3.4',
+  }
+  cisco_bgp_af { '55.77 default vpnv4 unicast':
+    ensure                                 => present,
+  }
+  cisco_bgp { '55.77 blue':
+    ensure                                 => present,
+    route_distinguisher                    => auto,
+  }
+  cisco_bgp_af { '55.77 blue ipv4 unicast':
+    ensure                                 => present,
+  }
   if $operatingsystem == 'ios_xr' {
-    cisco_bgp { '55.77':
-      ensure                                 => present,
-      router_id                              => '1.2.3.4',
-    }
-    cisco_bgp_af { '55.77 default vpnv4 unicast':
-      ensure                                 => present,
-    }
-    cisco_bgp { '55.77 blue':
-      ensure                                 => present,
-      route_distinguisher                    => auto,
-    }
-    cisco_bgp_af { '55.77 blue ipv4 unicast':
-      ensure                                 => present,
-    }
     cisco_bgp_neighbor { '55.77 blue 1.1.1.1':
       ensure                                 => present,
       remote_as                              => 2,
