@@ -84,7 +84,6 @@ tests = {
 # tests[id][:resource] - a hash of expected states, used by test_resource
 # tests[id][:resource_cmd] - 'puppet resource' command to use with test_resource
 # tests[id][:show_pattern] - array of regexp patterns to use with test_show_cmd
-# tests[id][:ensure] - (Optional) set to :present or :absent before calling
 # tests[id][:code] - (Optional) override the default exit code in some tests.
 #
 # These keys are local use only and not used by test_harness_common:
@@ -101,12 +100,6 @@ tests = {
 #   :title_pattern will be set to 'id'.
 #
 
-tests['preclean'] = {
-  manifest_props: '',
-  code:           [0, 2],
-  resource_props: {},
-}
-
 tests['default_properties'] = {
   manifest_props: "
     dup_host_ip_addr_detection_host_moves     => 'default',
@@ -121,6 +114,7 @@ tests['default_properties'] = {
     'dup_host_mac_detection_host_moves'     => '5',
     'dup_host_mac_detection_timeout'        => '180',
   },
+  code:           [0, 2],
 }
 
 tests['non_default_properties'] = {
@@ -151,17 +145,8 @@ def puppet_resource_cmd
 end
 
 def build_manifest_vxlan_global(tests, id)
-  if tests[id][:ensure] == :absent
-    state = 'ensure => absent,'
-    # No need to check for 'ensure' => 'absent' here as vxlan_global doesn't
-    # have instances and puppet resource command is issued with no specific
-    # resource name.
-    tests[id][:resource] = {}
-  else
-    state = 'ensure => present,'
-    manifest = tests[id][:manifest_props]
-    tests[id][:resource] = tests[id][:resource_props]
-  end
+  manifest = tests[id][:manifest_props]
+  tests[id][:resource] = tests[id][:resource_props]
 
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
   logger.debug("build_manifest_vxlan_global :: title_pattern:\n" +
@@ -169,7 +154,6 @@ def build_manifest_vxlan_global(tests, id)
   tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   node 'default' {
     cisco_vxlan_global { 'default':
-      #{state}
       #{manifest}
     }
   }
@@ -177,9 +161,7 @@ EOF"
 end
 
 def test_harness_vxlan_global(tests, id)
-  tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:resource_cmd] = puppet_resource_cmd
-  tests[id][:desc] += " [ensure => #{tests[id][:ensure]}]"
 
   # Build the manifest for this test
   build_manifest_vxlan_global(tests, id)
@@ -190,29 +172,17 @@ def test_harness_vxlan_global(tests, id)
   test_manifest(tests, id)
   test_resource(tests, id)
   test_idempotence(tests, id)
-
-  tests[id][:ensure] = nil
 end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
-  # -------------
-  id = 'preclean'
-  tests[id][:desc] = 'Preclean'
-  tests[id][:ensure] = :absent
-  test_harness_vxlan_global(tests, id)
-
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
   id = 'default_properties'
   tests[id][:desc] = '1.1 Default Properties'
-  test_harness_vxlan_global(tests, id)
-
-  tests[id][:desc] = '1.2 Default Properties'
-  tests[id][:ensure] = :absent
   test_harness_vxlan_global(tests, id)
 
   # -------------------------------------------------------------------

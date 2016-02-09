@@ -1797,9 +1797,6 @@ Also configures anycast gateway MAC of the switch.
 
 #### Parameters
 
-##### `ensure`
-Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
-
 ##### `name`
 Instance of vxlan_global, only allow the value 'default'
 

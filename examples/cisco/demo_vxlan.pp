@@ -17,7 +17,6 @@
 
 class ciscopuppet::cisco::demo_vxlan {
   cisco_vxlan_global { 'default':
-    ensure                                => present,
     dup_host_ip_addr_detection_host_moves => '100',
     dup_host_ip_addr_detection_timeout    => '10',
     anycast_gateway_mac                   => '1234.4567.6789',

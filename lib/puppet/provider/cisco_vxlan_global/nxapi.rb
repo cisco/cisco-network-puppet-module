@@ -46,15 +46,12 @@ Puppet::Type.type(:cisco_vxlan_global).provide(:nxapi) do
 
   def initialize(value={})
     super(value)
-    @vxlan_global = Cisco::VxlanGlobal.new if Cisco::Feature.fabric_forwarding_enabled?
+    @vxlan_global = Cisco::VxlanGlobal.new(false)
     @property_flush = {}
   end
 
   def self.properties_get(vxlan_global)
-    current_state = {
-      ensure: :present,
-      name:   'default',
-    }
+    current_state = { name: 'default' }
 
     # Call node_utils getter for each property
     VXLAN_GLOBAL_PROPS.each do |prop|
@@ -65,8 +62,7 @@ Puppet::Type.type(:cisco_vxlan_global).provide(:nxapi) do
 
   def self.instances
     vxlan_globals = []
-    return vxlan_globals unless Cisco::Feature.fabric_forwarding_enabled?
-    vxlan_global = Cisco::VxlanGlobal.new
+    vxlan_global = Cisco::VxlanGlobal.new(false)
 
     vxlan_globals << properties_get(vxlan_global)
     vxlan_globals
@@ -74,18 +70,6 @@ Puppet::Type.type(:cisco_vxlan_global).provide(:nxapi) do
 
   def self.prefetch(resources)
     resources.values.first.provider = instances.first unless instances.first.nil?
-  end
-
-  def exists?
-    (@property_hash[:ensure] == :present)
-  end
-
-  def create
-    @property_flush[:ensure] = :present
-  end
-
-  def destroy
-    @property_flush[:ensure] = :absent
   end
 
   def properties_set(new_vxlan_global=false)
@@ -139,17 +123,12 @@ Puppet::Type.type(:cisco_vxlan_global).provide(:nxapi) do
   end
 
   def flush
-    if @property_flush[:ensure] == :absent
-      @vxlan_global.disable
-      @vxlan_global = nil
-    else
-      # Create/Update
-      if @vxlan_global.nil?
-        new_vxlan_global = true
-        @vxlan_global = Cisco::VxlanGlobal.new
-      end
-      properties_set(new_vxlan_global)
+    # Create/Update
+    if @vxlan_global.nil?
+      new_vxlan_global = true
+      @vxlan_global = Cisco::VxlanGlobal.new
     end
+    properties_set(new_vxlan_global)
     puts_config
   end
 

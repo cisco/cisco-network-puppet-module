@@ -4,7 +4,7 @@
 #
 # November 2015
 #
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2015-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ Puppet::Type.newtype(:cisco_vxlan_global) do
 
   ~~~puppet
     cisco_vxlan_global { 'default':
-      ensure                                    => present,
       dup_host_ip_addr_detection_host_moves     => 200,
       dup_host_ip_addr_detection_timeout        => 20,
       anycast_gateway_mac                       => '1223.3445.5668',
@@ -54,8 +53,6 @@ Puppet::Type.newtype(:cisco_vxlan_global) do
   ##############
   # Attributes #
   ##############
-
-  ensurable
 
   newproperty(:dup_host_ip_addr_detection_host_moves) do
     desc "The number of host moves allowed in n seconds. Valid values are Integer, keyword 'default'."
