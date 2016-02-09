@@ -59,14 +59,14 @@ Puppet::Type.newtype(:cisco_ace) do
         dst_port                              => 'range 32 56',
         tcp_flags                             => 'ack syn fin'
         dscp                                  => 'af11',
-        established                           => 'false',
-        http-method                           => 'post',
-        packet-length                         => 'range 80 1000',
-        tcp-option-length                     => '20',
-        time-range                            => 'my_range',
+        established                           => false,
+        http_method                           => 'post',
+        packet_length                         => 'range 80 1000',
+        tcp_option_length                     => '20',
+        time_range                            => 'my_range',
         ttl                                   => '153',
         redirect                              => 'Ethernet1/1,Ethernet1/2,port-channel1',
-        log                                   => 'false',
+        log                                   => false,
     }
   ~~~
   "
@@ -87,7 +87,7 @@ Puppet::Type.newtype(:cisco_ace) do
           [:acl_name, identity],
           [:seqno, identity],
         ],
-      ]
+      ],
     ]
   end
 
@@ -257,7 +257,7 @@ Puppet::Type.newtype(:cisco_ace) do
 
     validate do |ttl|
       fail 'TTL must be between 0 and 255: #ttl' \
-           unless ttl.to_f.between(0, 255)
+           unless ttl.to_f.between?(0, 255)
     end
   end
 

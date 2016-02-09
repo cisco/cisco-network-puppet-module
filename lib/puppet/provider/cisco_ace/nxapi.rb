@@ -36,7 +36,7 @@ Puppet::Type.type(:cisco_ace).provide(:nxapi) do
 
   # Property symbol array for method auto-generation.
   # Keep the props in 'action' order.
-  ACL_NON_BOOL_PROPS = [
+  ACE_NON_BOOL_PROPS = [
     :action,
     :proto,
     :src_addr,
@@ -50,22 +50,22 @@ Puppet::Type.type(:cisco_ace).provide(:nxapi) do
     :packet_length,
     :ttl,
     :http_method,
-    :tcp_options_length,
+    :tcp_option_length,
     :redirect,
     :remark,
   ]
 
-  ACL_BOOL_PROPS = [
+  ACE_BOOL_PROPS = [
     :established,
     :log,
   ]
 
-  ACL_ALL_PROPS = ACL_NON_BOOL_PROPS + ACL_BOOL_PROPS
+  ACE_ALL_PROPS = ACE_NON_BOOL_PROPS + ACE_BOOL_PROPS
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@ace',
-                                            ACL_NON_BOOL_PROPS)
+                                            ACE_NON_BOOL_PROPS)
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@ace',
-                                            ACL_BOOL_PROPS)
+                                            ACE_BOOL_PROPS)
 
   def initialize(value={})
     super(value)
@@ -87,10 +87,10 @@ Puppet::Type.type(:cisco_ace).provide(:nxapi) do
     }
 
     # Call node_utils getter for each property
-    ACL_NON_BOOL_PROPS.each do |prop|
+    ACE_NON_BOOL_PROPS.each do |prop|
       current_state[prop] = instance.send(prop)
     end
-    ACL_BOOL_PROPS.each do |prop|
+    ACE_BOOL_PROPS.each do |prop|
       val = instance.send(prop)
       if val.nil?
         current_state[prop] = nil
@@ -139,7 +139,7 @@ Puppet::Type.type(:cisco_ace).provide(:nxapi) do
   end
 
   def properties_set(new_ace=false)
-    ACL_ALL_PROPS.each do |prop|
+    ACE_ALL_PROPS.each do |prop|
       next unless @resource[prop]
       if new_ace
         # Set @property_flush for the current object
@@ -167,7 +167,7 @@ Puppet::Type.type(:cisco_ace).provide(:nxapi) do
       :dst_addr,
       :dst_port,
       :tcp_flags,
-      :establsihed,
+      :established,
       :precedence,
       :dscp,
       :time_range,
