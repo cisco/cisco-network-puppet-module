@@ -141,6 +141,7 @@ tests[:non_def_S2] = {
 
 tests[:non_def_S3] = {
   desc:           'Non Default: (S3) soft-reconfig enable',
+  platform:       'n(3|9)k',
   manifest_props: { soft_reconfiguration_in: 'enable' },
 }
 
@@ -277,7 +278,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :non_def_ibgp_only)
 
   # -------------------------------------------------------------------
-  if platform[/n(5|7|9)k/]
+  if platform[/n(5|6|7|9)k/]
     logger.info("\n#{'-' * 60}\nSection 3. L2VPN Property Testing")
     resource_absent_cleanup(agent, 'cisco_bgp', 'BGP CLEAN :: ')
     title = '2 default 1.1.1.1 l2vpn evpn'
@@ -294,10 +295,9 @@ test_name "TestCase :: #{tests[:resource_name]}" do
       test_harness_run(tests, id)
     end
 
-    [:non_def_ibgp_only].each do |id|
-      tests[id][:title_pattern].gsub!(/ipv4 unicast/, 'l2vpn evpn')
-      test_harness_run(tests, id)
-    end
+    id = :non_def_ibgp_only
+    tests[id][:title_pattern].gsub!(/ipv4 unicast/, 'l2vpn evpn')
+    test_harness_run(tests, id)
   end
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
