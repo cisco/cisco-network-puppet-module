@@ -131,6 +131,7 @@ end
 #################################################################
 test_name "TestCase :: #{testheader}" do
   # Pre-test Cleanup
+  raise_skip_exception('ONLY SUPPORTED ON N7K', self) unless platform == 'n7k'
   limit_resource_module_type_set(default_vdc_name, nil, true)
 
   # -------------------------------------------------------------------

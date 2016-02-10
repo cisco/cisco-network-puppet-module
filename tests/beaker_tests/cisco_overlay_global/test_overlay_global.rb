@@ -15,11 +15,11 @@
 ###############################################################################
 # TestCase Name:
 # -------------
-# test-vxlan_global.rb
+# test-overlay_global.rb
 #
 # TestCase Prerequisites:
 # -----------------------
-# This is a Puppet vxlan_global resource testcase for Puppet Agent on
+# This is a Puppet overlay_global resource testcase for Puppet Agent on
 # Nexus devices.
 # The test case assumes the following prerequisites are already satisfied:
 #   - Host configuration file contains agent and master information.
@@ -29,7 +29,7 @@
 #
 # TestCase:
 # ---------
-# This vxlan_global resource test verifies default values for all properties.
+# This overlay_global resource test verifies default values for all properties.
 #
 # The following exit_codes are validated for Puppet, Vegas shell and
 # Bash shell commands.
@@ -57,7 +57,7 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 # -----------------------------
 # Common settings and variables
 # -----------------------------
-testheader = 'Resource cisco_vxlan_global'
+testheader = 'Resource cisco_overlay_global'
 
 # Define PUPPETMASTER_MANIFESTPATH.
 
@@ -72,8 +72,9 @@ testheader = 'Resource cisco_vxlan_global'
 # tests[:show_cmd] - the common show command to use for test_show_run
 #
 tests = {
-  master: master,
-  agent:  agent,
+  master:   master,
+  agent:    agent,
+  platform: 'n9k',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -84,7 +85,6 @@ tests = {
 # tests[id][:resource] - a hash of expected states, used by test_resource
 # tests[id][:resource_cmd] - 'puppet resource' command to use with test_resource
 # tests[id][:show_pattern] - array of regexp patterns to use with test_show_cmd
-# tests[id][:ensure] - (Optional) set to :present or :absent before calling
 # tests[id][:code] - (Optional) override the default exit code in some tests.
 #
 # These keys are local use only and not used by test_harness_common:
@@ -103,8 +103,12 @@ tests = {
 
 tests['preclean'] = {
   manifest_props: '',
-  code:           [0, 2],
-  resource_props: {},
+  code:           [0],
+  resource_props: {
+    # These properties always exist
+    'dup_host_mac_detection_host_moves' => '5',
+    'dup_host_mac_detection_timeout'    => '180',
+  },
 }
 
 tests['default_properties'] = {
@@ -146,43 +150,32 @@ tests['non_default_properties'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = PUPPET_BINPATH + 'resource cisco_vxlan_global'
+  cmd = PUPPET_BINPATH + 'resource cisco_overlay_global'
   get_namespace_cmd(agent, cmd, options)
 end
 
-def build_manifest_vxlan_global(tests, id)
-  if tests[id][:ensure] == :absent
-    state = 'ensure => absent,'
-    # No need to check for 'ensure' => 'absent' here as vxlan_global doesn't
-    # have instances and puppet resource command is issued with no specific
-    # resource name.
-    tests[id][:resource] = {}
-  else
-    state = 'ensure => present,'
-    manifest = tests[id][:manifest_props]
-    tests[id][:resource] = tests[id][:resource_props]
-  end
+def build_manifest_overlay_global(tests, id)
+  manifest = tests[id][:manifest_props]
+  tests[id][:resource] = tests[id][:resource_props]
 
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
-  logger.debug("build_manifest_vxlan_global :: title_pattern:\n" +
+  logger.debug("build_manifest_overlay_global :: title_pattern:\n" +
                tests[id][:title_pattern])
   tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   node 'default' {
-    cisco_vxlan_global { 'default':
-      #{state}
+    cisco_overlay_global { 'default':
       #{manifest}
     }
   }
 EOF"
 end
 
-def test_harness_vxlan_global(tests, id)
-  tests[id][:ensure] = :present if tests[id][:ensure].nil?
+def test_harness_overlay_global(tests, id)
+  return unless platform_supports_test(tests, id)
   tests[id][:resource_cmd] = puppet_resource_cmd
-  tests[id][:desc] += " [ensure => #{tests[id][:ensure]}]"
 
   # Build the manifest for this test
-  build_manifest_vxlan_global(tests, id)
+  build_manifest_overlay_global(tests, id)
 
   # For full test support of properties use test_harness_common; as an
   # alternative use direct calls to individual test_* wrapper methods:
@@ -190,8 +183,6 @@ def test_harness_vxlan_global(tests, id)
   test_manifest(tests, id)
   test_resource(tests, id)
   test_idempotence(tests, id)
-
-  tests[id][:ensure] = nil
 end
 
 #################################################################
@@ -201,25 +192,25 @@ test_name "TestCase :: #{testheader}" do
   # -------------
   id = 'preclean'
   tests[id][:desc] = 'Preclean'
-  tests[id][:ensure] = :absent
-  test_harness_vxlan_global(tests, id)
+  if platform_supports_test(tests, id)
+    command_config(agent, 'no nv overlay evpn', 'no nv overlay evpn')
+    command_config(agent, 'l2rib dup-host-mac-detection default',
+                   'l2rib dup-host-mac-detection default')
+  end
+  test_harness_overlay_global(tests, id)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
   id = 'default_properties'
   tests[id][:desc] = '1.1 Default Properties'
-  test_harness_vxlan_global(tests, id)
-
-  tests[id][:desc] = '1.2 Default Properties'
-  tests[id][:ensure] = :absent
-  test_harness_vxlan_global(tests, id)
+  test_harness_overlay_global(tests, id)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   id = 'non_default_properties'
   tests[id][:desc] = '2.1 Non Default Properties'
-  test_harness_vxlan_global(tests, id)
+  test_harness_overlay_global(tests, id)
 end
 
 logger.info("TestCase :: #{testheader} :: End")
