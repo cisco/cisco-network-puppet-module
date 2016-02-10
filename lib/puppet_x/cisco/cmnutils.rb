@@ -48,7 +48,7 @@ module PuppetX
                 array << ele.to_a
                 array = array.flatten
               else
-                fail 'overlapping arrays'
+                fail 'overlapping arrays not allowed'
               end
             else
               elema = []
@@ -57,7 +57,7 @@ module PuppetX
                 array << elema
                 array = array.flatten
               else
-                fail 'overlapping arrays'
+                fail 'overlapping arrays not allowed'
               end
             end
           end

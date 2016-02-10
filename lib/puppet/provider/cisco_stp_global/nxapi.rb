@@ -163,6 +163,8 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
 
   def bd_designated_priority=(should_list)
     should_list = @nu.default_bd_designated_priority if should_list[0] == :default
+    # check for overlapping arrays in should_list
+    PuppetX::Cisco::Utils.fail_array_overlap(should_list)
     @property_flush[:bd_designated_priority] = should_list
   end
 
@@ -178,6 +180,8 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
 
   def bd_forward_time=(should_list)
     should_list = @nu.default_bd_forward_time if should_list[0] == :default
+    # check for overlapping arrays in should_list
+    PuppetX::Cisco::Utils.fail_array_overlap(should_list)
     @property_flush[:bd_forward_time] = should_list
   end
 
@@ -193,6 +197,8 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
 
   def bd_hello_time=(should_list)
     should_list = @nu.default_bd_hello_time if should_list[0] == :default
+    # check for overlapping arrays in should_list
+    PuppetX::Cisco::Utils.fail_array_overlap(should_list)
     @property_flush[:bd_hello_time] = should_list
   end
 
@@ -208,6 +214,8 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
 
   def bd_max_age=(should_list)
     should_list = @nu.default_bd_max_age if should_list[0] == :default
+    # check for overlapping arrays in should_list
+    PuppetX::Cisco::Utils.fail_array_overlap(should_list)
     @property_flush[:bd_max_age] = should_list
   end
 
@@ -223,6 +231,8 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
 
   def bd_priority=(should_list)
     should_list = @nu.default_bd_priority if should_list[0] == :default
+    # check for overlapping arrays in should_list
+    PuppetX::Cisco::Utils.fail_array_overlap(should_list)
     @property_flush[:bd_priority] = should_list
   end
 
@@ -238,6 +248,8 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
 
   def bd_root_priority=(should_list)
     should_list = @nu.default_bd_root_priority if should_list[0] == :default
+    # check for overlapping arrays in should_list
+    PuppetX::Cisco::Utils.fail_array_overlap(should_list)
     @property_flush[:bd_root_priority] = should_list
   end
 
@@ -253,6 +265,8 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
 
   def mst_designated_priority=(should_list)
     should_list = @nu.default_mst_designated_priority if should_list[0] == :default
+    # check for overlapping arrays in should_list
+    PuppetX::Cisco::Utils.fail_array_overlap(should_list)
     @property_flush[:mst_designated_priority] = should_list
   end
 
@@ -268,6 +282,22 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
 
   def mst_inst_vlan_map=(should_list)
     should_list = @nu.default_mst_inst_vlan_map if should_list[0] == :default
+    # check for overlapping arrays in should_list
+    # however, in this case, the range is 2nd value unlike
+    # other range based params so, reverse the arrays and
+    # check the overlap on the ranges
+    # do a deep copy of the array first
+    llist = []
+    should_list.each do |element|
+      llist << element.dup
+    end
+    # swap elements of the new array
+    llist.each do |elem|
+      tmp = elem[1]
+      elem[1] = elem[0]
+      elem[0] = tmp
+    end
+    PuppetX::Cisco::Utils.fail_array_overlap(llist)
     @property_flush[:mst_inst_vlan_map] = should_list
   end
 
@@ -283,6 +313,8 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
 
   def mst_priority=(should_list)
     should_list = @nu.default_mst_priority if should_list[0] == :default
+    # check for overlapping arrays in should_list
+    PuppetX::Cisco::Utils.fail_array_overlap(should_list)
     @property_flush[:mst_priority] = should_list
   end
 
@@ -298,6 +330,8 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
 
   def mst_root_priority=(should_list)
     should_list = @nu.default_mst_root_priority if should_list[0] == :default
+    # check for overlapping arrays in should_list
+    PuppetX::Cisco::Utils.fail_array_overlap(should_list)
     @property_flush[:mst_root_priority] = should_list
   end
 
@@ -313,6 +347,8 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
 
   def vlan_designated_priority=(should_list)
     should_list = @nu.default_vlan_designated_priority if should_list[0] == :default
+    # check for overlapping arrays in should_list
+    PuppetX::Cisco::Utils.fail_array_overlap(should_list)
     @property_flush[:vlan_designated_priority] = should_list
   end
 
@@ -328,6 +364,7 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
 
   def vlan_forward_time=(should_list)
     should_list = @nu.default_vlan_forward_time if should_list[0] == :default
+    # check for overlapping arrays in should_list
     PuppetX::Cisco::Utils.fail_array_overlap(should_list)
     @property_flush[:vlan_forward_time] = should_list
   end
@@ -344,6 +381,8 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
 
   def vlan_hello_time=(should_list)
     should_list = @nu.default_vlan_hello_time if should_list[0] == :default
+    # check for overlapping arrays in should_list
+    PuppetX::Cisco::Utils.fail_array_overlap(should_list)
     @property_flush[:vlan_hello_time] = should_list
   end
 
@@ -359,6 +398,8 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
 
   def vlan_max_age=(should_list)
     should_list = @nu.default_vlan_max_age if should_list[0] == :default
+    # check for overlapping arrays in should_list
+    PuppetX::Cisco::Utils.fail_array_overlap(should_list)
     @property_flush[:vlan_max_age] = should_list
   end
 
@@ -374,6 +415,8 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
 
   def vlan_priority=(should_list)
     should_list = @nu.default_vlan_priority if should_list[0] == :default
+    # check for overlapping arrays in should_list
+    PuppetX::Cisco::Utils.fail_array_overlap(should_list)
     @property_flush[:vlan_priority] = should_list
   end
 
@@ -389,6 +432,8 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
 
   def vlan_root_priority=(should_list)
     should_list = @nu.default_vlan_root_priority if should_list[0] == :default
+    # check for overlapping arrays in should_list
+    PuppetX::Cisco::Utils.fail_array_overlap(should_list)
     @property_flush[:vlan_root_priority] = should_list
   end
 
