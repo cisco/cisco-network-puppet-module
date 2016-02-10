@@ -328,6 +328,7 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
 
   def vlan_forward_time=(should_list)
     should_list = @nu.default_vlan_forward_time if should_list[0] == :default
+    PuppetX::Cisco::Utils.fail_array_overlap(should_list)
     @property_flush[:vlan_forward_time] = should_list
   end
 
