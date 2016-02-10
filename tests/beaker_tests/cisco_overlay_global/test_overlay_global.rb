@@ -72,8 +72,9 @@ testheader = 'Resource cisco_overlay_global'
 # tests[:show_cmd] - the common show command to use for test_show_run
 #
 tests = {
-  master: master,
-  agent:  agent,
+  master:   master,
+  agent:    agent,
+  platform: 'n9k',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -170,6 +171,7 @@ EOF"
 end
 
 def test_harness_overlay_global(tests, id)
+  return unless platform_supports_test(tests, id)
   tests[id][:resource_cmd] = puppet_resource_cmd
 
   # Build the manifest for this test
@@ -190,9 +192,11 @@ test_name "TestCase :: #{testheader}" do
   # -------------
   id = 'preclean'
   tests[id][:desc] = 'Preclean'
-  command_config(agent, 'no nv overlay evpn', 'no nv overlay evpn')
-  command_config(agent, 'l2rib dup-host-mac-detection default',
-                 'l2rib dup-host-mac-detection default')
+  if platform_supports_test(tests, id)
+    command_config(agent, 'no nv overlay evpn', 'no nv overlay evpn')
+    command_config(agent, 'l2rib dup-host-mac-detection default',
+                   'l2rib dup-host-mac-detection default')
+  end
   test_harness_overlay_global(tests, id)
 
   # -------------------------------------------------------------------
