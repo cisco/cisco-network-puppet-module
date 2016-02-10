@@ -58,28 +58,24 @@ require File.expand_path('../search_domainlib.rb', __FILE__)
 result = 'PASS'
 testheader = 'DOMAIN_NAME Resource :: All Attributes Defaults'
 
+# Helper for testbed cleanup
+def dns_clean(agent)
+  # remove any existing resources that we will be testing against
+  resource_titles(agent, :domain_name, :clean)
+
+  # These resources currently do not support ensure=absent; they can use
+  # resource_titles above if they're ever updated.
+  on(agent, get_vshell_cmd('show run | i domain-list|name-server'))
+  stdout.scan(/ip domain-list \S+|ip name-server .*/).each do |cli|
+    command_config(agent, "no #{cli}", "removing #{cli}")
+  end
+end
+
 # @test_name [TestCase] Executes defaults testcase for NAME_SERVER Resource.
 test_name "TestCase :: #{testheader}" do
-  ## @step [Step] Sets up switch for provider test.
-  step 'TestStep :: Setup switch for provider test' do
-    # Let's check and make sure that an expected default group/role is present
-    # and an unexpected non-default group/role is absent
-
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    cmd_str = get_vshell_cmd('conf t ; ' \
-                                        'no ip domain-name test.abc ;' \
-                                        'no ip domain-name test.xyz ;' \
-                                        'no vrf context test')
-    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
-
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config all')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, [/domain-name test.abc$/],
-                               true, self, logger)
-    end
-    logger.info("Setup switch for provider test :: #{result}")
+  step 'TestStep :: Testbed pre-test cleanup' do
+    dns_clean(agent)
+    resource_absent_cleanup(agent, 'cisco_vrf')
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
