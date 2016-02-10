@@ -72,7 +72,7 @@ testheader = 'Resource cisco_vxlan_vtep_vni'
 tests = {
   master:   master,
   agent:    agent,
-  platform: 'n(3|9)k',
+  platform: 'n9k',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -270,6 +270,8 @@ EOF"
 end
 
 def test_harness_cisco_vxlan_vtep_vni(tests, id)
+  return unless platform_supports_test(tests, id)
+
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:resource_cmd] = puppet_resource_cmd
   tests[id][:desc] += " [ensure => #{tests[id][:ensure]}]"

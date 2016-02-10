@@ -108,7 +108,7 @@ Puppet::Type.type(:cisco_vxlan_vtep_vni).provide(:nxapi) do
     resources.keys.each do |id|
       provider = vnis.find do |vni|
         vni.interface.to_s == resources[id][:interface].to_s &&
-        vni.vni == resources[id][:vni] &&
+        vni.vni.to_s == resources[id][:vni].to_s &&
         vni.assoc_vrf.to_s == resources[id][:assoc_vrf].to_s
       end
       resources[id].provider = provider unless provider.nil?
