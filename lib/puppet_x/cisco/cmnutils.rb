@@ -31,6 +31,38 @@ module PuppetX
         network = address + '/' + mask unless mask.nil?
         network
       end
+
+      # Helper utility for checking if arrays are overlapping in a
+      # give list.
+      # For ex: if the list has '2-10,32,42,44-89' and '11-33'
+      # then this will fail as they overlap
+      def self.fail_array_overlap(list)
+        array = []
+        list.each do |range, _val|
+          larray = range.split(',')
+          larray.each do |elem|
+            if elem.include?('-')
+              elema = elem.split('-').map { |d| Integer(d) }
+              ele = elema[0]..elema[1]
+              if (array & ele.to_a).empty?
+                array << ele.to_a
+                array = array.flatten
+              else
+                fail 'overlapping arrays'
+              end
+            else
+              elema = []
+              elema << elem.to_i
+              if (array & elema).empty?
+                array << elema
+                array = array.flatten
+              else
+                fail 'overlapping arrays'
+              end
+            end
+          end
+        end
+      end
     end
 
     # PuppetX::Cisco::BgpUtil - Common BGP methods used by BGP Types/Providers
