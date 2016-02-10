@@ -16,11 +16,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `cisco_interface_channel_group` type and provider
 - `cisco_interface_portchannel` type and provider
 - `cisco_interface_service_vni` type and provider
+- `cisco_overlay_global` type and provider.
 - `cisco_portchannel_global` type and provider
 - `cisco_vdc` type and provider.
 - `cisco_vni` type and provider.
 - `cisco_vrf_af` type and provider.
-- `cisco_vxlan_global` type and provider.
 - `cisco_vxlan_vtep` type and provider.
 
 #### NetDev Resources

@@ -245,7 +245,7 @@ The following resources include cisco types and providers along with cisco provi
    * [`cisco_vni`](#type-cisco_vni)
 
 * VXLAN Types
-  * [`cisco_vxlan_global`](#type-cisco_vxlan_global)
+  * [`cisco_overlay_global`](#type-cisco_overlay_global)
   * [`cisco_vxlan_vtep`](#type-cisco_vxlan_vtep)
   * [`cisco_vxlan_vtep_vni`](#type-cisco_vxlan_vtep_vni)
 
@@ -269,6 +269,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
 * [`cisco_ospf`](#type-cisco_ospf)
 * [`cisco_ospf_vrf`](#type-cisco_ospf_vrf)
+* [`cisco_overlay_global`](#type-cisco_overlay_global)
 * [`cisco_portchannel_global`](#type-cisco_portchannel_global)
 * [`cisco_snmp_community`](#type-cisco_snmp_community)
 * [`cisco_snmp_group`](#type-cisco_snmp_group)
@@ -283,7 +284,6 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_vrf`](#type-cisco_vrf)
 * [`cisco_vrf_af`](#type-cisco_vrf_af)
 * [`cisco_vtp`](#type-cisco_vtp)
-* [`cisco_vxlan_global`](#type-cisco_vxlan_global)
 * [`cisco_vxlan_vtep`](#type-cisco_vxlan_vtep)
 * [`cisco_vxlan_vtep_vni`](#type-cisco_vxlan_vtep_vni)
 
@@ -1298,6 +1298,31 @@ Specifies the reference bandwidth used to assign OSPF cost.
 Valid values are an integer, in Mbps, or the keyword 'default'.
 
 --
+### Type: cisco_overlay_global
+Handles the detection of duplicate IP or MAC addresses based on the number of moves in a given time-interval (seconds).
+Also configures anycast gateway MAC of the switch.
+
+#### Parameters
+
+##### `name`
+Instance of cisco_overlay_global, only allow the value 'default'
+
+##### `anycast_gateway_mac`
+Anycast gateway mac of the switch
+
+##### `dup_host_ip_addr_detection_host_moves`
+The number of host moves allowed in n seconds. The range is 1 to 1000 moves; default is 5 moves.
+
+##### `dup_host_ip_addr_detection_timeout`
+The duplicate detection timeout in seconds for the number of host moves. The range is 2 to 36000 seconds; default is 180 seconds.
+
+##### `dup_host_mac_detection_host_moves`
+The number of host moves allowed in n seconds. The range is 1 to 1000 moves; default is 5 moves.
+
+##### `dup_host_mac_detection_timeout`
+The duplicate detection timeout in seconds for the number of host moves. The range is 2 to 36000 seconds; default is 180 seconds.
+
+--
 ### Type: cisco_pim
 Manages configuration of an Protocol Independent Multicast (PIM) instance.
 
@@ -1789,34 +1814,6 @@ vPC system mac. Valid values are in mac addresses format. There is no default va
 
 ##### `system_priority`
 vPC system priority. Valid values are integers in the range 1..65535. Default value: 32667.
-
---
-### Type: cisco_vxlan_global
-Handles the detection of duplicate IP or MAC addresses based on the number of moves in a given time-interval (seconds).
-Also configures anycast gateway MAC of the switch.
-
-#### Parameters
-
-##### `ensure`
-Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
-
-##### `name`
-Instance of vxlan_global, only allow the value 'default'
-
-##### `anycast_gateway_mac`
-Anycast gateway mac of the switch
-
-##### `dup_host_ip_addr_detection_host_moves`
-The number of host moves allowed in n seconds. The range is 1 to 1000 moves; default is 5 moves.
-
-##### `dup_host_ip_addr_detection_timeout`
-The duplicate detection timeout in seconds for the number of host moves. The range is 2 to 36000 seconds; default is 180 seconds.
-
-##### `dup_host_mac_detection_host_moves`
-The number of host moves allowed in n seconds. The range is 1 to 1000 moves; default is 5 moves.
-
-##### `dup_host_mac_detection_timeout`
-The duplicate detection timeout in seconds for the number of host moves. The range is 2 to 36000 seconds; default is 180 seconds.
 
 --
 ### Type: cisco_vxlan_vtep
