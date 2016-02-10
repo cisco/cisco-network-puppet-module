@@ -46,7 +46,7 @@ Puppet::Type.type(:cisco_overlay_global).provide(:nxapi) do
 
   def initialize(value={})
     super(value)
-    @overlay_global = Cisco::OverlayGlobal.new(false)
+    @overlay_global = Cisco::OverlayGlobal.new
     @property_flush = {}
   end
 
@@ -62,7 +62,7 @@ Puppet::Type.type(:cisco_overlay_global).provide(:nxapi) do
 
   def self.instances
     overlay_globals = []
-    overlay_global = Cisco::OverlayGlobal.new(false)
+    overlay_global = Cisco::OverlayGlobal.new
 
     overlay_globals << properties_get(overlay_global)
     overlay_globals
