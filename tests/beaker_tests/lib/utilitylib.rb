@@ -281,7 +281,8 @@ def get_current_resource_instances(agent, res_name)
   names
 end
 
-# Method to clean by putting a resource in absent state
+# Method to clean *all* resources of a given resource name, by
+# calling puppet resource with 'ensure=absent'.
 # @param agent [String] the agent that is going to run the test
 # @param res_name [String] the resource name that will be cleaned up
 def resource_absent_cleanup(agent, res_name, stepinfo='absent clean')
@@ -307,6 +308,29 @@ def resource_absent_cleanup(agent, res_name, stepinfo='absent clean')
       on(agent, cmd_str, acceptable_exit_codes: [0])
     end
   end
+end
+
+# Helper to clean a specific resource by title name
+def resource_absent_by_title(agent, res_name, title)
+  res_cmd =
+    get_namespace_cmd(agent, PUPPET_BINPATH + "resource #{res_name}", options)
+  on(agent, "#{res_cmd} '#{title}' ensure=absent")
+end
+
+# Helper to find all titles of a given resource name.
+# Optionally remove all titles found.
+# Returns an array of titles.
+def resource_titles(agent, res_name, action=:find)
+  res_cmd =
+    get_namespace_cmd(agent, PUPPET_BINPATH + "resource #{res_name}", options)
+  on(agent, res_cmd)
+
+  titles = []
+  stdout.scan(/'.*':/).each { |title| titles << title.gsub(/[':]/, '') }
+  if action == :clean
+    titles.each { |title| resource_absent_by_title(agent, res_name, title) }
+  end
+  titles
 end
 
 # Helper to configure switchport mode
