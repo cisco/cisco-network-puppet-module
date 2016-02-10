@@ -73,6 +73,32 @@ end
 
 # @test_name [TestCase] Executes nondefaults testcase for network_dns Resource.
 test_name "TestCase :: #{testheader}" do
+  dns_warning = "
+    *****************************************************************
+    *****************************************************************
+    ***                    WARNING WARNING WARNING                ***
+    ***                                                           ***
+    ***                                                           ***
+    ***                                                           ***
+    ***                                                           ***
+    *** This test will remove all DNS settings from the testbed   ***
+    *** running-config.                                           ***
+    ***                                                           ***
+    *** Please save the DNS settings before executing this test.  ***
+    ***                                                           ***
+    ***                                                           ***
+    *** Comment out the 'fail dns_warning' command below to       ***
+    *** execute this test.                                        ***
+    ***                                                           ***
+    ***                                                           ***
+    ***                    WARNING WARNING WARNING                ***
+    *****************************************************************
+    *****************************************************************"
+  fail dns_warning if dns_warning
+
+  ############
+  # Start Test
+  ############
   step 'TestStep :: Testbed pre-test cleanup' do
     dns_clean(agent)
   end
