@@ -231,7 +231,6 @@ test_name "TestCase :: #{testheader}" do
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   resource_absent_cleanup(agent, 'cisco_acl',
                           'Setup switch for cisco_acl provider test')
-  # node_feature_cleanup(agent, 'acl')
 
   # -----------------------------------
   id = 'default_properties_ipv4'
@@ -252,7 +251,6 @@ test_name "TestCase :: #{testheader}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  # node_feature_cleanup(agent, 'acl')
 
   id = 'non_default_properties_ipv4'
   tests[id][:desc] = '2.1 Non Default Properties'

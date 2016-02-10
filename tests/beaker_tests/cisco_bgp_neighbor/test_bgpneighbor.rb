@@ -68,7 +68,6 @@ tests[:non_def_uber] = {
     capability_negotiation: 'true',
     dynamic_capability:     'true',
     ebgp_multihop:          '2',
-    log_neighbor_changes:   'enable',
     low_memory_exempt:      'true',
     remove_private_as:      'all',
     shutdown:               'true',
@@ -77,6 +76,10 @@ tests[:non_def_uber] = {
     timers_holdtime:        '270',
   },
 }
+
+if platform[/n(3|9)k/]
+  tests[:non_def_uber][:manifest_props][:log_neighbor_changes] = 'enable'
+end
 
 tests[:non_def_local_remote_as] = {
   preclean:       'cisco_bgp_neighbor',

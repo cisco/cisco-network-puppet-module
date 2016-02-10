@@ -309,33 +309,6 @@ def resource_absent_cleanup(agent, res_name, stepinfo='absent clean')
   end
 end
 
-# Method to clean up a feature on the test node
-# @param agent [String] the agent that is going to run the test
-# @param feature [String] the feature name that will be cleaned up
-def node_feature_cleanup(agent, feature, stepinfo='feature cleanup',
-                         enable=true)
-  step "TestStep :: #{stepinfo}" do
-    logger.debug("#{stepinfo} disable feature")
-    clean = get_vshell_cmd("conf t ; no feature #{feature}")
-    on(agent, clean, acceptable_exit_codes: [0, 2])
-    show_cmd = get_vshell_cmd('show running-config section feature')
-    on(agent, show_cmd) do
-      search_pattern_in_output(stdout, [/feature #{feature}/],
-                               true, self, logger)
-    end
-
-    return unless enable
-    logger.debug("#{stepinfo} re-enable feature")
-    clean = get_vshell_cmd("conf t ; feature #{feature}")
-    on(agent, clean, acceptable_exit_codes: [0, 2])
-    show_cmd = get_vshell_cmd('show running-config section feature')
-    on(agent, show_cmd) do
-      search_pattern_in_output(stdout, [/feature #{feature}/],
-                               false, self, logger)
-    end
-  end
-end
-
 # Helper to configure switchport mode
 def config_switchport_mode(agent, mode, stepinfo='switchport mode: ')
   step "TestStep :: #{stepinfo}" do
