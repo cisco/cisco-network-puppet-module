@@ -100,6 +100,16 @@ tests = {
 #   :title_pattern will be set to 'id'.
 #
 
+tests['preclean'] = {
+  manifest_props: '',
+  code:           [0],
+  resource_props: {
+    # These properties always exist
+    'dup_host_mac_detection_host_moves' => '5',
+    'dup_host_mac_detection_timeout'    => '180',
+  },
+}
+
 tests['default_properties'] = {
   manifest_props: "
     dup_host_ip_addr_detection_host_moves     => 'default',
@@ -114,7 +124,6 @@ tests['default_properties'] = {
     'dup_host_mac_detection_host_moves'     => '5',
     'dup_host_mac_detection_timeout'        => '180',
   },
-  code:           [0, 2],
 }
 
 tests['non_default_properties'] = {
@@ -178,6 +187,14 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
+  # -------------
+  id = 'preclean'
+  tests[id][:desc] = 'Preclean'
+  command_config(agent, 'no nv overlay evpn', 'no nv overlay evpn')
+  command_config(agent, 'l2rib dup-host-mac-detection default',
+                 'l2rib dup-host-mac-detection default')
+  test_harness_overlay_global(tests, id)
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
