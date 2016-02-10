@@ -15,11 +15,11 @@
 ###############################################################################
 # TestCase Name:
 # -------------
-# test-vxlan_global.rb
+# test-overlay_global.rb
 #
 # TestCase Prerequisites:
 # -----------------------
-# This is a Puppet vxlan_global resource testcase for Puppet Agent on
+# This is a Puppet overlay_global resource testcase for Puppet Agent on
 # Nexus devices.
 # The test case assumes the following prerequisites are already satisfied:
 #   - Host configuration file contains agent and master information.
@@ -29,7 +29,7 @@
 #
 # TestCase:
 # ---------
-# This vxlan_global resource test verifies default values for all properties.
+# This overlay_global resource test verifies default values for all properties.
 #
 # The following exit_codes are validated for Puppet, Vegas shell and
 # Bash shell commands.
@@ -57,7 +57,7 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 # -----------------------------
 # Common settings and variables
 # -----------------------------
-testheader = 'Resource cisco_vxlan_global'
+testheader = 'Resource cisco_overlay_global'
 
 # Define PUPPETMASTER_MANIFESTPATH.
 
@@ -140,31 +140,31 @@ tests['non_default_properties'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = PUPPET_BINPATH + 'resource cisco_vxlan_global'
+  cmd = PUPPET_BINPATH + 'resource cisco_overlay_global'
   get_namespace_cmd(agent, cmd, options)
 end
 
-def build_manifest_vxlan_global(tests, id)
+def build_manifest_overlay_global(tests, id)
   manifest = tests[id][:manifest_props]
   tests[id][:resource] = tests[id][:resource_props]
 
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
-  logger.debug("build_manifest_vxlan_global :: title_pattern:\n" +
+  logger.debug("build_manifest_overlay_global :: title_pattern:\n" +
                tests[id][:title_pattern])
   tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   node 'default' {
-    cisco_vxlan_global { 'default':
+    cisco_overlay_global { 'default':
       #{manifest}
     }
   }
 EOF"
 end
 
-def test_harness_vxlan_global(tests, id)
+def test_harness_overlay_global(tests, id)
   tests[id][:resource_cmd] = puppet_resource_cmd
 
   # Build the manifest for this test
-  build_manifest_vxlan_global(tests, id)
+  build_manifest_overlay_global(tests, id)
 
   # For full test support of properties use test_harness_common; as an
   # alternative use direct calls to individual test_* wrapper methods:
@@ -183,13 +183,13 @@ test_name "TestCase :: #{testheader}" do
 
   id = 'default_properties'
   tests[id][:desc] = '1.1 Default Properties'
-  test_harness_vxlan_global(tests, id)
+  test_harness_overlay_global(tests, id)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   id = 'non_default_properties'
   tests[id][:desc] = '2.1 Non Default Properties'
-  test_harness_vxlan_global(tests, id)
+  test_harness_overlay_global(tests, id)
 end
 
 logger.info("TestCase :: #{testheader} :: End")
