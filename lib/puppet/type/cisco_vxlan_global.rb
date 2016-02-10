@@ -31,9 +31,9 @@ Puppet::Type.newtype(:cisco_vxlan_global) do
   Example:
 
   ~~~puppet
-    cisco_vxlan_global { default:
+    cisco_vxlan_global { 'default':
       ensure                                    => present,
-      dup_host_ip_addr_detection_host_moves  	  => 200,
+      dup_host_ip_addr_detection_host_moves     => 200,
       dup_host_ip_addr_detection_timeout        => 20,
       anycast_gateway_mac                       => '1223.3445.5668',
       dup_host_mac_detection_host_moves         => 100,
