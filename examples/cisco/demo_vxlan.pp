@@ -26,11 +26,12 @@ class ciscopuppet::cisco::demo_vxlan {
   }
 
   cisco_vxlan_vtep { 'nve1':
-    ensure            => present,
-    description       => 'Configured by puppet',
-    host_reachability => 'evpn',
-    shutdown          => 'false',
-    source_interface  => 'loopback55',
+    ensure                          => present,
+    description                     => 'Configured by puppet',
+    host_reachability               => 'evpn',
+    shutdown                        => 'false',
+    source_interface                => 'loopback55',
+    source_interface_hold_down_time => '50',
   }
 
   cisco_vxlan_vtep_vni {'nve1 10000':
