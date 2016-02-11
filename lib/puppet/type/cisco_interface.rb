@@ -413,6 +413,13 @@ Puppet::Type.newtype(:cisco_interface) do
   # Begin SVI interface config attributes #
   #########################################
 
+  newproperty(:fabric_forwarding_anycast_gateway) do
+    desc 'Associate SVI with anycast gateway under VLAN configuration mode. '\
+         "Valid values are 'true','false' and 'default'."
+
+    newvalues(:true, :false, :default)
+  end # property fabric_forwarding_anycast_gateway
+
   newproperty(:svi_autostate) do
     desc 'Enable/Disable autostate on the SVI interface.'
 

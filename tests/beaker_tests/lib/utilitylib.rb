@@ -679,6 +679,15 @@ def command_config(agent, cmd, msg='')
   on(agent, cmd, acceptable_exit_codes: [0, 2])
 end
 
+# Helper to set properties using the puppet resource command.
+def resource_set(agent, resource, msg='')
+  logger.info("\n#{msg}")
+  cmd = "resource #{resource[:name]} '#{resource[:title]}' " \
+                  "#{resource[:property]}='#{resource[:value]}'"
+  cmd = get_namespace_cmd(agent, PUPPET_BINPATH + cmd, options)
+  on(agent, cmd, acceptable_exit_codes: [0, 2])
+end
+
 # Helper to raise skip when prereqs are not met
 def prereq_skip(testheader, testcase, message)
   testheader = '' if testheader.nil?
