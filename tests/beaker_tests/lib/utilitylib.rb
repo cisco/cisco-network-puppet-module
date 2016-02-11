@@ -779,6 +779,9 @@ def platform
     # Some platforms do not respond correctly to the first command;
     # make another attempt using a broader search.
     on(agent, facter_cmd('-p cisco | egrep -A1 hardware'))
+    # Sample output:
+    #   hardware => {
+    #     type => "NX-OSv Chassis",
     pi = Regexp.last_match[1] if stdout[/type => "(.*)"/]
     fail 'Unable to query Cisco hardware type using facter commands' if
       pi.empty?
