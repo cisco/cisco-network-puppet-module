@@ -219,14 +219,12 @@ EOF"
           ensure         => present,
           mapped_vni     => '24000',
           vlan_name      => 'DESCR-VLAN2400',
-          state          => 'suspend',
          }"
     else
       manifest = "
         cisco_vlan { '2400':
           ensure         => present,
           vlan_name      => 'DESCR-VLAN2400',
-          state          => 'suspend',
         }"
     end
 
