@@ -354,7 +354,7 @@ tests['speed_dup_mtu'] = {
   },
 }
 
-resource = {
+resource_cisco_overlay_global = {
   name:     'cisco_overlay_global',
   title:    'default',
   property: 'anycast_gateway_mac',
@@ -495,7 +495,7 @@ test_name "TestCase :: #{testheader}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 4. (SVI) Property Testing")
-  resource_set(agent, resource, 'Overlay Global mac setup')
+  resource_set(agent, resource_cisco_overlay_global, 'Overlay Global mac setup')
   interface_cleanup(agent, tests[:svi_name])
   test_harness_interface(tests, 'SVI_default')
   test_harness_interface(tests, 'SVI')
