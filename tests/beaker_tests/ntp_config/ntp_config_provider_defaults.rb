@@ -67,7 +67,6 @@ tests = {
 
 # @test_name [TestCase] Executes defaults testcase for ntp_config Resource.
 test_name "TestCase :: #{testheader}" do
-
   # Find an available test interface on this device
   intf = find_interface(tests)
 
