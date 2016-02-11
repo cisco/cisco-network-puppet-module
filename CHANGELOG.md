@@ -17,6 +17,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `cisco_interface_portchannel` type and provider
 - `cisco_interface_service_vni` type and provider
 - `cisco_overlay_global` type and provider.
+- `cisco_pim` type and provider
+- `cisco_pim_rp_address` type and provider
+- `cisco_pim_grouplist` type and provider
 - `cisco_portchannel_global` type and provider
 - `cisco_vdc` type and provider.
 - `cisco_vni` type and provider.
@@ -48,6 +51,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `table_map`, `table_map_filter`
   - `suppress_inactive`
 - Extended `cisco_interface` with the following attributes:
+  - `fabric_forwarding_anycast_gateway` 
   - `ipv4_address_secondary`, `ipv4_netmask_length_secondary`
   - `ipv4_arp_timeout`
   - `ipv4_pim_sparse_mode`

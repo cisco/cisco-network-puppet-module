@@ -1061,6 +1061,10 @@ VRF member of the interface.  Valid values are a string or the keyword 'default'
 
 ##### SVI interface config attributes
 
+###### `fabric_forwarding_anycast_gateway`
+Associate SVI with anycast gateway under VLAN configuration mode.
+Valid values are 'true', 'false', and 'default'.
+
 ###### `svi_autostate`
 Enable/Disable autostate on the SVI interface. Valid values are 'true',
 'false', and 'default'.

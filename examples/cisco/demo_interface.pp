@@ -87,6 +87,16 @@ class ciscopuppet::cisco::demo_interface {
     ipv4_arp_timeout => 300,
   }
 
+  cisco_overlay_global { 'default':
+    anycast_gateway_mac                    => '1.1.1',
+  }
+
+  cisco_interface { 'vlan97':
+    ensure => present,
+    fabric_forwarding_anycast_gateway        => 'true',
+    require                                  => Cisco_overlay_global['default'],
+  }
+
   #  Requires F3 or newer linecards
   # cisco_interface { 'Ethernet9/1':
   #   switchport_mode                => trunk,
