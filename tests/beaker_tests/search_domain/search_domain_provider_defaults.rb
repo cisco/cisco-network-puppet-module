@@ -162,6 +162,11 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check search_domain instance absence on agent :: #{result}")
   end
 
+  step 'TestStep :: Testbed post-test cleanup' do
+    dns_clean(agent)
+    resource_absent_cleanup(agent, 'cisco_vrf')
+  end
+
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   raise_passfail_exception(result, testheader, self, logger)
 end

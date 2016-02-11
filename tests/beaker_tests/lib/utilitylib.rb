@@ -773,6 +773,10 @@ end
 def platform
   return @cisco_hardware unless @cisco_hardware.nil?
   pi = on(agent, facter_cmd('-p cisco.hardware.type')).stdout.chomp
+  if pi.empty?
+    fail 'Unable to query Cisco hardware type using the ' \
+      "'cisco.hardware.type' custom factor key"
+  end
   # The following kind of string info is returned for Nexus.
   # - Nexus9000 C9396PX Chassis
   # - Nexus7000 C7010 (10 Slot) Chassis
