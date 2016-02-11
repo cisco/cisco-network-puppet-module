@@ -774,9 +774,19 @@ def platform
   return @cisco_hardware unless @cisco_hardware.nil?
   pi = on(agent, facter_cmd('-p cisco.hardware.type')).stdout.chomp
   if pi.empty?
-    fail 'Unable to query Cisco hardware type using the ' \
+    logger.debug 'Unable to query Cisco hardware type using the ' \
       "'cisco.hardware.type' custom factor key"
+    # Some platforms do not respond correctly to the first command;
+    # make another attempt using a broader search.
+    on(agent, facter_cmd('-p cisco | egrep -A1 hardware'))
+    # Sample output:
+    #   hardware => {
+    #     type => "NX-OSv Chassis",
+    pi = Regexp.last_match[1] if stdout[/type => "(.*)"/]
+    fail 'Unable to query Cisco hardware type using facter commands' if
+      pi.empty?
   end
+
   # The following kind of string info is returned for Nexus.
   # - Nexus9000 C9396PX Chassis
   # - Nexus7000 C7010 (10 Slot) Chassis
@@ -798,6 +808,7 @@ def platform
   else
     fail "Unrecognized platform type: #{pi}\n"
   end
+  logger.info "\nFound Platform string: '#{pi}', Alias to: '#{@cisco_hardware}'"
   @cisco_hardware
 end
 
