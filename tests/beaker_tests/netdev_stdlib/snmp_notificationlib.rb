@@ -38,7 +38,7 @@ module SnmpNotificationLib
   # A. Methods to create manifests for snmp_notification Puppet provider test cases.
 
   def self.create_absent
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   snmp_notification { 'aaa server-state-change':
     enable => false,
@@ -49,7 +49,7 @@ EOF"
   end
 
   def self.create_defaults
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   snmp_notification { 'aaa server-state-change':
     enable => false,
@@ -60,7 +60,7 @@ EOF"
   end
 
   def self.create_non_defaults
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   snmp_notification { 'aaa server-state-change':
     enable => true,
