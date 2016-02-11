@@ -826,6 +826,10 @@ def skipped_tests_summary(tests)
 end
 
 # Find a test interface on the agent.
+# Callers should include the following hash keys:
+#   [:agent]
+#   [:intf_type]
+#   [:resource_name]
 def find_interface(tests, id=nil, skipcheck=true)
   # Prefer specific test key over the all tests key
   if id

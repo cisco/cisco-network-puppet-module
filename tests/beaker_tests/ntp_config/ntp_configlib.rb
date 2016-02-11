@@ -44,11 +44,11 @@ module NtpConfigLib
   # where 'ensure' is set to present.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_ntp_config_manifest_set
+  def self.create_ntp_config_manifest_set(intf)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   ntp_config {'default':
-    source_interface => 'ethernet2/1',
+    source_interface => '#{intf}',
   }
 }
 EOF"
