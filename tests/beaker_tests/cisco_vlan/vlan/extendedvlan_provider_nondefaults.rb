@@ -102,7 +102,6 @@ test_name "TestCase :: #{testheader}" do
                                { 'ensure'     => 'present',
                                  'mapped_vni' => ('24000' if platform.match('n9k')),
                                  'shutdown'   => 'false',
-                                 'state'      => 'suspend',
                                  'vlan_name'  => 'DESCR-VLAN2400' }.reject { |_k, v| v.nil? },
                                false, self, logger)
     end
@@ -133,7 +132,6 @@ test_name "TestCase :: #{testheader}" do
       search_pattern_in_output(stdout,
                                { 'ensure'    => 'present',
                                  'shutdown'  => 'false',
-                                 'state'     => 'suspend',
                                  'vlan_name' => 'DESCR-VLAN2400' },
                                true, self, logger)
     end
