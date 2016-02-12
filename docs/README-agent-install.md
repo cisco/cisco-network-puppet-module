@@ -236,7 +236,6 @@ Copy the `ova` file to the `bootflash:` device.
 ~~~
 n7k# dir bootflash: | inc oac.1.0.0.ova
    45424640    Feb 12 19:37:40 2016  oac.1.0.0.ova
-n7k# 
 ~~~
 
 Use the `show virtual-service global` command to display available resources for the `OAC` Virtual Service.
