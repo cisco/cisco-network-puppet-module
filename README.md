@@ -24,14 +24,16 @@ Please see [Learning Resources](#learning-resources) for additional references.
 #### Table of Contents
 
 1. [Overview](#overview)
-2. [Module Description](#module-description)
-3. [Setup](#setup)
-4. [Usage](#usage)
-5. [Resource Reference](#resource-reference)
+1. [Module Description](#module-description)
+1. [Setup](#setup)
+1. [Usage](#usage)
+1. [Platform Support](#platform-support)
+   * [Provider Support Across Platforms](#provider-platform-support)
+1. [Resource Reference](#resource-reference)
    * [Resource Type Catalog (by Technology)](#resource-by-tech)
    * [Resource Type Catalog (by Name)](#resource-by-name)
-6. [Limitations - OS compatibility, etc.](#limitations)
-7. [Learning Resources](#learning-resources)
+1. [Limitations - OS compatibility, etc.](#limitations)
+1. [Learning Resources](#learning-resources)
 
 
 
@@ -141,6 +143,87 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
    cost => "200",
 }
 ~~~
+
+## Platform Support
+
+### <a name="provider-platform-support">Provider Support Across Platforms</a>
+
+The following table indicates which providers are supported on each platform. As platforms are added to the support list they may indicate ' `Unsupported`' for some providers that have not completed the test validation process at the time of this release. Some providers will show caveats for a platform if there are limitations on usage.
+
+##### Cisco Providers
+
+|  = Supported <br>  = Unsupported  | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|:---|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| [cisco_aaa_authentication_login](#type-cisco_aaa_authentication_login) |  |  |  |  |  |  |
+| [cisco_aaa_authorization_cfg_svc](#type-cisco_aaa_authorization_cfg_svc) |  |  |  |  |  |  |
+| [cisco_aaa_authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) |  |  |  |  |  |  |
+| [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs) |  |  |  |  |  |  |
+| [cisco_acl](#type-cisco_acl) |  |  |  |  |  |  |
+| [cisco_ace](#type-cisco_ace) |  |  |  |  |  |  |
+| [cisco_command_config](#type-cisco_command_config) |  |  |  |  |  |  |
+| [cisco_bgp](#type-cisco_bgp) |  |  |  |  |  |  |
+| [cisco_bgp_af](#type-cisco_bgp_af) |  |  |  |  |  |  |
+| [cisco_bgp_neighbor](#type-cisco_bgp_neighbor) |  |  |  |  |  |  |
+| [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af) |  |  |  |  |  |  |
+| [cisco_interface](#type-cisco_interface) |  |  |  |  <br>[Caveat](#cisco-interface-caveats) |  <br>[Caveat](#cisco-interface-caveats) |  |
+| [cisco_interface_channel_group](#type-cisco_interface_channel_group) |  |  |  |  |  |  |
+| [cisco_interface_ospf](#type-cisco_interface_ospf) |  |  |  |  |  |  |
+| [cisco_interface_port_channel](#type-cisco_interface_port_channel) | test |  |  |  |  |  |
+| [cisco_interface_ospf](#type-cisco_interface_ospf) |  |  |  |  |  |  |
+| [cisco_interface_service_vni](#type-cisco_interface_service_vni) |  |  |  |  |  |  |
+| [cisco_interface_ospf](#type-cisco_interface_ospf) |  |  |  |  |  |  |
+| [cisco_interface_ospf](#type-cisco_interface_ospf) |  |  |  |  |  |  |
+| [cisco_ospf](#type-cisco_ospf) |  |  |  |  |  |  |
+| [cisco_ospf_vrf](#type-cisco_ospf_vrf) |  |  |  |  |  |  |
+|  = Supported <br>  = Unsupported  | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+| [cisco_overlay_global](#type-cisco_overlay_global) |  | test  | test |  |  |  |
+| [cisco_pim](#type-cisco_pim) |  |  |  | test |  |  |
+| [cisco_pim_rp_address](#type-cisco_pim_rp_address) |  |  |  | test |  |  |
+| [cisco_pim_group_list](#type-cisco_pim_group_list) |  |  |  | test |  |  |
+| [cisco_portchannel_global](#type-cisco_portchannel_global) |  |  |  |  |  |  |
+| [cisco_snmp_community](#type-cisco_snmp_community) |  |  |  |  |  |  |
+| [cisco_snmp_group](#type-cisco_snmp_group) |  |  |  |  |  |  |
+| [cisco_snmp_server](#type-cisco_snmp_server) |  |  |  |  |  |  |
+| [cisco_snmp_user](#type-cisco_snmp_user) |  |  |  |  |  |  |
+| [cisco_tacacs_server](#type-cisco_tacacs_server) |  |  |  |  |  |  |
+| [cisco_tacacs_server_host](#type-cisco_tacacs_server_host) |  |  |  |  |  |  |
+| [cisco_vdc](#type-cisco_vdc) |  |  |  |  |  |  |
+| [cisco_vlan](#type-cisco_vlan) |  |  |  |  |  |  |
+| [cisco_vpc_domain](#type-cisco_vpc_domain) |  |  |  |  |  |  |
+| [cisco_vrf](#type-cisco_vrf) |  |  |  |  |  |  |
+| [cisco_vrf_af](#type-cisco_vrf_af) |  |  |  |  |  |  |
+| [cisco_vtp](#type-cisco_vtp) |  |  |  |  |  |  |
+| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep) |  |  |  |  |  |  |
+| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni) | ? |  |  |  |  |  |
+
+##### NetDev Providers
+
+|  = Supported <br>  = Unsupported  | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|:---|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| [domain_name](#type-domain_name) |  |  |  |  |  |  |
+| [name_server](#type-name_server) |  |  |  |  |  |  |
+| [network_dns](#type-network_dns) |  |  |  |  |  |  |
+| [network_interface](#type-network_interface) |  |  |  |  |  |  |
+| [network_snmp](#type-network_snmp) |  |  |  |  |  |  |
+| [network_trunk](#type-network_trunk) |  |  |  |  |  |  |
+| [ntp_config](#type-ntp_config) |  |  |  |  |  |  |
+| [ntp_server](#type-ntp_server) |  |  |  |  |  |  |
+| [network_snmp](#type-network_snmp) |  |  |  |  |  |  |
+| [radius](#type-radius) |  |  |  |  |  |  |
+| [radius_global](#type-radius_global) |  |  |  |  |  |  |
+| [radius_server](#type-radius_server) |  |  |  |  |  |  |
+| [search_domain](#type-search_domain) |  |  |  |  |  |  |
+| [snmp_community](#type-snmp_community) |  |  |  |  |  |  |
+| [snmp_notification](#type-snmp_notification) |  |  |  |  |  |  |
+| [snmp_notification_receiver](#type-snmp_notification_receiver) |  |  |  |  |  |  |
+| [snmp_user](#type-snmp_user) |  |  |  |  |  |  |
+| [syslog_server](#type-syslog_server) |  |  |  |  |  |  |
+| [syslog_setting](#type-syslog_setting) |  |  |  |  |  |  |
+| [tacacs](#type-tacacs) |  |  |  |  |  |  |
+| [tacacs_global](#type-tacacs_global) |  |  |  |  |  |  |
+| [tacacs_server_group](#type-tacacs_server_group) |  |  |  |  |  |  |
+| [tacacs_server](#type-tacacs_server) |  |  |  |  |  |  |
+
 
 ## <a name ="resource-reference">Resource Reference<a>
 
@@ -935,6 +1018,19 @@ Site-of-origin. Valid values are a string defining a VPN extcommunity or 'defaul
 ### Type: cisco_interface
 
 Manages a Cisco Network Interface. Any resource dependency should be run before the interface resource.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.1.0 | 1.1.0 | 1.1.0 |
+
+#### <a name="cisco-interface-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|---------|:-------------|
+| svi_autostate | Not supported on N56xx, N6k |
+| vlan_mapping | Not supported on N9k, N3k, N56xx, N6k |
+
 
 #### Parameters
 
