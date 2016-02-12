@@ -445,9 +445,9 @@ puppet agent -t
 
 ## <a name="ha">Guestshell & High Availability (HA) Platforms</a>
 
-Optional. This section discusses `guestshell` usage on HA platforms. This section does not apply to the bash-shell environment or to single-sup platforms.
+Optional. This section discusses `guestshell` usage on HA platforms. This section does not apply to the bash-shell environment, open agent container (OAC) environment or to single-sup platforms.
 
-The `guestshell` container does not automatically sync filesystem changes from the active processor to the standby processor. This means that Puppet installation files and related file changes performed in the earlier steps will not be present on the standby until they are manually synced with the following NX-OS exec command:
+The `guestshell` and `open agent (OAC)` container does not automatically sync filesystem changes from the active processor to the standby processor. This means that Puppet installation files and related file changes performed in the earlier steps will not be present on the standby until they are manually synced with the following NX-OS exec command:
 
 ~~~
 guestshell sync
