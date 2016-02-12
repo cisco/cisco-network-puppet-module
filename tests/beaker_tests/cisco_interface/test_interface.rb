@@ -276,8 +276,7 @@ tests['SVI_default'] = {
   desc:           '4.1 (SVI) Default Properties',
   intf_type:      'vlan',
   manifest_props: {
-    fabric_forwarding_anycast_gateway: 'default',
-    svi_management:                    'default',
+    svi_management: 'default'
   },
   resource:       {
     'svi_management' => 'false'
@@ -288,14 +287,19 @@ tests['SVI'] = {
   desc:           '4.2 (SVI) Non Default Properties',
   intf_type:      'vlan',
   manifest_props: {
-    fabric_forwarding_anycast_gateway: 'true',
-    svi_management:                    'true',
+    svi_management: 'true'
   },
   resource:       {
-    'fabric_forwarding_anycast_gateway' => 'true',
-    'svi_management'                    => 'true',
+    'svi_management' => 'true'
   },
 }
+
+# Fabric Forwarding Anycast Gateway
+if platform[/n9k/]
+  tests['SVI_default'][:manifest_props][:fabric_forwarding_anycast_gateway] = 'default'
+  tests['SVI'][:manifest_props][:fabric_forwarding_anycast_gateway] = 'true'
+  tests['SVI'][:resource][:fabric_forwarding_anycast_gateway] = 'true'
+end
 
 tests['SVI_autostate_default'] = {
   desc:           '4.3 (SVI) Default SVI Autostate Property',
