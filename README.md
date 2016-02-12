@@ -1281,7 +1281,7 @@ port-channel concatenation enable or disable. Valid values are true, false or 'd
 port-channel hash-distribution. Valid values are 'adaptive', 'fixed' or the keyword 'default'. This property is supported only on (Nexus 7k)
 
 ##### `hash_poly`
-port-channel hash-polynomial. Valid values are 'CRC10a', 'CRC10b', 'CRC10c', 'CRC10d' or the keyword 'default'. This property is supported only on (Nexus 5|6k)
+port-channel hash-polynomial. Valid values are 'CRC10a', 'CRC10b', 'CRC10c' or 'CRC10d'. This property is supported only on (Nexus 5|6k)
 
 ##### `load_defer`
 port-channel load-defer time interval. Valid values are integer or 'default'. This property is supported only on (Nexus 7k)
