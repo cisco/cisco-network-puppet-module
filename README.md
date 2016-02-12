@@ -28,7 +28,7 @@ Please see [Learning Resources](#learning-resources) for additional references.
 1. [Setup](#setup)
 1. [Usage](#usage)
 1. [Platform Support](#platform-support)
-   * [Provider Support Across Platforms](#provider-platform-support)
+   * [Provider Support Across Platforms](#provider-support-across-platforms)
 1. [Resource Reference](#resource-reference)
    * [Resource Type Catalog (by Technology)](#resource-by-tech)
    * [Resource Type Catalog (by Name)](#resource-by-name)
@@ -174,7 +174,7 @@ The following table indicates which providers are supported on each platform. As
 | [cisco_interface_ospf](#type-cisco_interface_ospf) |  |  |  |  |  |  |
 | [cisco_ospf](#type-cisco_ospf) |  |  |  |  |  |  |
 | [cisco_ospf_vrf](#type-cisco_ospf_vrf) |  |  |  |  |  |  |
-|  = Supported <br>  = Unsupported  | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+| ✅ = Supported <br> ❌ = Unsupported  | N9k | N30xx | N31xx | N56xx | N6k | N7k | Caveats |
 | [cisco_overlay_global](#type-cisco_overlay_global) |  | test  | test |  |  |  |
 | [cisco_pim](#type-cisco_pim) |  |  |  | test |  |  |
 | [cisco_pim_rp_address](#type-cisco_pim_rp_address) |  |  |  | test |  |  |
