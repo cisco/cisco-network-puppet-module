@@ -156,9 +156,9 @@ The following table indicates which providers are supported on each platform. As
 | ✅ = Supported <br> ❌ = Unsupported | N9k | N30xx | N31xx | N56xx | N6k | N7k | Caveats |
 |:---|:---:|:-----:|:-----:|:-----:|:---:|:---:|:---:|
 | [cisco_aaa_authentication_login](#type-cisco_aaa_authentication_login) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_aaa_authorization_cfg_svc](#type-cisco_aaa_authorization_cfg_svc) | ✅ | ✅ | ✅ | ❌ | ✅ | ❌ |
-| [cisco_aaa_authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ❌ | ✅ | ❌ |
-| [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs) | ✅ | ✅ | ✅ | ❌ | ✅ | ❌ |
+| [cisco_aaa_authorization_cfg_svc](#type-cisco_aaa_authorization_cfg_svc) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [cisco_aaa_authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
 | [cisco_acl](#type-cisco_acl) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
 | [cisco_ace](#type-cisco_ace) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
 | [cisco_command_config](#type-cisco_command_config) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
@@ -167,9 +167,9 @@ The following table indicates which providers are supported on each platform. As
 | [cisco_bgp_neighbor](#type-cisco_bgp_neighbor) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [cisco_interface](#type-cisco_interface) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅ | * [caveats](#cisco_interface-caveats) |
-| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅ | ✅ | ✅ | ❌ | ✅ | ❌ |
+| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
 | [cisco_interface_ospf](#type-cisco_interface_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_interface_portchannel](#type-cisco_interface_portchannel) | ✅ | ✅ | ✅ | ❌ | ✅* | ❌ | * [caveats](#cisco_interface_portchannel-caveats) |
+| [cisco_portchannel_global](#type-cisco_portchannel_global) | ❌* | ✅* | ✅* | ❌* | ❌* | ❌* | * [caveats](#cisco_portchannel_global-caveats) |
 | [cisco_interface_service_vni](#type-cisco_interface_service_vni) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | 
 | [cisco_ospf](#type-cisco_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [cisco_ospf_vrf](#type-cisco_ospf_vrf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
@@ -178,7 +178,7 @@ The following table indicates which providers are supported on each platform. As
 | [cisco_pim](#type-cisco_pim) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [cisco_pim_rp_address](#type-cisco_pim_rp_address) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [cisco_pim_group_list](#type-cisco_pim_group_list) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_portchannel_global](#type-cisco_portchannel_global) | ❌ | ✅ | ✅ | ❌ | ✅ | ❌ |
+| [cisco_portchannel_global](#type-cisco_portchannel_global) | ❌* | ✅* | ✅* | ❌* | ❌* | ❌ | * [caveats](#cisco_portchannel_global-caveats) |
 | [cisco_snmp_community](#type-cisco_snmp_community) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [cisco_snmp_group](#type-cisco_snmp_group) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [cisco_snmp_server](#type-cisco_snmp_server) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
@@ -416,7 +416,7 @@ Allows execution of configuration commands.
 | Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
 |----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
 | OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.0.1 | 1.0.1 | 1.0.1 |
+| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
 
 #### Parameters
 
@@ -444,7 +444,7 @@ Manages AAA Authentication Login configuration.
 | Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
 |----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
 | OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -474,7 +474,7 @@ Manages configuration for Authorization Login Config Service.
 | Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
 |----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
 | OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -498,7 +498,7 @@ Manages configuration for Authorization Login Exec Service.
 | Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
 |----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
 | OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -522,7 +522,7 @@ Manages configuration for a TACACS+ server group.
 | Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
 |----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
 | OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -552,7 +552,7 @@ Manages configuration of a Access Control List (ACL) instance.
 | Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
 |----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
 | OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -579,7 +579,7 @@ Manages configuration of an Access Control List (ACL) Access Control Entry (ACE)
 | Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
 |----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
 | OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -1264,7 +1264,7 @@ Manages a Cisco Network Interface Channel-group
 | Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
 |----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
 | OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -1295,7 +1295,7 @@ Manages a Cisco Network Interface Service VNI.
 | Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
 |----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
 | OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Puppet Module | unsupported | unsupported | unsupported | unsupported | unsupported | 1.2.0 |
 
 #### Parameters
 
@@ -1503,7 +1503,7 @@ Also configures anycast gateway MAC of the switch.
 | Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
 |----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
 | OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Puppet Module | 1.2.0 | unsupported | unsupported | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -1595,7 +1595,16 @@ Manages configuration of a portchannel global parameters
 | Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
 |----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
 | OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Puppet Module | unsupported | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+
+#### <a name="cisco_portchannel_global-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `asymmetric` <br> `hash_distribution` <br> `load_defer` | Supported only on N7k |
+| `concatenation` <br> `resilient` | Supported only on N9k, N30xx, N31xx |
+| `hash_poly` <br> `rotate` | Supported only on N56xx, N6k |
+| `symmetry ` | Supported only on N9k |
 
 #### Parameters
 
@@ -1615,7 +1624,7 @@ port-channel concatenation enable or disable. Valid values are true, false or 'd
 port-channel hash-distribution. Valid values are 'adaptive', 'fixed' or the keyword 'default'. This property is supported only on (Nexus 7k)
 
 ##### `hash_poly`
-port-channel hash-polynomial. Valid values are 'CRC10a', 'CRC10b', 'CRC10c', 'CRC10d' or the keyword 'default'. This property is supported only on (Nexus 5|6k)
+port-channel hash-polynomial. Valid values are 'CRC10a', 'CRC10b', 'CRC10c', 'CRC10d'. This property is supported only on (Nexus 5|6k).
 
 ##### `load_defer`
 port-channel load-defer time interval. Valid values are integer or 'default'. This property is supported only on (Nexus 7k)
@@ -1843,7 +1852,7 @@ Manages a Cisco VDC (Virtual Device Context).
 | Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
 |----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
 | OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Puppet Module | unsupported | unsupported | unsupported | unsupported | unsupported | 1.2.0 |
 
 #### Parameters
 
@@ -1998,7 +2007,7 @@ device.
 | Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
 |----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
 | OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -2068,11 +2077,11 @@ Sets the route-target import extended communities. Valid values are an Array or 
 
 route_target Examples:
 
-~~puppet
+~~~puppet
 route_target_import => ['1.2.3.4:5', '33:55']
 route_target_export => '4:4 66:66'
 route_target_export_evpn => '5:5'
-\~~~
+~~~
 
 ##### `route_target_import_evpn`
 (EVPN only) Sets the route-target import extended communities for EVPN. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
@@ -2092,7 +2101,7 @@ There can only be one instance of the cisco_vtp.
 | Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
 |----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
 | OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -2122,7 +2131,7 @@ Creates a VXLAN Network Virtualization Endpoint (NVE) overlay interface that ter
 | Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
 |----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
 | OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Puppet Module | 1.2.0 | unsupported | unsupported | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -2148,7 +2157,7 @@ Creates a Virtual Network Identifier member (VNI) for an NVE overlay interface.
 | Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
 |----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
 | OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Puppet Module | 1.2.0 | unsupported | unsupported | unsupported | unsupported | unsupported |
 
 #### Parameters
 
