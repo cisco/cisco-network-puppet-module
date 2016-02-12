@@ -51,7 +51,7 @@ NX-OS supports three possible environments for running third party software:
 Environment                  | Supported Platforms                      |
 -----------------------------|------------------------------------------|
 `bash-shell` or `guestshell` | Cisco Nexus 30xx, 31xx, 93xx, 95xx, N9Kv |
-`open agent container`       | Cisco Nexus 56xx, 60xx, 7xxx             |
+`open agent container (OAC)` | Cisco Nexus 56xx, 60xx, 7xxx             |
 
 You may run Puppet from either `bash-shell` or `guestshell` on supported platforms but not from both at the same time.
 
@@ -60,7 +60,9 @@ You may run Puppet from either `bash-shell` or `guestshell` on supported platfor
 * `guestshell`
   * This is a secure Linux container environment running CentOS. It is enabled by default in most platforms that support it.
 * `open agent container`
-  * This is a 32-bit CentOS based container targeted specifically to allow Puppet Agents on platforms that support it.  The OAC must be downloaded and installed before the Puppet Agent can be installed.
+  * This is a 32-bit CentOS-based container created specifically for running Puppet Agent software.
+  * OAC containers are created for specific platforms and must be downloaded from Cisco.
+  * The OAC must be installed before the Puppet Agent can be installed.
 
 #### Set Up the Network
 
@@ -224,9 +226,10 @@ This section is only necessary if Puppet will run from the `open agent container
 
 Download the `OAC` `oac.1.1.0.ova` file.
 
-* For Cisco Nexus 7xxx devices: [Download Link](https://software.cisco.com/download/release.html?i=!y&mdfid=283748960&softwareid=282088129&release=7.3%280%29D1%281%29&os=)
-
-* For Cisco Nexus 56xx and 60xx devices: [Download Link]**TODO**()
+| Platform | OAC Download Link |
+|----------|-------------------|
+| Nexus 7xxx | [Nexus 7xxx Download Link](https://software.cisco.com/download/release.html?i=!y&mdfid=283748960&softwareid=282088129&release=7.3%280%29D1%281%29&os=)|
+| Nexus 56xx and 60xx | [**TODO**]|
 
 Copy the `ova` file to the `bootflash:` device.
 
@@ -240,18 +243,7 @@ Use the `show virtual-service global` command to display available resources for
 
 ~~~
 n7k# show virtual-service global 
-
-Virtual Service Global State and Virtualization Limits:
-
-Infrastructure version : 1.9
-Total virtual services installed : 0
-Total virtual services activated : 0
-
-Machine types supported   : LXC
-Machine types disabled    : KVM
-
-Maximum VCPUs per virtual service : 1
-
+...
 Resource virtualization limits:
 Name                        Quota    Committed    Available
 -----------------------------------------------------------------------
@@ -271,7 +263,8 @@ The recommended minimum values are currently:
 
 **NOTE:** If insufficent `bootflash:` resources are available, remove unneeded files from `bootflash:` to free up space.
 
-Install the `OAC` Virtual Service using the `virtual-service install name oac package bootflash:oac.ova` command.
+Install the `OAC` Virtual Service using the `virtual-service install` command:
+`virtual-service install name oac package bootflash:oac.1.1.0.ova`
 
 ~~~
 n7k# virtual-service install name oac package bootflash:oac.1.1.0.ova
@@ -290,7 +283,7 @@ oac                     Installed          oac.1.1.0.ova
 n7k# 
 ~~~
 
-Configure and activate the OAC Virtual Service.
+Activate the OAC using the `virtual-service` configuration command:
 
 ~~~
 n7k# config t
@@ -302,7 +295,11 @@ n7k(config-virt-serv)#
 n7k(config-virt-serv)# end
 n7k# 
 n7k# 2016 Feb 12 19:55:06 n7k %$ VDC-1 %$ %VMAN-2-ACTIVATION_STATE: Successfully activated virtual service 'oac'
+~~~
 
+You may verify activation by using the `show virtual-service list` command:
+
+~~~
 n7k# show virtual-service list
 
 Virtual Service List:
@@ -314,7 +311,11 @@ oac                     Activated          oac.1.1.0.ova
 n7k# 
 ~~~
 
-Connect to the `OAC` Virtual Service using the `virtual-service connect name oac console` command.
+Open a console session to the `OAC` using the `virtual-service connect` command:
+
+`virtual-service connect name oac console`
+
+*note: The OAC's root password is initially set to `oac`. You are required to change it on initial login.*
 
 ~~~
 n7k# virtual-service connect name oac console
@@ -335,10 +336,7 @@ Changing password for root.
 New password: 
 Retype new password: 
 [root@localhost ~]# 
-[root@localhost ~]# 
 ~~~
-
-The initial `root` password is `oac` but you will be required to change it immediately.
 
 See [References](#references) for more OAC documentation *TODO*.
 
@@ -346,11 +344,14 @@ See [References](#references) for more OAC documentation *TODO*.
 
 The `open agent container` is an independent CentOS container that doesn't inherit settings from NX-OS; thus it requires additional network configuration.  This configuration will be applied inside the `OAC` container.
 
-~~~bash
-# Once connected to the OAC console
+Connect to the OAC console, then:
 
-# If using the management interface, you must enter the management namespace
+~~~bash
+
+# First become root:
 sudo su -
+
+# Enter the management namespace if your device uses the management interface for connectivity.
 chvrf management
 
 # Set up hostname and DNS configuration
@@ -378,7 +379,7 @@ export http_proxy=http://proxy.yourdomain.com:<port>
 export https_proxy=https://proxy.yourdomain.com:<port>
 ~~~
 
-Import the GPG keys.
+Import the Puppet GPG keys.
 
 ~~~
 rpm --import http://yum.puppetlabs.com/RPM-GPG-KEY-puppetlabs
