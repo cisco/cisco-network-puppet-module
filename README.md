@@ -148,27 +148,27 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 
 ### <a name="provider-platform-support">Provider Support Across Platforms</a>
 
-The following table indicates which providers are supported on each platform. As platforms are added to the support list they may indicate ' `Unsupported`' for some providers that have not completed the test validation process at the time of this release. Some providers will show caveats for a platform if there are limitations on usage.
+The following table indicates which providers are supported on each platform. As platforms are added to the support list they may indicate ' `Unsupported`' for some providers that have not completed the test validation process at the time of this release. Some providers will show caveats for a platform if there are limitations on usage, such as with unsupported properties or hardware limitations.
 
 ##### Cisco Providers
 
-|  = Supported <br>  = Unsupported  | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|:---|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| [cisco_aaa_authentication_login](#type-cisco_aaa_authentication_login) |  |  |  |  |  |  |
-| [cisco_aaa_authorization_cfg_svc](#type-cisco_aaa_authorization_cfg_svc) |  |  |  |  |  |  |
-| [cisco_aaa_authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) |  |  |  |  |  |  |
-| [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs) |  |  |  |  |  |  |
-| [cisco_acl](#type-cisco_acl) |  |  |  |  |  |  |
-| [cisco_ace](#type-cisco_ace) |  |  |  |  |  |  |
-| [cisco_command_config](#type-cisco_command_config) |  |  |  |  |  |  |
-| [cisco_bgp](#type-cisco_bgp) |  |  |  |  |  |  |
-| [cisco_bgp_af](#type-cisco_bgp_af) |  |  |  |  |  |  |
-| [cisco_bgp_neighbor](#type-cisco_bgp_neighbor) |  |  |  |  |  |  |
-| [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af) |  |  |  |  |  |  |
-| [cisco_interface](#type-cisco_interface) |  |  |  |  <br>[Caveat](#cisco-interface-caveats) |  <br>[Caveat](#cisco-interface-caveats) |  |
-| [cisco_interface_channel_group](#type-cisco_interface_channel_group) |  |  |  |  |  |  |
+| ✅ = Supported <br> ❌ = Unsupported | N9k | N30xx | N31xx | N56xx | N6k | N7k | Caveats |
+|:---|:---:|:-----:|:-----:|:-----:|:---:|:---:|:---:|
+| [cisco_aaa_authentication_login](#type-cisco_aaa_authentication_login) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [cisco_aaa_authorization_cfg_svc](#type-cisco_aaa_authorization_cfg_svc) | ✅ | ✅ | ✅ | ❌ | ✅ | ❌ |
+| [cisco_aaa_authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ❌ | ✅ | ❌ |
+| [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs) | ✅ | ✅ | ✅ | ❌ | ✅ | ❌ |
+| [cisco_acl](#type-cisco_acl) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [cisco_ace](#type-cisco_ace) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [cisco_command_config](#type-cisco_command_config) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_bgp](#type-cisco_bgp) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅* | * [caveats](#cisco_bgp-caveats) |
+| [cisco_bgp_af](#type-cisco_bgp_af) | ✅* | ✅* | ✅ | ✅ | ✅*  | ✅ | * [caveats](#cisco_bgp_af-caveats) |
+| [cisco_bgp_neighbor](#type-cisco_bgp_neighbor) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_interface](#type-cisco_interface) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅ | * [caveats](#cisco_interface-caveats) |
+| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅ | ✅ | ✅ | ❌ | ✅ | ❌ |
 | [cisco_interface_ospf](#type-cisco_interface_ospf) |  |  |  |  |  |  |
-| [cisco_interface_port_channel](#type-cisco_interface_port_channel) | test |  |  |  |  |  |
+| [cisco_interface_port_channel](#type-cisco_interface_port_channel) | ✅ | ✅ | ✅ | ❌ | ✅ | ❌ |
 | [cisco_interface_ospf](#type-cisco_interface_ospf) |  |  |  |  |  |  |
 | [cisco_interface_service_vni](#type-cisco_interface_service_vni) |  |  |  |  |  |  |
 | [cisco_interface_ospf](#type-cisco_interface_ospf) |  |  |  |  |  |  |
@@ -539,6 +539,17 @@ Permit or deny Fragments for ACL. Valid values are 'permit-all' and 'deny-all'
 
 Manages configuration of a BGP instance.
 
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | 1.1.0 | 1.1.0 | 1.1.0 |
+
+#### <a name="cisco_bgp-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `disable_policy_batching_ipv4` <br> `disable_policy_batching_ipv4` <br> `neighbor_down_fib_accelerate` <br> `reconnect_interval` | Not supported on N56xx, N6k, N7k |
+
 #### Parameters
 
 ##### `ensure`
@@ -670,6 +681,17 @@ Set bgp hold timer. Valid values are Integer, keyword 'default'.
 ### Type: cisco_bgp_af
 
 Manages configuration of a BGP Address-family instance.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | 1.1.0 | 1.1.0 | 1.1.0 |
+
+#### <a name="cisco_bgp_af-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `advertise_l2vpn_evpn ` | Not supported on N30xx, N31xx, N6k |
 
 #### Parameters
 
@@ -1024,13 +1046,12 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
 | Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.1.0 | 1.1.0 | 1.1.0 |
 
-#### <a name="cisco-interface-caveats">Caveats</a>
+#### <a name="cisco_interface-caveats">Caveats</a>
 
 | Property | Caveat Description |
-|---------|:-------------|
+|:---------|:-------------|
 | svi_autostate | Not supported on N56xx, N6k |
 | vlan_mapping | Not supported on N9k, N3k, N56xx, N6k |
-
 
 #### Parameters
 
