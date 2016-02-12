@@ -264,6 +264,11 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
   * [`network_interface (netdev_stdlib)`](#type-network_interface)
 
+* Multicast Types
+  * [`cisco_pim`](#type-cisco_pim)
+  * [`cisco_pim_grouplist`](#type-cisco_pim_grouplist)
+  * [`cisco_pim_rp_address`](#type-cisco_pim_rp_address)
+
 * NTP Types
   * [`ntp_config (netdev_stdlib)`](#type-ntp_config)
   * [`ntp_server (netdev_stdlib)`](#type-ntp_server)
@@ -351,6 +356,9 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_ospf`](#type-cisco_ospf)
 * [`cisco_ospf_vrf`](#type-cisco_ospf_vrf)
 * [`cisco_overlay_global`](#type-cisco_overlay_global)
+* [`cisco_pim`](#type-cisco_pim)
+* [`cisco_pim_grouplist`](#type-cisco_pim_grouplist)
+* [`cisco_pim_rp_address`](#type-cisco_pim_rp_address)
 * [`cisco_portchannel_global`](#type-cisco_portchannel_global)
 * [`cisco_snmp_community`](#type-cisco_snmp_community)
 * [`cisco_snmp_group`](#type-cisco_snmp_group)
