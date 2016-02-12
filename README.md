@@ -178,6 +178,7 @@ The following resources include cisco types and providers along with cisco provi
 
 * Interface Types
   * [`cisco_interface`](#type-cisco_interface)
+  * [`cisco_interface_channel_group`](#type-cisco_interface_channel_group)
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
   * [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
   * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
@@ -194,9 +195,11 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 
 * Portchannel Types
+  * [`cisco_interface_channel_group`](#type-cisco_interface_channel_group)
   * [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
   * [`cisco_portchannel_global`](#type-cisco_portchannel_global)
-  * 
+  * [`port_channel (netdev_stdlib)`](#type-port_channel)
+
 * RADIUS Types
   * [`radius (netdev_stdlib)`](#type-radius)
   * [`radius_global (netdev_stdlib)`](#type-radius_global)
@@ -230,6 +233,9 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_vtp`](#type-cisco_vtp)
   * [`network_trunk (netdev_stdlib)`](#type-network_trunk)
 
+* VPC Types
+  * [`cisco_vpc_domain`](#type-cisco_vpc_domain)
+  
 * VRF Types
   * [`cisco_vrf`](#type-cisco_vrf)
   * [`cisco_vrf_af`](#type-cisco_vrf_af)
@@ -241,6 +247,7 @@ The following resources include cisco types and providers along with cisco provi
 * VXLAN Types
   * [`cisco_vxlan_global`](#type-cisco_vxlan_global)
   * [`cisco_vxlan_vtep`](#type-cisco_vxlan_vtep)
+  * [`cisco_vxlan_vtep_vni`](#type-cisco_vxlan_vtep_vni)
 
 --
 ### <a name="resource-by-name">Cisco Resource Type Catalog (by Name)<a>
@@ -256,6 +263,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_bgp_neighbor`](#type-cisco_bgp_neighbor)
 * [`cisco_bgp_neighbor_af`](#type-cisco_bgp_neighbor_af)
 * [`cisco_interface`](#type-cisco_interface)
+* [`cisco_interface_channel_group`](#type-cisco_interface_channel_group)
 * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 * [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
 * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
@@ -270,12 +278,14 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_tacacs_server_host`](#type-cisco_tacacs_server_host)
 * [`cisco_vdc`](#type-cisco_vdc)
 * [`cisco_vlan`](#type-cisco_vlan)
+* [`cisco_vpc_domain`](#type-cisco_vpc_domain)
 * [`cisco_vni`](#type-cisco_vni)
 * [`cisco_vrf`](#type-cisco_vrf)
 * [`cisco_vrf_af`](#type-cisco_vrf_af)
 * [`cisco_vtp`](#type-cisco_vtp)
 * [`cisco_vxlan_global`](#type-cisco_vxlan_global)
 * [`cisco_vxlan_vtep`](#type-cisco_vxlan_vtep)
+* [`cisco_vxlan_vtep_vni`](#type-cisco_vxlan_vtep_vni)
 
 ### <a name="resource-by-name-netdev">NetDev StdLib Resource Type Catalog (by Name)<a>
 
@@ -287,6 +297,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`network_snmp`](#type-network_snmp)
 * [`ntp_config`](#type-ntp_config)
 * [`ntp_server`](#type-ntp_server)
+* [`port_channel`](#type-port_channel)
 * [`radius`](#type-radius)
 * [`radius_global`](#type-radius_global)
 * [`radius_server`](#type-radius_server)
@@ -936,11 +947,6 @@ are 'present' and 'absent'.
 ###### `interface`
 Name of the interface on the network element. Valid value is a string.
 
-###### `channel_group`
-channel_group is an aggregation of multiple physical interfaces that creates a logical interface. Valid values are 1 to 4096 and 'default'.
-
-Note: On some platforms a normal side-effect of adding the channel-group property is that an independent port-channel interface will be created; however, removing the channel-group configuration by itself will not also remove the port-channel interface. Therefore, the port-channel interface itself may be explicitly removed by using the `cisco_interface` provider with `ensure => absent`.
-
 ###### `description`
 Description of the interface. Valid values are a string or the keyword 'default'.
 
@@ -1044,6 +1050,12 @@ vlan_mapping => [[20, 21], [30, 31]]
 ###### `vlan_mapping_enable`
 Allows disablement of vlan_mapping on a given interface. Valid values are 'true', 'false', and 'default'.
 
+###### `vpc_id`
+Configure the vPC ID on this interface to make it a vPC link. The peer switch should configure a corresponding interface with the same vPC ID in order for the downstream device to add these links as part of the same port-channel. The vpc_id can generally be configured only on interfaces which are themselves port-channels (usually a single member port-channel). However, on the Nexus 7000 series a physical port can be configured as a vPC link. Valid values are integers in the range 1..4096. By default, interface is not configured with any vpc_id.
+
+###### `vpc_peer_link`
+Configure this port-channel interface to be a vPC peer-link. A vPC peer-link is essential to the working of the vPC complex, not only for establishing the peer connectivity for control message exchange, but also for providing redundancy when vPC links fail. Valid values are 'true' or 'false'. Default value: false.
+
 ###### `vrf`
 VRF member of the interface.  Valid values are a string or the keyword 'default'.
 
@@ -1055,6 +1067,32 @@ Enable/Disable autostate on the SVI interface. Valid values are 'true',
 
 ###### `svi_management`
 Enable/Disable management on the SVI interface. Valid values are 'true', 'false', and 'default'.
+
+--
+### Type: cisco_interface_channel_group
+
+Manages a Cisco Network Interface Channel-group
+
+#### Parameters
+
+##### Basic interface channel-group config attributes
+
+###### `ensure`
+Determine whether the interface config should be present or not. Valid values are 'present' and 'absent'.
+
+###### `interface`
+Name of the interface where the service resides. Valid value is a string.
+
+###### `channel_group`
+channel_group is an aggregation of multiple physical interfaces that creates a logical interface. Valid values are 1 to 4096 and 'default'.
+
+Note: On some platforms a normal side-effect of adding the channel-group property is that an independent port-channel interface will be created; however, removing the channel-group configuration by itself will not also remove the port-channel interface. Therefore, the port-channel interface itself may be explicitly removed by using the `cisco_interface` provider with `ensure => absent`.
+
+###### `description`
+Description of the interface. Valid values are a string or the keyword 'default'.
+
+###### `shutdown`
+Shutdown state of the interface. Valid values are 'true', 'false', and 'default'.
 
 --
 ### Type: cisco_interface_service_vni
@@ -1258,6 +1296,54 @@ Valid values are an integer, in milliseconds, or the keyword 'default'.
 ##### `auto_cost`
 Specifies the reference bandwidth used to assign OSPF cost.
 Valid values are an integer, in Mbps, or the keyword 'default'.
+
+--
+### Type: cisco_pim
+Manages configuration of an Protocol Independent Multicast (PIM) instance.
+
+#### Parameters
+
+##### `afi`
+Address Family Identifier (AFI). Required. Valid value is ipv4.
+
+##### `vrf`
+Name of the resource instance. Required. Valid values are string. The name 'default' is a valid VRF representing the global vrf.
+
+##### `ssm_range`
+Configure group ranges for Source Specific Multicast (SSM). Valid values are multicast addresses or the keyword ‘none’.
+
+--
+### Type: cisco_pim_grouplist
+Manages configuration of an Protocol Independent Multicast (PIM) static route processor (RP) address for a multicast group range.
+
+#### Parameters
+
+##### `afi`
+Address Family Identifier (AFI). Required. Valid values are ipv4 and ipv6.
+
+##### `vrf`
+Name of the resource instance. Required. Valid values are string. The name 'default' is a valid VRF representing the global vrf.
+
+##### `rp_addr`
+IP address of a router which is the route processor (RP) for a group range.. Required. Valid values are unicast addresses.
+
+##### `group`
+Specifies a group range for a static route processor (RP) address. Required. Valid values are multicast addresses.
+
+--
+### Type: cisco_pim_rp_address
+Manages configuration of an Protocol Independent Multicast (PIM) static route processor (RP) address instance.
+
+#### Parameters
+
+##### `afi`
+Address Family Identifier (AFI). Required. Valid values are ipv4 and ipv6.
+
+##### `vrf`
+Name of the resource instance. Required. Valid values are string. The name 'default' is a valid VRF representing the global vrf.
+
+##### `rp_addr`
+Configures a Protocol Independent Multicast (PIM) static route processor (RP) address. Required. Valid values are unicast addresses.
 
 --
 ### Type: cisco_portchannel_global
@@ -1501,6 +1587,9 @@ ID of the Virtual LAN. Valid value is an integer.
 ##### `ensure`
 Determines whether the config should be present or not. Valid values are 'present' and 'absent'.
 
+##### `mapped_vni`
+The Virtual Network Identifier (VNI) id that is mapped to the VLAN. Valid values are integer and keyword 'default'.
+
 ##### `vlan_name`
 The name of the VLAN. Valid values are a string or the keyword 'default'.
 
@@ -1542,7 +1631,7 @@ VPN Route Distinguisher (RD). The RD is combined with the IPv4 or IPv6 prefix le
 *IMPORTANT: Choose only one provider to configure the `route_distinguisher` property on a given device. Using both providers simultaneously on the same device may have unpredictable results.*
 
 ##### `shutdown`
-Shutdown state of the VRF. Valid values are 'true' and 'false'.
+Shutdown state of the VRF. Valid values are 'true', 'false', and 'default'.
 
 ##### `vni`
 Specify virtual network identifier. Valid values are Integer or keyword 'default'.
@@ -1623,19 +1712,83 @@ VTP file name. Valid values are a string or the keyword 'default'.
 Password for the VTP domain. Valid values are a string or the keyword 'default'.
 
 --
-### Type: cisco_vni
-Manages the VNI (Virtual Network Identifier) configuration of a Cisco device.
+### Type: cisco_vpc_domain
+Manages the virtual Port Channel (vPC) domain configuration of a Cisco device.
 
 #### Parameters
 
 ##### `ensure`
 Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
 
-##### `name`
-Instance of vni, valid value is integer.
+##### `domain`
+vPC domain ID. Valid values are integer in the range 1-1000. There is no default value, this is a 'name' parameter.
 
-##### `mapped_vlan`
-The VLAN ID that will map to the VNI.
+##### `auto_recovery`
+Auto Recovery enable or disable if peer is non-operational. Valid values are true, false or default. This parameter is available only on Nexus 7000 series. Default value: true.
+
+##### `auto_recovery_reload_delay`
+Delay (in secs) before peer is assumed dead before attempting to recover vPCs. Valid values are integers in the range 240..3600. Default value: 240.
+
+##### `delay_restore`
+Delay (in secs) after peer link is restored to bring up vPCs. Valid values are integers in the range 1..3600. Default vlaue: 30.
+
+##### `delay_restore_interface_vlan`
+Delay (in secs) after peer link is restored to bring up Interface VLANs or Interface BDs. Valid values are integers in the
+range 1..3600. Default value: 10.
+
+##### `dual_active_exclude_interface_vlan_bridge_domain`
+Interface VLANs or BDs to exclude from suspension when dual-active. Valid value is a string of integer ranges from 1..4095. There is no default value.
+
+##### `graceful_consistency_check`
+Graceful conistency check . Valid values are true, false or default. Default value: true.
+
+##### `layer3_peer_routing`
+Enable or Disable Layer3 peer routing. Valid values are true/false or default. Default value: false.
+
+##### `peer_keepalive_dest`
+Destination IPV4 address of the peer where Peer Keep-alives are terminated. Valid values are IPV4 unicast address. There is no default value.
+
+##### `peer_keepalive_hold_timeout`
+Peer keep-alive hold timeout in secs. Valid Values are integers in the range 3..10. Default value: 3.
+
+##### `peer_keepalive_interval`
+Peer keep-alive interval in millisecs. Valid Values are integers in the range 400..10000. Default value: 1000.
+
+##### `peer_keepalive_interval_timeout`
+Peer keep-alive interval timeout. Valid Values are integers in the range 3..20. Default value: 5.
+
+##### `peer_keepalive_precedence`
+Peer keep-alive precedence. Valid Values are integers in the range 0..7. Default value: 6.
+
+##### `peer_keepalive_src`
+Source IPV4 address of this switch where Peer Keep-alives are Sourced. Valid values are IPV4 unicast address. There is no default value.
+
+##### `peer_keepalive_udp_port`
+Peer keep-alive udp port used for hellos. Valid Values are integers in the range 1024..65000. Default value: 3200.
+
+##### `peer_keepalive_vrf`
+Peer keep-alive VRF. Valid Values are string. There is no default value.
+
+##### `peer_gateway`
+Enable or Disable Layer3 forwarding for packets with peer gateway-mac. Valid values are true/false or default. Default: false.
+
+##### `peer_gateway_exclude_vlan`
+Interface vlans to exclude from peer gateway functionality. Valid value is a string of integer ranges from 1..4095. This parameter is available only in Nexus 5000, Nexus 6000 and Nexus 7000 series. There is no default value.
+
+##### `role_priority`
+Priority to be used during vPC role selection of primary vs secondary. Valid values are integers in the range 1..65535. Default value: 32667.
+
+##### `self_isolation`
+Enable or Disable self-isolation function for vPC. Valid values are true, false or default. This parameter is available only in Nexus 7000 series. Default value: false.
+
+##### `shutdown`
+Whether or not the vPC domain is shutdown. This property is not avialable on Nexus 9000 and Nexus 3000 series. Default value: false.
+
+##### `system_mac`
+vPC system mac. Valid values are in mac addresses format. There is no default value.
+
+##### `system_priority`
+vPC system priority. Valid values are integers in the range 1..65535. Default value: 32667.
 
 --
 ### Type: cisco_vxlan_global
@@ -1685,6 +1838,36 @@ Administratively shutdown the NVE interface. Valid values are true, false or key
 
 ##### `source_interface`
 Specify the loopback interface whose IP address should be used for the NVE interface. Valid values are string or keyword 'default'.
+
+--
+### Type: cisco_vxlan_vtep_vni
+Creates a Virtual Network Identifier member (VNI) for an NVE overlay interface.
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `interface`
+Name of the nve interface on the network element. Valid values are string.
+
+##### `vni`
+ID of the Virtual Network Identifier. Valid values are integer.
+
+##### `assoc_vrf`
+This attribute is used to identify and separate processing VNIs that are associated with a VRF and used for routing. The VRF and VNI specified with this command must match the configuration of the VNI under the VRF. Valid values are true or false.
+
+##### `ingress_replication`
+Specifies mechanism for host reachability advertisement. Valid values are 'bgp', 'static', or 'default'.
+
+##### `multicast_group`
+The multicast group (range) of the VNI. Valid values are string and keyword 'default'.
+
+##### `peer_list`
+Set the ingress-replication static peer list. Valid values are an Array, a space-separated String of ip addresses, or the keyword 'default'.
+
+##### `suppress_arp`
+Suppress arp under layer 2 VNI. Valid values are true, false, or 'default'.
 
 --
 ### NetDev StdLib Resource Type Details
@@ -1792,7 +1975,26 @@ Source interface for the NTP server.  Valid value is a string.
 Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
 
 ##### `name`
-Hostname or address of the NTP server.  Valid value is a string.
+Hostname or IPv4/IPv6 address of the NTP server.  Valid value is a string.
+
+### Type: port_channel
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `id`
+Channel group ID. eg 100. Valid value is an integer.
+
+##### `interfaces`
+Array of Physical Interfaces that are part of the port channel. An array of valid interface names.
+
+##### `minimum_links`
+Number of active links required for port channel to be up. Valid value is an integer.
+
+##### `name`
+Name of the port channel. eg port-channel100. Valid value is a string.
 
 ### Type: radius
 
@@ -1831,7 +2033,7 @@ Encryption key format [0-7].  Valid value is an integer.
 Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
 
 ##### `name`
-Name of the radius server.  Valid value is a string.
+IPv4/IPv6 address of the radius server.  Valid value is a string.
 
 ##### `auth_port`
 Port number to use for authentication.  Valid value is an integer.
@@ -1973,7 +2175,7 @@ format (in case of true) or cleartext (in case of false). Valid values are 'true
 Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
 
 ##### `name`
-Hostname or address of the Syslog server.  Valid value is a string.
+Hostname or IPv4/IPv6 address of the Syslog server.  Valid value is a string.
 
 ##### `serverity_level`
 Syslog severity level to log.  Valid value is an integer.
@@ -2016,11 +2218,6 @@ Number of seconds before the timeout period ends
 
 ### Type: tacacs_server
 
-##### `enable`
-Enable or disable tacacs functionality [true|false]
-
-### Type: tacacs_server
-
 ##### `ensure`
 Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
 
@@ -2031,7 +2228,7 @@ Encryption key (plaintext or in hash form depending on key_format)
 Encryption key format [0-7]
 
 ##### `name`
-Hostname or IP address of the Syslog server.  Valid value is a string.
+Hostname or IPv4/IPv6 address of the Syslog server.  Valid value is a string.
 
 ##### `port`
 The port of the tacacs server.

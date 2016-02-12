@@ -109,8 +109,7 @@ tests['default_properties_ipv4'] = {
     fragments                        => 'default',
   ",
   resource_props: {
-    'stats_per_entry' => 'false',
-    'fragments'       => '',
+    'stats_per_entry' => 'false'
   },
 }
 
@@ -121,8 +120,7 @@ tests['default_properties_ipv6'] = {
     fragments                        => 'default',
   ",
   resource_props: {
-    'stats_per_entry' => 'false',
-    'fragments'       => '',
+    'stats_per_entry' => 'false'
   },
 }
 
@@ -160,8 +158,7 @@ tests['title_patterns_afi_only'] = {
     acl_name                         => 'beaker_afi_only',
   ",
   resource_props:        {
-    'stats_per_entry' => 'false',
-    'fragments'       => '',
+    'stats_per_entry' => 'false'
   },
 }
 
@@ -175,8 +172,7 @@ tests['title_patterns_acl_name_only'] = {
     afi                              => 'ipv4',
   ",
   resource_props:        {
-    'stats_per_entry' => 'false',
-    'fragments'       => '',
+    'stats_per_entry' => 'false'
   },
 }
 
@@ -233,6 +229,8 @@ end
 test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
+  resource_absent_cleanup(agent, 'cisco_acl',
+                          'Setup switch for cisco_acl provider test')
   # node_feature_cleanup(agent, 'acl')
 
   # -----------------------------------

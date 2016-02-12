@@ -189,7 +189,7 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       end
     end
 
-    munge { |value| PuppetX::Cisco::BgpUtils.process_asnum(value.to_s) }
+    munge(&:to_s)
   end
 
   newparam(:vrf, namevar: true) do

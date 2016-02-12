@@ -92,4 +92,38 @@ node default {
 EOF"
     manifest_str
   end
+
+  # Method to create a manifest for tacacs_server resource attribute 'ensure'
+  # where 'ensure' is set to present.
+  # @param none [None] No input parameters exist.
+  # @result none [None] Returns no object.
+  def self.create_tacacs_server_manifest_present_ipv6
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+  tacacs_server { '2020::20':
+    ensure              => 'present',
+    key                 => '44444444',
+    key_format          => '7',
+    port                => '48',
+    timeout             => '2',
+  }
+}
+EOF"
+    manifest_str
+  end
+
+  # Method to create a manifest for tacacs_server resource attribute 'ensure'
+  # where 'ensure' is set to absent.
+  # @param none [None] No input parameters exist.
+  # @result none [None] Returns no object.
+  def self.create_tacacs_server_manifest_absent_ipv6
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+    tacacs_server {'2020::20':
+      ensure => absent,
+    }
+}
+EOF"
+    manifest_str
+  end
 end

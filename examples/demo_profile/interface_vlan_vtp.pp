@@ -13,7 +13,7 @@
 # limitations under the License.
 
 class ciscopuppet::demo_profile::interface_vlan_vtp {
-  include ciscopuppet::demo_interface
-  include ciscopuppet::demo_vlan
-  include ciscopuppet::demo_vtp
+  include ciscopuppet::cisco::demo_interface
+  include ciscopuppet::cisco::demo_vlan
+  include ciscopuppet::cisco::demo_vtp
 }
