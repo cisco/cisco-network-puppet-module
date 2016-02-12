@@ -403,6 +403,11 @@ The following resources are listed alphabetically.
 
 Allows execution of configuration commands.
 
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.0.1 | 1.0.1 | 1.0.1 |
+
 #### Parameters
 
 ##### `command`
@@ -425,6 +430,11 @@ This provider allows raw configurations to be managed by Puppet. It serves as a 
 ### Type: cisco_aaa_authentication_login
 
 Manages AAA Authentication Login configuration.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
 
 #### Parameters
 
@@ -451,6 +461,11 @@ Enable/disable mschapv2 for AAA Authentication Login.
 
 Manages configuration for Authorization Login Config Service.
 
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+
 #### Parameters
 
 ##### `ensure`
@@ -470,6 +485,11 @@ Authentication methods on this device. Valid values are 'local', 'unselected', '
 
 Manages configuration for Authorization Login Exec Service.
 
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+
 #### Parameters
 
 ##### `ensure`
@@ -488,6 +508,11 @@ Authentication methods on this device. Valid values are 'local', 'unselected', '
 ### Type: cisco_aaa_group_tacacs
 
 Manages configuration for a TACACS+ server group.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
 
 #### Parameters
 
@@ -512,7 +537,12 @@ Specifies the virtual routing and forwarding instance (VRF) to use to contact th
 --
 ### Type: cisco_acl
 
-Manages configuration of a ACL instance.
+Manages configuration of a Access Control List (ACL) instance.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
 
 #### Parameters
 
@@ -532,6 +562,26 @@ Enable/disable Statistics Per Entry for ACL. Valid values are true, false, keywo
 Permit or deny Fragments for ACL. Valid values are 'permit-all' and 'deny-all'
 
 --
+### Type: cisco_ace
+
+Manages configuration of an Access Control List (ACL) Access Control Entry (ACE) instance.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+
+#### Parameters
+
+##### `ensure`
+Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
+
+##### `afi`
+Address Family Identifier (AFI). Required. Valid values are ipv4 and ipv6.
+
+*TBD: Add property definitions*
+
+--
 ### Type: cisco_bgp
 
 Manages configuration of a BGP instance.
@@ -539,7 +589,7 @@ Manages configuration of a BGP instance.
 | Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
 |----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
 | OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | 1.1.0 | 1.1.0 | 1.1.0 |
+| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | 1.2.0 | 1.2.0 | 1.2.0 |
 
 #### <a name="cisco_bgp-caveats">Caveats</a>
 
@@ -682,7 +732,7 @@ Manages configuration of a BGP Address-family instance.
 | Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
 |----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
 | OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | 1.1.0 | 1.1.0 | 1.1.0 |
+| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | 1.2.0 | 1.2.0 | 1.2.0 |
 
 #### <a name="cisco_bgp_af-caveats">Caveats</a>
 
@@ -851,6 +901,11 @@ Filters routes rejected by the route map and does not download them to the RIB. 
 
 Manages configuration of a BGP Neighbor.
 
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+
 #### Parameters
 
 ###### `ensure`
@@ -926,6 +981,11 @@ Specify source interface of BGP session and updates. Valid value is a string of 
 ### Type: cisco_bgp_neighbor_af
 
 Manages configuration of a BGP Neighbor Address-family instance.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | 1.2.0 | 1.2.0 | 1.2.0 |
 
 #### Parameters
 
@@ -1041,7 +1101,7 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
 |----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
 | OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.1.0 | 1.1.0 | 1.1.0 |
+| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
 
 #### <a name="cisco_interface-caveats">Caveats</a>
 
@@ -1191,6 +1251,11 @@ Enable/Disable management on the SVI interface. Valid values are 'true', 'false'
 
 Manages a Cisco Network Interface Channel-group
 
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+
 #### Parameters
 
 ##### Basic interface channel-group config attributes
@@ -1217,6 +1282,11 @@ Shutdown state of the interface. Valid values are 'true', 'false', and 'default'
 
 Manages a Cisco Network Interface Service VNI.
 
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+
 #### Parameters
 
 ##### Basic interface service vni config attributes
@@ -1235,29 +1305,6 @@ The VNI Encapsulation Profile Name. Valid values are String or the keyword 'defa
 
 ###### `shutdown`
 Shutdown state of the interface service vni. Valid values are 'true', 'false', or 'default'.
-
---
-### Type: `network_interface`
-
-Manages a puppet netdev_stdlib Network Interface. Any resource dependency should be run before the interface resource.
-
-#### Parameters
-
-###### `name`
-Name of the interface on the network element. Valid value is a string.
-
-###### `description`
-Description of the interface. Valid values are a string or the keyword 'default'.
-
-###### `duplex`
-Duplex of the interface. Valid values are 'full', and 'auto'.
-
-###### `speed`
-Speed of the interface. Valid values are 100m, 1g, 10g, 40g, 100g, and 'auto'.
-
-##### `mtu`
-Maximum Trasnmission Unit size for frames received and sent on the specified
-interface. Valid value is an integer.
 
 --
 ### Type: cisco_interface_ospf
@@ -2043,6 +2090,29 @@ Array of DNS suffixes to search for FQDN entries.  Valid value is an array of st
 
 ##### `servers`
 Array of DNS servers to use for name resolution.  Valid value is an array of strings.
+
+--
+### Type: `network_interface`
+
+Manages a puppet netdev_stdlib Network Interface. Any resource dependency should be run before the interface resource.
+
+#### Parameters
+
+###### `name`
+Name of the interface on the network element. Valid value is a string.
+
+###### `description`
+Description of the interface. Valid values are a string or the keyword 'default'.
+
+###### `duplex`
+Duplex of the interface. Valid values are 'full', and 'auto'.
+
+###### `speed`
+Speed of the interface. Valid values are 100m, 1g, 10g, 40g, 100g, and 'auto'.
+
+##### `mtu`
+Maximum Trasnmission Unit size for frames received and sent on the specified
+interface. Valid value is an integer.
 
 ### Type: network_snmp
 
