@@ -228,6 +228,8 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
 
   def stp_mst_cost=(should_list)
     should_list = @interface.default_stp_mst_cost if should_list[0] == :default
+    # check for overlapping arrays in should_list
+    PuppetX::Cisco::Utils.fail_array_overlap(should_list)
     @property_flush[:stp_mst_cost] = should_list
   end
 
@@ -243,6 +245,8 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
 
   def stp_mst_port_priority=(should_list)
     should_list = @interface.default_stp_mst_port_priority if should_list[0] == :default
+    # check for overlapping arrays in should_list
+    PuppetX::Cisco::Utils.fail_array_overlap(should_list)
     @property_flush[:stp_mst_port_priority] = should_list
   end
 
@@ -258,6 +262,8 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
 
   def stp_vlan_cost=(should_list)
     should_list = @interface.default_stp_vlan_cost if should_list[0] == :default
+    # check for overlapping arrays in should_list
+    PuppetX::Cisco::Utils.fail_array_overlap(should_list)
     @property_flush[:stp_vlan_cost] = should_list
   end
 
@@ -273,6 +279,8 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
 
   def stp_vlan_port_priority=(should_list)
     should_list = @interface.default_stp_vlan_port_priority if should_list[0] == :default
+    # check for overlapping arrays in should_list
+    PuppetX::Cisco::Utils.fail_array_overlap(should_list)
     @property_flush[:stp_vlan_port_priority] = should_list
   end
 

@@ -82,7 +82,11 @@ Puppet::Type.newtype(:cisco_stp_global) do
     # equal to value specified in manifest.  Make sure puppet considers
     # 2 arrays with same elements but in different order as equal.
     def insync?(is)
-      (is.size == should.size && is.sort == should.sort)
+      slist = []
+      should.each do |elem|
+        slist << elem unless elem[1] == 'default'
+      end
+      (is.size == slist.size && is.sort == slist.sort)
     end
 
     munge do |value|
@@ -103,7 +107,11 @@ Puppet::Type.newtype(:cisco_stp_global) do
     # equal to value specified in manifest.  Make sure puppet considers
     # 2 arrays with same elements but in different order as equal.
     def insync?(is)
-      (is.size == should.size && is.sort == should.sort)
+      slist = []
+      should.each do |elem|
+        slist << elem unless elem[1] == 'default' || elem[1].to_i == 15
+      end
+      (is.size == slist.size && is.sort == slist.sort)
     end
 
     munge do |value|
@@ -124,7 +132,11 @@ Puppet::Type.newtype(:cisco_stp_global) do
     # equal to value specified in manifest.  Make sure puppet considers
     # 2 arrays with same elements but in different order as equal.
     def insync?(is)
-      (is.size == should.size && is.sort == should.sort)
+      slist = []
+      should.each do |elem|
+        slist << elem unless elem[1] == 'default' || elem[1].to_i == 2
+      end
+      (is.size == slist.size && is.sort == slist.sort)
     end
 
     munge do |value|
@@ -145,7 +157,11 @@ Puppet::Type.newtype(:cisco_stp_global) do
     # equal to value specified in manifest.  Make sure puppet considers
     # 2 arrays with same elements but in different order as equal.
     def insync?(is)
-      (is.size == should.size && is.sort == should.sort)
+      slist = []
+      should.each do |elem|
+        slist << elem unless elem[1] == 'default' || elem[1].to_i == 20
+      end
+      (is.size == slist.size && is.sort == slist.sort)
     end
 
     munge do |value|
@@ -166,7 +182,11 @@ Puppet::Type.newtype(:cisco_stp_global) do
     # equal to value specified in manifest.  Make sure puppet considers
     # 2 arrays with same elements but in different order as equal.
     def insync?(is)
-      (is.size == should.size && is.sort == should.sort)
+      slist = []
+      should.each do |elem|
+        slist << elem unless elem[1] == 'default' || elem[1].to_i == 32_768
+      end
+      (is.size == slist.size && is.sort == slist.sort)
     end
 
     munge do |value|
@@ -187,7 +207,11 @@ Puppet::Type.newtype(:cisco_stp_global) do
     # equal to value specified in manifest.  Make sure puppet considers
     # 2 arrays with same elements but in different order as equal.
     def insync?(is)
-      (is.size == should.size && is.sort == should.sort)
+      slist = []
+      should.each do |elem|
+        slist << elem unless elem[1] == 'default'
+      end
+      (is.size == slist.size && is.sort == slist.sort)
     end
 
     munge do |value|
@@ -258,7 +282,11 @@ Puppet::Type.newtype(:cisco_stp_global) do
     # equal to value specified in manifest.  Make sure puppet considers
     # 2 arrays with same elements but in different order as equal.
     def insync?(is)
-      (is.size == should.size && is.sort == should.sort)
+      slist = []
+      should.each do |elem|
+        slist << elem unless elem[1] == 'default'
+      end
+      (is.size == slist.size && is.sort == slist.sort)
     end
 
     munge do |value|
@@ -307,7 +335,11 @@ Puppet::Type.newtype(:cisco_stp_global) do
     # equal to value specified in manifest.  Make sure puppet considers
     # 2 arrays with same elements but in different order as equal.
     def insync?(is)
-      (is.size == should.size && is.sort == should.sort)
+      slist = []
+      should.each do |elem|
+        slist << elem unless elem[0] == '0' || elem[1] == 'default'
+      end
+      (is.size == slist.size && is.sort == slist.sort)
     end
 
     munge do |value|
@@ -366,7 +398,11 @@ Puppet::Type.newtype(:cisco_stp_global) do
     # equal to value specified in manifest.  Make sure puppet considers
     # 2 arrays with same elements but in different order as equal.
     def insync?(is)
-      (is.size == should.size && is.sort == should.sort)
+      slist = []
+      should.each do |elem|
+        slist << elem unless elem[1] == 'default' || elem[1].to_i == 32_768
+      end
+      (is.size == slist.size && is.sort == slist.sort)
     end
 
     munge do |value|
@@ -401,7 +437,11 @@ Puppet::Type.newtype(:cisco_stp_global) do
     # equal to value specified in manifest.  Make sure puppet considers
     # 2 arrays with same elements but in different order as equal.
     def insync?(is)
-      (is.size == should.size && is.sort == should.sort)
+      slist = []
+      should.each do |elem|
+        slist << elem unless elem[1] == 'default'
+      end
+      (is.size == slist.size && is.sort == slist.sort)
     end
 
     munge do |value|
@@ -428,7 +468,11 @@ Puppet::Type.newtype(:cisco_stp_global) do
     # equal to value specified in manifest.  Make sure puppet considers
     # 2 arrays with same elements but in different order as equal.
     def insync?(is)
-      (is.size == should.size && is.sort == should.sort)
+      slist = []
+      should.each do |elem|
+        slist << elem unless elem[1] == 'default'
+      end
+      (is.size == slist.size && is.sort == slist.sort)
     end
 
     munge do |value|
@@ -449,7 +493,11 @@ Puppet::Type.newtype(:cisco_stp_global) do
     # equal to value specified in manifest.  Make sure puppet considers
     # 2 arrays with same elements but in different order as equal.
     def insync?(is)
-      (is.size == should.size && is.sort == should.sort)
+      slist = []
+      should.each do |elem|
+        slist << elem unless elem[1] == 'default' || elem[1].to_i == 15
+      end
+      (is.size == slist.size && is.sort == slist.sort)
     end
 
     munge do |value|
@@ -470,7 +518,11 @@ Puppet::Type.newtype(:cisco_stp_global) do
     # equal to value specified in manifest.  Make sure puppet considers
     # 2 arrays with same elements but in different order as equal.
     def insync?(is)
-      (is.size == should.size && is.sort == should.sort)
+      slist = []
+      should.each do |elem|
+        slist << elem unless elem[1] == 'default' || elem[1].to_i == 2
+      end
+      (is.size == slist.size && is.sort == slist.sort)
     end
 
     munge do |value|
@@ -491,7 +543,11 @@ Puppet::Type.newtype(:cisco_stp_global) do
     # equal to value specified in manifest.  Make sure puppet considers
     # 2 arrays with same elements but in different order as equal.
     def insync?(is)
-      (is.size == should.size && is.sort == should.sort)
+      slist = []
+      should.each do |elem|
+        slist << elem unless elem[1] == 'default' || elem[1].to_i == 20
+      end
+      (is.size == slist.size && is.sort == slist.sort)
     end
 
     munge do |value|
@@ -512,7 +568,11 @@ Puppet::Type.newtype(:cisco_stp_global) do
     # equal to value specified in manifest.  Make sure puppet considers
     # 2 arrays with same elements but in different order as equal.
     def insync?(is)
-      (is.size == should.size && is.sort == should.sort)
+      slist = []
+      should.each do |elem|
+        slist << elem unless elem[1] == 'default' || elem[1].to_i == 32_768
+      end
+      (is.size == slist.size && is.sort == slist.sort)
     end
 
     munge do |value|
@@ -533,7 +593,11 @@ Puppet::Type.newtype(:cisco_stp_global) do
     # equal to value specified in manifest.  Make sure puppet considers
     # 2 arrays with same elements but in different order as equal.
     def insync?(is)
-      (is.size == should.size && is.sort == should.sort)
+      slist = []
+      should.each do |elem|
+        slist << elem unless elem[1] == 'default'
+      end
+      (is.size == slist.size && is.sort == slist.sort)
     end
 
     munge do |value|
