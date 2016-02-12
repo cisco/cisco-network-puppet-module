@@ -167,10 +167,9 @@ The following table indicates which providers are supported on each platform. As
 | [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [cisco_interface](#type-cisco_interface) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅ | * [caveats](#cisco_interface-caveats) |
 | [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅ | ✅ | ✅ | ❌ | ✅ | ❌ |
-| [cisco_interface_ospf](#type-cisco_interface_ospf) |  |  |  |  |  |  |
-| [cisco_interface_port_channel](#type-cisco_interface_port_channel) | ✅ | ✅ | ✅ | ❌ | ✅ | ❌ |
-| [cisco_interface_ospf](#type-cisco_interface_ospf) |  |  |  |  |  |  |
-| [cisco_interface_service_vni](#type-cisco_interface_service_vni) |  |  |  |  |  |  |
+| [cisco_interface_ospf](#type-cisco_interface_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_interface_portchannel](#type-cisco_interface_portchannel) | ✅ | ✅ | ✅ | ❌ | ✅* | ❌ | * [caveats](#cisco_interface_portchannel-caveats) |
+| [cisco_interface_service_vni](#type-cisco_interface_service_vni) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | 
 | [cisco_interface_ospf](#type-cisco_interface_ospf) |  |  |  |  |  |  |
 | [cisco_interface_ospf](#type-cisco_interface_ospf) |  |  |  |  |  |  |
 | [cisco_ospf](#type-cisco_ospf) |  |  |  |  |  |  |
@@ -1323,7 +1322,19 @@ Specifies the message_digest password. Valid value is a string.
 
 --
 ### Type: cisco_interface_portchannel
+
 Manages configuration of a portchannel interface instance.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+
+#### <a name="cisco_interface_portchannel-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `port_hash_distribution ` <br> `port_load_defer ` | Not supported on N56xx, N6k |
 
 #### Parameters
 
