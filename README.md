@@ -1406,7 +1406,13 @@ port-channel per port load-defer. Valid values are true, false or 'default'. Thi
 
 --
 ### Type: cisco_ospf
+
 Manages configuration of an ospf instance.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
 
 #### Parameters
 
@@ -1421,6 +1427,11 @@ Name of the ospf router. Valid value is a string.
 ### Type: cisco_ospf_vrf
 
 Manages a VRF for an OSPF router.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
 
 #### Parameters
 
@@ -1479,6 +1490,11 @@ Valid values are an integer, in Mbps, or the keyword 'default'.
 Handles the detection of duplicate IP or MAC addresses based on the number of moves in a given time-interval (seconds).
 Also configures anycast gateway MAC of the switch.
 
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+
 #### Parameters
 
 ##### `name`
@@ -1503,6 +1519,11 @@ The duplicate detection timeout in seconds for the number of host moves. The ran
 ### Type: cisco_pim
 Manages configuration of an Protocol Independent Multicast (PIM) instance.
 
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+
 #### Parameters
 
 ##### `afi`
@@ -1517,6 +1538,11 @@ Configure group ranges for Source Specific Multicast (SSM). Valid values are mul
 --
 ### Type: cisco_pim_grouplist
 Manages configuration of an Protocol Independent Multicast (PIM) static route processor (RP) address for a multicast group range.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
 
 #### Parameters
 
@@ -1536,6 +1562,11 @@ Specifies a group range for a static route processor (RP) address. Required. Val
 ### Type: cisco_pim_rp_address
 Manages configuration of an Protocol Independent Multicast (PIM) static route processor (RP) address instance.
 
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+
 #### Parameters
 
 ##### `afi`
@@ -1550,6 +1581,11 @@ Configures a Protocol Independent Multicast (PIM) static route processor (RP) ad
 --
 ### Type: cisco_portchannel_global
 Manages configuration of a portchannel global parameters
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
 
 #### Parameters
 
@@ -1587,6 +1623,11 @@ port-channel symmetry hash. Valid values are true, false or 'default'. This prop
 ### Type: cisco_snmp_community
 Manages an SNMP community on a Cisco SNMP server.
 
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+
 #### Parameters
 
 ##### `ensure`
@@ -1612,6 +1653,11 @@ Manages a Cisco SNMP Group on a Cisco SNMP Server.
 The term 'group' is a standard SNMP term, but in NXOS role it serves the purpose
 of group; thus this provider utility does not create snmp groups and only reports group (role) existence.
 
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+
 #### Parameters
 
 ##### `ensure`
@@ -1625,6 +1671,11 @@ Name of the snmp group. Valid value is a string.
 ### Type: cisco_snmp_server
 Manages a Cisco SNMP Server. There can only be one instance of the
 cisco_snmp_server.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
 
 #### Parameters
 
@@ -1661,6 +1712,11 @@ Valid values are 'true', 'false', and 'default'.
 ### Type: cisco_snmp_user
 
 Manages an SNMP user on an cisco SNMP server.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
 
 #### Parameters
 
@@ -1702,6 +1758,11 @@ format (in case of true) or cleartext (in case of false). Valid values are 'true
 Manages a Cisco TACACS+ Server global configuration. There can only be one
 instance of the cisco_tacacs_server.
 
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+
 #### Parameters
 
 ##### `name`
@@ -1736,6 +1797,11 @@ Valid values are string, and keyword 'default'.
 
 Configures Cisco TACACS+ server hosts.
 
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+
 #### Parameters
 
 ##### `ensure`
@@ -1764,6 +1830,11 @@ Specifies a preshared key for the host. Valid values are 'clear', 'encrypted',
 
 Manages a Cisco VDC (Virtual Device Context).
 
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+
 #### Parameters
 
 ##### `name`
@@ -1780,6 +1851,17 @@ This command restricts the allowed module-types in a given VDC. Valid values are
 ### Type: cisco_vlan
 
 Manages a Cisco VLAN.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+
+#### <a name="cisco_vlan-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `mode` | Not supported on N9k, N30xx, N31xx |
 
 #### Parameters
 
@@ -1803,119 +1885,24 @@ Whether or not the vlan is shutdown. Valid values are 'true', 'false' and
 keyword 'default'.
 
 --
-### Type: cisco_vrf
-
-Manages Cisco Virtual Routing and Forwarding (VRF) configuration of a Cisco
-device.
-
-#### Parameters
-
-##### `ensure`
-Determines whether or not the config should be present on the device. Valid
-values are 'present' and 'absent'. Default value is 'present'.
-
-##### `name`
-Name of the VRF. Valid value is a string of non-whitespace characters. It is
-not case-sensitive and overrides the title of the type.
-
-##### `description`
-Description of the VRF. Valid value is string.
-
-<a name='vrf_rd'></a>
-##### `route_distinguisher`
-VPN Route Distinguisher (RD). The RD is combined with the IPv4 or IPv6 prefix learned by the PE router to create a globally unique address. Valid values are a String in one of the route-distinguisher formats (ASN2:NN, ASN4:NN, or IPV4:NN); the keyword 'auto', or the keyword 'default'.
-
-*Please note:* The `route_distinguisher` property is typically configured within the VRF context configuration on most platforms (including NXOS) but it is tightly coupled to bgp and therefore configured within the BGP configuration on some platforms (XR for example). For this reason the `route_distinguisher` property has support (with limitations) in both `cisco_vrf` and `cisco_bgp` providers:
-
-* `cisco_bgp`: The property is fully supported on both NXOS and XR. See: [cisco_bgp: route_distinguisher](#bgp_rd)
-* `cisco_vrf`: The property is only supported on NXOS.
-
-*IMPORTANT: Choose only one provider to configure the `route_distinguisher` property on a given device. Using both providers simultaneously on the same device may have unpredictable results.*
-
-##### `shutdown`
-Shutdown state of the VRF. Valid values are 'true', 'false', and 'default'.
-
-##### `vni`
-Specify virtual network identifier. Valid values are Integer or keyword 'default'.
-
---
-### Type: cisco_vrf_af
-
-Manages Cisco Virtual Routing and Forwarding (VRF) Address-Family configuration.
-
-#### Parameters
-
-##### `ensure`
-Determines whether or not the config should be present on the device. Valid
-values are 'present' and 'absent'. Default value is 'present'.
-
-##### `name`
-Name of the VRF. Required. Valid value is a string of non-whitespace characters. It is
-not case-sensitive and overrides the title of the type.
-
-##### `afi`
-Address-Family Identifier (AFI). Required. Valid values are 'ipv4' or 'ipv6'.
-
-##### `safi`
-Sub Address-Family Identifier (SAFI). Required. Valid values are `unicast` or `multicast`.
-*`multicast` is not supported on some platforms.*
-
-##### `route target both auto`
-Enable/Disable the route-target 'auto' setting for both import and export target communities. Valid values are true, false, or 'default'.
-
-##### `route target both auto evpn`
-(EVPN only) Enable/Disable the EVPN route-target 'auto' setting for both import and export target communities. Valid values are true, false, or 'default'.
-
-##### `route_target_import`
-Sets the route-target import extended communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
-
-route_target Examples:
-
-~~puppet
-route_target_import => ['1.2.3.4:5', '33:55']
-route_target_export => '4:4 66:66'
-route_target_export_evpn => '5:5'
-\~~~
-
-##### `route_target_import_evpn`
-(EVPN only) Sets the route-target import extended communities for EVPN. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
-
-##### `route_target_export`
-Sets the route-target export extended communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
-
-##### `route_target_export_evpn`
-(EVPN only) Sets the route-target export extended communities for EVPN. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
-
---
-### Type: cisco_vtp
-
-Manages the VTP (VLAN Trunking Protocol) configuration of a Cisco device.
-There can only be one instance of the cisco_vtp.
-
-#### Parameters
-
-##### `ensure`
-Determines whether or not the config should be present on the device. Valid
-values are 'present' and 'absent'.
-
-##### `name`
-Instance of vtp, only allow the value 'default'
-
-##### `domain`
-*Required.* VTP administrative domain. Valid value is a string.
-
-##### `version`
-Version for the VTP domain. Valid values are an integer or the keyword 'default'.
-
-##### `file_name`
-VTP file name. Valid values are a string or the keyword 'default'.
-
-##### `password`
-Password for the VTP domain. Valid values are a string or the keyword 'default'.
-
---
 ### Type: cisco_vpc_domain
 Manages the virtual Port Channel (vPC) domain configuration of a Cisco device.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+
+#### <a name="cisco_vpc_domain-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `auto_recovery` | Not supported on N56xx, N6k |
+| `layer3_peer_routing` | Not supported on N9k, N30xx, N31xx, N56xx |
+| `peer_gateway_exclude_vlan` | Not supported on N9k, N30xx, N31xx |
+| `port_channel_limit` | Not supported on N9k, N56xx, N6k |
+| `self_isolation` | Not supported on N9k, N56xx, N6k |
+| `shutdown` | Not supported on N9k, N30xx, N31xx |
 
 #### Parameters
 
@@ -1993,8 +1980,139 @@ vPC system mac. Valid values are in mac addresses format. There is no default va
 vPC system priority. Valid values are integers in the range 1..65535. Default value: 32667.
 
 --
+### Type: cisco_vrf
+
+Manages Cisco Virtual Routing and Forwarding (VRF) configuration of a Cisco
+device.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid
+values are 'present' and 'absent'. Default value is 'present'.
+
+##### `name`
+Name of the VRF. Valid value is a string of non-whitespace characters. It is
+not case-sensitive and overrides the title of the type.
+
+##### `description`
+Description of the VRF. Valid value is string.
+
+<a name='vrf_rd'></a>
+##### `route_distinguisher`
+VPN Route Distinguisher (RD). The RD is combined with the IPv4 or IPv6 prefix learned by the PE router to create a globally unique address. Valid values are a String in one of the route-distinguisher formats (ASN2:NN, ASN4:NN, or IPV4:NN); the keyword 'auto', or the keyword 'default'.
+
+*Please note:* The `route_distinguisher` property is typically configured within the VRF context configuration on most platforms (including NXOS) but it is tightly coupled to bgp and therefore configured within the BGP configuration on some platforms (XR for example). For this reason the `route_distinguisher` property has support (with limitations) in both `cisco_vrf` and `cisco_bgp` providers:
+
+* `cisco_bgp`: The property is fully supported on both NXOS and XR. See: [cisco_bgp: route_distinguisher](#bgp_rd)
+* `cisco_vrf`: The property is only supported on NXOS.
+
+*IMPORTANT: Choose only one provider to configure the `route_distinguisher` property on a given device. Using both providers simultaneously on the same device may have unpredictable results.*
+
+##### `shutdown`
+Shutdown state of the VRF. Valid values are 'true', 'false', and 'default'.
+
+##### `vni`
+Specify virtual network identifier. Valid values are Integer or keyword 'default'.
+
+--
+### Type: cisco_vrf_af
+
+Manages Cisco Virtual Routing and Forwarding (VRF) Address-Family configuration.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid
+values are 'present' and 'absent'. Default value is 'present'.
+
+##### `name`
+Name of the VRF. Required. Valid value is a string of non-whitespace characters. It is
+not case-sensitive and overrides the title of the type.
+
+##### `afi`
+Address-Family Identifier (AFI). Required. Valid values are 'ipv4' or 'ipv6'.
+
+##### `safi`
+Sub Address-Family Identifier (SAFI). Required. Valid values are `unicast` or `multicast`.
+*`multicast` is not supported on some platforms.*
+
+##### `route target both auto`
+Enable/Disable the route-target 'auto' setting for both import and export target communities. Valid values are true, false, or 'default'.
+
+##### `route target both auto evpn`
+(EVPN only) Enable/Disable the EVPN route-target 'auto' setting for both import and export target communities. Valid values are true, false, or 'default'.
+
+##### `route_target_import`
+Sets the route-target import extended communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
+route_target Examples:
+
+~~puppet
+route_target_import => ['1.2.3.4:5', '33:55']
+route_target_export => '4:4 66:66'
+route_target_export_evpn => '5:5'
+\~~~
+
+##### `route_target_import_evpn`
+(EVPN only) Sets the route-target import extended communities for EVPN. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
+##### `route_target_export`
+Sets the route-target export extended communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
+##### `route_target_export_evpn`
+(EVPN only) Sets the route-target export extended communities for EVPN. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
+--
+### Type: cisco_vtp
+
+Manages the VTP (VLAN Trunking Protocol) configuration of a Cisco device.
+There can only be one instance of the cisco_vtp.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid
+values are 'present' and 'absent'.
+
+##### `name`
+Instance of vtp, only allow the value 'default'
+
+##### `domain`
+*Required.* VTP administrative domain. Valid value is a string.
+
+##### `version`
+Version for the VTP domain. Valid values are an integer or the keyword 'default'.
+
+##### `file_name`
+VTP file name. Valid values are a string or the keyword 'default'.
+
+##### `password`
+Password for the VTP domain. Valid values are a string or the keyword 'default'.
+
+--
 ### Type: cisco_vxlan_vtep
 Creates a VXLAN Network Virtualization Endpoint (NVE) overlay interface that terminates VXLAN tunnels.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
 
 #### Parameters
 
@@ -2016,6 +2134,11 @@ Specify the loopback interface whose IP address should be used for the NVE inter
 --
 ### Type: cisco_vxlan_vtep_vni
 Creates a Virtual Network Identifier member (VNI) for an NVE overlay interface.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
 
 #### Parameters
 
