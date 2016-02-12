@@ -49,4 +49,10 @@ class ciscopuppet::cisco::demo_vxlan {
     multicast_group     => '224.1.1.1',
     suppress_arp        => 'default',
   }
+
+  cisco_interface { 'vlan97':
+    ensure => present,
+    fabric_forwarding_anycast_gateway => 'true',
+    require                           => Cisco_overlay_global['default'],
+  }
 }

@@ -294,6 +294,13 @@ tests['SVI'] = {
   },
 }
 
+# Fabric Forwarding Anycast Gateway
+if platform[/n9k/]
+  tests['SVI_default'][:manifest_props][:fabric_forwarding_anycast_gateway] = 'default'
+  tests['SVI'][:manifest_props][:fabric_forwarding_anycast_gateway] = 'true'
+  tests['SVI'][:resource][:fabric_forwarding_anycast_gateway] = 'true'
+end
+
 tests['SVI_autostate_default'] = {
   desc:           '4.3 (SVI) Default SVI Autostate Property',
   platform:       'n(3|7|9)k',
@@ -349,6 +356,13 @@ tests['speed_dup_mtu'] = {
     # 'speed'  => '100',
     'duplex' => 'full',
   },
+}
+
+resource_cisco_overlay_global = {
+  name:     'cisco_overlay_global',
+  title:    'default',
+  property: 'anycast_gateway_mac',
+  value:    '1.1.1',
 }
 
 # cisco_interface uses the interface name as the title.
@@ -485,6 +499,7 @@ test_name "TestCase :: #{testheader}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 4. (SVI) Property Testing")
+  resource_set(agent, resource_cisco_overlay_global, 'Overlay Global mac setup')
   interface_cleanup(agent, tests[:svi_name])
   test_harness_interface(tests, 'SVI_default')
   test_harness_interface(tests, 'SVI')
