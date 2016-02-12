@@ -173,25 +173,25 @@ The following table indicates which providers are supported on each platform. As
 | [cisco_ospf](#type-cisco_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [cisco_ospf_vrf](#type-cisco_ospf_vrf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | ✅ = Supported <br> ❌ = Unsupported  | N9k | N30xx | N31xx | N56xx | N6k | N7k | Caveats |
-| [cisco_overlay_global](#type-cisco_overlay_global) |  | test  | test |  |  |  |
-| [cisco_pim](#type-cisco_pim) |  |  |  | test |  |  |
-| [cisco_pim_rp_address](#type-cisco_pim_rp_address) |  |  |  | test |  |  |
-| [cisco_pim_group_list](#type-cisco_pim_group_list) |  |  |  | test |  |  |
-| [cisco_portchannel_global](#type-cisco_portchannel_global) |  |  |  |  |  |  |
-| [cisco_snmp_community](#type-cisco_snmp_community) |  |  |  |  |  |  |
-| [cisco_snmp_group](#type-cisco_snmp_group) |  |  |  |  |  |  |
-| [cisco_snmp_server](#type-cisco_snmp_server) |  |  |  |  |  |  |
-| [cisco_snmp_user](#type-cisco_snmp_user) |  |  |  |  |  |  |
-| [cisco_tacacs_server](#type-cisco_tacacs_server) |  |  |  |  |  |  |
-| [cisco_tacacs_server_host](#type-cisco_tacacs_server_host) |  |  |  |  |  |  |
-| [cisco_vdc](#type-cisco_vdc) |  |  |  |  |  |  |
-| [cisco_vlan](#type-cisco_vlan) |  |  |  |  |  |  |
-| [cisco_vpc_domain](#type-cisco_vpc_domain) |  |  |  |  |  |  |
-| [cisco_vrf](#type-cisco_vrf) |  |  |  |  |  |  |
-| [cisco_vrf_af](#type-cisco_vrf_af) |  |  |  |  |  |  |
-| [cisco_vtp](#type-cisco_vtp) |  |  |  |  |  |  |
-| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep) |  |  |  |  |  |  |
-| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni) | ? |  |  |  |  |  |
+| [cisco_overlay_global](#type-cisco_overlay_global) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌  |
+| [cisco_pim](#type-cisco_pim) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_pim_rp_address](#type-cisco_pim_rp_address) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_pim_group_list](#type-cisco_pim_group_list) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_portchannel_global](#type-cisco_portchannel_global) | ❌ | ✅ | ✅ | ❌ | ✅ | ❌ |
+| [cisco_snmp_community](#type-cisco_snmp_community) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_snmp_group](#type-cisco_snmp_group) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_snmp_server](#type-cisco_snmp_server) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_snmp_user](#type-cisco_snmp_user) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_tacacs_server](#type-cisco_tacacs_server) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_tacacs_server_host](#type-cisco_tacacs_server_host) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_vdc](#type-cisco_vdc) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+| [cisco_vlan](#type-cisco_vlan) | ✅* | ✅* | ✅* | ✅ | ✅ | ✅ | * [caveats](#cisco_vlan-caveats) |
+| [cisco_vpc_domain](#type-cisco_vpc_domain) | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | * [caveats](#cisco_vlan-caveats) |
+| [cisco_vrf](#type-cisco_vrf) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [cisco_vrf_af](#type-cisco_vrf_af) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_vtp](#type-cisco_vtp) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
 
 ##### NetDev Providers
 
