@@ -68,6 +68,7 @@ The Puppet Agent requires installation and setup on each device. Agent setup can
 As noted in the agent installation guide, these are the current RPM versions for use with ciscopuppet:
 * `bash-shell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm)
 * `guestshell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm)
+* `open agent container (OAC)`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm)
 
 ##### Gems
 
@@ -85,8 +86,8 @@ Example:
 [root@guestshell]#  gem install cisco_node_utils
 
 [root@guestshell]#  gem list | egrep 'cisco|net_http'
-cisco_node_utils (1.0.0)
-cisco_nxapi (1.0.0)
+cisco_node_utils (1.2.0)
+cisco_nxapi (1.0.1)
 net_http_unix (0.2.1)
 ~~~
 
@@ -104,7 +105,7 @@ package { 'cisco_node_utils' :
   ensure => present,
 }
 ~~~
-*This persistence issue does not affect the `guestshell` environment. Gems are persistent across reload in the `guestshell`.*
+*This persistence issue does not affect the `guestshell` or `open agent container (OAC)` environments. Gems are persistent across reload in these environments.*
 
 ## Usage
 
@@ -148,7 +149,7 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 
 ### <a name="provider-platform-support">Provider Support Across Platforms</a>
 
-The following table indicates which providers are supported on each platform. As platforms are added to the support list they may indicate ' `Unsupported`' for some providers that have not completed the test validation process at the time of this release. Some providers will show caveats for a platform if there are limitations on usage, such as with unsupported properties or hardware limitations.
+The following table indicates which providers are supported on each platform. As platforms are added to the support list they may indicate `Unsupported` for some providers that have not completed the test validation process at the time of this release. Some providers will show caveats for a platform if there are limitations on usage, such as with unsupported properties or hardware limitations.
 
 ##### Cisco Providers
 
