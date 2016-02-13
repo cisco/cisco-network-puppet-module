@@ -40,6 +40,10 @@ at the same time.
   * This is the native WRL linux environment underlying NX-OS. It is disabled by default.
 * `guestshell`
   * This is a secure linux container environment running CentOS. It is enabled by default.
+* `open agent container`
+  * This is a 32-bit CentOS-based container created specifically for running Puppet Agent software.
+  * OAC containers are created for specific platforms and must be downloaded from Cisco.
+  * The OAC must be installed before the Puppet Agent can be installed.
 
 Access the following [link](README-agent-install.md) for more information on enabling these environments.
 
@@ -60,6 +64,8 @@ configure terminal
   username devops shelltype bash
 end
 ~~~
+
+*Note: To enable sshd inside the `open agent container (OAC)` reference `OAC` documentation.
 
 ## <a name="beaker-config">Beaker Server Configuration</a>
 
