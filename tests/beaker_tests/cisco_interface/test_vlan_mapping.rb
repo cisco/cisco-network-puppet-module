@@ -83,15 +83,15 @@ testheader = 'Resource cisco_interface: vlan_mapping properties'
 # Top-level keys set by caller:
 # tests[:master] - the master object
 # tests[:agent] - the agent object
-# tests[:config_bridge_domain] - the bridge-domain configuration
-# tests[:config_switchport] - the interface switchport configuration
+# tests[:bridge_domain] - the bridge-domain configuration
+# tests[:switchport_mode] - the interface switchport mode type
 #
 tests = {
-  master:               master,
-  agent:                agent,
-  testheader:           testheader,
-  config_bridge_domain: 'system bridge-domain 100-113 ; bridge-domain 100',
-  config_switchport:    'switchport ; switchport mode trunk',
+  master:          master,
+  agent:           agent,
+  resource_name:   'cisco_interface',
+  bridge_domain:   '199',
+  switchport_mode: 'trunk',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -154,7 +154,7 @@ def test_harness_vlan_mapping(tests, id)
   build_manifest_vlan_mapping(tests, id)
 
   # Workaround for (ioctl) facter bug on n7k ***
-  tests[id][:code] = [0, 2]
+  tests[id][:code] = [0, 2] if platform[/n7k/]
 
   test_harness_common(tests, id)
   tests[id][:ensure] = nil

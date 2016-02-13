@@ -68,13 +68,11 @@ testheader = 'Resource cisco_vdc properties'
 # Top-level keys set by caller:
 # tests[:master] - the master object
 # tests[:agent] - the agent object
-# tests[:config_bridge_domain] - the bridge-domain configuration
-# tests[:config_switchport] - the interface switchport configuration
 #
 tests = {
-  master:     master,
-  agent:      agent,
-  testheader: testheader,
+  master:        master,
+  agent:         agent,
+  resource_name: 'cisco_vdc',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -122,7 +120,7 @@ def test_harness_vdc(tests, id)
   build_manifest_vdc(tests, id)
 
   # Workaround for (ioctl) facter bug on n7k ***
-  tests[id][:code] = [0, 2]
+  tests[id][:code] = [0, 2] if platform[/n7k/]
 
   test_harness_common(tests, id)
   tests[id][:ensure] = nil
@@ -133,6 +131,7 @@ end
 #################################################################
 test_name "TestCase :: #{testheader}" do
   # Pre-test Cleanup
+  raise_skip_exception('ONLY SUPPORTED ON N7K', self) unless platform == 'n7k'
   limit_resource_module_type_set(default_vdc_name, nil, true)
 
   # -------------------------------------------------------------------
@@ -146,6 +145,8 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:manifest_props] = { limit_resource_module_type: 'default' }
   build_manifest_vdc(tests, id)
   test_manifest(tests, id)
+
+  skipped_tests_summary(tests)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

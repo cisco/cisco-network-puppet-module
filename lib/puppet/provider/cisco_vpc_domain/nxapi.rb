@@ -75,7 +75,6 @@ Puppet::Type.type(:cisco_vpc_domain).provide(:nxapi) do
   end
 
   def self.properties_get(domain_id, v)
-    puts "Checking instance, domain #{domain_id}"
     current_state = {
       domain: domain_id,
       name:   domain_id,

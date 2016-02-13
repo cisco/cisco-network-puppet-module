@@ -65,7 +65,7 @@ tests = {
 
 test_name "TestCase :: #{testheader}" do
   stepinfo = 'Setup switch for provider test'
-  node_feature_cleanup(agent, 'bgp', stepinfo)
+  resource_absent_cleanup(agent, 'cisco_bgp')
   logger.info("TestStep :: #{stepinfo} :: #{result}")
 
   asn = 42
@@ -103,24 +103,11 @@ test_name "TestCase :: #{testheader}" do
     tests[id][:desc] = '1.2 Verify puppet resource'
     test_resource(tests, id)
 
-    tests[id][:desc] = '1.3 Verify password has been configured on the box'
-    tests[:show_cmd] = "show run bgp all | section #{neighbor}"
-    tests[id][:show_pattern] = [/password/]
-    test_show_cmd(tests, id)
+    tests[id][:desc] = '1.3 Test removing the password'
+    tests[id][:manifest_props][:password] = ''
 
-    tests[id][:desc] = '1.4 Test removing the password'
-    tests[id][:manifest_props] = {
-      :ensure   => :present,
-      :asn      => asn,
-      :vrf      => vrf,
-      :neighbor => neighbor,
-      :password => '',
-    }
     create_bgpneighbor_manifest(tests, id)
     test_manifest(tests, id)
-
-    tests[id][:desc] = '1.5 Verify password has been removed on the box'
-    test_show_cmd(tests, id, true)
   end
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   raise_passfail_exception(result, testheader, self, logger)

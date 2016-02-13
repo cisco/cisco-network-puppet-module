@@ -71,4 +71,38 @@ node default {
 EOF"
     manifest_str
   end
+
+  # A. Methods to create manifests for syslog_server Puppet provider test cases.
+
+  # Method to create a manifest for syslog_server resource attribute 'ensure'
+  # where 'ensure' is set to present.
+  # @param none [None] No input parameters exist.
+  # @result none [None] Returns no object.
+  def self.create_syslog_server_manifest_present_ipv6
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+  syslog_server {'2003::3':
+    ensure         => present,
+    severity_level => 2,
+    vrf            => 'default',
+  }
+}
+EOF"
+    manifest_str
+  end
+
+  # Method to create a manifest for syslog_server resource attribute 'ensure'
+  # where 'ensure' is set to absent.
+  # @param none [None] No input parameters exist.
+  # @result none [None] Returns no object.
+  def self.create_syslog_server_manifest_absent_ipv6
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+    syslog_server {'2003::3':
+      ensure => absent,
+    }
+}
+EOF"
+    manifest_str
+  end
 end

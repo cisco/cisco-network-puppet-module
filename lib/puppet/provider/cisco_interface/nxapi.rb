@@ -43,7 +43,6 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     :switchport_mode,
     :vrf,
     :access_vlan,
-    :channel_group,
     :description,
     :encapsulation_dot1q,
     :ipv4_address,
@@ -75,6 +74,7 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     :ipv6_acl_out,
   ]
   INTF_BOOL_PROPS = [
+    :fabric_forwarding_anycast_gateway,
     :ipv4_pim_sparse_mode,
     :ipv4_proxy_arp,
     :ipv4_redirects,

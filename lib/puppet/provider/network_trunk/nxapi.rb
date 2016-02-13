@@ -47,7 +47,7 @@ Puppet::Type.type(:network_trunk).provide(:nxapi, parent: Puppet::Type.type(:cis
       @property_hash[:ensure] = :absent
     else
       if @property_hash.empty?
-        @interface = Cisco::Interface.new(@resource[:interface])
+        @interface = Cisco::Interface.new(@resource[:name])
       end
       @interface.switchport_mode = :trunk
       @interface.switchport_trunk_native_vlan = @resource[:untagged_vlan] if @resource[:untagged_vlan]
