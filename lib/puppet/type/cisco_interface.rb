@@ -16,6 +16,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+begin
+  require 'puppet_x/cisco/cmnutils'
+rescue LoadError # seen on master, not on agent
+  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..',
+                                     'puppet_x', 'cisco', 'cmnutils.rb'))
+end
+
 Puppet::Type.newtype(:cisco_interface) do
   @doc = "Manages a Cisco Network Interface.
 
@@ -537,6 +545,14 @@ Puppet::Type.newtype(:cisco_interface) do
       (is.size == slist.size && is.sort == slist.sort)
     end
 
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
+
     munge do |value|
       begin
         return value = :default if value == 'default'
@@ -560,6 +576,14 @@ Puppet::Type.newtype(:cisco_interface) do
         slist << elem unless elem[1] == 'default'
       end
       (is.size == slist.size && is.sort == slist.sort)
+    end
+
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
     end
 
     munge do |value|
@@ -608,6 +632,14 @@ Puppet::Type.newtype(:cisco_interface) do
       (is.size == slist.size && is.sort == slist.sort)
     end
 
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
+
     munge do |value|
       begin
         return value = :default if value == 'default'
@@ -631,6 +663,14 @@ Puppet::Type.newtype(:cisco_interface) do
         slist << elem unless elem[1] == 'default'
       end
       (is.size == slist.size && is.sort == slist.sort)
+    end
+
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
     end
 
     munge do |value|
