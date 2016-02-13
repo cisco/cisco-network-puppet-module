@@ -58,31 +58,49 @@ require File.expand_path('../network_dnslib.rb', __FILE__)
 result = 'PASS'
 testheader = 'network_dns Resource :: All Attributes NonDefaults'
 
+# Helper for testbed cleanup
+def dns_clean(agent)
+  # remove any existing resources that we will be testing against
+  resource_titles(agent, :domain_name, :clean)
+
+  # These resources currently do not support ensure=absent; they can use
+  # resource_titles above if they're ever updated.
+  on(agent, get_vshell_cmd('show run | i domain-list|name-server'))
+  stdout.scan(/ip domain-list \S+|ip name-server .*/).each do |cli|
+    command_config(agent, "no #{cli}", "removing #{cli}")
+  end
+end
+
 # @test_name [TestCase] Executes nondefaults testcase for network_dns Resource.
 test_name "TestCase :: #{testheader}" do
-  ## @step [Step] Sets up switch for provider test.
-  step 'TestStep :: Setup switch for provider test' do
-    # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
-    UtilityLib.set_manifest_path(master, self)
+  dns_warning = "
+    *****************************************************************
+    *****************************************************************
+    ***                    WARNING WARNING WARNING                ***
+    ***                                                           ***
+    ***                                                           ***
+    ***                                                           ***
+    ***                                                           ***
+    *** This test will remove all DNS settings from the testbed   ***
+    *** running-config.                                           ***
+    ***                                                           ***
+    *** Please save the DNS settings before executing this test.  ***
+    ***                                                           ***
+    ***                                                           ***
+    *** Comment out the 'fail dns_warning' command below to       ***
+    *** execute this test.                                        ***
+    ***                                                           ***
+    ***                                                           ***
+    ***                    WARNING WARNING WARNING                ***
+    *****************************************************************
+    *****************************************************************"
+  fail dns_warning if dns_warning
 
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    cmd_str = UtilityLib.get_vshell_cmd('conf t ; ' \
-                                        'no ip domain-name switch1.test.com ; ' \
-                                        'no ip domain-name switch2.test.com ; ' \
-                                        'no ip domain-list test.com ; ' \
-                                        'no ip domain-list test.net ; ' \
-                                        'no ip name-server 8.8.8.8 ; ' \
-                                        'no ip name-server 2001:4860:4860::8888')
-    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
-
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config')
-    on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout, [/name-server .*8\.8\.8\.8$/],
-                                          true, self, logger)
-    end
-    logger.info("Setup switch for provider test :: #{result}")
+  ############
+  # Start Test
+  ############
+  step 'TestStep :: Testbed pre-test cleanup' do
+    dns_clean(agent)
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
@@ -94,7 +112,7 @@ test_name "TestCase :: #{testheader}" do
                                                         ))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -105,15 +123,15 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check network_dns resource on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       "resource network_dns 'settings'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'ensure'  => 'present',
-                                            'domain'  => 'switch1.test.com',
-                                            'search'  => "\\['test.com', 'test.net'\\]",
-                                            'servers' => "\\['2001:4860:4860::8888', '8.8.8.8'\\]" },
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'ensure'  => 'present',
+                                 'domain'  => 'switch1.test.com',
+                                 'search'  => "\\['test.com', 'test.net'\\]",
+                                 'servers' => "\\['2001:4860:4860::8888', '8.8.8.8'\\]" },
+                               false, self, logger)
     end
 
     logger.info("Check network_dns resource on agent :: #{result}")
@@ -123,16 +141,16 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check network_dns settings on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config')
+    cmd_str = get_vshell_cmd('show running-config')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [
-                                            /ip domain-name switch1\.test\.com/,
-                                            /ip domain-list test\.com/,
-                                            /ip domain-list test\.net/,
-                                            /ip name-server 2001:4860:4860::8888 8\.8\.8\.8/,
-                                          ],
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               [
+                                 /ip domain-name switch1\.test\.com/,
+                                 /ip domain-list test\.com/,
+                                 /ip domain-list test\.net/,
+                                 /ip name-server 2001:4860:4860::8888 8\.8\.8\.8/,
+                               ],
+                               false, self, logger)
     end
 
     logger.info("Check network_dns resource on agent :: #{result}")
@@ -147,7 +165,7 @@ test_name "TestCase :: #{testheader}" do
                                                         ))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -158,15 +176,15 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check network_dns resource on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       "resource network_dns 'settings'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'ensure'  => 'present',
-                                            'domain'  => 'switch2.test.com',
-                                            'search'  => "\\['test.net'\\]",
-                                            'servers' => "\\['2001:4860:4860::8888', '8.8.4.4'\\]" },
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'ensure'  => 'present',
+                                 'domain'  => 'switch2.test.com',
+                                 'search'  => "\\['test.net'\\]",
+                                 'servers' => "\\['2001:4860:4860::8888', '8.8.4.4'\\]" },
+                               false, self, logger)
     end
 
     logger.info("Check network_dns resource on agent :: #{result}")
@@ -176,15 +194,15 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check network_dns settings on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config')
+    cmd_str = get_vshell_cmd('show running-config')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [
-                                            /ip domain-name switch2\.test\.com/,
-                                            /ip domain-list test\.net/,
-                                            /ip name-server 2001:4860:4860::8888 8\.8\.4\.4/,
-                                          ],
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               [
+                                 /ip domain-name switch2\.test\.com/,
+                                 /ip domain-list test\.net/,
+                                 /ip name-server 2001:4860:4860::8888 8\.8\.4\.4/,
+                               ],
+                               false, self, logger)
     end
 
     logger.info("Check network_dns resource on agent :: #{result}")
@@ -199,7 +217,7 @@ test_name "TestCase :: #{testheader}" do
                                                         ))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
@@ -210,14 +228,14 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check network_dns resource on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       "resource network_dns 'settings'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'ensure' => 'present',
-                                            'domain' => 'switch2.test.com',
-                                            'search' => "\\['test.com'\\]" },
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'ensure' => 'present',
+                                 'domain' => 'switch2.test.com',
+                                 'search' => "\\['test.com'\\]" },
+                               false, self, logger)
     end
 
     logger.info("Check network_dns resource on agent :: #{result}")
@@ -227,26 +245,30 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check network_dns settings on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_vshell_cmd('show running-config')
+    cmd_str = get_vshell_cmd('show running-config')
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [
-                                            /ip domain-name switch2\.test\.com/,
-                                            /ip domain-list test\.com/,
-                                          ],
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               [
+                                 /ip domain-name switch2\.test\.com/,
+                                 /ip domain-list test\.com/,
+                               ],
+                               false, self, logger)
     end
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/ip name-server (8\.8\.8\.8|2001:4860:4860::8888|8\.8\.4\.4)$/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/ip name-server (8\.8\.8\.8|2001:4860:4860::8888|8\.8\.4\.4)$/],
+                               true, self, logger)
     end
 
     logger.info("Check network_dns resource on agent :: #{result}")
   end
 
+  step 'TestStep :: Testbed post-test cleanup' do
+    dns_clean(agent)
+  end
+
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

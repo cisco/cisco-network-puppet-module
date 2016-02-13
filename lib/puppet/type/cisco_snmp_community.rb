@@ -48,7 +48,7 @@ Puppet::Type.newtype(:cisco_snmp_community) do
     patterns << [
       /^(\S+)$/,
       [
-        [:community, identity],
+        [:community, identity]
       ],
     ]
     patterns

@@ -2,7 +2,7 @@
 #
 # July 2015
 #
-# Copyright (c) 2015 Cisco and/or its affiliates.
+# Copyright (c) 2015-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,6 +32,8 @@ Puppet::Type.newtype(:cisco_vrf) do
      ensure                       => present,
      shutdown                     => false,
      description                  => 'vrf red',
+     route_distinguisher          => '2:3'
+     vni                          => 4096,
     }
   ~~~
   "
@@ -50,7 +52,7 @@ Puppet::Type.newtype(:cisco_vrf) do
     patterns << [
       /^(\S+)$/,
       [
-        [:name, identity],
+        [:name, identity]
       ],
     ]
     patterns
@@ -72,10 +74,44 @@ Puppet::Type.newtype(:cisco_vrf) do
 
   newproperty(:description) do
     desc 'Description of the VRF. Valid value is string.'
+
+    munge do |val|
+      val = :default if val == 'default'
+      val
+    end
   end # property description
 
+  newproperty(:route_distinguisher) do
+    desc 'VPN Route Distinguisher (RD). The RD is combined with the IPv4 '\
+         'or IPv6 prefix learned by the PE router to create a globally '\
+         'unique address. Valid values are a String in one of the '\
+         'route-distinguisher formats (ASN2:NN, ASN4:NN, or IPV4:NN); '\
+         "the keyword 'auto', or the keyword 'default'."
+
+    match_error = 'must be specified in ASN:nn or IPV4:nn notation'
+    validate do |rd|
+      fail "Route Distinguisher '#{value}' #{match_error}" unless
+        /^(?:\d+\.\d+\.\d+\.)?\d+:\d+$/.match(rd) || rd == 'auto' ||
+        rd == 'default' || rd == :default
+    end
+
+    munge do |rd|
+      rd = :default if rd == 'default'
+      rd
+    end
+  end # property router_distinguisher
+
   newproperty(:shutdown) do
-    desc 'Shutdown state of the VRF.'
-    newvalues(:true, :false)
+    desc 'Shutdown state of the VRF. '\
+         'Valid values are true, false, or default'
+    newvalues(:true, :false, :default)
   end # property shutdown
+
+  newproperty(:vni) do
+    desc "Specify virtual network identifier. Valid values are
+          Integer or keyword 'default'"
+    munge do |value|
+      value == 'default' ? :default : value.to_i
+    end
+  end
 end # Puppet::Type.newtype

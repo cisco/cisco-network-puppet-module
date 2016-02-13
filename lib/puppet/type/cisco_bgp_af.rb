@@ -1,7 +1,7 @@
 #
 # Manages BGP Address-Family configuration.
 #
-# Copyright (c) 2015 Cisco and/or its affiliates.
+# Copyright (c) 2015-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ Puppet::Type.newtype(:cisco_bgp_af) do
 
   Example:
 
+  $injectmap = [['nyc', 'sfo'], ['sjc', 'sfo', 'copy-attributes']
   $network_list = [['192.168.5.0/24', 'rtmap1'], ['192.168.10.0/24']]
   $redistribute = [['eigrp 1', 'e_rtmap_29'], ['ospf 3',  'o_rtmap']]
   ~~~puppet
@@ -46,10 +47,12 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       vrf                                    => 'default',
       afi                                    => 'ipv4',
       safi                                   => 'unicast',
+
       additional_paths_install               => 'true',
       additional_paths_receive               => 'true',
       additional_paths_selection             => 'Route_Map',
       additional_paths_send                  => 'true',
+      advertise_l2vpn_evpn                   => 'true',
       client_to_client                       => 'true',
       dampen_igp_metric                      => 200,
       dampening_state                        => 'true',
@@ -59,11 +62,19 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       dampening_routemap                     => 'Dampening_Route_Map',
       dampening_suppress_time                => 15,
       default_information_originate          => 'true',
+      default_metric                         => 50,
+      distance_ebgp                          => 20,
+      distance_ibgp                          => 40,
+      distance_local                         => 60,
+      inject_map                             => $injectmap,
       maximum_paths                          => '7',
       maximum_paths_ibgp                     => '7',
       next_hop_route_map                     => 'Default_Route_Map',
       network                                => $network_list,
       redistribute                           => $redistribute,
+      suppress_inactive                      => 'true',
+      table_map                              => 'sjc',
+      table_map_filter                       => 'true',
     }
   ~~~
 
@@ -111,14 +122,13 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   # Parse out the title to fill in the attributes in these patterns. These
   # attributes can be overwritten later.
 
-  # rubocop:disable Metrics/MethodLength
   def self.title_patterns
     identity = ->(x) { x }
     [
       [
         /^(\d+|\d+\.\d+)$/,
         [
-          [:asn, identity],
+          [:asn, identity]
         ],
       ],
       [
@@ -148,12 +158,11 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       [
         /^(\S+)$/,
         [
-          [:name, identity],
+          [:name, identity]
         ],
       ],
     ]
   end
-  # rubocop:enable Metrics/MethodLength
 
   ##############
   # Parameters #
@@ -180,7 +189,7 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       end
     end
 
-    munge { |value| PuppetX::Cisco::BgpUtils.process_asnum(value.to_s) }
+    munge(&:to_s)
   end
 
   newparam(:vrf, namevar: true) do
@@ -244,6 +253,12 @@ Puppet::Type.newtype(:cisco_bgp_af) do
 
     newvalues(:true, :false, :default)
   end # property additional_paths_send
+
+  newproperty(:advertise_l2vpn_evpn) do
+    desc "Advertise EVPN routes. Valid values are true, false, or 'default'"
+
+    newvalues(:true, :false, :default)
+  end # property advertise_l2vpn_evpn
 
   newproperty(:client_to_client) do
     desc 'Configure client-to-client route reflection. Valid values are ' \
@@ -356,6 +371,58 @@ Puppet::Type.newtype(:cisco_bgp_af) do
     newvalues(:true, :false, :default)
   end # property :default_information_originate
 
+  newproperty(:default_metric) do
+    desc "Sets the default metrics for routes redistributed into BGP.
+          Valid values are Integer or keyword 'default'"
+    munge do |value|
+      value == 'default' ? :default : value.to_i
+    end
+  end # property :default_metric
+
+  newproperty(:distance_ebgp) do
+    desc "Sets the administrative distance for BGP.
+          Valid values are Integer or keyword 'default'"
+    munge do |value|
+      value == 'default' ? :default : value.to_i
+    end
+  end # property :distance_ebgp
+
+  newproperty(:distance_ibgp) do
+    desc "Sets the administrative distance for BGP.
+          Valid values are Integer or keyword 'default'"
+    munge do |value|
+      value == 'default' ? :default : value.to_i
+    end
+  end # property :distance_ibgp
+
+  newproperty(:distance_local) do
+    desc "Sets the administrative distance for BGP.
+          Valid values are Integer or keyword 'default'"
+    munge do |value|
+      value == 'default' ? :default : value.to_i
+    end
+  end # property :distance_local
+
+  newproperty(:inject_map, array_matching: :all) do
+    format = "[['routemap string'], ['routemap string], ['copy string]]"
+    desc "Routemap which specifies prefixes to inject. Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property inject_map
+
   newproperty(:maximum_paths) do
     desc 'Configures the maximum number of equal-cost paths for load ' \
           'sharing. Valid values are integers in the range 1 - 64, ' \
@@ -450,6 +517,35 @@ Puppet::Type.newtype(:cisco_bgp_af) do
       end
     end
   end # property :redistribute
+
+  newproperty(:suppress_inactive) do
+    desc "Advertises only active routes to peersy
+          Valid values are true, false, or 'default'"
+
+    newvalues(:true, :false, :default)
+  end # property suppress_inactive
+
+  newproperty(:table_map) do
+    desc "Apply table-map to filter routes downloaded into URIB
+          Valid values are a string"
+
+    validate do |value|
+      fail("'table_map' value must be a string") unless
+        value.is_a? String
+    end
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property table_map
+
+  newproperty(:table_map_filter) do
+    desc "Filters routes rejected by the route map and does not download
+          them to the RIB. Valid values are true, false, or 'default'"
+
+    newvalues(:true, :false, :default)
+  end # property table_map_filter
 
   #
   # VALIDATIONS

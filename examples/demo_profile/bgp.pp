@@ -13,5 +13,5 @@
 # limitations under the License.
 
 class ciscopuppet::demo_profile::bgp {
-  include ciscopuppet::demo_bgp_ipv4
+  include ciscopuppet::cisco::demo_bgp_ipv4
 }

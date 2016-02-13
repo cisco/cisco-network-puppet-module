@@ -3,7 +3,7 @@
 #
 # May 2015
 #
-# Copyright (c) 2015 Cisco and/or its affiliates.
+# Copyright (c) 2015-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
   # because the boolean-based methods are processed slightly different.
   # Note: switchport_mode should always process first to evaluate L2 vs L3.
   # Note: vrf should be the first L3 property to process.  The AutoGen vrf
-  # setting is not used.
+  # setter is not used.
   INTF_NON_BOOL_PROPS = [
     :switchport_mode,
     :vrf,
@@ -47,14 +47,34 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     :encapsulation_dot1q,
     :ipv4_address,
     :ipv4_netmask_length,
+    :ipv4_address_secondary,
+    :ipv4_netmask_length_secondary,
+    :ipv4_arp_timeout,
     :mtu,
+    :speed,
+    :duplex,
     :switchport_trunk_allowed_vlan,
     :switchport_trunk_native_vlan,
+    :vlan_mapping,
+    :vpc_id,
+    :ipv4_acl_in,
+    :ipv4_acl_out,
+    :ipv6_acl_in,
+    :ipv6_acl_out,
   ]
   INTF_BOOL_PROPS = [
-    :shutdown, :negotiate_auto, :ipv4_redirects, :ipv4_proxy_arp,
-    :switchport_vtp, :switchport_autostate_exclude,
-    :svi_autostate, :svi_management
+    :fabric_forwarding_anycast_gateway,
+    :ipv4_pim_sparse_mode,
+    :ipv4_proxy_arp,
+    :ipv4_redirects,
+    :negotiate_auto,
+    :shutdown,
+    :switchport_autostate_exclude,
+    :switchport_vtp,
+    :svi_autostate,
+    :svi_management,
+    :vlan_mapping_enable,
+    :vpc_peer_link,
   ]
   INTF_ALL_PROPS = INTF_NON_BOOL_PROPS + INTF_BOOL_PROPS
 
@@ -88,6 +108,8 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
         current_state[prop] = val ? :true : :false
       end
     end
+    # nested array properties
+    current_state[:vlan_mapping] = intf.vlan_mapping
     new(current_state)
   end # self.properties_get
 
@@ -139,24 +161,59 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     ipv4_addr_mask_set
   end
 
-  def ipv4_addr_mask_set
-    # Combo property: ipv4 address/mask
-    return unless @property_flush[:ipv4_address] ||
-                  @property_flush[:ipv4_netmask_length] ||
-                  @resource[:ipv4_address] == :default
+  def ipv4_addr_mask_configure(secondary=false)
+    if secondary
+      v4_addr_prop = :ipv4_address_secondary
+      v4_mask_prop = :ipv4_netmask_length_secondary
+    else
+      v4_addr_prop = :ipv4_address
+      v4_mask_prop = :ipv4_netmask_length
+    end
 
-    if @resource[:ipv4_address] == :default
+    # Combo property: ipv4 address/mask
+    return unless @property_flush[v4_addr_prop] ||
+                  @property_flush[v4_mask_prop] ||
+                  @resource[v4_addr_prop] == :default
+
+    if @resource[v4_addr_prop] == :default
       addr = @interface.default_ipv4_address
     else
-      addr = @resource[:ipv4_address]
+      addr = @resource[v4_addr_prop]
     end
 
-    if @resource[:ipv4_netmask_length] == :default
+    if @resource[v4_mask_prop] == :default
       mask = @interface.default_ipv4_netmask_length
     else
-      mask = @resource[:ipv4_netmask_length]
+      mask = @resource[v4_mask_prop]
     end
-    @interface.ipv4_addr_mask_set(addr, mask)
+    @interface.ipv4_addr_mask_set(addr, mask, secondary)
+  end
+
+  def ipv4_addr_mask_set
+    # Primary addr/mask must be configured before secondary addr/mask.
+    # Secondary addr/mask must be removed before primary addr/mask.
+    if @resource[:ipv4_address] == :default
+      ipv4_addr_mask_configure(true)
+      ipv4_addr_mask_configure
+    else
+      ipv4_addr_mask_configure
+      ipv4_addr_mask_configure(true)
+    end
+  end
+
+  def vlan_mapping
+    return @property_hash[:vlan_mapping] if @resource[:vlan_mapping].nil?
+    if @resource[:vlan_mapping][0] == :default &&
+       @property_hash[:vlan_mapping] == @interface.default_vlan_mapping
+      return [:default]
+    else
+      @property_hash[:vlan_mapping]
+    end
+  end
+
+  def vlan_mapping=(should_list)
+    should_list = @interface.default_vlan_mapping if should_list[0] == :default
+    @property_flush[:vlan_mapping] = should_list
   end
 
   # override vrf setter
@@ -167,7 +224,8 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     # flush other L3 properties because vrf will wipe them out
     l3_props = [
       :ipv4_proxy_arp, :ipv4_redirects,
-      :ipv4_address, :ipv4_netmask_length
+      :ipv4_address, :ipv4_netmask_length,
+      :ipv4_address_secondary, :ipv4_netmask_length_secondary
     ]
     l3_props.each do |prop|
       if @property_flush[prop].nil?

@@ -139,7 +139,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
       [
         /^(\d+|\d+\.\d+)$/,
         [
-          [:asn, identity],
+          [:asn, identity]
         ],
       ],
       [
@@ -179,7 +179,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
       [
         /^(\S+)$/,
         [
-          [:name, identity],
+          [:name, identity]
         ],
       ],
     ]
@@ -211,11 +211,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
         fail("BGP asn #{value} must be specified in ASPLAIN or ASDOT notation")
       end
     end
-
-    munge do |value|
-      value = PuppetX::Cisco::BgpUtils.process_asnum(value.to_s)
-      value
-    end
+    munge(&:to_s)
   end
 
   newparam(:vrf, namevar: true) do
@@ -241,12 +237,12 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
 
   newparam(:afi, namevar: true) do
     desc 'BGP Address-family AFI (ipv4|ipv6). Valid values are string.'
-    newvalues(:ipv4, :ipv6)
+    newvalues(:ipv4, :ipv6, :l2vpn)
   end
 
   newparam(:safi, namevar: true) do
     desc 'BGP Address-family SAFI (unicast|multicast). Valid values are string.'
-    newvalues(:unicast, :multicast)
+    newvalues(:unicast, :multicast, :evpn)
   end
 
   ##############
@@ -281,6 +277,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
          "'default'."
     munge do |value|
       value = :default if value == 'default'
+      value = Integer(value) unless value == :default
       value
     end
   end
@@ -354,6 +351,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     desc "max_prefix_interval state. Valid values are an integer or 'default'."
     munge do |value|
       value = :default if value == 'default'
+      value = Integer(value) unless value == :default
       value
     end
   end
@@ -362,6 +360,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     desc "max_prefix_limit state. Valid values are an integer or 'default'."
     munge do |value|
       value = :default if value == 'default'
+      value = Integer(value) unless value == :default
       value
     end
   end
@@ -370,6 +369,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     desc "max_prefix_threshold state. Valid values are an integer or 'default'."
     munge do |value|
       value = :default if value == 'default'
+      value = Integer(value) unless value == :default
       value
     end
   end
@@ -482,6 +482,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     desc "weight state. Valid values are an integer or 'default'."
     munge do |value|
       value = :default if value == 'default'
+      value = Integer(value) unless value == :default
       value
     end
   end

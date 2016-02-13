@@ -45,7 +45,7 @@ module NtpServerLib
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_ntp_server_manifest_present
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   ntp_server {'5.5.5.5':
     ensure => present,
@@ -60,7 +60,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_ntp_server_manifest_absent
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     ntp_server {'5.5.5.5':
       ensure => absent,
@@ -75,7 +75,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_ntp_server_manifest_negative
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   ntp_server {'5.5.5.5':
     ensure => #{NtpServerLib::ENSURE_NEGATIVE},
@@ -90,12 +90,42 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_ntp_server_manifest_present_prefer
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   ntp_server {'5.5.5.5':
     ensure => present,
     prefer => true,
   }
+}
+EOF"
+    manifest_str
+  end
+
+  # Method to create a manifest for ntp_server resource attribute 'ensure'
+  # where 'ensure' is set to present.
+  # @param none [None] No input parameters exist.
+  # @result none [None] Returns no object.
+  def self.create_ntp_server_manifest_present_ipv6
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+  ntp_server {'2002::5':
+    ensure => present,
+  }
+}
+EOF"
+    manifest_str
+  end
+
+  # Method to create a manifest for ntp_server resource attribute 'ensure'
+  # where 'ensure' is set to absent.
+  # @param none [None] No input parameters exist.
+  # @result none [None] Returns no object.
+  def self.create_ntp_server_manifest_absent_ipv6
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+    ntp_server {'2002::5':
+      ensure => absent,
+    }
 }
 EOF"
     manifest_str

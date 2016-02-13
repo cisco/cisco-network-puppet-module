@@ -45,7 +45,7 @@ module RadiusServerLib
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_radius_server_manifest_present
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   radius_server { '8.8.8.8':
     ensure              => 'present',
@@ -68,7 +68,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_radius_server_manifest_present_change
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   radius_server { '8.8.8.8':
     ensure              => 'present',
@@ -90,9 +90,47 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_radius_server_manifest_absent
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     radius_server {'8.8.8.8':
+      ensure => absent,
+    }
+}
+EOF"
+    manifest_str
+  end
+
+  # Method to create a manifest for radius_server resource attribute 'ensure'
+  # where 'ensure' is set to present.
+  # @param none [None] No input parameters exist.
+  # @result none [None] Returns no object.
+  def self.create_radius_server_manifest_present_ipv6
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+  radius_server { '2003::7':
+    ensure              => 'present',
+    accounting_only     => 'true',
+    acct_port           => '66',
+    auth_port           => '77',
+    authentication_only => 'true',
+    key                 => '44444444',
+    key_format          => '7',
+    retransmit_count    => '4',
+    timeout             => '2',
+  }
+}
+EOF"
+    manifest_str
+  end
+
+  # Method to create a manifest for radius_server resource attribute 'ensure'
+  # where 'ensure' is set to absent.
+  # @param none [None] No input parameters exist.
+  # @result none [None] Returns no object.
+  def self.create_radius_server_manifest_absent_ipv6
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+    radius_server {'2003::7':
       ensure => absent,
     }
 }

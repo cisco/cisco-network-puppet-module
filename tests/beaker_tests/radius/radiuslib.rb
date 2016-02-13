@@ -41,7 +41,7 @@ module RadiusLib
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_radius_manifest_true
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   radius { 'default':
     enable => 'true',
@@ -55,7 +55,7 @@ EOF"
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
   def self.create_radius_manifest_false
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   radius { 'default':
     enable => 'false',

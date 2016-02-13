@@ -37,17 +37,27 @@ Puppet::Type.newtype(:cisco_bgp) do
   `<bgp-title>` is the title of the bgp resource.
 
   Example:
-
   ~~~puppet
     cisco_bgp { 'raleigh':
       ensure                                 => present,
       asn                                    => '39317'
       vrf                                    => 'green',
+      route_distinguisher                    => 'auto'
       router_id                              => '10.0.0.1',
       cluster_id                             => '55',
       confederation_id                       => '77.6',
       confederation_peers                    => '77.6 88 99.4 200'
+      disable_policy_batching                => true,
+      disable_policy_batching_ipv4           => 'xx',
+      disable_policy_batching_ipv6           => 'yy',
       enforce_first_as                       => true,
+      event_history_cli                      => 'true',
+      event_history_detail                   => 'small',
+      event_history_events                   => 'large',
+      event_history_periodic                 => 'disable',
+      fast_external_fallover                 => true,
+      flush_routes                           => false,
+      isolate                                => false,
       maxas_limit                            => '50',
       shutdown                               => false,
 
@@ -110,7 +120,7 @@ Puppet::Type.newtype(:cisco_bgp) do
       [
         /^(\d+|\d+\.\d+)$/,
         [
-          [:asn, identity],
+          [:asn, identity]
         ],
       ],
       [
@@ -123,7 +133,7 @@ Puppet::Type.newtype(:cisco_bgp) do
       [
         /^(\S+)$/,
         [
-          [:name, identity],
+          [:name, identity]
         ],
       ],
     ]
@@ -154,7 +164,7 @@ Puppet::Type.newtype(:cisco_bgp) do
       end
     end
 
-    munge { |value| PuppetX::Cisco::BgpUtils.process_asnum(value.to_s) }
+    munge(&:to_s)
   end # param asn
 
   newparam(:vrf, namevar: true) do
@@ -168,6 +178,25 @@ Puppet::Type.newtype(:cisco_bgp) do
   ##############
   # Properties #
   ##############
+
+  newproperty(:route_distinguisher) do
+    desc "VPN Route Distinguisher (RD). The RD is combined with the IPv4
+          or IPv6 prefix learned by the PE router to create a globally
+          unique address. Valid values are a String in one of the
+          route-distinguisher formats (ASN2:NN, ASN4:NN, or IPV4:NN);
+          the keyword 'auto', or the keyword 'default'."
+
+    validate do |rd|
+      fail "Route Distinguisher '#{value}' #{match_error}" unless
+        /^(?:\d+\.\d+\.\d+\.)?\d+:\d+$/.match(rd) || rd == 'auto' ||
+        rd == 'default' || rd == :default
+    end
+
+    munge do |rd|
+      rd = :default if rd == 'default'
+      rd
+    end
+  end # property router_distinguisher
 
   newproperty(:router_id) do
     desc "Router Identifier (ID) of the BGP router instance. Valid
@@ -255,12 +284,120 @@ Puppet::Type.newtype(:cisco_bgp) do
     newvalues(:true, :false, :default)
   end # property shutdown
 
+  newproperty(:disable_policy_batching) do
+    desc 'Enable/Disable the batching evaluation of prefix' \
+         'advertisements to all peers'
+
+    newvalues(:true, :false, :default)
+  end # property disable_policy_batching
+
+  newproperty(:disable_policy_batching_ipv4) do
+    desc "Enable/Disable the batching evaluation of prefix
+          advertisements to all peers. Valid values are String"
+
+    validate do |value|
+      fail("'disable_policy_batching_ipv4' value must be String") unless
+        value.is_a? String
+    end
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property disable_policy_batching_ipv4
+
+  newproperty(:disable_policy_batching_ipv6) do
+    desc "Enable/Disable the batching evaluation of prefix
+          advertisements to all peers. Valid values are String"
+
+    validate do |value|
+      fail("'disable_policy_batching_ipv6' value must be String") unless
+        value.is_a? String
+    end
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property disable_policy_batching_ipv6
+
   newproperty(:enforce_first_as) do
     desc 'Enable/Disable enforces the neighbor autonomous system ' \
          'to be the first AS number listed in the AS_path attribute for eBGP'
 
     newvalues(:true, :false, :default)
   end # property enforce_first_as
+
+  newproperty(:event_history_cli) do
+    desc "event_history_cli state. Valid values are True, False, size_small,
+          size_medium, size_large, size_disable or 'default'"
+
+    munge do |value|
+      value = 'size_small' if value == 'true'
+      value.to_sym
+    end
+
+    newvalues(:true, :false, :default,
+              :size_small, :size_medium, :size_large, :size_disable)
+  end # property event_history_cli
+
+  newproperty(:event_history_detail) do
+    desc "event_history_detail state. Valid values are True, False, size_small,
+          size_medium, size_large, size_disable or 'default'"
+
+    munge do |value|
+      value = 'size_disable' if value == 'true'
+      value.to_sym
+    end
+
+    newvalues(:true, :false, :default,
+              :size_small, :size_medium, :size_large, :size_disable)
+  end # property event_history_detail
+
+  newproperty(:event_history_events) do
+    desc "event_history_events state. Valid values are True, False, size_small,
+          size_medium, size_large, size_disable or 'default'"
+
+    munge do |value|
+      value = 'size_small' if value == 'true'
+      value.to_sym
+    end
+
+    newvalues(:true, :false, :default,
+              :size_small, :size_medium, :size_large, :size_disable)
+  end # property event_history_events
+
+  newproperty(:event_history_periodic) do
+    desc "event_history_periodic state. Valid values are True, False, size_small,
+          size_medium, size_large, size_disable or 'default'"
+
+    munge do |value|
+      value = 'size_small' if value == 'true'
+      value.to_sym
+    end
+
+    newvalues(:true, :false, :default,
+              :size_small, :size_medium, :size_large, :size_disable)
+  end # property event_history_periodic
+
+  newproperty(:fast_external_fallover) do
+    desc 'Enable/Disable immediately reset the session if the link ' \
+         'to a directly connected BGP peer goes down'
+
+    newvalues(:true, :false, :default)
+  end # property fast_external_fallover
+
+  newproperty(:flush_routes) do
+    desc 'Enable/Disable flush routes in RIB upon controlled restart'
+
+    newvalues(:true, :false, :default)
+  end # property flush_routes
+
+  newproperty(:isolate) do
+    desc 'Enable/Disable isolate this router from BGP perspective'
+
+    newvalues(:true, :false, :default)
+  end # property isolate
 
   newproperty(:maxas_limit) do
     desc "Specify Maximum number of AS numbers allowed in the AS-path attribute.
@@ -276,6 +413,12 @@ Puppet::Type.newtype(:cisco_bgp) do
       value
     end
   end
+
+  newproperty(:neighbor_down_fib_accelerate) do
+    desc 'Enable/Disable handle BGP neighbor down event, due to various reasons'
+
+    newvalues(:true, :false, :default)
+  end # property neighbor_down_fib_accelerate
 
   newproperty(:suppress_fib_pending) do
     desc "Enable/Disable advertise only routes that are programmed

@@ -43,7 +43,7 @@ module NetworkDnsLib
   # @param servers [Array, String] The value to pass to the servers property
   # @result none [None] Returns no object.
   def self.create_network_dns_manifest(domain, search, servers)
-    manifest_str = "cat <<EOF >#{UtilityLib::PUPPETMASTER_MANIFESTPATH}
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   network_dns { 'settings':
     domain  => #{domain.inspect},

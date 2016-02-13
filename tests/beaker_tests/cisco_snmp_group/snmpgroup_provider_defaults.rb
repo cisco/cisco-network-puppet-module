@@ -63,9 +63,6 @@ testheader = 'SNMPGROUP Resource :: All Attributes Defaults'
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
-    # Define PUPPETMASTER_MANIFESTPATH constant using puppet config cmd.
-    UtilityLib.set_manifest_path(master, self)
-
     # In NX-OS there's no direct configuration of SNMP groups.
     # Instead SNMP groups correspond to user roles, and our Puppet provider
     # for cisco_snmp_group provides read-only access.
@@ -74,16 +71,16 @@ test_name "TestCase :: #{testheader}" do
     # and an unexpected non-default group/role is absent
 
     # Expected exit_code is 0 since this is a vegas shell cmd.
-    cmd_str = UtilityLib.get_vshell_cmd('show snmp group | i Role')
+    cmd_str = get_vshell_cmd('show snmp group')
     on(agent, cmd_str) do
       # Flag is set to false to check for presence of RegExp pattern in stdout.
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/Role: *network-admin/],
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               [/Role: *network-admin/],
+                               false, self, logger)
       # Flag is set to true to check for absence of RegExp pattern in stdout.
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/Role: *foobar/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/Role: *foobar/],
+                               true, self, logger)
     end
     logger.info("Setup switch for provider test :: #{result}")
   end
@@ -94,7 +91,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SnmpGroupLib.create_snmpgroup_manifest_defaults)
 
     # Expected exit_code is 0 since this is a puppet agent cmd without change.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str)
 
@@ -105,22 +102,22 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_snmp_group resource state on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       "resource cisco_snmp_group 'network-admin'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'ensure' => 'present' },
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'ensure' => 'present' },
+                               false, self, logger)
     end
 
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = UtilityLib.get_namespace_cmd(agent, UtilityLib::PUPPET_BINPATH +
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       "resource cisco_snmp_group 'foobar'", options)
     on(agent, cmd_str) do
-      UtilityLib.search_pattern_in_output(stdout,
-                                          { 'ensure' => 'absent' },
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               { 'ensure' => 'absent' },
+                               false, self, logger)
     end
 
     logger.info("Check cisco_snmp_group resource state on agent :: #{result}")
@@ -129,23 +126,23 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Checks snmpgroup instance on agent using switch show cli cmds.
   step 'TestStep :: Check snmpgroup instance state in CLI' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
-    cmd_str = UtilityLib.get_vshell_cmd('show snmp group | i Role')
+    cmd_str = get_vshell_cmd('show snmp group')
     on(agent, cmd_str) do
       # Flag is set to false to check for presence of RegExp pattern in stdout.
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/Role: *network-admin/],
-                                          false, self, logger)
+      search_pattern_in_output(stdout,
+                               [/Role: *network-admin/],
+                               false, self, logger)
       # Flag is set to true to check for absence of RegExp pattern in stdout.
-      UtilityLib.search_pattern_in_output(stdout,
-                                          [/Role: *foobar/],
-                                          true, self, logger)
+      search_pattern_in_output(stdout,
+                               [/Role: *foobar/],
+                               true, self, logger)
     end
 
     logger.info("Check snmpgroup instance state in CLI:: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  UtilityLib.raise_passfail_exception(result, testheader, self, logger)
+  raise_passfail_exception(result, testheader, self, logger)
 end
 
 logger.info("TestCase :: #{testheader} :: End")
