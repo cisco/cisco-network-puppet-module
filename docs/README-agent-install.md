@@ -459,6 +459,7 @@ Optional. This section discusses Puppet agent persistence after system restarts.
 
 1. [Service Management in bash-shell using init.d](#svc-mgmt-bs)
 2. [Service Management in guestshell using systemd](#svc-mgmt-gs)
+3. Not supported for the open agent container (OAC)
 
 #### Service Management
 
