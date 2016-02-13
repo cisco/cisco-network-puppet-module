@@ -196,31 +196,31 @@ The following table indicates which providers are supported on each platform. As
 
 ##### NetDev Providers
 
-|  = Supported <br>  = Unsupported  | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+| ✅ = Supported <br> ❌ = Unsupported  | N9k | N30xx | N31xx | N56xx | N6k | N7k |
 |:---|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| [domain_name](#type-domain_name) |  |  |  |  |  |  |
-| [name_server](#type-name_server) |  |  |  |  |  |  |
-| [network_dns](#type-network_dns) |  |  |  |  |  |  |
-| [network_interface](#type-network_interface) |  |  |  |  |  |  |
-| [network_snmp](#type-network_snmp) |  |  |  |  |  |  |
-| [network_trunk](#type-network_trunk) |  |  |  |  |  |  |
-| [ntp_config](#type-ntp_config) |  |  |  |  |  |  |
-| [ntp_server](#type-ntp_server) |  |  |  |  |  |  |
-| [network_snmp](#type-network_snmp) |  |  |  |  |  |  |
-| [radius](#type-radius) |  |  |  |  |  |  |
-| [radius_global](#type-radius_global) |  |  |  |  |  |  |
-| [radius_server](#type-radius_server) |  |  |  |  |  |  |
-| [search_domain](#type-search_domain) |  |  |  |  |  |  |
-| [snmp_community](#type-snmp_community) |  |  |  |  |  |  |
-| [snmp_notification](#type-snmp_notification) |  |  |  |  |  |  |
-| [snmp_notification_receiver](#type-snmp_notification_receiver) |  |  |  |  |  |  |
-| [snmp_user](#type-snmp_user) |  |  |  |  |  |  |
-| [syslog_server](#type-syslog_server) |  |  |  |  |  |  |
-| [syslog_setting](#type-syslog_setting) |  |  |  |  |  |  |
-| [tacacs](#type-tacacs) |  |  |  |  |  |  |
-| [tacacs_global](#type-tacacs_global) |  |  |  |  |  |  |
-| [tacacs_server_group](#type-tacacs_server_group) |  |  |  |  |  |  |
-| [tacacs_server](#type-tacacs_server) |  |  |  |  |  |  |
+| [domain_name](#type-domain_name) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [name_server](#type-name_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [network_dns](#type-network_dns) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [network_interface](#type-network_interface) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [network_snmp](#type-network_snmp) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [network_trunk](#type-network_trunk) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [ntp_config](#type-ntp_config) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [ntp_server](#type-ntp_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [network_snmp](#type-network_snmp) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [radius](#type-radius) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [radius_global](#type-radius_global) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [radius_server](#type-radius_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [search_domain](#type-search_domain) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [snmp_community](#type-snmp_community) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [snmp_notification](#type-snmp_notification) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [snmp_notification_receiver](#type-snmp_notification_receiver) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [snmp_user](#type-snmp_user) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [syslog_server](#type-syslog_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [syslog_setting](#type-syslog_setting) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [tacacs](#type-tacacs) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [tacacs_global](#type-tacacs_global) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [tacacs_server_group](#type-tacacs_server_group) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [tacacs_server](#type-tacacs_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
 
 
 ## <a name ="resource-reference">Resource Reference<a>
@@ -2196,6 +2196,11 @@ The following resources are listed alphabetically.
 
 Configure the domain name of the device
 
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
+
 #### Parameters
 
 ##### `ensure`
@@ -2204,7 +2209,13 @@ Determines whether or not the config should be present on the device. Valid valu
 ##### `name`
 Domain name of the device. Valid value is a string.
 
+--
 ### Type: name_server
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -2214,7 +2225,13 @@ Determines whether or not the config should be present on the device. Valid valu
 ##### `name`
 Hostname or address of the DNS server.  Valid value is a string.
 
+--
 ### Type: network_dns
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -2238,6 +2255,11 @@ Array of DNS servers to use for name resolution.  Valid value is an array of str
 
 Manages a puppet netdev_stdlib Network Interface. Any resource dependency should be run before the interface resource.
 
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+
 #### Parameters
 
 ###### `name`
@@ -2256,7 +2278,13 @@ Speed of the interface. Valid values are 100m, 1g, 10g, 40g, 100g, and 'auto'.
 Maximum Trasnmission Unit size for frames received and sent on the specified
 interface. Valid value is an integer.
 
+--
 ### Type: network_snmp
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -2272,9 +2300,15 @@ Contact name for this device.  Valid value is a string.
 ##### `location`
 Location of this device.  Valid value is a string.
 
+--
 ### Type: `network_trunk`
 
 Manages a puppet netdev_stdlib Network Trunk. It should be noted that while the NetDev stdlib has certain specified accepted parameters these may not be applicable to different network devices. For example, certain Cisco devices only use dot1q encapsulation, and therefore other values will cause errors.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -2296,7 +2330,13 @@ Array of VLAN names used for tagged packets. Values must be in range of 1 to 409
 ###### `pruned_vlans`
 Array of VLAN ID numbers used for VLAN pruning. Values must be in range of 1 to 4095. Cisco do not implement the concept of pruned vlans.
 
+--
 ### Type: ntp_config
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -2306,7 +2346,13 @@ Resource name, not used to configure the device.  Valid value is a string.
 ##### `source_interface`
 Source interface for the NTP server.  Valid value is a string.
 
+--
 ### Type: ntp_server
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -2316,7 +2362,13 @@ Determines whether or not the config should be present on the device. Valid valu
 ##### `name`
 Hostname or IPv4/IPv6 address of the NTP server.  Valid value is a string.
 
+--
 ### Type: port_channel
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -2335,7 +2387,13 @@ Number of active links required for port channel to be up. Valid value is an int
 ##### `name`
 Name of the port channel. eg port-channel100. Valid value is a string.
 
+--
 ### Type: radius
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -2345,7 +2403,13 @@ Resource name, not used to manage the device.  Valid value is a string.
 ##### `enable`
 Enable or disable radius functionality.  Valid values are 'true' or 'false'.
 
+--
 ### Type: radius_global
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -2364,7 +2428,13 @@ Encryption key (plaintext or in hash form depending on key_format).  Valid value
 ##### `key_format`
 Encryption key format [0-7].  Valid value is an integer.
 
+--
 ### Type: radius_server
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -2398,9 +2468,15 @@ Encryption key (plaintext or in hash form depending on key_format).  Valid value
 ##### `key_format`
 Encryption key format [0-7].  Valid value is an integer.
 
+--
 ### Type: search_domain
 
 Configure the search domain of the device. Note that this type is functionally equivalent to the netdev_stdlib domain_name type.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -2410,8 +2486,15 @@ Determines whether or not the config should be present on the device. Valid valu
 ##### `name`
 Search domain of the device. Valid value is a string.
 
+-
 ### Type: snmp_community
+
 Manages an SNMP community on a Cisco SNMP server.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -2427,8 +2510,15 @@ keyword 'default'.
 Assigns an Access Control List (ACL) to an SNMP community to filter SNMP
 requests. Valid values are a string or the keyword 'default'.
 
+--
 ### Type: snmp_notification
+
 Manages an SNMP notification on a Cisco SNMP server.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -2436,9 +2526,15 @@ Manages an SNMP notification on a Cisco SNMP server.
 Determine whether the trap should be on or off. Valid
 values are true and false.
 
+--
 ### Type: snmp_notification_receiver
 
 Manages an SNMP user on an cisco SNMP server.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -2470,9 +2566,15 @@ Interface to send SNMP data from, e.g. "management"
 ##### `source_interface`
 Source interface to send SNMP data from, e.g. "ethernet 2/1".
 
+--
 ### Type: snmp_user
 
 Manages an SNMP user on an cisco SNMP server.
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -2506,7 +2608,13 @@ Privacy password for SNMP user. Valid value is a string.
 Specifies whether the passwords specified in manifest are in localized key
 format (in case of true) or cleartext (in case of false). Valid values are 'true', and 'false'.
 
+--
 ### Type: syslog_server
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -2522,7 +2630,13 @@ Syslog severity level to log.  Valid value is an integer.
 ##### `vrf`
 Interface to send syslog data from, e.g. "management".  Valid value is a string.
 
+--
 ### Type: syslog_setting
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -2532,14 +2646,26 @@ Hostname or address of the Syslog server.  Valid value is a string.
 ##### `time_stamp_units`
 The unit of measurement for log time values.  Valid values are 'seconds' and 'milliseconds'.
 
+--
 ### Type: tacacs
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
 ##### `enable`
 Enable or disable radius functionality [true|false]
 
+--
 ### Type: tacacs_global
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
@@ -2555,7 +2681,13 @@ Encryption key format [0-7]
 ##### `timeout`
 Number of seconds before the timeout period ends
 
+--
 ### Type: tacacs_server
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
 
 ##### `ensure`
 Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
@@ -2575,7 +2707,13 @@ The port of the tacacs server.
 ##### `timeout`
 Number of seconds before the timeout period ends
 
+--
 ### Type: tacacs_server_group
+
+| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
+|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
+| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
 
 #### Parameters
 
