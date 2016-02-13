@@ -64,12 +64,29 @@ require File.expand_path('../accessvlanlib.rb', __FILE__)
 result = 'PASS'
 testheader = 'ACCESSVLAN Resource :: All Attributes NonDefaults'
 
+# Local tests hash and helper method used to dynamically find an available
+# interface for tests that require an interface.
+tests = { intf_type: 'ethernet', agent: agent, testheader: testheader }
+def find_ospf_interface(tests)
+  if tests[:ethernet]
+    intf = tests[:ethernet]
+  else
+    intf = find_interface(tests)
+    # cache for later tests
+    tests[:ethernet] = intf
+  end
+  intf
+end
+int = find_ospf_interface(tests)
+
 # @test_name [TestCase] Executes nondefaults testcase for ACCESSVLAN Resource.
 test_name "TestCase :: #{testheader}" do
+  resource_absent_cleanup(agent, 'cisco_vlan', 'VLAN CLEAN :: ')
+
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, AccessVlanLib.create_accessvlan_manifest_absent)
+    on(master, AccessVlanLib.create_accessvlan_manifest_absent(int))
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no change.
     # Or expected exit_code is 2 since this is a puppet agent cmd with change.
@@ -77,21 +94,13 @@ test_name "TestCase :: #{testheader}" do
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config interface eth1/4')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, [%r{interface Ethernet1/4}],
-                               false, self, logger)
-    end
-
     logger.info("Setup switch for provider test :: #{result}")
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource nondefaults manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, AccessVlanLib.create_accessvlan_manifest_nondefaults)
+    on(master, AccessVlanLib.create_accessvlan_manifest_nondefaults(int))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
@@ -106,14 +115,14 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface 'ethernet1/4'", options)
+      "resource cisco_interface '#{int}'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ensure'                       => 'present',
                                  'access_vlan'                  => '128',
                                  'ipv4_proxy_arp'               => 'false',
                                  'ipv4_redirects'               => 'true',
-                                 'negotiate_auto'               => 'true',
+                                 # 'negotiate_auto'               => 'true', # TBD: Needs plat awareness
                                  'shutdown'                     => 'true',
                                  'switchport_autostate_exclude' => 'false',
                                  'switchport_mode'              => 'access',
@@ -124,24 +133,10 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check cisco_interface resource presence on agent :: #{result}")
   end
 
-  # @step [Step] Checks interface instance on agent using switch show cli cmds.
-  step 'TestStep :: Check interface instance presence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config interface eth1/4')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               [/switchport access vlan 128/],
-                               false, self, logger)
-    end
-
-    logger.info("Check interface instance presence on agent :: #{result}")
-  end
-
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource absent manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, AccessVlanLib.create_accessvlan_manifest_absent)
+    on(master, AccessVlanLib.create_accessvlan_manifest_absent(int))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
@@ -157,14 +152,14 @@ test_name "TestCase :: #{testheader}" do
     # Presence of AccessVLAN 1 implies absence of AccessVLAN 128.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface 'ethernet1/4'", options)
+      "resource cisco_interface '#{int}'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ensure'                       => 'present',
                                  'access_vlan'                  => '1',
                                  'ipv4_proxy_arp'               => 'false',
                                  'ipv4_redirects'               => 'true',
-                                 'negotiate_auto'               => 'true',
+                                 # 'negotiate_auto'               => 'true', # TBD: Needs plat awareness
                                  'shutdown'                     => 'false',
                                  'switchport_autostate_exclude' => 'false',
                                  'switchport_mode'              => 'access',
@@ -173,20 +168,6 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Check cisco_interface resource absence on agent :: #{result}")
-  end
-
-  # @step [Step] Checks interface instance on agent using switch show cli cmds.
-  step 'TestStep :: Check interface instance absence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config interface eth1/4')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               [/switchport access vlan 128/],
-                               true, self, logger)
-    end
-
-    logger.info("Check interface instance absence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.

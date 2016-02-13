@@ -48,7 +48,7 @@ module AccessVlanLib
   # 'ensure' is set to present.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_accessvlan_manifest_present
+  def self.create_accessvlan_manifest_present(intf)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan { '128':
@@ -56,13 +56,13 @@ node default {
       shutdown                     => 'default',
       state                        => 'default',
     }
-    cisco_interface { 'ethernet1/4':
+    cisco_interface { '#{intf}':
       ensure                       => present,
       access_vlan                  => '128',
       description                  => 'default',
       ipv4_proxy_arp               => 'default',
       ipv4_redirects               => 'default',
-      negotiate_auto               => 'default',
+      #negotiate_auto               => 'default', # TBD: Needs plat awareness
       shutdown                     => 'default',
       switchport_autostate_exclude => 'default',
       switchport_mode              => 'access',
@@ -77,19 +77,19 @@ EOF"
   # 'ensure' is set to absent.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_accessvlan_manifest_absent
+  def self.create_accessvlan_manifest_absent(intf)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan { '128':
       ensure                       => absent,
     }
-    cisco_interface { 'ethernet1/4':
+    cisco_interface { '#{intf}':
       ensure                       => present,
       access_vlan                  => '1',
       description                  => 'default',
       ipv4_proxy_arp               => 'default',
       ipv4_redirects               => 'default',
-      negotiate_auto               => 'default',
+      #negotiate_auto               => 'default', # TBD: Needs plat awareness
       shutdown                     => 'default',
       switchport_autostate_exclude => 'default',
       switchport_mode              => 'access',
@@ -106,7 +106,7 @@ EOF"
   # and switchport_vtp.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_accessvlan_manifest_nondefaults
+  def self.create_accessvlan_manifest_nondefaults(intf)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan { '128':
@@ -114,13 +114,13 @@ node default {
       shutdown                     => 'default',
       state                        => 'default',
     }
-    cisco_interface { 'ethernet1/4':
+    cisco_interface { '#{intf}':
       ensure                       => present,
       access_vlan                  => '128',
       description                  => 'Configured with puppet',
       ipv4_proxy_arp               => 'default',
       ipv4_redirects               => 'default',
-      negotiate_auto               => 'default',
+      #negotiate_auto               => 'default', # TBD: Needs plat awareness
       shutdown                     => 'true',
       switchport_autostate_exclude => 'default',
       switchport_mode              => 'access',
@@ -134,14 +134,14 @@ EOF"
   # Method to create a manifest for AccessVLAN resource attribute 'ipv4_proxy_arp'.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_accessvlan_manifest_ipv4proxyarp_negative
+  def self.create_accessvlan_manifest_ipv4proxyarp_negative(intf)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan { '128':
       ensure                       => present,
       state                        => 'default',
     }
-    cisco_interface { 'ethernet1/4':
+    cisco_interface { '#{intf}':
       ensure                       => present,
       access_vlan                  => '128',
       ipv4_proxy_arp               => #{AccessVlanLib::IPV4PROXYARP_NEGATIVE},
@@ -154,14 +154,14 @@ EOF"
   # Method to create a manifest for AccessVLAN resource attribute 'ipv4_redirects'.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_accessvlan_manifest_ipv4redir_negative
+  def self.create_accessvlan_manifest_ipv4redir_negative(intf)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan { '128':
       ensure                       => present,
       state                        => 'default',
     }
-    cisco_interface { 'ethernet1/4':
+    cisco_interface { '#{intf}':
       ensure                       => present,
       access_vlan                  => '128',
       ipv4_redirects               => #{AccessVlanLib::IPV4REDIRECTS_NEGATIVE},
@@ -174,17 +174,17 @@ EOF"
   # Method to create a manifest for AccessVLAN resource attribute 'negotiate_auto'.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_accessvlan_manifest_negoauto_negative
+  def self.create_accessvlan_manifest_negoauto_negative(intf)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan { '128':
       ensure                       => present,
       state                        => 'default',
     }
-    cisco_interface { 'ethernet1/4':
+    cisco_interface { '#{intf}':
       ensure                       => present,
       access_vlan                  => '128',
-      negotiate_auto               => #{AccessVlanLib::NEGOTIATEAUTO_NEGATIVE},
+      #negotiate_auto               => #{AccessVlanLib::NEGOTIATEAUTO_NEGATIVE}, # TBD: Needs plat awareness
     }
 }
 EOF"
@@ -194,14 +194,14 @@ EOF"
   # Method to create a manifest for AccessVLAN resource attribute 'shutdown'.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_accessvlan_manifest_shutdown_negative
+  def self.create_accessvlan_manifest_shutdown_negative(intf)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan { '128':
       ensure                       => present,
       state                        => 'default',
     }
-    cisco_interface { 'ethernet1/4':
+    cisco_interface { '#{intf}':
       ensure                       => present,
       access_vlan                  => '128',
       shutdown                     => #{AccessVlanLib::SHUTDOWN_NEGATIVE},
@@ -214,14 +214,14 @@ EOF"
   # Method to create a manifest for AccessVLAN resource attribute 'autostate'.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_accessvlan_manifest_autostate_negative
+  def self.create_accessvlan_manifest_autostate_negative(intf)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan { '128':
       ensure                       => present,
       state                        => 'default',
     }
-    cisco_interface { 'ethernet1/4':
+    cisco_interface { '#{intf}':
       ensure                       => present,
       access_vlan                  => '128',
       switchport_autostate_exclude => #{AccessVlanLib::AUTOSTATE_NEGATIVE},
@@ -234,14 +234,14 @@ EOF"
   # Method to create a manifest for AccessVLAN resource attribute 'switchport_vtp'.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_accessvlan_manifest_vtp_negative
+  def self.create_accessvlan_manifest_vtp_negative(intf)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     cisco_vlan { '128':
       ensure                       => present,
       state                        => 'default',
     }
-    cisco_interface { 'ethernet1/4':
+    cisco_interface { '#{intf}':
       ensure                       => present,
       access_vlan                  => '128',
       switchport_vtp               => #{AccessVlanLib::SWITCHPORTVTP_NEGATIVE},

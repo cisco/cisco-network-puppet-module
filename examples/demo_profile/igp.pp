@@ -13,5 +13,5 @@
 # limitations under the License.
 
 class ciscopuppet::demo_profile::igp {
-  include ciscopuppet::demo_ospf
+  include ciscopuppet::cisco::demo_ospf
 }

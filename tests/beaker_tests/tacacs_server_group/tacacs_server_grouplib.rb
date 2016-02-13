@@ -40,6 +40,20 @@ module TacacsServerGroupLib
 
   # A. Methods to create manifests for tacacs_server_group Puppet provider test cases.
 
+  # Method to create a manifest for tacacs_server for setup purposes.
+  # @param none [None] No input parameters exist.
+  # @result none [None] Returns no object.
+  def self.create_tacacs_server_setup
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+  tacacs_server { ['2.2.2.2','3.3.3.3','2004::44']:
+    ensure    => 'present',
+  }
+}
+EOF"
+    manifest_str
+  end
+
   # Method to create a manifest for tacacs_server_group resource attribute 'ensure'
   # where 'ensure' is set to present.
   # @param none [None] No input parameters exist.
@@ -65,7 +79,7 @@ EOF"
 node default {
   tacacs_server_group { 'red':
     ensure    => 'present',
-    servers   => ['2.2.2.2','4.4.4.4']
+    servers   => ['2.2.2.2','2004::44']
   }
 }
 EOF"
