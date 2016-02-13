@@ -97,6 +97,14 @@ Puppet::Type.newtype(:cisco_stp_global) do
       (is.size == slist.size && is.sort == slist.sort)
     end
 
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
+
     munge do |value|
       begin
         return value = :default if value == 'default'
@@ -120,6 +128,14 @@ Puppet::Type.newtype(:cisco_stp_global) do
         slist << elem unless elem[1] == 'default' || elem[1].to_i == 15
       end
       (is.size == slist.size && is.sort == slist.sort)
+    end
+
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
     end
 
     munge do |value|
@@ -147,6 +163,14 @@ Puppet::Type.newtype(:cisco_stp_global) do
       (is.size == slist.size && is.sort == slist.sort)
     end
 
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
+
     munge do |value|
       begin
         return value = :default if value == 'default'
@@ -170,6 +194,14 @@ Puppet::Type.newtype(:cisco_stp_global) do
         slist << elem unless elem[1] == 'default' || elem[1].to_i == 20
       end
       (is.size == slist.size && is.sort == slist.sort)
+    end
+
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
     end
 
     munge do |value|
@@ -197,6 +229,14 @@ Puppet::Type.newtype(:cisco_stp_global) do
       (is.size == slist.size && is.sort == slist.sort)
     end
 
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
+
     munge do |value|
       begin
         return value = :default if value == 'default'
@@ -220,6 +260,14 @@ Puppet::Type.newtype(:cisco_stp_global) do
         slist << elem unless elem[1] == 'default'
       end
       (is.size == slist.size && is.sort == slist.sort)
+    end
+
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
     end
 
     munge do |value|
@@ -297,6 +345,14 @@ Puppet::Type.newtype(:cisco_stp_global) do
       (is.size == slist.size && is.sort == slist.sort)
     end
 
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
+
     munge do |value|
       begin
         return value = :default if value == 'default'
@@ -348,6 +404,14 @@ Puppet::Type.newtype(:cisco_stp_global) do
         slist << elem unless elem[0] == '0' || elem[1] == 'default'
       end
       (is.size == slist.size && is.sort == slist.sort)
+    end
+
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
     end
 
     munge do |value|
@@ -413,6 +477,14 @@ Puppet::Type.newtype(:cisco_stp_global) do
       (is.size == slist.size && is.sort == slist.sort)
     end
 
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
+
     munge do |value|
       begin
         return value = :default if value == 'default'
@@ -452,6 +524,14 @@ Puppet::Type.newtype(:cisco_stp_global) do
       (is.size == slist.size && is.sort == slist.sort)
     end
 
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
+
     munge do |value|
       begin
         return value = :default if value == 'default'
@@ -483,6 +563,14 @@ Puppet::Type.newtype(:cisco_stp_global) do
       (is.size == slist.size && is.sort == slist.sort)
     end
 
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
+
     munge do |value|
       begin
         return value = :default if value == 'default'
@@ -506,6 +594,14 @@ Puppet::Type.newtype(:cisco_stp_global) do
         slist << elem unless elem[1] == 'default' || elem[1].to_i == 15
       end
       (is.size == slist.size && is.sort == slist.sort)
+    end
+
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
     end
 
     munge do |value|
@@ -533,6 +629,14 @@ Puppet::Type.newtype(:cisco_stp_global) do
       (is.size == slist.size && is.sort == slist.sort)
     end
 
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
+
     munge do |value|
       begin
         return value = :default if value == 'default'
@@ -556,6 +660,14 @@ Puppet::Type.newtype(:cisco_stp_global) do
         slist << elem unless elem[1] == 'default' || elem[1].to_i == 20
       end
       (is.size == slist.size && is.sort == slist.sort)
+    end
+
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
     end
 
     munge do |value|
@@ -583,6 +695,22 @@ Puppet::Type.newtype(:cisco_stp_global) do
       (is.size == slist.size && is.sort == slist.sort)
     end
 
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
+
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
+
     munge do |value|
       begin
         return value = :default if value == 'default'
@@ -606,6 +734,14 @@ Puppet::Type.newtype(:cisco_stp_global) do
         slist << elem unless elem[1] == 'default'
       end
       (is.size == slist.size && is.sort == slist.sort)
+    end
+
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
     end
 
     munge do |value|
