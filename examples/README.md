@@ -34,7 +34,7 @@ If your puppet master has an older version of the `puppetlabs-ciscopuppet` modul
 puppetmaster# puppet module list
 /etc/puppetlabs/code/environments/production/modules
 |
-+-- puppetlabs-ciscopuppet (v1.0.1)
++-- puppetlabs-ciscopuppet (v1.1.0)
 /etc/puppetlabs/code/modules (no modules installed)
 /opt/puppetlabs/puppet/modules (no modules installed)
 ```
@@ -44,7 +44,7 @@ puppetmaster# puppet module list
 ```bash
 puppetmaster:# puppet module uninstall puppetlabs-ciscopuppet
 Notice: Preparing to uninstall 'puppetlabs-ciscopuppet' ...
-Removed 'puppetlabs-ciscopuppet' (v1.0.1) from /etc/puppetlabs/code/environments/production/modules
+Removed 'puppetlabs-ciscopuppet' (v1.1.0) from /etc/puppetlabs/code/environments/production/modules
 ```
 
 ### Build and Install `puppetlabs-ciscopuppet` Module.
@@ -64,7 +64,7 @@ Issue the following command one layer **above** the `cisco-network-puppet-module
 ```bash
 puppetmaster:# puppet module build cisco-network-puppet-module/
 Notice: Building /githubpuppet/cisco-network-puppet-module for release
-Module built: /githubpuppet/cisco-network-puppet-module/pkg/puppetlabs-ciscopuppet-1.1.0.tar.gz
+Module built: /githubpuppet/cisco-network-puppet-module/pkg/puppetlabs-ciscopuppet-1.2.0.tar.gz
 ```
 
 #### Install the `puppetlabs-ciscopuppet` module on your puppet master
@@ -77,8 +77,8 @@ Notice: Downloading from https://forgeapi.puppetlabs.com ...
 Notice: Installing -- do not interrupt ...
 /etc/puppetlabs/code/environments/production/modules
 |
-+-- puppetlabs-ciscopuppet (v1.1.0)
-+-- puppetlabs-netdev_stdlib (v0.11.0)
++-- puppetlabs-ciscopuppet (v1.2.0)
++-- puppetlabs-netdev_stdlib (v0.11.1)
 ```
 
 **Note:** Optionally, restart your puppet server following the install.
@@ -88,25 +88,25 @@ Notice: Installing -- do not interrupt ...
 
 ```bash
 puppetmaster:# cd /etc/puppetlabs/code/environments/production/modules/ciscopuppet/examples
-puppetmaster:# cp -r ./demo* /etc/puppetlabs/code/environments/production/modules/ciscopuppet/manifests/
+puppetmaster:# cp -r * /etc/puppetlabs/code/environments/production/modules/ciscopuppet/manifests/
 ```
 
 ## <a name="basic-demo">Run Basic Demo</a>
 
-The basic demo covers all existing cisco providers using a flat hierarchy.  The `demo_site.pp` file is the sample `site.pp` file for this demo.  For a current list of all cisco providers included in this demo visit the `demo_all.pp` file.
+The basic demo covers all existing cisco providers using a flat hierarchy.  The `demo_site_cisco.pp` and `demo_site_netdev.pp` files are the sample `site.pp` files for this demo.  For a current list of all cisco providers included in this demo visit the `demo_all_cisco.pp` and `demo_all_netdev.pp` files.
 
-### Copy `demo_site.pp` file to `production/manifests` directory
+### Copy `demo_site_cisco.pp` and `demo_site_netdev` files to `production/manifests` directory
 
 ```bash
 puppetmaster:# cd /etc/puppetlabs/code/environments/production/modules/ciscopuppet/examples
-puppetmaster:# cp ./demo_site.pp /etc/puppetlabs/code/environments/production/manifests/site.pp
+puppetmaster:# cp ./demo_site_cisco.pp /etc/puppetlabs/code/environments/production/manifests/site.pp
 ```
 
 ### Modify the `site.pp` file to use your agent node name
 
 ```puppet
 node 'your_node_name' {  <---------------- Modify
-  include ciscopuppet::demo_all
+  include ciscopuppet::demo_all_cisco
 }
 ```
 ### Apply the demo `site.pp` manifest using the `puppet agent -t` command on the agent
@@ -194,7 +194,7 @@ node 'cisco_[bgpv4|bgpv6]_device_name' {  <------ Modify
 ## <a name="license-information">License Information</a>
 
 ```
-Copyright (c) 2014-2015 Cisco and/or its affiliates.
+Copyright (c) 2014-2016 Cisco and/or its affiliates.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
