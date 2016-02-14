@@ -23,7 +23,7 @@ Puppet::Type.type(:port_channel).provide(:nxapi, parent: Puppet::Type.type(:cisc
 
   def self.instances
     interfaces = []
-    Cisco::Interface.interfaces.each do |interface_name, i|
+    Cisco::InterfaceChannelGroup.interfaces.each do |interface_name, i|
       interface = {
         interface:     interface_name,
         channel_group: i.send(:channel_group),
@@ -66,7 +66,7 @@ Puppet::Type.type(:port_channel).provide(:nxapi, parent: Puppet::Type.type(:cisc
       # loop through interfaces
       if @resource[:interfaces]
         @resource[:interfaces].each do |i|
-          bla = Cisco::Interface.interfaces[i]
+          bla = Cisco::InterfaceChannelGroup.interfaces[i]
           bla.channel_group = @resource[:id] if @resource[:id]
         end
       end
