@@ -79,6 +79,10 @@ def find_ospf_interface(tests)
 end
 int = find_ospf_interface(tests)
 
+# Cleanup commands for 'system default switchport [default]'
+cmd1 = 'no system default switchport'
+cmd2 = cmd1 + ' shutdown'
+
 # @test_name [TestCase] Executes defaults testcase for ACCESSVLAN Resource.
 test_name "TestCase :: #{testheader}" do
   resource_absent_cleanup(agent, 'cisco_vlan', 'VLAN CLEAN :: ')
@@ -93,6 +97,11 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
+
+    # Ensure that 'system default switchport [default]' is set property before
+    # the test starts.
+    command_config(agent, cmd1, cmd1)
+    command_config(agent, cmd2, cmd2)
 
     logger.info("Setup switch for provider test :: #{result}")
   end
@@ -169,6 +178,11 @@ test_name "TestCase :: #{testheader}" do
 
     logger.info("Check cisco_interface resource absence on agent :: #{result}")
   end
+
+  # Ensure that 'system default switchport [default]' is set property before
+  # after the test ends.
+  command_config(agent, cmd1, cmd1)
+  command_config(agent, cmd2, cmd2)
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   raise_passfail_exception(result, testheader, self, logger)
