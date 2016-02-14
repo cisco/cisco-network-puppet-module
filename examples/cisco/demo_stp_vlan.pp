@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet::demo_stp_vlan {
+class ciscopuppet::cisco::demo_stp_vlan {
 
   $domain = platform_get() ? {
     /(n5k|n6k|n7k)/ => 100,

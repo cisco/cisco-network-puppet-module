@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet::demo_stp_bd {
+class ciscopuppet::cisco::demo_stp_bd {
 
   $bd_designated_priority = platform_get() ? {
     'n7k' => [['2-42', '40960'], ['83-92,1000-2300', '53248']],
