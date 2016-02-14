@@ -88,7 +88,7 @@ Puppet::Type.newtype(:cisco_portchannel_global) do
   newproperty(:hash_poly) do
     desc 'port-channel hash-polynomial.'
 
-    newvalues(:CRC10a, :CRC10b, :CRC10c, :CRC10d)
+    newvalues(:CRC10a, :CRC10b, :CRC10c, :CRC10d, :default)
   end # property hash_poly
 
   newproperty(:load_defer) do
