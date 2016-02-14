@@ -3,14 +3,15 @@
 #### Table of Contents
 
 1. [Overview](#overview)
-2. [Pre-Install Tasks](#pre-install)
-3. [Puppet Agent Environment: bash-shell](#env-bs)
-4. [Puppet Agent Environment: guestshell](#env-gs)
-5. [Puppet Agent Installation, Configuration and Usage](#agent-config)
-6. [Optional: Guestshell & High Availability (HA) Platforms](#ha)
-7. [Optional: Puppet Agent Persistence](#persistence)
-8. [Optional: Automated Installation Options](#auto-install)
-9. [References](#references)
+1. [Pre-Install Tasks](#pre-install)
+1. [Puppet Agent Environment: bash-shell](#env-bs)
+1. [Puppet Agent Environment: guestshell](#env-gs)
+1. [Puppet Agent Environment: open agent container (OAC)](#env-oac)
+1. [Puppet Agent Installation, Configuration and Usage](#agent-config)
+1. [Optional: Guestshell & High Availability (HA) Platforms](#ha)
+1. [Optional: Puppet Agent Persistence](#persistence)
+1. [Optional: Automated Installation Options](#auto-install)
+1. [References](#references)
 
 ## <a name="overview">Overview</a>
 
@@ -218,7 +219,7 @@ search mycompany.com
 EOF
 ~~~
 
-## <a name="env-gs">Puppet Agent Environment: open agent container</a>
+## <a name="env-oac">Puppet Agent Environment: open agent container (OAC)</a>
 
 This section is only necessary if Puppet will run from the `open agent container`.
 
