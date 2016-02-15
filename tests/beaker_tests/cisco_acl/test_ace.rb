@@ -188,10 +188,10 @@ tests['ipv6_seq_20'] = {
   desc:           '2.2 ipv6 beaker_6 seq 20',
   title_pattern:  'ipv6 beaker_6 20',
   manifest_props: "
-    remark          => 'test remark',
+    remark          => 'test remark'
   ",
   resource:       {
-    'remark' => 'test remark',
+    'remark' => 'test remark'
   },
 }
 
