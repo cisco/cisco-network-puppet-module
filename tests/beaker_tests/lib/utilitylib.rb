@@ -643,7 +643,6 @@ end
 # test interface name to use for testing.
 # tests[:vdc] The default vdc name
 # tests[:intf] A compatible interface to use for MT-full testing.
-# rubocop:disable Metrics/AbcSize
 def setup_mt_full_env(tests, testcase)
   # MT-full tests require a specific linecard. Search for a compatible
   # module and enable it.
@@ -696,7 +695,6 @@ def setup_mt_full_env(tests, testcase)
   config_encap_profile_vni_global(agent, tests[:encap_prof_global]) if
     tests[:encap_prof_global]
 end
-# rubocop:enable Metrics/AbcSize
 
 # Helper for command_config calls
 def command_config(agent, cmd, msg='')
@@ -714,7 +712,6 @@ def resource_set(agent, resource, msg='')
   cmd = get_namespace_cmd(agent, PUPPET_BINPATH + cmd, options)
   on(agent, cmd, acceptable_exit_codes: [0, 2])
 end
-# rubocop:enable Metrics/AbcSize
 
 # Helper to raise skip when prereqs are not met
 def prereq_skip(testheader, testcase, message)
@@ -850,15 +847,24 @@ def platform
 end
 
 # Helper to skip tests on unsupported platforms.
+# tests[:operating_system] - An OS regexp pattern for all tests (caller set)
 # tests[:platform] - A platform regexp pattern for all tests (caller set)
+# tests[id][:operating_system] - An OS regexp pattern for specific test (caller set)
 # tests[id][:platform] - A platform regexp pattern for specific test (caller set)
 # tests[:skipped] - A list of skipped tests (set by this method)
 def platform_supports_test(tests, id)
   # Prefer specific test key over the all tests key
+  os = tests[id][:operating_system] || tests[:operating_system]
   plat = tests[id][:platform] || tests[:platform]
-  return true if plat.nil? || platform.match(plat)
-  logger.error("\n#{tests[id][:desc]} :: #{id} :: SKIP")
-  logger.error("Platform type does not match testcase platform regexp: /#{plat}/")
+  if os && !operating_system.match(os)
+    logger.error("\n#{tests[id][:desc]} :: #{id} :: SKIP")
+    logger.error("Operating system does not match testcase os regexp: /#{os}/")
+  elsif plat && !platform.match(plat)
+    logger.error("\n#{tests[id][:desc]} :: #{id} :: SKIP")
+    logger.error("Platform type does not match testcase platform regexp: /#{plat}/")
+  else
+    return true
+  end
   tests[:skipped] ||= []
   tests[:skipped] << tests[id][:desc]
   false

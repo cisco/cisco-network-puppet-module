@@ -87,11 +87,12 @@ testheader = 'Resource cisco_interface: vlan_mapping properties'
 # tests[:switchport_mode] - the interface switchport mode type
 #
 tests = {
-  master:          master,
-  agent:           agent,
-  resource_name:   'cisco_interface',
-  bridge_domain:   '199',
-  switchport_mode: 'trunk',
+  master:           master,
+  agent:            agent,
+  operating_system: 'nexus',
+  resource_name:    'cisco_interface',
+  bridge_domain:    '199',
+  switchport_mode:  'trunk',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
