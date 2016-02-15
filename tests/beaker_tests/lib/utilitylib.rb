@@ -171,13 +171,14 @@ end
 # attributes: hash of property names and values
 # return: a manifest friendly string of property names / values
 def prop_hash_to_manifest(attributes)
+  return '' if attributes.nil?
   manifest_str = ''
   attributes.each do |k, v|
     next if v.nil?
     if v.is_a?(String)
-      manifest_str += "       #{k} => '#{v.strip}',\n"
+      manifest_str += sprintf("    %-40s => '#{v.strip}',\n", k)
     else
-      manifest_str += "       #{k} => #{v},\n"
+      manifest_str += sprintf("    %-40s => #{v},\n", k)
     end
   end
   manifest_str
@@ -306,14 +307,27 @@ def get_current_resource_instances(agent, res_name)
   names
 end
 
-# Method to clean by putting a resource in absent state
+# Method to clean *all* resources of a given resource name, by
+# calling puppet resource with 'ensure=absent'.
 # @param agent [String] the agent that is going to run the test
 # @param res_name [String] the resource name that will be cleaned up
 def resource_absent_cleanup(agent, res_name, stepinfo='absent clean')
-  step "TestStep :: #{stepinfo}" do
+  step "\n--------\n * TestStep :: #{stepinfo}" do
     # set each resource to ensure=absent
     get_current_resource_instances(agent, res_name).each do |title|
-      next if title[/management/]
+      case res_name
+      when /cisco_bgp$/
+        # cleaning default cleans them all
+        next unless title[/default/]
+      when /^cisco_interface$/
+        next if title[/ethernet/i]
+      when /cisco_snmp_user/
+        next if title[/devops/i]
+      when /cisco_vlan/
+        next if title == '1'
+      when /cisco_vrf/
+        next if title[/management/]
+      end
       cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
         "resource #{res_name} '#{title}' ensure=absent", options)
       logger.info("  * #{stepinfo} Removing #{res_name} '#{title}'")
@@ -322,41 +336,120 @@ def resource_absent_cleanup(agent, res_name, stepinfo='absent clean')
   end
 end
 
-# Method to clean up a feature on the test node
-# @param agent [String] the agent that is going to run the test
-# @param feature [String] the feature name that will be cleaned up
-def node_feature_cleanup(agent, feature, stepinfo='feature cleanup',
-                         enable=true)
+# Helper to clean a specific resource by title name
+def resource_absent_by_title(agent, res_name, title)
+  res_cmd =
+    get_namespace_cmd(agent, PUPPET_BINPATH + "resource #{res_name}", options)
+  on(agent, "#{res_cmd} '#{title}' ensure=absent")
+end
+
+# Helper to find all titles of a given resource name.
+# Optionally remove all titles found.
+# Returns an array of titles.
+def resource_titles(agent, res_name, action=:find)
+  res_cmd =
+    get_namespace_cmd(agent, PUPPET_BINPATH + "resource #{res_name}", options)
+  on(agent, res_cmd)
+
+  titles = []
+  stdout.scan(/'.*':/).each { |title| titles << title.gsub(/[':]/, '') }
+  if action == :clean
+    titles.each { |title| resource_absent_by_title(agent, res_name, title) }
+  end
+  titles
+end
+
+# Helper to configure switchport mode
+def config_switchport_mode(agent, mode, stepinfo='switchport mode: ')
   step "TestStep :: #{stepinfo}" do
-    logger.debug("#{stepinfo} disable feature")
-    clean = get_vshell_cmd("conf t ; no feature #{feature}")
-    on(agent, clean, acceptable_exit_codes: [0, 2])
-    show_cmd = get_vshell_cmd('show running-config section feature')
-    on(agent, show_cmd) do
-      search_pattern_in_output(stdout, [/feature #{feature}/],
-                               true, self, logger)
+    cmd = "switchport ; switchport mode #{mode}"
+    command_config(agent, cmd, cmd)
+  end
+end
+
+# Helper to toggle 'system default switchport'
+def system_default_switchport(agent, state=false,
+                              stepinfo='system default switchport')
+  step "TestStep :: #{stepinfo}" do
+    state = state ? ' ' : 'no '
+    cmd = "#{state}system default switchport"
+    command_config(agent, cmd, cmd)
+  end
+end
+
+# Helper to toggle 'system default switchport shutdown'
+def system_default_switchport_shutdown(agent, state=false,
+                                       stepinfo='system default switchport shutdown')
+  step "TestStep :: #{stepinfo}" do
+    state = state ? ' ' : 'no '
+    cmd = "#{state}system default switchport shutdown"
+    command_config(agent, cmd, cmd)
+  end
+end
+
+# Helper for creating / removing an ACL
+def config_acl(agent, afi, acl, state, stepinfo='ACL:')
+  step "TestStep :: #{stepinfo}" do
+    state = state ? 'present' : 'absent'
+    cmd = "resource cisco_acl '#{afi} #{acl}' ensure=#{state}"
+    logger.info("Setup: puppet #{cmd}")
+    cmd = get_namespace_cmd(agent, PUPPET_BINPATH + cmd, options)
+    on(agent, cmd, acceptable_exit_codes: [0, 2])
+  end
+end
+
+# Helper for creating / removing bridge-domain configs
+# 1. Remove any existing bridge-domain config unless it contains our test_bd
+# 2. Remove vlan with test_bd id
+# 3. Add bridge-domain configs
+def config_bridge_domain(agent, test_bd, stepinfo='bridge-domain config:')
+  step stepinfo do
+    # Find current bridge-domain
+    # NOTE: This should convert to using puppet resource, however, the cli
+    # does not allow changes to bridge-domain without removing existing BD's,
+    # which means we are stuck with vsh for now.
+    cmd = get_vshell_cmd('show run bridge-domain')
+    out = on(agent, cmd).stdout
+    bds = out.scan(/^bridge-domain \d+ /)
+    return if bds.include?("bridge-domain #{test_bd} ")
+
+    bds.each do |bd|
+      command_config(agent, "no #{bd}", "remove #{bd}")
     end
 
-    return unless enable
-    logger.debug("#{stepinfo} re-enable feature")
-    clean = get_vshell_cmd("conf t ; feature #{feature}")
-    on(agent, clean, acceptable_exit_codes: [0, 2])
-    show_cmd = get_vshell_cmd('show running-config section feature')
-    on(agent, show_cmd) do
-      search_pattern_in_output(stdout, [/feature #{feature}/],
-                               false, self, logger)
+    if (sys_bd = out[/^system bridge-domain .*/])
+      command_config(agent, "no #{sys_bd}", "remove #{sys_bd}")
     end
+
+    # Remove vlan
+    cmd = "resource cisco_vlan '#{test_bd}' ensure=absent"
+    cmd = get_namespace_cmd(agent, PUPPET_BINPATH + cmd, options)
+    on(agent, cmd, acceptable_exit_codes: [0, 2])
+
+    # Configure bridge-domain
+    cmd = "system bridge-domain #{test_bd} ; bridge-domain #{test_bd}"
+    command_config(agent, cmd, cmd)
+  end
+end
+
+# Helper for creating / removing encap profile vni (global) configs
+def config_encap_profile_vni_global(agent, cmd,
+                                    stepinfo='encap profile vni global:')
+  step stepinfo do
+    command_config(agent, cmd, cmd)
   end
 end
 
 # Helper to nuke a single interface. This is needed to remove all
 # configurations from the interface.
 def interface_cleanup(agent, intf, stepinfo='Pre Clean:')
-  logger.debug("#{stepinfo} Interface cleanup #{intf}")
-
-  # exit codes: 0 = no changes, 2 = changes have occurred
-  clean = "conf t ; default interface #{intf}"
-  on(agent, get_vshell_cmd(clean), acceptable_exit_codes: [0, 2])
+  step "TestStep :: #{stepinfo}" do
+    cmd = "resource cisco_command_config 'interface_cleanup' "\
+          "command='default interface #{intf}'"
+    cmd = get_namespace_cmd(agent, PUPPET_BINPATH + cmd, options)
+    logger.info("  * #{stepinfo} Set '#{intf}' to default state")
+    on(agent, cmd, acceptable_exit_codes: [0, 2])
+  end
 end
 
 # Helper to remove all IP address configs from all interfaces. This is
@@ -379,30 +472,168 @@ def interface_ip_cleanup(agent, stepinfo='Pre Clean:')
   on(agent, get_vshell_cmd(clean), acceptable_exit_codes: [0, 2])
 end
 
-# If a [:title] exists merge it with the [:af] values to create a complete af.
-def af_title_pattern_munge(tests, id, provider=nil)
+# bgp neighbor remote-as configuration helper
+def bgp_nbr_remote_as(agent, remote_as)
+  asn, vrf, nbr, remote = remote_as.split
+  vrf = (vrf == 'default') ? '' : "vrf #{vrf} ;"
+  cfg_str = "conf t ; router bgp #{asn} ; #{vrf} " \
+            "neighbor #{nbr} ; remote-as #{remote}"
+  on(agent, get_vshell_cmd(cfg_str))
+end
+
+# puppet_resource_title_pattern_munge
+# Some providers support complex title patterns, in which case parameters
+# ('newparameter' methods from the type file) can obtain their values from
+# either explicit assignments or from the title pattern itself; e.g.
+#
+#  (params from title)                        (non-title params)
+# cisco_bgp { '55 red':    -equivalent to-   cisco_bgp { '55':
+#                                              vrf => 'red'
+#
+# The 'puppet resource' tests need the "title params" syntax, so this helper
+# is used to create an appropriate title by merging a partial title from
+# [:title_pattern] with the [:title_params] values.
+#
+def puppet_resource_title_pattern_munge(tests, id)
   title = tests[id][:title_pattern]
-  af = tests[id][:af]
+  params = tests[id][:title_params]
+  return params if title.nil?
 
-  if title.nil?
-    puts 'no title'
-    return af
-  end
-
-  tests[id][:af] = {} if af.nil?
+  tests[id][:title_params] = {} if params.nil?
   t = {}
-
-  case provider
-  when 'bgp_af'
+  case tests[:resource_name]
+  when 'cisco_bgp'
+    t[:asn], t[:vrf] = title.split
+  when 'cisco_bgp_af'
     t[:asn], t[:vrf], t[:afi], t[:safi] = title.split
-  when 'bgp_neighbor_af'
+  when 'cisco_bgp_neighbor'
+    t[:asn], t[:vrf], t[:neighbor] = title.split
+  when 'cisco_bgp_neighbor_af'
     t[:asn], t[:vrf], t[:neighbor], t[:afi], t[:safi] = title.split
-  when 'vrf_af'
+  when 'cisco_pim'
+    t[:afi], t[:vrf] = title.split
+  when 'cisco_pim_grouplist'
+    t[:afi], t[:vrf], t[:rp_addr], t[:group] = title.split
+  when 'cisco_pim_rp_address'
+    t[:afi], t[:vrf], t[:rp_addr] = title.split
+  when 'cisco_vrf_af'
     t[:vrf], t[:afi], t[:safi] = title.split
   end
-  t.merge!(tests[id][:af])
+  t.merge!(tests[id][:title_params])
   t[:vrf] = 'default' if t[:vrf].nil?
   t
+end
+
+# Helper method to create a puppet resource command string for providers
+# that use complex title patterns (bgp, vrf_af, etc).
+# [:title_pattern] (required) This string will become the entire cmd string
+#                  if there are no :title_params
+# [:title_params] (optional) This hash will be merged with the :title_pattern
+#                  to create the cmd string
+def puppet_resource_cmd_from_params(tests, id)
+  fail 'tests[:resource_name] is not defined' unless tests[:resource_name]
+  params = tests[id][:title_params]
+  stepinfo = 'Create resource command title string:'\
+             "\n  [:resource_name] '#{tests[:resource_name]}'"\
+             "\n  [:title_pattern] '#{tests[id][:title_pattern]}'"
+  stepinfo += "\n  [:title_params]  #{params}" if params
+
+  step "\n--------\n#{stepinfo}" do
+    # Create puppet resource cmd string. This is used to test
+    # a specific resource instance output using 'puppet resource'
+    if params
+      title_string = puppet_resource_title_pattern_munge(tests, id).values.join(' ')
+    else
+      title_string = tests[id][:title_pattern]
+    end
+
+    cmd = PUPPET_BINPATH + "resource #{tests[:resource_name]} '#{title_string}'"
+
+    logger.info("\ntitle_string: '#{title_string}'")
+    tests[id][:resource_cmd] = get_namespace_cmd(agent, cmd, options)
+  end
+end
+
+# Create manifest and resource command strings for a given test scenario.
+# Test hash keys used by this method:
+# [:resource_name] (REQUIRED) This is the resource name to use in the manifest
+#   the for puppet resource command strings
+# [:manifest_props] (REQUIRED) This is a hash of properties to use in building
+#   the manifest; they are also used to populate [:resource] when that key is
+#   not defined.
+# [:resource] (OPTIONAL) This is a hash of properties to use for validating the
+#   output from puppet resource.
+# [:title_pattern] (OPTIONAL) The title pattern to use in the manifest
+# [:title_params] (OPTIONAL) Complex title patterns can be combined with
+#   parameter keys in the manifest. When these are used the puppet resource
+#   command string becomes a combination of the title pattern and these params.
+#
+def create_manifest_and_resource(tests, id)
+  fail 'tests[:resource_name] is not defined' unless tests[:resource_name]
+  tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
+
+  # Create the cmd string for puppet_resource
+  puppet_resource_cmd_from_params(tests, id)
+
+  # Create any title-params manifest entries. Typically only used
+  # for title-pattern testing
+  manifest = prop_hash_to_manifest(tests[id][:title_params])
+
+  # Setup the ensure state, manifest string, and resource command state
+  if tests[id][:ensure] == :absent
+    state = 'ensure => absent,'
+    tests[id][:resource] = { 'ensure' => 'absent' }
+  else
+    state = 'ensure => present,'
+    # Create the property string for the manifest
+    manifest += prop_hash_to_manifest(tests[id][:manifest_props]) if
+      tests[id][:manifest_props]
+
+    # Automatically create a hash of expected states for puppet resource
+    # -or- use a static hash
+    tests[id][:resource] = tests[id][:manifest_props] unless
+      tests[id][:resource]
+  end
+
+  tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+  \nnode default {
+  #{tests[:resource_name]} { '#{tests[id][:title_pattern]}':
+    #{state}\n#{manifest}
+  }\n}\nEOF"
+end
+
+# test_harness_dependencies
+#
+# This method is used for additional testbed setup beyond the basics
+# used by most tests.
+def test_harness_dependencies(tests, id)
+  # BGP remote-as configuration
+  bgp_nbr_remote_as(agent, tests[id][:remote_as]) if tests[id][:remote_as]
+end
+
+# test_harness_run
+#
+# This method is a front-end for test_harness_common.
+# - Creates manifests
+# - Creates puppet resource title strings
+# - Cleans resource
+# - Sets up additional dependencies
+def test_harness_run(tests, id)
+  return unless platform_supports_test(tests, id)
+
+  tests[id][:ensure] = :present if tests[id][:ensure].nil?
+
+  # Build the manifest for this test
+  create_manifest_and_resource(tests, id)
+
+  resource_absent_cleanup(agent, tests[id][:preclean]) if
+    tests[id][:preclean]
+
+  # Check for additional pre-requisites
+  test_harness_dependencies(tests, id)
+
+  test_harness_common(tests, id)
+  tests[id][:ensure] = nil
 end
 
 # setup_mt_full_env
@@ -417,7 +648,7 @@ def setup_mt_full_env(tests, testcase)
   # MT-full tests require a specific linecard. Search for a compatible
   # module and enable it.
 
-  testheader = tests[:testheader] ? tests[:testheader] : 'setup_mt_full_env'
+  testheader = tests[:resource_name]
   mod = 'f3'
   step 'Check for Compatible Line Module' do
     tests[:intf] = mt_full_interface
@@ -456,25 +687,38 @@ def setup_mt_full_env(tests, testcase)
 
   interface_cleanup(tests[:agent], intf)
 
-  step "Add switchport config to #{intf}" do
-    cmd = get_vshell_cmd("conf t ; int #{intf} ; #{tests[:config_switchport]}")
-    on(agent, cmd, pty: true)
-  end if tests[:config_switchport]
+  config_switchport_mode(agent, tests[:switchport_mode]) if
+    tests[:switchport_mode]
 
-  step 'Add bridge-domain global config' do
-    cmd = get_vshell_cmd("conf t ; #{tests[:config_bridge_domain]}")
-    on(agent, cmd, pty: true)
-  end if tests[:config_bridge_domain]
+  config_bridge_domain(agent, tests[:bridge_domain]) if
+    tests[:bridge_domain]
 
-  step 'Add encap profile global config' do
-    cmd = get_vshell_cmd("conf t ; #{tests[:config_encap_prof_global]}")
-    on(agent, cmd, pty: true)
-  end if tests[:config_encap_prof_global]
+  config_encap_profile_vni_global(agent, tests[:encap_prof_global]) if
+    tests[:encap_prof_global]
+end
+# rubocop:enable Metrics/AbcSize
+
+# Helper for command_config calls
+def command_config(agent, cmd, msg='')
+  logger.info("\n#{msg}")
+  cmd = "resource cisco_command_config 'cc' command='#{cmd}'"
+  cmd = get_namespace_cmd(agent, PUPPET_BINPATH + cmd, options)
+  on(agent, cmd, acceptable_exit_codes: [0, 2])
+end
+
+# Helper to set properties using the puppet resource command.
+def resource_set(agent, resource, msg='')
+  logger.info("\n#{msg}")
+  cmd = "resource #{resource[:name]} '#{resource[:title]}' " \
+                  "#{resource[:property]}='#{resource[:value]}'"
+  cmd = get_namespace_cmd(agent, PUPPET_BINPATH + cmd, options)
+  on(agent, cmd, acceptable_exit_codes: [0, 2])
 end
 # rubocop:enable Metrics/AbcSize
 
 # Helper to raise skip when prereqs are not met
 def prereq_skip(testheader, testcase, message)
+  testheader = '' if testheader.nil?
   logger.error("** PLATFORM PREREQUISITE NOT MET: #{message}")
   raise_skip_exception(testheader, testcase)
 end
@@ -566,6 +810,20 @@ end
 def platform
   return @cisco_hardware unless @cisco_hardware.nil?
   pi = on(agent, facter_cmd('-p cisco.hardware.type')).stdout.chomp
+  if pi.empty?
+    logger.debug 'Unable to query Cisco hardware type using the ' \
+      "'cisco.hardware.type' custom factor key"
+    # Some platforms do not respond correctly to the first command;
+    # make another attempt using a broader search.
+    on(agent, facter_cmd('-p cisco | egrep -A1 hardware'))
+    # Sample output:
+    #   hardware => {
+    #     type => "NX-OSv Chassis",
+    pi = Regexp.last_match[1] if stdout[/type => "(.*)"/]
+    fail 'Unable to query Cisco hardware type using facter commands' if
+      pi.empty?
+  end
+
   # The following kind of string info is returned for Nexus.
   # - Nexus9000 C9396PX Chassis
   # - Nexus7000 C7010 (10 Slot) Chassis
@@ -587,6 +845,7 @@ def platform
   else
     fail "Unrecognized platform type: #{pi}\n"
   end
+  logger.info "\nFound Platform string: '#{pi}', Alias to: '#{@cisco_hardware}'"
   @cisco_hardware
 end
 
@@ -598,18 +857,44 @@ def platform_supports_test(tests, id)
   # Prefer specific test key over the all tests key
   plat = tests[id][:platform] || tests[:platform]
   return true if plat.nil? || platform.match(plat)
-  logger.error("#{tests[id][:desc]} :: #{id} :: SKIP")
+  logger.error("\n#{tests[id][:desc]} :: #{id} :: SKIP")
   logger.error("Platform type does not match testcase platform regexp: /#{plat}/")
   tests[:skipped] ||= []
   tests[:skipped] << tests[id][:desc]
   false
 end
 
-def skipped_tests_summary(tests, testheader)
+def skipped_tests_summary(tests)
   return unless tests[:skipped]
   logger.info("\n#{'-' * 60}\n  SKIPPED TESTS SUMMARY\n#{'-' * 60}")
   tests[:skipped].each do |desc|
     logger.error(sprintf('%-40s :: SKIP', desc))
   end
-  raise_skip_exception(testheader, self)
+  raise_skip_exception(tests[:resource_name], self)
+end
+
+# Find a test interface on the agent.
+# Callers should include the following hash keys:
+#   [:agent]
+#   [:intf_type]
+#   [:resource_name]
+def find_interface(tests, id=nil, skipcheck=true)
+  # Prefer specific test key over the all tests key
+  if id
+    type = tests[id][:intf_type] || tests[:intf_type]
+  else
+    type = tests[:intf_type]
+  end
+
+  case type
+  when /ethernet/i, /dot1q/
+    all = get_current_resource_instances(tests[:agent], 'cisco_interface')
+    intf = all.grep(%r{ethernet\d+/\d+})[0]
+  end
+
+  if skipcheck && intf.nil?
+    msg = 'Unable to find suitable interface module for this test.'
+    prereq_skip(tests[:resource_name], self, msg)
+  end
+  intf
 end

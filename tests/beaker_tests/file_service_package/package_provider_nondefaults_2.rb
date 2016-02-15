@@ -59,6 +59,12 @@ require File.expand_path('../filesvcpkglib.rb', __FILE__)
 result = 'PASS'
 testheader = 'PACKAGE Resource :: All Attributes NonDefaults'
 
+skipmsg = "\n\n*** WARNING ***\nThis test case relies on patches that are " \
+  "built for specific image versions.\nMake sure the patch being tested is " \
+  'compatible with the current image and then comment out this ' \
+  "raise_skip_exception call to run the test.\n*** WARNING ***\n"
+raise_skip_exception(skipmsg, self)
+
 # @test_name [TestCase] Executes nondefaults testcase for PACKAGE Resource.
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.

@@ -46,34 +46,38 @@ Puppet::Type.type(:cisco_vrf).provide(:nxapi) do
   ]
   VRF_ALL_PROPS = VRF_NON_BOOL_PROPS + VRF_BOOL_PROPS
 
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@vrf',
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@nu',
                                             VRF_NON_BOOL_PROPS)
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@vrf',
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@nu',
                                             VRF_BOOL_PROPS)
 
   def initialize(value={})
     super(value)
-    @vrf = Cisco::Vrf.vrfs[@property_hash[:name]]
+    @nu = Cisco::Vrf.vrfs[@property_hash[:name]]
     @property_flush = {}
   end
 
-  def self.properties_get(vrf_name, vrf)
-    debug "Checking VRF #{vrf_name}."
+  def self.properties_get(vrf, nu_obj)
+    debug "Checking VRF #{vrf}."
     current_state = {
-      name:   vrf_name,
+      name:   vrf,
       ensure: :present,
     }
     # Call node_utils getter for each property
-    VRF_ALL_PROPS.each do |prop|
-      current_state[prop] = vrf.send(prop)
+    VRF_NON_BOOL_PROPS.each do |prop|
+      current_state[prop] = nu_obj.send(prop)
+    end
+    VRF_BOOL_PROPS.each do |prop|
+      val = nu_obj.send(prop)
+      current_state[prop] = val.nil? ? nil : val.to_s.to_sym
     end
     new(current_state)
   end # self.properties_get
 
   def self.instances
     vrfs = []
-    Cisco::Vrf.vrfs.each do |vrf_name, vrf|
-      vrfs << properties_get(vrf_name, vrf)
+    Cisco::Vrf.vrfs.each do |vrf, nu_obj|
+      vrfs << properties_get(vrf, nu_obj)
     end
     vrfs
   end # self.instances
@@ -110,37 +114,22 @@ Puppet::Type.type(:cisco_vrf).provide(:nxapi) do
       next if @property_flush[prop].nil?
       # calling setters of the node utility gem using
       # values in property_flush
-      @vrf.send("#{prop}=", @property_flush[prop]) if
-      @vrf.respond_to?("#{prop}=")
+      @nu.send("#{prop}=", @property_flush[prop]) if
+      @nu.respond_to?("#{prop}=")
     end
   end
 
   def flush
     if @property_flush[:ensure] == :absent
-      @vrf.destroy
-      @vrf = nil
+      @nu.destroy
+      @nu = nil
     else
       # Create/Update
-      if @vrf.nil?
+      if @nu.nil?
         new_vrf = true
-        @vrf = Cisco::Vrf.new(@resource[:name])
+        @nu = Cisco::Vrf.new(@resource[:name])
       end
       properties_set(new_vrf)
     end
-    puts_config
   end
-
-  def puts_config
-    if @vrf.nil?
-      info "VRF #{@resource[:name]} is absent."
-      return
-    end
-
-    # Dump all current properties for this interface
-    current = sprintf("\n%30s: %s", 'VRF', @vrf.name)
-    VRF_ALL_PROPS.each do |prop|
-      current.concat(sprintf("\n%30s: %s", prop, @vrf.send(prop)))
-    end
-    debug current
-  end # puts_config
 end # Puppet::Type

@@ -154,14 +154,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
   newparam(:asn, namevar: true) do
     desc "BGP autonomous system number.  Valid values are String in ASPLAIN
           or ASDOT notation or Integer"
-    munge do |value|
-      begin
-        value = PuppetX::Cisco::BgpUtils.process_asnum(value.to_s)
-        value.to_s
-      rescue
-        raise("BGP asn #{value} must be specified in ASPLAIN or ASDOT notation")
-      end
-    end
+    munge(&:to_s)
   end
 
   newparam(:vrf, namevar: true) do
@@ -229,15 +222,6 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
     desc "Specify the local-as number for the eBGP neighbor. Valid values are
           String or Integer in ASPLAIN or ASDOT notation, or 'default', which
           means not to configure it"
-    validate do |value|
-      begin
-        PuppetX::Cisco::BgpUtils.process_asnum(value.to_s) unless
-          value.to_s.to_sym == :default
-      rescue
-        raise("BGP asn #{value} must be specified in ASPLAIN or ASDOT notation")
-      end
-    end
-
     munge do |value|
       value = :default if value.to_s.to_sym == :default
       value.to_s unless value == :default
@@ -310,15 +294,6 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
     desc "Specify Autonomous System Number of the neighbor. Valid values are
           String or Integer in ASPLAIN or ASDOT notation, or 'default', which
           means not to configure it"
-    validate do |value|
-      begin
-        PuppetX::Cisco::BgpUtils.process_asnum(value.to_s) unless
-          value.to_s.to_sym == :default
-      rescue
-        raise("BGP asn #{value} must be specified in ASPLAIN or ASDOT notation")
-      end
-    end
-
     munge do |value|
       value = :default if value.to_s.to_sym == :default
       value.to_s unless value == :default

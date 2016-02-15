@@ -67,6 +67,10 @@ test_name "TestCase :: #{testheader}" do
   tests[id] = {}
   init_bgp(tests, id) # clean slate
   stepinfo = 'Setup switch for provider test'
+<<<<<<< HEAD
+=======
+  resource_absent_cleanup(agent, 'cisco_bgp')
+>>>>>>> develop
   logger.info("TestStep :: #{stepinfo} :: #{result}")
 
   platform = fact_on(agent, 'os.name')
@@ -126,6 +130,7 @@ test_name "TestCase :: #{testheader}" do
     test_resource(tests, id)
 
     tests[id][:desc] = '1.3 Test removing the password'
+<<<<<<< HEAD
     tests[id][:manifest_props] = {
       :ensure   => :present,
       :asn      => BgpLib::ASN,
@@ -139,6 +144,12 @@ test_name "TestCase :: #{testheader}" do
     tests[id][:desc] = '1.4 Verify password has been removed on the box'
     tests[id][:resource] = { 'password' => IGNORE_VALUE }
     test_resource(tests, id, true)
+=======
+    tests[id][:manifest_props][:password] = ''
+
+    create_bgpneighbor_manifest(tests, id)
+    test_manifest(tests, id)
+>>>>>>> develop
   end
 
   cleanup_bgp(tests, id)

@@ -34,10 +34,13 @@ Puppet::Type.type(:cisco_bgp_neighbor).provide(:cisco) do
 
   # Property symbol array for method auto-generation.
   # NOTE: For maintainability please keep this list in alphabetical order.
+  # Exceptions:
+  #   remote_as must process before local_as
   BGP_NBR_NON_BOOL_PROPS = [
     :remote_as, # must be first for XR
     :description,
     :ebgp_multihop,
+    :remote_as,
     :local_as,
     :log_neighbor_changes,
     :maximum_peers,
@@ -61,11 +64,9 @@ Puppet::Type.type(:cisco_bgp_neighbor).provide(:cisco) do
 
   BGP_NBR_ALL_PROPS = BGP_NBR_NON_BOOL_PROPS + BGP_NBR_BOOL_PROPS
 
-  # We need to write our own getter and setter for local_as and remote_as
-  # to cover different AS format
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@nbr',
-                                            (BGP_NBR_NON_BOOL_PROPS - [:local_as, :remote_as]))
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@nbr',
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@nu',
+                                            (BGP_NBR_NON_BOOL_PROPS))
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@nu',
                                             BGP_NBR_BOOL_PROPS)
 
   def initialize(value={})
@@ -73,11 +74,11 @@ Puppet::Type.type(:cisco_bgp_neighbor).provide(:cisco) do
     asn = @property_hash[:asn]
     vrf = @property_hash[:vrf]
     nbr = @property_hash[:neighbor]
-    @nbr = Cisco::RouterBgpNeighbor.neighbors[asn][vrf][nbr] unless asn.nil?
+    @nu = Cisco::RouterBgpNeighbor.neighbors[asn][vrf][nbr] unless asn.nil?
     @property_flush = {}
   end
 
-  def self.properties_get(asn, vrf, addr, nbr)
+  def self.properties_get(asn, vrf, addr, nu_obj)
     current_state = {
       name:     [asn, vrf, addr].join(' '),
       asn:      asn,
@@ -86,8 +87,12 @@ Puppet::Type.type(:cisco_bgp_neighbor).provide(:cisco) do
       ensure:   :present,
     }
     # Call node_utils getter for every property
-    BGP_NBR_ALL_PROPS.each do |prop|
-      current_state[prop] = nbr.send(prop)
+    BGP_NBR_NON_BOOL_PROPS.each do |prop|
+      current_state[prop] = nu_obj.send(prop)
+    end
+    BGP_NBR_BOOL_PROPS.each do |prop|
+      val = nu_obj.send(prop)
+      current_state[prop] = val.nil? ? nil : val.to_s.to_sym
     end
     new(current_state)
   end
@@ -96,8 +101,8 @@ Puppet::Type.type(:cisco_bgp_neighbor).provide(:cisco) do
     neighbors = []
     Cisco::RouterBgpNeighbor.neighbors.each do |asn, vrfs|
       vrfs.each do |vrf, nbrs|
-        nbrs.each do |addr, nbr|
-          neighbors << properties_get(asn, vrf, addr, nbr)
+        nbrs.each do |addr, nu_obj|
+          neighbors << properties_get(asn, vrf, addr, nu_obj)
         end
       end
     end
@@ -128,59 +133,17 @@ Puppet::Type.type(:cisco_bgp_neighbor).provide(:cisco) do
     @property_flush[:ensure] = :absent
   end
 
-  def local_as
-    current_as = Cisco::RouterBgp.process_asnum(@property_hash[:local_as]).to_s
-    if @resource[:local_as]
-      if @resource[:local_as] == :default
-        return :default if @property_hash[:local_as] == @nbr.default_local_as
-      elsif current_as == Cisco::RouterBgp.process_asnum(@resource[:local_as]).to_s
-        # if current as is same as the resource value, return resource value in
-        # its current format (dot or integer)
-        return @resource[:local_as]
-      end
-    end
-    @property_hash[:local_as]
-  end
-
-  def local_as=(asnum)
-    asnum = @nbr.default_local_as if asnum == :default
-    @property_flush[:local_as] = asnum
-  end
-
-  def remote_as
-    current_as = Cisco::RouterBgp.process_asnum(@property_hash[:remote_as]).to_s
-    if @resource[:remote_as]
-      if @resource[:remote_as] == :default
-        return :default if @property_hash[:remote_as] == @nbr.default_remote_as
-      elsif current_as ==
-            Cisco::RouterBgp.process_asnum(@resource[:remote_as]).to_s
-        # if current as is same as the resource value, return resource value in
-        # its current format (dot or integer)
-        return @resource[:remote_as]
-      end
-    end
-    @property_hash[:remote_as]
-  end
-
-  def remote_as=(asnum)
-    asnum = @nbr.default_remote_as if asnum == :default
-    @property_flush[:remote_as] = asnum
-  end
-
   def properties_set(new_nbr=false)
     BGP_NBR_ALL_PROPS.each do |prop|
       next unless @resource[prop]
-
-      # Set @property_flush for the current object
-      send("#{prop}=", @resource[prop]) if new_nbr
-
+      if new_nbr
+        # Set @property_flush for the current object
+        send("#{prop}=", @resource[prop])
+      end
       next if @property_flush[prop].nil?
-      # Call the AutoGen setters for the @nbr node_utils object.
-      # For password and type, keepalive and hold timers, we don't have
-      # individual setters (respond_to? will return false). For these
-      # properties, we need to process them separately.
-      @nbr.send("#{prop}=", @property_flush[prop]) if
-        @nbr.respond_to?("#{prop}=")
+      # Call the AutoGen setters for the node_utils object.
+      @nu.send("#{prop}=", @property_flush[prop]) if
+        @nu.respond_to?("#{prop}=")
     end
 
     # Non-AutoGen custom setters follow
@@ -203,7 +166,7 @@ Puppet::Type.type(:cisco_bgp_neighbor).provide(:cisco) do
     else
       password = @property_flush[:password]
     end
-    @nbr.password_set(password, type)
+    @nu.password_set(password, type)
   end
 
   def timers_set
@@ -219,18 +182,18 @@ Puppet::Type.type(:cisco_bgp_neighbor).provide(:cisco) do
     else
       holdtime = @property_flush[:timers_holdtime]
     end
-    @nbr.timers_set(keepalive, holdtime)
+    @nu.timers_set(keepalive, holdtime)
   end
 
   def flush
     if @property_flush[:ensure] == :absent
-      @nbr.destroy
-      @nbr = nil
+      @nu.destroy
+      @nu = nil
     else
-      if @nbr.nil?
+      if @nu.nil?
         new_nbr = true
-        @nbr = Cisco::RouterBgpNeighbor.new(@resource[:asn], @resource[:vrf],
-                                            @resource[:neighbor])
+        @nu = Cisco::RouterBgpNeighbor.new(@resource[:asn], @resource[:vrf],
+                                           @resource[:neighbor])
       end
       properties_set(new_nbr)
     end
