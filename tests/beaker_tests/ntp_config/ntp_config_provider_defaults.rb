@@ -58,8 +58,18 @@ require File.expand_path('../ntp_configlib.rb', __FILE__)
 result = 'PASS'
 testheader = 'ntp_config Resource :: All Attributes Defaults'
 
+tests = {
+  agent:         agent,
+  master:        master,
+  intf_type:     'ethernet',
+  resource_name: 'ntp_config',
+}
+
 # @test_name [TestCase] Executes defaults testcase for ntp_config Resource.
 test_name "TestCase :: #{testheader}" do
+  # Find an available test interface on this device
+  intf = find_interface(tests)
+
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider' do
     # Cleanup before starting test.
@@ -74,7 +84,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource present manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, NtpConfigLib.create_ntp_config_manifest_set)
+    on(master, NtpConfigLib.create_ntp_config_manifest_set(intf))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
@@ -91,7 +101,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'resource ntp_config default', options)
     on(agent, cmd_str) do
-      search_pattern_in_output(stdout, { 'source_interface' => 'ethernet2/1' },
+      search_pattern_in_output(stdout, { 'source_interface' => intf },
                                false, self, logger)
     end
 

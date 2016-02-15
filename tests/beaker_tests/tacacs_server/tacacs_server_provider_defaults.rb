@@ -57,6 +57,7 @@ testheader = 'tacacs_server Resource :: All Attributes Defaults'
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider' do
+    resource_absent_cleanup(agent, 'tacacs_server')
     logger.info('Setup switch for provider')
   end
 
@@ -149,6 +150,68 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'resource tacacs_server 8.8.8.8', options)
+    on(agent, cmd_str) do
+      search_pattern_in_output(stdout, { 'ensure' => 'present' },
+                               true, self, logger)
+    end
+
+    logger.info("Check tacacs_server resource presence on agent :: #{result}")
+  end
+
+  # @step [Step] Requests manifest from the master server to the agent.
+  step 'TestStep :: Get resource present manifest from master' do
+    # Expected exit_code is 0 since this is a bash shell cmd.
+    on(master, TacacsServerLib.create_tacacs_server_manifest_present_ipv6)
+
+    # Expected exit_code is 2 since this is a puppet agent cmd with change.
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
+      'agent -t', options)
+    on(agent, cmd_str, acceptable_exit_codes: [2])
+
+    logger.info("Get resource present manifest from master :: #{result}")
+  end
+
+  # @step [Step] Checks tacacs_server resource on agent using resource cmd.
+  step 'TestStep :: Check tacacs_server resource presence on agent' do
+    # Expected exit_code is 0 since this is a puppet resource cmd.
+    # Flag is set to false to check for presence of RegExp pattern in stdout.
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
+      'resource tacacs_server 2020::20', options)
+    on(agent, cmd_str) do
+      search_pattern_in_output(stdout, { 'ensure' => 'present' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'key' => '44444444' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'key_format' => '7' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'port' => '48' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'timeout' => '2' },
+                               false, self, logger)
+    end
+
+    logger.info("Check tacacs_server resource presence on agent :: #{result}")
+  end
+
+  # @step [Step] Requests manifest from the master server to the agent.
+  step 'TestStep :: Get resource absent manifest from master' do
+    # Expected exit_code is 0 since this is a bash shell cmd.
+    on(master, TacacsServerLib.create_tacacs_server_manifest_absent_ipv6)
+
+    # Expected exit_code is 2 since this is a puppet agent cmd with change.
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
+      'agent -t', options)
+    on(agent, cmd_str, acceptable_exit_codes: [2])
+
+    logger.info("Get resource present manifest from master :: #{result}")
+  end
+
+  # @step [Step] Checks tacacs_server resource on agent using resource cmd.
+  step 'TestStep :: Check tacacs_server resource presence on agent' do
+    # Expected exit_code is 0 since this is a puppet resource cmd.
+    # Flag is set to false to check for presence of RegExp pattern in stdout.
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
+      'resource tacacs_server 2020::20', options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                true, self, logger)

@@ -63,6 +63,12 @@ require File.expand_path('../../cisco_tacacs_server/tacacsserverlib.rb', __FILE_
 result = 'PASS'
 testheader = 'AAAGROUP Resource :: All Attributes NonDefaults'
 
+# Check platform type and skip if necessary.
+unless /n(3|9)k/.match(platform)
+  msg = "Test not supported on this platform: #{platform}"
+  prereq_skip(testheader, self, msg)
+end
+
 # @test_name [TestCase] Executes nondefaults testcase for AAAGROUP Resource.
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
