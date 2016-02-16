@@ -669,6 +669,58 @@ def setup_mt_full_env(tests, testcase)
   config_encap_profile_vni_global(agent, tests[:encap_prof_global]) if
     tests[:encap_prof_global]
 end
+
+# setup_fabricpath_env
+# Check and set up prerequisites for fabricpath testing.
+# Fabricpath requires an F series line module. This method will update
+# the tests hash with the names of the default vdc and also an appropriate
+# test interface name to use for testing.
+# tests[:vdc] The default vdc name
+# tests[:intf] A compatible interface to use for Fabricpath testing.
+def setup_fabricpath_env(tests, testcase)
+  # Fabricpath tests require a specific linecard. Search for a compatible
+  # module and enable it.
+
+  if platform == 'n7k'
+    testheader = tests[:resource_name]
+    mod = 'f2e f3'
+    step 'Check for Compatible Line Module' do
+      tests[:intf_type] = 'ethernet'
+      tests[:intf] = fabricpath_interface
+      break if tests[:intf]
+      prereq_skip(testheader, testcase,
+                  "Fabricpath tests require #{mod} or compatible line module")
+    end if tests[:intf].nil?
+    intf = tests[:intf]
+    logger.info("Test interface name is '#{intf}'")
+  
+    step 'Get default VDC name' do
+      tests[:vdc] = default_vdc_name
+      break if tests[:vdc]
+      prereq_skip(testheader, testcase, 'Unable to determine default vdc name')
+    end if tests[:vdc].nil?
+    vdc = tests[:vdc]
+  
+    step "Set 'limit-resource module-type #{mod}'" do
+      limit_resource_module_type_set(vdc, mod)
+      break if limit_resource_module_type_get(vdc, mod)
+      prereq_skip(testheader, testcase,
+                  "Unable to set limit-resource module-type to '#{mod}'")
+    end
+  
+    step "Verify that '#{intf}' is allocated to VDC" do
+      break if vdc_allocate_interface_get(vdc, intf)
+      logger.info("'#{intf}' is not allocated to VDC, allocate it now...")
+      vdc_allocate_interface_set(vdc, intf)
+      break if vdc_allocate_interface_get(vdc, intf)
+      prereq_skip(testheader, testcase,
+                  "Unable to allocate interface '#{intf}' to VDC")
+    end
+  
+    interface_cleanup(tests[:agent], intf)
+  end
+end
+
 # rubocop:enable Metrics/AbcSize
 
 # Helper for command_config calls
@@ -703,6 +755,17 @@ def mt_full_interface
   slot = out.nil? ? nil : Regexp.last_match[1]
   "ethernet#{slot}/1" unless slot.nil?
 end
+
+# Return an interface name from the first Fabricpath compatible line module 
+# found
+def fabricpath_interface
+  # Search for F2E/F3 cards on device, create an interface name if found
+  cmd = get_vshell_cmd('sh mod')
+  out = on(agent, cmd, pty: true).stdout[/^(\d+)\s.*N7K-F(?:2.*25E|3)/]
+  slot = out.nil? ? nil : Regexp.last_match[1]
+  "ethernet#{slot}/1" unless slot.nil?
+end
+
 
 # Return the default vdc name
 def default_vdc_name

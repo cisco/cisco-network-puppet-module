@@ -28,6 +28,12 @@ class ciscopuppet::demo_fabricpath {
       $mode                           = 'transit'
       $ttl_multicast                  = '20'
       $ttl_unicast                    = '20'
+
+      cisco_vdc { 'default':
+        ensure                        => present,
+        limit_resource_module_type    => 'f2e f3'
+      }
+
     } else {
       $aggregate_multicast_routes     = undef
       $linkup_delay_always            = undef

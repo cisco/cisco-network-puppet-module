@@ -254,6 +254,10 @@ test_name "TestCase :: #{testheader}" do
                           'Setup for cisco_fabricpath_global provider test')
   device = platform
   logger.info("#### This device is of type: #{device} #####")
+
+  logger.info("\n#{'-' * 60}\nSection 0. Testbed Initialization")
+  setup_fabricpath_env(tests, self)
+
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
   id = 'default_properties'
