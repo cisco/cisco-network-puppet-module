@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet::demo_fabricpath {
+class ciscopuppet::cisco::demo_fabricpath {
 
   if platform_get() =~ /n(5|6|7)k/ {
     if platform_get() == 'n7k' {
@@ -30,8 +30,8 @@ class ciscopuppet::demo_fabricpath {
       $ttl_unicast                    = '20'
 
       cisco_vdc { 'default':
-        ensure                        => present,
-        limit_resource_module_type    => 'f2e f3'
+        ensure                     => present,
+        limit_resource_module_type => 'f2e f3'
       }
 
     } else {
