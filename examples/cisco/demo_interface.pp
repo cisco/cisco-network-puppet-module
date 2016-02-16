@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-<<<<<<< HEAD:examples/demo_interface.pp
 class ciscopuppet::cisco::demo_interface {
   if $operatingsystem == 'nexus' {
     cisco_acl { 'ipv4 v4acl1':
