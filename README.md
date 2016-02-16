@@ -197,7 +197,7 @@ The following table indicates which providers are supported on each platform. As
 ##### NetDev Providers
 
 | ✅ = Supported <br> ❌ = Unsupported  | N9k | N30xx | N31xx | N56xx | N6k | N7k | IOS XR |
-|:---|:---:|:-----:|:-----:|:-----:|:---:|:---:|
+|:---|:---:|:-----:|:-----:|:-----:|:---:|:---:|:---:|
 | [domain_name](#type-domain_name) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [name_server](#type-name_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [network_dns](#type-network_dns) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
