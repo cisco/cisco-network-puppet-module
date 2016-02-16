@@ -157,10 +157,6 @@ def raise_skip_exception(message, testcase)
   testcase.skip_test("\nTestCase :: #{message} :: SKIP")
 end
 
-def platform
-  fact_on(agent, 'os.name')
-end
-
 # Full command string for puppet agent
 def puppet_agent_cmd
   cmd = PUPPET_BINPATH + 'agent -t'
@@ -806,6 +802,11 @@ end
 # Use facter to return cisco hardware type
 def platform
   return @cisco_hardware unless @cisco_hardware.nil?
+  if operating_system == 'ios_xr'
+    # TODO: HACK: FIXME
+    @cisco_hardware = 'xr'
+    return @cisco_hardware
+  end
   pi = on(agent, facter_cmd('-p cisco.hardware.type')).stdout.chomp
   if pi.empty?
     logger.debug 'Unable to query Cisco hardware type using the ' \
