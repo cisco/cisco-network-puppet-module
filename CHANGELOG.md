@@ -12,7 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 *
 
 ### Added
-*
+- `cisco_interface` now supports IOS XR.
 
 ### Removed
 *

@@ -207,6 +207,8 @@ tests['L3_misc_nexus'] = {
 
 tests['L3_ACL'] = {
   desc:               '1.6 (L3) ACL Properties',
+  # TODO: this requires cisco_acl support before we can enable it for IOS XR
+  operating_system:   'nexus',
   intf_type:          'ethernet',
   sys_def_switchport: false,
   acl:                {
@@ -543,7 +545,10 @@ test_name "TestCase :: #{testheader}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 4. (SVI) Property Testing")
-  resource_set(agent, resource_cisco_overlay_global, 'Overlay Global mac setup')
+  if platform_supports_test(tests, 'SVI')
+    resource_set(agent, resource_cisco_overlay_global,
+                 'Overlay Global mac setup')
+  end
   interface_cleanup(agent, tests[:svi_name])
   test_harness_interface(tests, 'SVI_default')
   test_harness_interface(tests, 'SVI')
