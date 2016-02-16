@@ -802,11 +802,6 @@ end
 # Use facter to return cisco hardware type
 def platform
   return @cisco_hardware unless @cisco_hardware.nil?
-  if operating_system == 'ios_xr'
-    # TODO: HACK: FIXME
-    @cisco_hardware = 'xr'
-    return @cisco_hardware
-  end
   pi = on(agent, facter_cmd('-p cisco.hardware.type')).stdout.chomp
   if pi.empty?
     logger.debug 'Unable to query Cisco hardware type using the ' \
@@ -827,6 +822,9 @@ def platform
   # - Nexus7000 C7010 (10 Slot) Chassis
   # - Nexus 6001 Chassis
   # - NX-OSv Chassis
+  #
+  # The following kind of string info is returned for IOS XR.
+  # - Cisco XRv9K Virtual Router
   case pi
   when /Nexus\s?3\d\d\d/
     @cisco_hardware = 'n3k'
@@ -840,6 +838,8 @@ def platform
     @cisco_hardware = 'n9k'
   when /NX-OSv/
     @cisco_hardware = 'n9k'
+  when /XRv9K/i
+    @cisco_hardware = 'xrv9k'
   else
     fail "Unrecognized platform type: #{pi}\n"
   end
@@ -896,7 +896,9 @@ def find_interface(tests, id=nil, skipcheck=true)
   case type
   when /ethernet/i, /dot1q/
     all = get_current_resource_instances(tests[:agent], 'cisco_interface')
-    intf = all.grep(%r{ethernet\d+/\d+})[0]
+    # Skip the first interface we find in case it's our access interface.
+    # TODO: check the interface IP address like we do in node_utils
+    intf = all.grep(%r{ethernet\d+/\d+})[1]
   end
 
   if skipcheck && intf.nil?
