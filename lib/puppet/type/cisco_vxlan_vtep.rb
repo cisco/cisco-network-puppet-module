@@ -29,11 +29,12 @@ Puppet::Type.newtype(:cisco_vxlan_vtep) do
 
   ~~~puppet
     cisco_vxlan_vtep { 'nve1':
-      ensure             => present,
-      description        => 'nve interface',
-      host_reachability  => 'evpn',
-      shutdown           => false,
-      source_interface   => 'loopback1',
+      ensure                          => present,
+      description                     => 'nve interface',
+      host_reachability               => 'evpn',
+      shutdown                        => false,
+      source_interface                => 'loopback1',
+      source_interface_hold_down_time => '50',
     }
   ~~~
   "
@@ -102,5 +103,27 @@ Puppet::Type.newtype(:cisco_vxlan_vtep) do
     munge do |value|
       value == 'default' ? :default : value.gsub(/\s+/, '').downcase
     end
+  end
+
+  newproperty(:source_interface_hold_down_time) do
+    desc "Suppress advertisement of the NVE loopback address until the overlay
+          has converged. Valid values are Integer, keyword 'default'."
+
+    munge do |value|
+      begin
+        value = :default if value == 'default'
+        value = Integer(value) unless value == :default
+      rescue
+        raise 'source_interface_hold_down_time must be an integer.'
+      end
+      value
+    end
+  end # source_interface_hold_down_time
+
+  validate do
+    # source_interface_hold_down_time can be set only if source_interface is set
+    fail 'source_interface_hold_down_time can be used only when source_interface '\
+         'is also used' if self[:source_interface_hold_down_time] &&
+                           !self[:source_interface]
   end
 end

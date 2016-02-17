@@ -2150,6 +2150,9 @@ Administratively shutdown the NVE interface. Valid values are true, false or key
 ##### `source_interface`
 Specify the loopback interface whose IP address should be used for the NVE interface. Valid values are string or keyword 'default'.
 
+##### `source_interface_hold_down_time`
+Suppresses advertisement of the NVE loopback address until the overlay has converged. Valid values are Integer or keyword 'default'.
+
 --
 ### Type: cisco_vxlan_vtep_vni
 Creates a Virtual Network Identifier member (VNI) for an NVE overlay interface.
