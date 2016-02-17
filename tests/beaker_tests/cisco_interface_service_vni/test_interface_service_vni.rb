@@ -82,15 +82,15 @@ testheader = 'Resource cisco_interface_service_vni'
 # Top-level keys set by caller:
 # tests[:master] - the master object
 # tests[:agent] - the agent object
-# tests[:config_bridge_domain] - the bridge-domain configuration
+# tests[:encap_prof_global] - the encap profile vni global configuration
 #
 tests = {
-  master:                   master,
-  agent:                    agent,
-  testheader:               testheader,
-  sid:                      22,
-  config_encap_prof_global: 'encapsulation profile vni vni_500_5000 ; '\
-                            'dot1q 500 vni 5000',
+  master:            master,
+  agent:             agent,
+  resource_name:     'cisco_interface_service_vni',
+  sid:               22,
+  encap_prof_global: 'encapsulation profile vni vni_500_5000 ; '\
+                     'dot1q 500 vni 5000',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -152,7 +152,7 @@ def test_harness_interface_service_vni(tests, id)
   build_manifest_interface_service_vni(tests, id)
 
   # Workaround for (ioctl) facter bug on n7k ***
-  tests[id][:code] = [0, 2]
+  tests[id][:code] = [0, 2] if platform[/n7k/]
 
   test_harness_common(tests, id)
   tests[id][:ensure] = nil

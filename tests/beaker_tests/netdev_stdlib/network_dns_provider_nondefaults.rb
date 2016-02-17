@@ -58,28 +58,49 @@ require File.expand_path('../network_dnslib.rb', __FILE__)
 result = 'PASS'
 testheader = 'network_dns Resource :: All Attributes NonDefaults'
 
+# Helper for testbed cleanup
+def dns_clean(agent)
+  # remove any existing resources that we will be testing against
+  resource_titles(agent, :domain_name, :clean)
+
+  # These resources currently do not support ensure=absent; they can use
+  # resource_titles above if they're ever updated.
+  on(agent, get_vshell_cmd('show run | i domain-list|name-server'))
+  stdout.scan(/ip domain-list \S+|ip name-server .*/).each do |cli|
+    command_config(agent, "no #{cli}", "removing #{cli}")
+  end
+end
+
 # @test_name [TestCase] Executes nondefaults testcase for network_dns Resource.
 test_name "TestCase :: #{testheader}" do
-  ## @step [Step] Sets up switch for provider test.
-  step 'TestStep :: Setup switch for provider test' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    cmd_str = get_vshell_cmd('conf t ; ' \
-                                        'no ip domain-name switch1.test.com ; ' \
-                                        'no ip domain-name switch2.test.com ; ' \
-                                        'no ip domain-list test.com ; ' \
-                                        'no ip domain-list test.net ; ' \
-                                        'no ip name-server 8.8.8.8 ; ' \
-                                        'no ip name-server 2001:4860:4860::8888')
-    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
+  dns_warning = "
+    *****************************************************************
+    *****************************************************************
+    ***                    WARNING WARNING WARNING                ***
+    ***                                                           ***
+    ***                                                           ***
+    ***                                                           ***
+    ***                                                           ***
+    *** This test will remove all DNS settings from the testbed   ***
+    *** running-config.                                           ***
+    ***                                                           ***
+    *** Please save the DNS settings before executing this test.  ***
+    ***                                                           ***
+    ***                                                           ***
+    *** Comment out the 'fail dns_warning' command below to       ***
+    *** execute this test.                                        ***
+    ***                                                           ***
+    ***                                                           ***
+    ***                    WARNING WARNING WARNING                ***
+    *****************************************************************
+    *****************************************************************"
+  fail dns_warning if dns_warning
 
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, [/name-server .*8\.8\.8\.8$/],
-                               true, self, logger)
-    end
-    logger.info("Setup switch for provider test :: #{result}")
+  ############
+  # Start Test
+  ############
+  step 'TestStep :: Testbed pre-test cleanup' do
+    dns_clean(agent)
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
@@ -240,6 +261,10 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Check network_dns resource on agent :: #{result}")
+  end
+
+  step 'TestStep :: Testbed post-test cleanup' do
+    dns_clean(agent)
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.

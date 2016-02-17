@@ -71,7 +71,7 @@ test_name "TestCase :: #{testheader}" do
     # and an unexpected non-default group/role is absent
 
     # Expected exit_code is 0 since this is a vegas shell cmd.
-    cmd_str = get_vshell_cmd('show snmp group | i Role')
+    cmd_str = get_vshell_cmd('show snmp group')
     on(agent, cmd_str) do
       # Flag is set to false to check for presence of RegExp pattern in stdout.
       search_pattern_in_output(stdout,
@@ -137,7 +137,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Checks snmpgroup instance on agent using switch show cli cmds.
   step 'TestStep :: Check snmpgroup instance state in CLI' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
-    cmd_str = get_vshell_cmd('show snmp group | i Role')
+    cmd_str = get_vshell_cmd('show snmp group')
     on(agent, cmd_str) do
       # Flag is set to false to check for presence of RegExp pattern in stdout.
       search_pattern_in_output(stdout,
