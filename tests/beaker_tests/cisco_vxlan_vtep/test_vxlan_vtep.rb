@@ -104,10 +104,11 @@ tests = {
 tests['default_properties'] = {
   title_pattern:  'nve1',
   manifest_props: "
-    description        => 'default',
-    host_reachability  => 'default',
-    shutdown           => 'default',
-    source_interface   => 'default',
+    description                     => 'default',
+    host_reachability               => 'default',
+    shutdown                        => 'default',
+    source_interface                => 'default',
+    source_interface_hold_down_time => 'default',
   ",
   resource_props: {
     'host_reachability' => 'flood',
@@ -118,31 +119,35 @@ tests['default_properties'] = {
 tests['non_default_properties'] = {
   title_pattern:  'nve1',
   manifest_props: "
-    description        => 'Configured by Puppet',
-    host_reachability  => 'evpn',
-    shutdown           => 'false',
-    source_interface   => 'loopback55',
+    description                     => 'Configured by Puppet',
+    host_reachability               => 'evpn',
+    shutdown                        => 'false',
+    source_interface                => 'loopback55',
+    source_interface_hold_down_time => '50',
   ",
   resource_props: {
-    'description'       => 'Configured by Puppet',
-    'host_reachability' => 'evpn',
-    'shutdown'          => 'false',
-    'source_interface'  => 'loopback55',
+    'description'                     => 'Configured by Puppet',
+    'host_reachability'               => 'evpn',
+    'shutdown'                        => 'false',
+    'source_interface'                => 'loopback55',
+    'source_interface_hold_down_time' => '50',
   },
 }
 
 tests['change_parameters'] = {
   title_pattern:  'nve1',
   manifest_props: "
-    host_reachability  => 'flood',
-    shutdown           => 'true',
-    source_interface   => 'loopback1',
+    host_reachability               => 'flood',
+    shutdown                        => 'true',
+    source_interface                => 'loopback1',
+    source_interface_hold_down_time => '100',
   ",
   resource_props: {
-    'description'       => 'Configured by Puppet',
-    'host_reachability' => 'flood',
-    'shutdown'          => 'true',
-    'source_interface'  => 'loopback1',
+    'description'                     => 'Configured by Puppet',
+    'host_reachability'               => 'flood',
+    'shutdown'                        => 'true',
+    'source_interface'                => 'loopback1',
+    'source_interface_hold_down_time' => '100',
   },
 }
 

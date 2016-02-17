@@ -17,6 +17,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `switchport_mode fabricpath` 
 - Extended `cisco_vlan` with the following attributes:
   - `mode` 
+- Extended `cisco_vxlan_vtep` with the following attributes:
+  - `source_interface_hold_down_time`
 
 ### Removed
 *
