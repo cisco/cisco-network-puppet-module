@@ -148,7 +148,7 @@ tests['default_properties_eth'] = {
   manifest_props: "
     bundle_hash                  => 'default',
     bundle_select                => 'default',
-    hash_poly                    => 'default',
+    hash_poly                    => 'CRC10b',
   ",
   code:           [0, 2],
   resource_props: {

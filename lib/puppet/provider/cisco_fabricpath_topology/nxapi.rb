@@ -1,6 +1,6 @@
-# The NXAPI provider for cisco vlan.
+# The NXAPI provider for cisco fabricapth topology.
 #
-# November, 2014
+# February, 2016
 #
 # Copyright (c) 2014-2016 Cisco and/or its affiliates.
 #
@@ -25,7 +25,7 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
-Puppet::Type.type(:cisco_vlan).provide(:nxapi) do
+Puppet::Type.type(:cisco_fabricpath_topology).provide(:nxapi) do
   desc 'The new NXAPI provider.'
 
   confine feature: :cisco_node_utils
@@ -33,58 +33,46 @@ Puppet::Type.type(:cisco_vlan).provide(:nxapi) do
 
   mk_resource_methods
 
-  VLAN_NON_BOOL_PROPS = [:mapped_vni, :mode, :state, :vlan_name]
-  VLAN_BOOL_PROPS = [:shutdown]
-  VLAN_ALL_PROPS = VLAN_NON_BOOL_PROPS + VLAN_BOOL_PROPS
+  TOPO_NON_BOOL_PROPS = [:member_vlans, :topo_name]
+  TOPO_ALL_PROPS = TOPO_NON_BOOL_PROPS
 
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@vlan',
-                                            VLAN_NON_BOOL_PROPS)
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@vlan',
-                                            VLAN_BOOL_PROPS)
-
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@topo',
+                                            TOPO_NON_BOOL_PROPS)
   def initialize(value={})
     super(value)
-    @vlan = Cisco::Vlan.vlans[@property_hash[:name]]
+    @topo = Cisco::FabricpathTopo.topos[@property_hash[:name]]
     @property_flush = {}
-    debug 'Created provider instance of cisco_vlan.'
+    debug 'Created provider instance of cisco_fabricpath_topology.'
   end
 
-  def self.properties_get(vlan_id, v)
-    debug "Checking instance, vlan #{vlan_id}"
+  def self.properties_get(topo_id, t)
+    debug "Checking instance, topo #{topo_id}"
     current_state = {
-      vlan:   vlan_id,
-      name:   vlan_id,
-      ensure: :present,
+      topo_id: topo_id,
+      name:    topo_id,
+      ensure:  :present,
     }
 
     # Call node_utils getter for each property
-    VLAN_NON_BOOL_PROPS.each do |prop|
-      current_state[prop] = v.send(prop)
-    end
-    VLAN_BOOL_PROPS.each do |prop|
-      val = v.send(prop)
-      if val.nil?
-        current_state[prop] = nil
-      else
-        current_state[prop] = val ? :true : :false
-      end
+    TOPO_NON_BOOL_PROPS.each do |prop|
+      current_state[prop] = t.send(prop)
     end
     new(current_state)
   end # self.properties_get
 
   def self.instances
-    vlans = []
-    Cisco::Vlan.vlans.each do |vlan_id, v|
-      vlans << properties_get(vlan_id, v)
+    topos = []
+    Cisco::FabricpathTopo.topos.each do |topo_id, t|
+      topos << properties_get(topo_id, t)
     end
-    vlans
+    topos
   end
 
   def self.prefetch(resources)
-    vlans = instances
+    topos = instances
 
     resources.keys.each do |id|
-      provider = vlans.find { |vlan| vlan.instance_name == id }
+      provider = topos.find { |topo| topo.instance_name == id }
       resources[id].provider = provider unless provider.nil?
     end
   end # self.prefetch
@@ -102,45 +90,47 @@ Puppet::Type.type(:cisco_vlan).provide(:nxapi) do
   end
 
   def instance_name
-    vlan
+    debug "returning topo-id #{topo_id} for inst_name"
+    topo_id
   end
 
-  def properties_set(new_vlan=false)
-    VLAN_ALL_PROPS.each do |prop|
+  def properties_set(new_topo=false)
+    TOPO_ALL_PROPS.each do |prop|
+      next if prop == :state # no setter for topo state
       next unless @resource[prop]
-      send("#{prop}=", @resource[prop]) if new_vlan
+      send("#{prop}=", @resource[prop]) if new_topo
       unless @property_flush[prop].nil?
-        @vlan.send("#{prop}=", @property_flush[prop]) if
-          @vlan.respond_to?("#{prop}=")
+        @topo.send("#{prop}=", @property_flush[prop]) if
+          @topo.respond_to?("#{prop}=")
       end
     end
   end
 
   def flush
     if @property_flush[:ensure] == :absent
-      @vlan.destroy
-      @vlan = nil
+      @topo.destroy
+      @topo = nil
     else
       # Create/Update
-      if @vlan.nil?
-        new_vlan = true
-        @vlan = Cisco::Vlan.new(@resource[:vlan])
+      if @topo.nil?
+        new_topo = true
+        @topo = Cisco::FabricpathTopo.new(@resource[:topo_id])
       end
-      properties_set(new_vlan)
+      properties_set(new_topo)
     end
     puts_config
   end
 
   def puts_config
-    if @vlan.nil?
-      info "Vlan=#{@resource[:vlan]} is absent."
+    if @topo.nil?
+      info "Topo=#{@resource[:topo_id]} is absent."
       return
     end
 
-    # Dump all current properties for this vlan
-    current = sprintf("\n%30s: %s", 'vlan', instance_name)
-    VLAN_ALL_PROPS.each do |prop|
-      current.concat(sprintf("\n%30s: %s", prop, @vlan.send(prop)))
+    # Dump all current properties for this topo
+    current = sprintf("\n%30s: %s", 'topo', instance_name)
+    TOPO_ALL_PROPS.each do |prop|
+      current.concat(sprintf("\n%30s: %s", prop, @topo.send(prop)))
     end
     debug current
   end # puts_config

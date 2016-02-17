@@ -156,7 +156,7 @@ The following table indicates which providers are supported on each platform. As
 | ✅ = Supported <br> ❌ = Unsupported | N9k | N30xx | N31xx | N56xx | N6k | N7k | Caveats |
 |:---|:---:|:-----:|:-----:|:-----:|:---:|:---:|:---:|
 | [cisco_aaa_authentication_login](#type-cisco_aaa_authentication_login) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_aaa_authorization_cfg_svc](#type-cisco_aaa_authorization_cfg_svc) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| [cisco_aaa_authorization_login_cfg_svc](#type-cisco_aaa_authorization_login_cfg_svc) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
 | [cisco_aaa_authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
 | [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
 | [cisco_acl](#type-cisco_acl) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
@@ -169,7 +169,7 @@ The following table indicates which providers are supported on each platform. As
 | [cisco_interface](#type-cisco_interface) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅ | * [caveats](#cisco_interface-caveats) |
 | [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
 | [cisco_interface_ospf](#type-cisco_interface_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_portchannel_global](#type-cisco_portchannel_global) | ❌* | ✅* | ✅* | ❌* | ❌* | ❌* | * [caveats](#cisco_portchannel_global-caveats) |
+| [cisco_interface_portchannel](#type-cisco_interface_portchannel) | ❌* | ✅* | ✅* | ❌* | ❌* | ❌* | * [caveats](#cisco_interface_portchannel-caveats) |
 | [cisco_interface_service_vni](#type-cisco_interface_service_vni) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | 
 | [cisco_ospf](#type-cisco_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [cisco_ospf_vrf](#type-cisco_ospf_vrf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
@@ -177,7 +177,7 @@ The following table indicates which providers are supported on each platform. As
 | [cisco_overlay_global](#type-cisco_overlay_global) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌  |
 | [cisco_pim](#type-cisco_pim) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [cisco_pim_rp_address](#type-cisco_pim_rp_address) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_pim_group_list](#type-cisco_pim_group_list) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_pim_grouplist](#type-cisco_pim_grouplist) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [cisco_portchannel_global](#type-cisco_portchannel_global) | ❌* | ✅* | ✅* | ❌* | ❌* | ❌ | * [caveats](#cisco_portchannel_global-caveats) |
 | [cisco_snmp_community](#type-cisco_snmp_community) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [cisco_snmp_group](#type-cisco_snmp_group) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
@@ -256,6 +256,10 @@ The following resources include cisco types and providers along with cisco provi
   * [`name_server (netdev_stdlib)`](#type-name_server)
   * [`network_dns (netdev_stdlib)`](#type-network_dns)
   * [`search_domain (netdev_stdlib)`](#type-search_domain)
+
+* Fabricpath Types
+  * [`cisco_fabricpath_global`](#type-cisco_fabricpath_global)
+  * [`cisco_fabricpath_topology`](#type-cisco_fabricpath_topology)
 
 * Interface Types
   * [`cisco_interface`](#type-cisco_interface)
@@ -349,6 +353,8 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_bgp_af`](#type-cisco_bgp_af)
 * [`cisco_bgp_neighbor`](#type-cisco_bgp_neighbor)
 * [`cisco_bgp_neighbor_af`](#type-cisco_bgp_neighbor_af)
+* [`cisco_fabricpath_global`](#type-cisco_fabricpath_global)
+* [`cisco_fabricpath_topology`](#type-cisco_fabricpath_topology)
 * [`cisco_interface`](#type-cisco_interface)
 * [`cisco_interface_channel_group`](#type-cisco_interface_channel_group)
 * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
@@ -1104,6 +1110,77 @@ Site-of-origin. Valid values are a string defining a VPN extcommunity or 'defaul
 `weight` value. Valid values are an integer value or 'default'.
 
 --
+### Type: cisco_fabricpath_global
+##### `name`
+ID of the fabricpath global config. The only valid value is keyword 'default'.
+
+##### `aggregate_multicast_routes`
+Aggregate Multicast Routes on same tree in the topology. Valid values are true/false and keyword 'default'. Default value: false.
+
+##### `allocate_delay`
+Fabricpath Timers Allocate Delay in seconds. Valid values are integers from 1..1200 and keyword 'default'. Default value: 10.
+
+##### `graceful_merge`
+Graceful merge for conflicting switch-id or FTAG allocation. Valid values are enable/disable and keyword 'default'. Default value: true.
+
+##### `linkup_delay`
+Fabricpath Timers Link-up Delay in seconds. Valid values are integers from 1..1200 and keyword 'default'. Default value: 10.
+
+##### `loadbalance_algorithm`
+Fabricpath ECMP loadbalancing alogorithm. Valid values are 'destination', 'source', 'source-destination', 'symmetric' and the keyword 'default'. Default is symmetric for Nexus 7000 series and source-destination for others.
+
+##### `loadbalance_multicast_has_vlan`
+Multicast Loadbalance flow parameters - include vlan or not. Valid values are true or false and keyword 'default'. Default value: true. This parameter is valid only on Nexus 7000 series platform.
+
+##### `loadbalance_multicast_rotate`
+Multicast Loadbalance flow parameters -  rotate amount in bytes. Valid values are integer in range 0..15 and keyword 'default'. Default value: 1. This parameter is valid only on Nexus 7000 series platform.
+
+##### `loadbalance_unicast_has_vlan`
+Unicast Loadbalance flow parameters - include vlan or not. Valid values are true/false and keyword 'default'. Default value: 1.
+
+##### `loadbalance_unicast_layer`
+Unicast Loadbalance flow parameters - layer. Valid values are : layer2, layer3,
+layer4, mixed, and keyword 'default'. Default value: mixed.
+
+##### `loadbalance_unicast_rotate`
+Unicast Loadbalance flow parameters - rotate amount in bytes. Valid values are Integers in range 0..15 and keyword 'default'. Default value: 1.
+
+##### `linkup_delay_always`
+Fabricpath Timers Link-up delay always. This configuration introduces a linkup delay always whether the link is administratively brought up or whether it is restored after events such as a module reload. Valid values are true/false. Default: true.
+
+##### `linkup_delay_enable`
+Fabricpath Timers Link-up delay enable. Valid values are true/false and keyword 'default'. Default value: true.
+
+##### `mode`
+Mode of operation of this switch w.r.t to segmentation. Valid values are normal/transit and keyword 'default'. Default: normal.
+
+##### `switch_id`
+The fabricpath switch_id. This parameter can be used to over-ride the automatically assigned switch-id for this switch. Valid values are integers from 1..4094. 
+
+##### `transition_delay`
+Fabricpath Timers Transition Delay in seconds. Valid values are integers from 1..1200 and keyword 'default'. Default value: 10.
+
+##### `ttl_multicast`
+Fabricpath Multicast TTL value. Valid values are integers from 1..64 and keyword 'default'. Default value: 32. This parameter is valid only on Nexus 7000 series platform.
+
+##### `ttl_unicast`
+Fabricpath Unicast TTL value. Valid values are integers from 1..64 and keyword 'default'. Default value: 32. This parameter is valid only on Nexus 7000 series platform.
+
+--
+### Type: cisco_fabricpath_topology
+Manages a Cisco fabricpath Topology
+
+##### `topo_id`
+ID of the fabricpath topology. Valid values are integers in the range 1-63. 
+Value of 0 is reserved for default topology.
+
+##### `member_vlans`
+ID of the VLAN(s) tha are members of this topology. Valid values are integer/integer ranges.
+
+##### `topo_name`
+Descriptive name of the topology. Valid values are string
+
+--
 ### Type: cisco_interface
 
 Manages a Cisco Network Interface. Any resource dependency should be run before the interface resource.
@@ -1146,7 +1223,7 @@ Shutdown state of the interface. Valid values are 'true', 'false', and
 
 ###### `switchport_mode`
 Switchport mode of the interface. To make an interface Layer 3, set
-`switchport_mode` to 'disabled'. Valid values are 'disabled', 'access', 'tunnel', 'fex_fabric', 'trunk', and 'default'.
+`switchport_mode` to 'disabled'. Valid values are 'disabled', 'access', 'tunnel', 'fex_fabric', 'trunk', 'fabricpath' and 'default'.
 
 ###### `ipv4_acl_in`
 Apply ipv4 access list on the interface in ingress direction. Access-list should be present on the network device 
@@ -1601,41 +1678,45 @@ Manages configuration of a portchannel global parameters
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `hash_poly` <br> `rotate` | Supported only on N56xx, N6k |
+| `hash_poly` | Supported only on N56xx, N6k |
 | `asymmetric` <br> `hash_distribution` <br> `load_defer` | Supported only on N7k |
 | `concatenation` <br> `resilient` <br> `symmetry`| Supported only on N9k, N30xx, N31xx |
+| `rotate` | Supported only on N9k, N30xx, N31xx and N7k |
 
 #### Parameters
 
 ##### `asymmetric`
-port-channel asymmetric hash. Valid values are true, false or 'default'. This property is supported only on (Nexus 7k)
+port-channel asymmetric hash. Valid values are true, false or 'default'. This property is supported only on N7k.
 
 ##### `bundle_hash`
-port-channel bundle hash. Valid values are 'ip', 'ip-l4port', 'ip-l4port-vlan', 'ip-vlan', 'l4port', 'mac', 'port', 'ip-only', 'port-only', 'ip-gre' or 'default'. 'port', 'ip-only', 'port-only', 'ip-gre' are not supported on (Nexus 7k). 'ip-l4port', 'ip-l4port-vlan', 'ip-vlan', 'l4port', 'ip-gre' are not supported on (Nexus 5|6k). 'port', 'ip-only', 'port-only' are not supported on (Nexus 3|9k)
+port-channel bundle hash. Valid values are 'ip', 'ip-l4port', 'ip-l4port-vlan', 'ip-vlan', 'l4port', 'mac', 'port', 'ip-only', 'port-only', 'ip-gre' or 'default'.
+* 'port', 'ip-only', 'port-only', 'ip-gre' are only supported on N9k, N30xx, N31xx, N56xx, N6k.
+* 'ip-l4port', 'ip-l4port-vlan', 'ip-vlan', 'l4port', 'ip-gre' are only supported on N9k, N30xx, N31xx, N7k.
+* 'port', 'ip-only', 'port-only' are only supported on N56xx, N6k, N7k.
 
 ##### `bundle_select`
 port-channel bundle select. Valid values are 'src', 'dst', 'src-dst' or 'default'.
 
 ##### `concatenation`
-port-channel concatenation enable or disable. Valid values are true, false or 'default'. This property is supported only on (Nexus 3|9k)
+port-channel concatenation enable or disable. Valid values are true, false or 'default'. This property is only supported on N9k, N30xx, N31xx.
 
 ##### `hash_distribution`
-port-channel hash-distribution. Valid values are 'adaptive', 'fixed' or the keyword 'default'. This property is supported only on (Nexus 7k)
+port-channel hash-distribution. Valid values are 'adaptive', 'fixed' or the keyword 'default'. This property is only supported on N7k.
 
 ##### `hash_poly`
-port-channel hash-polynomial. Valid values are 'CRC10a', 'CRC10b', 'CRC10c', 'CRC10d'. This property is supported only on (Nexus 5|6k).
+port-channel hash-polynomial. Valid values are 'CRC10a', 'CRC10b', 'CRC10c' or 'CRC10d'. Note: This property does not support the keyword 'default' and it is only supported on N56xx and N6k.
 
 ##### `load_defer`
-port-channel load-defer time interval. Valid values are integer or 'default'. This property is supported only on (Nexus 7k)
+port-channel load-defer time interval. Valid values are integer or 'default'. This property is only supported on N7k.
 
 ##### `resilient`
-port-channel resilient mode. Valid values are true, false or 'default'. This property is supported only on (Nexus 3|9k)
+port-channel resilient mode. Valid values are true, false or 'default'. This property is only supported on N9k, N30xx, N31xx.
 
 ##### `rotate`
-port-channel hash input offset. Valid values are integer or 'default'. This property is not supported on (Nexus 5|6k)
+port-channel hash input offset. Valid values are integer or 'default'. This property is only supported on N9k, N30xx, N31xx, N7k.
 
 ##### `symmetry`
-port-channel symmetry hash. Valid values are true, false or 'default'. This property is supported only on (Nexus 3|9k)
+port-channel symmetry hash. Valid values are true, false or 'default'. This property is only supported on N9k, N30xx, N31xx.
 
 --
 ### Type: cisco_snmp_community
@@ -1891,6 +1972,10 @@ Determines whether the config should be present or not. Valid values are 'presen
 
 ##### `mapped_vni`
 The Virtual Network Identifier (VNI) id that is mapped to the VLAN. Valid values are integer and keyword 'default'.
+
+##### `mode`
+Determines mode of the VLAN. Valid values are 'CE', 'fabricpath' and 
+keyword 'default'.
 
 ##### `vlan_name`
 The name of the VLAN. Valid values are a string or the keyword 'default'.

@@ -2,7 +2,7 @@
 #
 # April 2013
 #
-# Copyright (c) 2013-2015 Cisco and/or its affiliates.
+# Copyright (c) 2013-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -102,6 +102,16 @@ Puppet::Type.newtype(:cisco_vlan) do
       value
     end
   end # property name
+
+  newproperty(:mode) do
+    desc 'Mode of the VLAN. Valid values are "CE" (Classical Ethernet) or
+          "fabricpath". Default value is CE'
+
+    newvalues(
+      :CE,
+      :fabricpath,
+      :default)
+  end # property mode
 
   newproperty(:state) do
     desc 'State of the VLAN.'
