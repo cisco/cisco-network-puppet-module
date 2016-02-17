@@ -1601,9 +1601,10 @@ Manages configuration of a portchannel global parameters
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `hash_poly` <br> `rotate` | Supported only on N9k, N30xx, N31xx and N7k |
+| `hash_poly` | Supported only on N56xx, N6k |
 | `asymmetric` <br> `hash_distribution` <br> `load_defer` | Supported only on N7k |
 | `concatenation` <br> `resilient` <br> `symmetry`| Supported only on N9k, N30xx, N31xx |
+| `rotate` | Supported only on N9k, N30xx, N31xx and N7k |
 
 #### Parameters
 
