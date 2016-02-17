@@ -1678,9 +1678,10 @@ Manages configuration of a portchannel global parameters
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `hash_poly` <br> `rotate` | Supported only on N56xx, N6k |
+| `hash_poly` | Supported only on N56xx, N6k |
 | `asymmetric` <br> `hash_distribution` <br> `load_defer` | Supported only on N7k |
 | `concatenation` <br> `resilient` <br> `symmetry`| Supported only on N9k, N30xx, N31xx |
+| `rotate` | Supported only on N9k, N30xx, N31xx and N7k |
 
 #### Parameters
 
@@ -1700,7 +1701,7 @@ port-channel concatenation enable or disable. Valid values are true, false or 'd
 port-channel hash-distribution. Valid values are 'adaptive', 'fixed' or the keyword 'default'. This property is supported only on (Nexus 7k)
 
 ##### `hash_poly`
-port-channel hash-polynomial. Valid values are 'CRC10a', 'CRC10b', 'CRC10c', 'CRC10d'. This property is supported only on (Nexus 5|6k).
+port-channel hash-polynomial. Valid values are 'CRC10a', 'CRC10b', 'CRC10c' or 'CRC10d'. Note: This property does not support the keyword 'default' and it is only supported on Nexus N56xx and N6k.
 
 ##### `load_defer`
 port-channel load-defer time interval. Valid values are integer or 'default'. This property is supported only on (Nexus 7k)
@@ -1709,7 +1710,7 @@ port-channel load-defer time interval. Valid values are integer or 'default'. Th
 port-channel resilient mode. Valid values are true, false or 'default'. This property is supported only on (Nexus 3|9k)
 
 ##### `rotate`
-port-channel hash input offset. Valid values are integer or 'default'. This property is not supported on (Nexus 5|6k)
+port-channel hash input offset. Valid values are integer or 'default'. This property is not supported on (Nexus 3|7|9k)
 
 ##### `symmetry`
 port-channel symmetry hash. Valid values are true, false or 'default'. This property is supported only on (Nexus 3|9k)
