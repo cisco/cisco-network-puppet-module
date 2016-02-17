@@ -58,6 +58,10 @@ require File.expand_path('../domain_namelib.rb', __FILE__)
 result = 'PASS'
 testheader = 'DOMAIN_NAME Resource :: All Attributes Defaults'
 
+# Cleanup commands for test setup/cleanup
+clean_commands = ['no ip domain-name test.abc', 'no ip domain-name test.xyz',
+                  'no vrf context test']
+
 # @test_name [TestCase] Executes defaults testcase for NAME_SERVER Resource.
 test_name "TestCase :: #{testheader}" do
   ## @step [Step] Sets up switch for provider test.
@@ -65,20 +69,10 @@ test_name "TestCase :: #{testheader}" do
     # Let's check and make sure that an expected default group/role is present
     # and an unexpected non-default group/role is absent
 
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    cmd_str = get_vshell_cmd('conf t ; ' \
-                                        'no ip domain-name test.abc ;' \
-                                        'no ip domain-name test.xyz ;' \
-                                        'no vrf context test')
-    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
-
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config all')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, [/domain-name test.abc$/],
-                               true, self, logger)
+    clean_commands.each do |cmd|
+      command_config(agent, cmd, cmd)
     end
+
     logger.info("Setup switch for provider test :: #{result}")
   end
 
@@ -164,6 +158,10 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Check domain_name instance absence on agent :: #{result}")
+  end
+
+  clean_commands.each do |cmd|
+    command_config(agent, cmd, cmd)
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.

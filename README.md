@@ -1601,10 +1601,9 @@ Manages configuration of a portchannel global parameters
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `asymmetric` <br> `hash_distribution` <br> `load_defer` | Supported only on N7k |
-| `concatenation` <br> `resilient` | Supported only on N9k, N30xx, N31xx |
 | `hash_poly` <br> `rotate` | Supported only on N56xx, N6k |
-| `symmetry ` | Supported only on N9k |
+| `asymmetric` <br> `hash_distribution` <br> `load_defer` | Supported only on N7k |
+| `concatenation` <br> `resilient` <br> `symmetry`| Supported only on N9k, N30xx, N31xx |
 
 #### Parameters
 
@@ -2149,6 +2148,9 @@ Administratively shutdown the NVE interface. Valid values are true, false or key
 
 ##### `source_interface`
 Specify the loopback interface whose IP address should be used for the NVE interface. Valid values are string or keyword 'default'.
+
+##### `source_interface_hold_down_time`
+Suppresses advertisement of the NVE loopback address until the overlay has converged. Valid values are Integer or keyword 'default'.
 
 --
 ### Type: cisco_vxlan_vtep_vni
@@ -2729,6 +2731,9 @@ Minimum Requirements:
   * Cisco Nexus 93xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
   * Cisco Nexus 31xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
   * Cisco Nexus 30xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
+  * Cisco Nexus 56xx, OS Version 7.3(0)N1(1), Environments: Open Agent Container (OAC)
+  * Cisco Nexus 60xx, OS Version 7.3(0)N1(1), Environments: Open Agent Container (OAC)
+  * Cisco Nexus 7xxx, OS Version 7.3(0)D1(1), Environments: Open Agent Container (OAC)
 
 ## Learning Resources
 

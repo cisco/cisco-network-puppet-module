@@ -12,10 +12,21 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 *
 
 ### Added
-*
+* Extended `cisco_vxlan_vtep` with the following attributes:
+  * `source_interface_hold_down_time`
 
 ### Removed
 *
+
+## [1.2.2] - 2016-02-14
+
+### Fixed
+- Fixed Cisco NetDev port\_channel provider to use the correct cisco\_node\_utils object.
+- Fixed beaker test setup and cleanup issues.
+- Fixed incomplete documentation references for the open agent container (OAC)
+
+## 1.2.1
+This version was never released.
 
 ## [1.2.0] - 2016-02-12
 
@@ -165,6 +176,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Please note: 0.9.0 is an EFT pre-release for a limited audience with access to NX-OS 7.0(3)I2(1). Additional code changes may occur in 0.9.x prior to the final 1.0.0 release.
 
 [unreleased]: https://github.com/cisco/cisco-network-puppet-module/compare/master...develop
+[1.2.2]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.2.0...v1.2.2
 [1.2.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.0.2...v1.1.0
 [1.0.2]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.0.1...v1.0.2
