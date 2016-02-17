@@ -125,6 +125,7 @@ tests[:non_def_1] = {
     event_history_detail:    'size_large',
     event_history_events:    'size_disable',
     event_history_periodic:  'false',
+    nsr:                     'true',
   },
 }
 
