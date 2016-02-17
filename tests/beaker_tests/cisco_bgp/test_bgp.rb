@@ -220,11 +220,7 @@ def vrf(test)
   'default'
 end
 
-# unsupported_properties
-#
-# Returns an array of properties that are not supported for
-# a particular operating_system or platform.
-# Override this in a particular test file as needed.
+# Overridden to properly handle unsupported properties.
 def unsupported_properties(tests, id)
   unprops = []
 
@@ -263,6 +259,7 @@ def unsupported_properties(tests, id)
         :nsr
     end
   else
+    # NX does not support these properties
     unprops << :nsr
   end
 
