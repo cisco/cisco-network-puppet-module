@@ -66,6 +66,7 @@ tests[:default] = {
     timer_bestpath_limit_always:            'default',
     timer_bgp_holdtime:                     'default',
     timer_bgp_keepalive:                    'default',
+    nsr:                                    'default',
   },
   resource:       {
     'bestpath_always_compare_med'            => 'false',
@@ -96,6 +97,7 @@ tests[:default] = {
     'timer_bestpath_limit_always'            => 'false',
     'timer_bgp_holdtime'                     => '180',
     'timer_bgp_keepalive'                    => '60',
+    'nsr'                                    => 'false',
   },
 }
 
@@ -146,11 +148,11 @@ tests[:non_def_3] = {
   manifest_props: {
     cluster_id:                             '10.0.0.1',
     confederation_id:                       '99',
-    confederation_peers:                    '55 23.4 88 200.1',
-    enforce_first_as:                       'true',
-    fast_external_fallover:                 'true',
-    flush_routes:                           'false',
-    graceful_restart:                       'true',
+    confederation_peers:                    ['200.1', '23.4', '55', '88'],
+    enforce_first_as:                       'false',
+    fast_external_fallover:                 'false',
+    flush_routes:                           'true',
+    graceful_restart:                       'false',
     graceful_restart_helper:                'true',
     graceful_restart_timers_restart:        '130',
     graceful_restart_timers_stalepath_time: '310',
@@ -204,6 +206,68 @@ tests[:title_patterns_2] = {
   title_params:  { vrf: 'blue' },
   resource:      { 'ensure' => 'present' },
 }
+
+# Returns the vrf being tested by the specified test.
+def vrf(test)
+  return test[:title_params][:vrf] if
+    test[:title_params] && test[:title_params][:vrf]
+
+  if test[:title_pattern]
+    words = test[:title_pattern].split(' ')
+    return words[1] unless words.length < 2
+  end
+
+  'default'
+end
+
+# unsupported_properties
+#
+# Returns an array of properties that are not supported for
+# a particular operating_system or platform.
+# Override this in a particular test file as needed.
+def unsupported_properties(tests, id)
+  unprops = []
+
+  vrf = vrf(tests[id])
+
+  if operating_system == 'ios_xr'
+    # XR does not support these properties
+    unprops <<
+      :bestpath_med_non_deterministic <<
+      :disable_policy_batching <<
+      :event_history_cli <<
+      :event_history_detail <<
+      :event_history_events <<
+      :event_history_periodic <<
+      :flush_routes <<
+      :graceful_restart_helper <<
+      :isolate <<
+      :log_neighbor_changes <<
+      :maxas_limit <<
+      :neighbor_down_fib_accelerate <<
+      :shutdown <<
+      :suppress_fib_pending <<
+      :timer_bestpath_limit <<
+      :timer_bestpath_limit_always
+
+    if vrf != 'default'
+      # XR does not support these properties under a non-default vrf
+      unprops <<
+        :bestpath_med_confed <<
+        :cluster_id <<
+        :confederation_id <<
+        :confederation_peers <<
+        :graceful_restart <<
+        :graceful_restart_timers_restart <<
+        :graceful_restart_timers_stalepath_time <<
+        :nsr
+    end
+  else
+    unprops << :nsr
+  end
+
+  unprops
+end
 
 # This helper tests a test case in vrf context. This allows for testing a vrf
 # while an existing config is present in vrf default.
