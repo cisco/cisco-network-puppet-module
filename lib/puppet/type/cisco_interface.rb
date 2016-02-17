@@ -160,6 +160,7 @@ Puppet::Type.newtype(:cisco_interface) do
       :tunnel,
       :fex_fabric,
       :trunk,
+      :fabricpath,
       :default)
   end # property switchport_mode
 

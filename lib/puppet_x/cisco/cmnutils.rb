@@ -2,7 +2,7 @@
 #
 # November 2015
 #
-# Copyright (c) 2015 Cisco and/or its affiliates.
+# Copyright (c) 2015-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,7 +31,54 @@ module PuppetX
         network = address + '/' + mask unless mask.nil?
         network
       end
-    end
+
+      # Helper utility method for range summarization of VLAN and BD ranges
+      # Input is a range string. For example: '10-20, 30, 14, 100-105, 21'
+      # Output should be: '10-21,30,100-105'
+      def self.range_summarize(range_str)
+        ranges = []
+        range_str.split(/,/).each do |elem|
+          if elem =~ /\d+\s*\-\s*\d+/
+            range_limits = elem.split(/\-/).map { |d| Integer(d) }
+            ranges << (range_limits[0]..range_limits[1])
+          else
+            ranges << Integer(elem)
+          end
+        end
+        # nrange array below will expand the ranges and get a single list
+        nrange = []
+        ranges.each do |item|
+          # OR operations below will get rid of duplicates
+          if item.class == Range
+            nrange |= item.to_a
+          else
+            nrange |= [item]
+          end
+        end
+        nrange.sort!
+        ranges = []
+        left = nrange.first
+        right = nil
+        nrange.each do |obj|
+          if right && obj != right.succ
+            # obj cannot be included in the current range, end this range
+            if left != right
+              ranges << Range.new(left, right)
+            else
+              ranges << left
+            end
+            left = obj # start of new range
+          end
+          right = obj # move right to point to obj
+        end
+        if left != right
+          ranges << Range.new(left, right)
+        else
+          ranges << left
+        end
+        ranges.join(',').gsub('..', '-')
+      end
+    end # class Utils
 
     # PuppetX::Cisco::BgpUtil - Common BGP methods used by BGP Types/Providers
     class BgpUtils

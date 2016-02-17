@@ -6,14 +6,19 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### New feature support
 #### Cisco Resources
-*
+- `cisco_fabricpath_global` type and provider.
+- `cisco_fabricpath_topology` type and provider.
 
 #### NetDev Resources
 *
 
 ### Added
-* Extended `cisco_vxlan_vtep` with the following attributes:
-  * `source_interface_hold_down_time`
+- Extended `cisco_interface` with the following attributes:
+  - `switchport_mode fabricpath` 
+- Extended `cisco_vlan` with the following attributes:
+  - `mode` 
+- Extended `cisco_vxlan_vtep` with the following attributes:
+  - `source_interface_hold_down_time`
 
 ### Removed
 *
@@ -48,6 +53,7 @@ This version was never released.
 - `cisco_pim_grouplist` type and provider
 - `cisco_portchannel_global` type and provider
 - `cisco_vdc` type and provider.
+- `cisco_vpc_domain` type and provider.
 - `cisco_vni` type and provider.
 - `cisco_vrf_af` type and provider.
 - `cisco_vxlan_vtep` type and provider.
@@ -83,6 +89,7 @@ This version was never released.
   - `ipv4_pim_sparse_mode`
   - `vlan_mapping`, `vlan_mapping_enable`
   - `ipv4_acl_in`, `ipv4_acl_out`, `ipv6_acl_in`, `ipv6_acl_out`
+  - `vpc_id`, `vpc_peer_link`
 - Extended `cisco_vrf` with the following attributes:
   - `route_distinguisher`
   - `vni`
