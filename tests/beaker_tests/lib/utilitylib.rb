@@ -584,6 +584,7 @@ def create_manifest_and_resource(tests, id)
     tests[id][:resource] = { 'ensure' => 'absent' }
   else
     state = 'ensure => present,'
+    tests[id][:resource]['ensure'] = nil unless tests[id][:resource].nil?
 
     manifest_props = tests[id][:manifest_props]
     if manifest_props
@@ -616,8 +617,8 @@ end
 # Returns an array of properties that are not supported for
 # a particular operating_system or platform.
 # Override this in a particular test file as needed.
-def unsupported_properties(tests, id)
-  []  # defaults to no unsupported properties
+def unsupported_properties(_tests, _id)
+  [] # defaults to no unsupported properties
 end
 
 # supported_property_hash
@@ -629,8 +630,7 @@ end
 def supported_property_hash(tests, id, property_hash)
   return nil if property_hash.nil?
   copy = property_hash.clone
-  unprops = unsupported_properties(tests, id)
-  unprops.each do |prop_symbol|
+  unsupported_properties(tests, id).each do |prop_symbol|
     copy.delete(prop_symbol)
     # because :resource hash currently uses strings for keys
     copy.delete(prop_symbol.to_s)
@@ -660,7 +660,7 @@ def test_harness_run(tests, id)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
 
   # Build the manifest for this test
-  if (!create_manifest_and_resource(tests, id))
+  unless create_manifest_and_resource(tests, id)
     logger.error("\n#{tests[id][:desc]} :: #{id} :: SKIP")
     logger.error('No supported properties remain for this test.')
     return
