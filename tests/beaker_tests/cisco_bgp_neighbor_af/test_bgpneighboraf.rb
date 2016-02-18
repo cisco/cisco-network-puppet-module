@@ -31,7 +31,7 @@ tests = {
 }
 
 # Overridden to properly handle unsupported properties.
-def unsupported_properties(tests, id)
+def unsupported_properties(_, _)
   unpros = []
   return unpros if operating_system == 'nexus'
 
