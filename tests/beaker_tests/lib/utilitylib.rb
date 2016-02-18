@@ -94,6 +94,7 @@ def hash_to_patterns(hash)
       regexparr << Regexp.new("#{key}\s+=>?")
       next
     end
+    value = value.to_s
     # Need to escape '[', ']', '"' characters for nested array of arrays.
     # Example:
     #   [["192.168.5.0/24", "nrtemap1"], ["192.168.6.0/32"]]
@@ -255,8 +256,9 @@ def test_resource(tests, id, state=false)
   step "TestStep :: #{stepinfo}" do
     logger.debug("test_resource :: cmd:\n#{tests[id][:resource_cmd]}")
     on(tests[:agent], tests[id][:resource_cmd]) do
-      search_pattern_in_output(stdout, tests[id][:resource],
-                               state, self, logger)
+      search_pattern_in_output(
+        stdout, supported_property_hash(tests, id, tests[id][:resource]),
+        state, self, logger)
     end
     logger.info("#{stepinfo} :: PASS")
     tests[id].delete(:log_desc)
@@ -551,6 +553,7 @@ def puppet_resource_cmd_from_params(tests, id)
 end
 
 # Create manifest and resource command strings for a given test scenario.
+# Returns true if a valid/non-empty manifest was created, false otherwise.
 # Test hash keys used by this method:
 # [:resource_name] (REQUIRED) This is the resource name to use in the manifest
 #   the for puppet resource command strings
@@ -581,14 +584,23 @@ def create_manifest_and_resource(tests, id)
     tests[id][:resource] = { 'ensure' => 'absent' }
   else
     state = 'ensure => present,'
-    # Create the property string for the manifest
-    manifest += prop_hash_to_manifest(tests[id][:manifest_props]) if
-      tests[id][:manifest_props]
+    tests[id][:resource]['ensure'] = nil unless tests[id][:resource].nil?
+
+    manifest_props = tests[id][:manifest_props]
+    if manifest_props
+      manifest_props = supported_property_hash(tests, id, manifest_props)
+
+      # we shouldn't continue if all properties were removed
+      return false if
+        manifest_props.empty? && !tests[id][:manifest_props].empty?
+
+      # Create the property string for the manifest
+      manifest += prop_hash_to_manifest(manifest_props) if manifest_props
+    end
 
     # Automatically create a hash of expected states for puppet resource
     # -or- use a static hash
-    tests[id][:resource] = tests[id][:manifest_props] unless
-      tests[id][:resource]
+    tests[id][:resource] = manifest_props unless tests[id][:resource]
   end
 
   tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
@@ -596,6 +608,34 @@ def create_manifest_and_resource(tests, id)
   #{tests[:resource_name]} { '#{tests[id][:title_pattern]}':
     #{state}\n#{manifest}
   }\n}\nEOF"
+
+  true
+end
+
+# unsupported_properties
+#
+# Returns an array of properties that are not supported for
+# a particular operating_system or platform.
+# Override this in a particular test file as needed.
+def unsupported_properties(_tests, _id)
+  [] # defaults to no unsupported properties
+end
+
+# supported_property_hash
+#
+# This method creates a clone of the specified property
+# hash containing only the key/values of properties
+# that are supported for the specified test (based on
+# operating_system, platform, etc.).
+def supported_property_hash(tests, id, property_hash)
+  return nil if property_hash.nil?
+  copy = property_hash.clone
+  unsupported_properties(tests, id).each do |prop_symbol|
+    copy.delete(prop_symbol)
+    # because :resource hash currently uses strings for keys
+    copy.delete(prop_symbol.to_s)
+  end
+  copy
 end
 
 # test_harness_dependencies
@@ -620,7 +660,11 @@ def test_harness_run(tests, id)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
 
   # Build the manifest for this test
-  create_manifest_and_resource(tests, id)
+  unless create_manifest_and_resource(tests, id)
+    logger.error("\n#{tests[id][:desc]} :: #{id} :: SKIP")
+    logger.error('No supported properties remain for this test.')
+    return
+  end
 
   resource_absent_cleanup(agent, tests[id][:preclean]) if
     tests[id][:preclean]
