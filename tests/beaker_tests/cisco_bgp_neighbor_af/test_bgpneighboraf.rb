@@ -32,21 +32,21 @@ tests = {
 
 # Overridden to properly handle unsupported properties.
 def unsupported_properties(_, _)
-  unpros = []
-  return unpros if operating_system == 'nexus'
+  return [] if operating_system == 'nexus'
 
-  unpros <<
-    :additional_paths_receive <<
-    :additional_paths_send <<
-    :default_originate_route_map <<
-    :disable_peer_as_check <<
-    :filter_list_in <<
-    :filter_list_out <<
-    :next_hop_third_party <<
-    :prefix_list_in <<
-    :prefix_list_out <<
-    :suppress_inactive <<
+  unpros = [
+    :additional_paths_receive,
+    :additional_paths_send,
+    :default_originate_route_map,
+    :disable_peer_as_check,
+    :filter_list_in,
+    :filter_list_out,
+    :next_hop_third_party,
+    :prefix_list_in,
+    :prefix_list_out,
+    :suppress_inactive,
     :unsuppress_map
+  ]
 end
 
 tests[:default] = {
@@ -320,19 +320,22 @@ def get_dependency_manifest(tests, id)
   extra_config
 end
 
+def test_harness_bgp_nbr_af_run(tests, id)
+  extra_config = get_dependency_manifest(tests, id)
+  test_harness_run(tests, id, extra_config)
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  extra_config = get_dependency_manifest(tests, :default)
-  test_harness_run(tests, :default, extra_config)
+  test_harness_bgp_nbr_af_run(tests, :default)
 
   tests[:default][:ensure] = :absent
   tests[:default].delete(:preclean)
-  extra_config = get_dependency_manifest(tests, :default)
-  test_harness_run(tests, :default, extra_config)
+  test_harness_bgp_nbr_af_run(tests, :default)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
@@ -357,14 +360,11 @@ test_name "TestCase :: #{tests[:resource_name]}" do
     :non_def_misc_maps_3,
   ].each do |id|
     tests[id][:title_pattern] = title
-    extra_config = get_dependency_manifest(tests, id)
-    test_harness_run(tests, id, extra_config)
+    test_harness_bgp_nbr_af_run(tests, id)
   end
 
-  extra_config = get_dependency_manifest(tests, :non_def_ebgp_only)
-  test_harness_run(tests, :non_def_ebgp_only, extra_config)
-  extra_config = get_dependency_manifest(tests, :non_def_ibgp_only)
-  test_harness_run(tests, :non_def_ibgp_only, extra_config)
+  test_harness_bgp_nbr_af_run(tests, :non_def_ebgp_only)
+  test_harness_bgp_nbr_af_run(tests, :non_def_ibgp_only)
 
   # -------------------------------------------------------------------
   if operating_system == 'ios_xr' || platform[/n(5|6|7|9)k/]
@@ -381,25 +381,19 @@ test_name "TestCase :: #{tests[:resource_name]}" do
       :non_def_misc_maps_1,
     ].each do |id|
       tests[id][:title_pattern] = title
-      extra_config = get_dependency_manifest(tests, id)
-      test_harness_run(tests, id, extra_config)
+      test_harness_bgp_nbr_af_run(tests, id)
     end
 
     id = :non_def_ibgp_only
     tests[id][:title_pattern].gsub!(/ipv4 unicast/, 'l2vpn evpn')
-    extra_config = get_dependency_manifest(tests, :non_def_ibgp_only)
-    test_harness_run(tests, id, extra_config)
+    test_harness_bgp_nbr_af_run(tests, id)
   end
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
-  extra_config = get_dependency_manifest(tests, :title_patterns_1)
-  test_harness_run(tests, :title_patterns_1, extra_config)
-  extra_config = get_dependency_manifest(tests, :title_patterns_2)
-  test_harness_run(tests, :title_patterns_2, extra_config)
-  extra_config = get_dependency_manifest(tests, :title_patterns_3)
-  test_harness_run(tests, :title_patterns_3, extra_config)
-  extra_config = get_dependency_manifest(tests, :title_patterns_4)
-  test_harness_run(tests, :title_patterns_4, extra_config)
+  test_harness_bgp_nbr_af_run(tests, :title_patterns_1)
+  test_harness_bgp_nbr_af_run(tests, :title_patterns_2)
+  test_harness_bgp_nbr_af_run(tests, :title_patterns_3)
+  test_harness_bgp_nbr_af_run(tests, :title_patterns_4)
 
   # -----------------------------------
   resource_absent_cleanup(agent, 'cisco_bgp')
