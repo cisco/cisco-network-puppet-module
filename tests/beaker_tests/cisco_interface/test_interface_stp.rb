@@ -88,10 +88,10 @@ tests[:non_default] = {
     stp_vlan_port_priority: stp_vlan_port_priority_ndp,
   },
   resource:       {
-    stp_mst_cost:  "#{stp_mst_cost_ndp}",
+    stp_mst_cost:           "#{stp_mst_cost_ndp}",
     stp_mst_port_priority:  "#{stp_mst_port_priority_ndp}",
-    stp_vlan_cost:  "#{stp_vlan_cost_ndp}",
-    stp_vlan_port_priority:  "#{stp_vlan_port_priority_ndp}",
+    stp_vlan_cost:          "#{stp_vlan_cost_ndp}",
+    stp_vlan_port_priority: "#{stp_vlan_port_priority_ndp}",
   },
 }
 

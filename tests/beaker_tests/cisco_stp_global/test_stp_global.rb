@@ -98,6 +98,16 @@ tests[:default_mst] = {
   },
 }
 
+mst_dp = Array[%w(2-42 4096), %w(83-92,100-230 53248)]
+mst_ivm = Array[%w(2 6-47), %w(92 120-400)]
+mst_pri = Array[%w(2-42 4096), %w(83-92,100-230 53248)]
+mst_rpri = Array[%w(2-42 4096), %w(83-92,100-230 53248)]
+vlan_dp = Array[%w(1-42 40960), %w(83-92,100-230 53248)]
+vlan_ft = Array[%w(1-42 19), %w(83-92,100-230 13)]
+vlan_ht = Array[%w(1-42 10), %w(83-92,100-230 6)]
+vlan_ma = Array[%w(1-42 21), %w(83-92,100-230 13)]
+vlan_pri = Array[%w(1-42 40960), %w(83-92,100-230 53248)]
+vlan_rpri = Array[%w(1-42 40960), %w(83-92,100-230 53248)]
 tests[:non_default] = {
   desc:           '2.1 Non Default Properties',
   title_pattern:  'default',
@@ -107,23 +117,35 @@ tests[:non_default] = {
     bridge_assurance:         'false',
     loopguard:                'true',
     mode:                     'mst',
-    mst_designated_priority:  [['2-42', '4096'], ['83-92,100-230', '53248']],
+    mst_designated_priority:  mst_dp,
     mst_forward_time:         '25',
     mst_hello_time:           '5',
-    mst_inst_vlan_map:        [['2', '6-47'], ['92', '120-400']],
+    mst_inst_vlan_map:        mst_ivm,
     mst_max_age:              '35',
     mst_max_hops:             '200',
     mst_name:                 'nexus',
-    mst_priority:             [['2-42', '4096'], ['83-92,100-230', '53248']],
+    mst_priority:             mst_pri,
     mst_revision:             '34',
-    mst_root_priority:        [['2-42', '4096'], ['83-92,100-230', '53248']],
+    mst_root_priority:        mst_rpri,
     pathcost:                 'long',
-    vlan_designated_priority: [['1-42', '40960'], ['83-92,100-230', '53248']],
-    vlan_forward_time:        [['1-42', '19'], ['83-92,100-230', '13']],
-    vlan_hello_time:          [['1-42', '10'], ['83-92,100-230', '6']],
-    vlan_max_age:             [['1-42', '21'], ['83-92,100-230', '13']],
-    vlan_priority:            [['1-42', '40960'], ['83-92,100-230', '53248']],
-    vlan_root_priority:       [['1-42', '40960'], ['83-92,100-230', '53248']],
+    vlan_designated_priority: vlan_dp,
+    vlan_forward_time:        vlan_ft,
+    vlan_hello_time:          vlan_ht,
+    vlan_max_age:             vlan_ma,
+    vlan_priority:            vlan_pri,
+    vlan_root_priority:       vlan_rpri,
+  },
+  resource:       {
+    mst_designated_priority:  "#{mst_dp}",
+    mst_inst_vlan_map:        "#{mst_ivm}",
+    mst_priority:             "#{mst_pri}",
+    mst_root_priority:        "#{mst_rpri}",
+    vlan_designated_priority: "#{vlan_dp}",
+    vlan_forward_time:        "#{vlan_ft}",
+    vlan_hello_time:          "#{vlan_ht}",
+    vlan_max_age:             "#{vlan_ma}",
+    vlan_priority:            "#{vlan_pri}",
+    vlan_root_priority:       "#{vlan_rpri}",
   },
 }
 
@@ -194,17 +216,31 @@ tests[:default_bd] = {
   },
 }
 
+bd_dp = Array[%w(2-42 40960), %w(83-92,100-2300 53248)]
+bd_ft = Array[%w(2-42 26), %w(83-92,100-2300 20)]
+bd_ht = Array[%w(2-42 6), %w(83-92,100-2300 9)]
+bd_ma = Array[%w(2-42 26), %w(83-92,100-2300 21)]
+bd_pri = Array[%w(2-42 40960), %w(83-92,100-2300 53248)]
+bd_rpri = Array[%w(2-42 40960), %w(83-92,100-2300 53248)]
 tests[:non_default_bd] = {
   desc:           '2.3 bridge-domain Non Default Properties platform specific',
   platform:       'n7k',
   title_pattern:  'default',
   manifest_props: {
-    bd_designated_priority: [['2-42', '40960'], ['83-92,1000-2300', '53248']],
-    bd_forward_time:        [['2-42', '26'], ['83-92,1000-2300', '20']],
-    bd_hello_time:          [['2-42', '6'], ['83-92,1000-2300', '9']],
-    bd_max_age:             [['2-42', '26'], ['83-92,1000-2300', '21']],
-    bd_priority:            [['2-42', '40960'], ['83-92,1000-2300', '53248']],
-    bd_root_priority:       [['2-42', '40960'], ['83-92,1000-2300', '53248']],
+    bd_designated_priority: bd_dp,
+    bd_forward_time:        bd_ft,
+    bd_hello_time:          bd_ht,
+    bd_max_age:             bd_ma,
+    bd_priority:            bd_pri,
+    bd_root_priority:       bd_rpri,
+  },
+  resource:       {
+    bd_designated_priority: "#{bd_dp}",
+    bd_forward_time:        "#{bd_ft}",
+    bd_hello_time:          "#{bd_ht}",
+    bd_max_age:             "#{bd_ma}",
+    bd_priority:            "#{bd_pri}",
+    bd_root_priority:       "#{bd_rpri}",
   },
 }
 
