@@ -66,34 +66,44 @@ The Puppet Agent requires installation and setup on each device. Agent setup can
 ##### Artifacts
 
 As noted in the agent installation guide, these are the current RPM versions for use with ciscopuppet:
-* `bash-shell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm)
-* `guestshell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm)
-* `open agent container (OAC)`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm)
+* NX-OS:
+  * `bash-shell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm)
+  * `guestshell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm)
+  * `open agent container (OAC)`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm)
+* IOS XR:
+  * Native: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-7.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-7.noarch.rpm)
 
 ##### Gems
 
-The ciscopuppet module has dependencies on a few ruby gems. After installing the Puppet Agent software you will then need to install the following gems on the agent device:
+The ciscopuppet module has dependencies on the [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) ruby gem. After installing the Puppet Agent software you will then need to install the gem on the agent device.
 
-* [`net_http_unix`](https://rubygems.org/gems/net_http_unix)
-* [`cisco_nxapi`](https://rubygems.org/gems/cisco_nxapi)
-* [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils)
+This gem has various dependencies which differ between IOS XR and Nexus; installing `cisco_node_utils` by itself will automatically install the dependencies that are relevant to the target platform.
 
-These gems have dependencies on each other so installing `cisco_node_utils` by itself will automatically install `net_http_unix` and `cisco_nxapi`.
-
-Example:
+Nexus example:
 
 ~~~bash
-[root@guestshell]#  gem install cisco_node_utils
+[root@guestshell]#  /opt/puppetlabs/puppet/bin/gem install cisco_node_utils
 
-[root@guestshell]#  gem list | egrep 'cisco|net_http'
+[root@guestshell]#  /opt/puppetlabs/puppet/bin/gem list | egrep 'cisco|net_http'
 cisco_node_utils (1.2.0)
-cisco_nxapi (1.0.1)
 net_http_unix (0.2.1)
+~~~
+
+IOS XR example:
+
+~~~bash
+bash-4.3# /opt/puppetlabs/puppet/bin/gem install cisco_node_utils
+
+bash-4.3# /opt/puppetlabs/puppet/bin/gem list 'cisco|grpc|google'
+cisco_node_utils (1.2.0)
+google-protobuf (3.0.0.alpha.5.0.3 x86_64-linux)
+googleauth (0.5.1)
+grpc (0.13.0 x86_64-linux)
 ~~~
 
 *Please note: The `ciscopuppet` module requires a compatible `cisco_node_utils` gem. This is not an issue with release versions; however, when using a pre-release module it may be necessary to manually build a compatible gem. Please see the `cisco_node_utils` developer's guide for more information on building a `cisco_node_utils` gem:  [README-develop-node-utils-APIs.md](https://github.com/cisco/cisco-network-node-utils/blob/develop/docs/README-develop-node-utils-APIs.md#step-5-build-and-install-the-gem)*
 
-##### Gem Persistence (bash-shell only)
+##### Gem Persistence (Nexus bash-shell only)
 
 Please note that in the Nexus `bash-shell` environment these gems are currently not persistent across system reload. This persistence issue can be mitigated by simply defining a manifest entry for installing the `cisco_node_utils` gem via the package provider.
 
@@ -162,11 +172,11 @@ The following table indicates which providers are supported on each platform. As
 | [cisco_acl](#type-cisco_acl) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [cisco_ace](#type-cisco_ace) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [cisco_command_config](#type-cisco_command_config) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_bgp](#type-cisco_bgp) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅* | ✅ | * [caveats](#cisco_bgp-caveats) |
-| [cisco_bgp_af](#type-cisco_bgp_af) | ✅* | ✅* | ✅ | ✅ | ✅*  | ✅ | ✅ | * [caveats](#cisco_bgp_af-caveats) |
-| [cisco_bgp_neighbor](#type-cisco_bgp_neighbor) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_interface](#type-cisco_interface) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅ | ✅ | * [caveats](#cisco_interface-caveats) |
+| [cisco_bgp](#type-cisco_bgp) | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | * [caveats](#cisco_bgp-caveats) |
+| [cisco_bgp_af](#type-cisco_bgp_af) | ✅* | ✅* | ✅ | ✅ | ✅*  | ✅ | ✅* | * [caveats](#cisco_bgp_af-caveats) |
+| [cisco_bgp_neighbor](#type-cisco_bgp_neighbor) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅* | ✅* | * [caveats](#cisco_bgp_neighbor-caveats) |
+| [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅* | * [caveats](#cisco_bgp_neighbor_af-caveats) |
+| [cisco_interface](#type-cisco_interface) | ✅* | ✅* | ✅* | ✅* | ✅* | ✅ | ✅* | * [caveats](#cisco_interface-caveats) |
 | [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [cisco_interface_ospf](#type-cisco_interface_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_portchannel_global](#type-cisco_portchannel_global) | ❌* | ✅* | ✅* | ❌* | ❌* | ❌* | ❌ | * [caveats](#cisco_portchannel_global-caveats) |
@@ -413,10 +423,15 @@ The following resources are listed alphabetically.
 
 Allows execution of configuration commands.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N30xx    | 7.0(3)I2(1)        | 1.0.1                  |
+| N31xx    | 7.0(3)I2(1)        | 1.0.1                  |
+| N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| IOS XR   | TODO               | TODO                   |
 
 #### Parameters
 
@@ -441,10 +456,15 @@ This provider allows raw configurations to be managed by Puppet. It serves as a 
 
 Manages AAA Authentication Login configuration.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -471,10 +491,15 @@ Enable/disable mschapv2 for AAA Authentication Login.
 
 Manages configuration for Authorization Login Config Service.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -495,10 +520,15 @@ Authentication methods on this device. Valid values are 'local', 'unselected', '
 
 Manages configuration for Authorization Login Exec Service.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -519,10 +549,15 @@ Authentication methods on this device. Valid values are 'local', 'unselected', '
 
 Manages configuration for a TACACS+ server group.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -549,10 +584,15 @@ Specifies the virtual routing and forwarding instance (VRF) to use to contact th
 
 Manages configuration of a Access Control List (ACL) instance.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -576,10 +616,15 @@ Permit or deny Fragments for ACL. Valid values are 'permit-all' and 'deny-all'
 
 Manages configuration of an Access Control List (ACL) Access Control Entry (ACE) instance.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -596,16 +641,46 @@ Address Family Identifier (AFI). Required. Valid values are ipv4 and ipv6.
 
 Manages configuration of a BGP instance.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| IOS XR   | TODO               | TODO                   |
 
 #### <a name="cisco_bgp-caveats">Caveats</a>
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `disable_policy_batching_ipv4` <br> `disable_policy_batching_ipv4` <br> `neighbor_down_fib_accelerate` <br> `reconnect_interval` | Not supported on N56xx, N6k, N7k |
+| `bestpath_med_confed` | Only supported in global BGP context in IOS XR |
+| `bestpath_med_non_deterministic` | Not supported on IOS XR |
+| `cluster_id` | Only supported in global BGP context in IOS XR |
+| `confederation_id` | Only supported in global BGP context in IOS XR |
+| `confederation_peers` | Only supported in global BGP context in IOS XR |
+| `disable_policy_batching` | Not supported on IOS XR |
+| `disable_policy_batching_ipv4` | Not supported on N56xx, N6k, N7k, IOS XR |
+| `disable_policy_batching_ipv6` | Not supported on N56xx, N6k, N7k, IOS XR |
+| `event_history_cli` | Not supported on IOS XR |
+| `event_history_detail` | Not supported on IOS XR |
+| `event_history_events` | Not supported on IOS XR |
+| `event_history_periodic` | Not supported on IOS XR |
+| `flush_routes` | Not supported on IOS XR |
+| `graceful_restart` | Only supported in global BGP context in IOS XR |
+| `graceful_restart_helper` | Not supported on IOS XR |
+| `graceful_restart_timers_restart` | Only supported in global BGP context in IOS XR |
+| `graceful_restart_timers_stalepath_time` | Only supported in global BGP context in IOS XR |
+| `isolate` | Not supported on IOS XR |
+| `maxas_limit` | Not supported on IOS XR |
+| `neighbor_down_fib_accelerate` | Not supported on N56xx, N6k, N7k, IOS XR |
+| `nsr` | Only supported on IOS XR. Not supported on NX-OS |
+| `reconnect_interval` | Not supported on N56xx, N6k, N7k, IOS XR |
+| `shutdown` | Not supported on IOS XR |
+| `suppress_fib_pending` | Not supported on IOS XR |
+| `timer_bestpath_limit` | Not supported on IOS XR |
+| `timer_bestpath_limit_always` | Not supported on IOS XR |
 
 #### Parameters
 
@@ -742,16 +817,31 @@ Set bgp hold timer. Valid values are Integer, keyword 'default'.
 
 Manages configuration of a BGP Address-family instance.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| IOS XR   | TODO               | TODO                   |
 
 #### <a name="cisco_bgp_af-caveats">Caveats</a>
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `advertise_l2vpn_evpn ` | Not supported on N30xx, N31xx, N6k |
+| `additional_paths_install` | Not supported on IOS XR |
+| `advertise_l2vpn_evpn` | Not supported on N30xx, N31xx, N6k, IOS XR |
+| `client_to_client` | Only supported in global BGP context in IOS XR |
+| `dampen_igp_metric` | Not supported on IOS XR |
+| `dampening_state` (and dependent properties `dampening_half_time`, `dampening_max_suppress_time`, `dampening_reuse_time`, `dampening_routemap`, `dampening_suppress_time`) | Only supported in global BGP context in IOS XR |
+| `default_information_originate` | Not supported on IOS XR |
+| `default_metric` | Not supported on IOS XR |
+| `inject_map` | Not supported on IOS XR |
+| `next_hop_route_map` | Only supported in global BGP context in IOS XR |
+| `suppress_inactive` | Not supported on IOS XR |
+| `table_map_filter` | Not supported on IOS XR |
 
 #### Parameters
 
@@ -901,7 +991,7 @@ redistribute => [['direct'],
 ```
 
 ##### `suppress_inactive`
-Advertises only active routes to peersy. Valid values are true, false, or 'default'. This property is not supported on IOS XR.
+Advertises only active routes to peers. Valid values are true, false, or 'default'. This property is not supported on IOS XR.
 
 ##### `table_map`
 Apply table-map to filter routes downloaded into URIB. Valid values are a string.
@@ -914,10 +1004,28 @@ Filters routes rejected by the route map and does not download them to the RIB. 
 
 Manages configuration of a BGP Neighbor.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| IOS XR   | TODO               | TODO                   |
+
+#### <a name="cisco_bgp_neighbor-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `capability_negotiation` | Not supported on IOS XR |
+| `dynamic_capability` | Not supported on IOS XR |
+| `log_neighbor_changes` | Not supported on N56xx, N6k, N7k, IOS XR |
+| `low_memory_exempt` | Not supported on IOS XR |
+| `maximum_peers` | Not supported on IOS XR |
+| `neighbor` | ip/prefix format is not supported on IOS XR |
+| `password_type` | Set of valid values differs between NX-OS and IOS XR |
+| `remove_private_as` | Not supported on IOS XR |
 
 #### Parameters
 
@@ -998,10 +1106,34 @@ Specify source interface of BGP session and updates. Valid value is a string of 
 
 Manages configuration of a BGP Neighbor Address-family instance.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| IOS XR   | TODO               | TODO                   |
+
+#### <a name="cisco_bgp_neighbor_af-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `additional_paths_receive` | Not supported on IOS XR |
+| `additional_paths_send` | Not supported on IOS XR |
+| `advertise_map_exist` | Not supported on IOS XR |
+| `advertise_map_non_exist` | Not supported on IOS XR |
+| `default_originate_route_map` | Not supported on IOS XR |
+| `disable_peer_as_check` | Not supported on IOS XR |
+| `filter_list_in` | Not supported on IOS XR |
+| `filter_list_out` | Not supported on IOS XR |
+| `next_hop_third_party` | Not supported on IOS XR |
+| `prefix_list_in` | Not supported on IOS XR |
+| `prefix_list_out` | Not supported on IOS XR |
+| `soo` | Not supported on IOS XR |
+| `suppress_inactive` | Not supported on IOS XR |
+| `unsuppress_map` | Not supported on IOS XR |
 
 #### Parameters
 
@@ -1114,17 +1246,37 @@ Site-of-origin. Valid values are a string defining a VPN extcommunity or 'defaul
 
 Manages a Cisco Network Interface. Any resource dependency should be run before the interface resource.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N30xx    | 7.0(3)I2(1)        | 1.0.1                  |
+| N31xx    | 7.0(3)I2(1)        | 1.0.1                  |
+| N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| IOS XR   | TODO               | TODO                   |
 
 #### <a name="cisco_interface-caveats">Caveats</a>
 
 | Property | Caveat Description |
 |:---------|:-------------|
-| svi_autostate | Not supported on N56xx, N6k |
-| vlan_mapping | Not supported on N9k, N3k, N56xx, N6k |
+| `access_vlan` | Not supported on IOS XR |
+| `duplex` | Not supported on IOS XR |
+| `fabric_forwarding_anycast_gateway` | Not supported on IOS XR |
+| `ipv4_arp_timeout` | Not supported on IOS XR |
+| `ipv4_pim_sparse_mode` | Not supported on IOS XR |
+| `negotiate_auto` | Not supported on IOS XR |
+| `speed` | Not supported on IOS XR |
+| `svi_autostate` | Not supported on N56xx, N6k, IOS XR |
+| `svi_management` | Not supported on IOS XR |
+| `switchport` | Not supported on IOS XR |
+| `switchport_autostate_exclude` | Not supported on IOS XR |
+| `switchport_mode` | Not supported on IOS XR |
+| `switchport_trunk_allowed_vlan` | Not supported on IOS XR |
+| `switchport_trunk_native_vlan` | Not supported on IOS XR |
+| `switchport_vtp` | Not supported on IOS XR |
+| `vlan_mapping` | Not supported on N9k, N3k, N56xx, N6k, IOS XR |
+| `vlan_mapping_enable` | Not supported on IOS XR |
 
 #### Parameters
 
@@ -1266,12 +1418,17 @@ Enable/Disable management on the SVI interface. Valid values are 'true', 'false'
 --
 ### Type: cisco_interface_channel_group
 
-Manages a Cisco Network Interface Channel-group. This type is not supported on IOS XR.
+Manages a Cisco Network Interface Channel-group.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | TODO               | TODO                   |
 
 #### Parameters
 
@@ -1299,10 +1456,15 @@ Shutdown state of the interface. Valid values are 'true', 'false', and 'default'
 
 Manages a Cisco Network Interface Service VNI.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | unsupported | unsupported | unsupported | unsupported | unsupported | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | unsupported        | unsupported            |
+| N30xx    | unsupported        | unsupported            |
+| N31xx    | unsupported        | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -1387,10 +1549,15 @@ Specifies the message_digest password. Valid value is a string.
 
 Manages configuration of a portchannel interface instance.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| IOS XR   | TODO               | TODO                   |
 
 #### <a name="cisco_interface_portchannel-caveats">Caveats</a>
 
@@ -1426,10 +1593,15 @@ port-channel per port load-defer. Valid values are true, false or 'default'. Thi
 
 Manages configuration of an ospf instance.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N30xx    | 7.0(3)I2(1)        | 1.0.1                  |
+| N31xx    | 7.0(3)I2(1)        | 1.0.1                  |
+| N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -1445,10 +1617,15 @@ Name of the ospf router. Valid value is a string.
 
 Manages a VRF for an OSPF router.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N30xx    | 7.0(3)I2(1)        | 1.0.1                  |
+| N31xx    | 7.0(3)I2(1)        | 1.0.1                  |
+| N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -1507,10 +1684,15 @@ Valid values are an integer, in Mbps, or the keyword 'default'.
 Handles the detection of duplicate IP or MAC addresses based on the number of moves in a given time-interval (seconds).
 Also configures anycast gateway MAC of the switch.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | unsupported | unsupported | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | unsupported        | unsupported            |
+| N31xx    | unsupported        | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -1536,10 +1718,15 @@ The duplicate detection timeout in seconds for the number of host moves. The ran
 ### Type: cisco_pim
 Manages configuration of an Protocol Independent Multicast (PIM) instance.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -1556,10 +1743,15 @@ Configure group ranges for Source Specific Multicast (SSM). Valid values are mul
 ### Type: cisco_pim_grouplist
 Manages configuration of an Protocol Independent Multicast (PIM) static route processor (RP) address for a multicast group range.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -1579,10 +1771,15 @@ Specifies a group range for a static route processor (RP) address. Required. Val
 ### Type: cisco_pim_rp_address
 Manages configuration of an Protocol Independent Multicast (PIM) static route processor (RP) address instance.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -1599,10 +1796,15 @@ Configures a Protocol Independent Multicast (PIM) static route processor (RP) ad
 ### Type: cisco_portchannel_global
 Manages configuration of a portchannel global parameters
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | unsupported | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | unsupported        | unsupported            |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### <a name="cisco_portchannel_global-caveats">Caveats</a>
 
@@ -1649,10 +1851,15 @@ port-channel symmetry hash. Valid values are true, false or 'default'. This prop
 ### Type: cisco_snmp_community
 Manages an SNMP community on a Cisco SNMP server.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N30xx    | 7.0(3)I2(1)        | 1.0.1                  |
+| N31xx    | 7.0(3)I2(1)        | 1.0.1                  |
+| N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -1679,10 +1886,15 @@ Manages a Cisco SNMP Group on a Cisco SNMP Server.
 The term 'group' is a standard SNMP term, but in NXOS role it serves the purpose
 of group; thus this provider utility does not create snmp groups and only reports group (role) existence.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N30xx    | 7.0(3)I2(1)        | 1.0.1                  |
+| N31xx    | 7.0(3)I2(1)        | 1.0.1                  |
+| N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -1698,10 +1910,15 @@ Name of the snmp group. Valid value is a string.
 Manages a Cisco SNMP Server. There can only be one instance of the
 cisco_snmp_server.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N30xx    | 7.0(3)I2(1)        | 1.0.1                  |
+| N31xx    | 7.0(3)I2(1)        | 1.0.1                  |
+| N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -1739,10 +1956,15 @@ Valid values are 'true', 'false', and 'default'.
 
 Manages an SNMP user on an cisco SNMP server.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N30xx    | 7.0(3)I2(1)        | 1.0.1                  |
+| N31xx    | 7.0(3)I2(1)        | 1.0.1                  |
+| N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -1784,10 +2006,15 @@ format (in case of true) or cleartext (in case of false). Valid values are 'true
 Manages a Cisco TACACS+ Server global configuration. There can only be one
 instance of the cisco_tacacs_server.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N30xx    | 7.0(3)I2(1)        | 1.0.1                  |
+| N31xx    | 7.0(3)I2(1)        | 1.0.1                  |
+| N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -1823,10 +2050,15 @@ Valid values are string, and keyword 'default'.
 
 Configures Cisco TACACS+ server hosts.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N30xx    | 7.0(3)I2(1)        | 1.0.1                  |
+| N31xx    | 7.0(3)I2(1)        | 1.0.1                  |
+| N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -1856,10 +2088,15 @@ Specifies a preshared key for the host. Valid values are 'clear', 'encrypted',
 
 Manages a Cisco VDC (Virtual Device Context).
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | unsupported | unsupported | unsupported | unsupported | unsupported | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | unsupported        | unsupported            |
+| N30xx    | unsupported        | unsupported            |
+| N31xx    | unsupported        | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -1878,10 +2115,15 @@ This command restricts the allowed module-types in a given VDC. Valid values are
 
 Manages a Cisco VLAN.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N30xx    | 7.0(3)I2(1)        | 1.0.1                  |
+| N31xx    | 7.0(3)I2(1)        | 1.0.1                  |
+| N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| IOS XR   | unsupported        | unsupported            |
 
 #### <a name="cisco_vlan-caveats">Caveats</a>
 
@@ -1914,10 +2156,15 @@ keyword 'default'.
 ### Type: cisco_vpc_domain
 Manages the virtual Port Channel (vPC) domain configuration of a Cisco device.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| IOS XR   | unsupported        | unsupported            |
 
 #### <a name="cisco_vpc_domain-caveats">Caveats</a>
 
@@ -2011,10 +2258,15 @@ vPC system priority. Valid values are integers in the range 1..65535. Default va
 Manages Cisco Virtual Routing and Forwarding (VRF) configuration of a Cisco
 device.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | TODO               | TODO                   |
 
 #### Parameters
 
@@ -2051,10 +2303,15 @@ Specify virtual network identifier. Valid values are Integer or keyword 'default
 
 Manages Cisco Virtual Routing and Forwarding (VRF) Address-Family configuration.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| IOS XR   | TODO               | TODO                   |
 
 #### Parameters
 
@@ -2105,10 +2362,15 @@ Sets the route-target export extended communities. Valid values are an Array or 
 Manages the VTP (VLAN Trunking Protocol) configuration of a Cisco device.
 There can only be one instance of the cisco_vtp.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N30xx    | 7.0(3)I2(1)        | 1.0.1                  |
+| N31xx    | 7.0(3)I2(1)        | 1.0.1                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2135,10 +2397,15 @@ Password for the VTP domain. Valid values are a string or the keyword 'default'.
 ### Type: cisco_vxlan_vtep
 Creates a VXLAN Network Virtualization Endpoint (NVE) overlay interface that terminates VXLAN tunnels.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | unsupported | unsupported | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | unsupported        | unsupported            |
+| N31xx    | unsupported        | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2161,10 +2428,15 @@ Specify the loopback interface whose IP address should be used for the NVE inter
 ### Type: cisco_vxlan_vtep_vni
 Creates a Virtual Network Identifier member (VNI) for an NVE overlay interface.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | unsupported | unsupported | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | unsupported        | unsupported            |
+| N31xx    | unsupported        | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2203,10 +2475,15 @@ The following resources are listed alphabetically.
 
 Configure the domain name of the device
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2219,10 +2496,15 @@ Domain name of the device. Valid value is a string.
 --
 ### Type: name_server
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2235,10 +2517,15 @@ Hostname or address of the DNS server.  Valid value is a string.
 --
 ### Type: network_dns
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2262,10 +2549,15 @@ Array of DNS servers to use for name resolution.  Valid value is an array of str
 
 Manages a puppet netdev_stdlib Network Interface. Any resource dependency should be run before the interface resource.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2288,10 +2580,15 @@ interface. Valid value is an integer.
 --
 ### Type: network_snmp
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2312,10 +2609,15 @@ Location of this device.  Valid value is a string.
 
 Manages a puppet netdev_stdlib Network Trunk. It should be noted that while the NetDev stdlib has certain specified accepted parameters these may not be applicable to different network devices. For example, certain Cisco devices only use dot1q encapsulation, and therefore other values will cause errors.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2340,10 +2642,15 @@ Array of VLAN ID numbers used for VLAN pruning. Values must be in range of 1 to 
 --
 ### Type: ntp_config
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | TODO               | TODO                   |
 
 #### Parameters
 
@@ -2356,10 +2663,15 @@ Source interface for the NTP server.  Valid value is a string.
 --
 ### Type: ntp_server
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | TODO               | TODO                   |
 
 #### Parameters
 
@@ -2372,10 +2684,15 @@ Hostname or IPv4/IPv6 address of the NTP server.  Valid value is a string.
 --
 ### Type: port_channel
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2397,10 +2714,15 @@ Name of the port channel. eg port-channel100. Valid value is a string.
 --
 ### Type: radius
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2413,10 +2735,15 @@ Enable or disable radius functionality.  Valid values are 'true' or 'false'.
 --
 ### Type: radius_global
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2438,10 +2765,15 @@ Encryption key format [0-7].  Valid value is an integer.
 --
 ### Type: radius_server
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2480,10 +2812,15 @@ Encryption key format [0-7].  Valid value is an integer.
 
 Configure the search domain of the device. Note that this type is functionally equivalent to the netdev_stdlib domain_name type.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2498,10 +2835,15 @@ Search domain of the device. Valid value is a string.
 
 Manages an SNMP community on a Cisco SNMP server.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2522,10 +2864,15 @@ requests. Valid values are a string or the keyword 'default'.
 
 Manages an SNMP notification on a Cisco SNMP server.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2538,10 +2885,15 @@ values are true and false.
 
 Manages an SNMP user on an cisco SNMP server.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2578,10 +2930,15 @@ Source interface to send SNMP data from, e.g. "ethernet 2/1".
 
 Manages an SNMP user on an cisco SNMP server.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2618,10 +2975,15 @@ format (in case of true) or cleartext (in case of false). Valid values are 'true
 --
 ### Type: syslog_server
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2640,10 +3002,15 @@ Interface to send syslog data from, e.g. "management".  Valid value is a string.
 --
 ### Type: syslog_setting
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2656,10 +3023,15 @@ The unit of measurement for log time values.  Valid values are 'seconds' and 'mi
 --
 ### Type: tacacs
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2669,10 +3041,15 @@ Enable or disable radius functionality [true|false]
 --
 ### Type: tacacs_global
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2691,10 +3068,15 @@ Number of seconds before the timeout period ends
 --
 ### Type: tacacs_server
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 ##### `ensure`
 Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
@@ -2717,10 +3099,15 @@ Number of seconds before the timeout period ends
 --
 ### Type: tacacs_server_group
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2730,8 +3117,8 @@ Array of servers associated with this group.
 ## Limitations
 
 Minimum Requirements:
-* Cisco NX-OS Puppet implementation requires open source Puppet version 4.0 or Puppet Enterprise 2015.2
-* Supported Platforms:
+* Cisco NX-OS:
+  * Open source Puppet version 4.0+ or Puppet Enterprise 2015.2+
   * Cisco Nexus 95xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
   * Cisco Nexus 93xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
   * Cisco Nexus 31xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
@@ -2739,6 +3126,10 @@ Minimum Requirements:
   * Cisco Nexus 56xx, OS Version 7.3(0)N1(1), Environments: Open Agent Container (OAC)
   * Cisco Nexus 60xx, OS Version 7.3(0)N1(1), Environments: Open Agent Container (OAC)
   * Cisco Nexus 7xxx, OS Version 7.3(0)D1(1), Environments: Open Agent Container (OAC)
+* Cisco IOS XR:
+  * Open source Puppet version 4.3.2+ or Puppet Enterprise 2015.3.2+
+  * Cisco IOS XRv 9000, OS Version TODO, Environments: TODO
+  * Cisco Network Convergence System (NCS) 55xx, OS Version TODO, Environments: TODO
 
 ## Learning Resources
 
