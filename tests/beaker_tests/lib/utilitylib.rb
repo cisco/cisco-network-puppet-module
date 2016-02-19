@@ -559,7 +559,7 @@ def create_manifest_and_resource(tests, id)
     state = 'ensure => absent,'
     tests[id][:resource] = { 'ensure' => 'absent' }
   else
-    state = 'ensure => present,' unless tests[:ensure] == :unsupported
+    state = 'ensure => present,' unless tests[:ensurable] == false
     # Create the property string for the manifest
     manifest += prop_hash_to_manifest(tests[id][:manifest_props]) if
       tests[id][:manifest_props]

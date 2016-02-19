@@ -961,7 +961,7 @@ Custom keys may be added for various unique test requirements but they should be
 |:-----------------|:---------------
 | `:asn`           | An Autonomous-System number. Used in some routing protocol tests.
 | `:encap_prof_global` | The global encapsulation profile configuration. This configuration is a dependency for testing with `cisco_interface_service_vni`.
-| `:ensure`        | Allowed values: `:unsupported`. This key is only used for providers that do not support ensurability; this prevents the test_harness from inserting an ensure value into the manifest. Also see Test Case key `:ensure`.
+| `:ensurable`     | True/False. Defines whether a provider supports ensurable; typically only used to specify false, which prevents the test_harness from inserting an ensure value into the manifest. Also see Test Case key `:ensure`.
 | `:intf_type`     | The interface type string, e.g. `ethernet`. Used in tests that require an interface, in which case the test will discover the first interface of that type to use for the tests.
 | `:platform`      | A regexp pattern to match against the agent's product-id value. This is used to skip tests that don't support a feature or parameter. This key can be specified as a common top-level key or on a test-by-test basis.
 | `:preclean`      | The resource name used to remove a configuration as part of testbed pre-cleanup. The resource does not have to be the same as the one being tested; for example, the `'cisco_bgp_af'` test might use `'cisco_bgp'` for `:preclean` if a full bgp cleanup is needed instead of just removing the `'cisco_bgp_af'` configuration. This key can be specified as a common top-level key or on a test-by-test basis.
