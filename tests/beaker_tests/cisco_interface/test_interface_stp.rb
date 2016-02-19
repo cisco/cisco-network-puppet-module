@@ -66,6 +66,10 @@ tests[:default] = {
 
 # Non-default Tests. NOTE: [:resource] = [:manifest_props] for all non-default
 
+stp_mst_cost_ndp = Array[%w(0,2-4,6,8-12 1000), %w(1000 2568)]
+stp_mst_port_priority_ndp = Array[%w(0,2-11,20-33 64), %w(1111 160)]
+stp_vlan_cost_ndp = Array[%w(1-4,6,8-12 1000), %w(1000 2568)]
+stp_vlan_port_priority_ndp = Array[%w(1-11,20-33 64), %w(1111 160)]
 tests[:non_default] = {
   desc:           '2.1 Non Defaults',
   title_pattern:  'ethernet1/4',
@@ -78,10 +82,16 @@ tests[:non_default] = {
     stp_link_type:          'shared',
     stp_port_priority:      '64',
     stp_port_type:          'network',
-    stp_mst_cost:           [['0,2-4,6,8-12', '1000'], %w(1000 2568)],
-    stp_mst_port_priority:  [['0,2-11,20-33', '64'], %w(1111 160)],
-    stp_vlan_cost:          [['1-4,6,8-12', '1000'], %w(1000 2568)],
-    stp_vlan_port_priority: [['1-11,20-33', '64'], %w(1111 160)],
+    stp_mst_cost:           stp_mst_cost_ndp,
+    stp_mst_port_priority:  stp_mst_port_priority_ndp,
+    stp_vlan_cost:          stp_vlan_cost_ndp,
+    stp_vlan_port_priority: stp_vlan_port_priority_ndp,
+  },
+  resource:       {
+    stp_mst_cost:  "#{stp_mst_cost_ndp}",
+    stp_mst_port_priority:  "#{stp_mst_port_priority_ndp}",
+    stp_vlan_cost:  "#{stp_vlan_cost_ndp}",
+    stp_vlan_port_priority:  "#{stp_vlan_port_priority_ndp}",
   },
 }
 
