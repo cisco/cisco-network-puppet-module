@@ -48,99 +48,53 @@
 # instance attributes to verify resource properties.
 #
 ###############################################################################
-# rubocop:disable Style/HashSyntax
 
 # Require UtilityLib.rb and BgpNeighborLib.rb paths.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-require File.expand_path('../bgpneighborlib.rb', __FILE__)
 
-result = 'PASS'
-testheader = 'BGP Neighbor Resource :: transport_passive_mode property'
-id = 'test_green'
+id = 'transport_passive_mode'
 tests = {
-  :master => master,
-  :agent  => agent,
+  master:        master,
+  agent:         agent,
+  resource_name: 'cisco_bgp_neighbor',
 }
 
-test_name "TestCase :: #{testheader}" do
-  tests[id] = {}
-  init_bgp(tests, id) # clean slate
-  stepinfo = 'Setup switch for provider test'
-  logger.info("TestStep :: #{stepinfo} :: #{result}")
+test_name "TestCase :: #{tests[:resource_name]} - #{id}" do
+  resource_absent_cleanup(agent, 'cisco_bgp')
 
-  platform = fact_on(agent, 'os.name')
+  os = fact_on(agent, 'os.name')
   vrf = 'red'
   neighbor = '1.1.1.1'
 
-  modes = [:passive_only]
-  if platform == 'ios_xr'
-    modes << :active_only
-    modes << :both
-  end
+  modes = [:passive_only, :active_only, :both, :none] if os == 'ios_xr'
+  modes = [:passive_only, :none] unless os == 'ios_xr'
 
   modes.each do |mode|
     tests[id] = {
-      :manifest_props => { :ensure                 => :present,
-                           :asn                    => BgpLib::ASN,
-                           :vrf                    => vrf,
-                           :neighbor               => neighbor,
-                           :remote_as              => 99,
-                           :transport_passive_mode => mode,
-                   },
-      :resource       => {
-        'ensure'                 => 'present',
-        'transport_passive_mode' => mode.to_s,
+      title_pattern:  "2 #{vrf} #{neighbor}",
+      desc:           "1.1 Test mode '#{mode}'",
+      manifest_props: {
+        remote_as:              99,
+        transport_passive_mode: mode,
       },
     }
 
-    resource_cmd_str =
-      PUPPET_BINPATH +
-      'resource cisco_bgp_neighbor ' + "'#{BgpLib::ASN} #{vrf} #{neighbor}'"
-    tests[id][:resource_cmd] =
-      get_namespace_cmd(agent, resource_cmd_str, options)
-    tests[id][:desc] = "1.1 Apply manifest with mode '#{mode}'"
-
-    create_bgpneighbor_manifest(tests, id)
-    test_manifest(tests, id)
-
-    tests[id][:desc] = '1.2 Verify puppet resource'
-    test_resource(tests, id)
+    test_harness_run(tests, id)
   end
 
-  tests[id][:desc] = '1.3 Test :none'
+  tests[id][:desc] = '1.2 Verify :default is the same as :none'
   tests[id][:manifest_props] = {
-    :ensure                 => :present,
-    :asn                    => BgpLib::ASN,
-    :vrf                    => vrf,
-    :neighbor               => neighbor,
-    :transport_passive_mode => 'none',
-  }
-  tests[id][:resource] = {
-    'ensure'                 => 'present',
-    'transport_passive_mode' => 'none',
-  }
-  create_bgpneighbor_manifest(tests, id)
-  test_manifest(tests, id)
-  test_resource(tests, id)
-
-  tests[id][:desc] = '1.4 Verify :default is the same as :none'
-  tests[id][:manifest_props] = {
-    :ensure                 => :present,
-    :asn                    => BgpLib::ASN,
-    :vrf                    => vrf,
-    :neighbor               => neighbor,
-    :transport_passive_mode => :default,
+    transport_passive_mode: :default
   }
   # In this case, nothing changed, we would expect the puppet run to return 0.
   tests[id][:code] = [0]
-  create_bgpneighbor_manifest(tests, id)
+  create_manifest_and_resource(tests, id)
   test_manifest(tests, id)
   test_resource(tests, id)
 
-  cleanup_bgp(tests, id)
+  resource_absent_cleanup(agent, 'cisco_bgp')
 
-  # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  raise_passfail_exception(result, testheader, self, logger)
+  skipped_tests_summary(tests)
 end
 
-logger.info("TestCase :: #{testheader} :: End")
+logger.info("TestCase :: #{tests[:resource_name]} - #{id} :: End")

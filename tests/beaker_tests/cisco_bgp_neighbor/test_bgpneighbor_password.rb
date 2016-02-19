@@ -52,61 +52,47 @@
 
 # Require UtilityLib.rb and BgpNeighborLib.rb paths.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-require File.expand_path('../bgpneighborlib.rb', __FILE__)
 
-result = 'PASS'
-testheader = 'BGP Neighbor Resource :: Password and type attributes'
-id = 'test_green'
+id = 'password'
 
 tests = {
   :master => master,
   :agent  => agent,
+  resource_name: 'cisco_bgp_neighbor',
 }
 
-test_name "TestCase :: #{testheader}" do
-  tests[id] = {}
-  init_bgp(tests, id) # clean slate
-  stepinfo = 'Setup switch for provider test'
-<<<<<<< HEAD
-=======
+test_name "TestCase :: #{tests[:resource_name]} - #{id}" do
   resource_absent_cleanup(agent, 'cisco_bgp')
->>>>>>> develop
-  logger.info("TestStep :: #{stepinfo} :: #{result}")
 
-  platform = fact_on(agent, 'os.name')
+  os = operating_system
   vrf = 'red'
   neighbor = '1.1.1.1'
   encr_pw = '386c0565965f89de'
-  passwords = { :default    => 'test',
-                'default'   => 'test',
-                :cleartext  => 'test',
-                'cleartext' => 'test',
+  passwords = { :default   => 'test',
+                :cleartext => 'test',
               }
 
-  if platform == 'ios_xr'
-    passwords[:md5]  = encr_pw
-    passwords['md5'] = encr_pw
+  if os == 'ios_xr'
+    passwords[:md5] = encr_pw
   else
-    # don't try symbol since it starts with a number
-    passwords['3des']  = encr_pw
+    passwords['3des'] = encr_pw
   end
 
   passwords.each do |type, password|
     tests[id] = {
-      :manifest_props => { :ensure        => :present,
-                           :asn           => BgpLib::ASN,
-                           :vrf           => vrf,
-                           :neighbor      => neighbor,
-                           :remote_as     => 99,
-                           :password_type => type,
-                           :password      => password,
-                   },
-      :resource       => {
+      desc:           "1.1 Password type: #{type}, password: #{password})",
+      title_pattern:  "2 #{vrf} #{neighbor}",
+      manifest_props: {
+        remote_as:     99,
+        password_type: type,
+        password:      password,
+      },
+      resource:       {
         'ensure' => 'present'
       },
     }
 
-    if platform == 'ios_xr'
+    if os == 'ios_xr'
       # for XR, just make sure a password is there for types other than md5
       if type == :md5 || type == 'md5'
         tests[id][:resource]['password'] = encr_pw
@@ -117,45 +103,28 @@ test_name "TestCase :: #{testheader}" do
       tests[id][:resource]['password'] = encr_pw
     end
 
-    resource_cmd_str =
-      PUPPET_BINPATH +
-      'resource cisco_bgp_neighbor ' + "'#{BgpLib::ASN} #{vrf} #{neighbor}'"
-    tests[id][:resource_cmd] =
-      get_namespace_cmd(agent, resource_cmd_str, options)
-    tests[id][:desc] = "1.1 Apply manifest with password attributes (#{type})"
-    create_bgpneighbor_manifest(tests, id)
-    test_manifest(tests, id)
+    # NOTE: We can't simply call test_harness_run() here since idempotence
+    # test will fail (we can't tell if a password has changed).
 
-    tests[id][:desc] = '1.2 Verify puppet resource'
+    create_manifest_and_resource(tests, id)
+    test_manifest(tests, id)
     test_resource(tests, id)
 
-    tests[id][:desc] = '1.3 Test removing the password'
-<<<<<<< HEAD
+    tests[id][:desc] = '1.2 Test removing the password'
     tests[id][:manifest_props] = {
-      :ensure   => :present,
-      :asn      => BgpLib::ASN,
-      :vrf      => vrf,
-      :neighbor => neighbor,
-      :password => '',
+      :password => ''
     }
-    create_bgpneighbor_manifest(tests, id)
+    create_manifest_and_resource(tests, id)
     test_manifest(tests, id)
 
-    tests[id][:desc] = '1.4 Verify password has been removed on the box'
+    tests[id][:desc] = '1.3 Verify password has been removed on the box'
     tests[id][:resource] = { 'password' => IGNORE_VALUE }
     test_resource(tests, id, true)
-=======
-    tests[id][:manifest_props][:password] = ''
-
-    create_bgpneighbor_manifest(tests, id)
-    test_manifest(tests, id)
->>>>>>> develop
   end
 
-  cleanup_bgp(tests, id)
+  resource_absent_cleanup(agent, 'cisco_bgp')
 
-  # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
-  raise_passfail_exception(result, testheader, self, logger)
+  skipped_tests_summary(tests)
 end
 
-logger.info("TestCase :: #{testheader} :: End")
+logger.info("TestCase :: #{tests[:resource_name]} - #{id} :: End")
