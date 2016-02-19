@@ -606,7 +606,7 @@ Install a backup path into the forwarding table and provide prefix 'independent 
 Enables the receive capability of additional paths for all of the neighbors under this address family for which the capability has not been disabled.  Valid values are true, false, or 'default'
 
 ##### `additional_paths_selection`
-Configures the capability of selecting additional paths for a prefix. Valid values are a string defining the name of the [route-map](# cisco-os-differences).
+Configures the capability of selecting additional paths for a prefix. Valid values are a string defining the name of the [route-map](#cisco-os-differences).
 
 ##### `additional_paths_send`
 Enables the send capability of additional paths for all of the neighbors under this address family for which the capability has not been disabled. Valid values are true, false, or 'default'
@@ -633,7 +633,7 @@ Specify max suppress time for route-flap dampening stable route. Valid values ar
 Specify route reuse time for route-flap dampening. Valid values are Integer, keyword 'default'. On IOS XR, this property is only supported in the global BGP context.
 
 ##### `dampening_routemap`
-Specify [route-map](# cisco-os-differences) for route-flap dampening. Valid values are a string defining the name of the route-map. On IOS XR, this property is only supported in the global BGP context.
+Specify [route-map](#cisco-os-differences) for route-flap dampening. Valid values are a string defining the name of the route-map. On IOS XR, this property is only supported in the global BGP context.
 
 ##### `dampening_suppress_time`
 Specify route suppress time for route-flap dampening. Valid values are Integer, keyword 'default'. On IOS XR, this property is only supported in the global BGP context.
@@ -676,7 +676,7 @@ Configures the maximum number of equal-cost paths for load sharing. Valid value 
 Configures the maximum number of ibgp equal-cost paths for load sharing. Valid value is an integer in the range 1-64. Default value is 1.
 
 ##### `networks`
-Networks to configure. Valid value is a list of network prefixes to advertise.  The list must be in the form of an array.  Each entry in the array must include a prefix address and an optional [route-map](# cisco-os-differences).
+Networks to configure. Valid value is a list of network prefixes to advertise.  The list must be in the form of an array.  Each entry in the array must include a prefix address and an optional [route-map](#cisco-os-differences).
 
 Example: IPv4 Networks Array
 
@@ -700,10 +700,10 @@ Example: IPv6 Networks Array
 ```
 
 ##### `next_hop_route_map`
-Configure a [route-map](# cisco-os-differences) for valid nexthops. Valid values are a string defining the name of the route-map. On IOS XR, this property is only supported in the global BGP context.
+Configure a [route-map](#cisco-os-differences) for valid nexthops. Valid values are a string defining the name of the route-map. On IOS XR, this property is only supported in the global BGP context.
 
 ##### `redistribute`
-A list of redistribute directives. Multiple redistribute entries are allowed. The list must be in the form of a nested array: the first entry of each array defines the source-protocol to redistribute from; the second entry defines a [route-map](# cisco-os-differences) name. A route-map is highly advised but may be optional on some platforms, in which case it may be omitted from the array list.
+A list of redistribute directives. Multiple redistribute entries are allowed. The list must be in the form of a nested array: the first entry of each array defines the source-protocol to redistribute from; the second entry defines a [route-map](#cisco-os-differences) name. A route-map is highly advised but may be optional on some platforms, in which case it may be omitted from the array list.
 
 Example: Platform requiring route-maps
 
@@ -868,7 +868,7 @@ Optional max-occurrences value for `allowas_in`. Valid values are an integer val
 `default-originate`. Valid values are True, False, or 'default'. Related: `default_originate_route_map`.
 
 ##### `default_originate_route_map`
-Optional [route-map](# cisco-os-differences) for the `default_originate` property. Can be used independently or in conjunction with `default_originate`. Valid values are a string defining a route-map name, or 'default'.
+Optional [route-map](#cisco-os-differences) for the `default_originate` property. Can be used independently or in conjunction with `default_originate`. Valid values are a string defining a route-map name, or 'default'.
 
 ##### `filter_list_in`
 Valid values are a string defining a filter-list name, or 'default'. This property is not supported on IOS XR.
@@ -901,10 +901,10 @@ Valid values are a string defining a prefix-list name, or 'default'. This proper
 Valid values are a string defining a prefix-list name, or 'default'. This property is not supported on IOS XR.
 
 ##### `route_map_in`
-Valid values are a string defining a [route-map](# cisco-os-differences) name, or 'default'.
+Valid values are a string defining a [route-map](#cisco-os-differences) name, or 'default'.
 
 ##### `route_map_out`
-Valid values are a string defining a [route-map](# cisco-os-differences) name, or 'default'.
+Valid values are a string defining a [route-map](#cisco-os-differences) name, or 'default'.
 
 ##### `route_reflector_client`
 `route-reflector-client`. Valid values are True, False, or 'default'.
