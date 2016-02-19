@@ -461,10 +461,10 @@ Manages AAA Authentication Login configuration.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -496,10 +496,10 @@ Manages configuration for Authorization Login Config Service.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -525,10 +525,10 @@ Manages configuration for Authorization Login Exec Service.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -554,10 +554,10 @@ Manages configuration for a TACACS+ server group.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -589,10 +589,10 @@ Manages configuration of a Access Control List (ACL) instance.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -621,10 +621,10 @@ Manages configuration of an Access Control List (ACL) Access Control Entry (ACE)
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -1425,9 +1425,9 @@ Manages a Cisco Network Interface Channel-group.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
 | IOS XR   | TODO               | TODO                   |
 
 #### Parameters
@@ -1458,13 +1458,13 @@ Manages a Cisco Network Interface Service VNI.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | unsupported            |
-| N30xx    | 7.0(3)I2(1)        | unsupported            |
-| N31xx    | 7.0(3)I2(1)        | unsupported            |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
+| N9k      | unsupported        | unsupported            |
+| N30xx    | unsupported        | unsupported            |
+| N31xx    | unsupported        | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| IOS XR   | TODO               | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -1601,7 +1601,7 @@ Manages configuration of an ospf instance.
 | N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| IOS XR   | TODO               | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -1625,7 +1625,7 @@ Manages a VRF for an OSPF router.
 | N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| IOS XR   | TODO               | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -1687,12 +1687,12 @@ Also configures anycast gateway MAC of the switch.
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N30xx    | 7.0(3)I2(1)        | unsupported            |
-| N31xx    | 7.0(3)I2(1)        | unsupported            |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N30xx    | unsupported        | unsupported            |
+| N31xx    | unsupported        | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -1726,7 +1726,7 @@ Manages configuration of an Protocol Independent Multicast (PIM) instance.
 | N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| IOS XR   | TODO               | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -1751,7 +1751,7 @@ Manages configuration of an Protocol Independent Multicast (PIM) static route pr
 | N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| IOS XR   | TODO               | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -1779,7 +1779,7 @@ Manages configuration of an Protocol Independent Multicast (PIM) static route pr
 | N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| IOS XR   | TODO               | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -1798,13 +1798,13 @@ Manages configuration of a portchannel global parameters
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | unsupported            |
+| N9k      | unsupported        | unsupported            |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### <a name="cisco_portchannel_global-caveats">Caveats</a>
 
@@ -1859,7 +1859,7 @@ Manages an SNMP community on a Cisco SNMP server.
 | N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| IOS XR   | TODO               | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -1894,7 +1894,7 @@ of group; thus this provider utility does not create snmp groups and only report
 | N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| IOS XR   | TODO               | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -1918,7 +1918,7 @@ cisco_snmp_server.
 | N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| IOS XR   | TODO               | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -1964,7 +1964,7 @@ Manages an SNMP user on an cisco SNMP server.
 | N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| IOS XR   | TODO               | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2014,7 +2014,7 @@ instance of the cisco_tacacs_server.
 | N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| IOS XR   | TODO               | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2058,7 +2058,7 @@ Configures Cisco TACACS+ server hosts.
 | N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| IOS XR   | TODO               | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2090,13 +2090,13 @@ Manages a Cisco VDC (Virtual Device Context).
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | unsupported            |
-| N30xx    | 7.0(3)I2(1)        | unsupported            |
-| N31xx    | 7.0(3)I2(1)        | unsupported            |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
+| N9k      | unsupported        | unsupported            |
+| N30xx    | unsupported        | unsupported            |
+| N31xx    | unsupported        | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| IOS XR   | TODO               | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2123,7 +2123,7 @@ Manages a Cisco VLAN.
 | N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| IOS XR   | TODO               | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### <a name="cisco_vlan-caveats">Caveats</a>
 
@@ -2164,7 +2164,7 @@ Manages the virtual Port Channel (vPC) domain configuration of a Cisco device.
 | N56xx    | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| IOS XR   | TODO               | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### <a name="cisco_vpc_domain-caveats">Caveats</a>
 
@@ -2263,9 +2263,9 @@ device.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
 | IOS XR   | TODO               | TODO                   |
 
 #### Parameters
@@ -2367,10 +2367,10 @@ There can only be one instance of the cisco_vtp.
 | N9k      | 7.0(3)I2(1)        | 1.0.1                  |
 | N30xx    | 7.0(3)I2(1)        | 1.0.1                  |
 | N31xx    | 7.0(3)I2(1)        | 1.0.1                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2400,12 +2400,12 @@ Creates a VXLAN Network Virtualization Endpoint (NVE) overlay interface that ter
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N30xx    | 7.0(3)I2(1)        | unsupported            |
-| N31xx    | 7.0(3)I2(1)        | unsupported            |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N30xx    | unsupported        | unsupported            |
+| N31xx    | unsupported        | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2431,12 +2431,12 @@ Creates a Virtual Network Identifier member (VNI) for an NVE overlay interface.
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N30xx    | 7.0(3)I2(1)        | unsupported            |
-| N31xx    | 7.0(3)I2(1)        | unsupported            |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N30xx    | unsupported        | unsupported            |
+| N31xx    | unsupported        | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2480,10 +2480,10 @@ Configure the domain name of the device
 | N9k      | 7.0(3)I2(1)        | 1.1.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2501,10 +2501,10 @@ Domain name of the device. Valid value is a string.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2522,10 +2522,10 @@ Hostname or address of the DNS server.  Valid value is a string.
 | N9k      | 7.0(3)I2(1)        | 1.1.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2554,10 +2554,10 @@ Manages a puppet netdev_stdlib Network Interface. Any resource dependency should
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2585,10 +2585,10 @@ interface. Valid value is an integer.
 | N9k      | 7.0(3)I2(1)        | 1.1.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2614,10 +2614,10 @@ Manages a puppet netdev_stdlib Network Trunk. It should be noted that while the 
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2647,9 +2647,9 @@ Array of VLAN ID numbers used for VLAN pruning. Values must be in range of 1 to 
 | N9k      | 7.0(3)I2(1)        | 1.1.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
 | IOS XR   | TODO               | TODO                   |
 
 #### Parameters
@@ -2668,9 +2668,9 @@ Source interface for the NTP server.  Valid value is a string.
 | N9k      | 7.0(3)I2(1)        | 1.1.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
 | IOS XR   | TODO               | TODO                   |
 
 #### Parameters
@@ -2689,10 +2689,10 @@ Hostname or IPv4/IPv6 address of the NTP server.  Valid value is a string.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2719,10 +2719,10 @@ Name of the port channel. eg port-channel100. Valid value is a string.
 | N9k      | 7.0(3)I2(1)        | 1.1.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2740,10 +2740,10 @@ Enable or disable radius functionality.  Valid values are 'true' or 'false'.
 | N9k      | 7.0(3)I2(1)        | 1.1.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2770,10 +2770,10 @@ Encryption key format [0-7].  Valid value is an integer.
 | N9k      | 7.0(3)I2(1)        | 1.1.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2817,10 +2817,10 @@ Configure the search domain of the device. Note that this type is functionally e
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2840,10 +2840,10 @@ Manages an SNMP community on a Cisco SNMP server.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2869,10 +2869,10 @@ Manages an SNMP notification on a Cisco SNMP server.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2890,10 +2890,10 @@ Manages an SNMP user on an cisco SNMP server.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2935,10 +2935,10 @@ Manages an SNMP user on an cisco SNMP server.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -2980,10 +2980,10 @@ format (in case of true) or cleartext (in case of false). Valid values are 'true
 | N9k      | 7.0(3)I2(1)        | 1.1.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -3007,10 +3007,10 @@ Interface to send syslog data from, e.g. "management".  Valid value is a string.
 | N9k      | 7.0(3)I2(1)        | 1.1.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -3028,10 +3028,10 @@ The unit of measurement for log time values.  Valid values are 'seconds' and 'mi
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -3046,10 +3046,10 @@ Enable or disable radius functionality [true|false]
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
@@ -3073,10 +3073,10 @@ Number of seconds before the timeout period ends
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 ##### `ensure`
 Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
@@ -3104,10 +3104,10 @@ Number of seconds before the timeout period ends
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | 7.3(0)N1(1)        | unsupported            |
-| N6k      | 7.3(0)N1(1)        | unsupported            |
-| N7k      | 7.3(0)D1(1)        | unsupported            |
-| IOS XR   | TODO               | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
 
