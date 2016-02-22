@@ -207,10 +207,13 @@ def unsupported_properties(tests, id)
       # NX-OS does not support these properties under a non-default vrf
       unprops <<
         :disable_policy_batching <<
+        :enforce_first_as <<
         :event_history_cli <<
         :event_history_detail <<
         :event_history_events <<
         :event_history_periodic <<
+        :fast_external_fallover <<
+        :flush_routes <<
         :neighbor_down_fib_accelerate
     end
   end

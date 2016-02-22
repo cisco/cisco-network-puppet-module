@@ -615,6 +615,15 @@ def create_manifest_and_resource(tests, id, extra_config=nil)
   true
 end
 
+# dependency_manifest
+#
+# This method returns a string representation of a manifest that contains
+# any dependencies needed for a particular test to run.
+# Override this in a particular test file as needed.
+def dependency_manifest(_tests, _id)
+  nil # indicates no manifest dependencies
+end
+
 # unsupported_properties
 #
 # Returns an array of properties that are not supported for
@@ -647,8 +656,7 @@ end
 # - Creates manifests
 # - Creates puppet resource title strings
 # - Cleans resource
-# - Sets up additional dependencies
-def test_harness_run(tests, id, extra_config=nil)
+def test_harness_run(tests, id, extra_config=dependency_manifest(tests, id))
   return unless platform_supports_test(tests, id)
 
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
