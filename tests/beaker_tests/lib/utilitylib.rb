@@ -579,12 +579,14 @@ def create_manifest_and_resource(tests, id, extra_config=nil)
   manifest = prop_hash_to_manifest(tests[id][:title_params])
 
   # Setup the ensure state, manifest string, and resource command state
+  state = ''
   if tests[id][:ensure] == :absent
     state = 'ensure => absent,'
     tests[id][:resource] = { 'ensure' => 'absent' }
   else
-    state = 'ensure => present,'
-    tests[id][:resource]['ensure'] = nil unless tests[id][:resource].nil?
+    state = 'ensure => present,' unless tests[:ensurable] == false
+    tests[id][:resource]['ensure'] = nil unless
+      tests[id][:resource].nil? || tests[:ensurable] == false
 
     manifest_props = tests[id][:manifest_props]
     if manifest_props
@@ -611,6 +613,15 @@ def create_manifest_and_resource(tests, id, extra_config=nil)
   }\n}\nEOF"
 
   true
+end
+
+# dependency_manifest
+#
+# This method returns a string representation of a manifest that contains
+# any dependencies needed for a particular test to run.
+# Override this in a particular test file as needed.
+def dependency_manifest(_tests, _id)
+  nil # indicates no manifest dependencies
 end
 
 # unsupported_properties
@@ -645,8 +656,7 @@ end
 # - Creates manifests
 # - Creates puppet resource title strings
 # - Cleans resource
-# - Sets up additional dependencies
-def test_harness_run(tests, id, extra_config=nil)
+def test_harness_run(tests, id, extra_config=dependency_manifest(tests, id))
   return unless platform_supports_test(tests, id)
 
   tests[id][:ensure] = :present if tests[id][:ensure].nil?

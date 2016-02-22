@@ -22,6 +22,7 @@
 #
 ###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
+require File.expand_path('../bgplib.rb', __FILE__)
 
 # Test hash top-level keys
 asn = '1'
@@ -160,19 +161,6 @@ tests[:title_patterns_2] = {
   resource:      { 'ensure' => 'present' },
 }
 
-# Returns the vrf being tested by the specified test.
-def vrf(test)
-  return test[:title_params][:vrf] if
-    test[:title_params] && test[:title_params][:vrf]
-
-  if test[:title_pattern]
-    words = test[:title_pattern].split(' ')
-    return words[1] unless words.length < 2
-  end
-
-  'default'
-end
-
 # Overridden to properly handle unsupported properties for this test file.
 def unsupported_properties(tests, id)
   unprops = []
@@ -219,10 +207,13 @@ def unsupported_properties(tests, id)
       # NX-OS does not support these properties under a non-default vrf
       unprops <<
         :disable_policy_batching <<
+        :enforce_first_as <<
         :event_history_cli <<
         :event_history_detail <<
         :event_history_events <<
         :event_history_periodic <<
+        :fast_external_fallover <<
+        :flush_routes <<
         :neighbor_down_fib_accelerate
     end
   end
@@ -230,17 +221,6 @@ def unsupported_properties(tests, id)
   unprops << :neighbor_down_fib_accelerate unless /n(3|9)k/.match(platform)
 
   unprops
-end
-
-# This helper tests a test case in vrf context. This allows for testing a vrf
-# while an existing config is present in vrf default.
-def test_harness_bgp_vrf(tests, id, vrf)
-  orig_desc = tests[id][:desc]
-  tests[id][:desc] += " (vrf #{vrf})"
-  tests[id][:title_pattern] = "#{tests[:asn]} #{vrf}"
-
-  test_harness_run(tests, id)
-  tests[id][:desc] = orig_desc
 end
 
 #################################################################

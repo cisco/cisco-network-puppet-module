@@ -49,6 +49,61 @@ def unsupported_properties(_, _)
   ]
 end
 
+# Overridden to properly handle dependencies for this test file.
+def dependency_manifest(tests, id)
+  af = puppet_resource_title_pattern_munge(tests, id)
+  remote_as = tests[id][:remote_as]
+
+  extra_config = ''
+  # XR requires the following before a vrf AF can be configured:
+  #   1. a global router_id
+  #   2. a global address family
+  #   3. route_distinguisher configured on the vrf
+  #   4. remote-as is required for neightbor
+  remote_as = 1 if remote_as.nil? && operating_system == 'ios_xr'
+  if af[:vrf] != 'default'
+    if af[:afi] == 'ipv6'
+      global_afi = 'vpnv6'
+    else
+      global_afi = 'vpnv4'
+    end
+    extra_config = "
+    cisco_bgp { '#{af[:asn]}':
+      ensure                                 => present,
+      router_id                              => '1.2.3.4',
+    }
+    cisco_bgp_af { '#{af[:asn]} default #{global_afi} #{af[:safi]}':
+      ensure                                 => present,
+    }
+    cisco_bgp { '#{af[:asn]} #{af[:vrf]}':
+      ensure                                 => present,
+      route_distinguisher                    => auto,
+    }"
+  end
+  extra_config += "
+    cisco_bgp_af { '#{af[:asn]} #{af[:vrf]} #{af[:afi]} #{af[:safi]}':
+        ensure                                 => present,
+    }"
+  if remote_as
+    extra_config += "
+    cisco_bgp_neighbor { '#{af[:asn]} #{af[:vrf]} #{af[:neighbor]}':
+      ensure                                 => present,
+      remote_as                              => #{remote_as},
+    }"
+  end
+  if operating_system == 'ios_xr'
+    extra_config += "
+    cisco_command_config { 'policy_config':
+      command => '
+        route-policy rm_in
+          end-policy
+        route-policy rm_out
+          end-policy'
+    }"
+  end
+  extra_config
+end
+
 tests[:default] = {
   desc:           '1.1 Default Properties',
   title_pattern:  '2 default 1.1.1.1 ipv4 unicast',
@@ -263,79 +318,16 @@ tests[:title_patterns_4] = {
 }
 
 #################################################################
-# HELPER FUNCTIONS
-#################################################################
-
-def get_dependency_manifest(tests, id)
-  af = puppet_resource_title_pattern_munge(tests, id)
-  remote_as = tests[id][:remote_as]
-
-  extra_config = ''
-  # XR requires the following before a vrf AF can be configured:
-  #   1. a global router_id
-  #   2. a global address family
-  #   3. route_distinguisher configured on the vrf
-  #   4. remote-as is required for neightbor
-  remote_as = 1 if remote_as.nil? && operating_system == 'ios_xr'
-  if af[:vrf] != 'default'
-    if af[:afi] == 'ipv6'
-      global_afi = 'vpnv6'
-    else
-      global_afi = 'vpnv4'
-    end
-    extra_config = "
-    cisco_bgp { '#{af[:asn]}':
-      ensure                                 => present,
-      router_id                              => '1.2.3.4',
-    }
-    cisco_bgp_af { '#{af[:asn]} default #{global_afi} #{af[:safi]}':
-      ensure                                 => present,
-    }
-    cisco_bgp { '#{af[:asn]} #{af[:vrf]}':
-      ensure                                 => present,
-      route_distinguisher                    => auto,
-    }"
-  end
-  extra_config += "
-    cisco_bgp_af { '#{af[:asn]} #{af[:vrf]} #{af[:afi]} #{af[:safi]}':
-        ensure                                 => present,
-    }"
-  if remote_as
-    extra_config += "
-    cisco_bgp_neighbor { '#{af[:asn]} #{af[:vrf]} #{af[:neighbor]}':
-      ensure                                 => present,
-      remote_as                              => #{remote_as},
-    }"
-  end
-  if operating_system == 'ios_xr'
-    extra_config += "
-    cisco_command_config { 'policy_config':
-      command => '
-        route-policy rm_in
-          end-policy
-        route-policy rm_out
-          end-policy'
-    }"
-  end
-  extra_config
-end
-
-def test_harness_bgp_nbr_af_run(tests, id)
-  extra_config = get_dependency_manifest(tests, id)
-  test_harness_run(tests, id, extra_config)
-end
-
-#################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  test_harness_bgp_nbr_af_run(tests, :default)
+  test_harness_run(tests, :default)
 
   tests[:default][:ensure] = :absent
   tests[:default].delete(:preclean)
-  test_harness_bgp_nbr_af_run(tests, :default)
+  test_harness_run(tests, :default)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
@@ -360,11 +352,11 @@ test_name "TestCase :: #{tests[:resource_name]}" do
     :non_def_misc_maps_3,
   ].each do |id|
     tests[id][:title_pattern] = title
-    test_harness_bgp_nbr_af_run(tests, id)
+    test_harness_run(tests, id)
   end
 
-  test_harness_bgp_nbr_af_run(tests, :non_def_ebgp_only)
-  test_harness_bgp_nbr_af_run(tests, :non_def_ibgp_only)
+  test_harness_run(tests, :non_def_ebgp_only)
+  test_harness_run(tests, :non_def_ibgp_only)
 
   # -------------------------------------------------------------------
   if operating_system == 'ios_xr' || platform[/n(5|6|7|9)k/]
@@ -381,19 +373,19 @@ test_name "TestCase :: #{tests[:resource_name]}" do
       :non_def_misc_maps_1,
     ].each do |id|
       tests[id][:title_pattern] = title
-      test_harness_bgp_nbr_af_run(tests, id)
+      test_harness_run(tests, id)
     end
 
     id = :non_def_ibgp_only
     tests[id][:title_pattern].gsub!(/ipv4 unicast/, 'l2vpn evpn')
-    test_harness_bgp_nbr_af_run(tests, id)
+    test_harness_run(tests, id)
   end
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
-  test_harness_bgp_nbr_af_run(tests, :title_patterns_1)
-  test_harness_bgp_nbr_af_run(tests, :title_patterns_2)
-  test_harness_bgp_nbr_af_run(tests, :title_patterns_3)
-  test_harness_bgp_nbr_af_run(tests, :title_patterns_4)
+  test_harness_run(tests, :title_patterns_1)
+  test_harness_run(tests, :title_patterns_2)
+  test_harness_run(tests, :title_patterns_3)
+  test_harness_run(tests, :title_patterns_4)
 
   # -----------------------------------
   resource_absent_cleanup(agent, 'cisco_bgp')
