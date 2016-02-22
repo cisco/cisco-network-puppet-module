@@ -103,6 +103,7 @@ tests['L3_default'] = {
   sys_def_switchport: false,
   manifest_props:     {
     duplex:                        'default',
+    ipv4_forwarding:               'default',
     ipv4_pim_sparse_mode:          'default',
     ipv4_proxy_arp:                'default',
     ipv4_redirects:                'default',
@@ -115,6 +116,7 @@ tests['L3_default'] = {
   },
   resource:           {
     'duplex'                        => 'auto',
+    'ipv4_forwarding'               => 'false',
     'ipv4_pim_sparse_mode'          => 'false',
     'ipv4_proxy_arp'                => 'false',
     'ipv4_redirects'                => 'true',
@@ -152,6 +154,7 @@ tests['L3_misc'] = {
     ipv4_netmask_length:           31,
     ipv4_address_secondary:        '2.2.2.2',
     ipv4_netmask_length_secondary: 31,
+    ipv4_forwarding:               true,
     ipv4_pim_sparse_mode:          true,
     ipv4_proxy_arp:                true,
     ipv4_redirects:                false,
@@ -165,6 +168,7 @@ tests['L3_misc'] = {
     'ipv4_netmask_length'           => '31',
     'ipv4_address_secondary'        => '2.2.2.2',
     'ipv4_netmask_length_secondary' => '31',
+    'ipv4_forwarding'               => 'true',
     'ipv4_pim_sparse_mode'          => 'true',
     'ipv4_proxy_arp'                => 'true',
     'ipv4_redirects'                => 'false',

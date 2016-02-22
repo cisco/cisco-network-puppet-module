@@ -43,6 +43,7 @@ class ciscopuppet::cisco::demo_interface {
     ipv4_netmask_length            => 24,
     ipv4_address_secondary         => '192.168.88.1',
     ipv4_netmask_length_secondary  => 24,
+    ipv4_forwarding                => true,
     ipv4_pim_sparse_mode           => false,
     mtu                            => 1600,
     # Removed because of too many differences between platforms and linecards

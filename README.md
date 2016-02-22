@@ -1225,22 +1225,6 @@ Shutdown state of the interface. Valid values are 'true', 'false', and
 Switchport mode of the interface. To make an interface Layer 3, set
 `switchport_mode` to 'disabled'. Valid values are 'disabled', 'access', 'tunnel', 'fex_fabric', 'trunk', 'fabricpath' and 'default'.
 
-###### `ipv4_acl_in`
-Apply ipv4 access list on the interface in ingress direction. Access-list should be present on the network device 
-prior this configuration. Valid values are string, keyword 'default'.
-
-###### `ipv4_acl_out`
-Apply ipv4 access list on the interface in egress direction. Access-list should be present on the network device 
-prior this configuration. Valid values are string, keyword 'default'.
-
-###### `ipv6_acl_in`
-Apply ipv6 access list on the interface in ingress direction. Access-list should be present on the network device 
-prior this configuration. Valid values are string, keyword 'default'.
-
-###### `ipv6_acl_out`
-Apply ipv6 access list on the interface in egress direction. Access-list should be present on the network device 
-prior this configuration. Valid values are string, keyword 'default'.
-
 ##### L2 interface config attributes
 
 ###### `access_vlan`
@@ -1275,14 +1259,13 @@ Enable/Disable negotiate auto on the interface. Valid values are 'true',
 
 ##### L3 interface config attributes
 
-###### `ipv4_pim_sparse_mode`
-Enables or disables ipv4 pim sparse mode on the interface. Valid values are 'true', 'false', and 'default'.
+###### `ipv4_acl_in`
+Apply ipv4 access list on the interface in ingress direction. Access-list should be present on the network device
+prior this configuration. Valid values are string, keyword 'default'.
 
-###### `ipv4_proxy_arp`
-Enables or disables proxy arp on the interface. Valid values are 'true', 'false', and 'default'.
-
-###### `ipv4_redirects`
-Enables or disables sending of IP redirect messages. Valid values are 'true', 'false', and 'default'.
+###### `ipv4_acl_out`
+Apply ipv4 access list on the interface in egress direction. Access-list should be present on the network device
+prior this configuration. Valid values are string, keyword 'default'.
 
 ###### `ipv4_address`
 IP address of the interface. Valid values are a string of ipv4 address or the
@@ -1300,6 +1283,26 @@ Network mask length of the secondary IP address on the interface. Valid values a
 
 ###### `ipv4_arp_timeout`
 Address Resolution Protocol (ARP) timeout value. Valid values are integer and keyword 'default'. Currently only supported on vlan interfaces.
+
+###### `ipv4_forwarding`
+IP forwarding state.  Valid values are string or keyword 'default'.
+
+###### `ipv4_pim_sparse_mode`
+Enables or disables ipv4 pim sparse mode on the interface. Valid values are 'true', 'false', and 'default'.
+
+###### `ipv4_proxy_arp`
+Enables or disables proxy arp on the interface. Valid values are 'true', 'false', and 'default'.
+
+###### `ipv4_redirects`
+Enables or disables sending of IP redirect messages. Valid values are 'true', 'false', and 'default'.
+
+###### `ipv6_acl_in`
+Apply ipv6 access list on the interface in ingress direction. Access-list should be present on the network device
+prior this configuration. Valid values are string, keyword 'default'.
+
+###### `ipv6_acl_out`
+Apply ipv6 access list on the interface in egress direction. Access-list should be present on the network device
+prior this configuration. Valid values are string, keyword 'default'.
 
 ###### `vlan_mapping`
 This property is a nested array of [original_vlan, translated_vlan] pairs. Valid values are an array specifying the mapped vlans or keyword 'default'; e.g.:
