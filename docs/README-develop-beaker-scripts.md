@@ -67,7 +67,7 @@ configure terminal
 end
 ~~~
 
-*Note: To enable sshd inside the `open agent container (OAC)` reference `OAC` documentation.
+*Note: To enable sshd inside the `open agent container (OAC)` reference `OAC` documentation.*
 
 ### Configure IOS XR
 
