@@ -663,11 +663,13 @@ Manages configuration of a BGP instance.
 | `disable_policy_batching` | Not supported on IOS XR |
 | `disable_policy_batching_ipv4` | Not supported on N56xx, N6k, N7k, IOS XR |
 | `disable_policy_batching_ipv6` | Not supported on N56xx, N6k, N7k, IOS XR |
+| `enforce_first_as` | Only supported in global BGP context in NX-OS |
 | `event_history_cli` | Not supported on IOS XR |
 | `event_history_detail` | Not supported on IOS XR |
 | `event_history_events` | Not supported on IOS XR |
 | `event_history_periodic` | Not supported on IOS XR |
-| `flush_routes` | Not supported on IOS XR |
+| `fast_external_fallover` | Only supported in global BGP context in NX-OS |
+| `flush_routes` | Only supported in global BGP context in NX-OS. Not supported on IOS XR |
 | `graceful_restart` | Only supported in global BGP context in IOS XR |
 | `graceful_restart_helper` | Not supported on IOS XR |
 | `graceful_restart_timers_restart` | Only supported in global BGP context in IOS XR |
@@ -726,7 +728,7 @@ Enable/Disable the batching evaluation of prefix advertisements to all peers wit
 Enable/Disable the batching evaluation of prefix advertisements to all peers with prefix list. Valid values are String, keyword 'default'. This property is not supported on IOS XR.
 
 ##### `enforce_first_as`
-Enable/Disable enforces the neighbor autonomous system to be the first AS number listed in the AS path attribute for eBGP. Valid values are 'true', 'false', and 'default'.
+Enable/Disable enforces the neighbor autonomous system to be the first AS number listed in the AS path attribute for eBGP. Valid values are 'true', 'false', and 'default'. On NX-OS, this property is only supported in the global BGP context.
 
 ##### `event_history_cli`
 Enable/Disable cli event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. This property is not supported on IOS XR.
@@ -741,10 +743,10 @@ Enable/Disable event history buffer. Valid values are 'true', 'false', 'size_sma
 Enable/Disable periodic event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. This property is not supported on IOS XR.
 
 ##### `fast_external_fallover`
-Enable/Disable immediately reset the session if the link to a directly connected BGP peer goes down. Valid values are 'true', 'false', and 'default'.
+Enable/Disable immediately reset the session if the link to a directly connected BGP peer goes down. Valid values are 'true', 'false', and 'default'. On NX-OS, this property is only supported in the global BGP context.
 
 ##### `flush_routes`
-Enable/Disable flush routes in RIB upon controlled restart. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
+Enable/Disable flush routes in RIB upon controlled restart. Valid values are 'true', 'false', and 'default'. On NX-OS, this property is only supported in the global BGP context. This property is not supported on IOS XR.
 
 ##### `isolate`
 Enable/Disable isolate this router from BGP perspective. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
