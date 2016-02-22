@@ -34,7 +34,7 @@ tests = {
 def unsupported_properties(_, _)
   return [] if operating_system == 'nexus'
 
-  unpros = [
+  [
     :additional_paths_receive,
     :additional_paths_send,
     :default_originate_route_map,
@@ -45,7 +45,7 @@ def unsupported_properties(_, _)
     :prefix_list_in,
     :prefix_list_out,
     :suppress_inactive,
-    :unsuppress_map
+    :unsuppress_map,
   ]
 end
 

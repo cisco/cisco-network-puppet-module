@@ -20,7 +20,6 @@ class ciscopuppet::cisco::demo_bgp {
   # Configure Global BGP                                                      #
   # --------------------------------------------------------------------------#
 
-<<<<<<< HEAD:examples/demo_bgp.pp
   $maxas_limit = $operatingsystem ? {
     'nexus' => '50',
     default => undef
@@ -245,7 +244,6 @@ class ciscopuppet::cisco::demo_bgp {
   # Configure BGP IPv4 Neighbors
   #---------------------------------------------------------------------------#
 
-<<<<<<< HEAD:examples/demo_bgp.pp
   $capability_negotiation = $operatingsystem ? {
     'nexus' => true,
     default => undef
@@ -254,8 +252,8 @@ class ciscopuppet::cisco::demo_bgp {
     'nexus' => true,
     default => undef
   }
-  $log_neighbor_changes = $operatingsystem ? {
-    'nexus' => disable,
+  $log_neighbor_changes = platform_get() ? {
+    /(n3k|n9k)/ => disable,
     default => undef
   }
   $low_memory_exempt = $operatingsystem ? {
@@ -270,12 +268,6 @@ class ciscopuppet::cisco::demo_bgp {
     'nexus' => 'ethernet1/1',
     default => 'fastethernet1/1/1/1'
   }
-=======
-  $log_neighbor_changes = platform_get() ? {
-    /(n3k|n9k)/ => disable,
-    default => undef
-  }
->>>>>>> develop:examples/cisco/demo_bgp.pp
 
   cisco_bgp_neighbor {'55.77 blue 1.1.1.1':
     ensure                 => present,
