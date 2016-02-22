@@ -22,6 +22,7 @@
 #
 ###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
+require File.expand_path('../../cisco_bgp/bgplib.rb', __FILE__)
 
 # Test hash top-level keys
 tests = {
@@ -61,7 +62,7 @@ tests[:default] = {
 tests[:non_def_uber] = {
   desc:           'Non Default: (UBER)',
   preclean:       'cisco_bgp_neighbor',
-  title_pattern:  '2 blue 1.1.1.1',
+  title_pattern:  '2 default 1.1.1.1',
   manifest_props: {
     description:            'tested by beaker',
     connected_check:        'true',
@@ -69,6 +70,7 @@ tests[:non_def_uber] = {
     dynamic_capability:     'true',
     ebgp_multihop:          '2',
     low_memory_exempt:      'true',
+    remote_as:              '12.1',
     remove_private_as:      'all',
     shutdown:               'true',
     suppress_4_byte_as:     'true',
@@ -83,7 +85,7 @@ end
 
 tests[:non_def_local_remote_as] = {
   preclean:       'cisco_bgp_neighbor',
-  title_pattern:  '2 blue 1.1.1.1',
+  title_pattern:  '2 default 1.1.1.1',
   desc:           'Non Default: (AS) local-as, remote-as',
   manifest_props: {
     local_as:  '42',
@@ -93,9 +95,10 @@ tests[:non_def_local_remote_as] = {
 
 tests[:non_def_update_source] = {
   desc:           'Non Default: (update-source)',
-  title_pattern:  '2 blue 1.1.1.1',
+  title_pattern:  '2 default 1.1.1.1',
   intf_type:      'ethernet',
   manifest_props: {
+    remote_as: '12.1', # must be set for IOS_XR
     # update_source: find_interface(tests, id) # Set dynamically at run time
   },
 }
@@ -122,6 +125,24 @@ tests[:title_patterns_3] = {
   resource:      { 'ensure' => 'present' },
 }
 
+# Overridden to properly handle unsupported properties for this test file.
+def unsupported_properties(_tests, _id)
+  unprops = []
+
+  if operating_system == 'ios_xr'
+    # IOS-XR does not support these properties
+    unprops <<
+      :capability_negotiation <<
+      :dynamic_capability <<
+      :log_neighbor_changes <<
+      :low_memory_exempt <<
+      :maximum_peers <<
+      :remove_private_as
+  end
+
+  unprops
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
@@ -130,20 +151,28 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   test_harness_run(tests, :default)
 
+  # test removal of bgp neighbor instance
   tests[:default][:ensure] = :absent
   tests[:default].delete(:preclean)
   test_harness_run(tests, :default)
 
+  # now test the defaults under a non-default vrf
+  tests[:default][:ensure] = :present
+  tests[:default][:preclean] = 'cisco_bgp_neighbor'
+  test_harness_bgp_vrf(tests, :default, 'blue')
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   test_harness_run(tests, :non_def_uber)
+  test_harness_bgp_vrf(tests, :non_def_uber, 'blue')
+
   test_harness_run(tests, :non_def_local_remote_as)
+  test_harness_bgp_vrf(tests, :non_def_local_remote_as, 'blue')
 
   id = :non_def_update_source
-  tests[id][:manifest_props] = {
-    update_source: find_interface(tests, id)
-  }
+  tests[id][:manifest_props][:update_source] = find_interface(tests, id)
   test_harness_run(tests, id)
+  test_harness_bgp_vrf(tests, id, 'blue')
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")

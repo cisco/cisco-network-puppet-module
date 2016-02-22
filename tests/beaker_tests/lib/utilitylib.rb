@@ -579,12 +579,14 @@ def create_manifest_and_resource(tests, id, extra_config=nil)
   manifest = prop_hash_to_manifest(tests[id][:title_params])
 
   # Setup the ensure state, manifest string, and resource command state
+  state = ''
   if tests[id][:ensure] == :absent
     state = 'ensure => absent,'
     tests[id][:resource] = { 'ensure' => 'absent' }
   else
-    state = 'ensure => present,'
-    tests[id][:resource]['ensure'] = nil unless tests[id][:resource].nil?
+    state = 'ensure => present,' unless tests[:ensurable] == false
+    tests[id][:resource]['ensure'] = nil unless
+      tests[id][:resource].nil? || tests[:ensurable] == false
 
     manifest_props = tests[id][:manifest_props]
     if manifest_props
