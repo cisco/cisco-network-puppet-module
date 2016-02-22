@@ -66,8 +66,12 @@ test_name "TestCase :: #{tests[:resource_name]} - #{id}" do
   vrf = 'red'
   neighbor = '1.1.1.1'
 
-  modes = [:passive_only, :active_only, :both, :none] if os == 'ios_xr'
-  modes = [:passive_only, :none] unless os == 'ios_xr'
+  modes = [:passive_only]
+  if os == 'ios_xr'
+    modes << :active_only
+    modes << :both
+  end
+  modes << :none
 
   modes.each do |mode|
     tests[id] = {
