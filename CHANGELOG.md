@@ -14,11 +14,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 - Extended `cisco_interface` with the following attributes:
-  - `switchport_mode fabricpath` 
+  - `switchport_mode fabricpath`
 - Extended `cisco_vlan` with the following attributes:
-  - `mode` 
+  - `mode`
 - Extended `cisco_vxlan_vtep` with the following attributes:
   - `source_interface_hold_down_time`
+- Extended `cisco_bgp` with the following attributes:
+  - `nsr`
 
 ### Removed
 *
@@ -83,7 +85,7 @@ This version was never released.
   - `table_map`, `table_map_filter`
   - `suppress_inactive`
 - Extended `cisco_interface` with the following attributes:
-  - `fabric_forwarding_anycast_gateway` 
+  - `fabric_forwarding_anycast_gateway`
   - `ipv4_address_secondary`, `ipv4_netmask_length_secondary`
   - `ipv4_arp_timeout`
   - `ipv4_pim_sparse_mode`

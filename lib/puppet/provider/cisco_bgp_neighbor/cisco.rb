@@ -26,9 +26,9 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
-Puppet::Type.type(:cisco_bgp_neighbor).provide(:nxapi) do
+Puppet::Type.type(:cisco_bgp_neighbor).provide(:cisco) do
   confine feature: :cisco_node_utils
-  defaultfor operatingsystem: :nexus
+  defaultfor operatingsystem: [:ios_xr, :nexus]
 
   mk_resource_methods
 
@@ -37,6 +37,7 @@ Puppet::Type.type(:cisco_bgp_neighbor).provide(:nxapi) do
   # Exceptions:
   #   remote_as must process before local_as
   BGP_NBR_NON_BOOL_PROPS = [
+    :remote_as, # must be first for XR
     :description,
     :ebgp_multihop,
     :remote_as,
@@ -48,6 +49,7 @@ Puppet::Type.type(:cisco_bgp_neighbor).provide(:nxapi) do
     :remove_private_as,
     :timers_keepalive,
     :timers_holdtime,
+    :transport_passive_mode,
     :update_source,
   ]
   BGP_NBR_BOOL_PROPS = [
