@@ -35,10 +35,16 @@
 # -- Method to raise pass_test or fail_test exception based on testcase
 #    result.
 
-# Define various CONSTANTS used by beaker tests
+# Group of constants for use by the Beaker::TestCase instances.
+# Binary executable path for puppet on master and agent.
 PUPPET_BINPATH = '/opt/puppetlabs/bin/puppet '
+# Binary executable path for facter on master and agent.
 FACTER_BINPATH = '/opt/puppetlabs/bin/facter '
+# Location of the main Puppet manifest
 PUPPETMASTER_MANIFESTPATH = '/etc/puppetlabs/code/environments/production/manifests/site.pp'
+# Indicates that we want to ignore the value when matching (essentially
+# testing the presence of a key, regardless of value)
+IGNORE_VALUE = :ignore_value
 
 # These methods are defined outside of a module so that
 # they can access the Beaker DSL API's.
@@ -53,8 +59,19 @@ PUPPETMASTER_MANIFESTPATH = '/etc/puppetlabs/code/environments/production/manife
 def get_namespace_cmd(host, cmdstr, options)
   case host['platform']
   when /cisco/
-    agentvrf = options[:HOSTS][host.to_s.to_sym]['vrf']
-    return "sudo ip netns exec #{agentvrf} " + cmdstr
+    agentvrf = options[:HOSTS][host.to_s.to_sym][:vrf]
+    grpc_port = options[:HOSTS][host.to_s.to_sym][:grpc_port]
+    if grpc_port.nil?
+      # Nexus
+      return "sudo ip netns exec #{agentvrf} " + cmdstr
+    else
+      # IOS XR
+      # TODO: remove this workaround when we have grpc UDS support
+      user = options[:HOSTS][host.to_s.to_sym][:ssh][:user]
+      pass = options[:HOSTS][host.to_s.to_sym][:ssh][:password]
+      node_var = "NODE=\"127.0.0.1:#{grpc_port} #{user} #{pass}\""
+      return "sudo #{node_var} " + cmdstr
+    end
   else
     return cmdstr
   end
@@ -73,6 +90,11 @@ end
 def hash_to_patterns(hash)
   regexparr = []
   hash.each do |key, value|
+    if value == IGNORE_VALUE
+      regexparr << Regexp.new("#{key}\s+=>?")
+      next
+    end
+    value = value.to_s
     # Need to escape '[', ']', '"' characters for nested array of arrays.
     # Example:
     #   [["192.168.5.0/24", "nrtemap1"], ["192.168.6.0/32"]]
@@ -100,10 +122,11 @@ def search_pattern_in_output(output, patarr, inverse, testcase,\
   patarr = hash_to_patterns(patarr) if patarr.instance_of?(Hash)
   patarr.each do |pattern|
     inverse ? (match = (output !~ pattern)) : (match = (output =~ pattern))
+    match_kind = inverse ? 'Inverse ' : ''
     if match
-      logger.debug("TestStep :: Match #{pattern} :: PASS")
+      logger.debug("TestStep :: #{match_kind}Match #{pattern} :: PASS")
     else
-      testcase.fail_test("TestStep :: Match #{pattern} :: FAIL")
+      testcase.fail_test("TestStep :: #{match_kind}Match #{pattern} :: FAIL")
     end
   end
 end
@@ -228,13 +251,14 @@ def test_manifest(tests, id)
 end
 
 # Wrapper for 'puppet resource' command tests
-def test_resource(tests, id)
+def test_resource(tests, id, state=false)
   stepinfo = format_stepinfo(tests, id, 'RESOURCE')
   step "TestStep :: #{stepinfo}" do
     logger.debug("test_resource :: cmd:\n#{tests[id][:resource_cmd]}")
     on(tests[:agent], tests[id][:resource_cmd]) do
-      search_pattern_in_output(stdout, tests[id][:resource],
-                               false, self, logger)
+      search_pattern_in_output(
+        stdout, supported_property_hash(tests, id, tests[id][:resource]),
+        state, self, logger)
     end
     logger.info("#{stepinfo} :: PASS")
     tests[id].delete(:log_desc)
@@ -529,6 +553,7 @@ def puppet_resource_cmd_from_params(tests, id)
 end
 
 # Create manifest and resource command strings for a given test scenario.
+# Returns true if a valid/non-empty manifest was created, false otherwise.
 # Test hash keys used by this method:
 # [:resource_name] (REQUIRED) This is the resource name to use in the manifest
 #   the for puppet resource command strings
@@ -542,7 +567,7 @@ end
 #   parameter keys in the manifest. When these are used the puppet resource
 #   command string becomes a combination of the title pattern and these params.
 #
-def create_manifest_and_resource(tests, id)
+def create_manifest_and_resource(tests, id, extra_config=nil)
   fail 'tests[:resource_name] is not defined' unless tests[:resource_name]
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
 
@@ -554,35 +579,75 @@ def create_manifest_and_resource(tests, id)
   manifest = prop_hash_to_manifest(tests[id][:title_params])
 
   # Setup the ensure state, manifest string, and resource command state
+  state = ''
   if tests[id][:ensure] == :absent
     state = 'ensure => absent,'
     tests[id][:resource] = { 'ensure' => 'absent' }
   else
-    state = 'ensure => present,'
-    # Create the property string for the manifest
-    manifest += prop_hash_to_manifest(tests[id][:manifest_props]) if
-      tests[id][:manifest_props]
+    state = 'ensure => present,' unless tests[:ensurable] == false
+    tests[id][:resource]['ensure'] = nil unless
+      tests[id][:resource].nil? || tests[:ensurable] == false
+
+    manifest_props = tests[id][:manifest_props]
+    if manifest_props
+      manifest_props = supported_property_hash(tests, id, manifest_props)
+
+      # we shouldn't continue if all properties were removed
+      return false if
+        manifest_props.empty? && !tests[id][:manifest_props].empty?
+
+      # Create the property string for the manifest
+      manifest += prop_hash_to_manifest(manifest_props) if manifest_props
+    end
 
     # Automatically create a hash of expected states for puppet resource
     # -or- use a static hash
-    tests[id][:resource] = tests[id][:manifest_props] unless
-      tests[id][:resource]
+    tests[id][:resource] = manifest_props unless tests[id][:resource]
   end
 
   tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   \nnode default {
+  #{extra_config}
   #{tests[:resource_name]} { '#{tests[id][:title_pattern]}':
     #{state}\n#{manifest}
   }\n}\nEOF"
+
+  true
 end
 
-# test_harness_dependencies
+# dependency_manifest
 #
-# This method is used for additional testbed setup beyond the basics
-# used by most tests.
-def test_harness_dependencies(tests, id)
-  # BGP remote-as configuration
-  bgp_nbr_remote_as(agent, tests[id][:remote_as]) if tests[id][:remote_as]
+# This method returns a string representation of a manifest that contains
+# any dependencies needed for a particular test to run.
+# Override this in a particular test file as needed.
+def dependency_manifest(_tests, _id)
+  nil # indicates no manifest dependencies
+end
+
+# unsupported_properties
+#
+# Returns an array of properties that are not supported for
+# a particular operating_system or platform.
+# Override this in a particular test file as needed.
+def unsupported_properties(_tests, _id)
+  [] # defaults to no unsupported properties
+end
+
+# supported_property_hash
+#
+# This method creates a clone of the specified property
+# hash containing only the key/values of properties
+# that are supported for the specified test (based on
+# operating_system, platform, etc.).
+def supported_property_hash(tests, id, property_hash)
+  return nil if property_hash.nil?
+  copy = property_hash.clone
+  unsupported_properties(tests, id).each do |prop_symbol|
+    copy.delete(prop_symbol)
+    # because :resource hash currently uses strings for keys
+    copy.delete(prop_symbol.to_s)
+  end
+  copy
 end
 
 # test_harness_run
@@ -591,20 +656,20 @@ end
 # - Creates manifests
 # - Creates puppet resource title strings
 # - Cleans resource
-# - Sets up additional dependencies
-def test_harness_run(tests, id)
+def test_harness_run(tests, id, extra_config=dependency_manifest(tests, id))
   return unless platform_supports_test(tests, id)
 
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
 
   # Build the manifest for this test
-  create_manifest_and_resource(tests, id)
+  unless create_manifest_and_resource(tests, id, extra_config)
+    logger.error("\n#{tests[id][:desc]} :: #{id} :: SKIP")
+    logger.error('No supported properties remain for this test.')
+    return
+  end
 
   resource_absent_cleanup(agent, tests[id][:preclean]) if
     tests[id][:preclean]
-
-  # Check for additional pre-requisites
-  test_harness_dependencies(tests, id)
 
   test_harness_common(tests, id)
   tests[id][:ensure] = nil
@@ -860,6 +925,9 @@ def platform
   # - Nexus7000 C7010 (10 Slot) Chassis
   # - Nexus 6001 Chassis
   # - NX-OSv Chassis
+  #
+  # The following kind of string info is returned for IOS XR.
+  # - Cisco XRv9K Virtual Router
   case pi
   when /Nexus\s?3\d\d\d/
     @cisco_hardware = 'n3k'
@@ -873,6 +941,8 @@ def platform
     @cisco_hardware = 'n9k'
   when /NX-OSv/
     @cisco_hardware = 'n9k'
+  when /XRv9K/i
+    @cisco_hardware = 'xrv9k'
   else
     fail "Unrecognized platform type: #{pi}\n"
   end
@@ -881,15 +951,24 @@ def platform
 end
 
 # Helper to skip tests on unsupported platforms.
+# tests[:operating_system] - An OS regexp pattern for all tests (caller set)
 # tests[:platform] - A platform regexp pattern for all tests (caller set)
+# tests[id][:operating_system] - An OS regexp pattern for specific test (caller set)
 # tests[id][:platform] - A platform regexp pattern for specific test (caller set)
 # tests[:skipped] - A list of skipped tests (set by this method)
 def platform_supports_test(tests, id)
   # Prefer specific test key over the all tests key
+  os = tests[id][:operating_system] || tests[:operating_system]
   plat = tests[id][:platform] || tests[:platform]
-  return true if plat.nil? || platform.match(plat)
-  logger.error("\n#{tests[id][:desc]} :: #{id} :: SKIP")
-  logger.error("Platform type does not match testcase platform regexp: /#{plat}/")
+  if os && !operating_system.match(os)
+    logger.error("\n#{tests[id][:desc]} :: #{id} :: SKIP")
+    logger.error("Operating system does not match testcase os regexp: /#{os}/")
+  elsif plat && !platform.match(plat)
+    logger.error("\n#{tests[id][:desc]} :: #{id} :: SKIP")
+    logger.error("Platform type does not match testcase platform regexp: /#{plat}/")
+  else
+    return true
+  end
   tests[:skipped] ||= []
   tests[:skipped] << tests[id][:desc]
   false
@@ -920,7 +999,9 @@ def find_interface(tests, id=nil, skipcheck=true)
   case type
   when /ethernet/i, /dot1q/
     all = get_current_resource_instances(tests[:agent], 'cisco_interface')
-    intf = all.grep(%r{ethernet\d+/\d+})[0]
+    # Skip the first interface we find in case it's our access interface.
+    # TODO: check the interface IP address like we do in node_utils
+    intf = all.grep(%r{ethernet\d+/\d+})[1]
   end
 
   if skipcheck && intf.nil?
