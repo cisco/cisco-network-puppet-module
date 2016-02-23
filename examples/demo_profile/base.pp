@@ -14,6 +14,6 @@
 
 class ciscopuppet::demo_profile::base {
   include ciscopuppet::install
-  include ciscopuppet::demo_repo
-  include ciscopuppet::demo_cisco_patch_rpm
+  include ciscopuppet::cisco::demo_repo
+  include ciscopuppet::cisco::demo_cisco_patch_rpm
 }

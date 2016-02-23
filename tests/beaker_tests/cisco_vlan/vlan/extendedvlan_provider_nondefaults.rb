@@ -81,7 +81,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource nondefaults manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, VlanLib.create_extvlan_manifest_nondefaults)
+    on(master, VlanLib.create_extvlan_manifest_nondefaults(platform.match('n9k')))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
@@ -99,28 +99,14 @@ test_name "TestCase :: #{testheader}" do
       "resource cisco_vlan '2400'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
-                               { 'ensure'    => 'present',
-                                 'shutdown'  => 'false',
-                                 'state'     => 'suspend',
-                                 'vlan_name' => 'DESCR-VLAN2400' },
+                               { 'ensure'     => 'present',
+                                 'mapped_vni' => ('24000' if platform.match('n9k')),
+                                 'shutdown'   => 'false',
+                                 'vlan_name'  => 'DESCR-VLAN2400' }.reject { |_k, v| v.nil? },
                                false, self, logger)
     end
 
     logger.info("Check cisco_vlan resource presence on agent :: #{result}")
-  end
-
-  # @step [Step] Checks vlan instance on agent using switch show cli cmds.
-  step 'TestStep :: Check vlan instance presence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config vlan')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               [/vlan 2400/, /name DESCR-VLAN2400/],
-                               false, self, logger)
-    end
-
-    logger.info("Check vlan instance presence on agent :: #{result}")
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
@@ -146,26 +132,11 @@ test_name "TestCase :: #{testheader}" do
       search_pattern_in_output(stdout,
                                { 'ensure'    => 'present',
                                  'shutdown'  => 'false',
-                                 'state'     => 'suspend',
                                  'vlan_name' => 'DESCR-VLAN2400' },
                                true, self, logger)
     end
 
     logger.info("Check cisco_vlan resource absence on agent :: #{result}")
-  end
-
-  # @step [Step] Checks vlan instance on agent using switch show cli cmds.
-  step 'TestStep :: Check vlan instance absence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config vlan')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               [/vlan 2400/, /name DESCR-VLAN2400/],
-                               true, self, logger)
-    end
-
-    logger.info("Check vlan instance absence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.

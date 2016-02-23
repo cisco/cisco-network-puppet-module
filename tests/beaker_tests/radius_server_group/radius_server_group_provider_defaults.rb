@@ -62,12 +62,8 @@ testheader = 'radius_server_group Resource :: All Attributes Defaults'
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider' do
-    on(master, RadiusServerGroupLib.create_radius_server_group_manifest_absent)
-
-    # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
-    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
+    resource_absent_cleanup(agent, 'radius_server')
+    resource_absent_cleanup(agent, 'radius_server_group')
 
     cmd_str = get_vshell_cmd('conf t ; radius-server host 2.2.2.2')
     on(agent, cmd_str)

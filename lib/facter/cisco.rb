@@ -1,9 +1,7 @@
 require 'facter'
 
 Facter.add(:cisco) do
-  # TODO: add support for XR once structured output is supported
-  # confine operatingsystem: [:ios_xr, :nexus]
-  confine operatingsystem: :nexus
+  confine operatingsystem: [:ios_xr, :nexus]
   confine :cisco_node_utils do
     # Any version is OK so long as it is installed
     true

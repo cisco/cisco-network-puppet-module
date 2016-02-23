@@ -6,6 +6,32 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### New feature support
 #### Cisco Resources
+*
+
+#### NetDev Resources
+*
+
+### Added
+- Extended `cisco_bgp` with the following attributes:
+  - `nsr`
+
+### Removed
+*
+
+## [1.2.2] - 2016-02-14
+
+### Fixed
+- Fixed Cisco NetDev port\_channel provider to use the correct cisco\_node\_utils object.
+- Fixed beaker test setup and cleanup issues.
+- Fixed incomplete documentation references for the open agent container (OAC)
+
+## 1.2.1
+This version was never released.
+
+## [1.2.0] - 2016-02-12
+
+### New feature support
+#### Cisco Resources
 - `cisco_aaa_authentication_login` type and provider.
 - `cisco_aaa_authorization_login_cfg_svc` type and provider.
 - `cisco_aaa_authorization_login_exec_svc` type and provider.
@@ -13,17 +39,22 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `cisco_ace` type and provider
 - `cisco_acl` type and provider
 - `cisco_evpn_vni` type and provider.
+- `cisco_interface_channel_group` type and provider
 - `cisco_interface_portchannel` type and provider
 - `cisco_interface_service_vni` type and provider
+- `cisco_overlay_global` type and provider.
+- `cisco_pim` type and provider
+- `cisco_pim_rp_address` type and provider
+- `cisco_pim_grouplist` type and provider
 - `cisco_portchannel_global` type and provider
 - `cisco_vdc` type and provider.
 - `cisco_vni` type and provider.
 - `cisco_vrf_af` type and provider.
-- `cisco_vxlan_global` type and provider.
 - `cisco_vxlan_vtep` type and provider.
 
 #### NetDev Resources
 - `network_trunk` provider.
+- `port_channel` provider.
 - `search_domain` provider.
 - `snmp_notification` provider.
 
@@ -46,7 +77,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `table_map`, `table_map_filter`
   - `suppress_inactive`
 - Extended `cisco_interface` with the following attributes:
-  - `channel_group`
+  - `fabric_forwarding_anycast_gateway` 
   - `ipv4_address_secondary`, `ipv4_netmask_length_secondary`
   - `ipv4_arp_timeout`
   - `ipv4_pim_sparse_mode`
@@ -145,6 +176,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Please note: 0.9.0 is an EFT pre-release for a limited audience with access to NX-OS 7.0(3)I2(1). Additional code changes may occur in 0.9.x prior to the final 1.0.0 release.
 
 [unreleased]: https://github.com/cisco/cisco-network-puppet-module/compare/master...develop
+[1.2.2]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.2.0...v1.2.2
+[1.2.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.0.2...v1.1.0
 [1.0.2]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.0.0...v1.0.1
