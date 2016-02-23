@@ -33,6 +33,7 @@ Please see [Learning Resources](#learning-resources) for additional references.
    * [Resource Type Catalog (by Technology)](#resource-by-tech)
    * [Resource Type Catalog (by Name)](#resource-by-name)
 1. [Limitations - OS compatibility, etc.](#limitations)
+1. [Cisco OS Differences](#cisco-os-differences)
 1. [Learning Resources](#learning-resources)
 
 
@@ -876,7 +877,7 @@ Install a backup path into the forwarding table and provide prefix 'independent 
 Enables the receive capability of additional paths for all of the neighbors under this address family for which the capability has not been disabled.  Valid values are true, false, or 'default'
 
 ##### `additional_paths_selection`
-Configures the capability of selecting additional paths for a prefix. Valid values are a string defining the name of the route-map.
+Configures the capability of selecting additional paths for a prefix. Valid values are a string defining the name of the [route-map](#cisco-os-differences).
 
 ##### `additional_paths_send`
 Enables the send capability of additional paths for all of the neighbors under this address family for which the capability has not been disabled. Valid values are true, false, or 'default'
@@ -903,7 +904,7 @@ Specify max suppress time for route-flap dampening stable route. Valid values ar
 Specify route reuse time for route-flap dampening. Valid values are Integer, keyword 'default'. On IOS XR, this property is only supported in the global BGP context.
 
 ##### `dampening_routemap`
-Specify route-map for route-flap dampening. Valid values are a string defining the name of the route-map. On IOS XR, this property is only supported in the global BGP context.
+Specify [route-map](#cisco-os-differences) for route-flap dampening. Valid values are a string defining the name of the route-map. On IOS XR, this property is only supported in the global BGP context.
 
 ##### `dampening_suppress_time`
 Specify route suppress time for route-flap dampening. Valid values are Integer, keyword 'default'. On IOS XR, this property is only supported in the global BGP context.
@@ -946,7 +947,7 @@ Configures the maximum number of equal-cost paths for load sharing. Valid value 
 Configures the maximum number of ibgp equal-cost paths for load sharing. Valid value is an integer in the range 1-64. Default value is 1.
 
 ##### `networks`
-Networks to configure. Valid value is a list of network prefixes to advertise.  The list must be in the form of an array.  Each entry in the array must include a prefix address and an optional route-map.
+Networks to configure. Valid value is a list of network prefixes to advertise.  The list must be in the form of an array.  Each entry in the array must include a prefix address and an optional [route-map](#cisco-os-differences).
 
 Example: IPv4 Networks Array
 
@@ -970,10 +971,10 @@ Example: IPv6 Networks Array
 ```
 
 ##### `next_hop_route_map`
-Configure a route map for valid nexthops. Valid values are a string defining the name of the route-map. On IOS XR, this property is only supported in the global BGP context.
+Configure a [route-map](#cisco-os-differences) for valid nexthops. Valid values are a string defining the name of the route-map. On IOS XR, this property is only supported in the global BGP context.
 
 ##### `redistribute`
-A list of redistribute directives. Multiple redistribute entries are allowed. The list must be in the form of a nested array: the first entry of each array defines the source-protocol to redistribute from; the second entry defines a route-map/route-policy name. A route-map/route-policy is highly advised but may be optional on some platforms, in which case it may be omitted from the array list.
+A list of redistribute directives. Multiple redistribute entries are allowed. The list must be in the form of a nested array: the first entry of each array defines the source-protocol to redistribute from; the second entry defines a [route-map](#cisco-os-differences) name. A route-map is highly advised but may be optional on some platforms, in which case it may be omitted from the array list.
 
 Example: Platform requiring route-maps
 
@@ -1005,7 +1006,7 @@ Advertises only active routes to peers. Valid values are true, false, or 'defaul
 Apply table-map to filter routes downloaded into URIB. Valid values are a string.
 
 ##### `table_map_filter`
-Filters routes rejected by the route map and does not download them to the RIB. Valid values are true, false, or 'default'. This property is not supported on IOS XR.
+Filters routes rejected by the route-map and does not download them to the RIB. Valid values are true, false, or 'default'. This property is not supported on IOS XR.
 
 --
 ### Type: cisco_bgp_neighbor
@@ -1190,7 +1191,7 @@ Optional max-occurrences value for `allowas_in`. Valid values are an integer val
 `default-originate`. Valid values are True, False, or 'default'. Related: `default_originate_route_map`.
 
 ##### `default_originate_route_map`
-Optional route-map for the `default_originate` property. Can be used independently or in conjunction with `default_originate`. Valid values are a string defining a route-map name, or 'default'.
+Optional [route-map](#cisco-os-differences) for the `default_originate` property. Can be used independently or in conjunction with `default_originate`. Valid values are a string defining a route-map name, or 'default'.
 
 ##### `filter_list_in`
 Valid values are a string defining a filter-list name, or 'default'. This property is not supported on IOS XR.
@@ -1223,10 +1224,10 @@ Valid values are a string defining a prefix-list name, or 'default'. This proper
 Valid values are a string defining a prefix-list name, or 'default'. This property is not supported on IOS XR.
 
 ##### `route_map_in`
-Valid values are a string defining a route-map name, or 'default'.
+Valid values are a string defining a [route-map](#cisco-os-differences) name, or 'default'.
 
 ##### `route_map_out`
-Valid values are a string defining a route-map name, or 'default'.
+Valid values are a string defining a [route-map](#cisco-os-differences) name, or 'default'.
 
 ##### `route_reflector_client`
 `route-reflector-client`. Valid values are True, False, or 'default'.
@@ -3219,6 +3220,14 @@ Minimum Requirements:
   * Open source Puppet version 4.3.2+ or Puppet Enterprise 2015.3.2+
   * Cisco IOS XRv 9000, OS Version TODO, Environments: TODO
   * Cisco Network Convergence System (NCS) 55xx, OS Version TODO, Environments: TODO
+
+## Cisco OS Differences
+
+There are some differences between NX-OS and IOS-XR as described below:
+
+* Route-Map vs Route-Policy
+  * Nexus uses route-maps in some commands, this is a string reference to a route-map defined elsewhere in the configuration.
+  * XR uses route-policies instead.  Similar to Nexus, this is a string reference to a route-policy defined elsewhere.  Under XR, a policy must be defined before it is referenced.
 
 ## Learning Resources
 
