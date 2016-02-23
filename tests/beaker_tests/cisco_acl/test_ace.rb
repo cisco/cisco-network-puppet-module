@@ -147,6 +147,7 @@ tests['ipv4_seq_30'] = {
     packet_length => 'range 80 1000',
     time_range    => 'my_range',
     redirect      => 'Ethernet1/1,Ethernet1/2,port-channel1',
+    # TBD. redirect unsup on N7k
   ",
   resource:       {
     'action'        => 'permit',
