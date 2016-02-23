@@ -587,15 +587,238 @@ Manages configuration of an Access Control List (ACL) Access Control Entry (ACE)
 | OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
 | Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
 
+| Example Usage
+|:--
+```puppet
+cisco_ace { 'ipv4 my_acl 42':
+  ensure              => 'present',
+  remark              => 'East Branch',
+  action              => 'permit',
+  proto               => 'tcp',
+  src_addr            => '10.0.0.0/8',
+  src_port            => 'eq 40',
+  dst_addr            => 'any',
+  dst_port            => 'neq 80',
+
+  dscp                => 'af11',
+  established         => 'true',
+  http_method         => 'post',
+  log                 => 'true',
+  packet_length       => 'range 512 1024'
+  precedence          => 'flash',
+  redirect            => 'Ethernet1/2,Port-Channel42',
+  tcp_flags           => 'ack psh',
+  tcp_option_length   => '36',
+  time_range          => 'my_time_range',
+  ttl                 => '128',
+```
+
 #### Parameters
 
-##### `ensure`
-Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
+| Example Parameter Usage
+|:--
+| `cisco_ace { '<afi> <acl_name> <seqno>':`
+| `cisco_ace { 'ipv4 my_acl 42':`
 
 ##### `afi`
 Address Family Identifier (AFI). Required. Valid values are ipv4 and ipv6.
 
-*TBD: Add property definitions*
+##### `acl_name`
+Access Control List (ACL) name. Required. Valid values are type String.
+
+##### `seqno`
+Access Control Entry (ACE) Sequence Number. Required. Valid values are type Integer.
+
+##### `ensure`
+Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
+
+#### Properties
+
+##### `action`
+The action to perform with this ACE. Valid values are keywords `permit` or `deny`.
+
+| Example
+|:--
+| `action => 'permit'`
+
+##### `dscp`
+Allows matching by Differentiated Services Code Point (DSCP) value. Valid values are type String, which must be one of the following forms:
+
+* A numeric dscp value
+* One of the dscp keyword names
+  * `af11` `af12` `af13` `af21` `af22` `af23` `af31` `af32` `af33` `af41` `af42` `af43`
+  * `cs1` `cs2` `cs3` `cs4` `cs5` `cs6` `cs7`
+  * `ef`
+  * `default`
+
+| Example
+|:--
+| `dscp => 'af11'`
+
+##### `dst_addr`
+The Destination Address to match against. This property shares the same syntax as `src_addr`. Valid values are type String, which must be one of the following forms:
+
+* An IPv4/IPv6 address or subnet
+* The keyword `host` and a host address
+* The keyword `addrgroup` and its object group name
+* The keyword `any`
+
+| Examples
+|:--
+| `dst_addr => '10.0.0.0/8'`
+| `dst_addr => 'host 10.0.0.1'`
+| `dst_addr => '128:1::/64'`
+| `dst_addr => 'addrgroup my_addrgroup'`
+| `dst_addr => 'any'`
+
+See [`src_addr`](#src_addr).
+
+##### `dst_port`
+The TCP or UDP Destination Port to match against. This property shares the same syntax as `src_port`. Valid values are type String, which must be one of the following forms:
+
+* A comparison operator (`eq`, `neq`, `lt`, `gt`) and value
+* The keyword `range` and a range value
+* The keyword `portgroup` and its object group name
+
+| Examples
+|:--
+| `dst_port => 'neq 40'`
+| `dst_port => 'range 68 69'`
+| `dst_port => 'portgroup my_portgroup'`
+
+See [`src_port`](#src_port).
+
+##### `established`
+Allows matching against TCP Established connections. Valid values are true or false.
+
+| Example
+|:--
+| `established => true`
+
+##### `http_method`
+Allows matching based on http-method. Valid values are String, which must be one of the following forms:
+
+* A numeric http-method value
+* One of the http-method keyword names
+  * `connect` `delete` `get` `head` `post` `put` `trace`
+
+| Examples
+|:--
+| `http_method => 'post'`
+
+##### `log`
+Enables logging for the ACE. Valid values are true or false.
+
+| Examples
+|:--
+| `'log' => true`
+
+##### `packet_length`
+Allows matching based on Layer 3 Packet Length. Valid values are type String, which must be one of the following forms:
+
+* A comparison operator (`eq`, `neq`, `lt`, `gt`) and value
+* The keyword `range` and range values
+
+| Examples
+|:--
+| `packet_length => 'gt 512'`
+| `packet_length => 'range 512 1024'`
+
+##### `precedence`
+Allows matching by precedence value. Valid values are String, which must be one of the following forms:
+
+* A numeric precedence value
+* One of the precedence keyword names
+  * `critical` `flash` `flash-override` `immediate` `internet` `network` `priority` `routine`
+
+| Example
+|:--
+| `precedence => 'flash'`
+
+##### `proto`
+The protocol to match against. Valid values are String or Integer. Examples are: `tcp`, `udp`, `ip`, `6`.
+
+| Example
+|:--
+| `proto => 'tcp'`
+
+##### `redirect`
+Allows for redirecting traffic to one or more interfaces. This property is only useful with VLAN ACL (VACL) applications. Valid values are a String containing a list of interface names.
+
+| Examples
+|:--
+| `redirect => 'Ethernet1/1'`
+| `redirect => 'Ethernet1/2,Port-Channel42'`
+
+##### `remark`
+This is a Remark description for the ACL or ACE. Valid values are string.
+
+| Example
+|:--
+| `remark => 'East Branch'`
+
+##### `src_addr`
+The Source Address to match against. Valid values are type String, which must be one of the following forms:
+
+* An IPv4/IPv6 address or subnet
+* The keyword `host` and a host address
+* The keyword `addrgroup` and its object group name
+* The keyword `any`
+
+| Examples
+|:--
+| `src_addr => '10.0.0.0/8'`
+| `src_addr => 'host 10.0.0.1'`
+| `src_addr => '128:1::/64'`
+| `src_addr => 'addrgroup my_addrgroup'`
+| `src_addr => 'any'`
+
+See [`dst_addr`](#dst_addr).
+
+##### `src_port`
+The TCP or UDP Source Port to match against. Valid values are type String, which must be one of the following forms:
+
+* A comparison operator (`eq`, `neq`, `lt`, `gt`) and value
+* The keyword `range` and range values
+* The keyword `portgroup` and its object group name
+
+| Examples
+|:--
+| `src_port => 'neq 40'`
+| `src_port => 'range 68 69'`
+| `src_port => 'portgroup my_portgroup'`
+
+See [`dst_port`](#dst_port).
+
+##### `tcp_flags`
+The TCP flags or control bits. Valid values are a String of some or all of flags: `urg`, `ack`, `psh`, `rst`, `syn`, or `fin`.
+
+| Example
+|:--
+| `tcp_flags => 'ack psh'`
+
+##### `tcp_option_length`
+Allows matching on TCP options length. Valid values are type Integer or String, which must be a multiple of 4 in the range 0-40.
+
+| Examples
+|:--
+| `tcp_option_length => '0'`
+| `tcp_option_length => '36'`
+
+##### `time_range`
+Allows matching by Time Range. Valid values are String, which references a `time-range` name.
+
+| Example
+|:--
+| `time_range => 'my_time_range'`
+
+
+##### `ttl`
+Allows matching based on Time-To-Live (TTL) value. Valid values are type Integer or String.
+
+| Example
+|:--
+| `ttl => '128'`
 
 --
 ### Type: cisco_bgp

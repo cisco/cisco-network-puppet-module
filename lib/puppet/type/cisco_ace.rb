@@ -108,16 +108,16 @@ Puppet::Type.newtype(:cisco_ace) do
   end
 
   newparam(:afi, namevar: true) do
-    desc 'The Address-Family Identifier (ipv4|ipv6).'
+    desc 'The Address-Family Identifier (ipv4|ipv6)'
     newvalues(:ipv4, :ipv6)
   end
 
   newparam(:acl_name, namevar: true) do
-    desc 'Access Control List name'
+    desc 'The Access Control List (ACL) name'
   end
 
   newparam(:seqno, namevar: true) do
-    desc 'Sequence number of the ACE'
+    desc 'The Access Control Entry (ACE) Sequence number'
   end
 
   ##############
@@ -125,170 +125,181 @@ Puppet::Type.newtype(:cisco_ace) do
   ##############
 
   newproperty(:action) do
-    desc 'Ace Action Identifier (permit|deny)'
-
+    msg = 'The Action Identifier. Valid values are keywords `permit`, `deny`.'
+    desc msg
     validate do |action|
-      fail 'action should be permit or deny ' unless
-        /permit|deny/.match(action.downcase)
+      fail msg unless /permit|deny/.match(action.downcase)
     end
 
     munge(&:downcase)
   end
 
   newproperty(:proto) do
-    desc 'Protocol Identifier for ACE (tcp|udp|ip etc)'
-
+    msg = 'The protocol to match against. Valid values are String or Integer.'\
+           'Examples are: `tcp`, `udp`, `ip`, `6`.'
+    desc msg
     validate do |proto|
-      fail 'proto must be type String or Integer e.g tcp or 6' unless
-        /\S+|\d+/.match(proto)
+      fail msg unless /\S+|\d+/.match(proto)
     end
   end
 
   newproperty(:src_addr) do
-    desc 'Source address to match against. Valid values are an IP'\
-         ' address/prefix_len (10.0.0.0/8), '\
-         'an address group (addrgroup my_group), or the keyword any'
-
+    msg = 'The Source Address to match against. Valid values are type '\
+          'String and must be one of the following forms: '\
+          'An IPv4/IPv6 address or subnet; '\
+          'keyword `host` and a host address; '\
+          'keyword `addrgroup` and its object group name; or '\
+          'keyword `any`.'
+    desc msg
     validate do |src_addr|
-      fail 'src_addr must be ip address/prefix_len (10.0.0.0/8), '\
-           "address group (addrgroup foo), or keyword 'any'" unless
+      fail msg unless
         %r{any|host \S+|\S+\/\d+|\S+ [:\.0-9a-fA-F]+|addrgroup \S+}.match(src_addr)
     end
   end
 
   newproperty(:src_port) do
-    desc 'source port to match src address port number. valid'\
-         ' port configuration should be eq 40 or range 30 50 etc.'
-
+    msg = 'The TCP or UDP Source Port to match against. Valid values are type '\
+          'String and must be one of the following forms: '\
+          'A comparison operator (`eq`, `neq`, `lt`, `gt`) and value; '\
+          'keyword `range` and range values; or '\
+          'keyword `portgroup` and its object group name'
+    desc msg
     validate do |src_port|
-      fail 'src port should be eq , neq, lt, gt or '\
-           "range or portgroup object. src_port: #{src_port} " unless
+      fail msg unless
         /eq \S+|neq \S+|lt \S+|gt \S+|range \S+ \S+|portgroup \S+/.match(src_port)
     end
   end
 
   newproperty(:dst_addr) do
-    desc 'Destination address to match against. Valid values are an IP'\
-         ' address/prefix_len (10.0.0.0/8), '\
-         "an address group (addrgroup foo), or the keyword 'any'"
-
+    msg = 'The Destination Address to match against. Valid values are '\
+          'type String and must be one of the following forms: '\
+          'An IPv4/IPv6 address or subnet; '\
+          'keyword `host` and a host address; '\
+          'keyword `addrgroup` and its object group name; or '\
+          'keyword `any`.'
+    desc msg
     validate do |dst_addr|
-      fail 'src_addr must be ip address/prefix_len (10.0.0.0/8), '\
-           "address group (addrgroup foo), or keyword 'any'" unless
+      fail msg unless
         %r{any|host \S+|\S+\/\d+|\S+ [:\.0-9a-fA-F]+|addrgroup \S+}.match(dst_addr)
     end
   end
 
   newproperty(:dst_port) do
-    desc 'Destination port to match src address port number. Valid'\
-         ' port configuration should be eq 40 or range 30 50 etc.'
-
+    msg = 'The TCP or UDP Destination Port to match against. Valid values are '\
+          'type String and must be one of the following forms: '\
+          'A comparison operator (`eq`, `neq`, `lt`, `gt`) and value; '\
+          'keyword `range` and range values; or '\
+          'keyword `portgroup` and its object group name.'
+    desc msg
     validate do |dst_port|
-      fail 'src port should be eq, neq, lt, gt or '\
-           "range or portgroup object dst_port: #{dst_port}" unless
+      fail msg unless
         /eq \S+|neq \S+|lt \S+|gt \S+|range \S+ \S+|portgroup \S+/.match(dst_port)
     end
   end
 
   newproperty(:remark) do
-    desc 'A remark description for the ACL or ACE. Valid values are string'
+    desc 'This is a Remark description for the ACL or ACE. '\
+         'Valid values are string.'
   end
 
   newproperty(:tcp_flags) do
-    desc 'TCP flags or control bits. Valid value is a whitespace separated'\
-         ' list of the following flags: urg, ack, psh, rst, syn, fin.'
-
+    msg = 'The TCP flags or control bits. Valid values are a String of some '\
+          'or all of flags: `urg`, `ack`, `psh`, `rst`, `syn`, or `fin`.'
+    desc msg
     validate do |tcp_flags|
-      fail 'tcp_flags should be a whitespace separated list of zero or more'\
-           ' of the following flags: urg, ack, psh, rst, syn, fin: #tcp_flags}' \
-           unless /(ack *|fin *|urg *|syn *|psh *|rst *)*/.match(tcp_flags) \
-           || tcp_flags.nil?
+      fail msg unless
+        /(ack *|fin *|urg *|syn *|psh *|rst *)*/.match(tcp_flags) ||
+        tcp_flags.nil?
     end
   end
 
   newproperty(:established) do
-    desc 'Match established connections'
+    desc 'Allows matching against TCP Established connections. '\
+         'Valid values are true or false.'
     newvalues(:true, :false)
   end
 
   newproperty(:precedence) do
-    desc 'Match packets with given precedence value. Valid values are '\
-         '[0-7]|critical|flash|flash-override|immediate|internet|network|'\
-         'priority|routine'
-
+    msg = 'Allows matching by precedence value. Valid values are String, '\
+          'which must be one of the following forms: A numeric precedence '\
+          'value; or one of the precedence keyword names: (`critical` `flash` '\
+          '`flash-override` `immediate` `internet` `network` `priority` '\
+          '`routine`)'
+    desc msg
     validate do |precedence|
-      fail 'precedence must be one of [0-7]|critical|flash|flash-override|'\
-           'immediate|internet|network|priority|routine "#precedence' unless \
-           /^([0-7]|critical|flash|flash-override|immediate|internet|network|priority|routine)$/.match(precedence)
+      fail msg unless
+        /^([0-7]|critical|flash|flash-override|immediate|internet|network|priority|routine)$/.match(precedence)
     end
   end
 
   newproperty(:dscp) do
-    desc 'Match packets with given dscp value. Valid values are '\
-         '<0-63>|af11|af12|af13|af21|af22|af23|af31|af32|af33|af41|af42|af43|'\
-         'cs1|cs2|cs3|cs4|cs5|cs6|cs7|default|ef'
-
+    msg = 'Allows matching by Differentiated Services Code Point (DSCP) '\
+          'value. Valid values are String, which must be one of the '\
+          'following forms: A numeric dscp value; or one of the dscp '\
+          'keyword names.'
+    desc msg
     validate do |dscp|
-      fail 'dscp must be one of <0-63>|af11|af12|af13|af21|af22|af23|af31|'\
-           'af32|af33|af41|af42|af43|cs1|cs2|cs3|cs4|cs5|cs6|cs7|default|ef'\
-           ' : #dscp' unless \
-           /^([0-9]|[1-5][0-9]|6[0-3]|af[1-4][1-3]|cs[1-7]|default|ef)$/.match(dscp)
+      fail msg unless
+        /^([0-9]|[1-5][0-9]|6[0-3]|af[1-4][1-3]|cs[1-7]|default|ef)$/.match(dscp)
     end
   end
 
   newproperty(:time_range) do
-    desc 'Match on time range. Valid values are string'
+    desc 'Allows matching by Time Range. Valid values are String, which '\
+         'references a `time-range` name.'
   end
 
   newproperty(:packet_length) do
-    desc 'Match packets based on layer 3 packet length. '\
-         'Packet Length should be eq 40 or range 100 250 etc. '\
-         'Min. Packet Length is 20 and Max. is 9210'
-
+    msg = 'Allows matching based on Layer 3 Packet Length. Valid values are '\
+          'type String, which must be one of the following forms: '\
+          'A comparison operator (`eq`, `neq`, `lt`, `gt`) and value; or the '\
+          'keyword `range` and range values.'
+    desc msg
     validate do |packet_length|
-      fail 'packet length should be eq, neq, lt, gt or '\
-           'range: #{packet_length}' unless
+      fail msg unless
         /eq \S+|neq \S+|lt \S+|gt \S+|range \S+ \S+/.match(packet_length)
     end
   end
 
   newproperty(:ttl) do
-    desc 'Match packets with given TTL value. Valid values are bw 0 and 255'
-
+    msg = 'Allows matching based on Time-To-Live (TTL) value. Valid values '\
+          'are type Integer or String.'
+    desc msg
     validate do |ttl|
-      fail 'TTL must be between 0 and 255: #ttl' \
-           unless ttl.to_f.between?(0, 255)
+      fail msg unless ttl.to_f.between?(0, 255)
     end
   end
 
   newproperty(:http_method) do
-    desc 'Match packets based on http-method. Valid values are '\
-         '[1-7]|connect|delete|get|head|post|put|trace'
-
+    msg = 'Allows matching based on http-method. Valid values are '\
+          'String, which must be one of the following forms: '\
+          'A numeric http-method value; or one of the http-method keyword '\
+          'names: (`connect` `delete` `get` `head` `post` `put` `trace`)'
+    desc msg
     validate do |http_method|
-      fail 'http_method must be one of [1-7]|connect|delete|get|head|post|'\
-           'put|trace :#http_method' unless \
-           /^([1-7]|connect|delete|get|head|post|put|trace)$/.match(http_method)
+      fail msg unless
+        /^([1-7]|connect|delete|get|head|post|put|trace)$/.match(http_method)
     end
   end
 
   newproperty(:tcp_option_length) do
-    desc 'Match on TCP options size. Valid values are multiples of 4 between 0 and 40'
-
+    msg = 'Allows matching on TCP options length. Valid values are type '\
+          'Integer or String, which must be a multiple of 4 in the range 0-40.'
+    desc msg
     validate do |tcp_option_length|
-      fail 'tcp_option_length should be a multiple of 4 between 0 and 40'\
-           ' :#tcp_option_length' \
-           unless /^(0|4|8|12|16|20|24|28|32|36|40)$/.match(tcp_option_length)
+      fail msg unless
+        /^(0|4|8|12|16|20|24|28|32|36|40)$/.match(tcp_option_length)
     end
   end
 
   newproperty(:redirect) do
-    desc 'Redirect to interface(s). Syntax example: redirect Ethernet1/1,'\
-         'Ethernet1/2,port-channel1'
+    desc 'Allows for redirecting traffic to one or more interfaces. This '\
+         'property is only useful with VLAN ACL (VACL) applications. Valid '\
+         'values are a String containing a list of interface names.'
   end
 
   newproperty(:log) do
-    desc 'Log matches against this entry'
+    desc 'Enables logging for the ACE. Valid values are true or false.'
     newvalues(:true, :false)
   end
 end
