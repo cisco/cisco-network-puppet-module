@@ -16,15 +16,30 @@
 
 class ciscopuppet::cisco::demo_itd {
 
+  $probe_control = platform_get() ? {
+    'n7k'  => true,
+    default => undef
+  }
+
+  $probe_dns_host = platform_get() ? {
+    'n7k'  => '8.8.8.8',
+    default => undef
+  }
+
+  $probe_port = platform_get() ? {
+    'n7k'  => 6666,
+    default => undef
+  }
+
   cisco_itd_device_group {'mygroup':
     ensure           => 'present',
-    probe_control    => true,
-    probe_dns_host   => '8.8.8.8',
+    probe_control    => $probe_control,
+    probe_dns_host   => $probe_dns_host,
     probe_frequency  => 600,
-    probe_port       => 6666,
+    probe_port       => $probe_port,
     probe_retry_down => 4,
     probe_retry_up   => 4,
     probe_timeout    => 1200,
     probe_type       => 'icmp',
-  }
+  $fabricpath.yaml
 }
