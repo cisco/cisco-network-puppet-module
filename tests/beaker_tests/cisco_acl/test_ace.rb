@@ -13,307 +13,136 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-# TestCase Name:
-# -------------
-# test_ace.rb
-#
-# TestCase Prerequisites:
-# -----------------------
-# This is a Puppet ACE resource testcase for Puppet Agent on Nexus devices.
-# The test case assumes the following prerequisites are already satisfied:
-#   - Host configuration file contains agent and master information.
-#   - SSH is enabled on the N9K Agent.
-#   - Puppet master/server is started.
-#   - Puppet agent certificate has been signed on the Puppet master/server.
-#
-# TestCase:
-# ---------
-# This ACE resource test verifies cisco_ace title patterns.
-#
-# The following exit_codes are validated for Puppet, Vegas shell and
-# Bash shell commands.
-#
-# Vegas and Bash Shell Commands:
-# 0   - successful command execution
-# > 0 - failed command execution.
-#
-# Puppet Commands:
-# 0 - no changes have occurred
-# 1 - errors have occurred,
-# 2 - changes have occurred
-# 4 - failures have occurred and
-# 6 - changes and failures have occurred.
-#
-# NOTE: 0 is the default exit_code checked in Beaker::DSL::Helpers::on() method.
-#
-# The test cases use RegExp pattern matching on stdout or output IO
-# instance attributes to verify resource properties.
-#
-###############################################################################
-
-# Require UtilityLib.rb paths.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
-# -----------------------------
-# Common settings and variables
-# -----------------------------
-testheader = 'Resource cisco_ace'
-
-# 'tests' hash
-# Top-level keys set by caller:
-# tests[:master] - the master object
-# tests[:agent] - the agent object
-#
+# Test hash top-level keys
 tests = {
-  master: master,
-  agent:  agent,
+  master:        master,
+  agent:         agent,
+  resource_name: 'cisco_ace',
 }
 
-# tests[id] keys set by caller and used by test_harness_common:
-#
-# tests[id] keys set by caller:
-# tests[id][:desc] - a string to use with logs & debugs
-# tests[id][:manifest] - the complete manifest, as used by test_harness_common
-# tests[id][:resource] - a hash of expected states, used by test_resource
-# tests[id][:resource_cmd] - 'puppet resource' command to use with test_resource
-# tests[id][:ensure] - (Optional) set to :present or :absent before calling
-# tests[id][:code] - (Optional) override the default exit code in some tests.
-#
-# These keys are local use only and not used by test_harness_common:
-#
-# tests[id][:manifest_props] - This is essentially a master list of properties
-#   that permits re-use of the properties for both :present and :absent testing
-#   without destroying the list
-# tests[id][:resource_props] - This is essentially a master hash of properties
-#   that permits re-use of the properties for both :present and :absent testing
-#   without destroying the hash
-# tests[id][:title_pattern] - (Optional) defines the manifest title.
-#   Can be used with :af for mixed title/af testing. If mixing, :af values will
-#   be merged with title values and override any duplicates. If omitted,
-#   :title_pattern will be set to 'id'.
-#
-
-tests['ipv4_seq_10'] = {
-  desc:           '1.1 ipv4 beaker_1 seq 10',
-  title_pattern:  'ipv4 beaker_1 10',
-  manifest_props: "
-    action          => 'permit',
-    proto           => 'tcp',
-    src_addr        => '1.2.3.4 2.3.4.5',
-    src_port        => 'eq 40',
-    dst_addr        => '9.9.0.4/32',
-    dst_port        => 'range 32 56',
-  ",
-  resource:       {
-    'action'   => 'permit',
-    'proto'    => 'tcp',
-    'src_addr' => '1.2.3.4 2.3.4.5',
-    'src_port' => 'eq 40',
-    'dst_addr' => '9.9.0.4/32',
-    'dst_port' => 'range 32 56',
+# Test hash test cases
+tests[:seq_5] = {
+  preclean:       'cisco_acl',
+  title_pattern:  'ipv4 beaker 5',
+  manifest_props: {
+    # 'remark' is a standalone property
+    remark: 'seq_5 remark'
   },
 }
 
-tests['ipv4_seq_20'] = {
-  desc:           '1.2 ipv4 beaker_1 seq 20',
-  title_pattern:  'ipv4 beaker_1 20',
-  manifest_props: "
-    action          => 'deny',
-    proto           => 'tcp',
-    src_addr        => 'any',
-    dst_addr        => 'any',
-  ",
-  resource:       {
-    'action'   => 'deny',
-    'proto'    => 'tcp',
-    'src_addr' => 'any',
-    'dst_addr' => 'any',
+tests[:seq_10_v4] = {
+  title_pattern:  'ipv4 beaker 10',
+  manifest_props: {
+    action:   'permit',
+    proto:    'tcp',
+    src_addr: '1.2.3.4 2.3.4.5',
+    dst_addr: '9.9.0.4/32',
   },
 }
 
-tests['ipv4_seq_30'] = {
-  desc:           '1.3 ipv4 beaker_1 seq 30',
-  title_pattern:  'ipv4 beaker_1 30',
-  manifest_props: "
-    action        => 'permit',
-    proto         => 'tcp',
-    src_addr      => '1.2.3.4 2.3.4.5',
-    src_port      => 'eq 40',
-    dst_addr      => '8.9.0.4/32',
-    dst_port      => 'range 32 56',
-    tcp_flags     => 'ack syn fin',
-    precedence    => 'flash',
-    established   => true,
-    packet_length => 'range 80 1000',
-    time_range    => 'my_range',
-    redirect      => 'Ethernet1/1,Ethernet1/2,port-channel1',
-  ",
-  resource:       {
-    'action'        => 'permit',
-    'proto'         => 'tcp',
-    'src_addr'      => '1.2.3.4 2.3.4.5',
-    'src_port'      => 'eq 40',
-    'dst_addr'      => '8.9.0.4/32',
-    'dst_port'      => 'range 32 56',
-    'tcp_flags'     => 'ack syn fin',
-    'precedence'    => 'flash',
-    'established'   => 'true',
-    'packet_length' => 'range 80 1000',
-    'time_range'    => 'my_range',
-    'redirect'      => 'Ethernet1/1,Ethernet1/2,port-channel1',
+tests[:seq_10_v6] = {
+  desc:           'IPv6 Seq 10',
+  title_pattern:  'ipv6 beaker6 10',
+  platform:       'n(3|7|9)k', # TBD: N5k addrs display as 0001:0001::0001/128
+  manifest_props: {
+    action:   'permit',
+    proto:    'tcp',
+    src_addr: '1:1::1/128',
+    dst_addr: '1:1::2/128',
   },
 }
 
-tests['ipv6_seq_10'] = {
-  desc:           '2.1 ipv6 beaker_6 seq 10',
-  title_pattern:  'ipv6 beaker_6 10',
-  manifest_props: "
-    action          => 'deny',
-    proto           => 'tcp',
-    src_addr        => 'any',
-    dst_addr        => 'any',
-  ",
-  resource:       {
-    'action'   => 'deny',
-    'proto'    => 'tcp',
-    'src_addr' => 'any',
-    'dst_addr' => 'any',
+tests[:seq_20_v4] = {
+  title_pattern:  'ipv4 beaker 20',
+  manifest_props: {
+    action:        'deny',
+    proto:         'tcp',
+    src_addr:      'any',
+    src_port:      'eq 40',
+    dst_addr:      'any',
+    dst_port:      'range 32 56',
+
+    established:   'true',
+    packet_length: 'range 80 1000',
+    precedence:    'flash',
+    redirect:      'Ethernet1/1,Ethernet1/2,port-channel1',
+    tcp_flags:     'ack syn fin',
+    time_range:    'my_range',
+
+    # TBD: ttl is currently broken on NX platforms
+    # ttl:           '127',
+  },
+}
+tests[:seq_20_v6] = tests[:seq_20_v4].clone
+tests[:seq_20_v6][:title_pattern] = 'ipv6 beaker6 20'
+
+tests[:seq_30_v4] = {
+  desc:           'IPv4 Seq 30',
+  title_pattern:  'ipv4 beaker 30',
+  platform:       'n(3|9)k',
+  manifest_props: {
+    action:            'deny',
+    proto:             'tcp',
+    src_addr:          'any',
+    dst_addr:          'any',
+
+    # These v4-only properties are not compatible with some of the props
+    # in seq 20 so they are tested separately.
+    http_method:       'post',
+    tcp_option_length: '24',
   },
 }
 
-tests['ipv6_seq_20'] = {
-  desc:           '2.2 ipv6 beaker_6 seq 20',
-  title_pattern:  'ipv6 beaker_6 20',
-  manifest_props: "
-    remark          => 'test remark'
-  ",
-  resource:       {
-    'remark' => 'test remark'
-  },
-}
+# Overridden to properly handle unsupported properties for this test file.
+def unsupported_properties(tests, id)
+  unprops = []
 
-tests['ipv6_seq_30'] = {
-  desc:           '2.3 ipv4 beaker_6 seq 30',
-  title_pattern:  'ipv6 beaker_6 30',
-  manifest_props: "
-    action        => 'permit',
-    proto         => 'tcp',
-    src_addr      => 'any',
-    src_port      => 'eq 40',
-    dst_addr      => 'any',
-    dst_port      => 'range 32 56',
-    tcp_flags     => 'ack syn fin',
-    dscp          => 'af12',
-    packet_length => 'range 80 1000',
-    time_range    => 'my_range',
-    log           => true,
-  ",
-  resource:       {
-    'action'        => 'permit',
-    'proto'         => 'tcp',
-    'src_addr'      => 'any',
-    'src_port'      => 'eq 40',
-    'dst_addr'      => 'any',
-    'dst_port'      => 'range 32 56',
-    'tcp_flags'     => 'ack syn fin',
-    'dscp'          => 'af12',
-    'packet_length' => 'range 80 1000',
-    'time_range'    => 'my_range',
-    'log'           => 'true',
-  },
-}
+  if operating_system == 'ios_xr'
+    # unprops << TBD: XR Support
 
-#################################################################
-# HELPER FUNCTIONS
-#################################################################
-
-# Full command string for puppet resource command
-def puppet_resource_cmd
-  cmd = PUPPET_BINPATH + 'resource cisco_ace'
-  get_namespace_cmd(agent, cmd, options)
-end
-
-def build_manifest_ace(tests, id)
-  if tests[id][:ensure] == :absent
-    state = 'ensure => absent,'
-    # manifest = tests[id][:manifest_props_absent]
-    tests[id][:resource] = {}
   else
-    state = 'ensure => present,'
-    manifest = tests[id][:manifest_props]
+    if tests[id][:title_pattern][/ipv6/]
+      unprops <<
+        :http_method <<
+        :precedence <<
+        :redirect <<
+        :tcp_option_length
+    end
+    if platform[/n(5|6)k/]
+      unprops <<
+        :packet_length <<
+        :time_range
+    end
+    if platform[/n(5|6|7)k/]
+      unprops <<
+        :http_method <<
+        :redirect <<
+        :tcp_option_length <<
+        :ttl
+    end
   end
 
-  tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
-  logger.debug("build_manifest_ace :: title_pattern:\n" +
-               tests[id][:title_pattern])
-  tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
-  node 'default' {
-    cisco_ace { '#{tests[id][:title_pattern]}':
-      #{state}
-      #{manifest}
-    }
-  }
-EOF"
-end
-
-def test_harness_ace(tests, id)
-  tests[id][:ensure] = :present if tests[id][:ensure].nil?
-  tests[id][:resource_cmd] = puppet_resource_cmd
-  tests[id][:desc] = " #{tests[id][:desc]}"
-
-  # Build the manifest for this test
-  build_manifest_ace(tests, id)
-
-  test_harness_common(tests, id)
-  # add case
-  tests[id][:ensure] = nil
+  unprops
 end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name "TestCase :: #{testheader}" do
-  logger.info("\n#{'-' * 60}\nSection 0. Clean testbed")
-  resource_absent_cleanup(agent, 'cisco_acl', 'ACL CLEANUP :: ')
+test_name "TestCase :: #{tests[:resource_name]}" do
+  logger.info("\n#{'-' * 60}\nSection 1. ACE Testing")
 
-  # ---------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 1. IPv4 ACE")
-
-  id = 'ipv4_seq_10'
-  test_harness_ace(tests, id)
-  tests[id][:ensure] = :absent
-  test_harness_ace(tests, id)
-
-  id = 'ipv4_seq_20'
-  test_harness_ace(tests, id)
-  tests[id][:ensure] = :absent
-  test_harness_ace(tests, id)
-
-  id = 'ipv4_seq_30'
-  test_harness_ace(tests, id)
-  tests[id][:ensure] = :absent
-  test_harness_ace(tests, id)
-
-  # ---------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 2. IPv6 ACE")
-  # ---------------------------------------------------------
-  id = 'ipv6_seq_10'
-  test_harness_ace(tests, id)
-  tests[id][:ensure] = :absent
-  test_harness_ace(tests, id)
-
-  id = 'ipv6_seq_20'
-  test_harness_ace(tests, id)
-  tests[id][:ensure] = :absent
-  test_harness_ace(tests, id)
-
-  id = 'ipv6_seq_30'
-  test_harness_ace(tests, id)
-  tests[id][:ensure] = :absent
-  test_harness_ace(tests, id)
+  test_harness_run(tests, :seq_5)
+  test_harness_run(tests, :seq_10_v4)
+  test_harness_run(tests, :seq_10_v6)
+  test_harness_run(tests, :seq_20_v4)
+  test_harness_run(tests, :seq_20_v6)
+  test_harness_run(tests, :seq_30_v4)
 
   # ---------------------------------------------------------
   resource_absent_cleanup(agent, 'cisco_acl', 'ACL CLEANUP :: ')
+  skipped_tests_summary(tests)
 end
 
-logger.info('TestCase :: # {testheader} :: End')
+logger.info("TestCase :: #{tests[:resource_name]} :: End")
