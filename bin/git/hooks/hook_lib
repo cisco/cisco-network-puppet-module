@@ -1,0 +1,108 @@
+#!/bin/bash
+#
+# Shared library for git hooks
+
+# Colors
+DULL=0
+FG_BLACK=30
+FG_RED=31
+FG_GREEN=32
+FG_YELLOW=33
+FG_BLUE=34
+FG_MAGENTA=35
+FG_CYAN=36
+FG_WHITE=37
+FG_NULL=00
+BG_NULL=00
+ESC="["
+RESET="${ESC}0m"
+BOLD="${ESC}1m"
+BLACK="${ESC}${DULL};${FG_BLACK}m"
+RED="${ESC}${DULL};${FG_RED}m"
+GREEN="${ESC}${DULL};${FG_GREEN}m"
+YELLOW="${ESC}${DULL};${FG_YELLOW}m"
+BLUE="${ESC}${DULL};${FG_BLUE}m"
+MAGENTA="${ESC}${DULL};${FG_MAGENTA}m"
+CYAN="${ESC}${DULL};${FG_CYAN}m"
+WHITE="${ESC}${DULL};${FG_WHITE}m"
+
+# Top-level directory of our repository
+export REPO_DIR="$(git rev-parse --show-toplevel 2>/dev/null)"
+
+#DEBUG=1
+debug() {
+    [ "$DEBUG" == 1 ] && echo $1
+}
+export -f debug
+
+script_name() {
+    echo -e "*** ${BLUE}Running Git hook script: $*${RESET}..."
+}
+export -f script_name
+
+step_name() {
+    echo -e "\t${BOLD}$*${RESET}"
+}
+export -f step_name
+
+success() {
+    echo -e "\t...[ ${GREEN}OK${RESET} ]"
+}
+export -f success
+
+fail() {
+    local RC=$1
+    local msg=$2
+    echo -e "\t...[ ${RED}FAIL${RESET} ] $msg"
+    exit $RC
+}
+export -f fail
+
+check_rc() {
+    rc=$?
+    [ $rc -eq 0 ] || fail $rc "$*"
+    return $rc
+}
+export -f check_rc
+
+check_rc_optional() {
+    local RC=$?
+    local msg=$1
+    [ $RC -eq 0 ] && return $RC
+    echo -e "\t...[ ${YELLOW}WARNING${RESET} ] $msg"
+    read -p "Continue anyway? [y/N] " yn < /dev/tty
+    case $yn in
+      [Yy]* ) return 0;;
+      [Nn]* ) exit $RC;;
+      * ) exit $RC;;
+    esac
+}
+export -f check_rc_optional
+
+get_last_version() {
+    # Get the first subheading in the CHANGELOG, not counting 'Unreleased'
+    VER=$(grep -v "Unreleased" $REPO_DIR/CHANGELOG.md | egrep -m 1 '## \[.*]' | cut -d ' ' -f 2 | tr -d '[]')
+    echo "Detected previous release version as '$VER'"
+}
+export -f get_last_version
+
+add_changelog_diff_link() {
+    local OLD_VERSION=$1
+    local NEW_VERSION=$2
+
+    step_name "Adding link for diffs $OLD_VERSION..$NEW_VERSION in CHANGELOG.md"
+
+    # Automatically add diff link to the CHANGELOG
+    sed -i "/master...develop/ a\
+[$VERSION]: https://github.com/cisco/cisco-network-node-utils/compare/$OLD_VERSION...$NEW_VERSION" $REPO_DIR/CHANGELOG.md
+}
+export -f add_changelog_diff_link
+
+set_gem_version() {
+    local VERSION=$1
+
+    step_name "Updating version.rb to version '$VERSION'"
+
+    sed -i -e "s/VERSION =.*/VERSION = '$VERSION'/" $REPO_DIR/lib/cisco_node_utils/version.rb
+}
+export -f set_gem_version

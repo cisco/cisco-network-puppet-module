@@ -67,7 +67,56 @@ configure terminal
 end
 ~~~
 
-*Note: To enable sshd inside the `open agent container (OAC)` reference `OAC` documentation.
+*Note: To enable sshd inside the `open agent container (OAC)` reference `OAC` documentation.*
+
+### Configure IOS XR
+
+#### Enable gRPC server
+
+[Enable the gRPC server](http://www.cisco.com/c/en/us/td/docs/iosxr/ncs5500/DataModels/b-Datamodels-cg-ncs5500/b-Datamodels-cg-ncs5500_chapter_010.html#concept_700172ED7CF44313B0D7E521B2983F32) and select a port for it to listen on. Example:
+
+~~~
+configure
+grpc port 57777
+commit
+end
+~~~
+
+#### Start SSHd for TPNNS
+
+IOS XR provides an SSH server daemon that runs within the [third-party network namespace (TPNNS)](http://www.cisco.com/c/en/us/td/docs/iosxr/AppHosting/AH_Config_Guide/AH_User_Guide_chapter_00.html#concept_B8195E8C04EF4900BF51B2F3832F52AE), which is where the Puppet agent needs to run. Start this daemon from the IOS XR bash shell:
+
+~~~bash
+run bash
+service sshd_tpnns start
+chkconfig --add sshd_tpnns
+~~~
+
+Note that this daemon listens on port 57722 rather than the SSH default port of 22. You will configure `hosts.cfg` to specify this port for Beaker's use [below](#beaker-config), but if you want to manually SSH to the node, you will need to specify the port number as well:
+
+~~~bash
+ssh devops@192.168.122.222 -p 57722
+~~~
+
+#### Configure a user for passwordless sudo
+
+`sshd_tpnns` doesn't allow login as root, but the Puppet agent needs to run with root permissions. Beaker needs to be able to log in as a user that can transparently invoke `sudo` without a password prompt. There are several ways you can edit the `/etc/sudoers` file (using `visudo` from the Bash prompt) to permit this:
+
+Enable passwordless sudo for all users in group `sudo` (which includes all configured IOS XR users in IOS XR group `root-lr`, including the root-system user created at boot time):
+
+~~~diff
+ #includedir /etc/sudoers.d
+-%sudo ALL=(ALL) ALL
++%sudo ALL=(ALL) NOPASSWD: ALL
+~~~
+
+Or, enable passwordless sudo only for a specific user, such as 'devops':
+
+~~~diff
+ #includedir /etc/sudoers.d
+ %sudo ALL=(ALL) ALL
++devops ALL=(ALL) NOPASSWD: ALL
+~~~
 
 ## <a name="beaker-config">Beaker Server Configuration</a>
 
@@ -82,14 +131,29 @@ $ cd cisco-network-puppet-module/tests/beaker_tests/
 
 Under the `beaker_tests` directory, create file named `host.cfg` and add the following content.
 
+Note: If running puppet on IOS XR, specify the gRPC port number configured on the switch.
+
 Replace the `< >` markers with specific information.
 
 ```bash
 HOSTS:
-    <agent1>:
+    <IOS XR agent>:
         roles:
             - agent
         platform: cisco-7-x86_64
+        ip: <fully qualified domain name>
+        grpc_port: <grpc port number, such as 57777 or 57799
+        ssh:
+          auth_methods: ["password"]
+          # SSHd for third-party network namespace (TPNNS) uses port 57722
+          port: 57722
+          user: <configured admin username>
+          password: <configured admin password>
+
+    <Nexus agent>:
+        roles:
+            - agent
+        platform: cisco-5-x86_64
         ip: <fully qualified domain name>
         vrf: <vrf used for beaker workstation and puppet master ip reachability>
         ssh:
@@ -100,10 +164,10 @@ HOSTS:
         #target: guestshell
 
 
-    #<agent2>:
+    #<agent3>:
     #  <...>
 
-    #<agent3>:
+    #<agent4>:
     #  <...>
 
     <master>:
@@ -123,17 +187,29 @@ Here is a sample `host.cfg` file where `< >` markers have been replaced with act
 
 ```bash
 HOSTS:
-    agent1:
+    nx-agent:
         roles:
             - agent
-        platform: cisco-7-x86_64
-        ip: agent1.domain.com
+        platform: cisco-5-x86_64
+        ip: nx-agent.domain.com
         vrf: management
         #target: guestshell
         ssh:
           auth_methods: ["password"]
           user: devops
           password: devopspassword
+
+    xr-agent:
+        roles:
+            - agent
+        platform: cisco-7-x86_64
+        ip: xr-agent.domain.com
+        grpc_port: 57777
+        ssh:
+          auth_methods: ["password"]
+          port: 57722
+          user: admin
+          password: adminpassword
 
     puppetmaster1:
         roles:

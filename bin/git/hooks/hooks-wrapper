@@ -1,0 +1,38 @@
+#!/bin/bash
+#
+# Generic git hook. Calls all associated helper scripts.
+#
+# Based on:
+# http://stackoverflow.com/questions/8730514/chaining-git-hooks
+# https://github.com/henrik/dotfiles/blob/master/git_template/hooks/pre-commit
+
+[ -n "$GIT_DIR" ] || export GIT_DIR="$(git rev-parse --show-toplevel 2>/dev/null)/.git"
+
+. "$GIT_DIR"/hooks/hook_lib
+
+# What hook are we supposed to be?
+hookname=`basename $0`
+
+debug "Running wrapper script for '$hookname'..."
+
+exitcodes=()
+
+# Run each hook, passing through STDIN and storing the exit code.
+# We don't want to bail at the first failure, so the user can see everything.
+
+for hook in "$GIT_DIR"/hooks/$hookname-*; do
+    debug "Checking hook '$hook'"
+    test -x "$hook" || continue
+    script_name "${hook##*/}"
+    "$hook" "$@"
+    rc=$?
+    [ "$rc" == 0 ] && success
+    exitcodes+=($rc)
+done
+
+# If any exit code isn't 0, bail.
+for i in "${exitcodes[@]}"; do
+    [ "$i" == 0 ] || fail $i "One or more hook scripts reported an error"
+done
+debug "Wrapper script executed successfully"
+exit 0
