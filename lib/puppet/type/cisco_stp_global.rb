@@ -393,8 +393,8 @@ Puppet::Type.newtype(:cisco_stp_global) do
   end # property mst_hello_time
 
   newproperty(:mst_inst_vlan_map, array_matching: :all) do
-    format = '[[mst_inst_list, vlan_map], [mil, vm]]'
-    desc 'An array of [mst_inst_list, vlan_map] pairs. '\
+    format = '[[mst_inst, vlan_range], [mi, vr]]'
+    desc 'An array of [mst_inst, vlan_range] pairs. '\
          "Valid values match format #{format}."
 
     # Override puppet's insync method, which checks whether current value is

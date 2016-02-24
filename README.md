@@ -190,6 +190,7 @@ The following table indicates which providers are supported on each platform. As
 | [cisco_pim_rp_address](#type-cisco_pim_rp_address) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [cisco_pim_grouplist](#type-cisco_pim_grouplist) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [cisco_portchannel_global](#type-cisco_portchannel_global) | ❌* | ✅* | ✅* | ❌* | ❌* | ❌ | * [caveats](#cisco_portchannel_global-caveats) |
+| [cisco_stp_global](#type-cisco_stp_global) | ❌* | ✅* | ✅* | ❌* | ❌* | ❌ | * [caveats](#cisco_stp_global-caveats) |
 | [cisco_snmp_community](#type-cisco_snmp_community) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [cisco_snmp_group](#type-cisco_snmp_group) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [cisco_snmp_server](#type-cisco_snmp_server) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
@@ -306,6 +307,9 @@ The following resources include cisco types and providers along with cisco provi
   * [`radius_global (netdev_stdlib)`](#type-radius_global)
   * [`radius_server (netdev_stdlib)`](#type-radius_server)
 
+* STP Types
+  * [`cisco_stp_global`](#type-cisco_stp_global)
+
 * SNMP Types
   * [`cisco_snmp_community`](#type-cisco_snmp_community)
   * [`cisco_snmp_group`](#type-cisco_snmp_group)
@@ -378,6 +382,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_pim_grouplist`](#type-cisco_pim_grouplist)
 * [`cisco_pim_rp_address`](#type-cisco_pim_rp_address)
 * [`cisco_portchannel_global`](#type-cisco_portchannel_global)
+* [`cisco_stp_global`](#type-cisco_stp_global)
 * [`cisco_snmp_community`](#type-cisco_snmp_community)
 * [`cisco_snmp_group`](#type-cisco_snmp_group)
 * [`cisco_snmp_server`](#type-cisco_snmp_server)
@@ -1347,6 +1352,7 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | `ipv4_pim_sparse_mode` | Not supported on IOS XR |
 | `negotiate_auto` | Not supported on IOS XR |
 | `speed` | Not supported on IOS XR |
+| `stp_bpdufilter` <br> `stp_bpduguard` <br> `stp_cost` <br> `stp_guard` <br> `stp_link_type` <br> `stp_port_priority` <br> `stp_port_type` <br> `stp_mst_cost` <br> `stp_mst_port_priority` <br> `stp_vlan_cost` <br> `stp_vlan_port_priority` | Not supported on IOS XR |
 | `svi_autostate` | Not supported on N56xx, N6k, IOS XR |
 | `svi_management` | Not supported on IOS XR |
 | `switchport` | Not supported on IOS XR |
@@ -1481,6 +1487,41 @@ Configure this port-channel interface to be a vPC peer-link. A vPC peer-link is 
 
 ###### `vrf`
 VRF member of the interface.  Valid values are a string or the keyword 'default'.
+
+##### STP config attributes
+
+##### `stp_bpdufilter`
+Enable/Disable BPDU filter for this interface. Valid values are enable, disable or 'default'.
+
+##### `stp_bpduguard`
+Enable/Disable BPDU guard for this interface. Valid values are enable, disable or 'default'.
+
+##### `stp_cost`
+path cost. Valid values are integer, 'auto' or 'default'.
+
+##### `stp_guard`
+guard mode. Valid values are loop, none, root or 'default'.
+
+##### `stp_link_type`
+link type. Valid values are auto, shared, point-to-point or 'default'.
+
+##### `stp_mst_cost`
+mst cost. Valid values are an array of [mst_range, cost] pairs or 'default'.
+
+##### `stp_mst_port_priority`
+mst port priority. Valid values are an array of [mst_range, port_priority] pairs or 'default'.
+
+##### `stp_port_priority`
+port priority. Valid values are integer or 'default'.
+
+##### `stp_port_type`
+port type. Valid values are edge, network, normal, edge_trunk or 'default'.
+
+##### `stp_vlan_cost`
+vlan path cost. Valid values are an array of [vlan_range, cost] pairs or 'default'.
+
+##### `stp_vlan_port_priority`
+vlan port priority. Valid values are an array of [vlan_range, port_priority] pairs or 'default'.
 
 ##### SVI interface config attributes
 
@@ -1929,6 +1970,117 @@ port-channel hash input offset. Valid values are integer or 'default'. This prop
 
 ##### `symmetry`
 port-channel symmetry hash. Valid values are true, false or 'default'. This property is only supported on N9k, N30xx, N31xx.
+
+--
+### Type: cisco_stp_global
+Manages configuration of a spanning tree global parameters
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.3.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.3.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.3.0                  |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| IOS XR   | unsupported        | unsupported            |
+
+#### <a name="cisco_stp_global-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `bd_designated_priority` <br> `bd_forward_time` <br> `bd_hello_time` <br> `bd_max_age` <br> `bd_priority` <br> `bd_root_priority` | Supported only on N7k |
+| `domain` | Supported only on N56k, N6k, N7k |
+| `fcoe` | Supported only on N9k, N30xx, N31xx |
+
+#### Parameters
+
+##### `bd_designated_priority`
+designated bridge priority. Valid values are an array of [bd_range, designated_priority] pairs or 'default'. This property is supported only on N7k.
+
+##### `bd_forward_time`
+forward delay. Valid values are an array of [bd_range, forward_time] pairs or 'default'. This property is supported only on N7k.
+
+##### `bd_hello_time`
+hello interval. Valid values are an array of [bd_range, hello_time] pairs or 'default'. This property is supported only on N7k.
+
+##### `bd_max_age`
+max age interval. Valid values are an array of [bd_range, max_age] pairs or 'default'. This property is supported only on N7k.
+
+##### `bd_priority`
+bridge priority. Valid values are an array of [bd_range, priority] pairs or 'default'. This property is supported only on N7k.
+
+##### `bd_root_priority`
+root bridge priority. Valid values are an array of [bd_range, root_priority] pairs or 'default'. This property is supported only on N7k.
+
+##### `bpdufilter`
+Edge port (portfast) bpdu filter. Valid values are true, false or 'default'.
+
+##### `bpduguard`
+Edge port (portfast) bpdu guard. Valid values are true, false or 'default'.
+
+##### `bridge_assurance`
+Bridge Assurance on all network ports. Valid values are true, false or 'default'.
+
+##### `domain`
+Domain. Valid values are integer or 'default'. This property is supported only on N56k, N6k, N7k.
+
+##### `fcoe`
+spanning tree protocol for FCoE VLAN. Valid values are true, false or 'default'. This property is supported only on N9k, N30xx, N31xx.
+
+##### `loopguard`
+Enable loopguard by default on all ports. Valid values are true, false or 'default'.
+
+##### `mode`
+Operating mode. Valid values are mst, rapid-pvst or 'default'.
+
+##### `mst_designated_priority`
+designated priority for multiple spanning tree configuration. Valid values are an array of [mst_range, designated_priority] pairs or 'default'
+
+##### `mst_hello_time`
+hello interval for multiple spanning tree configuration. Valid values are integer or 'default'.
+
+##### `mst_inst_vlan_map`
+Map vlans to an MST instance. Valid values are an array of [mst_instance, vlan_range] pairs or 'default'
+
+##### `mst_max_age`
+max age interval for multiple spanning tree configuration. Valid values are integer or 'default'.
+
+##### `mst_max_hops`
+max hops for multiple spanning tree configuration. Valid values are integer or 'default'
+
+##### `mst_name`
+name for multiple spanning tree configuration. Valid values are String or 'default'
+
+##### `mst_priority`
+priority for multiple spanning tree configuration. Valid values are an array of [mst_range, priority] pairs or 'default'
+
+##### `mst_revision`
+configuration revision number for multiple spanning tree configuration. Valid values are String or 'default'
+
+##### `mst_root_priority`
+root priority for multiple spanning tree configuration. Valid values are an array of [mst_range, root_priority] pairs or 'default'
+
+##### `pathcost`
+pathcost option. Valid values are long, short or 'default'.
+
+##### `vlan_designated_priority`
+designated priority for vlan. Valid values are an array of [vlan_range, designated_priority] pairs or 'default'
+
+##### `vlan_forward_time`
+forward delay for vlan. Valid values are an array of [vlan_range, forward_time] pairs or 'default'
+
+##### `vlan_hello_time`
+hello interval for vlan. Valid values are an array of [vlan_range, hello_time] pairs or 'default'
+
+##### `vlan_max_age`
+max age interval for vlan. Valid values are an array of [vlan_range, max_age] pairs or 'default'
+
+##### `vlan_priority`
+priority for vlan. Valid values are an array of [vlan_range, priority] pairs or 'default'
+
+##### `vlan_root_priority`
+root priority for vlan. Valid values are an array of [vlan_range, root_priority] pairs or 'default'
 
 --
 ### Type: cisco_snmp_community
