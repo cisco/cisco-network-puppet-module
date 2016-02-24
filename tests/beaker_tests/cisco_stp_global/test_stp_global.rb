@@ -29,6 +29,7 @@ tests = {
   master:        master,
   agent:         agent,
   resource_name: 'cisco_stp_global',
+  ensurable:     false,
 }
 
 # Test hash test cases

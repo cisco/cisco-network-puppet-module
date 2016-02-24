@@ -33,7 +33,6 @@ Puppet::Type.newtype(:cisco_stp_global) do
     'default' is only acceptable name for this global config object.
     Example:
     cisco_portchannel_global { 'default':
-      ensure                       => present,
       bd_designated_priority       => [['2-42', '40960'], ['83-92,1000-2300', '53248']],
       bd_forward_time              => [['2-42', '26'], ['83-92,1000-2300', '20']],
       bd_hello_time                => [['2-42', '6'], ['83-92,1000-2300', '9']],
@@ -69,8 +68,6 @@ Puppet::Type.newtype(:cisco_stp_global) do
   ###################
   # Resource Naming #
   ###################
-
-  ensurable
 
   newparam(:name, namevar: :true) do
     desc 'ID of the stp global config. Valid values are default.'

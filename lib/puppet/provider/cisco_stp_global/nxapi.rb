@@ -84,8 +84,7 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
   def self.properties_get(global_id, nu_obj)
     debug "Checking instance, global #{global_id}"
     current_state = {
-      name:   global_id,
-      ensure: :present,
+      name: global_id
     }
 
     # Call node_utils getter for each property
@@ -142,25 +141,9 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
     name
   end
 
-  def exists?
-    (@property_hash[:ensure] == :present)
-  end
-
-  def create
-    @property_flush[:ensure] = :present
-  end
-
-  def destroy
-    @property_flush[:ensure] = :absent
-  end
-
-  def properties_set(new_stp=false)
+  def properties_set
     STP_GLOBAL_ALL_PROPS.each do |prop|
       next unless @resource[prop]
-      if new_stp
-        # Set @property_flush for the current object
-        send("#{prop}=", @resource[prop])
-      end
       unless @property_flush[prop].nil?
         @nu.send("#{prop}=", @property_flush[prop]) if
           @nu.respond_to?("#{prop}=")
@@ -455,16 +438,6 @@ Puppet::Type.type(:cisco_stp_global).provide(:nxapi) do
   end
 
   def flush
-    if @property_flush[:ensure] == :absent
-      @nu.destroy
-      @nu = nil
-    else
-      if @nu.nil?
-        new_stp = true
-        @nu = Cisco::StpGlobal.new(@resource[:name])
-      end
-      properties_set(new_stp)
-    end
     properties_set
   end
 end # Puppet::Type
