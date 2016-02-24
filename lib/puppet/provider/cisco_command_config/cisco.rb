@@ -18,9 +18,9 @@
 
 require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
 
-Puppet::Type.type(:cisco_command_config).provide(:nxapi) do
+Puppet::Type.type(:cisco_command_config).provide(:cisco) do
   confine feature: :cisco_node_utils
-  defaultfor operatingsystem: :nexus
+  defaultfor operatingsystem: [:ios_xr, :nexus]
 
   def initialize(value={})
     super(value)
@@ -37,7 +37,7 @@ Puppet::Type.type(:cisco_command_config).provide(:nxapi) do
   end
 
   def command
-    running_config_str = @node.show('show running-config all')
+    running_config_str = @node.get(command: 'show running-config all')
 
     # Sanitize configs and create config hashes.
     running_hash  = Cisco::ConfigParser::Configuration.new(running_config_str)
@@ -71,7 +71,7 @@ Puppet::Type.type(:cisco_command_config).provide(:nxapi) do
 
   def command=(cmds)
     return if cmds.empty?
-    output = @node.config(cmds)
+    output = @node.set(values: cmds)
     debug "Output from node:\n#{output}" unless output.nil?
 
   rescue Cisco::CliError => e

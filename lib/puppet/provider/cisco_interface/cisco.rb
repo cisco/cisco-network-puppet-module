@@ -26,11 +26,11 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
-Puppet::Type.type(:cisco_interface).provide(:nxapi) do
-  desc 'The NXAPI provider for cisco_interface.'
+Puppet::Type.type(:cisco_interface).provide(:cisco) do
+  desc 'The provider for cisco_interface.'
 
   confine feature: :cisco_node_utils
-  defaultfor operatingsystem: :nexus
+  defaultfor operatingsystem: [:ios_xr, :nexus]
 
   mk_resource_methods
 
@@ -132,8 +132,8 @@ Puppet::Type.type(:cisco_interface).provide(:nxapi) do
     interfaces = []
     Cisco::Interface.interfaces.each do |interface_name, intf|
       begin
-        # Not allowed to create an interface for mgmt0
-        next if interface_name.match(/mgmt0/)
+        # Not allowed to create an interface for mgmt0 or MgmtEth0/*
+        next if interface_name.match(/mgmt/i)
         interfaces << properties_get(interface_name, intf)
       end
     end
