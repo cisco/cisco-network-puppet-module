@@ -2355,6 +2355,14 @@ device.
 | N7k      | unsupported        | unsupported            |
 | IOS XR   | TODO               | TODO                   |
 
+#### <a name="cisco_vrf-caveats">Caveats</a>
+
+| Property                  | Caveat Description               |
+|---------------------------|----------------------------------|
+| route_distinguisher       | Only supported on N7k and N9k    |
+| shutdown                  | Only supported on N7k and N9k    |
+| vni                       | Only supported on N9k            |
+
 #### Parameters
 
 ##### `ensure`
@@ -2399,6 +2407,17 @@ Manages Cisco Virtual Routing and Forwarding (VRF) Address-Family configuration.
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | IOS XR   | TODO               | TODO                   |
+
+#### <a name="cisco_vrf_af-caveats">Caveats</a>
+
+| Property                    | Caveat Description                   |
+|-----------------------------|--------------------------------------|
+| route_target_both_auto      | Only supported on N7k and N9k        |
+| route_target_both_auto_evpn | Only supported on N7k and N9k        |
+| route_target_export         | Only supported on N7k, N9k, and XR   |
+| route_target_export_evpn    | Only supported on N7k and N9k        |
+| route_target_import         | Only supported on N7k, N9k, and XR   |
+| route_target_import_evpn    | Only supported on N7k and N9k        |
 
 #### Parameters
 
