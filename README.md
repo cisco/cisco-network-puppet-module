@@ -199,8 +199,8 @@ The following table indicates which providers are supported on each platform. As
 | [cisco_vdc](#type-cisco_vdc) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
 | [cisco_vlan](#type-cisco_vlan) | ✅* | ✅* | ✅* | ✅ | ✅ | ✅ | * [caveats](#cisco_vlan-caveats) |
 | [cisco_vpc_domain](#type-cisco_vpc_domain) | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | * [caveats](#cisco_vlan-caveats) |
-| [cisco_vrf](#type-cisco_vrf) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_vrf_af](#type-cisco_vrf_af) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_vrf](#type-cisco_vrf) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | * [caveats](#cisco_vrf-caveats) |
+| [cisco_vrf_af](#type-cisco_vrf_af) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | * [caveats](#cisco_vrf_af-caveats) |
 | [cisco_vtp](#type-cisco_vtp) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
 | [cisco_vxlan_vtep](#type-cisco_vxlan_vtep) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
