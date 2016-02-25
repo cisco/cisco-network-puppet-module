@@ -675,17 +675,9 @@ cisco_ace { 'ipv6 my_v6_acl 42':
   remark              => 'East Branch',
   action              => 'permit',
   proto               => 'tcp',
-  src_addr            => 'any',
+  src_addr            => '1:1::1/128',
   dst_addr            => 'any',
-
-  http_method         => 'post',
-  tcp_option_length   => '36',
 }
-=======
-  tcp_option_length   => '36',
-  time_range          => 'my_time_range',
-  ttl                 => '128',
->>>>>>> master
 ```
 
 #### Parameters
