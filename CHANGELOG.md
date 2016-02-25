@@ -25,6 +25,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 *
 
+## [1.2.3] - 2016-02-24
+### Added
+- Download link for Nexus 5000 and Nexus 6000 Open Agent Container (OAC).
+- OAC programmability guide links.
+- Complete cisco_ace documentation.
+
 ## [1.2.2] - 2016-02-14
 
 ### Fixed
@@ -185,6 +191,7 @@ This version was never released.
 - Please note: 0.9.0 is an EFT pre-release for a limited audience with access to NX-OS 7.0(3)I2(1). Additional code changes may occur in 0.9.x prior to the final 1.0.0 release.
 
 [unreleased]: https://github.com/cisco/cisco-network-puppet-module/compare/master...develop
+[1.2.3]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.2.0...v1.2.2
 [1.2.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.0.2...v1.1.0
