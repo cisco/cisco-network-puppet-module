@@ -1588,6 +1588,7 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | `duplex` | Not supported on IOS XR |
 | `fabric_forwarding_anycast_gateway` | Not supported on IOS XR |
 | `ipv4_arp_timeout` | Not supported on IOS XR |
+| `ipv4_forwarding` | Not supported on IOS XR |
 | `ipv4_pim_sparse_mode` | Not supported on IOS XR |
 | `negotiate_auto` | Not supported on IOS XR |
 | `speed` | Not supported on IOS XR |
@@ -1692,7 +1693,7 @@ Network mask length of the secondary IP address on the interface. Valid values a
 Address Resolution Protocol (ARP) timeout value. Valid values are integer and keyword 'default'. Currently only supported on vlan interfaces. This property is not supported on IOS XR as IOS XR does not support vlan interfaces.
 
 ###### `ipv4_forwarding`
-IP forwarding state.  Valid values are string or keyword 'default'.
+IP forwarding state.  Valid values are string or keyword 'default'. This property is not supported on IOS XR.
 
 ###### `ipv4_pim_sparse_mode`
 Enables or disables ipv4 pim sparse mode on the interface. Valid values are 'true', 'false', and 'default'.

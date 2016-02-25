@@ -175,8 +175,6 @@ tests['L3_misc'] = {
     ipv4_netmask_length:           31,
     ipv4_address_secondary:        '2.2.2.2',
     ipv4_netmask_length_secondary: 31,
-    ipv4_forwarding:               true,
-    ipv4_pim_sparse_mode:          true,
     ipv4_proxy_arp:                true,
     ipv4_redirects:                operating_system == 'nexus' ? false : true,
     vrf:                           'test1',
@@ -188,8 +186,6 @@ tests['L3_misc'] = {
     'ipv4_netmask_length'           => '31',
     'ipv4_address_secondary'        => '2.2.2.2',
     'ipv4_netmask_length_secondary' => '31',
-    'ipv4_forwarding'               => 'true',
-    'ipv4_pim_sparse_mode'          => 'true',
     'ipv4_proxy_arp'                => 'true',
     'ipv4_redirects'                => operating_system == 'nexus' ? 'false' : 'true',
     'vrf'                           => 'test1',
@@ -203,10 +199,12 @@ tests['L3_misc_nexus'] = {
   sys_def_switchport: false,
   manifest_props:     {
     switchport_mode:      'disabled',
+    ipv4_forwarding:      true,
     ipv4_pim_sparse_mode: true,
   },
   resource:           {
     'switchport_mode'      => 'disabled',
+    'ipv4_forwarding'      => 'true',
     'ipv4_pim_sparse_mode' => 'true',
   },
 }
