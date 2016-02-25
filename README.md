@@ -637,14 +637,13 @@ Manages configuration of an Access Control List (ACL) Access Control Entry (ACE)
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `redirect` | ipv4 only |
-| `http_method` | Not supported on N56xx, N6k, N7k |
+| `http_method` | ipv4 only <br> Not supported on N56xx, N6k, N7k |
 | `packet_length` | Not supported on N56xx, N6k |
 | `precedence` | ipv4 only |
 | `redirect` | ipv4 only <br> Not supported on N56xx, N6k, N7k |
 | `time_range` | Not supported on N56xx, N6k |
 | `ttl` | Not supported on N56xx, N6k, N7k |
-| `tcp_option_length` | Not supported on N56xx, N6k, N7k |
+| `tcp_option_length` | ipv4 only <br> Not supported on N56xx, N6k, N7k |
 
 #### Example Usage
 
@@ -763,7 +762,7 @@ Allows matching against TCP Established connections. Valid values are true or fa
 | `established => true`
 
 ##### `http_method`
-Allows matching based on http-method. Valid values are String, which must be one of the following forms:
+(ipv4 only) Allows matching based on http-method. Valid values are String, which must be one of the following forms:
 
 * A numeric http-method value
 * One of the http-method keyword names
@@ -865,7 +864,7 @@ The TCP flags or control bits. Valid values are a String of some or all of flags
 | `tcp_flags => 'ack psh'`
 
 ##### `tcp_option_length`
-Allows matching on TCP options length. Valid values are type Integer or String, which must be a multiple of 4 in the range 0-40.
+(ipv4 only) Allows matching on TCP options length. Valid values are type Integer or String, which must be a multiple of 4 in the range 0-40.
 
 | Examples
 |:--
