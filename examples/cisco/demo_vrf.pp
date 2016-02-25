@@ -16,6 +16,11 @@
 
 class ciscopuppet::cisco::demo_vrf {
 
+  $shutdown = $operatingsystem ? {
+    'ios_xr' => false,
+    default => undef
+  }
+
   # Check for platform/linecard support
   $rd_support = prop_supported('route_distinguisher')
   $rt_support = prop_supported('route_target_import')
@@ -70,7 +75,7 @@ class ciscopuppet::cisco::demo_vrf {
     ensure              => present,
     description         => 'test vrf for puppet',
     route_distinguisher => $rd_auto,
-    shutdown            => false,
+    shutdown            => $shutdown,
     vni                 => $vni,
   }
 
