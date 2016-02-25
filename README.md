@@ -164,46 +164,46 @@ The following table indicates which providers are supported on each platform. As
 
 ##### Cisco Providers
 
-| ✅ = Supported <br> ❌ = Unsupported | N9k | N30xx | N31xx | N56xx | N6k | N7k | Caveats |
-|:---|:---:|:-----:|:-----:|:-----:|:---:|:---:|:---:|
-| [cisco_aaa_authentication_login](#type-cisco_aaa_authentication_login) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_aaa_authorization_login_cfg_svc](#type-cisco_aaa_authorization_login_cfg_svc) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_aaa_authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_acl](#type-cisco_acl) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_ace](#type-cisco_ace) | ✅ | ✅ | ✅ | ❌* | ❌* | ❌* | * [caveats](#cisco_ace-caveats) |
-| [cisco_command_config](#type-cisco_command_config) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_bgp](#type-cisco_bgp) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅* | * [caveats](#cisco_bgp-caveats) |
-| [cisco_bgp_af](#type-cisco_bgp_af) | ✅* | ✅* | ✅ | ✅ | ✅*  | ✅ | * [caveats](#cisco_bgp_af-caveats) |
-| [cisco_bgp_neighbor](#type-cisco_bgp_neighbor) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_interface](#type-cisco_interface) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅ | * [caveats](#cisco_interface-caveats) |
-| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_interface_ospf](#type-cisco_interface_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_interface_portchannel](#type-cisco_interface_portchannel) | ❌* | ✅* | ✅* | ❌* | ❌* | ❌* | * [caveats](#cisco_interface_portchannel-caveats) |
-| [cisco_interface_service_vni](#type-cisco_interface_service_vni) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
-| [cisco_ospf](#type-cisco_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_ospf_vrf](#type-cisco_ospf_vrf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| ✅ = Supported <br> ❌ = Unsupported  | N9k | N30xx | N31xx | N56xx | N6k | N7k | Caveats |
-| [cisco_overlay_global](#type-cisco_overlay_global) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌  |
-| [cisco_pim](#type-cisco_pim) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_pim_rp_address](#type-cisco_pim_rp_address) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_pim_grouplist](#type-cisco_pim_grouplist) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_portchannel_global](#type-cisco_portchannel_global) | ❌* | ✅* | ✅* | ❌* | ❌* | ❌ | * [caveats](#cisco_portchannel_global-caveats) |
-| [cisco_snmp_community](#type-cisco_snmp_community) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_snmp_group](#type-cisco_snmp_group) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_snmp_server](#type-cisco_snmp_server) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_snmp_user](#type-cisco_snmp_user) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_tacacs_server](#type-cisco_tacacs_server) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_tacacs_server_host](#type-cisco_tacacs_server_host) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_vdc](#type-cisco_vdc) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
-| [cisco_vlan](#type-cisco_vlan) | ✅* | ✅* | ✅* | ✅ | ✅ | ✅ | * [caveats](#cisco_vlan-caveats) |
-| [cisco_vpc_domain](#type-cisco_vpc_domain) | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | * [caveats](#cisco_vlan-caveats) |
-| [cisco_vrf](#type-cisco_vrf) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_vrf_af](#type-cisco_vrf_af) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_vtp](#type-cisco_vtp) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| ✅ = Supported <br> ❌ = Unsupported | N9k | N30xx | N31xx | N56xx | N6k | N7k | IOS XR | Caveats |
+|:---|:---:|:-----:|:-----:|:-----:|:---:|:---:|:---:|:---:|
+| [cisco_aaa_authentication_login](#type-cisco_aaa_authentication_login) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| [cisco_aaa_authorization_login_cfg_svc](#type-cisco_aaa_authorization_login_cfg_svc) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| [cisco_aaa_authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| [cisco_acl](#type-cisco_acl) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| [cisco_ace](#type-cisco_ace) | ✅ | ✅ | ✅ | ❌* | ❌* | ❌* | ❌ | * [caveats](#cisco_ace-caveats) |
+| [cisco_command_config](#type-cisco_command_config) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |✅ |
+| [cisco_bgp](#type-cisco_bgp) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅* |✅ | * [caveats](#cisco_bgp-caveats) |
+| [cisco_bgp_af](#type-cisco_bgp_af) | ✅* | ✅* | ✅ | ✅ | ✅*  | ✅ | ✅ | * [caveats](#cisco_bgp_af-caveats) |
+| [cisco_bgp_neighbor](#type-cisco_bgp_neighbor) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_interface](#type-cisco_interface) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅ |✅ | * [caveats](#cisco_interface-caveats) |
+| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| [cisco_interface_ospf](#type-cisco_interface_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [cisco_interface_portchannel](#type-cisco_interface_portchannel) | ❌* | ✅* | ✅* | ❌* | ❌* | ❌* | ❌ | * [caveats](#cisco_interface_portchannel-caveats) |
+| [cisco_interface_service_vni](#type-cisco_interface_service_vni) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| [cisco_ospf](#type-cisco_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [cisco_ospf_vrf](#type-cisco_ospf_vrf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| ✅ = Supported <br> ❌ = Unsupported  | N9k | N30xx | N31xx | N56xx | N6k | N7k | IOS XR | Caveats |
+| [cisco_overlay_global](#type-cisco_overlay_global) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌  | ❌ |
+| [cisco_pim](#type-cisco_pim) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [cisco_pim_rp_address](#type-cisco_pim_rp_address) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [cisco_pim_grouplist](#type-cisco_pim_grouplist) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [cisco_portchannel_global](#type-cisco_portchannel_global) | ❌* | ✅* | ✅* | ❌* | ❌* | ❌ | ❌ | * [caveats](#cisco_portchannel_global-caveats) |
+| [cisco_snmp_community](#type-cisco_snmp_community) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [cisco_snmp_group](#type-cisco_snmp_group) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [cisco_snmp_server](#type-cisco_snmp_server) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [cisco_snmp_user](#type-cisco_snmp_user) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [cisco_tacacs_server](#type-cisco_tacacs_server) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [cisco_tacacs_server_host](#type-cisco_tacacs_server_host) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [cisco_vdc](#type-cisco_vdc) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| [cisco_vlan](#type-cisco_vlan) | ✅* | ✅* | ✅* | ✅ | ✅ | ✅ | ❌ | * [caveats](#cisco_vlan-caveats) |
+| [cisco_vpc_domain](#type-cisco_vpc_domain) | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | ❌ | * [caveats](#cisco_vlan-caveats) |
+| [cisco_vrf](#type-cisco_vrf) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | * [caveats](#cisco_vrf-caveats) |
+| [cisco_vrf_af](#type-cisco_vrf_af) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | * [caveats](#cisco_vrf_af-caveats) |
+ [cisco_vtp](#type-cisco_vtp) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 
 ##### NetDev Providers
 
@@ -2599,6 +2599,14 @@ device.
 | N7k      | unsupported        | unsupported            |
 | IOS XR   | TODO               | TODO                   |
 
+#### <a name="cisco_vrf-caveats">Caveats</a>
+
+| Property                  | Caveat Description               |
+|---------------------------|----------------------------------|
+| route_distinguisher       | Only supported on N7k and N9k    |
+| shutdown                  | Only supported on N7k and N9k    |
+| vni                       | Only supported on N9k            |
+
 #### Parameters
 
 ##### `ensure`
@@ -2643,6 +2651,17 @@ Manages Cisco Virtual Routing and Forwarding (VRF) Address-Family configuration.
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | IOS XR   | TODO               | TODO                   |
+
+#### <a name="cisco_vrf_af-caveats">Caveats</a>
+
+| Property                    | Caveat Description                   |
+|-----------------------------|--------------------------------------|
+| route_target_both_auto      | Only supported on N7k and N9k        |
+| route_target_both_auto_evpn | Only supported on N7k and N9k        |
+| route_target_export         | Only supported on N7k, N9k, and XR   |
+| route_target_export_evpn    | Only supported on N7k and N9k        |
+| route_target_import         | Only supported on N7k, N9k, and XR   |
+| route_target_import_evpn    | Only supported on N7k and N9k        |
 
 #### Parameters
 
