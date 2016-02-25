@@ -135,48 +135,36 @@ Puppet::Type.type(:cisco_itd_device_group).provide(:nxapi) do
       @property_flush[prop].is_a?(FalseClass)
   end
 
+  def fail_attribute_check(type)
+    case type.to_sym
+    when :icmp
+      fail ArgumentError, 'control, dns_host, port are not applicable' if
+        @resource[:probe_control] || @resource[:probe_dns_host] ||
+        @resource[:probe_port]
+    when :dns
+      fail ArgumentError, 'control, port are not applicable' if
+        @resource[:probe_control] || @resource[:probe_port]
+      fail ArgumentError, 'dns_host MUST be specified' unless
+        @resource[:probe_dns_host]
+    when :tcp, :udp
+      fail ArgumentError, 'dns_host is not applicable' if
+        @resource[:probe_dns_host]
+      fail ArgumentError, 'port MUST be specified' unless
+        @resource[:probe_port]
+    end
+  end
+
   def probe_set
-    if @property_flush[:probe_type]
-      type = @property_flush[:probe_type]
-    else
-      type = @nu.probe_type
-    end
-    if @property_flush[:probe_timeout]
-      to = @property_flush[:probe_timeout]
-    else
-      to = @nu.probe_timeout
-    end
-    if @property_flush[:probe_retry_up]
-      ru = @property_flush[:probe_retry_up]
-    else
-      ru = @nu.probe_retry_up
-    end
-    if @property_flush[:probe_retry_down]
-      rd = @property_flush[:probe_retry_down]
-    else
-      rd = @nu.probe_retry_down
-    end
-    if @property_flush[:probe_frequency]
-      freq = @property_flush[:probe_frequency]
-    else
-      freq = @nu.probe_frequency
-    end
-    if @property_flush[:probe_dns_host]
-      dh = @property_flush[:probe_dns_host]
-    else
-      dh = @nu.probe_dns_host
-    end
-    if @property_flush[:probe_port]
-      port = @property_flush[:probe_port]
-    else
-      port = @nu.probe_port
-    end
-    if flush_boolean?(:probe_control)
-      con = @property_flush[:probe_control]
-    else
-      con = @nu.probe_control
-    end
-    @nu.send(:probe=, type.to_s, dh.to_s, con, freq, ru, rd, port, to)
+    type = @property_flush[:probe_type] ? @property_flush[:probe_type] : @nu.probe_type
+    to = @property_flush[:probe_timeout] ? @property_flush[:probe_timeout] : @nu.probe_timeout
+    ru = @property_flush[:probe_retry_up] ? @property_flush[:probe_retry_up] : @nu.probe_retry_up
+    rd = @property_flush[:probe_retry_down] ? @property_flush[:probe_retry_down] : @nu.probe_retry_down
+    freq = @property_flush[:probe_frequency] ? @property_flush[:probe_frequency] : @nu.probe_frequency
+    dh = @property_flush[:probe_dns_host] ? @property_flush[:probe_dns_host] : @nu.probe_dns_host
+    port = @property_flush[:probe_port] ? @property_flush[:probe_port] : @nu.probe_port
+    con = flush_boolean?(:probe_control) ? @property_flush[:probe_control] : @nu.probe_control
+    fail_attribute_check(type)
+    @nu.send(:probe=, type, dh, con, freq, ru, rd, port, to)
   end
 
   def flush
