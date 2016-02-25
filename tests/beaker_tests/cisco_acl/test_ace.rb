@@ -23,7 +23,7 @@ tests = {
 }
 
 # Test hash test cases
-tests[:seq_5] = {
+tests[:seq_5_remark] = {
   preclean:       'cisco_acl',
   title_pattern:  'ipv4 beaker 5',
   manifest_props: {
@@ -67,7 +67,7 @@ tests[:seq_20_v4] = {
     established:   'true',
     packet_length: 'range 80 1000',
     precedence:    'flash',
-    redirect:      'Ethernet1/1,Ethernet1/2,port-channel1',
+    redirect:      'Port-channel1,Port-channel2',
     tcp_flags:     'ack syn fin',
     time_range:    'my_range',
 
@@ -133,7 +133,7 @@ end
 test_name "TestCase :: #{tests[:resource_name]}" do
   logger.info("\n#{'-' * 60}\nSection 1. ACE Testing")
 
-  test_harness_run(tests, :seq_5)
+  test_harness_run(tests, :seq_5_remark)
   test_harness_run(tests, :seq_10_v4)
   test_harness_run(tests, :seq_10_v6)
   test_harness_run(tests, :seq_20_v4)
