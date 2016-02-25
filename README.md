@@ -2603,8 +2603,8 @@ device.
 
 | Property                  | Caveat Description               |
 |---------------------------|----------------------------------|
-| route_distinguisher       | Only supported on N7k and N9k    |
-| shutdown                  | Only supported on N7k and N9k    |
+| route_distinguisher       | Only supported on N3k and N9k    |
+| shutdown                  | Only supported on N3k and N9k    |
 | vni                       | Only supported on N9k            |
 
 #### Parameters
@@ -2656,12 +2656,12 @@ Manages Cisco Virtual Routing and Forwarding (VRF) Address-Family configuration.
 
 | Property                    | Caveat Description                   |
 |-----------------------------|--------------------------------------|
-| route_target_both_auto      | Only supported on N7k and N9k        |
-| route_target_both_auto_evpn | Only supported on N7k and N9k        |
-| route_target_export         | Only supported on N7k, N9k, and XR   |
-| route_target_export_evpn    | Only supported on N7k and N9k        |
-| route_target_import         | Only supported on N7k, N9k, and XR   |
-| route_target_import_evpn    | Only supported on N7k and N9k        |
+| route_target_both_auto      | Only supported on N3k and N9k        |
+| route_target_both_auto_evpn | Only supported on N3k and N9k        |
+| route_target_export         | Only supported on N3k, N9k, and XR   |
+| route_target_export_evpn    | Only supported on N3k and N9k        |
+| route_target_import         | Only supported on N3k, N9k, and XR   |
+| route_target_import_evpn    | Only supported on N3k and N9k        |
 
 #### Parameters
 
