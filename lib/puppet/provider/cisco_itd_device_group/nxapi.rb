@@ -136,6 +136,7 @@ Puppet::Type.type(:cisco_itd_device_group).provide(:nxapi) do
   end
 
   def fail_attribute_check(type)
+    return unless type
     case type.to_sym
     when :icmp
       fail ArgumentError, 'control, dns_host, port are not applicable' if
