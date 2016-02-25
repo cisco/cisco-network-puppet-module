@@ -26,7 +26,7 @@ class ciscopuppet::install (String $repo = 'https://rubygems.org', String $proxy
 
   package { 'cisco_node_utils' :
     ensure          => present,
-    provider        => 'gem',
+    provider        => 'puppet_gem',
     source          => $repo,
     install_options => $opts,
   }

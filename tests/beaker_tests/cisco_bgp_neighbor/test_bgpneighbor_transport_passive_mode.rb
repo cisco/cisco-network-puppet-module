@@ -16,12 +16,12 @@
 #
 # TestCase Name:
 # -------------
-# BgpNeighbor-Provider-password.rb
+# test_bgpneighbor_transport_passive_mode.rb
 #
 # TestCase Prerequisites:
 # -----------------------
 # This is a Puppet BGP Neighbor resource testcase for Puppet Agent on Nexus
-# devices.
+# and XR devices.
 # The test case assumes the following prerequisites are already satisfied:
 # A. Host configuration file contains agent and master information.
 # B. SSH is enabled on the Agent.
@@ -30,8 +30,8 @@
 #
 # TestCase:
 # ---------
-# This is a BGP Neighbor resource test that tests for password and type
-# attributes when created with 'ensure' => 'present'.
+# This is a BGP Neighbor resource test that tests valid values for the
+# transport-passive-mode property.
 #
 # The testcode checks for exit_codes from Puppet Agent, Vegas shell and
 # Bash shell command executions. For Vegas shell and Bash shell command
@@ -48,79 +48,53 @@
 # instance attributes to verify resource properties.
 #
 ###############################################################################
-# rubocop:disable Style/HashSyntax
 
 # Require UtilityLib.rb and BgpNeighborLib.rb paths.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
-id = 'password'
-
+id = 'transport_passive_mode'
 tests = {
-  :master => master,
-  :agent  => agent,
+  master:        master,
+  agent:         agent,
   resource_name: 'cisco_bgp_neighbor',
 }
 
 test_name "TestCase :: #{tests[:resource_name]} - #{id}" do
   resource_absent_cleanup(agent, 'cisco_bgp')
 
-  os = operating_system
+  os = fact_on(agent, 'os.name')
   vrf = 'red'
   neighbor = '1.1.1.1'
-  encr_pw = '386c0565965f89de'
-  passwords = { :default   => 'test',
-                :cleartext => 'test',
-              }
 
+  modes = [:passive_only]
   if os == 'ios_xr'
-    passwords[:md5] = encr_pw
-  else
-    passwords['3des'] = encr_pw
+    modes << :active_only
+    modes << :both
   end
+  modes << :none
 
-  passwords.each do |type, password|
+  modes.each do |mode|
     tests[id] = {
-      desc:           "1.1 Password type: #{type}, password: #{password})",
       title_pattern:  "2 #{vrf} #{neighbor}",
+      desc:           "1.1 Test mode '#{mode}'",
       manifest_props: {
-        remote_as:     99,
-        password_type: type,
-        password:      password,
-      },
-      resource:       {
-        'ensure' => 'present'
+        remote_as:              99,
+        transport_passive_mode: mode,
       },
     }
 
-    if os == 'ios_xr'
-      # for XR, just make sure a password is there for types other than md5
-      if type == :md5 || type == 'md5'
-        tests[id][:resource]['password'] = encr_pw
-      else
-        tests[id][:resource]['password'] = IGNORE_VALUE
-      end
-    else
-      tests[id][:resource]['password'] = encr_pw
-    end
-
-    # NOTE: We can't simply call test_harness_run() here since idempotence
-    # test will fail (we can't tell if a password has changed).
-
-    create_manifest_and_resource(tests, id)
-    test_manifest(tests, id)
-    test_resource(tests, id)
-
-    tests[id][:desc] = '1.2 Test removing the password'
-    tests[id][:manifest_props] = {
-      :password => ''
-    }
-    create_manifest_and_resource(tests, id)
-    test_manifest(tests, id)
-
-    tests[id][:desc] = '1.3 Verify password has been removed on the box'
-    tests[id][:resource] = { 'password' => IGNORE_VALUE }
-    test_resource(tests, id, true)
+    test_harness_run(tests, id)
   end
+
+  tests[id][:desc] = '1.2 Verify :default is the same as :none'
+  tests[id][:manifest_props] = {
+    transport_passive_mode: :default
+  }
+  # In this case, nothing changed, we would expect the puppet run to return 0.
+  tests[id][:code] = [0]
+  create_manifest_and_resource(tests, id)
+  test_manifest(tests, id)
+  test_resource(tests, id)
 
   resource_absent_cleanup(agent, 'cisco_bgp')
 
