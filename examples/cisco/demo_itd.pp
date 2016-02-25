@@ -41,5 +41,5 @@ class ciscopuppet::cisco::demo_itd {
     probe_retry_up   => 4,
     probe_timeout    => 1200,
     probe_type       => 'icmp',
-  $fabricpath.yaml
+  }
 }

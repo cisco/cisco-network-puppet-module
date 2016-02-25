@@ -52,13 +52,13 @@ Puppet::Type.newtype(:cisco_itd_device_group) do
     patterns << [
       /^(\S+)$/,
       [
-        [:name, identity]
+        [:itddg, identity]
       ],
     ]
     patterns
   end
 
-  newparam(:name, namevar: :true) do
+  newparam(:itddg, namevar: :true) do
     desc "Name of the itd device group. Valid value is a string of
           non-whitespace characters. It is case-sensitive"
     munge(&:strip)
