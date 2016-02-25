@@ -1,8 +1,6 @@
-# package nxapi provider
-#
 # January, 2015
 #
-# Copyright (c) 2015 Cisco and/or its affiliates.
+# Copyright (c) 2015-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +16,7 @@
 
 require 'puppet/util/package'
 
-Puppet::Type.type(:package).provide :nxapi, parent: :yum do
+Puppet::Type.type(:package).provide :cisco, parent: :yum do
   desc "The cisco nexus package provider.
   Local rpm installations will utilize the native yum provider.
   Cisco rpm installations from the host will utilize the native yum provider.

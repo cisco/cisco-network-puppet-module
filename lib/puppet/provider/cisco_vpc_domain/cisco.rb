@@ -1,8 +1,6 @@
-# The NXAPI provider for cisco vpc_domain.
-#
 # December, 2015
 #
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2014-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,8 +23,8 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
-Puppet::Type.type(:cisco_vpc_domain).provide(:nxapi) do
-  desc 'The new NXAPI provider.'
+Puppet::Type.type(:cisco_vpc_domain).provide(:cisco) do
+  desc 'The Cisco provider.'
 
   confine feature: :cisco_node_utils
   defaultfor operatingsystem: :nexus

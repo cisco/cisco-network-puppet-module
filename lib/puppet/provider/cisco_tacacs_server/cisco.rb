@@ -1,9 +1,7 @@
 ################################################
-# The nxapi provider for cisco_tacacs_server.
-#
 # January, 2015
 #
-# Copyright (c) 2015 Cisco and/or its affiliates.
+# Copyright (c) 2015-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,8 +18,8 @@
 
 require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
 
-Puppet::Type.type(:cisco_tacacs_server).provide(:nxapi) do
-  desc 'The nxapi provider.'
+Puppet::Type.type(:cisco_tacacs_server).provide(:cisco) do
+  desc 'The Cisco provider.'
 
   confine feature: :cisco_node_utils
   defaultfor operatingsystem: :nexus

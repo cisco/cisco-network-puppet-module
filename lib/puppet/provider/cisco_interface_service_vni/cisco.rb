@@ -1,6 +1,3 @@
-#
-# The NXAPI provider for cisco_interface_service_vni.
-#
 # January 2016, Chris Van Heuveln
 #
 # Copyright (c) 2016 Cisco and/or its affiliates.
@@ -26,8 +23,8 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
-Puppet::Type.type(:cisco_interface_service_vni).provide(:nxapi) do
-  desc 'The NXAPI provider for cisco_interface_service_vni'
+Puppet::Type.type(:cisco_interface_service_vni).provide(:cisco) do
+  desc 'The Cisco provider for cisco_interface_service_vni'
 
   confine feature: :cisco_node_utils
   defaultfor operatingsystem: :nexus

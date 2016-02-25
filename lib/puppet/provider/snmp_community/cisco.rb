@@ -1,8 +1,6 @@
-# The NXAPI provider for snmp_community.
-#
 # October, 2015
 #
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2014-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,8 +24,8 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
-Puppet::Type.type(:snmp_community).provide(:nxapi) do
-  desc 'The Cisco NXAPI provider for snmp_community.'
+Puppet::Type.type(:snmp_community).provide(:cisco) do
+  desc 'The Cisco provider for snmp_community.'
 
   confine feature: :cisco_node_utils
   defaultfor operatingsystem: :nexus

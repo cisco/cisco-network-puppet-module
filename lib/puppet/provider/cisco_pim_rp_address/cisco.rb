@@ -1,7 +1,4 @@
-#
-# The NXAPI provider for cisco_pim_rp_address.
-#
-# Copyright (c) 2015 Cisco and/or its affiliates.
+# Copyright (c) 2015-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,8 +21,8 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
-Puppet::Type.type(:cisco_pim_rp_address).provide(:nxapi) do
-  desc 'The NXAPI provider for cisco_pim_rp_address.'
+Puppet::Type.type(:cisco_pim_rp_address).provide(:cisco) do
+  desc 'The Cisco provider for cisco_pim_rp_address.'
 
   confine feature: :cisco_node_utils
 

@@ -1,8 +1,6 @@
-# The NXAPI provider for network_interface
-#
 # October, 2015
 #
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2014-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Puppet::Type.type(:port_channel).provide(:nxapi, parent: Puppet::Type.type(:cisco_interface_portchannel).provider(:nxapi)) do
+Puppet::Type.type(:port_channel).provide(:cisco, parent: Puppet::Type.type(:cisco_interface_portchannel).provider(:cisco)) do
   @doc = 'port channel'
 
   mk_resource_methods

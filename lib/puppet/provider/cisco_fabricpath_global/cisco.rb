@@ -1,5 +1,3 @@
-# The NXAPI provider for cisco_fabricapth_global
-#
 # February, 2016
 #
 # Copyright (c) 2014-2016 Cisco and/or its affiliates.
@@ -25,8 +23,8 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
-Puppet::Type.type(:cisco_fabricpath_global).provide(:nxapi) do
-  desc 'The NXAPI provider.'
+Puppet::Type.type(:cisco_fabricpath_global).provide(:cisco) do
+  desc 'The Cisco provider.'
 
   confine feature: :cisco_node_utils
   defaultfor operatingsystem: :nexus

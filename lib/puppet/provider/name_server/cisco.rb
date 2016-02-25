@@ -1,8 +1,6 @@
-# The NXAPI provider for ip name-server
-#
 # September, 2015
 #
-# Copyright (c) 2015 Cisco and/or its affiliates.
+# Copyright (c) 2015-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Puppet::Type.type(:name_server).provide(:nxapi) do
-  desc 'The NXAPI provider for ip name-server.'
+Puppet::Type.type(:name_server).provide(:cisco) do
+  desc 'The Cisco provider for ip name-server.'
 
   confine feature: :cisco_node_utils
   defaultfor operatingsystem: :nexus

@@ -1,6 +1,3 @@
-#
-# The NXAPI provider for cisco_interface.
-#
 # May 2015
 #
 # Copyright (c) 2015-2016 Cisco and/or its affiliates.

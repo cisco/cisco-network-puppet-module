@@ -32,7 +32,7 @@ class ciscopuppet::cisco::demo_cisco_patch_rpm {
   $settings = {'target' => 'host'}
   package { 'n9000_sample':
     ensure           => present,
-    provider         => 'nxapi',
+    provider         => 'cisco',
     source           => $ciscoPatchFile,
     package_settings => $settings,
   }

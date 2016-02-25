@@ -23,7 +23,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `nsr`
 
 ### Removed
-*
+- Removed 'cisco_nxapi' fact as this gem is no longer a dependency.
+
+### Changed
+- Renamed all providers from `:nxapi` to `:cisco` as they may include support for multiple Cisco platforms, not all of which use NXAPI.
 
 ## [1.2.3] - 2016-02-24
 ### Added

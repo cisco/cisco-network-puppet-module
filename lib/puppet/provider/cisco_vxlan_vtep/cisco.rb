@@ -1,9 +1,6 @@
-#
-# The NXAPI provider for cisco_vxlan_vtep.
-#
 # December 2015 Michael G. Wiebe
 #
-# Copyright (c) 2015 Cisco and/or its affiliates.
+# Copyright (c) 2015-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,7 +23,7 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
-Puppet::Type.type(:cisco_vxlan_vtep).provide(:nxapi) do
+Puppet::Type.type(:cisco_vxlan_vtep).provide(:cisco) do
   confine feature: :cisco_node_utils
   defaultfor operatingsystem: :nexus
 

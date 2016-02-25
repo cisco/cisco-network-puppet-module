@@ -1,8 +1,6 @@
-# The NXAPI provider for tacacs_server.
-#
 # October, 2015
 #
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2014-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,8 +24,8 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
-Puppet::Type.type(:tacacs_server).provide(:nxapi) do
-  desc 'The Cisco NXAPI provider for tacacs_server.'
+Puppet::Type.type(:tacacs_server).provide(:cisco) do
+  desc 'The Cisco provider for tacacs_server.'
 
   confine feature: :cisco_node_utils
   defaultfor operatingsystem: :nexus

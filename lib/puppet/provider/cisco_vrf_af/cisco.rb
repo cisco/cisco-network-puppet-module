@@ -1,6 +1,3 @@
-#
-# The NXAPI provider for cisco_vrf_af
-#
 # January 2016, Chris Van Heuveln
 #
 # Copyright (c) 2016 Cisco and/or its affiliates.
@@ -26,7 +23,7 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
-Puppet::Type.type(:cisco_vrf_af).provide(:nxapi) do
+Puppet::Type.type(:cisco_vrf_af).provide(:cisco) do
   confine feature: :cisco_node_utils
   defaultfor operatingsystem: :nexus
 

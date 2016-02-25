@@ -1,5 +1,3 @@
-# The NXAPI provider for cisco fabricapth topology.
-#
 # February, 2016
 #
 # Copyright (c) 2014-2016 Cisco and/or its affiliates.
@@ -25,8 +23,8 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
-Puppet::Type.type(:cisco_fabricpath_topology).provide(:nxapi) do
-  desc 'The new NXAPI provider.'
+Puppet::Type.type(:cisco_fabricpath_topology).provide(:cisco) do
+  desc 'The new Cisco provider.'
 
   confine feature: :cisco_node_utils
   defaultfor operatingsystem: :nexus
