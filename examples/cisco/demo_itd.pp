@@ -16,6 +16,11 @@
 
 class ciscopuppet::cisco::demo_itd {
 
+  $non_icmp_type = platform_get() ? {
+    'n7k'  => 'present',
+    default => 'absent'
+  }
+
   $probe_control = platform_get() ? {
     'n7k'  => true,
     default => undef
@@ -31,15 +36,44 @@ class ciscopuppet::cisco::demo_itd {
     default => undef
   }
 
-  cisco_itd_device_group {'mygroup':
+  cisco_itd_device_group {'icmpGroup':
     ensure           => 'present',
-    probe_control    => $probe_control,
-    probe_dns_host   => $probe_dns_host,
-    probe_frequency  => 600,
-    probe_port       => $probe_port,
+    probe_frequency  => 1800,
     probe_retry_down => 4,
     probe_retry_up   => 4,
     probe_timeout    => 1200,
     probe_type       => 'icmp',
+  }
+
+  cisco_itd_device_group {'dnsgroup':
+    ensure           => $non_icmp_type,
+    probe_dns_host   => $probe_dns_host,
+    probe_frequency  => 1800,
+    probe_retry_down => 4,
+    probe_retry_up   => 4,
+    probe_timeout    => 1200,
+    probe_type       => 'dns',
+  }
+
+  cisco_itd_device_group {'tcpGroup':
+    ensure           => $non_icmp_type,
+    probe_control    => $probe_control,
+    probe_frequency  => 1600,
+    probe_port       => $probe_port,
+    probe_retry_down => 4,
+    probe_retry_up   => 4,
+    probe_timeout    => 1200,
+    probe_type       => 'tcp',
+  }
+
+  cisco_itd_device_group {'udpGroup':
+    ensure           => $non_icmp_type,
+    probe_control    => $probe_control,
+    probe_frequency  => 1600,
+    probe_port       => $probe_port,
+    probe_retry_down => 4,
+    probe_retry_up   => 4,
+    probe_timeout    => 1200,
+    probe_type       => 'udp',
   }
 }
