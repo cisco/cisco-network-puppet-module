@@ -58,12 +58,8 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     :stp_cost,
     :stp_guard,
     :stp_link_type,
-    :stp_mst_cost,
-    :stp_mst_port_priority,
     :stp_port_priority,
     :stp_port_type,
-    :stp_vlan_cost,
-    :stp_vlan_port_priority,
     :switchport_trunk_allowed_vlan,
     :switchport_trunk_native_vlan,
     :vlan_mapping,
@@ -87,12 +83,20 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     :vlan_mapping_enable,
     :vpc_peer_link,
   ]
-  INTF_ALL_PROPS = INTF_NON_BOOL_PROPS + INTF_BOOL_PROPS
+  INTF_ARRAY_FLAT_PROPS = [
+    :stp_mst_cost,
+    :stp_mst_port_priority,
+    :stp_vlan_cost,
+    :stp_vlan_port_priority,
+  ]
+  INTF_ALL_PROPS = INTF_NON_BOOL_PROPS + INTF_BOOL_PROPS + INTF_ARRAY_FLAT_PROPS
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@interface',
                                             INTF_NON_BOOL_PROPS)
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@interface',
                                             INTF_BOOL_PROPS)
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:array_flat, self, '@interface',
+                                            INTF_ARRAY_FLAT_PROPS)
 
   def initialize(value={})
     super(value)
@@ -118,6 +122,9 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
       else
         current_state[prop] = val ? :true : :false
       end
+    end
+    INTF_ARRAY_FLAT_PROPS.each do |prop|
+      current_state[prop] = intf.send(prop)
     end
     # nested array properties
     current_state[:vlan_mapping] = intf.vlan_mapping
@@ -216,31 +223,11 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     end
   end
 
-  def stp_mst_cost
-    return @property_hash[:stp_mst_cost] if @resource[:stp_mst_cost].nil?
-    if @resource[:stp_mst_cost][0] == :default &&
-       @property_hash[:stp_mst_cost] == @interface.default_stp_mst_cost
-      return [:default]
-    else
-      @property_hash[:stp_mst_cost]
-    end
-  end
-
   def stp_mst_cost=(should_list)
     should_list = @interface.default_stp_mst_cost if should_list[0] == :default
     # check for overlapping arrays in should_list
     PuppetX::Cisco::Utils.fail_array_overlap(should_list)
     @property_flush[:stp_mst_cost] = should_list
-  end
-
-  def stp_mst_port_priority
-    return @property_hash[:stp_mst_port_priority] if @resource[:stp_mst_port_priority].nil?
-    if @resource[:stp_mst_port_priority][0] == :default &&
-       @property_hash[:stp_mst_port_priority] == @interface.default_stp_mst_port_priority
-      return [:default]
-    else
-      @property_hash[:stp_mst_port_priority]
-    end
   end
 
   def stp_mst_port_priority=(should_list)
@@ -250,31 +237,11 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     @property_flush[:stp_mst_port_priority] = should_list
   end
 
-  def stp_vlan_cost
-    return @property_hash[:stp_vlan_cost] if @resource[:stp_vlan_cost].nil?
-    if @resource[:stp_vlan_cost][0] == :default &&
-       @property_hash[:stp_vlan_cost] == @interface.default_stp_vlan_cost
-      return [:default]
-    else
-      @property_hash[:stp_vlan_cost]
-    end
-  end
-
   def stp_vlan_cost=(should_list)
     should_list = @interface.default_stp_vlan_cost if should_list[0] == :default
     # check for overlapping arrays in should_list
     PuppetX::Cisco::Utils.fail_array_overlap(should_list)
     @property_flush[:stp_vlan_cost] = should_list
-  end
-
-  def stp_vlan_port_priority
-    return @property_hash[:stp_vlan_port_priority] if @resource[:stp_vlan_port_priority].nil?
-    if @resource[:stp_vlan_port_priority][0] == :default &&
-       @property_hash[:stp_vlan_port_priority] == @interface.default_stp_vlan_port_priority
-      return [:default]
-    else
-      @property_hash[:stp_vlan_port_priority]
-    end
   end
 
   def stp_vlan_port_priority=(should_list)
