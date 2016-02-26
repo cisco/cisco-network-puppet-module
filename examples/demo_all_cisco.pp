@@ -38,6 +38,7 @@ class ciscopuppet::demo_all_cisco {
   include ciscopuppet::cisco::demo_pim
   include ciscopuppet::cisco::demo_portchannel
   include ciscopuppet::cisco::demo_snmp
+  #stp_bd and stp_vlan are exclusive, so comment one of them
   #include ciscopuppet::cisco::demo_stp_bd
   include ciscopuppet::cisco::demo_stp_vlan
   include ciscopuppet::cisco::demo_tacacs_server
@@ -47,7 +48,7 @@ class ciscopuppet::demo_all_cisco {
   include ciscopuppet::cisco::demo_vrf
   include ciscopuppet::cisco::demo_vtp
   # Conditionally include ciscopuppet::demo_vxlan 
-  if platform_get() =~ /n9k/ { 
-    include ciscopuppet::cisco::demo_vxlan 
+  if platform_get() =~ /n9k/ {
+    include ciscopuppet::cisco::demo_vxlan
   }
 }
