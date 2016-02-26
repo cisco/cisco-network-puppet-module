@@ -306,7 +306,7 @@ Puppet::Type.newtype(:cisco_stp_global) do
   end # property bridge_assurance
 
   newproperty(:domain) do
-    desc 'Domain'
+    desc 'Spanning Tree domain'
 
     munge do |value|
       value = :default if value == 'default'
