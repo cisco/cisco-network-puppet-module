@@ -1501,10 +1501,10 @@ VRF member of the interface.  Valid values are a string or the keyword 'default'
 ##### STP config attributes
 
 ##### `stp_bpdufilter`
-Enable/Disable BPDU filter for this interface. Valid values are enable, disable or 'default'.
+Enable/Disable BPDU (Bridge Protocol Data Unit) filter for this interface. Valid values are enable, disable or 'default'.
 
 ##### `stp_bpduguard`
-Enable/Disable BPDU guard for this interface. Valid values are enable, disable or 'default'.
+Enable/Disable BPDU (Bridge Protocol Data Unit) guard for this interface. Valid values are enable, disable or 'default'.
 
 ##### `stp_cost`
 path cost. Valid values are integer, 'auto' or 'default'.
