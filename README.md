@@ -1507,31 +1507,31 @@ Enable/Disable BPDU (Bridge Protocol Data Unit) filter for this interface. Valid
 Enable/Disable BPDU (Bridge Protocol Data Unit) guard for this interface. Valid values are enable, disable or 'default'.
 
 ##### `stp_cost`
-path cost. Valid values are integer, 'auto' or 'default'.
+Path cost. Valid values are integer, 'auto' or 'default'.
 
 ##### `stp_guard`
-guard mode. Valid values are loop, none, root or 'default'.
+Guard mode. Valid values are loop, none, root or 'default'.
 
 ##### `stp_link_type`
-link type. Valid values are auto, shared, point-to-point or 'default'.
+Link type. Valid values are auto, shared, point-to-point or 'default'.
 
 ##### `stp_mst_cost`
-mst cost. Valid values are an array of [mst_range, cost] pairs or 'default'.
+Mst cost. Valid values are an array of [mst_range, cost] pairs or 'default'.
 
 ##### `stp_mst_port_priority`
-mst port priority. Valid values are an array of [mst_range, port_priority] pairs or 'default'.
+Mst port priority. Valid values are an array of [mst_range, port_priority] pairs or 'default'.
 
 ##### `stp_port_priority`
-port priority. Valid values are integer or 'default'.
+Port priority. Valid values are integer or 'default'.
 
 ##### `stp_port_type`
-port type. Valid values are edge, network, normal, edge_trunk or 'default'.
+Port type. Valid values are edge, network, normal, edge_trunk or 'default'.
 
 ##### `stp_vlan_cost`
-vlan path cost. Valid values are an array of [vlan_range, cost] pairs or 'default'.
+Vlan path cost. Valid values are an array of [vlan_range, cost] pairs or 'default'.
 
 ##### `stp_vlan_port_priority`
-vlan port priority. Valid values are an array of [vlan_range, port_priority] pairs or 'default'.
+Vlan port priority. Valid values are an array of [vlan_range, port_priority] pairs or 'default'.
 
 ##### SVI interface config attributes
 
@@ -2011,22 +2011,22 @@ Manages spanning tree global parameters
 #### Parameters
 
 ##### `bd_designated_priority`
-designated bridge priority. Valid values are an array of [bd_range, designated_priority] pairs or 'default'.
+Designated bridge priority. Valid values are an array of [bd_range, designated_priority] pairs or 'default'.
 
 ##### `bd_forward_time`
-forward delay. Valid values are an array of [bd_range, forward_time] pairs or 'default'.
+Forward delay. Valid values are an array of [bd_range, forward_time] pairs or 'default'.
 
 ##### `bd_hello_time`
-hello interval. Valid values are an array of [bd_range, hello_time] pairs or 'default'.
+Hello interval. Valid values are an array of [bd_range, hello_time] pairs or 'default'.
 
 ##### `bd_max_age`
-max age interval. Valid values are an array of [bd_range, max_age] pairs or 'default'.
+Max age interval. Valid values are an array of [bd_range, max_age] pairs or 'default'.
 
 ##### `bd_priority`
-bridge priority. Valid values are an array of [bd_range, priority] pairs or 'default'.
+Bridge priority. Valid values are an array of [bd_range, priority] pairs or 'default'.
 
 ##### `bd_root_priority`
-root bridge priority. Valid values are an array of [bd_range, root_priority] pairs or 'default'.
+Root bridge priority. Valid values are an array of [bd_range, root_priority] pairs or 'default'.
 
 ##### `bpdufilter`
 Edge port (portfast) bpdu filter. Valid values are true, false or 'default'.
@@ -2041,7 +2041,7 @@ Bridge Assurance on all network ports. Valid values are true, false or 'default'
 Domain. Valid values are integer or 'default'.
 
 ##### `fcoe`
-spanning tree protocol for FCoE VLAN. Valid values are true, false or 'default'.
+Spanning tree protocol for FCoE VLAN. Valid values are true, false or 'default'.
 
 ##### `loopguard`
 Enable loopguard by default on all ports. Valid values are true, false or 'default'.
@@ -2050,52 +2050,52 @@ Enable loopguard by default on all ports. Valid values are true, false or 'defau
 Operating mode. Valid values are mst, rapid-pvst or 'default'.
 
 ##### `mst_designated_priority`
-designated priority for multiple spanning tree configuration. Valid values are an array of [mst_range, designated_priority] pairs or 'default'
+Designated priority for multiple spanning tree configuration. Valid values are an array of [mst_range, designated_priority] pairs or 'default'
 
 ##### `mst_hello_time`
-hello interval for multiple spanning tree configuration. Valid values are integer or 'default'.
+Hello interval for multiple spanning tree configuration. Valid values are integer or 'default'.
 
 ##### `mst_inst_vlan_map`
 Map vlans to an MST instance. Valid values are an array of [mst_instance, vlan_range] pairs or 'default'
 
 ##### `mst_max_age`
-max age interval for multiple spanning tree configuration. Valid values are integer or 'default'.
+Max age interval for multiple spanning tree configuration. Valid values are integer or 'default'.
 
 ##### `mst_max_hops`
-max hops for multiple spanning tree configuration. Valid values are integer or 'default'
+Max hops for multiple spanning tree configuration. Valid values are integer or 'default'
 
 ##### `mst_name`
-name for multiple spanning tree configuration. Valid values are String or 'default'
+Name for multiple spanning tree configuration. Valid values are String or 'default'
 
 ##### `mst_priority`
-priority for multiple spanning tree configuration. Valid values are an array of [mst_range, priority] pairs or 'default'
+Priority for multiple spanning tree configuration. Valid values are an array of [mst_range, priority] pairs or 'default'
 
 ##### `mst_revision`
-configuration revision number for multiple spanning tree configuration. Valid values are String or 'default'
+Configuration revision number for multiple spanning tree configuration. Valid values are String or 'default'
 
 ##### `mst_root_priority`
-root priority for multiple spanning tree configuration. Valid values are an array of [mst_range, root_priority] pairs or 'default'
+Root priority for multiple spanning tree configuration. Valid values are an array of [mst_range, root_priority] pairs or 'default'
 
 ##### `pathcost`
-pathcost option. Valid values are long, short or 'default'.
+Pathcost option. Valid values are long, short or 'default'.
 
 ##### `vlan_designated_priority`
-designated priority for vlan. Valid values are an array of [vlan_range, designated_priority] pairs or 'default'
+Designated priority for vlan. Valid values are an array of [vlan_range, designated_priority] pairs or 'default'
 
 ##### `vlan_forward_time`
-forward delay for vlan. Valid values are an array of [vlan_range, forward_time] pairs or 'default'
+Forward delay for vlan. Valid values are an array of [vlan_range, forward_time] pairs or 'default'
 
 ##### `vlan_hello_time`
-hello interval for vlan. Valid values are an array of [vlan_range, hello_time] pairs or 'default'
+Hello interval for vlan. Valid values are an array of [vlan_range, hello_time] pairs or 'default'
 
 ##### `vlan_max_age`
-max age interval for vlan. Valid values are an array of [vlan_range, max_age] pairs or 'default'
+Max age interval for vlan. Valid values are an array of [vlan_range, max_age] pairs or 'default'
 
 ##### `vlan_priority`
-priority for vlan. Valid values are an array of [vlan_range, priority] pairs or 'default'
+Priority for vlan. Valid values are an array of [vlan_range, priority] pairs or 'default'
 
 ##### `vlan_root_priority`
-root priority for vlan. Valid values are an array of [vlan_range, root_priority] pairs or 'default'
+Root priority for vlan. Valid values are an array of [vlan_range, root_priority] pairs or 'default'
 
 --
 ### Type: cisco_snmp_community
