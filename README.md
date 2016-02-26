@@ -1352,7 +1352,17 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | `ipv4_pim_sparse_mode` | Not supported on IOS XR |
 | `negotiate_auto` | Not supported on IOS XR |
 | `speed` | Not supported on IOS XR |
-| `stp_bpdufilter` <br> `stp_bpduguard` <br> `stp_cost` <br> `stp_guard` <br> `stp_link_type` <br> `stp_port_priority` <br> `stp_port_type` <br> `stp_mst_cost` <br> `stp_mst_port_priority` <br> `stp_vlan_cost` <br> `stp_vlan_port_priority` | Not supported on IOS XR |
+| `stp_bpdufilter` | Not supported on IOS XR |
+| `stp_bpduguard` | Not supported on IOS XR  |
+| `stp_cost` | Not supported on IOS XR  |
+| `stp_guard` | Not supported on IOS XR  |
+| `stp_link_type` | Not supported on IOS XR  |
+| `stp_port_priority` | Not supported on IOS XR  |
+| `stp_port_type` | Not supported on IOS XR  |
+| `stp_mst_cost` | Not supported on IOS XR  |
+| `stp_mst_port_priority` | Not supported on IOS XR  |
+| `stp_vlan_cost` | Not supported on IOS XR  |
+| `stp_vlan_port_priority` | Not supported on IOS XR |
 | `svi_autostate` | Not supported on N56xx, N6k, IOS XR |
 | `svi_management` | Not supported on IOS XR |
 | `switchport` | Not supported on IOS XR |
