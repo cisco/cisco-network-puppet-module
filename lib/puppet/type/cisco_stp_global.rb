@@ -16,14 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-begin
-  require 'puppet_x/cisco/cmnutils'
-rescue LoadError # seen on master, not on agent
-  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
-  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..',
-                                     'puppet_x', 'cisco', 'cmnutils.rb'))
-end
-
 Puppet::Type.newtype(:cisco_stp_global) do
   @doc = "
     Manages the Cisco Spanning-tree Global configuration resource.
