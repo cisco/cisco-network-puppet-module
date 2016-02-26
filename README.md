@@ -2658,14 +2658,18 @@ Manages Cisco Virtual Routing and Forwarding (VRF) Address-Family configuration.
 
 #### <a name="cisco_vrf_af-caveats">Caveats</a>
 
-| Property                    | Caveat Description                   |
-|-----------------------------|--------------------------------------|
-| route_target_both_auto      | Only supported on N3k and N9k        |
-| route_target_both_auto_evpn | Only supported on N3k and N9k        |
-| route_target_export         | Only supported on N3k, N9k, and XR   |
-| route_target_export_evpn    | Only supported on N3k and N9k        |
-| route_target_import         | Only supported on N3k, N9k, and XR   |
-| route_target_import_evpn    | Only supported on N3k and N9k        |
+| Property                      | Caveat Description                   |
+|-------------------------------|--------------------------------------|
+| route_policy_export           | Only supported on N9kv and XR        |
+| route_policy_import           | Only supported on N9kv and XR        |
+| route_target_both_auto        | Only supported on N3k and N9k        |
+| route_target_both_auto_evpn   | Only supported on N3k and N9k        |
+| route_target_export           | Only supported on N3k, N9k, and XR   |
+| route_target_export_evpn      | Only supported on N3k and N9k        |
+| route_target_export_stitching | Only supported on XR                 |
+| route_target_import           | Only supported on N3k, N9k, and XR   |
+| route_target_import_evpn      | Only supported on N3k and N9k        |
+| route_target_import_stitching | Only supported on XR                 |
 
 #### Parameters
 

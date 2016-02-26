@@ -17,6 +17,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `ipv4_forwarding`, `switchport_mode fabricpath`
 - Extended `cisco_vlan` with the following attributes:
   - `mode`
+- Extended `cisco_vrf_af` with the following attributes:
+  - `route_policy_export`
+  - `route_policy_import`
+  - `route_target_export_stitching`
+  - `route_target_import_stitching`
 - Extended `cisco_vxlan_vtep` with the following attributes:
   - `source_interface_hold_down_time`
 - Extended `cisco_bgp` with the following attributes:

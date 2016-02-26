@@ -33,17 +33,25 @@ Puppet::Type.type(:cisco_vrf_af).provide(:cisco) do
   VRF_AF_ARRAY_FLAT_PROPS = [
     :route_target_import,
     :route_target_import_evpn,
+    :route_target_import_stitching,
     :route_target_export,
     :route_target_export_evpn,
+    :route_target_export_stitching,
+  ]
+  VRF_AF_NON_BOOL_PROPS = [
+    :route_policy_export,
+    :route_policy_import,
   ]
   VRF_AF_BOOL_PROPS = [
     :route_target_both_auto,
     :route_target_both_auto_evpn,
   ]
   VRF_AF_ALL_PROPS =
-    VRF_AF_ARRAY_FLAT_PROPS + VRF_AF_BOOL_PROPS
+    VRF_AF_ARRAY_FLAT_PROPS + VRF_AF_NON_BOOL_PROPS + VRF_AF_BOOL_PROPS
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:array_flat, self, '@nu',
                                             VRF_AF_ARRAY_FLAT_PROPS)
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@nu',
+                                            VRF_AF_NON_BOOL_PROPS)
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@nu',
                                             VRF_AF_BOOL_PROPS)
 
@@ -65,6 +73,9 @@ Puppet::Type.type(:cisco_vrf_af).provide(:cisco) do
     }
     # Call node_utils getter for every property
     VRF_AF_ARRAY_FLAT_PROPS.each do |prop|
+      current_state[prop] = nu_obj.send(prop)
+    end
+    VRF_AF_NON_BOOL_PROPS.each do |prop|
       current_state[prop] = nu_obj.send(prop)
     end
     VRF_AF_BOOL_PROPS.each do |prop|
