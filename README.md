@@ -1587,6 +1587,7 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | `duplex` | Not supported on IOS XR |
 | `fabric_forwarding_anycast_gateway` | Not supported on IOS XR |
 | `ipv4_arp_timeout` | Not supported on IOS XR |
+| `ipv4_forwarding` | Not supported on IOS XR |
 | `ipv4_pim_sparse_mode` | Not supported on IOS XR |
 | `negotiate_auto` | Not supported on IOS XR |
 | `speed` | Not supported on IOS XR |
@@ -1626,24 +1627,7 @@ Shutdown state of the interface. Valid values are 'true', 'false', and
 'default'.
 
 ###### `switchport_mode`
-Switchport mode of the interface. To make an interface Layer 3, set
-`switchport_mode` to 'disabled'. Valid values are 'disabled', 'access', 'tunnel', 'fex_fabric', 'trunk', 'fabricpath' and 'default'. This property is not supported on IOS XR.
-
-###### `ipv4_acl_in`
-Apply ipv4 access list on the interface in ingress direction. Access-list should be present on the network device
-prior this configuration. Valid values are string, keyword 'default'.
-
-###### `ipv4_acl_out`
-Apply ipv4 access list on the interface in egress direction. Access-list should be present on the network device
-prior this configuration. Valid values are string, keyword 'default'.
-
-###### `ipv6_acl_in`
-Apply ipv6 access list on the interface in ingress direction. Access-list should be present on the network device
-prior this configuration. Valid values are string, keyword 'default'.
-
-###### `ipv6_acl_out`
-Apply ipv6 access list on the interface in egress direction. Access-list should be present on the network device
-prior this configuration. Valid values are string, keyword 'default'.
+Switchport mode of the interface. Interfaces that support `switchport_mode` may default to layer 2 or layer 3 depending on platform, interface type, or the `system default switchport` setting. An interface may be explicitly set to Layer 3 by setting `switchport_mode` to 'disabled'. Valid values are 'disabled', 'access', 'tunnel', 'fex_fabric', 'trunk', 'fabricpath' and 'default'. This property is not supported on IOS XR.
 
 ##### L2 interface config attributes
 
@@ -1678,14 +1662,17 @@ Enable/Disable negotiate auto on the interface. Valid values are 'true',
 
 ##### L3 interface config attributes
 
+###### `ipv4_acl_in`
+Applies an ipv4 access list on the interface in the ingress direction. An access-list should be present on the network device prior to this configuration. Valid values are string, keyword 'default'.
+
+###### `ipv4_acl_out`
+Applies an ipv4 access list on the interface in the egress direction. An access-list should be present on the network device prior to this configuration. Valid values are string, keyword 'default'.
+
 ###### `ipv4_pim_sparse_mode`
 Enables or disables ipv4 pim sparse mode on the interface. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 
 ###### `ipv4_proxy_arp`
 Enables or disables proxy arp on the interface. Valid values are 'true', 'false', and 'default'.
-
-###### `ipv4_redirects`
-Enables or disables sending of IP redirect messages. Valid values are 'true', 'false', and 'default'.
 
 ###### `ipv4_address`
 IP address of the interface. Valid values are a string of ipv4 address or the
@@ -1703,6 +1690,24 @@ Network mask length of the secondary IP address on the interface. Valid values a
 
 ###### `ipv4_arp_timeout`
 Address Resolution Protocol (ARP) timeout value. Valid values are integer and keyword 'default'. Currently only supported on vlan interfaces. This property is not supported on IOS XR as IOS XR does not support vlan interfaces.
+
+###### `ipv4_forwarding`
+IP forwarding state.  Valid values are string or keyword 'default'. This property is not supported on IOS XR.
+
+###### `ipv4_pim_sparse_mode`
+Enables or disables ipv4 pim sparse mode on the interface. Valid values are 'true', 'false', and 'default'.
+
+###### `ipv4_proxy_arp`
+Enables or disables proxy arp on the interface. Valid values are 'true', 'false', and 'default'.
+
+###### `ipv4_redirects`
+Enables or disables sending of IP redirect messages. Valid values are 'true', 'false', and 'default'.
+
+###### `ipv6_acl_in`
+Applies an ipv6 access list on the interface in the ingress direction. An access-list should be present on the network device prior to this configuration. Valid values are string, keyword 'default'.
+
+###### `ipv6_acl_out`
+Applies an ipv6 access list on the interface in the egress direction. An access-list should be present on the network device prior to this configuration. Valid values are string, keyword 'default'.
 
 ###### `vlan_mapping`
 This property is a nested array of [original_vlan, translated_vlan] pairs. Valid values are an array specifying the mapped vlans or keyword 'default'; e.g.:
