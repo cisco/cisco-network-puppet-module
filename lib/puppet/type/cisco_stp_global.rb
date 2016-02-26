@@ -31,8 +31,14 @@ Puppet::Type.newtype(:cisco_stp_global) do
       ..attributes..
     }
     'default' is only acceptable name for this global config object.
+
+    Range based parameters (for ex. see bd_designated_priority below)
+    are nested array of arrays. These are basically range to value pairs.
+    So for bd_designated_priority, the bridge domain range 2 to 42 will be set
+    to 40960 and 83to 92 and 1000 to 2300 will be set to 53248
+
     Example:
-    cisco_portchannel_global { 'default':
+    cisco_stp_global { 'default':
       bd_designated_priority       => [['2-42', '40960'], ['83-92,1000-2300', '53248']],
       bd_forward_time              => [['2-42', '26'], ['83-92,1000-2300', '20']],
       bd_hello_time                => [['2-42', '6'], ['83-92,1000-2300', '9']],
