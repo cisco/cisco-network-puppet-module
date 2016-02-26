@@ -1999,29 +1999,34 @@ Manages spanning tree global parameters
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `bd_designated_priority` <br> `bd_forward_time` <br> `bd_hello_time` <br> `bd_max_age` <br> `bd_priority` <br> `bd_root_priority` | Supported only on N7k |
+| `bd_designated_priority` | Supported only on N7k |
+| `bd_forward_time` | Supported only on N7k |
+| `bd_hello_time` | Supported only on N7k |
+| `bd_max_age` | Supported only on N7k |
+| `bd_priority` | Supported only on N7k |
+| `bd_root_priority` | Supported only on N7k |
 | `domain` | Supported only on N56k, N6k, N7k |
 | `fcoe` | Supported only on N9k, N30xx, N31xx |
 
 #### Parameters
 
 ##### `bd_designated_priority`
-designated bridge priority. Valid values are an array of [bd_range, designated_priority] pairs or 'default'. This property is supported only on N7k.
+designated bridge priority. Valid values are an array of [bd_range, designated_priority] pairs or 'default'.
 
 ##### `bd_forward_time`
-forward delay. Valid values are an array of [bd_range, forward_time] pairs or 'default'. This property is supported only on N7k.
+forward delay. Valid values are an array of [bd_range, forward_time] pairs or 'default'.
 
 ##### `bd_hello_time`
-hello interval. Valid values are an array of [bd_range, hello_time] pairs or 'default'. This property is supported only on N7k.
+hello interval. Valid values are an array of [bd_range, hello_time] pairs or 'default'.
 
 ##### `bd_max_age`
-max age interval. Valid values are an array of [bd_range, max_age] pairs or 'default'. This property is supported only on N7k.
+max age interval. Valid values are an array of [bd_range, max_age] pairs or 'default'.
 
 ##### `bd_priority`
-bridge priority. Valid values are an array of [bd_range, priority] pairs or 'default'. This property is supported only on N7k.
+bridge priority. Valid values are an array of [bd_range, priority] pairs or 'default'.
 
 ##### `bd_root_priority`
-root bridge priority. Valid values are an array of [bd_range, root_priority] pairs or 'default'. This property is supported only on N7k.
+root bridge priority. Valid values are an array of [bd_range, root_priority] pairs or 'default'.
 
 ##### `bpdufilter`
 Edge port (portfast) bpdu filter. Valid values are true, false or 'default'.
@@ -2033,10 +2038,10 @@ Edge port (portfast) bpdu guard. Valid values are true, false or 'default'.
 Bridge Assurance on all network ports. Valid values are true, false or 'default'.
 
 ##### `domain`
-Domain. Valid values are integer or 'default'. This property is supported only on N56k, N6k, N7k.
+Domain. Valid values are integer or 'default'.
 
 ##### `fcoe`
-spanning tree protocol for FCoE VLAN. Valid values are true, false or 'default'. This property is supported only on N9k, N30xx, N31xx.
+spanning tree protocol for FCoE VLAN. Valid values are true, false or 'default'.
 
 ##### `loopguard`
 Enable loopguard by default on all ports. Valid values are true, false or 'default'.
