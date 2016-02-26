@@ -1983,7 +1983,7 @@ port-channel symmetry hash. Valid values are true, false or 'default'. This prop
 
 --
 ### Type: cisco_stp_global
-Manages configuration of a spanning tree global parameters
+Manages spanning tree global parameters
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
