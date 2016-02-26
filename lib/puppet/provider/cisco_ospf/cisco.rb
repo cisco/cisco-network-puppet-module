@@ -1,5 +1,4 @@
-#
-# Puppet provider for feature X__RESOURCE_NAME__X
+# March, 2014
 #
 # Copyright (c) 2014-2016 Cisco and/or its affiliates.
 #
@@ -17,27 +16,40 @@
 
 require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
 
-Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:cisco) do
+Puppet::Type.type(:cisco_ospf).provide(:cisco) do
+  desc 'The Cisco provider.'
+
   confine feature: :cisco_node_utils
+  defaultfor operatingsystem: :nexus
 
   mk_resource_methods
 
-  def initialize(value={})
-    super(value)
-    @property_flush = {}
-  end
-
   def self.instances
-    inst = []
-    return inst unless Cisco::X__CLASS_NAME__X.feature_enabled
-    current_state = { name: 'default', ensure: :present }
-    inst << new(current_state)
-    inst
-  end
+    ospf_instances = []
+    Cisco::RouterOspf.routers.each do |name, ospf_instance|
+      debug "Checking resource OSPF #{name}"
+      ospf_instances << new(
+        name:   name,
+        ospf:   ospf_instance,
+        ensure: :present)
+    end
+
+    ospf_instances
+  end # self.instances
 
   def self.prefetch(resources)
-    provider = instances
-    resources.values.first.provider = provider.first unless provider.first.nil?
+    ospf_instances = instances
+
+    resources.keys.each do |name|
+      provider = ospf_instances.find { |ospf| ospf.name == name }
+      resources[name].provider = provider unless provider.nil?
+    end
+  end
+
+  def initialize(value={})
+    super(value)
+    @ospf = Cisco::RouterOspf.routers[@property_hash[:name]]
+    @property_flush = {}
   end
 
   def exists?
@@ -55,9 +67,9 @@ Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:cisco) do
   def flush
     case @property_flush[:ensure]
     when :present
-      Cisco::X__CLASS_NAME__X.new.feature_enable
+      @ospf = Cisco::RouterOspf.new(@resource[:name])
     when :absent
-      Cisco::X__CLASS_NAME__X.new.feature_disable
+      @ospf.destroy
     end
   end
 end

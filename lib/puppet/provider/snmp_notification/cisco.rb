@@ -1,5 +1,4 @@
-#
-# Puppet provider for feature X__RESOURCE_NAME__X
+# October, 2015
 #
 # Copyright (c) 2014-2016 Cisco and/or its affiliates.
 #
@@ -17,47 +16,47 @@
 
 require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
 
-Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:cisco) do
+Puppet::Type.type(:snmp_notification).provide(:cisco) do
+  desc 'The Cisco provider for snmp_notification.'
+
   confine feature: :cisco_node_utils
+  defaultfor operatingsystem: :nexus
 
   mk_resource_methods
 
   def initialize(value={})
     super(value)
+    @snmpnotification = Cisco::SnmpNotification.notifications[name]
     @property_flush = {}
+    debug 'Created provider instance of snmp_notification'
   end
 
   def self.instances
-    inst = []
-    return inst unless Cisco::X__CLASS_NAME__X.feature_enabled
-    current_state = { name: 'default', ensure: :present }
-    inst << new(current_state)
-    inst
+    snmpnotification = []
+    Cisco::SnmpNotification.notifications.each do |name, v|
+      snmpnotification << new(
+        name:   name,
+        enable: v.enable,
+      )
+    end
+    snmpnotification
   end
 
   def self.prefetch(resources)
-    provider = instances
-    resources.values.first.provider = provider.first unless provider.first.nil?
+    snmpnotification = instances
+
+    resources.keys.each do |id|
+      provider = snmpnotification.find { |instance| instance.name == id }
+      resources[id].provider = provider unless provider.nil?
+    end
   end
 
   def exists?
-    @property_hash[:ensure] == :present
-  end
-
-  def create
-    @property_flush[:ensure] = :present
-  end
-
-  def destroy
-    @property_flush[:ensure] = :absent
+    true
   end
 
   def flush
-    case @property_flush[:ensure]
-    when :present
-      Cisco::X__CLASS_NAME__X.new.feature_enable
-    when :absent
-      Cisco::X__CLASS_NAME__X.new.feature_disable
-    end
+    enable = @resource[:enable] == :true ? true : false
+    @snmpnotification.enable = enable if @resource[:enable]
   end
 end
