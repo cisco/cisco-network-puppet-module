@@ -51,6 +51,7 @@ Puppet::Type.newtype(:cisco_interface) do
      ipv4_netmask_length            => 24,
      ipv4_address_secondary         => \"192.168.2.1\",
      ipv4_netmask_length_secondary  => 24,
+     ipv4_forwarding                => true,
      ipv4_redirects                 => true,
      ipv4_proxy_arp                 => true,
      ipv4_pim_sparse_mode           => true,
@@ -394,6 +395,13 @@ Puppet::Type.newtype(:cisco_interface) do
       value
     end
   end # property ipv4_acl_out
+
+  newproperty(:ipv4_forwarding) do
+    desc '<L3 attribute> Enables or disables IP forwarding on the interface. '\
+         "Valid values are true, false, keyword 'default'"
+
+    newvalues(:true, :false, :default)
+  end # property ipv4_forwarding
 
   newproperty(:ipv6_acl_in) do
     desc "<L3 attribute> ipv6 ingress access list on the interface. Valid values

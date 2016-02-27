@@ -131,6 +131,7 @@ tests['L3_default_nexus'] = {
   sys_def_switchport: false,
   manifest_props:     {
     duplex:                        'default',
+    ipv4_forwarding:               'default',
     ipv4_pim_sparse_mode:          'default',
     switchport_autostate_exclude:  'default',
     switchport_mode:               'default',
@@ -140,6 +141,7 @@ tests['L3_default_nexus'] = {
   },
   resource:           {
     'duplex'                        => 'auto',
+    'ipv4_forwarding'               => 'false',
     'ipv4_pim_sparse_mode'          => 'false',
     'switchport_autostate_exclude'  => 'false',
     'switchport_mode'               => 'disabled',
@@ -197,10 +199,12 @@ tests['L3_misc_nexus'] = {
   sys_def_switchport: false,
   manifest_props:     {
     switchport_mode:      'disabled',
+    ipv4_forwarding:      true,
     ipv4_pim_sparse_mode: true,
   },
   resource:           {
     'switchport_mode'      => 'disabled',
+    'ipv4_forwarding'      => 'true',
     'ipv4_pim_sparse_mode' => 'true',
   },
 }

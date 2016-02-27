@@ -1,6 +1,3 @@
-#
-# The NXAPI provider for cisco_interface.
-#
 # May 2015
 #
 # Copyright (c) 2015-2016 Cisco and/or its affiliates.
@@ -45,11 +42,15 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     :access_vlan,
     :description,
     :encapsulation_dot1q,
+    :ipv4_acl_in,
+    :ipv4_acl_out,
     :ipv4_address,
     :ipv4_netmask_length,
     :ipv4_address_secondary,
     :ipv4_netmask_length_secondary,
     :ipv4_arp_timeout,
+    :ipv6_acl_in,
+    :ipv6_acl_out,
     :mtu,
     :speed,
     :duplex,
@@ -64,13 +65,10 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     :switchport_trunk_native_vlan,
     :vlan_mapping,
     :vpc_id,
-    :ipv4_acl_in,
-    :ipv4_acl_out,
-    :ipv6_acl_in,
-    :ipv6_acl_out,
   ]
   INTF_BOOL_PROPS = [
     :fabric_forwarding_anycast_gateway,
+    :ipv4_forwarding,
     :ipv4_pim_sparse_mode,
     :ipv4_proxy_arp,
     :ipv4_redirects,
