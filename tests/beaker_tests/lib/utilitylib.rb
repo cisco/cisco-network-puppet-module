@@ -430,6 +430,23 @@ def config_bridge_domain(agent, test_bd, stepinfo='bridge-domain config:')
   end
 end
 
+# Helper for setting system bridge-domain configs
+def config_sys_bd(agent, test_sys_bd, stepinfo='sys-bd config:')
+  step stepinfo do
+    # NOTE: This should convert to using puppet resource, however, the cli
+    # does not allow changes to bridge-domain without removing existing BD's,
+    # which means we are stuck with vsh for now.
+    # Configure system bridge-domain
+    if test_sys_bd == :bd_all
+      cmd = 'system bridge-domain all'
+      command_config(agent, cmd, cmd)
+    elsif test_sys_bd == :bd_none
+      cmd = 'system bridge-domain all ; system bridge-domain none'
+      command_config(agent, cmd, cmd)
+    end
+  end
+end
+
 # Helper for creating / removing encap profile vni (global) configs
 def config_encap_profile_vni_global(agent, cmd,
                                     stepinfo='encap profile vni global:')
@@ -673,6 +690,12 @@ def test_harness_run(tests, id, extra_config=dependency_manifest(tests, id))
 
   test_harness_common(tests, id)
   tests[id][:ensure] = nil
+end
+
+# setup_sys_bd_stp
+def setup_sys_bd_stp(platform, test_sys_bd)
+  config_sys_bd(agent, test_sys_bd) if
+    platform == 'n7k'
 end
 
 # setup_mt_full_env

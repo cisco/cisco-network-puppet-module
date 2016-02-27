@@ -254,18 +254,22 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   logger.info("#### This device is of type: #{device} #####")
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
+  setup_sys_bd_stp(device, :bd_none)
   test_harness_run(tests, :default)
   test_harness_run(tests, :default_mst)
   test_harness_run(tests, :default_plat_1)
   test_harness_run(tests, :default_plat_2)
-  # test_harness_run(tests, :default_bd)
+  setup_sys_bd_stp(device, :bd_all)
+  test_harness_run(tests, :default_bd)
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
+  setup_sys_bd_stp(device, :bd_none)
   test_harness_run(tests, :non_default)
   test_harness_run(tests, :non_default_plat_1)
   test_harness_run(tests, :non_default_plat_2)
-  # test_harness_run(tests, :non_default_bd)
+  setup_sys_bd_stp(device, :bd_all)
+  test_harness_run(tests, :non_default_bd)
   skipped_tests_summary(tests)
 end
 
