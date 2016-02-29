@@ -79,7 +79,6 @@ Puppet::Type.newtype(:cisco_stp_global) do
   # Attributes #
   ##############
 
-  # rubocop:disable Style/PredicateName
   newproperty(:bd_designated_priority, array_matching: :all) do
     format = '[[bd_inst_list, designated_priority], [bdil, dp]]'
     desc 'An array of [bd_inst_list, designated_priority] pairs. '\
@@ -277,7 +276,6 @@ Puppet::Type.newtype(:cisco_stp_global) do
       end
     end
   end # property bd_root_priority
-  # rubocop:enable Style/PredicateName
 
   newproperty(:bpdufilter) do
     desc 'Edge port (portfast) bpdu filter'
@@ -349,7 +347,7 @@ Puppet::Type.newtype(:cisco_stp_global) do
       value.inspect
     end
 
-    def is_to_s(value) # rubocop:disable Style/PredicateName
+    def is_to_s(value)
       value.inspect
     end
 
@@ -410,7 +408,7 @@ Puppet::Type.newtype(:cisco_stp_global) do
       value.inspect
     end
 
-    def is_to_s(value) # rubocop:disable Style/PredicateName
+    def is_to_s(value)
       value.inspect
     end
 
@@ -481,7 +479,7 @@ Puppet::Type.newtype(:cisco_stp_global) do
       value.inspect
     end
 
-    def is_to_s(value) # rubocop:disable Style/PredicateName
+    def is_to_s(value)
       value.inspect
     end
 
@@ -528,7 +526,7 @@ Puppet::Type.newtype(:cisco_stp_global) do
       value.inspect
     end
 
-    def is_to_s(value) # rubocop:disable Style/PredicateName
+    def is_to_s(value)
       value.inspect
     end
 
@@ -547,7 +545,6 @@ Puppet::Type.newtype(:cisco_stp_global) do
     newvalues(:long, :short, :default)
   end # property pathcost
 
-  # rubocop:disable Style/PredicateName
   newproperty(:vlan_designated_priority, array_matching: :all) do
     format = '[[vlan_inst_list, designated_priority], [vil, pri]]'
     desc 'An array of [vlan_inst_list, designated_priority] pairs. '\
@@ -749,5 +746,4 @@ Puppet::Type.newtype(:cisco_stp_global) do
       end
     end
   end # property vlan_root_priority
-  # rubocop:enable Style/PredicateName
 end # Puppet::Type.newtype

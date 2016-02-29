@@ -538,7 +538,6 @@ Puppet::Type.newtype(:cisco_interface) do
     newvalues(:auto, :shared, :'point-to-point', :default)
   end # property stp_link_type
 
-  # rubocop:disable Style/PredicateName
   newproperty(:stp_mst_cost, array_matching: :all) do
     format = '[[mst_inst_list, cost], [mil, cost]]'
     desc 'An array of [mst_instance_list, cost] pairs. '\
@@ -691,7 +690,6 @@ Puppet::Type.newtype(:cisco_interface) do
       end
     end
   end # property stp_vlan_port_priority
-  # rubocop:enable Style/PredicateName
 
   ################
   # Autorequires #

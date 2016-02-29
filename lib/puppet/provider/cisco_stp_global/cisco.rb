@@ -1,4 +1,4 @@
-# The NXAPI provider for cisco_stp_global
+# The Cisco provider for cisco_stp_global
 #
 # January, 2016
 #
@@ -34,7 +34,7 @@ rescue LoadError # seen on master, not on agent
 end
 
 Puppet::Type.type(:cisco_stp_global).provide(:cisco) do
-  desc 'The new NXAPI provider.'
+  desc 'The new Cisco provider.'
 
   confine feature: :cisco_node_utils
   defaultfor operatingsystem: :nexus
