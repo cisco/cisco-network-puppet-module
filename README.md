@@ -164,46 +164,46 @@ The following table indicates which providers are supported on each platform. As
 
 ##### Cisco Providers
 
-| ✅ = Supported <br> ❌ = Unsupported | N9k | N30xx | N31xx | N56xx | N6k | N7k | Caveats |
-|:---|:---:|:-----:|:-----:|:-----:|:---:|:---:|:---:|
-| [cisco_aaa_authentication_login](#type-cisco_aaa_authentication_login) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_aaa_authorization_login_cfg_svc](#type-cisco_aaa_authorization_login_cfg_svc) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_aaa_authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_acl](#type-cisco_acl) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_ace](#type-cisco_ace) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_command_config](#type-cisco_command_config) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_bgp](#type-cisco_bgp) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅* | * [caveats](#cisco_bgp-caveats) |
-| [cisco_bgp_af](#type-cisco_bgp_af) | ✅* | ✅* | ✅ | ✅ | ✅*  | ✅ | * [caveats](#cisco_bgp_af-caveats) |
-| [cisco_bgp_neighbor](#type-cisco_bgp_neighbor) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_interface](#type-cisco_interface) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅ | * [caveats](#cisco_interface-caveats) |
-| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_interface_ospf](#type-cisco_interface_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_interface_portchannel](#type-cisco_interface_portchannel) | ❌* | ✅* | ✅* | ❌* | ❌* | ❌* | * [caveats](#cisco_interface_portchannel-caveats) |
-| [cisco_interface_service_vni](#type-cisco_interface_service_vni) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
-| [cisco_ospf](#type-cisco_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_ospf_vrf](#type-cisco_ospf_vrf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| ✅ = Supported <br> ❌ = Unsupported  | N9k | N30xx | N31xx | N56xx | N6k | N7k | Caveats |
-| [cisco_overlay_global](#type-cisco_overlay_global) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌  |
-| [cisco_pim](#type-cisco_pim) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_pim_rp_address](#type-cisco_pim_rp_address) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_pim_grouplist](#type-cisco_pim_grouplist) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_portchannel_global](#type-cisco_portchannel_global) | ❌* | ✅* | ✅* | ❌* | ❌* | ❌ | * [caveats](#cisco_portchannel_global-caveats) |
-| [cisco_snmp_community](#type-cisco_snmp_community) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_snmp_group](#type-cisco_snmp_group) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_snmp_server](#type-cisco_snmp_server) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_snmp_user](#type-cisco_snmp_user) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_tacacs_server](#type-cisco_tacacs_server) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_tacacs_server_host](#type-cisco_tacacs_server_host) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_vdc](#type-cisco_vdc) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
-| [cisco_vlan](#type-cisco_vlan) | ✅* | ✅* | ✅* | ✅ | ✅ | ✅ | * [caveats](#cisco_vlan-caveats) |
-| [cisco_vpc_domain](#type-cisco_vpc_domain) | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | * [caveats](#cisco_vlan-caveats) |
-| [cisco_vrf](#type-cisco_vrf) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_vrf_af](#type-cisco_vrf_af) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_vtp](#type-cisco_vtp) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| ✅ = Supported <br> ❌ = Unsupported | N9k | N30xx | N31xx | N56xx | N6k | N7k | IOS XR | Caveats |
+|:---|:---:|:-----:|:-----:|:-----:|:---:|:---:|:---:|:---:|
+| [cisco_aaa_authentication_login](#type-cisco_aaa_authentication_login) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| [cisco_aaa_authorization_login_cfg_svc](#type-cisco_aaa_authorization_login_cfg_svc) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| [cisco_aaa_authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| [cisco_acl](#type-cisco_acl) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| [cisco_ace](#type-cisco_ace) | ✅ | ✅ | ✅ | ❌* | ❌* | ❌* | ❌ | * [caveats](#cisco_ace-caveats) |
+| [cisco_command_config](#type-cisco_command_config) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |✅ |
+| [cisco_bgp](#type-cisco_bgp) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅* |✅ | * [caveats](#cisco_bgp-caveats) |
+| [cisco_bgp_af](#type-cisco_bgp_af) | ✅* | ✅* | ✅ | ✅ | ✅*  | ✅ | ✅ | * [caveats](#cisco_bgp_af-caveats) |
+| [cisco_bgp_neighbor](#type-cisco_bgp_neighbor) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_interface](#type-cisco_interface) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅ |✅ | * [caveats](#cisco_interface-caveats) |
+| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| [cisco_interface_ospf](#type-cisco_interface_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [cisco_interface_portchannel](#type-cisco_interface_portchannel) | ❌* | ✅* | ✅* | ❌* | ❌* | ❌* | ❌ | * [caveats](#cisco_interface_portchannel-caveats) |
+| [cisco_interface_service_vni](#type-cisco_interface_service_vni) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| [cisco_ospf](#type-cisco_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [cisco_ospf_vrf](#type-cisco_ospf_vrf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| ✅ = Supported <br> ❌ = Unsupported  | N9k | N30xx | N31xx | N56xx | N6k | N7k | IOS XR | Caveats |
+| [cisco_overlay_global](#type-cisco_overlay_global) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌  | ❌ |
+| [cisco_pim](#type-cisco_pim) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [cisco_pim_rp_address](#type-cisco_pim_rp_address) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [cisco_pim_grouplist](#type-cisco_pim_grouplist) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [cisco_portchannel_global](#type-cisco_portchannel_global) | ❌* | ✅* | ✅* | ❌* | ❌* | ❌ | ❌ | * [caveats](#cisco_portchannel_global-caveats) |
+| [cisco_snmp_community](#type-cisco_snmp_community) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [cisco_snmp_group](#type-cisco_snmp_group) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [cisco_snmp_server](#type-cisco_snmp_server) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [cisco_snmp_user](#type-cisco_snmp_user) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [cisco_tacacs_server](#type-cisco_tacacs_server) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [cisco_tacacs_server_host](#type-cisco_tacacs_server_host) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [cisco_vdc](#type-cisco_vdc) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| [cisco_vlan](#type-cisco_vlan) | ✅* | ✅* | ✅* | ✅ | ✅ | ✅ | ❌ | * [caveats](#cisco_vlan-caveats) |
+| [cisco_vpc_domain](#type-cisco_vpc_domain) | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | ❌ | * [caveats](#cisco_vlan-caveats) |
+| [cisco_vrf](#type-cisco_vrf) | ✅ | ✅* | ✅* | ❌ | ❌ | ❌ | ✅* | * [caveats](#cisco_vrf-caveats) |
+| [cisco_vrf_af](#type-cisco_vrf_af) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅* | ✅* | * [caveats](#cisco_vrf_af-caveats) |
+ [cisco_vtp](#type-cisco_vtp) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 
 ##### NetDev Providers
 
@@ -633,15 +633,258 @@ Manages configuration of an Access Control List (ACL) Access Control Entry (ACE)
 | N7k      | unsupported        | unsupported            |
 | IOS XR   | unsupported        | unsupported            |
 
+#### <a name="cisco_ace-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `http_method` | ipv4 only <br> Not supported on N56xx, N6k, N7k |
+| `packet_length` | Not supported on N56xx, N6k |
+| `precedence` | ipv4 only |
+| `redirect` | ipv4 only <br> Not supported on N56xx, N6k, N7k |
+| `time_range` | Not supported on N56xx, N6k |
+| `ttl` | Not supported on N56xx, N6k, N7k |
+| `tcp_option_length` | ipv4 only <br> Not supported on N56xx, N6k, N7k |
+
+#### Example Usage
+
+```puppet
+cisco_ace { 'ipv4 my_acl 42':
+  ensure              => 'present',
+  remark              => 'East Branch',
+  action              => 'permit',
+  proto               => 'tcp',
+  src_addr            => '10.0.0.0/8',
+  src_port            => 'eq 40',
+  dst_addr            => 'any',
+  dst_port            => 'neq 80',
+
+  dscp                => 'af11',
+  established         => 'true',
+  log                 => 'true',
+  packet_length       => 'range 512 1024'
+  precedence          => 'flash',
+  redirect            => 'Ethernet1/2,Port-Channel42',
+  tcp_flags           => 'ack psh',
+  time_range          => 'my_time_range',
+  ttl                 => '128',
+}
+
+cisco_ace { 'ipv6 my_v6_acl 42':
+  ensure              => 'present',
+  remark              => 'East Branch',
+  action              => 'permit',
+  proto               => 'tcp',
+  src_addr            => '1:1::1/128',
+  dst_addr            => 'any',
+}
+```
+
 #### Parameters
 
-##### `ensure`
-Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
+| Example Parameter Usage
+|:--
+| `cisco_ace { '<afi> <acl_name> <seqno>':`
+| `cisco_ace { 'ipv4 my_acl 42':`
 
 ##### `afi`
 Address Family Identifier (AFI). Required. Valid values are ipv4 and ipv6.
 
-*TBD: Add property definitions*
+##### `acl_name`
+Access Control List (ACL) name. Required. Valid values are type String.
+
+##### `seqno`
+Access Control Entry (ACE) Sequence Number. Required. Valid values are type Integer.
+
+##### `ensure`
+Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
+
+#### Properties
+
+##### `action`
+The action to perform with this ACE. Valid values are keywords `permit` or `deny`.
+
+| Example
+|:--
+| `action => 'permit'`
+
+##### `dscp`
+Allows matching by Differentiated Services Code Point (DSCP) value. Valid values are type String, which must be one of the following forms:
+
+* A numeric dscp value
+* One of the dscp keyword names
+  * `af11` `af12` `af13` `af21` `af22` `af23` `af31` `af32` `af33` `af41` `af42` `af43`
+  * `cs1` `cs2` `cs3` `cs4` `cs5` `cs6` `cs7`
+  * `ef`
+  * `default`
+
+| Example
+|:--
+| `dscp => 'af11'`
+
+##### `dst_addr`
+The Destination Address to match against. This property shares the same syntax as `src_addr`. Valid values are type String, which must be one of the following forms:
+
+* An IPv4/IPv6 address or subnet
+* The keyword `host` and a host address
+* The keyword `addrgroup` and its object group name
+* The keyword `any`
+
+| Examples
+|:--
+| `dst_addr => '10.0.0.0/8'`
+| `dst_addr => 'host 10.0.0.1'`
+| `dst_addr => '128:1::/64'`
+| `dst_addr => 'addrgroup my_addrgroup'`
+| `dst_addr => 'any'`
+
+See [`src_addr`](#src_addr).
+
+##### `dst_port`
+The TCP or UDP Destination Port to match against. This property shares the same syntax as `src_port`. Valid values are type String, which must be one of the following forms:
+
+* A comparison operator (`eq`, `neq`, `lt`, `gt`) and value
+* The keyword `range` and a range value
+* The keyword `portgroup` and its object group name
+
+| Examples
+|:--
+| `dst_port => 'neq 40'`
+| `dst_port => 'range 68 69'`
+| `dst_port => 'portgroup my_portgroup'`
+
+See [`src_port`](#src_port).
+
+##### `established`
+Allows matching against TCP Established connections. Valid values are true or false.
+
+| Example
+|:--
+| `established => true`
+
+##### `http_method`
+(ipv4 only) Allows matching based on http-method. Valid values are String, which must be one of the following forms:
+
+* A numeric http-method value
+* One of the http-method keyword names
+  * `connect` `delete` `get` `head` `post` `put` `trace`
+
+| Examples
+|:--
+| `http_method => 'post'`
+
+##### `log`
+Enables logging for the ACE. Valid values are true or false.
+
+| Examples
+|:--
+| `'log' => true`
+
+##### `packet_length`
+Allows matching based on Layer 3 Packet Length. Valid values are type String, which must be one of the following forms:
+
+* A comparison operator (`eq`, `neq`, `lt`, `gt`) and value
+* The keyword `range` and range values
+
+| Examples
+|:--
+| `packet_length => 'gt 512'`
+| `packet_length => 'range 512 1024'`
+
+##### `precedence`
+(ipv4 only) Allows matching by precedence value. Valid values are String, which must be one of the following forms:
+
+* A numeric precedence value
+* One of the precedence keyword names
+  * `critical` `flash` `flash-override` `immediate` `internet` `network` `priority` `routine`
+
+| Example
+|:--
+| `precedence => 'flash'`
+
+##### `proto`
+The protocol to match against. Valid values are String or Integer. Examples are: `tcp`, `udp`, `ip`, `6`.
+
+| Example
+|:--
+| `proto => 'tcp'`
+
+##### `redirect`
+(ipv4 only) Allows for redirecting traffic to one or more interfaces. This property is only useful with VLAN ACL (VACL) applications. Valid values are a String containing a list of interface names.
+
+| Examples
+|:--
+| `redirect => 'Ethernet1/1'`
+| `redirect => 'Ethernet1/2,Port-Channel42'`
+
+##### `remark`
+This is a Remark description for the ACL or ACE. Valid values are string.
+
+| Example
+|:--
+| `remark => 'East Branch'`
+
+##### `src_addr`
+The Source Address to match against. Valid values are type String, which must be one of the following forms:
+
+* An IPv4/IPv6 address or subnet
+* The keyword `host` and a host address
+* The keyword `addrgroup` and its object group name
+* The keyword `any`
+
+| Examples
+|:--
+| `src_addr => '10.0.0.0/8'`
+| `src_addr => 'host 10.0.0.1'`
+| `src_addr => '128:1::/64'`
+| `src_addr => 'addrgroup my_addrgroup'`
+| `src_addr => 'any'`
+
+See [`dst_addr`](#dst_addr).
+
+##### `src_port`
+The TCP or UDP Source Port to match against. Valid values are type String, which must be one of the following forms:
+
+* A comparison operator (`eq`, `neq`, `lt`, `gt`) and value
+* The keyword `range` and range values
+* The keyword `portgroup` and its object group name
+
+| Examples
+|:--
+| `src_port => 'neq 40'`
+| `src_port => 'range 68 69'`
+| `src_port => 'portgroup my_portgroup'`
+
+See [`dst_port`](#dst_port).
+
+##### `tcp_flags`
+The TCP flags or control bits. Valid values are a String of some or all of flags: `urg`, `ack`, `psh`, `rst`, `syn`, or `fin`.
+
+| Example
+|:--
+| `tcp_flags => 'ack psh'`
+
+##### `tcp_option_length`
+(ipv4 only) Allows matching on TCP options length. Valid values are type Integer or String, which must be a multiple of 4 in the range 0-40.
+
+| Examples
+|:--
+| `tcp_option_length => '0'`
+| `tcp_option_length => '36'`
+
+##### `time_range`
+Allows matching by Time Range. Valid values are String, which references a `time-range` name.
+
+| Example
+|:--
+| `time_range => 'my_time_range'`
+
+
+##### `ttl`
+Allows matching based on Time-To-Live (TTL) value. Valid values are type Integer or String.
+
+| Example
+|:--
+| `ttl => '128'`
 
 --
 ### Type: cisco_bgp
@@ -1344,6 +1587,7 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | `duplex` | Not supported on IOS XR |
 | `fabric_forwarding_anycast_gateway` | Not supported on IOS XR |
 | `ipv4_arp_timeout` | Not supported on IOS XR |
+| `ipv4_forwarding` | Not supported on IOS XR |
 | `ipv4_pim_sparse_mode` | Not supported on IOS XR |
 | `negotiate_auto` | Not supported on IOS XR |
 | `speed` | Not supported on IOS XR |
@@ -1383,24 +1627,7 @@ Shutdown state of the interface. Valid values are 'true', 'false', and
 'default'.
 
 ###### `switchport_mode`
-Switchport mode of the interface. To make an interface Layer 3, set
-`switchport_mode` to 'disabled'. Valid values are 'disabled', 'access', 'tunnel', 'fex_fabric', 'trunk', 'fabricpath' and 'default'. This property is not supported on IOS XR.
-
-###### `ipv4_acl_in`
-Apply ipv4 access list on the interface in ingress direction. Access-list should be present on the network device
-prior this configuration. Valid values are string, keyword 'default'.
-
-###### `ipv4_acl_out`
-Apply ipv4 access list on the interface in egress direction. Access-list should be present on the network device
-prior this configuration. Valid values are string, keyword 'default'.
-
-###### `ipv6_acl_in`
-Apply ipv6 access list on the interface in ingress direction. Access-list should be present on the network device
-prior this configuration. Valid values are string, keyword 'default'.
-
-###### `ipv6_acl_out`
-Apply ipv6 access list on the interface in egress direction. Access-list should be present on the network device
-prior this configuration. Valid values are string, keyword 'default'.
+Switchport mode of the interface. Interfaces that support `switchport_mode` may default to layer 2 or layer 3 depending on platform, interface type, or the `system default switchport` setting. An interface may be explicitly set to Layer 3 by setting `switchport_mode` to 'disabled'. Valid values are 'disabled', 'access', 'tunnel', 'fex_fabric', 'trunk', 'fabricpath' and 'default'. This property is not supported on IOS XR.
 
 ##### L2 interface config attributes
 
@@ -1435,14 +1662,17 @@ Enable/Disable negotiate auto on the interface. Valid values are 'true',
 
 ##### L3 interface config attributes
 
+###### `ipv4_acl_in`
+Applies an ipv4 access list on the interface in the ingress direction. An access-list should be present on the network device prior to this configuration. Valid values are string, keyword 'default'.
+
+###### `ipv4_acl_out`
+Applies an ipv4 access list on the interface in the egress direction. An access-list should be present on the network device prior to this configuration. Valid values are string, keyword 'default'.
+
 ###### `ipv4_pim_sparse_mode`
 Enables or disables ipv4 pim sparse mode on the interface. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 
 ###### `ipv4_proxy_arp`
 Enables or disables proxy arp on the interface. Valid values are 'true', 'false', and 'default'.
-
-###### `ipv4_redirects`
-Enables or disables sending of IP redirect messages. Valid values are 'true', 'false', and 'default'.
 
 ###### `ipv4_address`
 IP address of the interface. Valid values are a string of ipv4 address or the
@@ -1460,6 +1690,24 @@ Network mask length of the secondary IP address on the interface. Valid values a
 
 ###### `ipv4_arp_timeout`
 Address Resolution Protocol (ARP) timeout value. Valid values are integer and keyword 'default'. Currently only supported on vlan interfaces. This property is not supported on IOS XR as IOS XR does not support vlan interfaces.
+
+###### `ipv4_forwarding`
+IP forwarding state.  Valid values are string or keyword 'default'. This property is not supported on IOS XR.
+
+###### `ipv4_pim_sparse_mode`
+Enables or disables ipv4 pim sparse mode on the interface. Valid values are 'true', 'false', and 'default'.
+
+###### `ipv4_proxy_arp`
+Enables or disables proxy arp on the interface. Valid values are 'true', 'false', and 'default'.
+
+###### `ipv4_redirects`
+Enables or disables sending of IP redirect messages. Valid values are 'true', 'false', and 'default'.
+
+###### `ipv6_acl_in`
+Applies an ipv6 access list on the interface in the ingress direction. An access-list should be present on the network device prior to this configuration. Valid values are string, keyword 'default'.
+
+###### `ipv6_acl_out`
+Applies an ipv6 access list on the interface in the egress direction. An access-list should be present on the network device prior to this configuration. Valid values are string, keyword 'default'.
 
 ###### `vlan_mapping`
 This property is a nested array of [original_vlan, translated_vlan] pairs. Valid values are an array specifying the mapped vlans or keyword 'default'; e.g.:
@@ -2355,6 +2603,14 @@ device.
 | N7k      | unsupported        | unsupported            |
 | IOS XR   | TODO               | TODO                   |
 
+#### <a name="cisco_vrf-caveats">Caveats</a>
+
+| Property                  | Caveat Description               |
+|---------------------------|----------------------------------|
+| route_distinguisher       | Only supported on N3k and N9k    |
+| shutdown                  | Only supported on N3k and N9k    |
+| vni                       | Only supported on N9k            |
+
 #### Parameters
 
 ##### `ensure`
@@ -2399,6 +2655,17 @@ Manages Cisco Virtual Routing and Forwarding (VRF) Address-Family configuration.
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | IOS XR   | TODO               | TODO                   |
+
+#### <a name="cisco_vrf_af-caveats">Caveats</a>
+
+| Property                    | Caveat Description                   |
+|-----------------------------|--------------------------------------|
+| route_target_both_auto      | Only supported on N3k and N9k        |
+| route_target_both_auto_evpn | Only supported on N3k and N9k        |
+| route_target_export         | Only supported on N3k, N9k, and XR   |
+| route_target_export_evpn    | Only supported on N3k and N9k        |
+| route_target_import         | Only supported on N3k, N9k, and XR   |
+| route_target_import_evpn    | Only supported on N3k and N9k        |
 
 #### Parameters
 

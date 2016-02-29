@@ -1,6 +1,3 @@
-#
-# The NXAPI provider for cisco_bgp_af.
-#
 # August 2015 Rich Wellum
 #
 # Copyright (c) 2015-2016 Cisco and/or its affiliates.
