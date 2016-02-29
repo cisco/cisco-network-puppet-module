@@ -38,6 +38,7 @@ Puppet::Type.type(:cisco_vpc_domain).provide(:nxapi) do
     :delay_restore,
     :delay_restore_interface_vlan,
     :dual_active_exclude_interface_vlan_bridge_domain,
+    :fabricpath_emulated_switch_id,
     :peer_keepalive_dest,
     :peer_keepalive_hold_timeout,
     :peer_keepalive_interval,
@@ -54,9 +55,11 @@ Puppet::Type.type(:cisco_vpc_domain).provide(:nxapi) do
   ]
   VPC_BOOL_PROPS = [
     :auto_recovery,
+    :fabricpath_multicast_load_balance,
     :graceful_consistency_check,
     :layer3_peer_routing,
     :peer_gateway,
+    :port_channel_limit,
     :self_isolation,
     :shutdown,
   ]
