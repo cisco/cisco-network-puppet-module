@@ -95,17 +95,13 @@ tests[:title_patterns_3] = {
   resource:      { 'ensure' => 'present' },
 }
 
-def unsupported_properties(tests, id)
+def unsupported_properties(_tests, _id)
   unprops = []
   if operating_system == 'nexus'
-    if /n(3|9)k/.match(platform)
-      unprops = [
-        :route_target_export_stitching,
-        :route_target_import_stitching,
-      ]
-    else
-      unprops = tests[id][:manifest_props]
-    end
+    unprops = [
+      :route_target_export_stitching,
+      :route_target_import_stitching,
+    ]
   else
     unprops = [
       :route_target_both_auto,

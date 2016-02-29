@@ -41,7 +41,7 @@ Puppet::Type.newtype(:cisco_vrf_af) do
       route_target_import_evpn     => ['7:7'],
     }
 
-    (xr)
+    (ios_xr)
     cisco_vrf_af {'red ipv4 unicast':
       ensure                        => present,
       #afi                          => 'ipv4',
@@ -147,7 +147,7 @@ Puppet::Type.newtype(:cisco_vrf_af) do
 
   newproperty(:route_policy_export) do
     desc 'Set route-policy(ios xr) or map(nexus) export name. Valid value '\
-         'is string.'
+         "is string or keyword 'default'."
 
     munge do |val|
       val = :default if val == 'default'
@@ -157,7 +157,7 @@ Puppet::Type.newtype(:cisco_vrf_af) do
 
   newproperty(:route_policy_import) do
     desc 'Set route-policy(ios xr) or map(nexus) import name. Valid value '\
-         'is string.'
+         "is string or keyword 'default'."
 
     munge do |val|
       val = :default if val == 'default'
@@ -234,7 +234,7 @@ Puppet::Type.newtype(:cisco_vrf_af) do
     match_error = 'must be specified in AS:nn or IPv4:nn notation'
     validate do |community|
       community.split.each do |value|
-        fail "Confederation peer value '#{value}' #{match_error}" unless
+        fail "Route target stitching peer value '#{value}' #{match_error}" unless
           /^(?:\d+\.\d+\.\d+\.)?\d+:\d+$/.match(value) ||
           value == 'default' || value == :default
       end
@@ -280,7 +280,7 @@ Puppet::Type.newtype(:cisco_vrf_af) do
     match_error = 'must be specified in AS:nn or IPv4:nn notation'
     validate do |community|
       community.split.each do |value|
-        fail "Confederation peer value '#{value}' #{match_error}" unless
+        fail "Route target stitching peer value '#{value}' #{match_error}" unless
           /^(?:\d+\.\d+\.\d+\.)?\d+:\d+$/.match(value) ||
           value == 'default' || value == :default
       end

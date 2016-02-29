@@ -17,12 +17,12 @@
 class ciscopuppet::cisco::demo_vrf {
 
   $rt_export_stitching = $operatingsystem ? {
-    'ios_xr' => ['22:13 stitching', '24:15 stitching'],
+    'ios_xr' => ['22:13', '24:15'],
     default  => undef
   }
 
   $rt_import_stitching = $operatingsystem ? {
-    'ios_xr' => ['26:13 stitching', '28:15 stitching'],
+    'ios_xr' => ['26:13', '28:15'],
     default  => undef
   }
 
@@ -104,7 +104,7 @@ class ciscopuppet::cisco::demo_vrf {
     route_target_import_evpn      => $rt_import_evpn,
     route_target_import_stitching => $rt_import_stitching,
     route_target_export_evpn      => $rt_export_evpn,
-    route_target_export_stitching => $rt_import_stitching,
+    route_target_export_stitching => $rt_export_stitching,
     route_target_both_auto_evpn   => $rt_both_evpn,
   }
 }
