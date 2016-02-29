@@ -25,9 +25,10 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 # Test hash top-level keys
 tests = {
-  master:        master,
-  agent:         agent,
-  resource_name: 'cisco_interface',
+  master:           master,
+  agent:            agent,
+  operating_system: 'nexus',
+  resource_name:    'cisco_interface',
 }
 
 # Test hash test cases
