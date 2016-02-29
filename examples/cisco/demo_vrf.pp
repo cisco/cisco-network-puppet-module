@@ -16,9 +16,19 @@
 
 class ciscopuppet::cisco::demo_vrf {
 
+  $rt_export_stitching = $operatingsystem ? {
+    'ios_xr' => ['22:13', '24:15'],
+    default  => undef
+  }
+
+  $rt_import_stitching = $operatingsystem ? {
+    'ios_xr' => ['26:13', '28:15'],
+    default  => undef
+  }
+
   $shutdown = $operatingsystem ? {
     'ios_xr' => false,
-    default => undef
+    default  => undef
   }
 
   # Check for platform/linecard support
@@ -86,11 +96,15 @@ class ciscopuppet::cisco::demo_vrf {
 
   cisco_vrf_af { 'red ipv4 unicast':
     ensure                        => present,
+    route_policy_export           => 'abc',
+    route_policy_import           => 'abc',
     route_target_import           => $rt_import,
     route_target_export           => $rt_export,
     route_target_both_auto        => $rt_both,
     route_target_import_evpn      => $rt_import_evpn,
+    route_target_import_stitching => $rt_import_stitching,
     route_target_export_evpn      => $rt_export_evpn,
+    route_target_export_stitching => $rt_export_stitching,
     route_target_both_auto_evpn   => $rt_both_evpn,
   }
 }
