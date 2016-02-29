@@ -160,7 +160,7 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
   newproperty(:fabricpath_emulated_switch_id) do
     desc 'In vPC+ mode, configure the fabricpath switch-id aka the
           Emulated switch-id.  Valid values are integers in the range 1..4095'
-    munge { |value| value.to_i }
+    munge(&:to_i)
   end # property name
 
   newproperty(:fabricpath_multicast_load_balance) do
@@ -182,9 +182,9 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
   end # property name
 
   newproperty(:peer_keepalive_dest) do
-    desc 'Destination IPV4 address of the peer where Peer Keep-alives are 
+    desc 'Destination IPV4 address of the peer where Peer Keep-alives are
           terminated. Valid values are IPV4 unicast address'
-    # use /x modifier to ignore whitespace in the regex which is split in 
+    # use /x modifier to ignore whitespace in the regex which is split in
     # 2 lines
     newvalues(/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}
                 (?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/x)
@@ -203,7 +203,7 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
   end # property name
 
   newproperty(:peer_keepalive_interval) do
-    desc 'Peer keep-alive interval in millisecs. Valid Values are integers in 
+    desc 'Peer keep-alive interval in millisecs. Valid Values are integers in
           the range 400..10000'
     validate do |value|
       if value != 'default'
@@ -241,14 +241,14 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
   newproperty(:peer_keepalive_src) do
     desc 'Source IPV4 address of this switch where Peer Keep-alives are Sourced.
           Valid values are IPV4 unicast address'
-    # use /x modifier to ignore whitespace in the regex which is split in 
+    # use /x modifier to ignore whitespace in the regex which is split in
     # 2 lines
     newvalues(/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}
                 (?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/x)
   end # property name
 
   newproperty(:peer_keepalive_udp_port) do
-    desc 'Peer keep-alive udp port used for hellos. Valid Values are integers 
+    desc 'Peer keep-alive udp port used for hellos. Valid Values are integers
           in the range 1024..65000'
     validate do |value|
       if value != 'default'
@@ -292,7 +292,7 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
   end # property name
 
   newproperty(:port_channel_limit) do
-    desc 'In vPC+ mode, enable or disable the port channel scale limit of 
+    desc 'In vPC+ mode, enable or disable the port channel scale limit of
           244 vPCs.  Valid values are true, false or default'
     newvalues(:true, :false, :default)
   end # property name

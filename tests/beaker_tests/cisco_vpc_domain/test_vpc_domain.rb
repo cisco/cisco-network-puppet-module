@@ -73,8 +73,11 @@ testheader = 'Resource cisco_vpc_domain'
 # tests[:show_cmd] - the common show command to use for test_show_run
 #
 tests = {
-  master: master,
-  agent:  agent,
+  master:           master,
+  agent:            agent,
+  operating_system: 'nexus',
+  resource_name:    'cisco_vpc_domain',
+  platform:         'n(3|5|6|7|9)k',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -172,6 +175,7 @@ tests['non_default_properties'] = {
 
 tests['default_properties_n6k7k'] = {
   title_pattern:  '200',
+  platform:       'n(6|7)k',
   manifest_props: "
     layer3_peer_routing                                => 'default',
     shutdown                                           => 'default',
@@ -185,6 +189,7 @@ tests['default_properties_n6k7k'] = {
 
 tests['non_default_properties_n6k7k'] = {
   title_pattern:  '200',
+  platform:       'n(6|7)k',
   manifest_props: "
     layer3_peer_routing                                => 'true',
     peer_gateway_exclude_vlan                          => '500-510, 1100, 1120',
@@ -201,6 +206,7 @@ tests['non_default_properties_n6k7k'] = {
 
 tests['default_properties_n7k'] = {
   title_pattern:  '200',
+  platform:       'n7k',
   manifest_props: "
     auto_recovery                                      => 'default',
     self_isolation                                     => 'default',
@@ -214,6 +220,7 @@ tests['default_properties_n7k'] = {
 
 tests['non_default_properties_n7k'] = {
   title_pattern:  '200',
+  platform:       'n7k',
   manifest_props: "
     auto_recovery                                      => 'false',
     self_isolation                                     => 'true',
@@ -222,6 +229,22 @@ tests['non_default_properties_n7k'] = {
   resource_props: {
     'auto_recovery'  => 'false',
     'self_isolation' => 'true',
+  },
+}
+
+tests['vpc_plus_non_default_properties_n7k'] = {
+  title_pattern:  '200',
+  platform:       'n7k',
+  manifest_props: "
+    fabricpath_emulated_switch_id                      => '1015',
+    fabricpath_multicast_load_balance                  => 'true',
+    port_channel_limit                                 => 'false',
+  ",
+  code:           [0, 2],
+  resource_props: {
+    'fabricpath_emulated_switch_id'     => '1015',
+    'fabricpath_multicast_load_balance' => 'true',
+    'port_channel_limit'                => 'false',
   },
 }
 
@@ -280,17 +303,13 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:desc] = '1.1 Default Properties on All Nexus Platforms'
   test_harness_vpc_domain(tests, id)
 
-  # Add device specifics
-  if device =~ /(n6k|n7k)/
-    id = 'default_properties_n6k7k'
-    tests[id][:desc] = '1.2 Default Properties exclusive to N6K and N7K'
-    test_harness_vpc_domain(tests, id)
-  end
-  if device == 'n7k'
-    id = 'default_properties_n7k'
-    tests[id][:desc] = '1.3 Default Properties exclusive to N7K'
-    test_harness_vpc_domain(tests, id)
-  end
+  id = 'default_properties_n6k7k'
+  tests[id][:desc] = '1.2 Default Properties exclusive to N6K and N7K'
+  test_harness_vpc_domain(tests, id)
+
+  id = 'default_properties_n7k'
+  tests[id][:desc] = '1.3 Default Properties exclusive to N7K'
+  test_harness_vpc_domain(tests, id)
 
   id = 'default_properties'
   tests[id][:desc] = '1.4 Default Properties (absent)'
@@ -303,21 +322,25 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:desc] = '2.1 Non Default Properties on All Nexus Platforms'
   test_harness_vpc_domain(tests, id)
 
-  # Add device specifics
-  if device =~ /(n6k|n7k)/
-    id = 'non_default_properties_n6k7k'
-    tests[id][:desc] = '2.2 Non Default Properties exclusive to N6K and N7K'
-    test_harness_vpc_domain(tests, id)
-  end
-  if device == 'n7k'
-    id = 'non_default_properties_n7k'
-    tests[id][:desc] = '2.3 Non Default Properties exclusive to N7K'
-    test_harness_vpc_domain(tests, id)
-  end
+  id = 'non_default_properties_n6k7k'
+  tests[id][:desc] = '2.2 Non Default Properties exclusive to N6K and N7K'
+  test_harness_vpc_domain(tests, id)
+
+  id = 'non_default_properties_n7k'
+  tests[id][:desc] = '2.3 Non Default Properties exclusive to N7K'
+  test_harness_vpc_domain(tests, id)
 
   id = 'non_default_properties'
   tests[id][:desc] = '2.4 Non Default Properties (absent)'
   tests[id][:ensure] = :absent
+  test_harness_vpc_domain(tests, id)
+
+  # ------------------------------------------------------------------------
+  logger.info("\n#{'-' * 60}\nSection 3. vPC+ Non Default Property Testing")
+  id = 'vpc_plus_non_default_properties_n7k'
+  tests[id][:desc] = '3.1 vPC+ Non Default Properties on N7K'
+  # Need to setup fabricapth env for vPC+
+  setup_fabricpath_env(tests, self)
   test_harness_vpc_domain(tests, id)
 end
 
