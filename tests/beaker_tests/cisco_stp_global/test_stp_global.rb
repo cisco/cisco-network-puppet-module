@@ -246,6 +246,24 @@ tests[:non_default_bd] = {
   },
 }
 
+# setup_sys_bd_stp
+def setup_sys_bd_stp(platform, test_sys_bd)
+  config_sys_bd(agent, test_sys_bd) if platform == 'n7k'
+end
+
+# Helper for setting system bridge-domain configs
+def config_sys_bd(agent, test_sys_bd, stepinfo='sys-bd config:')
+  step stepinfo do
+    # Configure system bridge-domain
+    if test_sys_bd == :bd_all
+      cmd = 'system bridge-domain all'
+      command_config(agent, cmd, cmd)
+    elsif test_sys_bd == :bd_none
+      cmd = 'system bridge-domain all ; system bridge-domain none'
+      command_config(agent, cmd, cmd)
+    end
+  end
+end
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
