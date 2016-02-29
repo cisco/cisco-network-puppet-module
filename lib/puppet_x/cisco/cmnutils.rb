@@ -32,6 +32,38 @@ module PuppetX
         network
       end
 
+      # Helper utility for checking if arrays are overlapping in a
+      # give list.
+      # For ex: if the list has '2-10,32,42,44-89' and '11-33'
+      # then this will fail as they overlap
+      def self.fail_array_overlap(list)
+        array = []
+        list.each do |range, _val|
+          larray = range.split(',')
+          larray.each do |elem|
+            if elem.include?('-')
+              elema = elem.split('-').map { |d| Integer(d) }
+              ele = elema[0]..elema[1]
+              if (array & ele.to_a).empty?
+                array << ele.to_a
+                array = array.flatten
+              else
+                fail 'overlapping arrays not allowed'
+              end
+            else
+              elema = []
+              elema << elem.to_i
+              if (array & elema).empty?
+                array << elema
+                array = array.flatten
+              else
+                fail 'overlapping arrays not allowed'
+              end
+            end
+          end
+        end
+      end
+
       # Helper utility method for range summarization of VLAN and BD ranges
       # Input is a range string. For example: '10-20, 30, 14, 100-105, 21'
       # Output should be: '10-21,30,100-105'

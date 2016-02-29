@@ -63,6 +63,12 @@ Style/MethodName:
   Exclude:
     - 'docs/*.rb'
 
+# To stop rubocop from complaining about overriding is_to_s
+Style/PredicateName:
+  NameWhitelist:
+    - is_a?
+    - is_to_s
+
 # "def foo(bar=baz)" not "def foo(bar = baz)"
 Style/SpaceAroundEqualsInParameterDefault:
   EnforcedStyle: no_space
