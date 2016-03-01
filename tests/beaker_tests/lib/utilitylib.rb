@@ -567,7 +567,7 @@ end
 #   parameter keys in the manifest. When these are used the puppet resource
 #   command string becomes a combination of the title pattern and these params.
 #
-def create_manifest_and_resource(tests, id, extra_config=nil)
+def create_manifest_and_resource(tests, id)
   fail 'tests[:resource_name] is not defined' unless tests[:resource_name]
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
 
@@ -607,12 +607,21 @@ def create_manifest_and_resource(tests, id, extra_config=nil)
 
   tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   \nnode default {
-  #{extra_config}
+  #{dependency_manifest(tests, id)}
   #{tests[:resource_name]} { '#{tests[id][:title_pattern]}':
     #{state}\n#{manifest}
   }\n}\nEOF"
 
   true
+end
+
+# test_harness_dependencies
+#
+# This method is used for additional testbed setup beyond the basics
+# used by most tests.
+# Override this in a particular test file as needed.
+def test_harness_dependencies(tests, id)
+  # default is to do nothing
 end
 
 # dependency_manifest
@@ -656,13 +665,13 @@ end
 # - Creates manifests
 # - Creates puppet resource title strings
 # - Cleans resource
-def test_harness_run(tests, id, extra_config=dependency_manifest(tests, id))
+def test_harness_run(tests, id)
   return unless platform_supports_test(tests, id)
 
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
 
   # Build the manifest for this test
-  unless create_manifest_and_resource(tests, id, extra_config)
+  unless create_manifest_and_resource(tests, id)
     logger.error("\n#{tests[id][:desc]} :: #{id} :: SKIP")
     logger.error('No supported properties remain for this test.')
     return
@@ -670,6 +679,9 @@ def test_harness_run(tests, id, extra_config=dependency_manifest(tests, id))
 
   resource_absent_cleanup(agent, tests[id][:preclean]) if
     tests[id][:preclean]
+
+  # Check for additional pre-requisites
+  test_harness_dependencies(tests, id)
 
   test_harness_common(tests, id)
   tests[id][:ensure] = nil
