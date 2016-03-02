@@ -1,5 +1,5 @@
 #
-# The NXAPI provider for cisco_itd_device_group.
+# The Cisco provider for cisco_itd_device_group.
 #
 # Feb 2016
 #
@@ -26,8 +26,8 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
-Puppet::Type.type(:cisco_itd_device_group).provide(:nxapi) do
-  desc 'The NXAPI provider for cisco_itd_device_group.'
+Puppet::Type.type(:cisco_itd_device_group).provide(:cisco) do
+  desc 'The Cisco provider for cisco_itd_device_group.'
 
   confine feature: :cisco_node_utils
   defaultfor operatingsystem: :nexus
