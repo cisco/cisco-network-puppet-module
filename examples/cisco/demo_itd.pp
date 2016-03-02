@@ -76,4 +76,15 @@ class ciscopuppet::cisco::demo_itd {
     probe_timeout    => 1200,
     probe_type       => 'udp',
   }
+
+  cisco_itd_device_group_node {'icmpGroup 1.1.1.1':
+    ensure           => 'present',
+    node_type        => 'ip',
+    probe_frequency  => 1800,
+    probe_retry_down => 4,
+    probe_retry_up   => 4,
+    probe_timeout    => 1200,
+    probe_type       => 'icmp',
+    weight           => 200,
+  }
 }
