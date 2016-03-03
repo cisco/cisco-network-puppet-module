@@ -259,6 +259,8 @@ tests[:vpc_plus_non_default_properties_n7k] = {
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
+  resource_absent_cleanup(agent, 'cisco_vpc_domain',
+                          'Setup for cisco_vpc_domain provider test')
   device = platform
   logger.info("#### This device is of type: #{device} #####")
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
