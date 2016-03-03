@@ -15,18 +15,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-Puppet::Type.newtype(:cisco_itd_device_group_node, parent: Puppet::Type.type(:cisco_itd_device_group)) do
+Puppet::Type.newtype(:cisco_itd_device_group_node) do
   @doc = "Manages a Cisco ItdDeviceGroupNode.
-  **Autorequires:** cisco_itd_device_group
 
-  cisco_itd_device_group_node {\"<itddg> <node>\":
+  cisco_itd_device_group_node {\"<node>\":
     ..attributes..
   }
 
   <itddg> is the name of the itd device-group, and <node> is the name of the node instance.
 
   Example:
-    cisco_itd_device_group_node {\"my_group 1.1.1.1\":
+    cisco_itd_device_group_node {\"mygroup 1.1.1.1\":
      ensure                       => present,
      hot_standby                  => false,
      node_type                    => \"ip\",
@@ -62,8 +61,13 @@ Puppet::Type.newtype(:cisco_itd_device_group_node, parent: Puppet::Type.type(:ci
   end
 
   newparam(:itddg, namevar: :true) do
-    desc "Name of the itd device group. Valid value is a string of
-          non-whitespace characters. It is case-sensitive"
+    desc 'Name of the itd device group.
+          Valid values are string.'
+
+    validate do |value|
+      fail('Itd device group name must be a string') unless value.is_a? String
+    end
+
     munge(&:strip)
   end
 
@@ -72,13 +76,21 @@ Puppet::Type.newtype(:cisco_itd_device_group_node, parent: Puppet::Type.type(:ci
     munge(&:strip)
   end
 
+  newparam(:node_type, namevar: true) do
+    desc 'Type of node. Valid values are ip or IPv6.'
+    defaultto(:ip)
+    newvalues(:ip, :IPv6)
+  end
+
+  # Only needed to satisfy name parameter.
   newparam(:name) do
-    desc 'dummy paramenter to support puppet resource command'
   end
 
   ##############
   # Attributes #
   ##############
+
+  ensurable
 
   newproperty(:hot_standby) do
     desc 'Enable/disable hot_standby mode'
@@ -86,11 +98,104 @@ Puppet::Type.newtype(:cisco_itd_device_group_node, parent: Puppet::Type.type(:ci
     newvalues(:true, :false, :default)
   end # property hot_standby
 
-  newproperty(:node_type) do
-    desc 'Type of the node'
+  newproperty(:itd_device_group) do
+    desc 'Itd device group'
 
-    newvalues(:ip, :IPv6)
-  end # property node_type
+    validate do |grp|
+      fail("itd_device_group property - #{grp} should be a string") unless
+        grp.kind_of? String
+    end
+  end # property group
+
+  newproperty(:probe_control) do
+    desc 'Enable control protocol.'
+
+    newvalues(:true, :false, :default)
+  end # property probe_control
+
+  newproperty(:probe_dns_host) do
+    desc 'DNS Target IP Address or Hostname.'
+
+    validate do |dns_host|
+      fail("dns_host property - #{dns_host} should be a string") unless
+        dns_host.kind_of? String
+    end
+  end # property probe_dns_host
+
+  newproperty(:probe_frequency) do
+    desc 'Frequency in seconds'
+
+    munge do |value|
+      value = :default if value == 'default'
+      begin
+        value = Integer(value) unless value == :default
+      rescue
+        raise 'probe_frequency must be a valid integer, or default.'
+      end
+      value
+    end
+  end # property probe_frequency
+
+  newproperty(:probe_port) do
+    desc 'Port Number'
+
+    munge do |value|
+      begin
+        value = Integer(value)
+      rescue
+        raise 'probe_port must be a valid integer'
+      end
+      value
+    end
+  end # property probe_port
+
+  newproperty(:probe_retry_down) do
+    desc 'Retry-count when node goes down'
+
+    munge do |value|
+      value = :default if value == 'default'
+      begin
+        value = Integer(value) unless value == :default
+      rescue
+        raise 'probe_retry_down must be a valid integer, or default.'
+      end
+      value
+    end
+  end # property probe_retry_down
+
+  newproperty(:probe_retry_up) do
+    desc 'Retry-count when node comes back up'
+
+    munge do |value|
+      value = :default if value == 'default'
+      begin
+        value = Integer(value) unless value == :default
+      rescue
+        raise 'probe_retry_up must be a valid integer, or default.'
+      end
+      value
+    end
+  end # property probe_retry_up
+
+  newproperty(:probe_timeout) do
+    desc 'Timeout in seconds'
+
+    munge do |value|
+      value = :default if value == 'default'
+      begin
+        value = Integer(value) unless value == :default
+      rescue
+        raise 'probe_timeout must be a valid integer, or default.'
+      end
+      value
+    end
+  end # property probe_timeout
+
+  newproperty(:probe_type) do
+    desc 'protocol type'
+
+    newvalues(:dns, :tcp, :udp, :icmp, :default)
+  end # property probe_type
 
   newproperty(:weight) do
     desc 'Weight for traffic distribution'
@@ -105,22 +210,4 @@ Puppet::Type.newtype(:cisco_itd_device_group_node, parent: Puppet::Type.type(:ci
       value
     end
   end # property weight
-
-  ################
-  # Autorequires #
-  ################
-
-  # Autorequire cisco_itd_device_group; do not fail if it is not present in the manifest
-  autorequire(:cisco_itd_device_group) do |rel_catalog|
-    reqs = []
-
-    itddg_title = self[:itddg]
-
-    dep = rel_catalog.catalog.resource('cisco_itd_device_group', itddg_title)
-
-    info "Cisco_itd_device_group[#{itddg_title}] was not found in catalog. " \
-         'Will obtain from device.' if dep.nil?
-    reqs << dep
-    reqs
-  end
 end

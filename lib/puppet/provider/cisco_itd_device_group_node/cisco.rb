@@ -26,7 +26,7 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
-Puppet::Type.type(:cisco_itd_device_group_node).provide(:cisco, parent: Puppet::Type.type(cisco_itd_device_group).provide(:cisco)) do
+Puppet::Type.type(:cisco_itd_device_group_node).provide(:cisco) do
   desc 'The Cisco provider for cisco_itd_device_group_node.'
 
   confine feature: :cisco_node_utils
@@ -57,17 +57,24 @@ Puppet::Type.type(:cisco_itd_device_group_node).provide(:cisco, parent: Puppet::
 
   def initialize(value={})
     super(value)
-    @nu = Cisco::ItdDeviceGroupNode.itd_nodes[@property_hash[:name]]
+    itddg = @property_hash[:itddg]
+    node = @property_hash[:node]
+    puts 'init'
+    puts itddg
+    puts node
+    @nu = Cisco::ItdDeviceGroupNode.itd_nodes[itddg][node] unless
+      itddg.nil? || node.nil?
     @property_flush = {}
   end
 
-  def self.properties_get(itd_device_group_name, nu_obj)
-    debug "Checking instance, #{itd_device_group_name}."
+  def self.properties_get(itd_device_group_name, node, nu_obj)
+    debug "Checking instance, #{itd_device_group_name} #{node}"
     current_state = {
-      itddg:  itd_device_group_name,
-      name:   "#{itd_device_group_name}_#{nu_obj.name}",
-      node:   nu_obj.name,
-      ensure: :present,
+      name:      "#{itd_device_group_name} #{node}",
+      itddg:     itd_device_group_name,
+      node:      node,
+      node_type: nu_obj.node_type,
+      ensure:    :present,
     }
     # Call node_utils getter for each property
     ITDDG_NODE_NON_BOOL_PROPS.each do |prop|
@@ -87,21 +94,48 @@ Puppet::Type.type(:cisco_itd_device_group_node).provide(:cisco, parent: Puppet::
 
   def self.instances
     itd_nodes = []
-    Cisco::ItdDeviceGroupNode.itd_nodes.each do |itd_device_group_node_name, nu_obj|
-      itd_nodes << properties_get(itd_device_group_node_name, nu_obj)
+    Cisco::ItdDeviceGroupNode.itd_nodes.each do |itddg, all_nu|
+      all_nu.each do |nu, nu_obj|
+        puts 'inst'
+        puts itddg
+        puts nu
+        puts nu_obj
+        itd_nodes << properties_get(itddg, nu, nu_obj)
+      end
     end
+    puts Cisco::ItdDeviceGroupNode.itd_nodes
     itd_nodes
   end
 
   def self.prefetch(resources)
     itd_nodes = instances
-    resources.keys.each do |name|
-      provider = itd_nodes.find { |nu_obj| nu_obj.instance_name == name }
-      resources[name].provider = provider unless provider.nil?
+    resources.keys.each do |id|
+      provider = itd_nodes.find do |node|
+        node.itddg.to_s == resources[id][:itddg].to_s &&
+        node.node.to_s == resources[id][:node].to_s &&
+        node.node_type.to_s == resources[id][:node_type].to_s
+      end
+      puts 'pref'
+      puts id
+      resources[id].provider = provider unless provider.nil?
     end
   end # self.prefetch
 
+  def exists?
+    (@property_hash[:ensure] == :present)
+  end
+
+  def create
+    @property_flush[:ensure] = :present
+  end
+
+  def destroy
+    @property_flush[:ensure] = :absent
+  end
+
   def instance_name
+    puts 'inst_name'
+    puts name
     name
   end
 
@@ -116,6 +150,54 @@ Puppet::Type.type(:cisco_itd_device_group_node).provide(:cisco, parent: Puppet::
     end
     # custom setters which require one-shot multi-param setters
     probe_set
+    hot_standby_weight_set
+  end
+
+  # We need special handling for boolean properties in our custom
+  # setters below. This helper method returns true if the property
+  # flush contains a TrueClass or FalseClass value.
+  def flush_boolean?(prop)
+    @property_flush[prop].is_a?(TrueClass) ||
+      @property_flush[prop].is_a?(FalseClass)
+  end
+
+  def fail_attribute_check(type)
+    return unless type
+    case type.to_sym
+    when :icmp
+      fail ArgumentError, 'control, dns_host, port are not applicable' if
+        @resource[:probe_control] || @resource[:probe_dns_host] ||
+        @resource[:probe_port]
+    when :dns
+      fail ArgumentError, 'control, port are not applicable' if
+        @resource[:probe_control] || @resource[:probe_port]
+      fail ArgumentError, 'dns_host MUST be specified' unless
+        @resource[:probe_dns_host]
+    when :tcp, :udp
+      fail ArgumentError, 'dns_host is not applicable' if
+        @resource[:probe_dns_host]
+      fail ArgumentError, 'port MUST be specified' unless
+        @resource[:probe_port]
+    end
+  end
+
+  def hot_standby_weight_set
+    weight = @property_flush[:weight] ? @property_flush[:weight] : @nu.weight
+    hot_standby = flush_boolean?(:hot_standby) ? @property_flush[:hot_standby] : @nu.hot_standby
+    @nu.send(:hs_weight=, hot_standby, weight)
+  end
+
+  def probe_set
+    type = @property_flush[:probe_type] ? @property_flush[:probe_type] : @nu.probe_type
+    to = @property_flush[:probe_timeout] ? @property_flush[:probe_timeout] : @nu.probe_timeout
+    ru = @property_flush[:probe_retry_up] ? @property_flush[:probe_retry_up] : @nu.probe_retry_up
+    rd = @property_flush[:probe_retry_down] ? @property_flush[:probe_retry_down] : @nu.probe_retry_down
+    freq = @property_flush[:probe_frequency] ? @property_flush[:probe_frequency] : @nu.probe_frequency
+    dh = @property_flush[:probe_dns_host] ? @property_flush[:probe_dns_host] : @nu.probe_dns_host
+    port = @property_flush[:probe_port] ? @property_flush[:probe_port] : @nu.probe_port
+    con = flush_boolean?(:probe_control) ? @property_flush[:probe_control] : @nu.probe_control
+    fail_attribute_check(type)
+    @nu.send(:probe=, type, dh, con, freq, ru, rd, port, to)
   end
 
   def flush
@@ -128,7 +210,7 @@ Puppet::Type.type(:cisco_itd_device_group_node).provide(:cisco, parent: Puppet::
         new_itd_node = true
         @nu = Cisco::ItdDeviceGroupNode.new(@resource[:itddg],
                                             @resource[:node],
-                                            @resource[:node_type])
+                                            @resource[:node_type].to_s)
       end
       properties_set(new_itd_node)
     end
