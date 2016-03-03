@@ -108,17 +108,17 @@ tests[:default_properties] = {
   title_pattern:  '200',
   desc:           '1.1 Default Properties on All Nexus Platforms',
   manifest_props: {
-    auto_recovery_reload_delay:    'default',
-    delay_restore:                 'default',
-    delay_restore_interface_vlan:  'default',
-    graceful_consistency_check:    'default',
-    peer_gateway:                  'default',
-    role_priority:                 'default',
-    system_priority:               'default',
+    auto_recovery_reload_delay:   'default',
+    delay_restore:                'default',
+    delay_restore_interface_vlan: 'default',
+    graceful_consistency_check:   'default',
+    peer_gateway:                 'default',
+    role_priority:                'default',
+    system_priority:              'default',
 
   },
   code:           [0, 2],
-  resource: {
+  resource:       {
     'auto_recovery_reload_delay'   => '240',
     'delay_restore'                => '30',
     'delay_restore_interface_vlan' => '10',
@@ -153,7 +153,7 @@ tests[:non_default_properties] = {
 
   },
   code:           [0, 2],
-  resource: {
+  resource:       {
     'auto_recovery_reload_delay'                       => '300',
     'delay_restore'                                    => '250',
     'delay_restore_interface_vlan'                     => '300',
@@ -183,7 +183,7 @@ tests[:default_properties_n6k7k] = {
     shutdown:            'default',
   },
   code:           [0, 2],
-  resource: {
+  resource:       {
     'layer3_peer_routing' => 'false',
     'shutdown'            => 'false',
   },
@@ -200,7 +200,7 @@ tests[:non_default_properties_n6k7k] = {
 
   },
   code:           [0, 2],
-  resource: {
+  resource:       {
     'layer3_peer_routing'       => 'true',
     'peer_gateway_exclude_vlan' => '500-510,1100,1120',
     'shutdown'                  => 'true',
@@ -216,7 +216,7 @@ tests[:default_properties_n7k] = {
     self_isolation: 'default',
   },
   code:           [0, 2],
-  resource: {
+  resource:       {
     'auto_recovery'  => 'true',
     'self_isolation' => 'false',
   },
@@ -231,7 +231,7 @@ tests[:non_default_properties_n7k] = {
     self_isolation: 'true',
   },
   code:           [0, 2],
-  resource: {
+  resource:       {
     'auto_recovery'  => 'false',
     'self_isolation' => 'true',
   },
@@ -247,7 +247,7 @@ tests[:vpc_plus_non_default_properties_n7k] = {
     port_channel_limit:                'false',
   },
   code:           [0, 2],
-  resource: {
+  resource:       {
     'fabricpath_emulated_switch_id'     => '1015',
     'fabricpath_multicast_load_balance' => 'true',
     'port_channel_limit'                => 'false',
