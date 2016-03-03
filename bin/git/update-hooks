@@ -1,0 +1,123 @@
+#!/bin/bash
+#
+# Based on:
+# http://stackoverflow.com/questions/3462955/putting-git-hooks-into-repository
+# https://github.com/sjungwirth/githooks
+
+# Where hooks are stored in the repo
+SRC_DIR="$(git rev-parse --show-toplevel)/bin/git/hooks"
+
+# Where hooks need to be installed
+HOOK_DIR="$(git rev-parse --show-toplevel)/.git/hooks"
+
+. "$SRC_DIR/hook_lib"
+
+usage() {
+    echo "Usage: update-hooks [OPTION]"
+    echo "Update the hooks in the local git repository to match those"
+    echo "under version control."
+    echo
+    echo "Options:"
+    echo "  --dry-run       Do not make any updates"
+    echo "  -v  --verbose   Verbose output, including diffs of updated files"
+    echo "  --[no-]pager    Explicity request or suppress pagination in git diff"
+    echo "  -h  --help      Display this help text"
+}
+
+# Flags that can be set from the command line, with default values
+make_updates=1  # the inverse of --dry-run
+verbose=0
+pager= # default to whatever defaults git has configured
+
+# parse command line options
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        (-h|--help)
+            usage
+            exit 0
+            ;;
+        (-v|--verbose)
+            verbose=1
+            ;;
+        (--pager)
+            pager=--paginate
+            ;;
+        (--no-pager)
+            pager=--no-pager
+            ;;
+        (--dry-run)
+            make_updates=0
+            ;;
+        (*)
+            echo "Unrecognized option: $1"
+            usage
+            exit 1
+            ;;
+    esac
+    shift 1
+done
+
+
+install_hook_wrapper() {
+    local hook=$1
+    # Does the symlink exist?
+    if [ ! -h $HOOK_DIR/$hook ]; then
+        # If a hook already exists and is a file:
+        if [ -f $HOOK_DIR/$hook ]; then
+            step_name "Moving existing '$hook' script to '$hook-local'"
+            if [ $make_updates == 1 ]; then
+                mv $HOOK_DIR/$hook $HOOK_DIR/$hook-local
+            fi
+        fi
+        # create the symlink to our wrapper script
+        step_name "Installing hook wrapper script for '$hook'"
+        if [ $make_updates == 1 ]; then
+            ln -s -f ./hooks-wrapper $HOOK_DIR/$hook
+        fi
+    fi
+}
+
+check_update() {
+    local src=$1
+    local dest=$2
+    if [ ! -e "$dest" ] ; then
+        step_name "Creating new file at '$dest':"
+        if [ $verbose == 1 ]; then
+            git ${pager} diff --color --no-index /dev/null $src
+        fi
+        if [ $make_updates == 1 ]; then
+            cp $src $dest
+        fi
+    else
+        diff $src $dest >> /dev/null
+        if [ $? -ne 0 ] ; then
+            step_name "File '$dest' will be updated: "
+            if [ $verbose == 1 ]; then
+                git ${pager} diff --color --no-index $dest $src
+            fi
+            if [ $make_updates == 1 ]; then
+                cp -f $src $dest
+            fi
+        fi
+    fi
+}
+
+for item in "$SRC_DIR"/*; do
+    if [ ! -d "$item" ]; then
+        # Not a hook subdirectory, just a library file - update it as needed
+        file="${item##*/}"
+        check_update "$SRC_DIR/$file" "$HOOK_DIR/$file"
+        continue
+    fi
+    # Else it's a hook subdirectory.
+    hook="${item##*/}"
+    # First, make sure we have our hook-wrapper script installed for this hook:
+    install_hook_wrapper "$hook"
+    # Now descend into the subdirectory and update the individual scripts:
+    for file in "$item"/*; do
+        # bin/git/hooks/pre-commit/rubocop --> "pre-commit-rubocop"
+        hook_script="${hook}-${file##*/}"
+        check_update "$file" "$HOOK_DIR/$hook_script"
+    done
+done
+

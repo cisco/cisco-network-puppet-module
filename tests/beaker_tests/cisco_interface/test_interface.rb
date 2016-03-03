@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2016 Cisco and/or its affiliates.
+# Copyright (c) 2014-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,17 +20,16 @@
 # TestCase Prerequisites:
 # -----------------------
 # This is a Puppet cisco_interface testcase for Puppet Agent on
-# Nexus devices.
+# Nexus and IOS XR devices.
 # The test case assumes the following prerequisites are already satisfied:
 #   - Host configuration file contains agent and master information.
-#   - SSH is enabled on the N9K Agent.
+#   - SSH is enabled on the agent node.
 #   - Puppet master/server is started.
 #   - Puppet agent certificate has been signed on the Puppet master/server.
 #
-# The following exit_codes are validated for Puppet, Vegas shell and
-# Bash shell commands.
+# The following exit_codes are validated for Puppet and Bash shell commands.
 #
-# Vegas and Bash Shell Commands:
+# Bash Shell Commands:
 # 0   - successful command execution
 # > 0 - failed command execution.
 #
@@ -62,6 +61,9 @@ testheader = 'Resource cisco_interface'
 # Top-level keys set by caller:
 # tests[:master] - the master object
 # tests[:agent] - the agent object
+# tests[:operating_system] - a regexp pattern to match against supported OS.
+#                            This key can be overridden by a
+#                            tests[id][:operating_system] key
 # tests[:platform] - a regexp pattern to match against supported platforms.
 #                    This key can be overridden by a tests[id][:platform] key
 #
@@ -74,6 +76,8 @@ tests = {
 # tests[id] keys set by caller and used by test_harness_common:
 #
 # tests[id] keys set by caller:
+# tests[id][:operating_system] - a regexp pattern to match against supported OS.
+#                                This key overrides a tests[:operating_system] key
 # tests[id][:platform] - a regexp pattern to match against supported platforms.
 #                        This key overrides a tests[:platform] key
 # tests[id][:desc] - a string to use with logs & debugs
@@ -102,11 +106,33 @@ tests['L3_default'] = {
   preclean:           true,
   sys_def_switchport: false,
   manifest_props:     {
+    description:    'default',
+    ipv4_proxy_arp: 'default',
+    ipv4_redirects: 'default',
+    mtu:            'default',
+    shutdown:       'default',
+    vrf:            'default',
+  },
+  resource:           {
+    # 'description'    => nil,
+    'ipv4_proxy_arp' => 'false',
+    'ipv4_redirects' => operating_system == 'nexus' ? 'true' : 'false',
+    'mtu'            => operating_system == 'nexus' ? '1500' : '1514',
+    'shutdown'       => 'false',
+    # 'vrf'            => nil,
+  },
+}
+
+tests['L3_default_nexus'] = {
+  desc:               '1.2 (L3) Default Properties - Nexus Specific',
+  operating_system:   'nexus',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: false,
+  manifest_props:     {
     duplex:                        'default',
+    ipv4_forwarding:               'default',
     ipv4_pim_sparse_mode:          'default',
-    ipv4_proxy_arp:                'default',
-    ipv4_redirects:                'default',
-    shutdown:                      'default',
     switchport_autostate_exclude:  'default',
     switchport_mode:               'default',
     switchport_trunk_allowed_vlan: 'default',
@@ -115,10 +141,8 @@ tests['L3_default'] = {
   },
   resource:           {
     'duplex'                        => 'auto',
+    'ipv4_forwarding'               => 'false',
     'ipv4_pim_sparse_mode'          => 'false',
-    'ipv4_proxy_arp'                => 'false',
-    'ipv4_redirects'                => 'true',
-    'shutdown'                      => 'false',
     'switchport_autostate_exclude'  => 'false',
     'switchport_mode'               => 'disabled',
     'switchport_trunk_allowed_vlan' => '1-4094',
@@ -130,7 +154,7 @@ tests['L3_default'] = {
 # Note: This test should follow the L3_default test as it requires an
 # L3 parent interface and this makes it easy to set up.
 tests['L3_sub_int'] = {
-  desc:           '1.2 (L3) Sub-interface',
+  desc:           '1.3 (L3) Sub-interface',
   intf_type:      'dot1q',
   manifest_props: {
     encapsulation_dot1q: 30
@@ -141,39 +165,54 @@ tests['L3_sub_int'] = {
 }
 
 tests['L3_misc'] = {
-  desc:               '1.3 (L3) Misc Properties',
+  desc:               '1.4 (L3) Misc Properties',
   intf_type:          'ethernet',
   sys_def_switchport: false,
   manifest_props:     {
-    switchport_mode:               'disabled',
     description:                   'Configured with Puppet',
     shutdown:                      true,
     ipv4_address:                  '1.1.1.1',
     ipv4_netmask_length:           31,
     ipv4_address_secondary:        '2.2.2.2',
     ipv4_netmask_length_secondary: 31,
-    ipv4_pim_sparse_mode:          true,
     ipv4_proxy_arp:                true,
-    ipv4_redirects:                false,
+    ipv4_redirects:                operating_system == 'nexus' ? false : true,
     vrf:                           'test1',
   },
   resource:           {
-    'switchport_mode'               => 'disabled',
     'description'                   => 'Configured with Puppet',
     'shutdown'                      => 'true',
     'ipv4_address'                  => '1.1.1.1',
     'ipv4_netmask_length'           => '31',
     'ipv4_address_secondary'        => '2.2.2.2',
     'ipv4_netmask_length_secondary' => '31',
-    'ipv4_pim_sparse_mode'          => 'true',
     'ipv4_proxy_arp'                => 'true',
-    'ipv4_redirects'                => 'false',
+    'ipv4_redirects'                => operating_system == 'nexus' ? 'false' : 'true',
     'vrf'                           => 'test1',
   },
 }
 
+tests['L3_misc_nexus'] = {
+  desc:               '1.5 (L3) Misc Properties - Nexus specific',
+  operating_system:   'nexus',
+  intf_type:          'ethernet',
+  sys_def_switchport: false,
+  manifest_props:     {
+    switchport_mode:      'disabled',
+    ipv4_forwarding:      true,
+    ipv4_pim_sparse_mode: true,
+  },
+  resource:           {
+    'switchport_mode'      => 'disabled',
+    'ipv4_forwarding'      => 'true',
+    'ipv4_pim_sparse_mode' => 'true',
+  },
+}
+
 tests['L3_ACL'] = {
-  desc:               '1.4 (L3) ACL Properties',
+  desc:               '1.6 (L3) ACL Properties',
+  # TODO: this requires cisco_acl support before we can enable it for IOS XR
+  operating_system:   'nexus',
   intf_type:          'ethernet',
   sys_def_switchport: false,
   acl:                {
@@ -199,6 +238,7 @@ tests['L3_ACL'] = {
 
 tests['L2_access_default'] = {
   desc:               '2.1 (L2) Access Default',
+  operating_system:   'nexus',
   intf_type:          'ethernet',
   preclean:           true,
   sys_def_switchport: true,
@@ -215,6 +255,7 @@ tests['L2_access_default'] = {
 
 tests['L2_access'] = {
   desc:               '2.2 (L2) Access Properties',
+  operating_system:   'nexus',
   intf_type:          'ethernet',
   sys_def_switchport: true,
   sys_def_sw_shut:    true,
@@ -233,6 +274,7 @@ tests['L2_access'] = {
 
 tests['L2_trunk_default'] = {
   desc:               '3.1 (L2) Trunk Default',
+  operating_system:   'nexus',
   intf_type:          'ethernet',
   preclean:           true,
   sys_def_switchport: true,
@@ -254,6 +296,7 @@ tests['L2_trunk_default'] = {
 
 tests['L2_trunk'] = {
   desc:               '3.2 (L2) Trunk',
+  operating_system:   'nexus',
   intf_type:          'ethernet',
   sys_def_switchport: true,
   manifest_props:     {
@@ -273,23 +316,25 @@ tests['L2_trunk'] = {
 }
 
 tests['SVI_default'] = {
-  desc:           '4.1 (SVI) Default Properties',
-  intf_type:      'vlan',
-  manifest_props: {
+  desc:             '4.1 (SVI) Default Properties',
+  operating_system: 'nexus',
+  intf_type:        'vlan',
+  manifest_props:   {
     svi_management: 'default'
   },
-  resource:       {
+  resource:         {
     'svi_management' => 'false'
   },
 }
 
 tests['SVI'] = {
-  desc:           '4.2 (SVI) Non Default Properties',
-  intf_type:      'vlan',
-  manifest_props: {
+  desc:             '4.2 (SVI) Non Default Properties',
+  operating_system: 'nexus',
+  intf_type:        'vlan',
+  manifest_props:   {
     svi_management: 'true'
   },
-  resource:       {
+  resource:         {
     'svi_management' => 'true'
   },
 }
@@ -302,31 +347,34 @@ if platform[/n9k/]
 end
 
 tests['SVI_autostate_default'] = {
-  desc:           '4.3 (SVI) Default SVI Autostate Property',
-  platform:       'n(3|7|9)k',
-  intf_type:      'vlan',
-  manifest_props: {
+  desc:             '4.3 (SVI) Default SVI Autostate Property',
+  operating_system: 'nexus',
+  platform:         'n(3|7|9)k',
+  intf_type:        'vlan',
+  manifest_props:   {
     svi_autostate: 'default'
   },
-  resource:       {
+  resource:         {
     'svi_autostate' => 'true'
   },
 }
 
 tests['SVI_autostate'] = {
-  desc:           '4.4 (SVI) Non Default SVI Autostate Property',
-  platform:       'n(3|7|9)k',
-  intf_type:      'vlan',
-  manifest_props: {
+  desc:             '4.4 (SVI) Non Default SVI Autostate Property',
+  operating_system: 'nexus',
+  platform:         'n(3|7|9)k',
+  intf_type:        'vlan',
+  manifest_props:   {
     svi_autostate: 'false'
   },
-  resource:       {
+  resource:         {
     'svi_autostate' => 'false'
   },
 }
 
 tests['negotiate'] = {
   desc:               '5.1 negotiate-auto',
+  operating_system:   'nexus',
   platform:           'n(5|6|7)k',
   intf_type:          'ethernet',
   preclean:           true,
@@ -483,8 +531,10 @@ test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. (L3) Property Testing")
   test_harness_interface(tests, 'L3_default')
+  test_harness_interface(tests, 'L3_default_nexus')
   test_harness_interface(tests, 'L3_sub_int')
   test_harness_interface(tests, 'L3_misc')
+  test_harness_interface(tests, 'L3_misc_nexus')
   test_harness_interface(tests, 'L3_ACL')
 
   # -------------------------------------------------------------------
@@ -499,7 +549,10 @@ test_name "TestCase :: #{testheader}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 4. (SVI) Property Testing")
-  resource_set(agent, resource_cisco_overlay_global, 'Overlay Global mac setup')
+  if platform_supports_test(tests, 'SVI')
+    resource_set(agent, resource_cisco_overlay_global,
+                 'Overlay Global mac setup')
+  end
   interface_cleanup(agent, tests[:svi_name])
   test_harness_interface(tests, 'SVI_default')
   test_harness_interface(tests, 'SVI')

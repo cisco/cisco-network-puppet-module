@@ -33,6 +33,8 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 # The module has a single set of methods:
 # A. Methods to create manifests for file, service and pkg Puppet test cases.
 module FileSvcPkgLib
+  TEST_SERVICE = 'bootlogd'
+
   # A. Methods to create manifests for file, service and pkg Puppet test cases.
 
   # Method to create a manifest for FILE resource attributes:
@@ -79,8 +81,8 @@ EOF"
   def self.create_service_manifest_nondefaults
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
-    service { 'syslog':
-        name            => 'syslog',
+    service { '#{TEST_SERVICE}':
+        name            => '#{TEST_SERVICE}',
         ensure          => 'running',
         enable          => 'true',
     }
@@ -96,8 +98,8 @@ EOF"
   def self.create_service_manifest_stopped
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
-    service { 'syslog':
-        name            => 'syslog',
+    service { '#{TEST_SERVICE}':
+        name            => '#{TEST_SERVICE}',
         ensure          => 'stopped',
     }
 }
@@ -149,7 +151,7 @@ node default {
     package { 'n9000_sample.x86_64':
         name            => 'n9000_sample-1.0.0-7.0.3.x86_64.rpm',
         ensure          => present,
-        provider        => 'nxapi',
+        provider        => 'cisco',
         source          => '/bootflash/n9000_sample-1.0.0-7.0.3.x86_64.rpm',
         package_settings => {'target' => 'host'},
     }
@@ -168,7 +170,7 @@ node default {
     package { 'n9000_sample.x86_64':
         name            => 'n9000_sample-1.0.0-7.0.3.x86_64.rpm',
         ensure          => absent,
-        provider        => 'nxapi',
+        provider        => 'cisco',
         source          => '/bootflash/n9000_sample-1.0.0-7.0.3.x86_64.rpm',
         package_settings => {'target' => 'host'},
     }

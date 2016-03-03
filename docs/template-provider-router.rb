@@ -1,7 +1,7 @@
 #
-# The NXAPI provider for cisco_X__RESOURCE_NAME__X.
+# The Cisco provider for cisco_X__RESOURCE_NAME__X.
 #
-# Copyright (c) 2015 Cisco and/or its affiliates.
+# Copyright (c) 2015-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
-Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:nxapi) do
-  desc 'The NXAPI provider for cisco_X__RESOURCE_NAME__X.'
+Puppet::Type.type(:cisco_X__RESOURCE_NAME__X).provide(:cisco) do
+  desc 'The Cisco provider for cisco_X__RESOURCE_NAME__X.'
 
   confine feature: :cisco_node_utils
 

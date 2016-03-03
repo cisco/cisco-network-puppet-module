@@ -15,82 +15,100 @@
 # limitations under the License.
 
 class ciscopuppet::cisco::demo_interface {
-  cisco_acl { 'ipv4 v4acl1':
-    before => Cisco_interface['Ethernet1/1'],
-    ensure => 'present',
-  }
+  if $operatingsystem == 'nexus' {
+    cisco_acl { 'ipv4 v4acl1':
+      before => Cisco_interface['Ethernet1/1'],
+      ensure => 'present',
+    }
 
-  cisco_acl { 'ipv4 v4acl2':
-    before => Cisco_interface['Ethernet1/1'],
-    ensure => 'present',
-  }
+    cisco_acl { 'ipv4 v4acl2':
+      before => Cisco_interface['Ethernet1/1'],
+      ensure => 'present',
+    }
 
-  cisco_acl { 'ipv6 v6acl1':
-    before => Cisco_interface['Ethernet1/1'],
-    ensure => 'present',
-  }
+    cisco_acl { 'ipv6 v6acl1':
+      before => Cisco_interface['Ethernet1/1'],
+      ensure => 'present',
+    }
 
-  cisco_acl { 'ipv6 v6acl2':
-    before => Cisco_interface['Ethernet1/1'],
-    ensure => 'present',
-  }
+    cisco_acl { 'ipv6 v6acl2':
+      before => Cisco_interface['Ethernet1/1'],
+      ensure => 'present',
+    }
 
-  cisco_interface { 'Ethernet1/1' :
-    shutdown                       => true,
-    switchport_mode                => disabled,
-    description                    => 'managed by puppet',
-    ipv4_address                   => '192.168.55.5',
-    ipv4_netmask_length            => 24,
-    ipv4_address_secondary         => '192.168.88.1',
-    ipv4_netmask_length_secondary  => 24,
-    ipv4_pim_sparse_mode           => false,
-    mtu                            => 1600,
-    # Removed because of too many differences between platforms and linecards
-    # speed                          => 100,
-    # duplex                         => 'full',
-    vrf                            => 'test',
-    ipv4_acl_in                    => 'v4acl1',
-    ipv4_acl_out                   => 'v4acl2',
-    ipv6_acl_in                    => 'v6acl1',
-    ipv6_acl_out                   => 'v6acl2',
-  }
+    cisco_interface { 'Ethernet1/1' :
+      shutdown                       => true,
+      switchport_mode                => disabled,
+      description                    => 'managed by puppet',
+      ipv4_address                   => '192.168.55.5',
+      ipv4_netmask_length            => 24,
+      ipv4_address_secondary         => '192.168.88.1',
+      ipv4_netmask_length_secondary  => 24,
+      ipv4_forwarding                => true,
+      ipv4_pim_sparse_mode           => false,
+      mtu                            => 1600,
+      # Removed because of too many differences between platforms and linecards
+      # speed                          => 100,
+      # duplex                         => 'full',
+      vrf                            => 'test',
+      ipv4_acl_in                    => 'v4acl1',
+      ipv4_acl_out                   => 'v4acl2',
+      ipv6_acl_in                    => 'v6acl1',
+      ipv6_acl_out                   => 'v6acl2',
+    }
 
-  cisco_interface { 'Ethernet1/1.1':
-    encapsulation_dot1q => 20,
-  }
+    cisco_interface { 'Ethernet1/1.1':
+      encapsulation_dot1q => 20,
+    }
 
-  cisco_interface_channel_group { 'Ethernet1/2':
-    channel_group   => 200,
-  }
+    cisco_interface_channel_group { 'Ethernet1/2':
+      channel_group   => 200,
+    }
 
-  cisco_interface { 'Ethernet1/3':
-    description     => 'default',
-    shutdown        => 'default',
-    access_vlan     => 'default',
-    switchport_mode => access,
-  }
+    cisco_interface { 'Ethernet1/3':
+      description     => 'default',
+      shutdown        => 'default',
+      access_vlan     => 'default',
+      switchport_mode => access,
+    }
 
-  cisco_interface { 'Ethernet1/5':
-    switchport_mode               => trunk,
-    switchport_trunk_allowed_vlan => '20, 30',
-    switchport_trunk_native_vlan  => 40,
-  }
+    cisco_interface { 'Ethernet1/5':
+      switchport_mode               => trunk,
+      switchport_trunk_allowed_vlan => '20, 30',
+      switchport_trunk_native_vlan  => 40,
+    }
 
-  $svi_autostate = platform_get() ? {
-    /(n5k|n6k)/  => undef,
-    default      => false
-  }
+    $svi_autostate = platform_get() ? {
+      /(n5k|n6k)/  => undef,
+      default      => false
+    }
 
-  cisco_interface { 'Vlan22':
-    svi_autostate    => $svi_autostate,
-    svi_management   => true,
-    ipv4_arp_timeout => 300,
-  }
+    cisco_interface { 'Vlan22':
+      svi_autostate    => $svi_autostate,
+      svi_management   => true,
+      ipv4_arp_timeout => 300,
+    }
 
-  #  Requires F3 or newer linecards
-  # cisco_interface { 'Ethernet9/1':
-  #   switchport_mode                => trunk,
-  #   switchport_vlan_mapping        => [[20, 21], [30, 31]]
-  #   switchport_vlan_mapping_enable => false
-  # }
+    #  Requires F3 or newer linecards
+    # cisco_interface { 'Ethernet9/1':
+    #   switchport_mode                => trunk,
+    #   switchport_vlan_mapping        => [[20, 21], [30, 31]]
+    #   switchport_vlan_mapping_enable => false
+    # }
+  }
+  elsif $operatingsystem == 'ios_xr' {
+    cisco_interface { 'GigabitEthernet0/0/0/1' :
+      shutdown            => true,
+      description         => 'managed by puppet',
+      ipv4_address        => '192.168.55.55',
+      ipv4_netmask_length => 24,
+      mtu                 => 1600,
+      vrf                 => 'test',
+    }
+
+    cisco_interface { 'GigabitEthernet0/0/0/2':
+      description     => 'default',
+      shutdown        => 'default',
+    }
+  }
 }

@@ -8,20 +8,39 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 #### Cisco Resources
 - `cisco_fabricpath_global` type and provider.
 - `cisco_fabricpath_topology` type and provider.
+- `cisco_stp_global` type and provider.
 
 #### NetDev Resources
 *
 
 ### Added
 - Extended `cisco_interface` with the following attributes:
-  - `switchport_mode fabricpath` 
+  - `ipv4_forwarding`, `switchport_mode fabricpath`
+  - `stp_bpdufilter`, `stp_bpduguard`, `stp_cost`, `stp_guard`, `stp_link_type`, `stp_mst_cost`
+  - `stp_mst_port_priority`, `stp_port_priority`, `stp_port_type`, `stp_vlan_cost`, `stp_vlan_port_priority`
 - Extended `cisco_vlan` with the following attributes:
-  - `mode` 
+  - `mode`
+- Extended `cisco_vrf_af` with the following attributes:
+  - `route_policy_export`
+  - `route_policy_import`
+  - `route_target_export_stitching`
+  - `route_target_import_stitching`
 - Extended `cisco_vxlan_vtep` with the following attributes:
   - `source_interface_hold_down_time`
+- Extended `cisco_bgp` with the following attributes:
+  - `nsr`
 
 ### Removed
-*
+- Removed 'cisco_nxapi' fact as this gem is no longer a dependency.
+
+### Changed
+- Renamed all providers from `:nxapi` to `:cisco` as they may include support for multiple Cisco platforms, not all of which use NXAPI.
+
+## [1.2.3] - 2016-02-24
+### Added
+- Download link for Nexus 5000 and Nexus 6000 Open Agent Container (OAC).
+- OAC programmability guide links.
+- Complete cisco_ace documentation.
 
 ## [1.2.2] - 2016-02-14
 
@@ -83,7 +102,7 @@ This version was never released.
   - `table_map`, `table_map_filter`
   - `suppress_inactive`
 - Extended `cisco_interface` with the following attributes:
-  - `fabric_forwarding_anycast_gateway` 
+  - `fabric_forwarding_anycast_gateway`
   - `ipv4_address_secondary`, `ipv4_netmask_length_secondary`
   - `ipv4_arp_timeout`
   - `ipv4_pim_sparse_mode`
@@ -183,6 +202,7 @@ This version was never released.
 - Please note: 0.9.0 is an EFT pre-release for a limited audience with access to NX-OS 7.0(3)I2(1). Additional code changes may occur in 0.9.x prior to the final 1.0.0 release.
 
 [unreleased]: https://github.com/cisco/cisco-network-puppet-module/compare/master...develop
+[1.2.3]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.2.0...v1.2.2
 [1.2.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.0.2...v1.1.0

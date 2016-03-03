@@ -120,7 +120,6 @@ Info: Caching catalog for n9k.domain.com
 Warning: Found multiple default providers for package: yum, puppet_gem, pip3; using yum
 Info: Applying configuration version '1438692679'
 Notice: /Stage[main]/Ciscopuppet::Install/Package[net_http_unix]/ensure: created
-Notice: /Stage[main]/Ciscopuppet::Install/Package[cisco_nxapi]/ensure: created
 Notice: /Stage[main]/Ciscopuppet::Install/Package[cisco_node_utils]/ensure: created
 Notice: /Stage[main]/Ciscopuppet::Demo_command_config/Cisco_command_config[feature_bgp]/command: command changed '' to 'feature bgp
 '
