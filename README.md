@@ -2702,6 +2702,16 @@ range 1..3600. Default value: 10.
 ##### `dual_active_exclude_interface_vlan_bridge_domain`
 Interface VLANs or BDs to exclude from suspension when dual-active. Valid value is a string of integer ranges from 1..4095. There is no default value.
 
+##### `fabricpath_emulated_switch_id`
+Configure a fabricpath switch_Id to enable vPC+ mode. This is also known as 
+the Emulated switch-id.  Valid values are integers in the range 1..4095.
+There is no default value.
+
+##### `fabricpath_multicast_load_balance`
+In vPC+ mode, enable or disable the fabricpath multicast load balance.
+This loadbalances the Designated Forwarder selection for multicast traffic. 
+Valid values are true, false or default
+
 ##### `graceful_consistency_check`
 Graceful conistency check . Valid values are true, false or default. Default value: true.
 
@@ -2737,6 +2747,10 @@ Enable or Disable Layer3 forwarding for packets with peer gateway-mac. Valid val
 
 ##### `peer_gateway_exclude_vlan`
 Interface vlans to exclude from peer gateway functionality. Valid value is a string of integer ranges from 1..4095. This parameter is available only in Nexus 5000, Nexus 6000 and Nexus 7000 series. There is no default value.
+
+##### `port_channel_limit`
+In vPC+ mode, enable or disable the port channel scale limit of
+244 vPCs.  Valid values are true, false or default
 
 ##### `role_priority`
 Priority to be used during vPC role selection of primary vs secondary. Valid values are integers in the range 1..65535. Default value: 32667.

@@ -20,6 +20,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `stp_mst_port_priority`, `stp_port_priority`, `stp_port_type`, `stp_vlan_cost`, `stp_vlan_port_priority`
 - Extended `cisco_vlan` with the following attributes:
   - `mode`
+- Extended `cisco_vpc_domain` with the following attributes:
+  - `fabricpath_emulated_switch_id`
+  - `fabricpath_multicast_load_balance`
+  - `port_channel_limit`
 - Extended `cisco_vxlan_vtep` with the following attributes:
   - `source_interface_hold_down_time`
 - Extended `cisco_bgp` with the following attributes:
