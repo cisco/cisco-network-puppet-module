@@ -59,9 +59,6 @@ Puppet::Type.type(:cisco_itd_device_group_node).provide(:cisco) do
     super(value)
     itddg = @property_hash[:itddg]
     node = @property_hash[:node]
-    puts 'init'
-    puts itddg
-    puts node
     @nu = Cisco::ItdDeviceGroupNode.itd_nodes[itddg][node] unless
       itddg.nil? || node.nil?
     @property_flush = {}
@@ -96,14 +93,9 @@ Puppet::Type.type(:cisco_itd_device_group_node).provide(:cisco) do
     itd_nodes = []
     Cisco::ItdDeviceGroupNode.itd_nodes.each do |itddg, all_nu|
       all_nu.each do |nu, nu_obj|
-        puts 'inst'
-        puts itddg
-        puts nu
-        puts nu_obj
         itd_nodes << properties_get(itddg, nu, nu_obj)
       end
     end
-    puts Cisco::ItdDeviceGroupNode.itd_nodes
     itd_nodes
   end
 
@@ -115,8 +107,6 @@ Puppet::Type.type(:cisco_itd_device_group_node).provide(:cisco) do
         node.node.to_s == resources[id][:node].to_s &&
         node.node_type.to_s == resources[id][:node_type].to_s
       end
-      puts 'pref'
-      puts id
       resources[id].provider = provider unless provider.nil?
     end
   end # self.prefetch
@@ -134,9 +124,7 @@ Puppet::Type.type(:cisco_itd_device_group_node).provide(:cisco) do
   end
 
   def instance_name
-    puts 'inst_name'
-    puts name
-    name
+    node
   end
 
   def properties_set(new_itd_node=false)

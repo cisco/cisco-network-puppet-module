@@ -77,6 +77,17 @@ class ciscopuppet::cisco::demo_itd {
     probe_type       => 'udp',
   }
 
+  cisco_itd_device_group_node {'icmpGroup 2.2.2.2':
+    ensure           => 'present',
+    hot_standby      => false,
+    node_type        => 'ip',
+    probe_frequency  => 1600,
+    probe_retry_down => 2,
+    probe_retry_up   => 2,
+    probe_timeout    => 1100,
+    probe_type       => 'icmp',
+    weight           => 20,
+  }
   cisco_itd_device_group_node {'icmpGroup 1.1.1.1':
     ensure           => 'present',
     hot_standby      => false,

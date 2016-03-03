@@ -82,6 +82,10 @@ Puppet::Type.newtype(:cisco_itd_device_group_node) do
     newvalues(:ip, :IPv6)
   end
 
+  def name
+    "#{self[:itddg]} #{self[:node]}"
+  end
+
   # Only needed to satisfy name parameter.
   newparam(:name) do
   end
