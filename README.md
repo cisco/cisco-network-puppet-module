@@ -2672,9 +2672,11 @@ Manages the virtual Port Channel (vPC) domain configuration of a Cisco device.
 | Property | Caveat Description |
 |:--------|:-------------|
 | `auto_recovery` | Not supported on N56xx, N6k |
+| `fabricpath_emulated_switch_id` | Not supported on N31xx, N9k, N56xx, N6k |
+| `fabricpath_multicast_load_balance` | Not supported on N31xx, N9k, N56xx, N6k |
 | `layer3_peer_routing` | Not supported on N9k, N30xx, N31xx, N56xx |
 | `peer_gateway_exclude_vlan` | Not supported on N9k, N30xx, N31xx |
-| `port_channel_limit` | Not supported on N9k, N56xx, N6k |
+| `port_channel_limit` | Not supported on N31xx, N9k, N56xx, N6k |
 | `self_isolation` | Not supported on N9k, N56xx, N6k |
 | `shutdown` | Not supported on N9k, N30xx, N31xx |
 
