@@ -2840,14 +2840,14 @@ Manages Cisco Virtual Routing and Forwarding (VRF) Address-Family configuration.
 
 #### <a name="cisco_vrf_af-caveats">Caveats</a>
 
-| Property                    | Caveat Description                   |
-|-----------------------------|--------------------------------------|
-| route_target_both_auto      | Only supported on N3k and N9k        |
-| route_target_both_auto_evpn | Only supported on N3k and N9k        |
-| route_target_export         | Only supported on N3k, N9k, and XR   |
-| route_target_export_evpn    | Only supported on N3k and N9k        |
-| route_target_import         | Only supported on N3k, N9k, and XR   |
-| route_target_import_evpn    | Only supported on N3k and N9k        |
+| Property                      | Caveat Description                   |
+|-------------------------------|--------------------------------------|
+| route_target_both_auto        | Only supported on nexus              |
+| route_target_both_auto_evpn   | Only supported on nexus              |
+| route_target_export_evpn      | Only supported on nexus              |
+| route_target_export_stitching | Only supported on IOS XR             |
+| route_target_import_evpn      | Only supported on nexus              |
+| route_target_import_stitching | Only supported on IOS XR             |
 
 #### Parameters
 
@@ -2865,6 +2865,12 @@ Address-Family Identifier (AFI). Required. Valid values are 'ipv4' or 'ipv6'.
 ##### `safi`
 Sub Address-Family Identifier (SAFI). Required. Valid values are `unicast` or `multicast`.
 *`multicast` is not supported on some platforms.*
+
+##### `route policy export`
+Set route-policy(IOS XR) or map(nexus) export name. Valid value is string or keyword 'default'.
+
+##### `route policy import`
+Set route-policy(IOS XR) or map(nexus) import name. Valid value is string or keyword 'default'.
 
 ##### `route target both auto`
 Enable/Disable the route-target 'auto' setting for both import and export target communities. Valid values are true, false, or 'default'.
@@ -2886,11 +2892,17 @@ route_target_export_evpn => '5:5'
 ##### `route_target_import_evpn`
 (EVPN only) Sets the route-target import extended communities for EVPN. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
 
+##### `route_target_import_stitching`
+(Stitching only) Sets the route-target import extended communities for stitching. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
 ##### `route_target_export`
 Sets the route-target export extended communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
 
 ##### `route_target_export_evpn`
 (EVPN only) Sets the route-target export extended communities for EVPN. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
+##### `route_target_export_stitching`
+(Stitching only) Sets the route-target export extended communities for stitching. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
 
 --
 ### Type: cisco_vtp
