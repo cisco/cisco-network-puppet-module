@@ -26,9 +26,10 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 # Test hash top-level keys
 tests = {
-  master:        master,
-  agent:         agent,
-  resource_name: 'cisco_itd_device_group',
+  master:           master,
+  agent:            agent,
+  operating_system: 'nexus',
+  resource_name:    'cisco_itd_device_group',
 }
 
 # Test hash test cases
@@ -84,7 +85,7 @@ tests[:non_default_icmp] = {
 
 tests[:non_default_dns] = {
   desc:           '2.2 Non Defaults for type dns',
-  platform:       'n7k',
+  platform:       'n(7|9)k',
   title_pattern:  'dnsGroup',
   preclean:       'cisco_itd_device_group',
   manifest_props: {
@@ -99,7 +100,7 @@ tests[:non_default_dns] = {
 
 tests[:non_default_tcp] = {
   desc:           '2.3 Non Defaults for type tcp',
-  platform:       'n7k',
+  platform:       'n(7|9)k',
   title_pattern:  'tcpGroup',
   preclean:       'cisco_itd_device_group',
   manifest_props: {
@@ -115,7 +116,7 @@ tests[:non_default_tcp] = {
 
 tests[:non_default_udp] = {
   desc:           '2.4 Non Defaults for type udp',
-  platform:       'n7k',
+  platform:       'n(7|9)k',
   title_pattern:  'udpGroup',
   preclean:       'cisco_itd_device_group',
   manifest_props: {

@@ -16,26 +16,6 @@
 
 class ciscopuppet::cisco::demo_itd {
 
-  $non_icmp_type = platform_get() ? {
-    'n7k'  => 'present',
-    default => 'absent'
-  }
-
-  $probe_control = platform_get() ? {
-    'n7k'  => true,
-    default => undef
-  }
-
-  $probe_dns_host = platform_get() ? {
-    'n7k'  => '8.8.8.8',
-    default => undef
-  }
-
-  $probe_port = platform_get() ? {
-    'n7k'  => 6666,
-    default => undef
-  }
-
   cisco_itd_device_group {'icmpGroup':
     ensure           => 'present',
     probe_frequency  => 1800,
@@ -46,8 +26,8 @@ class ciscopuppet::cisco::demo_itd {
   }
 
   cisco_itd_device_group {'dnsgroup':
-    ensure           => $non_icmp_type,
-    probe_dns_host   => $probe_dns_host,
+    ensure           => 'present',
+    probe_dns_host   => '8.8.8.8',
     probe_frequency  => 1800,
     probe_retry_down => 4,
     probe_retry_up   => 4,
@@ -56,10 +36,10 @@ class ciscopuppet::cisco::demo_itd {
   }
 
   cisco_itd_device_group {'tcpGroup':
-    ensure           => $non_icmp_type,
-    probe_control    => $probe_control,
+    ensure           => 'present',
+    probe_control    => true,
     probe_frequency  => 1600,
-    probe_port       => $probe_port,
+    probe_port       => 6666,
     probe_retry_down => 4,
     probe_retry_up   => 4,
     probe_timeout    => 1200,
@@ -67,10 +47,10 @@ class ciscopuppet::cisco::demo_itd {
   }
 
   cisco_itd_device_group {'udpGroup':
-    ensure           => $non_icmp_type,
-    probe_control    => $probe_control,
+    ensure           => 'present',
+    probe_control    => true,
     probe_frequency  => 1600,
-    probe_port       => $probe_port,
+    probe_port       => 6666,
     probe_retry_down => 4,
     probe_retry_up   => 4,
     probe_timeout    => 1200,
@@ -101,9 +81,9 @@ class ciscopuppet::cisco::demo_itd {
   cisco_itd_device_group_node {'udpGroup 2.2.2.2':
     ensure           => 'present',
     hot_standby      => true,
-    probe_control    => $probe_control,
+    probe_control    => true,
     probe_frequency  => 1800,
-    probe_port       => $probe_port,
+    probe_port       => 6666,
     probe_retry_down => 4,
     probe_retry_up   => 4,
     probe_timeout    => 1200,
