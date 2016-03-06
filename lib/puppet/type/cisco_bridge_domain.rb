@@ -27,11 +27,23 @@ Puppet::Type.newtype(:cisco_bridge_domain) do
 
   Example:
     cisco_bridge_domain {\"1000\":
-      ensure     => present,
-      bd_name    => 'red',
-      state      => 'active',
-      shutdown   => 'false',
-    }"
+      ensure          => present,
+      name            => 'red',
+      member_vni      => '5000',
+      fabric_control  => 'false'
+      shutdown        => 'false',
+    }
+    cisco_bridge_domain {\"1000-1100\":
+      ensure          => present,
+      member_vni      => '5000-5100',
+      shutdown        => 'false',
+    }
+    cisco_bridge_domain {\"1000,1200\":
+      ensure          => present,
+      member_vni      => '5000,6000',
+      shutdown        => 'false',
+    }
+  "
 
   ###################
   # Resource Naming #
@@ -45,7 +57,7 @@ Puppet::Type.newtype(:cisco_bridge_domain) do
 
     # Below pattern matches both parts of the full composite name.
     patterns << [
-      /^(\d+)$/,
+      /^(\S+)$/,
       [
         [:bd, identity]
       ],
@@ -53,18 +65,36 @@ Puppet::Type.newtype(:cisco_bridge_domain) do
     patterns
   end
 
+  def self.number?(string)
+    true if Integer(string)
+  rescue
+    false
+  end
+
   newparam(:bd, namevar: true) do
     desc 'ID of the Bridge Domain. Valid values are integer.'
 
-    validate do |id|
+    validate do |value|
       range = *(2..4096)
       internal = *(3968..4096)
       valid_ids = range - internal
 
-      if id.to_i == 1
+      if value.to_i == 1
         warning('Cannot make changes to the default BD.')
-      elsif !valid_ids.include?(id.to_i)
-        fail('ID is not in the valid range.')
+      else
+        narray = value.split(',')
+        narray.each do |elem|
+          if elem.include?('-')
+            earray = elem.split('-')
+            earray.each do |id|
+              fail 'BD ID needs to be an integer' unless number?(id) 
+              fail 'BD ID is not in the valid range' unless valid_ids.include?(id.to_i)
+            end # earray
+          else
+              fail 'BD ID needs to be an integer' unless number?(elem)
+              fail 'BD ID is not in the valid range' unless valid_ids.include?(elem.to_i)
+          end # if
+        end # narray 
       end # if
     end
   end # param id
@@ -75,7 +105,7 @@ Puppet::Type.newtype(:cisco_bridge_domain) do
 
   ensurable
 
-  newproperty(:bd_name) do
+  newproperty(:name) do
     desc "The name of the BD. Valid values are string, keyword 'default'."
 
     munge do |value|
@@ -89,15 +119,35 @@ Puppet::Type.newtype(:cisco_bridge_domain) do
     end
   end # property name
 
-  newproperty(:state) do
-    desc 'State of the BD.'
+  newproperty(:member_vni) do
+    desc 'The VNI id that is mapped to the BD. Valid values are integer.'
+    munge do |value|
+      begin
+        narray = value.split(',')
+        narray.each do |elem|
+          if elem.include?('-')
+            earray = elem.split('-')
+            earray.each do |id|
+              fail 'VNI ID needs to be an integer' unless number?(id) 
+              fail 'VNI ID is not in the valid range' unless id.to_i>4096
+            end # earray
+          else
+              fail 'VNI ID needs to be an integer' unless number?(elem)
+              fail 'VNI ID is not in the valid range' unless elem.to_id>4096
+          end # if
+        end # narray 
+      end # begin
+    end # munge
+  end
+
+  newproperty(:fabric_control) do
+    desc 'whether to change BD type to fabric-control, Only one BD can be fabric-control'
 
     newvalues(
-      :active,
-      :suspend,
-      :default)
-  end # property state
-
+      :true,
+      :false)
+  end # property fabric_control
+  
   newproperty(:shutdown) do
     desc 'whether or not the BD is shutdown'
 
