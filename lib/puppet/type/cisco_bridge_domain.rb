@@ -57,8 +57,8 @@ Puppet::Type.newtype(:cisco_bridge_domain) do
     desc 'ID of the Bridge Domain. Valid values are integer.'
 
     validate do |id|
-      range = *(2..16383)
-      internal = *(3968..4047)
+      range = *(2..4096)
+      internal = *(3968..4096)
       valid_ids = range - internal
 
       if id.to_i == 1
