@@ -77,6 +77,7 @@ tests = {
   agent:            agent,
   operating_system: 'nexus',
   resource_name:    'cisco_vpc_domain',
+  platform:         'n(3|6|7|9)k',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -108,7 +109,6 @@ tests[:default_properties] = {
   title_pattern:  '200',
   desc:           '1.1 Default Properties on All Nexus Platforms',
   manifest_props: {
-    auto_recovery_reload_delay:   'default',
     delay_restore:                'default',
     delay_restore_interface_vlan: 'default',
     graceful_consistency_check:   'default',
@@ -119,7 +119,6 @@ tests[:default_properties] = {
   },
   code:           [0, 2],
   resource:       {
-    'auto_recovery_reload_delay'   => '240',
     'delay_restore'                => '30',
     'delay_restore_interface_vlan' => '10',
     'graceful_consistency_check'   => 'true',
