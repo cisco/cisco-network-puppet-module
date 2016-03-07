@@ -88,7 +88,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
     # ex n9000-dk9.LIBPROCMIBREST-1.0.0-7.0.3.x86_64.rpm
     name_var_arch_regex_nx = /^(.*)-([\d\.]+-[\d\.]+)\.(\w{4,})\.rpm$/
 
-    #xrv9k-k9sec-1.0.0.0-r61102I.x86_64.rpm-XR-DEV-16.02.22C
+    # xrv9k-k9sec-1.0.0.0-r61102I.x86_64.rpm-XR-DEV-16.02.22C
     name_var_arch_regex_xr = /^(.*\d.*)-([\d.]*)-r\d\d\d\d*..(\w{4,}).rpm-(.*)$/
 
     # ex: b+z-ip2.x64_64
