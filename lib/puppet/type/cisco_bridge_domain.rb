@@ -87,14 +87,14 @@ Puppet::Type.newtype(:cisco_bridge_domain) do
           if elem.include?('-')
             earray = elem.split('-')
             earray.each do |id|
-              fail 'BD ID needs to be an integer' unless number?(id) 
+              fail 'BD ID needs to be an integer' unless number?(id)
               fail 'BD ID is not in the valid range' unless valid_ids.include?(id.to_i)
             end # earray
           else
-              fail 'BD ID needs to be an integer' unless number?(elem)
-              fail 'BD ID is not in the valid range' unless valid_ids.include?(elem.to_i)
+            fail 'BD ID needs to be an integer' unless number?(elem)
+            fail 'BD ID is not in the valid range' unless valid_ids.include?(elem.to_i)
           end # if
-        end # narray 
+        end # narray
       end # if
     end
   end # param id
@@ -128,14 +128,14 @@ Puppet::Type.newtype(:cisco_bridge_domain) do
           if elem.include?('-')
             earray = elem.split('-')
             earray.each do |id|
-              fail 'VNI ID needs to be an integer' unless number?(id) 
-              fail 'VNI ID is not in the valid range' unless id.to_i>4096
+              fail 'VNI ID needs to be an integer' unless number?(id)
+              fail 'VNI ID is not in the valid range' unless id.to_i > 4096
             end # earray
           else
-              fail 'VNI ID needs to be an integer' unless number?(elem)
-              fail 'VNI ID is not in the valid range' unless elem.to_id>4096
+            fail 'VNI ID needs to be an integer' unless number?(elem)
+            fail 'VNI ID is not in the valid range' unless elem.to_id > 4096
           end # if
-        end # narray 
+        end # narray
       end # begin
     end # munge
   end
@@ -147,7 +147,7 @@ Puppet::Type.newtype(:cisco_bridge_domain) do
       :true,
       :false)
   end # property fabric_control
-  
+
   newproperty(:shutdown) do
     desc 'whether or not the BD is shutdown'
 
