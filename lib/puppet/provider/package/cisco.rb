@@ -17,10 +17,10 @@
 require 'puppet/util/package'
 
 Puppet::Type.type(:package).provide :cisco, parent: :yum do
-  desc "The cisco nexus package provider.
+  desc "The cisco package provider.
   Local rpm installations will utilize the native yum provider.
   Cisco rpm installations from the host will utilize the native yum provider.
-  Cisco rpm installations from guestshell will utilize nxapi to install to host."
+  Cisco rpm installations from guestshell will utilize api to install to host."
 
   confine feature: :cisco_node_utils
 
@@ -30,7 +30,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
   # these commands must exist to execute native yum provider
   commands yum: 'yum', rpm: 'rpm', python: 'python'
 
-  defaultfor operatingsystem: :nexus
+  defaultfor operatingsystem: [:ios_xr, :nexus]
 
   # if the following commands aren't present, we're in trouble
   if command('rpm')
@@ -88,6 +88,9 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
     # ex n9000-dk9.LIBPROCMIBREST-1.0.0-7.0.3.x86_64.rpm
     name_var_arch_regex_nx = /^(.*)-([\d\.]+-[\d\.]+)\.(\w{4,})\.rpm$/
 
+    #xrv9k-k9sec-1.0.0.0-r61102I.x86_64.rpm-XR-DEV-16.02.22C
+    name_var_arch_regex_xr = /^(.*\d.*)-([\d.]*)-r\d\d\d\d*..(\w{4,}).rpm-(.*)$/
+
     # ex: b+z-ip2.x64_64
     name_arch_regex = /^([\w\-\+]+)\.(\w+)$/
 
@@ -103,7 +106,8 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
     filename = @resource[:source].strip.tr(':', '/').split('/').last
 
     if filename =~ name_ver_arch_regex ||
-       filename =~ name_var_arch_regex_nx
+       filename =~ name_var_arch_regex_nx ||
+       filename =~ name_var_arch_regex_xr
       @resource[:name] = Regexp.last_match(1)
       @resource[:package_settings]['version'] = Regexp.last_match(2)
       @resource[:platform] = Regexp.last_match(3)
@@ -119,9 +123,9 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
   # helper to retrieve version info for installed package
   def current_version
     if @resource[:platform]
-      ver = Cisco::Yum.query("#{@resource[:name]}.#{@resource[:platform]}")
+      ver = Cisco::Yum.query("#{@resource[:name]}.#{@resource[:platform]}", "#{@resource[:source]}")
     else
-      ver = Cisco::Yum.query("#{@resource[:name]}")
+      ver = Cisco::Yum.query("#{@resource[:name]}", "#{@resource[:source]}")
     end
     debug "retrieved version '#{ver}' for package #{@resource[:name]}"
     ver
@@ -160,7 +164,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
 
   def install
     if in_guestshell? && target_host?
-      debug 'Guestshell + target=>host detected, using nxapi for install'
+      debug 'Guestshell + target=>host detected, using api for install'
       if @resource[:source]
         Cisco::Yum.install(@resource[:source])
       else
@@ -178,11 +182,11 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
 
   def uninstall
     if in_guestshell? && target_host?
-      debug 'Guestshell + target=>host detected, using nxapi for uninstall'
+      debug 'Guestshell + target=>host detected, using api for uninstall'
       if @resource[:platform]
-        Cisco::Yum.remove("#{@resource[:name]}.#{@resource[:platform]}")
+        Cisco::Yum.remove("#{@resource[:name]}.#{@resource[:platform]}", @resource[:source])
       else
-        Cisco::Yum.remove(@resource[:name])
+        Cisco::Yum.remove(@resource[:name], @resource[:source])
       end
     else
       debug 'Not Guestshell + target=>host, use native yum provider for uninstall'
