@@ -52,7 +52,7 @@ Puppet::Type.type(:cisco_bridge_domain).provide(:nxapi) do
   def self.properties_get(bd_id, v)
     debug "Checking instance, bd #{bd_id}"
     current_state = {
-      bd:   bd_id,
+      bd:     bd_id,
       name:   bd_id,
       ensure: :present,
     }
