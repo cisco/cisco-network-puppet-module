@@ -142,8 +142,8 @@ Puppet::Type.newtype(:cisco_vrf) do
   end
 
   newproperty(:vpn_id) do
-    desc "Specify vpn id. Valid values are in <0-ffffff>:<0-ffffffff> format 
-          or 'default'."
+    desc 'Specify vpn id. Valid values are in <0-ffffff>:<0-ffffffff> format '\
+         "or 'default'."
 
     match_error = 'must be specified in <0-ffffff>:<0-ffffffff> format notation'
     validate do |id|
