@@ -43,7 +43,7 @@ Puppet::Type.type(:cisco_vrf).provide(:cisco) do
   ]
   VRF_BOOL_PROPS = [
     :remote_route_filtering,
-    :shutdown
+    :shutdown,
   ]
   VRF_ALL_PROPS = VRF_NON_BOOL_PROPS + VRF_BOOL_PROPS
 
