@@ -81,6 +81,32 @@ Puppet::Type.newtype(:cisco_vrf) do
     end
   end # property description
 
+  newproperty(:mhost_ipv4) do
+    desc 'Ipv4 multicast host default interface. Valid value is a valid '\
+         "interface name or 'default'."
+
+    munge do |val|
+      val = :default if val == 'default'
+      val
+    end
+  end # property mhost_ipv4
+
+  newproperty(:mhost_ipv6) do
+    desc 'Ipv6 multicast host default interface. Valid value is a valid '\
+         "interface name  or 'default'."
+
+    munge do |val|
+      val = :default if val == 'default'
+      val
+    end
+  end # property mhost_ipv6
+
+  newproperty(:remote_route_filtering) do
+    desc 'Disable remote route filtering. Valid value is :true :false or '\
+         "'default'."
+    newvalues(:true, :false, :default)
+  end # property remote_route_filtering
+
   newproperty(:route_distinguisher) do
     desc 'VPN Route Distinguisher (RD). The RD is combined with the IPv4 '\
          'or IPv6 prefix learned by the PE router to create a globally '\
@@ -112,6 +138,22 @@ Puppet::Type.newtype(:cisco_vrf) do
           Integer or keyword 'default'"
     munge do |value|
       value == 'default' ? :default : value.to_i
+    end
+  end
+
+  newproperty(:vpn_id) do
+    desc "Specify vpn id. Valid values are in <0-ffffff>:<0-ffffffff> format 
+          or 'default'."
+
+    match_error = 'must be specified in <0-ffffff>:<0-ffffffff> format notation'
+    validate do |id|
+      fail "invalid vpn id '#{id}' #{match_error}" unless
+        id =~ /[0-9A-Fa-f]{1,6}:[0-9A-Fa-f]{1,8}/ ||
+        id == 'default'
+    end
+
+    munge do |id|
+      id == 'default' ? :default : id
     end
   end
 end # Puppet::Type.newtype
