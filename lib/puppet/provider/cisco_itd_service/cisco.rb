@@ -182,9 +182,15 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
     proto = @property_flush[:load_bal_method_proto] ? @property_flush[:load_bal_method_proto] : @nu.load_bal_method_proto
     start = @property_flush[:load_bal_method_start_port] ? @property_flush[:load_bal_method_start_port] : @nu.load_bal_method_start_port
     enable = flush_boolean?(:load_bal_enable) ? @property_flush[:load_bal_enable] : @nu.load_bal_enable
-    # fail_attribute_check(type) TODO
+    other_params = bs || bh || buckets || mpos || proto || start || enport
+    fail_load_balance(enable, other_params)
     @nu.send(:load_balance=, enable, bs,
              bh, buckets, mpos, proto, start, enport)
+  end
+
+  def fail_load_balance(enable, other_params)
+    fail ArgumentError, 'All lb params MUST be default when load_bal_enable is false' if
+      other_params && enable == false
   end
 
   def flush
