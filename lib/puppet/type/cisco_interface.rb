@@ -16,6 +16,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+begin
+  require 'puppet_x/cisco/cmnutils'
+rescue LoadError # seen on master, not on agent
+  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..',
+                                     'puppet_x', 'cisco', 'cmnutils.rb'))
+end
+
 Puppet::Type.newtype(:cisco_interface) do
   @doc = "Manages a Cisco Network Interface.
 
@@ -48,6 +56,19 @@ Puppet::Type.newtype(:cisco_interface) do
      ipv4_proxy_arp                 => true,
      ipv4_pim_sparse_mode           => true,
      negotiate_auto                 => true,
+    }
+    cisco_interface { \"Ethernet1/17\" :
+     stp_bpdufilter               => 'enable',
+     stp_bpduguard                => 'enable',
+     stp_cost                     => 2000,
+     stp_guard                    => 'loop',
+     stp_link_type                => 'shared',
+     stp_port_priority            => 32,
+     stp_port_type                => 'network',
+     stp_mst_cost                 => [[0,2-4,6,8-12, 1000], [1000, 2568]],
+     stp_mst_port_priority        => [[0,2-11,20-33, 64], [1111, 160],
+     stp_vlan_cost                => [[1-4,6,8-12, 1000], [1000, 2568]],
+     stp_vlan_port_priority       => [[1-11,20-33, 64], [1111, 160],
     }
     cisco_interface { \"Ethernet9/1\" :
      switchport_mode              => 'trunk',
@@ -472,6 +493,203 @@ Puppet::Type.newtype(:cisco_interface) do
 
     newvalues(:true, :false, :default)
   end # property vlan_mapping_enable
+
+  ############################
+  # spanning-tree attributes #
+  ############################
+
+  newproperty(:stp_bpdufilter) do
+    desc 'Enable/Disable BPDU filtering for this interface.'
+
+    newvalues(:enable, :disable, :default)
+  end # property stp_bpdufilter
+
+  newproperty(:stp_bpduguard) do
+    desc 'Enable/Disable BPDU guard for this interface.'
+
+    newvalues(:enable, :disable, :default)
+  end # property stp_bpduguard
+
+  newproperty(:stp_cost) do
+    desc "Spanning tree port path cost for this interface. Valid values are
+          integer, keyword 'auto' or 'default'."
+
+    munge do |value|
+      value = :default if value == 'default'
+      value = :auto if value == 'auto'
+      begin
+        value = Integer(value) unless value == :default || value == :auto
+      rescue
+        raise 'stp_cost must be a valid integer, or auto or default.'
+      end
+      value
+    end
+  end # property stp_cost
+
+  newproperty(:stp_guard) do
+    desc 'Spanning-tree guard mode for this interface.'
+
+    newvalues(:loop, :none, :root, :default)
+  end # property stp_guard
+
+  newproperty(:stp_link_type) do
+    desc 'Link type for spanning tree tree protocol use.'
+
+    newvalues(:auto, :shared, :'point-to-point', :default)
+  end # property stp_link_type
+
+  newproperty(:stp_mst_cost, array_matching: :all) do
+    format = '[[mst_inst_list, cost], [mil, cost]]'
+    desc 'An array of [mst_instance_list, cost] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      slist = []
+      should.each do |elem|
+        slist << elem unless elem[1] == 'default'
+      end
+      (is.size == slist.size && is.sort == slist.sort)
+    end
+
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property stp_mst_cost
+
+  newproperty(:stp_mst_port_priority, array_matching: :all) do
+    format = '[[mst_inst_list, port_priority], [vr, port_priority]]'
+    desc 'An array of [mst_inst_list, port_priority] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      slist = []
+      should.each do |elem|
+        slist << elem unless elem[1] == 'default'
+      end
+      (is.size == slist.size && is.sort == slist.sort)
+    end
+
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property stp_mst_port_priority
+
+  newproperty(:stp_port_priority) do
+    desc "Spanning tree port priority for this interface. Valid values are
+          integer, keyword 'default'."
+
+    munge do |value|
+      value = :default if value == 'default'
+      begin
+        value = Integer(value) unless value == :default
+      rescue
+        raise 'stp_port_priority must be a valid integer, or default.'
+      end
+      value
+    end
+  end # property stp_port_priority
+
+  newproperty(:stp_port_type) do
+    desc 'Spanning tree port type for this interface.'
+
+    newvalues(:edge, :network, :normal, :'edge trunk', :default)
+  end # property stp_port_type
+
+  newproperty(:stp_vlan_cost, array_matching: :all) do
+    format = '[[vlan_range, cost], [vr, cost]]'
+    desc 'An array of [vlan_range, cost] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      slist = []
+      should.each do |elem|
+        slist << elem unless elem[1] == 'default'
+      end
+      (is.size == slist.size && is.sort == slist.sort)
+    end
+
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property stp_vlan_cost
+
+  newproperty(:stp_vlan_port_priority, array_matching: :all) do
+    format = '[[vlan_range, port_priority], [vr, pp]]'
+    desc 'An array of [vlan_range, port_priority] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      slist = []
+      should.each do |elem|
+        slist << elem unless elem[1] == 'default'
+      end
+      (is.size == slist.size && is.sort == slist.sort)
+    end
+
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property stp_vlan_port_priority
 
   ################
   # Autorequires #

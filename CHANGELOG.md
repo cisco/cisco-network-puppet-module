@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 #### Cisco Resources
 - `cisco_fabricpath_global` type and provider.
 - `cisco_fabricpath_topology` type and provider.
+- `cisco_stp_global` type and provider.
 
 #### NetDev Resources
 *
@@ -15,8 +16,19 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Extended `cisco_interface` with the following attributes:
   - `ipv4_forwarding`, `switchport_mode fabricpath`
+  - `stp_bpdufilter`, `stp_bpduguard`, `stp_cost`, `stp_guard`, `stp_link_type`, `stp_mst_cost`
+  - `stp_mst_port_priority`, `stp_port_priority`, `stp_port_type`, `stp_vlan_cost`, `stp_vlan_port_priority`
 - Extended `cisco_vlan` with the following attributes:
   - `mode`
+- Extended `cisco_vpc_domain` with the following attributes:
+  - `fabricpath_emulated_switch_id`
+  - `fabricpath_multicast_load_balance`
+  - `port_channel_limit`
+- Extended `cisco_vrf_af` with the following attributes:
+  - `route_policy_export`
+  - `route_policy_import`
+  - `route_target_export_stitching`
+  - `route_target_import_stitching`
 - Extended `cisco_vxlan_vtep` with the following attributes:
   - `source_interface_hold_down_time`
 - Extended `cisco_bgp` with the following attributes:
