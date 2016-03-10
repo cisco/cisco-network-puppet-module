@@ -102,15 +102,15 @@ class ciscopuppet::cisco::demo_vrf {
   }
 
   cisco_vrf { 'test_vrf':
-    ensure                 => present,
-    description            => 'test vrf for puppet',
-    mhost_ipv4             => $mhost_intf,
-    mhost_ipv6             => $mhost_intf,
-    remote_route_filtering => $remote_route_disable,
-    route_distinguisher    => $rd_auto,
-    shutdown               => $shutdown,
-    vni                    => $vni,
-    vpn_id                 => $vpn_id,
+    ensure                        => present,
+    description                   => 'test vrf for puppet',
+    mhost_ipv4_default_interface  => $mhost_intf,
+    mhost_ipv6_default_interface  => $mhost_intf,
+    remote_route_filtering        => $remote_route_disable,
+    route_distinguisher           => $rd_auto,
+    shutdown                      => $shutdown,
+    vni                           => $vni,
+    vpn_id                        => $vpn_id,
   }
 
   cisco_vrf { 'red':
