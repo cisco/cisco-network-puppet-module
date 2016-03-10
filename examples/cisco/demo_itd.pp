@@ -90,4 +90,32 @@ class ciscopuppet::cisco::demo_itd {
     probe_type       => 'udp',
     weight           => 1,
   }
+  cisco_command_config { 'ial':
+    command => 'ip access-list ial'
+  }
+  cisco_command_config { 'eal':
+    command => 'ip access-list eal'
+  }
+  cisco_itd_service {'myservice':
+    ensure                        => 'present',
+    device_group                  => 'udpGroup',
+    exclude_access_list           => 'eal',
+    failaction                    => true,
+    ingress_interface             => [['vlan 2', '1.1.1.1'],
+    ['ethernet 1/1', '2.2.2.2']],
+    load_bal_enable               => true,
+    load_bal_buckets              => 2,
+    load_bal_mask_pos             => 5,
+    load_bal_method_bundle_hash   => 'ip-l4port',
+    load_bal_method_bundle_select => 'src',
+    load_bal_method_end_port      => 99,
+    load_bal_method_proto         => 'udp',
+    load_bal_method_start_port    => 50,
+    nat_destination               => true,
+    peer_vdc                      => ['vdc1', 'ser'],
+    shutdown                      => true,
+    virtual_ip                    => [
+    'ip 3.3.3.3 255.0.0.0 tcp 500 advertise enable',
+    'ip 2.2.2.2 255.0.0.0 udp 1000 device-group icmpGroup'],
+  }
 }

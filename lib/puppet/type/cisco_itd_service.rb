@@ -262,7 +262,6 @@ Puppet::Type.newtype(:cisco_itd_service) do
     munge do |value|
       begin
         return value = :default if value == 'default'
-        fail("Value must match format #{format}") unless value.is_a?(Array)
         value
       end
     end
@@ -297,7 +296,6 @@ Puppet::Type.newtype(:cisco_itd_service) do
     munge do |value|
       begin
         return value = :default if value == 'default'
-        fail("Value must match format #{format}") unless value.is_a?(Array)
         value
       end
     end

@@ -49,9 +49,9 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
     :vrf,
   ]
   ITDSERVICE_BOOL_PROPS = [
-    :nat_destination,
     :failaction,
     :load_bal_enable,
+    :nat_destination,
     :shutdown,
   ]
   ITDSERVICE_ARRAY_FLAT_PROPS = [
@@ -59,15 +59,15 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
     :peer_vdc,
     :virtual_ip,
   ]
-  ITDSERVICE_ALL_PROPS = ITDSERVICE_NON_BOOL_PROPS + ITDSERVICE_BOOL_PROPS +
-                         ITDSERVICE_ARRAY_FLAT_PROPS
+  ITDSERVICE_ALL_PROPS = ITDSERVICE_NON_BOOL_PROPS +
+                         ITDSERVICE_ARRAY_FLAT_PROPS + ITDSERVICE_BOOL_PROPS
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@nu',
                                             ITDSERVICE_NON_BOOL_PROPS)
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@nu',
-                                            ITDSERVICE_BOOL_PROPS)
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:array_flat, self, '@nu',
                                             ITDSERVICE_ARRAY_FLAT_PROPS)
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@nu',
+                                            ITDSERVICE_BOOL_PROPS)
 
   def initialize(value={})
     super(value)
@@ -86,7 +86,9 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
     ITDSERVICE_NON_BOOL_PROPS.each do |prop|
       current_state[prop] = nu_obj.send(prop)
     end
-
+    ITDSERVICE_ARRAY_FLAT_PROPS.each do |prop|
+      current_state[prop] = nu_obj.send(prop)
+    end
     ITDSERVICE_BOOL_PROPS.each do |prop|
       val = nu_obj.send(prop)
       if val.nil?
@@ -94,9 +96,6 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
       else
         current_state[prop] = val ? :true : :false
       end
-    end
-    ITDSERVICE_ARRAY_FLAT_PROPS.each do |prop|
-      current_state[prop] = nu_obj.send(prop)
     end
     # nested array properties
     current_state[:ingress_interface] = nu_obj.ingress_interface
