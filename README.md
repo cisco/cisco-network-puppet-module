@@ -2787,15 +2787,15 @@ device.
 
 #### <a name="cisco_vrf-caveats">Caveats</a>
 
-| Property                  | Caveat Description               |
-|---------------------------|----------------------------------|
-| mhost_ipv4                | Only supported on IOS XR         |
-| mhost_ipv6                | Only supported on IOS XR         |
-| remote_route_filtering    | Only supported on IOS XR         |
-| route_distinguisher       | Only supported on N3k and N9k    |
-| shutdown                  | Only supported on N3k and N9k    |
-| vni                       | Only supported on N9k            |
-| vpn_id                    | Only supported on IOS XR         |
+| Property                     | Caveat Description               |
+|------------------------------|----------------------------------|
+| mhost_ipv4_default_interface | Only supported on IOS XR         |
+| mhost_ipv6_default_interface | Only supported on IOS XR         |
+| remote_route_filtering       | Only supported on IOS XR         |
+| route_distinguisher          | Only supported on N3k and N9k    |
+| shutdown                     | Only supported on N3k and N9k    |
+| vni                          | Only supported on N9k            |
+| vpn_id                       | Only supported on IOS XR         |
 
 #### Parameters
 
@@ -2810,10 +2810,10 @@ not case-sensitive and overrides the title of the type.
 ##### `description`
 Description of the VRF. Valid value is string.
 
-##### `mhost_ipv4`
+##### `mhost_ipv4_default_interface`
 Specify multicast ipv4 host default interface. Valid value will be a valid interface or the keyword 'default'.
 
-##### `mhost_ipv6`
+##### `mhost_ipv6_default_interface`
 Specify multicast ipv6 host default interface. Valid value will be a valid interface or the keyword 'default'.
 
 ##### `remote_route_filtering`

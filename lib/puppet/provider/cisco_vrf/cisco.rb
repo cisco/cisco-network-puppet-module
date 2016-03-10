@@ -35,8 +35,8 @@ Puppet::Type.type(:cisco_vrf).provide(:cisco) do
   # because the boolean-based methods are processed slightly different.
   VRF_NON_BOOL_PROPS = [
     :description,
-    :mhost_ipv4,
-    :mhost_ipv6,
+    :mhost_ipv4_default_interface,
+    :mhost_ipv6_default_interface,
     :route_distinguisher,
     :vni,
     :vpn_id,

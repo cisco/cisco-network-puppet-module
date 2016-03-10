@@ -32,8 +32,12 @@ Puppet::Type.newtype(:cisco_vrf) do
      ensure                       => present,
      shutdown                     => false,
      description                  => 'vrf red',
+     mhost_ipv4_default_interface => 'Loopback100'
+     mhost_ipv6_default_interface => 'Loopback100'
+     remote_route_filtering       => false
      route_distinguisher          => '2:3'
      vni                          => 4096,
+     vpn_id                       => '1:1',
     }
   ~~~
   "
@@ -81,7 +85,7 @@ Puppet::Type.newtype(:cisco_vrf) do
     end
   end # property description
 
-  newproperty(:mhost_ipv4) do
+  newproperty(:mhost_ipv4_default_interface) do
     desc 'Ipv4 multicast host default interface. Valid value is a valid '\
          "interface name or 'default'."
 
@@ -91,7 +95,7 @@ Puppet::Type.newtype(:cisco_vrf) do
     end
   end # property mhost_ipv4
 
-  newproperty(:mhost_ipv6) do
+  newproperty(:mhost_ipv6_default_interface) do
     desc 'Ipv6 multicast host default interface. Valid value is a valid '\
          "interface name  or 'default'."
 

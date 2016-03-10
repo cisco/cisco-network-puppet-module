@@ -25,8 +25,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `fabricpath_multicast_load_balance`
   - `port_channel_limit`
 - Extended `cisco_vrf` with the following attributes for eXR:
-  - `mhost_ipv4`
-  - `mhost_ipv6`
+  - `mhost_ipv4_default_interface`
+  - `mhost_ipv6_default_interface`
   - `remote_route_filtering`
   - `vpn_id`
 - Extended `cisco_vrf_af` with the following attributes:

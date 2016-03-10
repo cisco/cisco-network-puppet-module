@@ -35,12 +35,12 @@ tests[:default] = {
   desc:           '1.1 Default Properties',
   title_pattern:  'blue',
   manifest_props: {
-    description:            'default',
-    mhost_ipv4:             'default',
-    mhost_ipv6:             'default',
-    remote_route_filtering: 'default',
-    shutdown:               'default',
-    vpn_id:                 'default',
+    description:                  'default',
+    mhost_ipv4_default_interface: 'default',
+    mhost_ipv6_default_interface: 'default',
+    remote_route_filtering:       'default',
+    shutdown:                     'default',
+    vpn_id:                       'default',
   },
   resource:       {
     'remote_route_filtering' => 'true',
@@ -53,22 +53,22 @@ tests[:non_default] = {
   desc:           '2.1 Non Default Properties commands',
   title_pattern:  'blue',
   manifest_props: {
-    description:            'test desc',
-    mhost_ipv4:             'Loopback100',
-    mhost_ipv6:             'Loopback100',
-    remote_route_filtering: false,
-    route_distinguisher:    '1:1',
-    shutdown:               'true',
-    vni:                    '4096',
-    vpn_id:                 '1:1',
+    description:                  'test desc',
+    mhost_ipv4_default_interface: 'Loopback100',
+    mhost_ipv6_default_interface: 'Loopback100',
+    remote_route_filtering:       false,
+    route_distinguisher:          '1:1',
+    shutdown:                     'true',
+    vni:                          '4096',
+    vpn_id:                       '1:1',
   },
 }
 
 def unsupported_properties(_tests, _id)
   if operating_system == 'nexus'
     [
-      :mhost_ipv4,
-      :mhost_ipv6,
+      :mhost_ipv4_default_interface,
+      :mhost_ipv6_default_interface,
       :remote_route_filtering,
       :vpn_id,
     ]
