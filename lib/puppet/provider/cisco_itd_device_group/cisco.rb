@@ -164,7 +164,11 @@ Puppet::Type.type(:cisco_itd_device_group).provide(:cisco) do
     if vars.any? { |p| @property_flush.key?(p) }
       # At least one var has changed, get all vals from manifest
       vars.each do |p|
-        attrs[p] = @resource[p]
+        if @resource[p] == :default
+          attrs[p] = @nu.send("default_#{p}")
+        else
+          attrs[p] = @resource[p]
+        end
       end
     end
     return if attrs.empty?

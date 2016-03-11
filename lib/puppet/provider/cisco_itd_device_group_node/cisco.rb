@@ -172,7 +172,7 @@ Puppet::Type.type(:cisco_itd_device_group_node).provide(:cisco) do
   def hot_standby_weight_set
     weight = @property_flush[:weight] ? @property_flush[:weight] : @nu.weight
     hot_standby = flush_boolean?(:hot_standby) ? @property_flush[:hot_standby] : @nu.hot_standby
-    @nu.send(:hs_weight=, hot_standby, weight)
+    @nu.hs_weight(hot_standby, weight)
   end
 
   # The following properties are setters and cannot be handled
@@ -192,7 +192,11 @@ Puppet::Type.type(:cisco_itd_device_group_node).provide(:cisco) do
     if vars.any? { |p| @property_flush.key?(p) }
       # At least one var has changed, get all vals from manifest
       vars.each do |p|
-        attrs[p] = @resource[p]
+        if @resource[p] == :default
+          attrs[p] = @nu.send("default_#{p}")
+        else
+          attrs[p] = @resource[p]
+        end
       end
     end
     return if attrs.empty?
