@@ -25,7 +25,7 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
-Puppet::Type.type(:cisco_bridge_domain).provide(:cisco) do
+Puppet::Type.type(:cisco_bridge_domain_range).provide(:cisco) do
   desc 'The new NXAPI provider.'
 
   confine feature: :cisco_node_utils
@@ -33,8 +33,8 @@ Puppet::Type.type(:cisco_bridge_domain).provide(:cisco) do
 
   mk_resource_methods
 
-  BD_NON_BOOL_PROPS = [:bd_name]
-  BD_BOOL_PROPS = [:fabric_control, :shutdown]
+  BD_NON_BOOL_PROPS = [:member_vni]
+  BD_BOOL_PROPS = []
   BD_ALL_PROPS = BD_NON_BOOL_PROPS + BD_BOOL_PROPS
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@bd',
@@ -44,7 +44,7 @@ Puppet::Type.type(:cisco_bridge_domain).provide(:cisco) do
 
   def initialize(value={})
     super(value)
-    @bd = Cisco::BridgeDomain.bds[@property_hash[:name]]
+    @bd = Cisco::BridgeDomainRange.rangebds[@property_hash[:name]]
     @property_flush = {}
     debug 'Created provider instance of cisco_bridge_domain.'
   end
@@ -74,7 +74,7 @@ Puppet::Type.type(:cisco_bridge_domain).provide(:cisco) do
 
   def self.instances
     bds = []
-    Cisco::BridgeDomain.bds.each do |bd_id, v|
+    Cisco::BridgeDomainRange.rangebds.each do |bd_id, v|
       bds << properties_get(bd_id, v)
     end
     bds
@@ -124,7 +124,7 @@ Puppet::Type.type(:cisco_bridge_domain).provide(:cisco) do
       # Create/Update
       if @bd.nil?
         new_bd = true
-        @bd = Cisco::BridgeDomain.new(@resource[:bd])
+        @bd = Cisco::BridgeDomainRange.new(@resource[:bd])
       end
       properties_set(new_bd)
     end
