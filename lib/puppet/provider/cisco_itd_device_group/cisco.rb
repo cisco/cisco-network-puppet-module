@@ -1,7 +1,7 @@
 #
 # The Cisco provider for cisco_itd_device_group.
 #
-# Feb 2016
+# March 2016
 #
 # Copyright (c) 2016 Cisco and/or its affiliates.
 #
@@ -127,14 +127,6 @@ Puppet::Type.type(:cisco_itd_device_group).provide(:cisco) do
     probe_set
   end
 
-  # We need special handling for boolean properties in our custom
-  # setters below. This helper method returns true if the property
-  # flush contains a TrueClass or FalseClass value.
-  def flush_boolean?(prop)
-    @property_flush[prop].is_a?(TrueClass) ||
-      @property_flush[prop].is_a?(FalseClass)
-  end
-
   def fail_attribute_check(type)
     return unless type
     case type.to_sym
@@ -155,17 +147,32 @@ Puppet::Type.type(:cisco_itd_device_group).provide(:cisco) do
     end
   end
 
+  # The following properties are setters and cannot be handled
+  # by PuppetX::Cisco::AutoGen.mk_puppet_methods.
   def probe_set
-    type = @property_flush[:probe_type] ? @property_flush[:probe_type] : @nu.probe_type
-    to = @property_flush[:probe_timeout] ? @property_flush[:probe_timeout] : @nu.probe_timeout
-    ru = @property_flush[:probe_retry_up] ? @property_flush[:probe_retry_up] : @nu.probe_retry_up
-    rd = @property_flush[:probe_retry_down] ? @property_flush[:probe_retry_down] : @nu.probe_retry_down
-    freq = @property_flush[:probe_frequency] ? @property_flush[:probe_frequency] : @nu.probe_frequency
-    dh = @property_flush[:probe_dns_host] ? @property_flush[:probe_dns_host] : @nu.probe_dns_host
-    port = @property_flush[:probe_port] ? @property_flush[:probe_port] : @nu.probe_port
-    con = flush_boolean?(:probe_control) ? @property_flush[:probe_control] : @nu.probe_control
-    fail_attribute_check(type)
-    @nu.send(:probe=, type, dh, con, freq, ru, rd, port, to)
+    attrs = {}
+    vars = [
+      :probe_type,
+      :probe_dns_host,
+      :probe_frequency,
+      :probe_port,
+      :probe_retry_down,
+      :probe_retry_up,
+      :probe_timeout,
+      :probe_control,
+    ]
+    if vars.any? { |p| @property_flush.key?(p) }
+      # At least one var has changed, get all vals from manifest
+      vars.each do |p|
+        attrs[p] = @resource[p]
+      end
+    end
+    return if attrs.empty?
+    fail_attribute_check(attrs[:probe_type])
+    # booleans need more conversion
+    attrs[:probe_control] = true if attrs[:probe_control] == :true
+    attrs[:probe_control] = false if attrs[:probe_control] == :false
+    @nu.probe_set(attrs)
   end
 
   def flush
