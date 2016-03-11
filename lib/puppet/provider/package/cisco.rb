@@ -67,7 +67,8 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
         status = :present
       end
 
-      debug "determined package #{@resource[:name]} is #{status}"
+      debug "determined package #{@resource[:name]} is #{status}. Expected " \
+            "version #{should_ver}, #{status} version #{is_ver}"
       @property_hash = { ensure: status, version: is_ver }
     else
       super
@@ -88,8 +89,9 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
     # ex n9000-dk9.LIBPROCMIBREST-1.0.0-7.0.3.x86_64.rpm
     name_var_arch_regex_nx = /^(.*)-([\d\.]+-[\d\.]+)\.(\w{4,})\.rpm$/
 
+    # xrv9k-k9sec-1.0.0.0-r600.x86_64.rpm-6.0.0
     # xrv9k-k9sec-1.0.0.0-r61102I.x86_64.rpm-XR-DEV-16.02.22C
-    name_var_arch_regex_xr = /^(.*\d.*)-([\d.]*)-r\d\d\d\d*..(\w{4,}).rpm-(.*)$/
+    name_var_arch_regex_xr = /^(.*\d.*)-([\d.]*)-r\d+.*\.(\w{4,}).rpm-(.*)$/
 
     # ex: b+z-ip2.x64_64
     name_arch_regex = /^([\w\-\+]+)\.(\w+)$/
