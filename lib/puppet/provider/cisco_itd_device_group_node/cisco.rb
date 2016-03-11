@@ -26,6 +26,13 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
+begin
+  require 'puppet_x/cisco/cmnutils'
+rescue LoadError # seen on master, not on agent
+  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..',
+                                     'puppet_x', 'cisco', 'cmnutils.rb'))
+end
 Puppet::Type.type(:cisco_itd_device_group_node).provide(:cisco) do
   desc 'The Cisco provider for cisco_itd_device_group_node.'
 
@@ -196,15 +203,9 @@ Puppet::Type.type(:cisco_itd_device_group_node).provide(:cisco) do
           attrs[p] = @nu.send("default_#{p}")
         else
           attrs[p] = @resource[p]
+          attrs[p] = PuppetX::Cisco::Utils.bool_sym_to_s(attrs[p])
         end
       end
-    end
-    return if attrs.empty?
-    # booleans need more conversion
-    if attrs[:probe_control] == :true
-      attrs[:probe_control] = true
-    else
-      attrs[:probe_control] = false
     end
     fail_attribute_check(attrs[:probe_type])
     @nu.probe_set(attrs)
