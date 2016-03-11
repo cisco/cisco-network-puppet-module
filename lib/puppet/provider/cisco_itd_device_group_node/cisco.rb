@@ -197,8 +197,11 @@ Puppet::Type.type(:cisco_itd_device_group_node).provide(:cisco) do
     end
     return if attrs.empty?
     # booleans need more conversion
-    attrs[:probe_control] = true if attrs[:probe_control] == :true
-    attrs[:probe_control] = false if attrs[:probe_control] == :false
+    if attrs[:probe_control] == :true
+      attrs[:probe_control] = true
+    else
+      attrs[:probe_control] = false
+    end
     fail_attribute_check(attrs[:probe_type])
     @nu.probe_set(attrs)
   end
