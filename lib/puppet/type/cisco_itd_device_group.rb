@@ -159,4 +159,24 @@ Puppet::Type.newtype(:cisco_itd_device_group) do
 
     newvalues(:dns, :tcp, :udp, :icmp, :default)
   end # property probe_type
+
+  validate do
+    return unless self[:probe_type]
+    case self[:probe_type].to_sym
+    when :icmp
+      fail ArgumentError, 'control, dns_host, port are not applicable' if
+        self[:probe_control] || self[:probe_dns_host] ||
+        self[:probe_port]
+    when :dns
+      fail ArgumentError, 'control, port are not applicable' if
+        self[:probe_control] || self[:probe_port]
+      fail ArgumentError, 'dns_host MUST be specified' unless
+        self[:probe_dns_host]
+    when :tcp, :udp
+      fail ArgumentError, 'dns_host is not applicable' if
+        self[:probe_dns_host]
+      fail ArgumentError, 'port MUST be specified' unless
+        self[:probe_port]
+    end
+  end
 end

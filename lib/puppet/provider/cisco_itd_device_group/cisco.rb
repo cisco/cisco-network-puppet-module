@@ -134,26 +134,6 @@ Puppet::Type.type(:cisco_itd_device_group).provide(:cisco) do
     probe_set
   end
 
-  def fail_attribute_check(type)
-    return unless type
-    case type.to_sym
-    when :icmp
-      fail ArgumentError, 'control, dns_host, port are not applicable' if
-        @resource[:probe_control] || @resource[:probe_dns_host] ||
-        @resource[:probe_port]
-    when :dns
-      fail ArgumentError, 'control, port are not applicable' if
-        @resource[:probe_control] || @resource[:probe_port]
-      fail ArgumentError, 'dns_host MUST be specified' unless
-        @resource[:probe_dns_host]
-    when :tcp, :udp
-      fail ArgumentError, 'dns_host is not applicable' if
-        @resource[:probe_dns_host]
-      fail ArgumentError, 'port MUST be specified' unless
-        @resource[:probe_port]
-    end
-  end
-
   # The following properties are setters and cannot be handled
   # by PuppetX::Cisco::AutoGen.mk_puppet_methods.
   def probe_set
@@ -180,7 +160,6 @@ Puppet::Type.type(:cisco_itd_device_group).provide(:cisco) do
       end
     end
     return if attrs.empty?
-    fail_attribute_check(attrs[:probe_type])
     @nu.probe_set(attrs)
   end
 

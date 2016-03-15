@@ -26,10 +26,10 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 # Test hash top-level keys
 tests = {
-  master:           master,
-  agent:            agent,
-  operating_system: 'nexus',
-  resource_name:    'cisco_itd_device_group_node',
+  master:        master,
+  agent:         agent,
+  platform:      'n(7|9)k',
+  resource_name: 'cisco_itd_device_group_node',
 }
 
 # Test hash test cases
@@ -75,11 +75,8 @@ tests[:non_default_icmp] = {
   },
 }
 
-# Platform-specific tests
-
 tests[:non_default_dns] = {
   desc:           '2.2 Non Defaults for type dns',
-  platform:       'n(7|9)k',
   title_pattern:  'dnsGroup 2.2.2.2',
   preclean:       'cisco_itd_device_group_node',
   manifest_props: {
@@ -96,7 +93,6 @@ tests[:non_default_dns] = {
 
 tests[:non_default_tcp] = {
   desc:           '2.3 Non Defaults for type tcp',
-  platform:       'n(7|9)k',
   title_pattern:  'tcpGroup 3.3.3.3',
   preclean:       'cisco_itd_device_group_node',
   manifest_props: {
@@ -114,7 +110,6 @@ tests[:non_default_tcp] = {
 
 tests[:non_default_udp] = {
   desc:           '2.4 Non Defaults for type udp',
-  platform:       'n(7|9)k',
   title_pattern:  'udpGroup 4.4.4.4',
   preclean:       'cisco_itd_device_group_node',
   manifest_props: {
@@ -132,7 +127,6 @@ tests[:non_default_udp] = {
 
 # Overridden to properly handle dependencies for this test file.
 def test_harness_dependencies(_tests, _id)
-  return unless platform == 'n7k' || platform == 'n9k'
   cmd = 'feature itd ; itd device-group icmpGroup ; itd device-group dnsGroup ; itd device-group tcpGroup ; itd device-group udpGroup'
   command_config(agent, cmd, cmd)
 end

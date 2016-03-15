@@ -148,37 +148,9 @@ Puppet::Type.type(:cisco_itd_device_group_node).provide(:cisco) do
     hot_standby_weight_set
   end
 
-  # We need special handling for boolean properties in our custom
-  # setters below. This helper method returns true if the property
-  # flush contains a TrueClass or FalseClass value.
-  def flush_boolean?(prop)
-    @property_flush[prop].is_a?(TrueClass) ||
-      @property_flush[prop].is_a?(FalseClass)
-  end
-
-  def fail_attribute_check(type)
-    return unless type
-    case type.to_sym
-    when :icmp
-      fail ArgumentError, 'control, dns_host, port are not applicable' if
-        @resource[:probe_control] || @resource[:probe_dns_host] ||
-        @resource[:probe_port]
-    when :dns
-      fail ArgumentError, 'control, port are not applicable' if
-        @resource[:probe_control] || @resource[:probe_port]
-      fail ArgumentError, 'dns_host MUST be specified' unless
-        @resource[:probe_dns_host]
-    when :tcp, :udp
-      fail ArgumentError, 'dns_host is not applicable' if
-        @resource[:probe_dns_host]
-      fail ArgumentError, 'port MUST be specified' unless
-        @resource[:probe_port]
-    end
-  end
-
   def hot_standby_weight_set
     weight = @property_flush[:weight] ? @property_flush[:weight] : @nu.weight
-    hot_standby = flush_boolean?(:hot_standby) ? @property_flush[:hot_standby] : @nu.hot_standby
+    hot_standby = PuppetX::Cisco::Utils.flush_boolean?(@property_flush[:hot_standby]) ? @property_flush[:hot_standby] : @nu.hot_standby
     @nu.hs_weight(hot_standby, weight)
   end
 
@@ -207,7 +179,6 @@ Puppet::Type.type(:cisco_itd_device_group_node).provide(:cisco) do
         end
       end
     end
-    fail_attribute_check(attrs[:probe_type])
     @nu.probe_set(attrs)
   end
 

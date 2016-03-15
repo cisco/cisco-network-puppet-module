@@ -1,4 +1,5 @@
-# Manifest to demo cisco_interface provider
+# Manifest to demo cisco_itd_device_group and
+# cisco_itd_device_group_node providers providers
 #
 # Copyright (c) 2016 Cisco and/or its affiliates.
 #
