@@ -1977,7 +1977,7 @@ port-channel per port load-defer. Valid values are true, false or 'default'. Thi
 --
 ### Type: cisco_itd_device_group
 
-Manages configuration of ITD device group
+Manages configuration of ITD (Intelligent Traffic Director) device group
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
@@ -1998,7 +1998,7 @@ Determine whether the config should be present or not. Valid values are 'present
 Enable control protocol for probe. Valid values are true, false or 'default'. This is applicable only when the probe type is 'tcp' or 'udp'
 
 ##### `probe_dns_host`
-Host name or Target Address when the probe type is 'dns'. Valid values are String.
+Host name or target address when the probe type is 'dns'. Valid values are String.
 
 ##### `probe_frequency`
 Probe frequency in seconds. Valid values are Integer, keyword 'default'.
@@ -2021,7 +2021,7 @@ Probe type. Valid values are 'icmp', 'dns', 'tcp', 'udp' or keyword 'default'.
 --
 ### Type: cisco_itd_device_group_node
 
-Manages configuration of ITD device group node
+Manages configuration of ITD (Intelligent Traffic Director) device group node
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
@@ -2041,11 +2041,14 @@ Determine whether the config should be present or not. Valid values are 'present
 ##### `hot_standby`
 Change mode of this node as hot-standby. Valid values are true, false or 'default'.
 
+##### `node_type`
+Type of the device group node. Valid values are ip and IPv6. It defaults to ip if not specified. IPv6 is not supported for N9k.
+
 ##### `probe_control`
 Enable control protocol for probe. Valid values are true, false or 'default'. This is applicable only when the probe type is 'tcp' or 'udp'
 
 ##### `probe_dns_host`
-Host name or Target Address when the probe type is 'dns'. Valid values are String.
+Host name or target address when the probe type is 'dns'. Valid values are String.
 
 ##### `probe_frequency`
 Probe frequency in seconds. Valid values are Integer, keyword 'default'.
