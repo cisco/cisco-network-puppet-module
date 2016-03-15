@@ -220,7 +220,7 @@ The following table indicates which providers are supported on each platform. As
 | [network_snmp](#type-network_snmp) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [radius](#type-radius) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [radius_global](#type-radius_global) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| [radius_server](#type-radius_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| [radius_server](#type-radius_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅* | * [caveats](#radius_server-caveats) |
 | [search_domain](#type-search_domain) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [snmp_community](#type-snmp_community) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [snmp_notification](#type-snmp_notification) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
@@ -3340,7 +3340,14 @@ Encryption key format [0-7].  Valid value is an integer.
 | N56xx    | unsupported        | unsupported            |
 | N6k      | unsupported        | unsupported            |
 | N7k      | unsupported        | unsupported            |
-| IOS XR   | unsupported        | unsupported            |
+| IOS XR   | TODO               | TODO                   |
+
+#### <a name="radius_server-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `accouting_only` | Not supported in Cisco IOS XR |
+| `authentication_only` | Not supported in Cisco IOS XR |
 
 #### Parameters
 
@@ -3363,10 +3370,10 @@ Number of seconds before the timeout period ends.  Valid value is an integer.
 Number of times to retransmit.  Valid value is an integer.
 
 ##### `accouting_only`
-Enable this server for accounting only.  Valid values are 'true' or 'false'.
+Enable this server for accounting only.  Valid values are 'true' or 'false'. Not supported on IOS XR.
 
 ##### `authentication_only`
-Enable this server for authentication only.  Valid values are 'true' or 'false'.
+Enable this server for authentication only.  Valid values are 'true' or 'false'. Not supported on IOS XR.
 
 ##### `key`
 Encryption key (plaintext or in hash form depending on key_format).  Valid value is a string.
