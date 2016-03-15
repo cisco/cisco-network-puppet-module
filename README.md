@@ -1981,7 +1981,7 @@ Manages configuration of ITD (Intelligent Traffic Director) device group
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.3.0                  |
+| N9k      | 7.0(3)I3(1)        | 1.3.0                  |
 | N30xx    | unsupported        | unsupported            |
 | N31xx    | unsupported        | unsupported            |
 | N56xx    | unsupported        | unsupported            |
@@ -2025,7 +2025,7 @@ Manages configuration of ITD (Intelligent Traffic Director) device group node
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.3.0                  |
+| N9k      | 7.0(3)I3(1)        | 1.3.0                  |
 | N30xx    | unsupported        | unsupported            |
 | N31xx    | unsupported        | unsupported            |
 | N56xx    | unsupported        | unsupported            |
