@@ -210,12 +210,12 @@ The following table indicates which providers are supported on each platform. As
 | ✅ = Supported <br> ❌ = Unsupported  | N9k | N30xx | N31xx | N56xx | N6k | N7k | IOS XR |
 |:---|:---:|:-----:|:-----:|:-----:|:---:|:---:|:---:|
 | [domain_name](#type-domain_name) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
-| [name_server](#type-name_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| [name_server](#type-name_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
 | [network_dns](#type-network_dns) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
 | [network_interface](#type-network_interface) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [network_snmp](#type-network_snmp) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [network_trunk](#type-network_trunk) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| [ntp_config](#type-ntp_config) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| [ntp_config](#type-ntp_config) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
 | [ntp_server](#type-ntp_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
 | [network_snmp](#type-network_snmp) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [radius](#type-radius) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
@@ -226,7 +226,7 @@ The following table indicates which providers are supported on each platform. As
 | [snmp_notification](#type-snmp_notification) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [snmp_notification_receiver](#type-snmp_notification_receiver) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [snmp_user](#type-snmp_user) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| [syslog_server](#type-syslog_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| [syslog_server](#type-syslog_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
 | [syslog_setting](#type-syslog_setting) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [tacacs](#type-tacacs) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [tacacs_global](#type-tacacs_global) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
@@ -3071,7 +3071,7 @@ Domain name of the device. Valid value is a string.
 | N56xx    | unsupported        | unsupported            |
 | N6k      | unsupported        | unsupported            |
 | N7k      | unsupported        | unsupported            |
-| IOS XR   | unsupported        | unsupported            |
+| IOS XR   | TODO               | TODO                   |
 
 #### Parameters
 
@@ -3550,7 +3550,7 @@ format (in case of true) or cleartext (in case of false). Valid values are 'true
 | N56xx    | unsupported        | unsupported            |
 | N6k      | unsupported        | unsupported            |
 | N7k      | unsupported        | unsupported            |
-| IOS XR   | unsupported        | unsupported            |
+| IOS XR   | TODO               | TODO                   |
 
 #### Parameters
 
