@@ -90,4 +90,15 @@ class ciscopuppet::cisco::demo_itd {
     probe_type       => 'udp',
     weight           => 1,
   }
+  cisco_itd_device_group_node {'udpGroup 3.3.3.3':
+    ensure           => 'present',
+    hot_standby      => false,
+    probe_control    => false,
+    probe_frequency  => 10,
+    probe_retry_down => 3,
+    probe_retry_up   => 3,
+    probe_timeout    => 5,
+    probe_type       => default,
+    weight           => 1,
+  }
 }
