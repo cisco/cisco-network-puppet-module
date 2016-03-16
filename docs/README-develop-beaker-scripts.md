@@ -22,7 +22,7 @@ This document describes the process for writing and executing [Beaker](https://g
 
 ### Platform and Software Support
 
-Beaker Release 2.14.1 and later.
+Beaker Release 2.37.0 and later.
 
 ## <a name="pre-install">Pre-Install Tasks</a>
 
@@ -108,9 +108,8 @@ HOSTS:
     <IOS XR agent>:
         roles:
             - agent
-        platform: cisco-7-x86_64
+        platform: cisco_ios_xr-6-x86_64
         ip: <fully qualified domain name>
-        grpc_port: <grpc port number, such as 57777 or 57799
         ssh:
           auth_methods: ["password"]
           # SSHd for third-party network namespace (TPNNS) uses port 57722
@@ -121,7 +120,7 @@ HOSTS:
     <Nexus agent>:
         roles:
             - agent
-        platform: cisco-5-x86_64
+        platform: cisco_nexus-7-x86_64
         ip: <fully qualified domain name>
         vrf: <vrf used for beaker workstation and puppet master ip reachability>
         ssh:
@@ -170,9 +169,8 @@ HOSTS:
     xr-agent:
         roles:
             - agent
-        platform: cisco-7-x86_64
+        platform: cisco_ios_xr-6-x86_64
         ip: xr-agent.domain.com
-        grpc_port: 57777
         ssh:
           auth_methods: ["password"]
           port: 57722
