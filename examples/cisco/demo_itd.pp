@@ -184,7 +184,6 @@ class ciscopuppet::cisco::demo_itd {
     load_bal_mask_pos             => 10,
     load_bal_method_bundle_hash   => 'ip',
     load_bal_method_bundle_select => 'dst',
-    nat_destination               => $nat_destination,
     peer_vdc                      => $peer_vdc2,
     peer_local                    => $peer_local2,
     shutdown                      => false,
