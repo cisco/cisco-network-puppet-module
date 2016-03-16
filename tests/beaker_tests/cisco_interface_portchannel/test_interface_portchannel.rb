@@ -221,9 +221,7 @@ tests['non_default_properties_eth'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = PUPPET_BINPATH +
-        'resource cisco_interface_portchannel port-channel100'
-  get_namespace_cmd(agent, cmd, options)
+  PUPPET_BINPATH + 'resource cisco_interface_portchannel port-channel100'
 end
 
 def build_manifest_interface_portchannel(tests, id)

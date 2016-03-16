@@ -70,8 +70,7 @@ test_name "TestCase :: #{testheader}" do
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no change.
     # Or expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
     # Expected exit_code is 0 since this is a vegas shell cmd.
@@ -96,8 +95,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, NetworkInterfaceLib.create_non_defaults)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource present manifest from master :: #{result}")
@@ -107,8 +105,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check network_interface resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource network_interface 'ethernet1/4'", options)
+    cmd_str = PUPPET_BINPATH + "resource network_interface 'ethernet1/4'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'mtu'         => '1500',

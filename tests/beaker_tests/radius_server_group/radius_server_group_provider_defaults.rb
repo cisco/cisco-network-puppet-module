@@ -78,8 +78,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, RadiusServerGroupLib.create_radius_server_group_manifest_present)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource present manifest from master :: #{result}")
@@ -89,8 +88,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check radius_server_group resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource radius_server_group red', options)
+    cmd_str = PUPPET_BINPATH + 'resource radius_server_group red'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                false, self, logger)
@@ -107,8 +105,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, RadiusServerGroupLib.create_radius_server_group_manifest_present_change)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource present manifest from master :: #{result}")
@@ -118,8 +115,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check radius_server_group resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource radius_server_group red', options)
+    cmd_str = PUPPET_BINPATH + 'resource radius_server_group red'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                false, self, logger)
@@ -136,8 +132,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, RadiusServerGroupLib.create_radius_server_group_manifest_present_servers_absent)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource present manifest from master :: #{result}")
@@ -147,8 +142,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check radius_server_group resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource radius_server_group red', options)
+    cmd_str = PUPPET_BINPATH + 'resource radius_server_group red'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                false, self, logger)
@@ -165,8 +159,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, RadiusServerGroupLib.create_radius_server_group_manifest_absent)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource present manifest from master :: #{result}")
@@ -176,8 +169,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check radius_server_group resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource radius_server_group red', options)
+    cmd_str = PUPPET_BINPATH + 'resource radius_server_group red'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                true, self, logger)

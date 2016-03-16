@@ -55,8 +55,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   vsh_cmd = get_vshell_cmd("show interface #{intf} capabilities")
   vsh_caps = parse_capabilities(agent, vsh_cmd)
 
-  resource_cmd = get_namespace_cmd(agent, PUPPET_BINPATH +
-                   "resource cisco_interface_capabilities '#{intf}'", options)
+  resource_cmd = PUPPET_BINPATH + "resource cisco_interface_capabilities '#{intf}'"
   resource_caps = parse_capabilities(agent, resource_cmd)
 
   testcase.fail_test('puppet resource mismatch with vsh :: FAIL') unless

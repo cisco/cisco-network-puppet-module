@@ -65,8 +65,7 @@ test_name "TestCase :: #{testheader}" do
     # Cleanup before starting test.
     on(master, NetworkSnmpLib.create_network_snmp_manifest_unset)
 
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
     logger.info('Setup switch for provider')
@@ -78,8 +77,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, NetworkSnmpLib.create_network_snmp_manifest_set)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource set manifest from master :: #{result}")
@@ -89,8 +87,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check network_snmp resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource network_snmp default', options)
+    cmd_str = PUPPET_BINPATH + 'resource network_snmp default'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'enable' => 'true' },
                                false, self, logger)
@@ -109,8 +106,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, NetworkSnmpLib.create_network_snmp_manifest_unset)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource unset manifest from master :: #{result}")
@@ -120,8 +116,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check network_snmp resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource network_snmp default', options)
+    cmd_str = PUPPET_BINPATH + 'resource network_snmp default'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'enable' => 'false' },
                                false, self, logger)

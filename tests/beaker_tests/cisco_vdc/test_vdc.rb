@@ -45,7 +45,7 @@ tests[:non_default] = {
 }
 
 def current_module_type
-  cmd = get_namespace_cmd(agent, PUPPET_BINPATH + 'resource cisco_vdc', options)
+  cmd = PUPPET_BINPATH + 'resource cisco_vdc'
   # sample output:
   #   limit_resource_module_type => 'f3'
   out = on(agent, cmd, pty: true).stdout[/limit_resource_module_type => '(.*)'/]

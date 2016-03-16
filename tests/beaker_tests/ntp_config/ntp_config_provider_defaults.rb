@@ -74,8 +74,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Setup switch for provider' do
     # Cleanup before starting test.
     on(master, NtpConfigLib.create_ntp_config_manifest_unset)
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-                                           'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
     logger.info('Setup switch for provider')
@@ -87,8 +86,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, NtpConfigLib.create_ntp_config_manifest_set(intf))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource present manifest from master :: #{result}")
@@ -98,8 +96,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check ntp_config resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource ntp_config default', options)
+    cmd_str = PUPPET_BINPATH + 'resource ntp_config default'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'source_interface' => intf },
                                false, self, logger)
@@ -114,8 +111,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, NtpConfigLib.create_ntp_config_manifest_unset)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-                                           'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource absent manifest from master :: #{result}")
@@ -125,8 +121,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check ntp_config resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource ntp_config default', options)
+    cmd_str = PUPPET_BINPATH + 'resource ntp_config default'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'source_interface' => 'unset' },
                                false, self, logger)

@@ -403,8 +403,7 @@ tests['non_default_properties'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = UtilityLib::PUPPET_BINPATH + 'resource cisco_tunnel'
-  UtilityLib.get_namespace_cmd(agent, cmd, options)
+  UtilityLib::PUPPET_BINPATH + 'resource cisco_tunnel'
 end
 
 def build_manifest_tunnel(tests, id)
@@ -741,8 +740,7 @@ tests['non_default_properties_S'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = UtilityLib::PUPPET_BINPATH + 'resource cisco_router_eigrp'
-  UtilityLib.get_namespace_cmd(agent, cmd, options)
+  UtilityLib::PUPPET_BINPATH + 'resource cisco_router_eigrp'
 end
 
 def build_manifest_eigrp(tests, id)

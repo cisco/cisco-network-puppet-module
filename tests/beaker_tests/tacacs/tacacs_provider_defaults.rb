@@ -63,8 +63,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider' do
     on(master, TacacsLib.create_tacacs_manifest_change_disabled)
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
     logger.info('Setup switch for provider')
@@ -76,8 +75,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, TacacsLib.create_tacacs_manifest)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource present manifest from master :: #{result}")
@@ -87,8 +85,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check tacacs resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource tacacs default', options)
+    cmd_str = PUPPET_BINPATH + 'resource tacacs default'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'enable' => 'true' },
                                false, self, logger)
@@ -103,8 +100,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, TacacsLib.create_tacacs_manifest_change_disabled)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource present manifest from master :: #{result}")
@@ -114,8 +110,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check tacacs resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource tacacs default', options)
+    cmd_str = PUPPET_BINPATH + 'resource tacacs default'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'enable' => 'false' },
                                false, self, logger)
