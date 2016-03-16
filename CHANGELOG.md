@@ -8,6 +8,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 #### Cisco Resources
 - `cisco_fabricpath_global` type and provider.
 - `cisco_fabricpath_topology` type and provider.
+- `cisco_itd_device_group` type and provider.
+- `cisco_itd_device_group_node` type and provider.
 - `cisco_stp_global` type and provider.
 
 #### NetDev Resources

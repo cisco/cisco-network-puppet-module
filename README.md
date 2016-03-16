@@ -181,6 +181,8 @@ The following table indicates which providers are supported on each platform. As
 | [cisco_interface_ospf](#type-cisco_interface_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_interface_portchannel](#type-cisco_interface_portchannel) | ❌* | ✅* | ✅* | ❌* | ❌* | ❌* | ❌ | * [caveats](#cisco_interface_portchannel-caveats) |
 | [cisco_interface_service_vni](#type-cisco_interface_service_vni) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| [cisco_itd_device_group](#type-cisco_itd_device_group) | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| [cisco_itd_device_group_node](#type-cisco_itd_device_group_node) | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
 | [cisco_ospf](#type-cisco_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_ospf_vrf](#type-cisco_ospf_vrf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | ✅ = Supported <br> ❌ = Unsupported  | N9k | N30xx | N31xx | N56xx | N6k | N7k | IOS XR | Caveats |
@@ -280,6 +282,10 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
   * [`network_interface (netdev_stdlib)`](#type-network_interface)
 
+* Itd Types
+  * [`cisco_itd_device_group`](#type-cisco_itd_device_group)
+  * [`cisco_itd_device_group_node`](#type-cisco_itd_device_group_node)
+  * 
 * Multicast Types
   * [`cisco_pim`](#type-cisco_pim)
   * [`cisco_pim_grouplist`](#type-cisco_pim_grouplist)
@@ -374,6 +380,8 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 * [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
 * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
+* [`cisco_itd_device_group`](#type-cisco_itd_device_group)
+* [`cisco_itd_device_group_node`](#type-cisco_itd_device_group_node)
 * [`cisco_ospf`](#type-cisco_ospf)
 * [`cisco_ospf_vrf`](#type-cisco_ospf_vrf)
 * [`cisco_overlay_global`](#type-cisco_overlay_global)
@@ -1965,6 +1973,103 @@ port-channel per port hash-distribution. Valid values are 'adaptive', 'fixed' or
 
 ##### `port_load_defer`
 port-channel per port load-defer. Valid values are true, false or 'default'. This property is not supported on (Nexus 5|6k)
+
+--
+### Type: cisco_itd_device_group
+
+Manages configuration of ITD (Intelligent Traffic Director) device group
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I3(1)        | 1.3.0                  |
+| N30xx    | unsupported        | unsupported            |
+| N31xx    | unsupported        | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| IOS XR   | unsupported        | unsupported            |
+
+#### Parameters
+
+##### `ensure`
+Determine whether the config should be present or not. Valid values are 'present' and 'absent'.
+
+##### `probe_control`
+Enable control protocol for probe. Valid values are true, false or 'default'. This is applicable only when the probe type is 'tcp' or 'udp'
+
+##### `probe_dns_host`
+Host name or target address when the probe type is 'dns'. Valid values are String.
+
+##### `probe_frequency`
+Probe frequency in seconds. Valid values are Integer, keyword 'default'.
+
+##### `probe_port`
+Probe port number when the type is 'tcp' or 'udp'. Valid values are Integer.
+
+##### `probe_retry_down`
+Probe retry count when the node goes down. Valid values are Integer, keyword 'default'.
+
+##### `probe_retry_up`
+Probe retry count when the node comes back up. Valid values are Integer, keyword 'default'.
+
+##### `probe_timeout`
+Probe timeout in seconds. Valid values are Integer, keyword 'default'.
+
+##### `probe_type`
+Probe type. Valid values are 'icmp', 'dns', 'tcp', 'udp' or keyword 'default'.
+
+--
+### Type: cisco_itd_device_group_node
+
+Manages configuration of ITD (Intelligent Traffic Director) device group node
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I3(1)        | 1.3.0                  |
+| N30xx    | unsupported        | unsupported            |
+| N31xx    | unsupported        | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| IOS XR   | unsupported        | unsupported            |
+
+#### Parameters
+
+##### `ensure`
+Determine whether the config should be present or not. Valid values are 'present' and 'absent'.
+
+##### `hot_standby`
+Change mode of this node as hot-standby. Valid values are true, false or 'default'.
+
+##### `node_type`
+Type of the device group node. Valid values are ip and IPv6. It defaults to ip if not specified. IPv6 is not supported for N9k.
+
+##### `probe_control`
+Enable control protocol for probe. Valid values are true, false or 'default'. This is applicable only when the probe type is 'tcp' or 'udp'
+
+##### `probe_dns_host`
+Host name or target address when the probe type is 'dns'. Valid values are String.
+
+##### `probe_frequency`
+Probe frequency in seconds. Valid values are Integer, keyword 'default'.
+
+##### `probe_port`
+Probe port number when the type is 'tcp' or 'udp'. Valid values are Integer.
+
+##### `probe_retry_down`
+Probe retry count when the node goes down. Valid values are Integer, keyword 'default'.
+
+##### `probe_retry_up`
+Probe retry count when the node comes back up. Valid values are Integer, keyword 'default'.
+
+##### `probe_timeout`
+Probe timeout in seconds. Valid values are Integer, keyword 'default'.
+
+##### `probe_type`
+Probe type. Valid values are 'icmp', 'dns', 'tcp', 'udp' or keyword 'default'.
+
+##### `weight`
+Weight for traffic distribution. Valid values are Integer, keyword 'default'.
 
 --
 ### Type: cisco_ospf
