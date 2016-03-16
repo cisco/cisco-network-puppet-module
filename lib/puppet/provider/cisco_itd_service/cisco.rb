@@ -147,43 +147,37 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
     cur_shut == :false && (next_shut.nil? || next_shut == :true)
   end
 
+  def all_prop_set(new_itd)
+    ITDSERVICE_ALL_PROPS.each do |prop|
+      next unless @resource[prop]
+      send("#{prop}=", @resource[prop]) if new_itd
+      unless @property_flush[prop].nil?
+        @nu.send("#{prop}=", @property_flush[prop]) if
+          @nu.respond_to?("#{prop}=")
+      end
+    end
+    # custom setters which require one-shot multi-param setters
+    load_balance_set
+  end
+
+  def shut_prop_set(new_itd)
+    ITDSERVICE_SHUT_PROP.each do |prop|
+      next unless @resource[prop]
+      send("#{prop}=", @resource[prop]) if new_itd
+      unless @property_flush[prop].nil?
+        @nu.send("#{prop}=", @property_flush[prop]) if
+          @nu.respond_to?("#{prop}=")
+      end
+    end
+  end
+
   def properties_set(new_itd=false)
     if new_itd || !shutdown_set
-      ITDSERVICE_ALL_PROPS.each do |prop|
-        next unless @resource[prop]
-        send("#{prop}=", @resource[prop]) if new_itd
-        unless @property_flush[prop].nil?
-          @nu.send("#{prop}=", @property_flush[prop]) if
-            @nu.respond_to?("#{prop}=")
-        end
-      end
-      # custom setters which require one-shot multi-param setters
-      load_balance_set
-      ITDSERVICE_SHUT_PROP.each do |prop|
-        next unless @resource[prop]
-        send("#{prop}=", @resource[prop]) if new_itd
-        unless @property_flush[prop].nil?
-          @nu.send("#{prop}=", @property_flush[prop]) if
-            @nu.respond_to?("#{prop}=")
-        end
-      end
+      all_prop_set(new_itd)
+      shut_prop_set(new_itd)
     else
-      ITDSERVICE_SHUT_PROP.each do |prop|
-        next unless @resource[prop]
-        unless @property_flush[prop].nil?
-          @nu.send("#{prop}=", @property_flush[prop]) if
-            @nu.respond_to?("#{prop}=")
-        end
-      end
-      ITDSERVICE_ALL_PROPS.each do |prop|
-        next unless @resource[prop]
-        unless @property_flush[prop].nil?
-          @nu.send("#{prop}=", @property_flush[prop]) if
-            @nu.respond_to?("#{prop}=")
-        end
-      end
-      # custom setters which require one-shot multi-param setters
-      load_balance_set
+      shut_prop_set(new_itd)
+      all_prop_set(new_itd)
     end
   end
 
