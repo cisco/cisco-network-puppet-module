@@ -228,7 +228,13 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
       end
       fail_load_balance(attrs)
       @nu.load_balance_set(attrs)
+    else
+      call_empty
     end
+  end
+
+  # method to keep ribocop happy
+  def call_empty
   end
 
   def fail_load_balance(attrs)

@@ -32,6 +32,19 @@ module PuppetX
         network
       end
 
+      # Convert boolean symbols to strings
+      def self.bool_sym_to_s(val)
+        return val unless val == :true || val == :false
+        (val == :true)
+      end
+
+      # Special handling for boolean properties.
+      # This helper method returns true if the property
+      # flush contains a TrueClass or FalseClass value.
+      def self.flush_boolean?(prop)
+        prop.is_a?(TrueClass) || prop.is_a?(FalseClass)
+      end
+
       # Helper utility for checking if arrays are overlapping in a
       # give list.
       # For ex: if the list has '2-10,32,42,44-89' and '11-33'
@@ -62,19 +75,6 @@ module PuppetX
             end
           end
         end
-      end
-
-      # Special handling for boolean properties.
-      # This helper method returns true if the property
-      # flush contains a TrueClass or FalseClass value.
-      def self.flush_boolean?(prop)
-        prop.is_a?(TrueClass) || prop.is_a?(FalseClass)
-      end
-
-      # Convert boolean symbols to strings
-      def self.bool_sym_to_s(val)
-        return val unless val == :true || val == :false
-        (val == :true)
       end
 
       # Helper utility method for range summarization of VLAN and BD ranges

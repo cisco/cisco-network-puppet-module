@@ -8,6 +8,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 #### Cisco Resources
 - `cisco_fabricpath_global` type and provider.
 - `cisco_fabricpath_topology` type and provider.
+- `cisco_itd_device_group` type and provider.
+- `cisco_itd_device_group_node` type and provider.
 - `cisco_stp_global` type and provider.
 
 #### NetDev Resources
@@ -20,6 +22,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `stp_mst_port_priority`, `stp_port_priority`, `stp_port_type`, `stp_vlan_cost`, `stp_vlan_port_priority`
 - Extended `cisco_vlan` with the following attributes:
   - `mode`
+- Extended `cisco_vpc_domain` with the following attributes:
+  - `fabricpath_emulated_switch_id`
+  - `fabricpath_multicast_load_balance`
+  - `port_channel_limit`
+- Extended `cisco_vrf` with the following attributes for eXR:
+  - `mhost_ipv4_default_interface`
+  - `mhost_ipv6_default_interface`
+  - `remote_route_filtering`
+  - `vpn_id`
 - Extended `cisco_vrf_af` with the following attributes:
   - `route_policy_export`
   - `route_policy_import`

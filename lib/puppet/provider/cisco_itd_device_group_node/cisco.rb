@@ -26,6 +26,13 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
+begin
+  require 'puppet_x/cisco/cmnutils'
+rescue LoadError # seen on master, not on agent
+  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..',
+                                     'puppet_x', 'cisco', 'cmnutils.rb'))
+end
 Puppet::Type.type(:cisco_itd_device_group_node).provide(:cisco) do
   desc 'The Cisco provider for cisco_itd_device_group_node.'
 
@@ -141,51 +148,44 @@ Puppet::Type.type(:cisco_itd_device_group_node).provide(:cisco) do
     hot_standby_weight_set
   end
 
-  # We need special handling for boolean properties in our custom
-  # setters below. This helper method returns true if the property
-  # flush contains a TrueClass or FalseClass value.
-  def flush_boolean?(prop)
-    @property_flush[prop].is_a?(TrueClass) ||
-      @property_flush[prop].is_a?(FalseClass)
+  def hot_standby_weight_set
+    weight = @property_flush[:weight] ? @property_flush[:weight] : @nu.weight
+    hot_standby = PuppetX::Cisco::Utils.flush_boolean?(@property_flush[:hot_standby]) ? @property_flush[:hot_standby] : @nu.hot_standby
+    @nu.hs_weight(hot_standby, weight)
   end
 
-  def fail_attribute_check(type)
-    return unless type
-    case type.to_sym
-    when :icmp
-      fail ArgumentError, 'control, dns_host, port are not applicable' if
-        @resource[:probe_control] || @resource[:probe_dns_host] ||
-        @resource[:probe_port]
-    when :dns
-      fail ArgumentError, 'control, port are not applicable' if
-        @resource[:probe_control] || @resource[:probe_port]
-      fail ArgumentError, 'dns_host MUST be specified' unless
-        @resource[:probe_dns_host]
-    when :tcp, :udp
-      fail ArgumentError, 'dns_host is not applicable' if
-        @resource[:probe_dns_host]
-      fail ArgumentError, 'port MUST be specified' unless
-        @resource[:probe_port]
+  # The following properties are setters and cannot be handled
+  # by PuppetX::Cisco::AutoGen.mk_puppet_methods.
+  def probe_set
+    attrs = {}
+    vars = [
+      :probe_type,
+      :probe_dns_host,
+      :probe_frequency,
+      :probe_port,
+      :probe_retry_down,
+      :probe_retry_up,
+      :probe_timeout,
+      :probe_control,
+    ]
+    if vars.any? { |p| @property_flush.key?(p) }
+      # At least one var has changed, get all vals from manifest
+      vars.each do |p|
+        if @resource[p] == :default
+          attrs[p] = @nu.send("default_#{p}")
+        else
+          attrs[p] = @resource[p]
+          attrs[p] = PuppetX::Cisco::Utils.bool_sym_to_s(attrs[p])
+        end
+      end
+      @nu.probe_set(attrs)
+    else
+      call_empty
     end
   end
 
-  def hot_standby_weight_set
-    weight = @property_flush[:weight] ? @property_flush[:weight] : @nu.weight
-    hot_standby = flush_boolean?(:hot_standby) ? @property_flush[:hot_standby] : @nu.hot_standby
-    @nu.send(:hs_weight=, hot_standby, weight)
-  end
-
-  def probe_set
-    type = @property_flush[:probe_type] ? @property_flush[:probe_type] : @nu.probe_type
-    to = @property_flush[:probe_timeout] ? @property_flush[:probe_timeout] : @nu.probe_timeout
-    ru = @property_flush[:probe_retry_up] ? @property_flush[:probe_retry_up] : @nu.probe_retry_up
-    rd = @property_flush[:probe_retry_down] ? @property_flush[:probe_retry_down] : @nu.probe_retry_down
-    freq = @property_flush[:probe_frequency] ? @property_flush[:probe_frequency] : @nu.probe_frequency
-    dh = @property_flush[:probe_dns_host] ? @property_flush[:probe_dns_host] : @nu.probe_dns_host
-    port = @property_flush[:probe_port] ? @property_flush[:probe_port] : @nu.probe_port
-    con = flush_boolean?(:probe_control) ? @property_flush[:probe_control] : @nu.probe_control
-    fail_attribute_check(type)
-    @nu.send(:probe=, type, dh, con, freq, ru, rd, port, to)
+  # method to keep rubocop happy
+  def call_empty
   end
 
   def flush
