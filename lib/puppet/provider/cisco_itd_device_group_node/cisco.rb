@@ -178,8 +178,14 @@ Puppet::Type.type(:cisco_itd_device_group_node).provide(:cisco) do
           attrs[p] = PuppetX::Cisco::Utils.bool_sym_to_s(attrs[p])
         end
       end
+      @nu.probe_set(attrs)
+    else
+      call_empty
     end
-    @nu.probe_set(attrs)
+  end
+
+  # method to keep rubocop happy
+  def call_empty
   end
 
   def flush
