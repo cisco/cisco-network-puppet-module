@@ -52,7 +52,9 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
     :failaction,
     :load_bal_enable,
     :nat_destination,
-    :shutdown,
+  ]
+  ITDSERVICE_SHUT_PROP = [
+    :shutdown
   ]
   ITDSERVICE_ARRAY_FLAT_PROPS = [
     :ingress_interface,
@@ -61,6 +63,7 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
   ]
   ITDSERVICE_ALL_PROPS = ITDSERVICE_NON_BOOL_PROPS +
                          ITDSERVICE_ARRAY_FLAT_PROPS + ITDSERVICE_BOOL_PROPS
+  ITDSERVICE_ALL_BOOL_PROPS = ITDSERVICE_BOOL_PROPS + ITDSERVICE_SHUT_PROP
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@nu',
                                             ITDSERVICE_NON_BOOL_PROPS)
@@ -68,6 +71,8 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
                                             ITDSERVICE_ARRAY_FLAT_PROPS)
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@nu',
                                             ITDSERVICE_BOOL_PROPS)
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@nu',
+                                            ITDSERVICE_SHUT_PROP)
 
   def initialize(value={})
     super(value)
@@ -89,7 +94,7 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
     ITDSERVICE_ARRAY_FLAT_PROPS.each do |prop|
       current_state[prop] = nu_obj.send(prop)
     end
-    ITDSERVICE_BOOL_PROPS.each do |prop|
+    ITDSERVICE_ALL_BOOL_PROPS.each do |prop|
       val = nu_obj.send(prop)
       if val.nil?
         current_state[prop] = nil
@@ -136,17 +141,50 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
     itdser
   end
 
+  def shutdown_set
+    cur_shut = @property_hash[:shutdown]
+    next_shut = @resource[:shutdown]
+    cur_shut == :false && (next_shut.nil? || next_shut == :true)
+  end
+
   def properties_set(new_itd=false)
-    ITDSERVICE_ALL_PROPS.each do |prop|
-      next unless @resource[prop]
-      send("#{prop}=", @resource[prop]) if new_itd
-      unless @property_flush[prop].nil?
-        @nu.send("#{prop}=", @property_flush[prop]) if
-          @nu.respond_to?("#{prop}=")
+    if new_itd || !shutdown_set
+      ITDSERVICE_ALL_PROPS.each do |prop|
+        next unless @resource[prop]
+        send("#{prop}=", @resource[prop]) if new_itd
+        unless @property_flush[prop].nil?
+          @nu.send("#{prop}=", @property_flush[prop]) if
+            @nu.respond_to?("#{prop}=")
+        end
       end
+      # custom setters which require one-shot multi-param setters
+      load_balance_set
+      ITDSERVICE_SHUT_PROP.each do |prop|
+        next unless @resource[prop]
+        send("#{prop}=", @resource[prop]) if new_itd
+        unless @property_flush[prop].nil?
+          @nu.send("#{prop}=", @property_flush[prop]) if
+            @nu.respond_to?("#{prop}=")
+        end
+      end
+    else
+      ITDSERVICE_SHUT_PROP.each do |prop|
+        next unless @resource[prop]
+        unless @property_flush[prop].nil?
+          @nu.send("#{prop}=", @property_flush[prop]) if
+            @nu.respond_to?("#{prop}=")
+        end
+      end
+      ITDSERVICE_ALL_PROPS.each do |prop|
+        next unless @resource[prop]
+        unless @property_flush[prop].nil?
+          @nu.send("#{prop}=", @property_flush[prop]) if
+            @nu.respond_to?("#{prop}=")
+        end
+      end
+      # custom setters which require one-shot multi-param setters
+      load_balance_set
     end
-    # custom setters which require one-shot multi-param setters
-    load_balance_set
   end
 
   def ingress_interface=(should_list)
@@ -173,23 +211,42 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
   end
 
   def load_balance_set
-    buckets = @property_flush[:load_bal_buckets] ? @property_flush[:load_bal_buckets] : @nu.load_bal_buckets
-    mpos = @property_flush[:load_bal_mask_pos] ? @property_flush[:load_bal_mask_pos] : @nu.load_bal_mask_pos
-    bh = @property_flush[:load_bal_method_bundle_hash] ? @property_flush[:load_bal_method_bundle_hash] : @nu.load_bal_method_bundle_hash
-    bs = @property_flush[:load_bal_method_bundle_select] ? @property_flush[:load_bal_method_bundle_select] : @nu.load_bal_method_bundle_select
-    enport = @property_flush[:load_bal_method_end_port] ? @property_flush[:load_bal_method_end_port] : @nu.load_bal_method_end_port
-    proto = @property_flush[:load_bal_method_proto] ? @property_flush[:load_bal_method_proto] : @nu.load_bal_method_proto
-    start = @property_flush[:load_bal_method_start_port] ? @property_flush[:load_bal_method_start_port] : @nu.load_bal_method_start_port
-    enable = flush_boolean?(:load_bal_enable) ? @property_flush[:load_bal_enable] : @nu.load_bal_enable
-    other_params = bs || bh || buckets || mpos || proto || start || enport
-    fail_load_balance(enable, other_params)
-    @nu.send(:load_balance=, enable, bs,
-             bh, buckets, mpos, proto, start, enport)
+    attrs = {}
+    vars = [
+      :load_bal_buckets,
+      :load_bal_mask_pos,
+      :load_bal_method_bundle_hash,
+      :load_bal_method_bundle_select,
+      :load_bal_method_end_port,
+      :load_bal_method_proto,
+      :load_bal_method_start_port,
+      :load_bal_enable,
+    ]
+    if vars.any? { |p| @property_flush.key?(p) }
+      # At least one var has changed, get all vals from manifest
+      vars.each do |p|
+        if @resource[p] == :default
+          attrs[p] = @nu.send("default_#{p}")
+        else
+          attrs[p] = @resource[p]
+          attrs[p] = PuppetX::Cisco::Utils.bool_sym_to_s(attrs[p])
+        end
+      end
+      fail_load_balance(attrs)
+      @nu.load_balance_set(attrs)
+    end
   end
 
-  def fail_load_balance(enable, other_params)
+  def fail_load_balance(attrs)
+    others = attrs[:load_bal_method_bundle_hash] ||
+             attrs[:load_bal_method_bundle_select] ||
+             attrs[:load_bal_buckets] ||
+             attrs[:load_bal_mask_pos] ||
+             attrs[:load_bal_method_proto] ||
+             attrs[:load_bal_method_start_port] ||
+             attrs[:load_bal_method_end_port]
     fail ArgumentError, 'All lb params MUST be default when load_bal_enable is false' if
-      other_params && enable == false
+      others && attrs[:load_bal_enable] == false
   end
 
   def flush

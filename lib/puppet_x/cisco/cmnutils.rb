@@ -64,6 +64,19 @@ module PuppetX
         end
       end
 
+      # Special handling for boolean properties.
+      # This helper method returns true if the property
+      # flush contains a TrueClass or FalseClass value.
+      def self.flush_boolean?(prop)
+        prop.is_a?(TrueClass) || prop.is_a?(FalseClass)
+      end
+
+      # Convert boolean symbols to strings
+      def self.bool_sym_to_s(val)
+        return val unless val == :true || val == :false
+        (val == :true)
+      end
+
       # Helper utility method for range summarization of VLAN and BD ranges
       # Input is a range string. For example: '10-20, 30, 14, 100-105, 21'
       # Output should be: '10-21,30,100-105'
