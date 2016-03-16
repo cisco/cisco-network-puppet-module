@@ -49,32 +49,10 @@ IGNORE_VALUE = :ignore_value
 # These methods are defined outside of a module so that
 # they can access the Beaker DSL API's.
 
-# Method to return the VRF namespace specific command string from basic
-# command string. VRF is declared in hosts.cfg.
-# @param host [String] Host on which to act upon.
-# @param cmdstr [String] The command string to execute on host.
-# @param options [Hash] Options hash literal to get configured VRF.
-# @result namespacestr [String] Returns 'sudo ip netns exec vrf <cmd>'
-# command string for 'cisco' platform.
-def get_namespace_cmd(host, cmdstr, options)
-  case host['platform']
-  when /cisco/
-    agentvrf = options[:HOSTS][host.to_s.to_sym][:vrf]
-    grpc_port = options[:HOSTS][host.to_s.to_sym][:grpc_port]
-    if grpc_port.nil?
-      # Nexus
-      return "sudo ip netns exec #{agentvrf} " + cmdstr
-    else
-      # IOS XR
-      # TODO: remove this workaround when we have grpc UDS support
-      user = options[:HOSTS][host.to_s.to_sym][:ssh][:user]
-      pass = options[:HOSTS][host.to_s.to_sym][:ssh][:password]
-      node_var = "NODE=\"127.0.0.1:#{grpc_port} #{user} #{pass}\""
-      return "sudo #{node_var} " + cmdstr
-    end
-  else
-    return cmdstr
-  end
+# Method rendered obsolete by Beaker enhancements (BKR-703).
+# TODO: remove me.
+def get_namespace_cmd(_, cmdstr, _)
+  cmdstr
 end
 
 # Method to return the Vegas shell command string for a NXOS CLI command.
