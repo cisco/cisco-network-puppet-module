@@ -1,6 +1,6 @@
-# The NXAPI provider for cisco bridge domain.
+# The NXAPI provider for cisco encapsulation.
 #
-# January, 2016
+# March, 2016
 #
 # Copyright (c) 2014-2016 Cisco and/or its affiliates.
 #
@@ -25,7 +25,7 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
-Puppet::Type.type(:cisco_bridge_domain_range).provide(:cisco) do
+Puppet::Type.type(:cisco_encapsulation).provide(:cisco) do
   desc 'The new NXAPI provider.'
 
   confine feature: :cisco_node_utils
@@ -33,7 +33,7 @@ Puppet::Type.type(:cisco_bridge_domain_range).provide(:cisco) do
 
   mk_resource_methods
 
-  BD_NON_BOOL_PROPS = [:member_vni]
+  BD_NON_BOOL_PROPS = [:dot1q_map]
   BD_BOOL_PROPS = []
   BD_ALL_PROPS = BD_NON_BOOL_PROPS + BD_BOOL_PROPS
 
@@ -44,16 +44,16 @@ Puppet::Type.type(:cisco_bridge_domain_range).provide(:cisco) do
 
   def initialize(value={})
     super(value)
-    @bd = Cisco::BridgeDomainRange.rangebds[@property_hash[:name]]
+    @bd = Cisco::Encapsulation.encaps[@property_hash[:name]]
     @property_flush = {}
-    debug 'Created provider instance of cisco_bridge_domain.'
+    debug 'Created provider instance of cisco_encapsulation.'
   end
 
-  def self.properties_get(bd_id, v)
+  def self.properties_get(encap, v)
     debug "Checking instance, bd #{bd_id}"
     current_state = {
-      bd:     bd_id,
-      name:   bd_id,
+      bd:     encap,
+      name:   encap,
       ensure: :present,
     }
 
@@ -74,8 +74,8 @@ Puppet::Type.type(:cisco_bridge_domain_range).provide(:cisco) do
 
   def self.instances
     bds = []
-    Cisco::BridgeDomainRange.rangebds.each do |bd_id, v|
-      bds << properties_get(bd_id, v)
+    Cisco::Encapsulation.encaps.each do |encap, v|
+      bds << properties_get(encap, v)
     end
     bds
   end
@@ -124,7 +124,7 @@ Puppet::Type.type(:cisco_bridge_domain_range).provide(:cisco) do
       # Create/Update
       if @bd.nil?
         new_bd = true
-        @bd = Cisco::BridgeDomainRange.new(@resource[:bd])
+        @bd = Cisco::Encapsulation.new(@resource[:bd])
       end
       properties_set(new_bd)
     end

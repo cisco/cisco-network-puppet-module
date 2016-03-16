@@ -16,18 +16,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Puppet::Type.newtype(:cisco_bridge_domain_range) do
-  @doc = "Manages a Cisco Bridge Domain Range (BD).
+Puppet::Type.newtype(:cisco_bridge_domain_vni) do
+  @doc = "Manages a Cisco Bridge Domain (BD).
 
-  cisco_bridge_domain {\"<bd>\":
+  cisco_bridge_domain_vni {\"<bd>\":
     ..attributes..
   }
 
-  <bd> is the id of the bridge domain.
+  <bd> is the range of ids of bridge domain.
 
   Example:
-    cisco_bridge_domain {\"1000-1100\":
-      member_vni        => '5000-5100'
+    cisco_bridge_domain_vni {\"100-110\":
+      ensure          => present,
+      member_vni      => '5100-5110',
     }
   "
 
@@ -75,7 +76,7 @@ Puppet::Type.newtype(:cisco_bridge_domain_range) do
             fail 'BD ID is not in the valid range' unless valid_ids.include?(elem.to_i)
           end # if
         end # narray
-      end # if
+      end
     end
   end # param id
 
@@ -83,28 +84,36 @@ Puppet::Type.newtype(:cisco_bridge_domain_range) do
   # Attributes #
   ##############
 
+  ensurable
+
   newproperty(:member_vni) do
-    desc "The segment-id mapped to the BD. Valid values are integer
-          and of valid range."
+    desc "The Virtual Network Identifier (VNI) id that is mapped to the VLAN.
+          Valid values are integer"
 
     validate do |value|
-      if value.to_i < 4096
-        warning('VNI value needs to greater than 4096')
+      if value.to_i < 4097
+        warning('Cannot map a vni less than 4097.')
       else
         narray = value.split(',')
         narray.each do |elem|
           if elem.include?('-')
             earray = elem.split('-')
             earray.each do |id|
-              fail 'VNI ID needs to be an integer' unless id == id.to_i.to_s
-              fail 'VNI ID is not in the valid range' unless id.to_i > 4096
+              fail 'BD ID needs to be an integer' unless id == id.to_i.to_s
+              fail 'BD ID is not in the valid range' unless id.to_i > 4097
             end # earray
           else
-            fail 'VNI ID needs to be an integer' unless elem == elem.to_i.to_s
-            fail 'VNI ID is not in the valid range' unless elem.to_i > 4096
+            fail 'BD ID needs to be an integer' unless elem == elem.to_i.to_s
+            fail 'BD ID is not in the valid range' unless elem.to_i > 4097
           end # if
         end # narray
       end # if
+      puts "member vni validate passed #{value}"
+    end # validate
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
     end
   end # property name
 end # Puppet::Type.newtype
