@@ -140,8 +140,7 @@ end
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = UtilityLib::PUPPET_BINPATH + 'resource cisco_X__RESOURCE_NAME__X'
-  UtilityLib.get_namespace_cmd(agent, cmd, options)
+  UtilityLib::PUPPET_BINPATH + 'resource cisco_X__RESOURCE_NAME__X'
 end
 
 def build_default_values(testcase)

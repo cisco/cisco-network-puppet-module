@@ -170,8 +170,7 @@ tests['change_source_int_when_shutdown'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = PUPPET_BINPATH + 'resource cisco_vxlan_vtep'
-  get_namespace_cmd(agent, cmd, options)
+  PUPPET_BINPATH + 'resource cisco_vxlan_vtep'
 end
 
 def build_manifest_cisco_vxlan_vtep(tests, id)

@@ -464,7 +464,7 @@ def build_manifest_interface(tests, id)
 
   cmd = PUPPET_BINPATH +
         "resource cisco_interface '#{tests[id][:title_pattern]}'"
-  tests[id][:resource_cmd] = get_namespace_cmd(agent, cmd, options)
+  tests[id][:resource_cmd] = cmd
 end
 
 # Helper for 'system default switchport'

@@ -226,8 +226,7 @@ tests['configure_loopback_interface'] = {
 # Full command string for puppet resource command used to verify
 # the configuration applied by the cisco_command_config resource.
 def puppet_resource_cmd(tests, id)
-  cmd = PUPPET_BINPATH + "resource #{tests[id][:puppet_resource]}"
-  get_namespace_cmd(agent, cmd, options)
+  PUPPET_BINPATH + "resource #{tests[id][:puppet_resource]}"
 end
 
 def build_manifest_cisco_command_config(tests, id)
