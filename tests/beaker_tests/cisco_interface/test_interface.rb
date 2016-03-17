@@ -130,14 +130,14 @@ tests['L3_default_nexus'] = {
   preclean:           true,
   sys_def_switchport: false,
   manifest_props:     {
-    duplex:                        'default',
-    ipv4_forwarding:               'default',
-    ipv4_pim_sparse_mode:          'default',
+    duplex:               'default',
+    ipv4_forwarding:      'default',
+    ipv4_pim_sparse_mode: 'default',
   },
   resource:           {
-    'duplex'                        => 'auto',
-    'ipv4_forwarding'               => 'false',
-    'ipv4_pim_sparse_mode'          => 'false',
+    'duplex'               => 'auto',
+    'ipv4_forwarding'      => 'false',
+    'ipv4_pim_sparse_mode' => 'false',
   },
 }
 
