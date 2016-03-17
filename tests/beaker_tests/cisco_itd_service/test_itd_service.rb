@@ -161,7 +161,9 @@ def test_harness_dependencies(_tests, _id)
   command_config(agent, cmd, cmd)
   cmd = 'feature interface-vlan ; vlan 2; interface vlan 2; interface port-channel 100 ; feature itd'
   command_config(agent, cmd, cmd)
-  cmd = 'itd device-group udpGroup ; itd device-group icmpGroup ; node ip 2.2.2.2 ; exit ; node ip 3.3.3.3'
+  cmd = 'itd device-group udpGroup ; node ip 1.1.1.1'
+  command_config(agent, cmd, cmd)
+  cmd = 'itd device-group icmpGroup ; node ip 2.2.2.2 ; exit ; node ip 3.3.3.3'
   command_config(agent, cmd, cmd)
 end
 
