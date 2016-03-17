@@ -172,7 +172,7 @@ $env['PATH'] = "$PATH:#{PUPPET_PATH}/bin/:#{PUPPET_PATH}/lib/"
 # @param agent [String]
 # @return [String] Path to puppet.conf file
 def get_puppet_config(agent)
-  cl = "puppet agent --configprint config"
+  cl = 'puppet agent --configprint config'
   (on agent, cl, environment: $env, pty: true).stdout.chomp
 end
 
@@ -230,7 +230,6 @@ def get_agent_config(agent)
   target_guestshell?(agent) ? opts = { pty: true } : opts = {}
   on(agent, "cat #{get_puppet_config(agent)}", opts).stdout
 end
-
 
 # Get default puppet.conf file from puppet.conf file after
 # the agent is installed.
@@ -374,7 +373,7 @@ def setup_env(agent)
   end
   on agent, "ln -sf #{PUPPET_PATH}/bin/puppet /usr/bin/puppet", codes
   # SSH environment directory may not exist by default for XR
-  on agent, "mkdir -p ~/.ssh", codes
+  on agent, 'mkdir -p ~/.ssh', codes
 end
 
 # Install cisco_node_utils gem on target agent
@@ -408,11 +407,12 @@ def install_cisco_gem_on(agent)
   conf_data << "\n  username: #{opts['username']}" if opts['username']
   conf_data << "\n  password: #{opts['password']}" if opts['password']
   conf_data << "\n  port:     #{opts['port']}" if opts['port']
-  on agent, "touch /etc/cisco_node_utils.yaml"
-  on agent, "chmod a+rw /etc/cisco_node_utils.yaml"
-  on agent, "echo \"#{conf_data}\" > /etc/cisco_node_utils.yaml"
-  on agent, "chown root /etc/cisco_node_utils.yaml"
-  on agent, "chmod 0600 /etc/cisco_node_utils.yaml"
+  config_file = '/etc/cisco_node_utils.yaml'
+  on agent, "touch #{config_file}"
+  on agent, "chmod a+rw #{config_file}"
+  on agent, "echo \"#{conf_data}\" > #{config_file}"
+  on agent, "chown root #{config_file}"
+  on agent, "chmod 0600 #{config_file}"
 end
 
 #---------------------------------------------------------------------#
@@ -458,7 +458,7 @@ agents.each do |agent|
     if options['cert_clean']
       on master, "#{PUPPET_PATH}/bin/puppet cert clean #{agent['ip']}",
          accept_all_exit_codes: true, pty: true
-      ssl_dir = (on agent, "puppet agent --configprint ssldir",
+      ssl_dir = (on agent, 'puppet agent --configprint ssldir',
                     accept_all_exit_codes: true, pty: true, environment: $env).stdout.chomp
       on agent, "find #{ssl_dir} -name #{agent['ip']}.pem -delete",
          accept_all_exit_codes: true, pty: true, environment: $env
@@ -466,7 +466,7 @@ agents.each do |agent|
 
     # Start puppet agent
     logger.notify "Kick start puppet on agent: #{agent}"
-    result = on agent, "puppet agent -t",
+    result = on agent, 'puppet agent -t',
                 accept_all_exit_codes: true, pty: true, environment: $env
     if result.exit_code != 0 && result.exit_code != 2
       logger.warn "AGENT: #{agent} did not start properly. Check logs for details"
