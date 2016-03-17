@@ -112,6 +112,61 @@ module PuppetX
       end
     end # class Utils
 
+    # PuppetX::Cisco::EncapUtil - Common Encapsulation methods used by
+    # Encapsulation Types/Providers
+    class EncapUtils
+      def self.batch_the_string(string)
+        Utils.unsorted_list_to_string(Utils.string_to_array(string.to_s))
+      end
+
+      # This will expand the string to a list of bds as integers
+      def self.string_to_array(string)
+        list = []
+        narray = string.split(',')
+        narray.each do |elem|
+          if elem.include?('-')
+            es = elem.gsub('-', '..')
+            ea = es.split('..').map { |d| Integer(d) }
+            er = ea[0]..ea[1]
+            list << er.to_a
+          else
+            list << elem.to_i
+          end
+        end
+        list.flatten
+      end
+
+      # This method will generate a batched string if a list is passed as
+      # argument
+      # Input would be as [1,2,3,4,5,10,11,12,7,30,100,31,32]
+      # output will be 1-5,10-12,7,30,100,31-32
+      def self.unsorted_list_to_string(list)
+        farray = list.compact
+        lranges = []
+        unless farray.empty?
+          left = list.first
+          right = nil
+          farray.each do |aelem|
+            if right && aelem != right.succ
+              if left == right
+                lranges << left
+              else
+                lranges << Range.new(left, right)
+              end
+              left = aelem
+            end
+            right = aelem
+          end
+          if left == right
+            lranges << left
+          else
+            lranges << Range.new(left, right)
+          end
+        end
+        lranges.to_s.gsub('..', '-').delete('[').delete(']').delete(' ')
+      end
+    end
+
     # PuppetX::Cisco::BgpUtil - Common BGP methods used by BGP Types/Providers
     class BgpUtils
       def self.process_asnum(asnum)

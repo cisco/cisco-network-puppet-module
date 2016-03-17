@@ -33,35 +33,35 @@ Puppet::Type.type(:cisco_encapsulation).provide(:cisco) do
 
   mk_resource_methods
 
-  BD_NON_BOOL_PROPS = [:dot1q_map]
-  BD_BOOL_PROPS = []
-  BD_ALL_PROPS = BD_NON_BOOL_PROPS + BD_BOOL_PROPS
+  ENCAP_NON_BOOL_PROPS = [:dot1q_map]
+  ENCAP_BOOL_PROPS = []
+  ENCAP_ALL_PROPS = ENCAP_NON_BOOL_PROPS + ENCAP_BOOL_PROPS
 
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@bd',
-                                            BD_NON_BOOL_PROPS)
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@bd',
-                                            BD_BOOL_PROPS)
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@encap',
+                                            ENCAP_NON_BOOL_PROPS)
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@encap',
+                                            ENCAP_BOOL_PROPS)
 
   def initialize(value={})
     super(value)
-    @bd = Cisco::Encapsulation.encaps[@property_hash[:name]]
+    @encap = Cisco::Encapsulation.encaps[@property_hash[:name]]
     @property_flush = {}
     debug 'Created provider instance of cisco_encapsulation.'
   end
 
   def self.properties_get(encap, v)
-    debug "Checking instance, bd #{bd_id}"
+    debug "Checking instance, encap #{encap}"
     current_state = {
-      bd:     encap,
+      encap:  encap,
       name:   encap,
       ensure: :present,
     }
 
     # Call node_utils getter for each property
-    BD_NON_BOOL_PROPS.each do |prop|
+    ENCAP_NON_BOOL_PROPS.each do |prop|
       current_state[prop] = v.send(prop)
     end
-    BD_BOOL_PROPS.each do |prop|
+    ENCAP_BOOL_PROPS.each do |prop|
       val = v.send(prop)
       if val.nil?
         current_state[prop] = nil
@@ -73,18 +73,18 @@ Puppet::Type.type(:cisco_encapsulation).provide(:cisco) do
   end # self.properties_get
 
   def self.instances
-    bds = []
+    encaps = []
     Cisco::Encapsulation.encaps.each do |encap, v|
-      bds << properties_get(encap, v)
+      encaps << properties_get(encap, v)
     end
-    bds
+    encaps
   end
 
   def self.prefetch(resources)
-    bds = instances
+    encaps = instances
 
     resources.keys.each do |id|
-      provider = bds.find { |bd| bd.instance_name == id }
+      provider = encaps.find { |encap| encap.instance_name == id }
       resources[id].provider = provider unless provider.nil?
     end
   end # self.prefetch
@@ -102,45 +102,45 @@ Puppet::Type.type(:cisco_encapsulation).provide(:cisco) do
   end
 
   def instance_name
-    bd
+    encap
   end
 
-  def properties_set(new_bd=false)
-    BD_ALL_PROPS.each do |prop|
+  def properties_set(new_encap=false)
+    ENCAP_ALL_PROPS.each do |prop|
       next unless @resource[prop]
-      send("#{prop}=", @resource[prop]) if new_bd
+      send("#{prop}=", @resource[prop]) if new_encap
       unless @property_flush[prop].nil?
-        @bd.send("#{prop}=", @property_flush[prop]) if
-          @bd.respond_to?("#{prop}=")
+        @encap.send("#{prop}=", @property_flush[prop]) if
+          @encap.respond_to?("#{prop}=")
       end
     end
   end
 
   def flush
     if @property_flush[:ensure] == :absent
-      @bd.destroy
-      @bd = nil
+      @encap.destroy
+      @encap = nil
     else
       # Create/Update
-      if @bd.nil?
-        new_bd = true
-        @bd = Cisco::Encapsulation.new(@resource[:bd])
+      if @encap.nil?
+        new_encap = true
+        @encap = Cisco::Encapsulation.new(@resource[:encap])
       end
-      properties_set(new_bd)
+      properties_set(new_encap)
     end
     puts_config
   end
 
   def puts_config
-    if @bd.nil?
-      info "BD=#{@resource[:bd]} is absent."
+    if @encap.nil?
+      info "ENCAP=#{@resource[:encap]} is absent."
       return
     end
 
-    # Dump all current properties for this bd
-    current = sprintf("\n%30s: %s", 'bd', instance_name)
-    BD_ALL_PROPS.each do |prop|
-      current.concat(sprintf("\n%30s: %s", prop, @bd.send(prop)))
+    # Dump all current properties for this encap
+    current = sprintf("\n%30s: %s", 'encap', instance_name)
+    ENCAP_ALL_PROPS.each do |prop|
+      current.concat(sprintf("\n%30s: %s", prop, @encap.send(prop)))
     end
     debug current
   end # puts_config

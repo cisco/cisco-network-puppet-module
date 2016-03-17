@@ -16,6 +16,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'ipaddr'
+begin
+  require 'puppet_x/cisco/cmnutils'
+rescue LoadError # seen on master, not on agent
+  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..',
+                                     'puppet_x', 'cisco', 'cmnutils.rb'))
+end
+
 Puppet::Type.newtype(:cisco_encapsulation) do
   @doc = "Manages a Global VNI Encapsulation profile(dot1q).
 
@@ -68,18 +77,14 @@ Puppet::Type.newtype(:cisco_encapsulation) do
     desc "Dot1q vlan to vni mapping under encapsulation profile.
          Valid values match format #{format}"
 
-    validate do |dot1q_map|
-      puts "#{dot1q_map.length} values #{dot1q_map}"
-      fail "Dot1q vlan to vni mapping should be of the format #{format}" unless
-           dot1q_map.length == 2
-      dot1q_map.split.each do |value|
-        fail 'Values in dot1q list is not of integer type' unless /^[\d\s,-]*$/.match(value)
-      end
-      dot1q_map
+    validate do |value|
+      fail 'Values in dot1q list is not of integer type' unless /^[\d\s,-]*$/.match(value)
     end
 
-    def insync?(is)
-      (is.size == should.flatten.size && is.sort == should.flatten.sort)
+    munge do |value|
+      value = value.gsub(/\s/, '')
+      # value = PuppetX::Cisco::EncapUtils.batch_the_string(value)
+      value
     end
   end # property name
 end # Puppet::Type.newtype

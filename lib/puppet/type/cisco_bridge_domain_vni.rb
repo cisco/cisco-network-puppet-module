@@ -60,24 +60,13 @@ Puppet::Type.newtype(:cisco_bridge_domain_vni) do
       internal = *(3968..4096)
       valid_ids = range - internal
 
-      if value.to_i == 1
-        warning('Cannot make changes to the default BD.')
-      else
-        narray = value.split(',')
-        narray.each do |elem|
-          if elem.include?('-')
-            earray = elem.split('-')
-            earray.each do |id|
-              fail 'BD ID needs to be an integer' unless id == id.to_i.to_s
-              fail 'BD ID is not in the valid range' unless valid_ids.include?(id.to_i)
-            end # earray
-          else
-            fail 'BD ID needs to be an integer' unless elem == elem.to_i.to_s
-            fail 'BD ID is not in the valid range' unless valid_ids.include?(elem.to_i)
-          end # if
-        end # narray
+      fail 'Value is not of integer type' unless /^[\d\s,-]*$/.match(value)
+      temp_val = value.scan(/\d+/)
+      temp_val.each do |elem|
+        warning('Cannot make changes to the default BD.') if elem.to_i == 1
+        fail 'BD ID is not in the valid range of 2-3967' unless valid_ids.include?(elem.to_i)
       end
-    end
+    end # validate
   end # param id
 
   ##############
@@ -91,24 +80,11 @@ Puppet::Type.newtype(:cisco_bridge_domain_vni) do
           Valid values are integer"
 
     validate do |value|
-      if value.to_i < 4097
-        warning('Cannot map a vni less than 4097.')
-      else
-        narray = value.split(',')
-        narray.each do |elem|
-          if elem.include?('-')
-            earray = elem.split('-')
-            earray.each do |id|
-              fail 'BD ID needs to be an integer' unless id == id.to_i.to_s
-              fail 'BD ID is not in the valid range' unless id.to_i > 4097
-            end # earray
-          else
-            fail 'BD ID needs to be an integer' unless elem == elem.to_i.to_s
-            fail 'BD ID is not in the valid range' unless elem.to_i > 4097
-          end # if
-        end # narray
-      end # if
-      puts "member vni validate passed #{value}"
+      fail 'Value is not of integer type' unless /^[\d\s,-]*$/.match(value)
+      temp_val = value.scan(/\d+/)
+      temp_val.each do |elem|
+        fail 'Value needs to be greater than 4097' unless elem.to_i > 4097
+      end
     end # validate
 
     munge do |value|

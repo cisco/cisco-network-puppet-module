@@ -74,6 +74,7 @@ Puppet::Type.type(:cisco_bridge_domain_vni).provide(:cisco) do
 
   def self.instances
     bds = []
+
     Cisco::BridgeDomainVNI.rangebds.each do |bd_id, v|
       bds << properties_get(bd_id, v)
     end
@@ -105,8 +106,14 @@ Puppet::Type.type(:cisco_bridge_domain_vni).provide(:cisco) do
     bd
   end
 
+  def check_member_vni
+    curr_bd = Cisco::BridgeDomainVNI.new(@resource[:bd], false)
+    curr_bd.member_vni
+  end
+
   def properties_set(new_bd=false)
     BD_ALL_PROPS.each do |prop|
+      next unless check_member_vni != @resource[prop]
       next unless @resource[prop]
       send("#{prop}=", @resource[prop]) if new_bd
       unless @property_flush[prop].nil?
