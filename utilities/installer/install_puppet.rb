@@ -159,6 +159,15 @@ def tmp_location(host)
   end
 end
 
+def create_tmp_location(agent)
+  on agent, "mkdir -p #{tmp_location(agent)}"
+  on agent, "chmod a+rw #{tmp_location(agent)}"
+end
+
+def destroy_tmp_location(agent)
+  on agent, "rm -rf #{tmp_location(agent)}"
+end
+
 $env = {}
 $env['http_proxy'] = options['http_proxy'] if options['http_proxy']
 $env['https_proxy'] = options['https_proxy'] if options['https_proxy']
@@ -173,7 +182,7 @@ $env['PATH'] = "$PATH:#{PUPPET_PATH}/bin/:#{PUPPET_PATH}/lib/"
 # @return [String] Path to puppet.conf file
 def get_puppet_config(agent)
   cl = 'puppet agent --configprint config'
-  (on agent, cl, environment: $env, pty: true).stdout.chomp
+  (on agent, cl, pty: true).stdout.chomp
 end
 
 # Determine if this is a native or guestshell install
@@ -205,7 +214,7 @@ end
 # @param agent [String]
 # @return [Boolean] true if it exists, else false
 def agent_template_exists?(agent)
-  opts = { acceptable_exit_codes: [0, 2], environment: $env }
+  opts = { acceptable_exit_codes: [0, 2] }
   opts[:pty] = true if target_guestshell?(agent)
   result = on agent, "ls #{get_puppet_config(agent)}", opts
   result.exit_code == 0
@@ -225,8 +234,6 @@ end
 # @param agent [String]
 # @return [String] Data containing puppet.conf information
 def get_agent_config(agent)
-  opts = { environment: $env }
-  opts[:pty] = true if target_guestshell?(agent)
   target_guestshell?(agent) ? opts = { pty: true } : opts = {}
   on(agent, "cat #{get_puppet_config(agent)}", opts).stdout
 end
@@ -307,10 +314,7 @@ def configure_puppet_nexus(agent, opts={})
   # file under /bootflash.  Bootflash is mounted into
   # the guestshell.
   tmp_puppet_file = "#{tmp_location(agent)}/puppet.conf"
-  call_opts = { acceptable_exit_codes: [0, 1], environment: $env }
-  on agent, "rmdir #{tmp_location(agent)}", call_opts
-  on agent, "mkdir #{tmp_location(agent)}", call_opts
-  on agent, "chmod a+rw #{tmp_location(agent)}", call_opts
+  create_tmp_location(agent)
 
   # Determine location of puppet.conf
   puppet_conf = get_puppet_config(agent)
@@ -326,9 +330,9 @@ def configure_puppet_nexus(agent, opts={})
     end
     conf_data << "\n"
   end
-  on agent, "echo \"#{conf_data}\" > #{tmp_puppet_file}", environment: $env
-  on agent, "mv #{tmp_puppet_file} #{puppet_conf}", pty: true, environment: $env
-  on agent, "rmdir #{tmp_location(agent)}", call_opts
+  on agent, "echo \"#{conf_data}\" > #{tmp_puppet_file}"
+  on agent, "mv #{tmp_puppet_file} #{puppet_conf}", pty: true
+  destroy_tmp_location(agent)
 end
 
 # Copy local resolve.conf file to target agent
@@ -337,26 +341,18 @@ end
 def copy_resolve_conf(agent)
   logger.info 'Copying /etc/resolv.conf to node'
   resolve_path = '/etc/resolv.conf'
-  on agent, "rm -rf #{resolve_path}",
-     acceptable_exit_codes: [0, 1], pty: true, environment: $env
+  on agent, "rm -rf #{resolve_path}", acceptable_exit_codes: [0, 1], pty: true
   tmp_puppet_file = "#{tmp_location(agent)}/resolve.conf"
-  on agent, "rmdir #{tmp_location(agent)}",
-     acceptable_exit_codes: [0, 1], environment: $env
-  on agent, "mkdir #{tmp_location(agent)}",
-     acceptable_exit_codes: [0, 1], environment: $env
-  on agent, "chmod a+rw #{tmp_location(agent)}",
-     acceptable_exit_codes: [0, 1], environment: $env
+  create_tmp_location(agent)
   scp_to agent, options['resolver'], "#{tmp_puppet_file}"
-  on agent, "mv #{tmp_puppet_file} #{resolve_path}",
-     pty: true, environment: $env
-  on agent, "rmdir #{tmp_location(agent)}",
-     acceptable_exit_codes: [0, 1], environment: $env
+  on agent, "mv #{tmp_puppet_file} #{resolve_path}", pty: true
+  destroy_tmp_location(agent)
 end
 
 def setup_env(agent)
   pupurl = 'http://yum.puppetlabs.com/RPM-GPG-KEY-puppetlabs'
   gpgdir = '/etc/pki/rpm-gpg'
-  codes  = { acceptable_exit_codes: [0, 1], pty: true, environment: $env }
+  codes  = { pty: true, environment: $env }
 
   on agent, "mkdir -p #{gpgdir}", codes
   if options['rpm_gpg_key'].nil?
@@ -364,16 +360,16 @@ def setup_env(agent)
     on agent, "wget #{pupurl} -P #{gpgdir}", codes
   else
     gpg_key_name = File.basename(options['rpm_gpg_key'])
-    on agent, "rm -rf #{tmp_location(agent)}", codes
-    on agent, "mkdir #{tmp_location(agent)}", codes
+    create_tmp_location(agent)
     scp_to agent, options['rpm_gpg_key'], tmp_location(agent)
     on agent, "rpm --import #{tmp_location(agent)}/#{gpg_key_name}", codes
     on agent, "cp #{tmp_location(agent)}/#{gpg_key_name} #{gpgdir}", codes
-    on agent, "rm -rf #{tmp_location(agent)}", codes
+    destroy_tmp_location(agent)
   end
   on agent, "ln -sf #{PUPPET_PATH}/bin/puppet /usr/bin/puppet", codes
   # SSH environment directory may not exist by default for XR
   on agent, 'mkdir -p ~/.ssh', codes
+  on agent, "chown #{agent['ssh']['user']} ~/.ssh", codes
 end
 
 # Install cisco_node_utils gem on target agent
@@ -382,21 +378,13 @@ def install_cisco_gem_on(agent)
   opts = options['cisco_node_utils']
   opts = {} unless opts.is_a? Hash
   if opts['gem']
-    # TODO: move the directory logic to a helper method
-    on agent, "rmdir #{tmp_location(agent)}",
-       acceptable_exit_codes: [0, 1], environment: $env
-    on agent, "mkdir #{tmp_location(agent)}",
-       acceptable_exit_codes: [0, 1], environment: $env
-    on agent, "chmod a+rw #{tmp_location(agent)}",
-       acceptable_exit_codes: [0, 1], environment: $env
+    create_tmp_location(agent)
 
     gem_file = "#{tmp_location(agent)}/#{File.basename(opts['gem'])}"
     scp_to agent, opts['gem'], gem_file
     on agent, "#{PUPPET_PATH}/bin/gem install --no-ri --no-rdoc #{gem_file}", environment: $env
 
-    on agent, "rm -rf #{gem_file}"
-    on agent, "rmdir #{tmp_location(agent)}",
-       acceptable_exit_codes: [0, 1], environment: $env
+    destroy_tmp_location(agent)
   else
     # install from rubygems.org
     on agent, "#{PUPPET_PATH}/bin/gem install --no-ri --no-rdoc cisco_node_utils", environment: $env
@@ -459,15 +447,15 @@ agents.each do |agent|
       on master, "#{PUPPET_PATH}/bin/puppet cert clean #{agent['ip']}",
          accept_all_exit_codes: true, pty: true
       ssl_dir = (on agent, 'puppet agent --configprint ssldir',
-                    accept_all_exit_codes: true, pty: true, environment: $env).stdout.chomp
+                    accept_all_exit_codes: true, pty: true).stdout.chomp
       on agent, "find #{ssl_dir} -name #{agent['ip']}.pem -delete",
-         accept_all_exit_codes: true, pty: true, environment: $env
+         accept_all_exit_codes: true, pty: true
     end
 
     # Start puppet agent
     logger.notify "Kick start puppet on agent: #{agent}"
     result = on agent, 'puppet agent -t',
-                accept_all_exit_codes: true, pty: true, environment: $env
+                accept_all_exit_codes: true, pty: true
     if result.exit_code != 0 && result.exit_code != 2
       logger.warn "AGENT: #{agent} did not start properly. Check logs for details"
       $start_failures += 1
@@ -511,7 +499,7 @@ def report_results
   end
 
   $exceptions.each do |exception|
-    logger.debug "#{exception}"
+    logger.info "#{exception}"
   end
 
   return unless options['log_level'] == 'info'
