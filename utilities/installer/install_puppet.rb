@@ -109,6 +109,11 @@
 #     https_proxy:            HTTPS proxy URL
 #     resolver:               Local path to file that will be used to overwrite
 #                             /etc/resolv.conf on target agent
+#     cisco_node_utils:       Install and configure the gem by this name
+#       gem:                  Gem file to install (else, use rubygems.org)
+#       port:                 gRPC server listen port
+#       username:             IOS XR admin username
+#       password:             IOS XR admin password
 #
 # Assumptions:
 #   - Master node has been configured to auto accept/sign SSL certificates
@@ -372,6 +377,44 @@ def setup_env(agent)
   on agent, "mkdir -p ~/.ssh", codes
 end
 
+# Install cisco_node_utils gem on target agent
+def install_cisco_gem_on(agent)
+  logger.notify "Installing cisco_node_utils gem on agent: #{agent}"
+  opts = options['cisco_node_utils']
+  opts = {} unless opts.is_a? Hash
+  if opts['gem']
+    # TODO: move the directory logic to a helper method
+    on agent, "rmdir #{tmp_location(agent)}",
+       acceptable_exit_codes: [0, 1], environment: $env
+    on agent, "mkdir #{tmp_location(agent)}",
+       acceptable_exit_codes: [0, 1], environment: $env
+    on agent, "chmod a+rw #{tmp_location(agent)}",
+       acceptable_exit_codes: [0, 1], environment: $env
+
+    gem_file = "#{tmp_location(agent)}/#{File.basename(opts['gem'])}"
+    scp_to agent, opts['gem'], gem_file
+    on agent, "#{PUPPET_PATH}/bin/gem install --no-ri --no-rdoc #{gem_file}", environment: $env
+
+    on agent, "rm -rf #{gem_file}"
+    on agent, "rmdir #{tmp_location(agent)}",
+       acceptable_exit_codes: [0, 1], environment: $env
+  else
+    # install from rubygems.org
+    on agent, "#{PUPPET_PATH}/bin/gem install --no-ri --no-rdoc cisco_node_utils", environment: $env
+  end
+
+  logger.notify "Configuring cisco_node_utils gem on agent: #{agent}"
+  conf_data = 'default:'
+  conf_data << "\n  username: #{opts['username']}" if opts['username']
+  conf_data << "\n  password: #{opts['password']}" if opts['password']
+  conf_data << "\n  port:     #{opts['port']}" if opts['port']
+  on agent, "touch /etc/cisco_node_utils.yaml"
+  on agent, "chmod a+rw /etc/cisco_node_utils.yaml"
+  on agent, "echo \"#{conf_data}\" > /etc/cisco_node_utils.yaml"
+  on agent, "chown root /etc/cisco_node_utils.yaml"
+  on agent, "chmod 0600 /etc/cisco_node_utils.yaml"
+end
+
 #---------------------------------------------------------------------#
 # Loop through each agent defined in the host configuration file
 # and perform the following:
@@ -403,6 +446,9 @@ agents.each do |agent|
     # Install RPM to native shell or guestshell
     logger.notify "Installing puppet on agent: #{agent}"
     install_puppet_agent_on(agent)
+
+    # Install cisco_node_utils gem
+    install_cisco_gem_on(agent) if options.key?(:cisco_node_utils)
 
     # Configure puppet
     logger.notify "Configure puppet on agent: #{agent}"
