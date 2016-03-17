@@ -83,29 +83,32 @@ Puppet::Type.newtype(:cisco_itd_service) do
   ensurable
 
   newproperty(:access_list) do
-    desc 'ITD access-list name.'
+    desc "ITD access-list name. Valid values are string, keyword
+         'default'. "
 
-    validate do |al|
-      fail("access_list property - #{al} should be a string") unless
-        al.kind_of? String
+    munge do |value|
+      value = :default if value == 'default'
+      value
     end
   end # property access_list
 
   newproperty(:device_group) do
-    desc 'ITD device-group name.'
+    desc "ITD device-group name. Valid values are string, keyword
+         'default'. "
 
-    validate do |dg|
-      fail("device_group property - #{dg} should be a string") unless
-        dg.kind_of? String
+    munge do |value|
+      value = :default if value == 'default'
+      value
     end
   end # property device_group
 
   newproperty(:exclude_access_list) do
-    desc 'ITD access-list name.'
+    desc "ITD exclude-access-list name. Valid values are string, keyword
+         'default'. "
 
-    validate do |al|
-      fail("exclude_access_list property - #{al} should be a string") unless
-        al.kind_of? String
+    munge do |value|
+      value = :default if value == 'default'
+      value
     end
   end # property exclude_access_list
 
@@ -231,11 +234,12 @@ Puppet::Type.newtype(:cisco_itd_service) do
   end # property nat_destination
 
   newproperty(:peer_local) do
-    desc 'ITD Peer involved in sandwich mode.'
+    desc "ITD Peer involved in sandwich mode. Valid values are string,
+         ' keyword default'. "
 
-    validate do |pl|
-      fail("peer_local property - #{pl} should be a string") unless
-        pl.kind_of? String
+    munge do |value|
+      value = :default if value == 'default'
+      value
     end
   end # property peer_local
 
@@ -302,11 +306,12 @@ Puppet::Type.newtype(:cisco_itd_service) do
   end # property virtual_ip
 
   newproperty(:vrf) do
-    desc 'ITD service vrf.'
+    desc "ITD service vrf. Valid values are string, keyword
+         'default'. "
 
-    validate do |vrf|
-      fail("vrf property - #{vrf} should be a string") unless
-        vrf.kind_of? String
+    munge do |value|
+      value = :default if value == 'default'
+      value
     end
   end # property vrf
 end
