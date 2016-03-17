@@ -53,7 +53,7 @@ Puppet::Type.newtype(:cisco_bridge_domain_vni) do
   end
 
   newparam(:bd, namevar: true) do
-    desc 'ID of the Bridge Domain. Valid values are integer.'
+    desc 'ID of the Bridge Domain. Valid values are range of integers.'
 
     validate do |value|
       range = *(2..4096)
@@ -67,6 +67,11 @@ Puppet::Type.newtype(:cisco_bridge_domain_vni) do
         fail 'BD ID is not in the valid range of 2-3967' unless valid_ids.include?(elem.to_i)
       end
     end # validate
+
+    munge do |value|
+      value = value.gsub(/\s/, '')
+      value
+    end # munge
   end # param id
 
   ##############
@@ -77,7 +82,7 @@ Puppet::Type.newtype(:cisco_bridge_domain_vni) do
 
   newproperty(:member_vni) do
     desc "The Virtual Network Identifier (VNI) id that is mapped to the VLAN.
-          Valid values are integer"
+          Valid values are range of integers"
 
     validate do |value|
       fail 'Value is not of integer type' unless /^[\d\s,-]*$/.match(value)
@@ -88,8 +93,8 @@ Puppet::Type.newtype(:cisco_bridge_domain_vni) do
     end # validate
 
     munge do |value|
-      value = :default if value == 'default'
+      value = value.gsub(/\s/, '')
       value
-    end
+    end # munge
   end # property name
 end # Puppet::Type.newtype

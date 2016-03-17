@@ -108,7 +108,19 @@ tests['preclean'] = {
 
 mapping = Array['100-151,200-250', '5100-5150,6000,5151-5201']
 tests['non_default_properties_change_mapping'] = {
-  desc:           "2.1 Non Default Properties 'change dot1q mapping' commands",
+  desc:           '2.1 Non Default Properties change dot1q mapping',
+  title_pattern:  'cisco',
+  manifest_props: "
+    dot1q_map       => #{mapping},
+  ",
+  resource_props: {
+    'dot1q_map' => mapping
+  },
+}
+
+mapping = Array['100-151,200-250', '8000-8001,5102-5150,6000,5151-5201']
+tests['non_default_properties_change_mapping_of_existing_profile'] = {
+  desc:           "2.2 Non Default Properties again change dot1q mapping of same profile'",
   title_pattern:  'cisco',
   manifest_props: "
     dot1q_map       => #{mapping},
@@ -209,8 +221,9 @@ test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   test_harness_encapsulation(tests, 'non_default_properties_change_mapping')
+  test_harness_encapsulation(tests, 'non_default_properties_change_mapping_of_existing_profile')
 
-  id = 'non_default_properties_change_mapping'
+  id = 'non_default_properties_change_mapping_of_existing_profile'
   tests[id][:desc] = '2.4 Cleanup the non default property'
   tests[id][:ensure] = :absent
   test_harness_encapsulation(tests, id)

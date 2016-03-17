@@ -91,7 +91,7 @@ Puppet::Type.newtype(:cisco_bridge_domain) do
   end # property name
 
   newproperty(:fabric_control) do
-    desc 'whether to change BD type to fabric-control, Only one BD can be fabric-control'
+    desc "whether to change BD type to fabric-control, Only one BD can be fabric-control. Valid values are true, false ,'default'."
 
     newvalues(
       :true,
@@ -100,7 +100,7 @@ Puppet::Type.newtype(:cisco_bridge_domain) do
   end # property fabric_control
 
   newproperty(:shutdown) do
-    desc 'whether or not the BD is shutdown'
+    desc "whether or not the BD is shutdown. Valid values are true, false, 'default'."
 
     newvalues(
       :true,

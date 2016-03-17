@@ -83,8 +83,8 @@ Puppet::Type.newtype(:cisco_encapsulation) do
 
     munge do |value|
       value = value.gsub(/\s/, '')
-      # value = PuppetX::Cisco::EncapUtils.batch_the_string(value)
+      value = PuppetX::Cisco::EncapUtils.batch_the_string(value)
       value
-    end
+    end # munge
   end # property name
 end # Puppet::Type.newtype

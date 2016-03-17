@@ -116,7 +116,7 @@ module PuppetX
     # Encapsulation Types/Providers
     class EncapUtils
       def self.batch_the_string(string)
-        Utils.unsorted_list_to_string(Utils.string_to_array(string.to_s))
+        EncapUtils.unsorted_list_to_string(EncapUtils.string_to_array(string.to_s))
       end
 
       # This will expand the string to a list of bds as integers
