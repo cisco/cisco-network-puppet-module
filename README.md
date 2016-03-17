@@ -57,14 +57,14 @@ The set of supported network element platforms is continuously expanding. Please
 
 ## Setup
 
-#### Puppet Master
+### Puppet Master
 
-The `ciscopuppet` module is installed on the Puppet Master server. Please see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html) for general information on Puppet module installation.
+The `ciscopuppet` module must be installed on the Puppet Master server. Please see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html) for general information on Puppet module installation.
 
-#### Puppet Agent
-The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md](docs/README-agent-install.md) document for detailed instructions on agent installation and configuration on Cisco Nexus devices.
+### Puppet Agent
+The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md](docs/README-agent-install.md) document for detailed instructions on agent installation and configuration on Cisco Nexus  and IOS XR devices.
 
-##### Artifacts
+#### Artifacts
 
 As noted in the agent installation guide, these are the current RPM versions for use with ciscopuppet:
 * NX-OS:
@@ -74,49 +74,9 @@ As noted in the agent installation guide, these are the current RPM versions for
 * IOS XR:
   * Native: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-7.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-7.noarch.rpm)
 
-##### Gems
+### `cisco_node_utils` Ruby gem
 
-The ciscopuppet module has dependencies on the [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) ruby gem. After installing the Puppet Agent software you will then need to install the gem on the agent device.
-
-This gem has various dependencies which differ between IOS XR and Nexus; installing `cisco_node_utils` by itself will automatically install the dependencies that are relevant to the target platform.
-
-Nexus example:
-
-~~~bash
-[root@guestshell]#  /opt/puppetlabs/puppet/bin/gem install cisco_node_utils
-
-[root@guestshell]#  /opt/puppetlabs/puppet/bin/gem list | egrep 'cisco|net_http'
-cisco_node_utils (1.2.0)
-net_http_unix (0.2.1)
-~~~
-
-IOS XR example:
-
-~~~bash
-bash-4.3# /opt/puppetlabs/puppet/bin/gem install cisco_node_utils
-
-bash-4.3# /opt/puppetlabs/puppet/bin/gem list 'cisco|grpc|google'
-cisco_node_utils (1.2.0)
-google-protobuf (3.0.0.alpha.5.0.3 x86_64-linux)
-googleauth (0.5.1)
-grpc (0.13.0 x86_64-linux)
-~~~
-
-*Please note: The `ciscopuppet` module requires a compatible `cisco_node_utils` gem. This is not an issue with release versions; however, when using a pre-release module it may be necessary to manually build a compatible gem. Please see the `cisco_node_utils` developer's guide for more information on building a `cisco_node_utils` gem:  [README-develop-node-utils-APIs.md](https://github.com/cisco/cisco-network-node-utils/blob/develop/docs/README-develop-node-utils-APIs.md#step-5-build-and-install-the-gem)*
-
-##### Gem Persistence (Nexus bash-shell only)
-
-Please note that in the Nexus `bash-shell` environment these gems are currently not persistent across system reload. This persistence issue can be mitigated by simply defining a manifest entry for installing the `cisco_node_utils` gem via the package provider.
-
-Example:
-
-~~~Puppet
-package { 'cisco_node_utils' :
-  provider => 'gem',
-  ensure => present,
-}
-~~~
-*This persistence issue does not affect the `guestshell` or `open agent container (OAC)` environments. Gems are persistent across reload in these environments.*
+This module has dependencies on the [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) ruby gem. After installing the Puppet Agent software you will then need to install (and possibly configure) the gem on the agent device. See [README-gem-install.md](docs/README-gem-install.md) for detailed instructions.
 
 ## Usage
 
@@ -3807,8 +3767,8 @@ Minimum Requirements:
   * Cisco Nexus 7xxx, OS Version 7.3(0)D1(1), Environments: Open Agent Container (OAC)
 * Cisco IOS XR:
   * Open source Puppet version 4.3.2+ or Puppet Enterprise 2015.3.2+
-  * Cisco IOS XRv 9000, OS Version TODO, Environments: TODO
-  * Cisco Network Convergence System (NCS) 55xx, OS Version TODO, Environments: TODO
+  * Cisco IOS XRv 9000, OS Version TODO, Environments: native (Bash-shell)
+  * Cisco Network Convergence System (NCS) 55xx, OS Version TODO, Environments: native (Bash-shell)
 
 ## Cisco OS Differences
 
