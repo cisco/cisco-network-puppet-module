@@ -66,8 +66,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
   # this method in package.rb determines how to set ensure
   # @property_hash is empty at this point
   def properties
-    if (in_nexus? && in_guestshell? && target_host?) ||
-       (in_ios_xr? && target_host?)
+    if in_ios_xr? || (in_guestshell? && target_host?)
       normalize_resource
 
       is_ver = current_version
@@ -113,7 +112,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
     # ex: b+z-ip2.x64_64
     name_arch_regex = /^([\w\-\+]+)\.(\w+)$/
 
-    if @resource[:name] =~ name_arch_regex
+    if in_nexus? && @resource[:name] =~ name_arch_regex
       @resource[:name] = Regexp.last_match(1)
       @resource[:platform] = Regexp.last_match(2)
       debug "parsed name:#{Regexp.last_match(1)}, arch:#{Regexp.last_match(2)}"
@@ -208,17 +207,23 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
   end
 
   def install
-    if (in_nexus? && in_guestshell? && target_host?) ||
-       (in_ios_xr? && target_host?)
+    if in_ios_xr? || (in_guestshell? && target_host?)
       if in_nexus?
         debug 'Guestshell + target=>host detected, using nxapi for install'
       elsif in_ios_xr?
-        debug 'target=>host detected, using sdr_instcmd for install'
+        debug 'using sdr_instcmd for install'
       end
       if @resource[:source]
         Cisco::Yum.install(@resource[:source])
       else
-        Cisco::Yum.install(@resource[:name])
+        if in_ios_xr?
+          Cisco::Yum.install("#{@resource[:name]}-" \
+                               "#{@resource[:package_settings]['version']}-" \
+                               "#{@resource[:package_settings]['xr_version']}."\
+                               "#{@resource[:platform]}.rpm")
+        elsif in_nexus?
+          Cisco::Yum.install(@resource[:name])
+        end
       end
     else
       debug 'Not Guestshell + target=>host, use native yum provider for install'
@@ -231,35 +236,28 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
   # yum's update method calls self.install which will refer to this class' install
 
   def uninstall
-    if (in_nexus? && in_guestshell? && target_host?) ||
-       (in_ios_xr? && target_host?)
+    if in_ios_xr? || (in_guestshell? && target_host?)
       if in_nexus?
         debug 'Guestshell + target=>host detected, using nxapi for uninstall'
       elsif in_ios_xr?
         debug 'target=>host detected, using sdr_instcmd for uninstall'
       end
 
-      if @resource[:platform]
-        # nexus and ios_xr accept differently formatted filenames for query and remove function.
-        # @resource[:package_settings]['xr_version'] is set only on ios_xr platform.
-        if @resource[:package_settings]['xr_version'] && in_ios_xr?
-          Cisco::Yum.remove("#{@resource[:name]}-"\
-                            "#{@resource[:package_settings]['version']}-"\
-                            "#{@resource[:package_settings]['xr_version']}")
-        elsif in_nexus?
+      # nexus and ios_xr accept differently formatted filenames for query and remove function.
+      # @resource[:package_settings]['xr_version'] is set only on ios_xr platform.
+      if @resource[:package_settings]['xr_version'] && in_ios_xr?
+        Cisco::Yum.remove("#{@resource[:name]}-"\
+                          "#{@resource[:package_settings]['version']}-"\
+                          "#{@resource[:package_settings]['xr_version']}")
+      elsif in_nexus?
+        if @resource[:platform]
           Cisco::Yum.remove("#{@resource[:name]}.#{@resource[:platform]}")
-        end
-      else
-        if @resource[:package_settings]['xr_version'] && in_ios_xr?
-          Cisco::Yum.remove("#{@resource[:name]}-"\
-                            "#{@resource[:package_settings]['version']}-"\
-                            "#{@resource[:package_settings]['xr_version']}")
-        elsif in_nexus?
+        else 
           Cisco::Yum.remove(@resource[:name])
         end
       end
     else
-      debug 'Not Guestshell + target=>host, use native yum provider for uninstall'
+      debug 'Not XR or Guestshell + target=>host, use native yum provider for uninstall'
       super
     end
   end
