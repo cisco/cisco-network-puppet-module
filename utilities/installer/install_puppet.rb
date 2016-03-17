@@ -1,7 +1,7 @@
 ################################################################################
 # Puppet Agent Bootstrap Utility
 #
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2014-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,21 +34,21 @@
 #
 # Sample host configuration file:
 #  HOSTS:
-#      agent-node1:
+#      nexus-native.domain.com:
 #          roles:
 #              - agent
-#          platform: cisco-7-x86_64
-#          ip: agent-node1.domain.com
+#          platform: cisco_nexus-7-x86_64
+#          ip: 10.0.0.100
 #          vrf: management
 #          ssh:
 #            auth_methods: ["password"]
 #            password: example
 #
-#      agent-node2:
+#      nexus-guestshell.domain.com:
 #          roles:
 #              - agent
-#          platform: cisco-7-x86_64
-#          ip: agent-node2.domain.com
+#          platform: cisco_nexus-7-x86_64
+#          ip: 10.0.0.101
 #          vrf: blue
 #          target: guestshell
 #          ssh:
@@ -56,11 +56,22 @@
 #            user: devops
 #            password: example
 #
-#      puppetmaster:
+#      xr-agent.domain.com:
+#          roles:
+#              - agent
+#          platform: cisco_ios_xr-6-x86_64
+#          ip: 10.0.0.102
+#          ssh:
+#            auth_methods: ["password"]
+#            port: 57722
+#            user: admin
+#            password: adminpassword
+#
+#      puppetmaster.domain.com:
 #          roles:
 #              - master
 #          platform: ubuntu-1404-x86_64
-#          ip: puppetmaster.domain.com
+#          ip: 10.0.0.2
 #          ssh:
 #            auth_methods: ["password"]
 #            # *Must* be set to root for master
@@ -69,8 +80,6 @@
 #
 #  CONFIG:
 #      puppet_config_template: /usr/config/puppet.conf
-#      package_url: ftp://server.domain.com/
-#      package_name: puppet-enterprise-3.7.1.rc2.6.g6cdc186-1.pe.nxos.x86_64.rpm
 #      http_proxy: http://proxy.server.domain.com:8080
 #      https_proxy: https://proxy.server.domain.com:8080
 #      resolver: /usr/config/resolver_config
@@ -79,7 +88,7 @@
 #   HOSTS Section:
 #     roles:          Choice of agent or master
 #     platform:       <osfamily>-<version>-<architecture>
-#     ip:             Fully qualified domain name of the node
+#     ip:             IP address of host
 #     vrf:            *Optional* vrf name for agent management interface
 #     target:         *Optional* If set to 'guestshell' installs into the
 #                      secure guestshell environment, else native shell
@@ -89,13 +98,12 @@
 #       username:     *Optional* SSH username if auth_methods is password
 #                       NOTE: Puppet master user must be root
 #       password:     *Optional* SSH password if auth_methods is password
+#       port:         *Optional* SSH server port - defaults to 22
 #
 #   CONFIG Section:
 #     puppet_config_template: Local path to template puppet.conf file
 #                             Template is customized with the agent certname:
 #                             and master server: fields
-#     package_url:            Base url for puppet rpm
-#     package_name:           Name of puppet agent RPM package
 #     rpm_gpg_key:            Local path to puppet rpm gpg key
 #     http_proxy:             HTTP proxy URL
 #     https_proxy:            HTTPS proxy URL
@@ -130,53 +138,37 @@ if ARGV.empty?
 end
 
 GSUTILITY = '/isan/bin/guestshell'
-TMP_PUPPET_LOCATION = '/bootflash/tmp_puppet'
 PUPPET_PATH = '/opt/puppetlabs/puppet'
 
 # -------------------------#
 # Bootstrap Helper Methods #
 # -------------------------#
 
-# Generate commands to prepend to native or
-# guestshell targets
-#
-# @param host [String]
-# @return [String] Network namespace command
-# @example on agent, "#{pp(agent)} puppet agent -t"
-def pp(host)
+# Temporary file storage location on the target
+def tmp_location(host)
   case host['platform']
-  when /cisco/
-    if host['vrf'].nil?
-      command = 'sudo'
-    else
-      if target_guestshell?(host)
-        command = "sudo chvrf #{host['vrf']}"
-      else
-        command = "sudo ip netns exec #{host['vrf']}"
-      end
-    end
-    command.prepend "sudo #{GSUTILITY} " if target_guestshell?(host)
-    command.prepend "http_proxy=#{options['http_proxy']} " if
-                     options['http_proxy']
-    command.prepend "https_proxy=#{options['https_proxy']} " if
-                     options['https_proxy']
-    command.prepend "PATH=$PATH:#{PUPPET_PATH}/bin/:#{PUPPET_PATH}/lib/ " unless
-                     target_guestshell?(host)
-  when /other_platform/
-    command = 'do something different'
-  else
-    command = ''
+  when /cisco_nexus/
+    '/bootflash/tmp_puppet'
+  when /cisco_ios_xr/
+    '/disk0:/tmp_puppet'
   end
-  command
 end
+
+$env = {}
+$env['http_proxy'] = options['http_proxy'] if options['http_proxy']
+$env['https_proxy'] = options['https_proxy'] if options['https_proxy']
+$env['PATH'] = "$PATH:#{PUPPET_PATH}/bin/:#{PUPPET_PATH}/lib/"
+
+# TODO: if installing to guestshell:
+# command.prepend "#{GSUTILITY} sudo chvrf ${host['vrf']}"
 
 # Get location of puppet.conf file
 #
 # @param agent [String]
 # @return [String] Path to puppet.conf file
 def get_puppet_config(agent)
-  cl = "#{pp(agent)} puppet agent --configprint config"
-  (on agent, cl, pty: true).stdout.chomp
+  cl = "puppet agent --configprint config"
+  (on agent, cl, environment: $env, pty: true).stdout.chomp
 end
 
 # Determine if this is a native or guestshell install
@@ -208,12 +200,9 @@ end
 # @param agent [String]
 # @return [Boolean] true if it exists, else false
 def agent_template_exists?(agent)
-  if target_guestshell?(agent)
-    opts = { acceptable_exit_codes: [0, 2], pty: true }
-  else
-    opts = { acceptable_exit_codes: [0, 2] }
-  end
-  result = on agent, "#{pp(agent)} ls #{get_puppet_config(agent)}", opts
+  opts = { acceptable_exit_codes: [0, 2], environment: $env }
+  opts[:pty] = true if target_guestshell?(agent)
+  result = on agent, "ls #{get_puppet_config(agent)}", opts
   result.exit_code == 0
 end
 
@@ -231,21 +220,12 @@ end
 # @param agent [String]
 # @return [String] Data containing puppet.conf information
 def get_agent_config(agent)
+  opts = { environment: $env }
+  opts[:pty] = true if target_guestshell?(agent)
   target_guestshell?(agent) ? opts = { pty: true } : opts = {}
-  config = on(agent,
-              "#{pp(agent)} cat #{get_puppet_config(agent)}", opts).stdout
-  config
+  on(agent, "cat #{get_puppet_config(agent)}", opts).stdout
 end
 
-# Check 'package_url' and 'package_name' params in the
-# host configuration file
-#
-# @return [Hash] puppet.conf data.
-def check_pkg_info
-  return false if options['package_url'].nil? ||
-                  options['package_name'].nil?
-  true
-end
 
 # Get default puppet.conf file from puppet.conf file after
 # the agent is installed.
@@ -284,6 +264,7 @@ def puppet_config_tohash(config)
     # Match all lines in main and agent sections except comment lines.
     config_hash[context][match[1]] = match[2] unless match.nil?
   end
+  logger.debug("puppet_config_tohash -> #{config_hash}")
   config_hash
 end
 
@@ -308,28 +289,10 @@ def build_puppet_config(agent)
   end
 
   # Add certname and server values to main section
-  puppet_config['main']['certname'] = agent['ip']
-  puppet_config['main']['server'] = master['ip']
-
+  puppet_config['main']['certname'] = agent.hostname
+  puppet_config['main']['server'] = master.hostname
+  logger.debug("build_puppet_config -> #{puppet_config}")
   puppet_config
-end
-
-# Handle install of puppet rpm to native or guestshell
-#
-# @param agent [String]
-def install_target(agent, package)
-  opts = { pty: true, prepend_cmds: pp(agent) }
-  opts = { acceptable_exit_codes: [0, 1] }.merge(opts)
-  agent.install_package(package, '', nil, opts)
-  if agent.check_for_package('puppet-agent', opts)
-    agent.upgrade_package('puppet', '', opts)
-  else
-    agent.install_package('puppet', '', nil, opts)
-  end
-  # Make sure install/upgrade succeeded
-  agent.check_for_package('puppet-agent', pty:                   true,
-                                          prepend_cmds:          pp(agent),
-                                          acceptable_exit_codes: [0])
 end
 
 # Configure puppet.conf file
@@ -339,11 +302,11 @@ def configure_puppet_nexus(agent, opts={})
   # Create temporary storage location for puppet.conf
   # file under /bootflash.  Bootflash is mounted into
   # the guestshell.
-  tmp_puppet_file = "#{TMP_PUPPET_LOCATION}/puppet.conf"
-  on agent, "rmdir #{TMP_PUPPET_LOCATION}",
-     acceptable_exit_codes: [0, 1]
-  on agent, "mkdir #{TMP_PUPPET_LOCATION}",
-     acceptable_exit_codes: [0, 1]
+  tmp_puppet_file = "#{tmp_location(agent)}/puppet.conf"
+  call_opts = { acceptable_exit_codes: [0, 1], environment: $env }
+  on agent, "rmdir #{tmp_location(agent)}", call_opts
+  on agent, "mkdir #{tmp_location(agent)}", call_opts
+  on agent, "chmod a+rw #{tmp_location(agent)}", call_opts
 
   # Determine location of puppet.conf
   puppet_conf = get_puppet_config(agent)
@@ -353,82 +316,72 @@ def configure_puppet_nexus(agent, opts={})
   conf_data = ''
   opts.each do |section, options|
     conf_data << "[#{section}]\n"
+    logger.debug("Options for section #{section}: #{options}")
     options.each do |option, value|
       conf_data << "#{option}=#{value}\n"
     end
     conf_data << "\n"
   end
-  on agent, "echo \"#{conf_data}\" > #{tmp_puppet_file}"
-  on agent, "#{pp(agent)} mv #{tmp_puppet_file} #{puppet_conf}",
-     pty: true
-  on agent, "rmdir #{TMP_PUPPET_LOCATION}",
-     acceptable_exit_codes: [0, 1]
+  on agent, "echo \"#{conf_data}\" > #{tmp_puppet_file}", environment: $env
+  on agent, "mv #{tmp_puppet_file} #{puppet_conf}", pty: true, environment: $env
+  on agent, "rmdir #{tmp_location(agent)}", call_opts
 end
 
 # Copy local resolve.conf file to target agent
 #
 # @param agent [String]
 def copy_resolve_conf(agent)
+  logger.info 'Copying /etc/resolv.conf to node'
   resolve_path = '/etc/resolv.conf'
-  on agent, "#{pp(agent)} rm -rf #{resolve_path}",
-     acceptable_exit_codes: [0, 1], pty: true
-  tmp_puppet_file = "#{TMP_PUPPET_LOCATION}/resolve.conf"
-  on agent, "rmdir #{TMP_PUPPET_LOCATION}",
-     acceptable_exit_codes: [0, 1]
-  on agent, "mkdir #{TMP_PUPPET_LOCATION}",
-     acceptable_exit_codes: [0, 1]
+  on agent, "rm -rf #{resolve_path}",
+     acceptable_exit_codes: [0, 1], pty: true, environment: $env
+  tmp_puppet_file = "#{tmp_location(agent)}/resolve.conf"
+  on agent, "rmdir #{tmp_location(agent)}",
+     acceptable_exit_codes: [0, 1], environment: $env
+  on agent, "mkdir #{tmp_location(agent)}",
+     acceptable_exit_codes: [0, 1], environment: $env
+  on agent, "chmod a+rw #{tmp_location(agent)}",
+     acceptable_exit_codes: [0, 1], environment: $env
   scp_to agent, options['resolver'], "#{tmp_puppet_file}"
-  on agent, "#{pp(agent)} mv #{tmp_puppet_file} #{resolve_path}",
-     pty: true
-  on agent, "rmdir #{TMP_PUPPET_LOCATION}",
-     acceptable_exit_codes: [0, 1]
+  on agent, "mv #{tmp_puppet_file} #{resolve_path}",
+     pty: true, environment: $env
+  on agent, "rmdir #{tmp_location(agent)}",
+     acceptable_exit_codes: [0, 1], environment: $env
 end
 
 def setup_env(agent)
   pupurl = 'http://yum.puppetlabs.com/RPM-GPG-KEY-puppetlabs'
   gpgdir = '/etc/pki/rpm-gpg'
-  codes  = { acceptable_exit_codes: [0, 1], pty: true }
+  codes  = { acceptable_exit_codes: [0, 1], pty: true, environment: $env }
 
-  on agent, "#{pp(agent)} mkdir -p #{gpgdir}", codes
+  on agent, "mkdir -p #{gpgdir}", codes
   if options['rpm_gpg_key'].nil?
-    on agent, "#{pp(agent)} rpm --import #{pupurl}", codes
-    on agent, "#{pp(agent)} wget #{pupurl} -P #{gpgdir}", codes
+    on agent, "rpm --import #{pupurl}", codes
+    on agent, "wget #{pupurl} -P #{gpgdir}", codes
   else
     gpg_key_name = File.basename(options['rpm_gpg_key'])
-    on agent, "rm -rf #{TMP_PUPPET_LOCATION}", codes
-    on agent, "mkdir #{TMP_PUPPET_LOCATION}", codes
-    scp_to agent, options['rpm_gpg_key'], TMP_PUPPET_LOCATION
-    on agent, "#{pp(agent)} rpm --import #{TMP_PUPPET_LOCATION}/#{gpg_key_name}", codes
-    on agent, "#{pp(agent)} cp #{TMP_PUPPET_LOCATION}/#{gpg_key_name} #{gpgdir}", codes
-    on agent, "rm -rf #{TMP_PUPPET_LOCATION}", codes
+    on agent, "rm -rf #{tmp_location(agent)}", codes
+    on agent, "mkdir #{tmp_location(agent)}", codes
+    scp_to agent, options['rpm_gpg_key'], tmp_location(agent)
+    on agent, "rpm --import #{tmp_location(agent)}/#{gpg_key_name}", codes
+    on agent, "cp #{tmp_location(agent)}/#{gpg_key_name} #{gpgdir}", codes
+    on agent, "rm -rf #{tmp_location(agent)}", codes
   end
-  on agent, "#{pp(agent)} ln -sf #{PUPPET_PATH}/bin/puppet /usr/bin/puppet", codes
+  on agent, "ln -sf #{PUPPET_PATH}/bin/puppet /usr/bin/puppet", codes
+  # SSH environment directory may not exist by default for XR
+  on agent, "mkdir -p ~/.ssh", codes
 end
 
 #---------------------------------------------------------------------#
 # Loop through each agent defined in the host configuration file
 # and perform the following:
 #
-# 1) Install puppet agent defined by
-#    package_url + package_name yaml param.
+# 1) Install puppet agent
 # 2) Configure puppet.conf file on agent
 #      If defined, use 'puppet_config_file' host.cfg yaml parameter.
 #      Else, build puppet.conf dynamically.
 # 3) Start the puppet agent.
 #---------------------------------------------------------------------#
-
-package_error = %(
-  INSTALL PUPPET: 'package_url:' and/or 'package_name:' parameters are
-  not specfied in #{options['hosts_file']}
-)
-# Make sure package information is set in the host configuration file
-unless check_pkg_info
-  logger.warn package_error
-  exit
-end
-
-# Puppet rpm package.
-package = options['package_url'] + options['package_name']
 
 # Keep track of failure information
 $failures = 0
@@ -444,11 +397,12 @@ agents.each do |agent|
     copy_resolve_conf(agent) if resolver_exists?
 
     # Setup symlinks to puppet binary and copy gpg keys if needed
+    logger.notify "Set up environment on agent: #{agent}"
     setup_env(agent)
 
     # Install RPM to native shell or guestshell
     logger.notify "Installing puppet on agent: #{agent}"
-    install_target(agent, package)
+    install_puppet_agent_on(agent)
 
     # Configure puppet
     logger.notify "Configure puppet on agent: #{agent}"
@@ -458,24 +412,24 @@ agents.each do |agent|
     if options['cert_clean']
       on master, "#{PUPPET_PATH}/bin/puppet cert clean #{agent['ip']}",
          accept_all_exit_codes: true, pty: true
-      ssl_dir = (on agent, "#{pp(agent)} puppet agent --configprint ssldir",
-                    accept_all_exit_codes: true, pty: true).stdout.chomp
-      on agent, "#{pp(agent)} find #{ssl_dir} -name #{agent['ip']}.pem -delete",
-         accept_all_exit_codes: true, pty: true
+      ssl_dir = (on agent, "puppet agent --configprint ssldir",
+                    accept_all_exit_codes: true, pty: true, environment: $env).stdout.chomp
+      on agent, "find #{ssl_dir} -name #{agent['ip']}.pem -delete",
+         accept_all_exit_codes: true, pty: true, environment: $env
     end
 
     # Start puppet agent
     logger.notify "Kick start puppet on agent: #{agent}"
-    result = on agent, "#{pp(agent)} puppet agent -t",
-                accept_all_exit_codes: true, pty: true
-    if result.exit_code != 0
+    result = on agent, "puppet agent -t",
+                accept_all_exit_codes: true, pty: true, environment: $env
+    if result.exit_code != 0 && result.exit_code != 2
       logger.warn "AGENT: #{agent} did not start properly. Check logs for details"
       $start_failures += 1
     end
 
   rescue StandardError => e
     $failure_messages[$failures] = "BOOTSTRAP OF AGENT #{agent} FAILED"
-    $exceptions[$failures] = "AGENT: #{agent} Exception \n #{e.message}"
+    $exceptions[$failures] = "AGENT: #{agent} Exception \n #{e.message}\n  #{e.backtrace.join("\n  ")}"
     $failures += 1
     next
   end
