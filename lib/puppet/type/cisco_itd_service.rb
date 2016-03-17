@@ -314,4 +314,50 @@ Puppet::Type.newtype(:cisco_itd_service) do
       value
     end
   end # property vrf
+
+  def check_nat_ingress
+    return unless self[:nat_destination]
+    fail ArgumentError, 'ingress_interface not specified' if
+      self[:ingress_interface].nil?
+    self[:ingress_interface].each do |_intf, next_hop|
+      fail ArgumentError, 'next_hop not specified' if
+        next_hop.empty?
+    end
+  end
+
+  def check_ingress_duplicates
+    return unless self[:ingress_interface]
+    # fail for duplicates
+    fail ArgumentError, 'ingress_interface contains duplicate values' unless
+      self[:ingress_interface].uniq.length == self[:ingress_interface].length
+    # also fail if the interface or next_hop itself is duplicated
+    array = self[:ingress_interface].flatten
+    hash = Hash[*array]
+    # remove empty next-hop if any
+    no_empty_arr = hash.values.reject(&:empty?)
+    fail ArgumentError, 'ingress_interface contains duplicate values' unless
+      no_empty_arr.uniq.length == no_empty_arr.length
+  end
+
+  def check_vip_advert
+    return unless self[:virtual_ip]
+    vip = self[:virtual_ip].dup
+    excl_advert_array =
+        vip.reject { |elem| elem.include?('advertise enable') }
+    incl_advert_array = vip - excl_advert_array
+    incl_advert_array.each do |str|
+      no_advert_str = str.sub(' advertise enable', '').strip
+      excl_advert_array << no_advert_str
+      fail ArgumentError,
+           'virtual_ip contains duplicate values with advertise' unless
+          excl_advert_array.uniq.length == excl_advert_array.length
+      excl_advert_array = excl_advert_array.take excl_advert_array.size - 1
+    end
+  end
+
+  validate do
+    check_nat_ingress
+    check_ingress_duplicates
+    check_vip_advert
+  end
 end
