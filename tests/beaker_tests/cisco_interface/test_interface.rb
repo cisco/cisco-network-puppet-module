@@ -130,24 +130,14 @@ tests['L3_default_nexus'] = {
   preclean:           true,
   sys_def_switchport: false,
   manifest_props:     {
-    duplex:                        'default',
-    ipv4_forwarding:               'default',
-    ipv4_pim_sparse_mode:          'default',
-    switchport_autostate_exclude:  'default',
-    switchport_mode:               'default',
-    switchport_trunk_allowed_vlan: 'default',
-    switchport_trunk_native_vlan:  'default',
-    switchport_vtp:                'default',
+    duplex:               'default',
+    ipv4_forwarding:      'default',
+    ipv4_pim_sparse_mode: 'default',
   },
   resource:           {
-    'duplex'                        => 'auto',
-    'ipv4_forwarding'               => 'false',
-    'ipv4_pim_sparse_mode'          => 'false',
-    'switchport_autostate_exclude'  => 'false',
-    'switchport_mode'               => 'disabled',
-    'switchport_trunk_allowed_vlan' => '1-4094',
-    'switchport_trunk_native_vlan'  => '1',
-    'switchport_vtp'                => 'false',
+    'duplex'               => 'auto',
+    'ipv4_forwarding'      => 'false',
+    'ipv4_pim_sparse_mode' => 'false',
   },
 }
 
@@ -196,6 +186,7 @@ tests['L3_misc_nexus'] = {
   desc:               '1.5 (L3) Misc Properties - Nexus specific',
   operating_system:   'nexus',
   intf_type:          'ethernet',
+  preclean:           true,
   sys_def_switchport: false,
   manifest_props:     {
     switchport_mode:      'disabled',
@@ -302,7 +293,7 @@ tests['L2_trunk'] = {
   manifest_props:     {
     shutdown:                      'false',
     switchport_mode:               'trunk',
-    switchport_trunk_allowed_vlan: '30,40',
+    switchport_trunk_allowed_vlan: '30, 40, 31-33, 100',
     switchport_trunk_native_vlan:  '20',
     switchport_vtp:                'false',
 
@@ -310,7 +301,7 @@ tests['L2_trunk'] = {
   resource:           {
     'shutdown'                      => 'false',
     'switchport_mode'               => 'trunk',
-    'switchport_trunk_allowed_vlan' => '30,40',
+    'switchport_trunk_allowed_vlan' => '30-33,40,100',
     'switchport_trunk_native_vlan'  => '20',
   },
 }
