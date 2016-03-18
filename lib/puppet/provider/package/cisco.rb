@@ -252,7 +252,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
       elsif in_nexus?
         if @resource[:platform]
           Cisco::Yum.remove("#{@resource[:name]}.#{@resource[:platform]}")
-        else 
+        else
           Cisco::Yum.remove(@resource[:name])
         end
       end
