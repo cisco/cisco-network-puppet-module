@@ -90,7 +90,7 @@ tests[:default_plat_2] = {
 }
 
 ing_intf = [['vlan 2', '4.4.4.4'], ['ethernet 1/1', '5.5.5.5'], ['port-channel 100', '6.6.6.6']]
-vip = ['ip 3.3.3.3 255.0.0.0 tcp 500 advertise enable', 'ip 2.2.2.2 255.0.0.0 udp 1000 device-group icmpGroup']
+vip = ['ip 3.3.3.3 255.0.0.0 tcp 500 advertise enable']
 pv = %w(myVdc1 pvservice)
 
 # Non-default Tests. NOTE: [:resource] = [:manifest_props] for all non-default
@@ -158,9 +158,9 @@ tests[:non_default_plat_2] = {
 
 # Overridden to properly handle dependencies for this test file.
 def test_harness_dependencies(_tests, _id)
-  cmd = 'no feature itd ; ip acess-list iap ; ip access-list eap ; interface ethernet 1/1 ; no switchport'
+  cmd = 'no feature itd ; ip access-list iap ; ip access-list eap ; interface ethernet 1/1 ; no switchport'
   command_config(agent, cmd, cmd)
-  cmd = 'feature interface-vlan ; vlan 2; interface vlan 2; interface port-channel 100 ; feature itd'
+  cmd = 'feature interface-vlan ; vlan 2 ; interface vlan 2 ; interface port-channel 100 ; feature itd'
   command_config(agent, cmd, cmd)
   cmd = 'itd device-group udpGroup ; node ip 1.1.1.1'
   command_config(agent, cmd, cmd)

@@ -171,8 +171,7 @@ class ciscopuppet::cisco::demo_itd {
     peer_local                    => $peer_local1,
     shutdown                      => true,
     virtual_ip                    => [
-    'ip 3.3.3.3 255.0.0.0 tcp 500 advertise enable',
-    'ip 2.2.2.2 255.0.0.0 udp 1000 device-group icmpGroup'],
+    'ip 3.3.3.3 255.0.0.0 tcp 500 advertise enable']
   }
 
   cisco_itd_service {'myservice2':
