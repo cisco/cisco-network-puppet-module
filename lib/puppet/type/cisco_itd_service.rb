@@ -345,6 +345,10 @@ Puppet::Type.newtype(:cisco_itd_service) do
   def check_vip_advert
     return unless self[:virtual_ip]
     return if self[:virtual_ip][0] == :default
+    # only one VIP can be configured for now
+    fail ArgumentError, 'only one VIP is allowed' if
+      self[:virtual_ip].length > 1
+    # this code will come into affect when there are more VIPs
     vip = self[:virtual_ip].dup
     excl_advert_array =
         vip.reject { |elem| elem.include?('advertise enable') }
