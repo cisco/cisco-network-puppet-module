@@ -317,6 +317,7 @@ Puppet::Type.newtype(:cisco_itd_service) do
 
   def check_nat_ingress
     return unless self[:nat_destination]
+    return if self[:ingress_interface][0] == :default
     fail ArgumentError, 'ingress_interface not specified' if
       self[:ingress_interface].nil?
     self[:ingress_interface].each do |_intf, next_hop|
@@ -327,11 +328,13 @@ Puppet::Type.newtype(:cisco_itd_service) do
 
   def check_ingress_duplicates
     return unless self[:ingress_interface]
+    return if self[:ingress_interface][0] == :default
     # fail for duplicates
     fail ArgumentError, 'ingress_interface contains duplicate values' unless
       self[:ingress_interface].uniq.length == self[:ingress_interface].length
     # also fail if the interface or next_hop itself is duplicated
     array = self[:ingress_interface].flatten
+    # for default case
     hash = Hash[*array]
     # remove empty next-hop if any
     no_empty_arr = hash.values.reject(&:empty?)
@@ -341,6 +344,7 @@ Puppet::Type.newtype(:cisco_itd_service) do
 
   def check_vip_advert
     return unless self[:virtual_ip]
+    return if self[:virtual_ip][0] == :default
     vip = self[:virtual_ip].dup
     excl_advert_array =
         vip.reject { |elem| elem.include?('advertise enable') }

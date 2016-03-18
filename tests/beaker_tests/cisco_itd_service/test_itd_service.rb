@@ -64,9 +64,10 @@ tests[:default_plat_1] = {
   title_pattern:  'myService',
   preclean:       'cisco_itd_service',
   manifest_props: {
-    device_group:    'udpGroup',
-    nat_destination: 'default',
-    peer_vdc:        'default',
+    device_group:      'udpGroup',
+    ingress_interface: 'default',
+    nat_destination:   'default',
+    peer_vdc:          'default',
   },
   code:           [0, 2],
   resource:       {
@@ -157,7 +158,7 @@ tests[:non_default_plat_2] = {
 
 # Overridden to properly handle dependencies for this test file.
 def test_harness_dependencies(_tests, _id)
-  cmd = 'ip acess-list iap ; ip access-list eap ; interface ethernet 1/1 ; no switchport ; exit'
+  cmd = 'no feature itd ; ip acess-list iap ; ip access-list eap ; interface ethernet 1/1 ; no switchport'
   command_config(agent, cmd, cmd)
   cmd = 'feature interface-vlan ; vlan 2; interface vlan 2; interface port-channel 100 ; feature itd'
   command_config(agent, cmd, cmd)
@@ -191,7 +192,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :non_default)
   test_harness_run(tests, :non_default_plat_1)
   test_harness_run(tests, :non_default_plat_2)
-  resource_absent_cleanup(agent, 'cisco_itd_service')
   resource_absent_cleanup(agent, 'cisco_itd_service')
   resource_absent_cleanup(agent, 'cisco_itd_device_group_node')
   resource_absent_cleanup(agent, 'cisco_itd_device_group')
