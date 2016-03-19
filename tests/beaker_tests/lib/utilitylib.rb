@@ -492,6 +492,7 @@ end
 # is used to create an appropriate title by merging a partial title from
 # [:title_pattern] with the [:title_params] values.
 #
+# rubocop:disable Metrics/AbcSize
 def puppet_resource_title_pattern_munge(tests, id)
   title = tests[id][:title_pattern]
   params = tests[id][:title_params]
@@ -500,6 +501,8 @@ def puppet_resource_title_pattern_munge(tests, id)
   tests[id][:title_params] = {} if params.nil?
   t = {}
   case tests[:resource_name]
+  when 'cisco_acl'
+    t[:afi], t[:acl_name] = title.split
   when 'cisco_bgp'
     t[:asn], t[:vrf] = title.split
   when 'cisco_bgp_af'
@@ -518,9 +521,17 @@ def puppet_resource_title_pattern_munge(tests, id)
     t[:vrf], t[:afi], t[:safi] = title.split
   end
   t.merge!(tests[id][:title_params])
-  t[:vrf] = 'default' if t[:vrf].nil?
+
+  if t[:vrf].nil?
+    case tests[:resource_name]
+    when 'cisco_acl'
+    else
+      t[:vrf] = 'default'
+    end
+  end
   t
 end
+# rubocop:enable Metrics/AbcSize
 
 # Helper method to create a puppet resource command string for providers
 # that use complex title patterns (bgp, vrf_af, etc).

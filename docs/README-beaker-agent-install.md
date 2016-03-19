@@ -3,12 +3,11 @@
 #### Table of Contents
 
 1. [Overview](#overview)
-2. [Pre-Install Tasks](#pre-install)
-3. [Beaker Installer Configuration](#beaker-install-config)
-4. [Automated Puppet Agent Install: bash-shell](#install-bs)
-5. [Automated Puppet Agent Install: guestshell](#install-gs)
-6. [Limitations](#limitations)
-7. [License Information](#license-information)
+1. [Pre-Install Tasks](#pre-install)
+1. [Beaker Installer Configuration](#beaker-install-config)
+1. [Automated Puppet Agent Install: bash-shell](#install-bs)
+1. [Automated Puppet Agent Install: guestshell](#install-gs)
+1. [License Information](#license-information)
 
 ## <a name="overview">Overview</a>
 
@@ -139,20 +138,10 @@ beaker --host <path to host.cfg> --pre-suite <path to install_puppet.rb> --no-va
 
 For installs into the `guestshell`, uncomment the `target: guestshell` field in the host.cfg file and run the Beaker tool.
 
-## <a name="limitations">Limitations</a>
-
-Minimum Requirements:
-* Cisco NX-OS Puppet implementation requires open source Puppet version 4.0 or Puppet Enterprise 2015.2
-* Supported Platforms:
- * Cisco Nexus 95xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
- * Cisco Nexus 93xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
- * Cisco Nexus 31xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
- * Cisco Nexus 30xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
-
 ## <a name="license-information">License Information</a>
 
 ~~~
-Copyright (c) 2014-2015 Cisco and/or its affiliates.
+Copyright (c) 2014-2016 Cisco and/or its affiliates.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
