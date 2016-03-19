@@ -100,9 +100,9 @@ tests[:non_default] = {
   title_pattern:  'myService',
   preclean:       'cisco_itd_service',
   manifest_props: {
-    access_list:                   'ial',
+    access_list:                   'iap',
     device_group:                  'udpGroup',
-    exclude_access_list:           'eal',
+    exclude_access_list:           'eap',
     failaction:                    'true',
     ingress_interface:             ing_intf,
     load_bal_buckets:              '16',
@@ -158,13 +158,29 @@ tests[:non_default_plat_2] = {
 
 # Overridden to properly handle dependencies for this test file.
 def test_harness_dependencies(_tests, _id)
-  cmd = 'no feature itd ; ip access-list iap ; ip access-list eap ; interface ethernet 1/1 ; no switchport'
+  cmd = 'no feature itd'
   command_config(agent, cmd, cmd)
-  cmd = 'feature interface-vlan ; vlan 2 ; interface vlan 2 ; interface port-channel 100 ; feature itd'
+  cmd = 'ip access-list iap'
+  command_config(agent, cmd, cmd)
+  cmd = 'ip access-list eap'
+  command_config(agent, cmd, cmd)
+  cmd = 'interface ethernet 1/1 ; no switchport'
+  command_config(agent, cmd, cmd)
+  cmd = 'feature interface-vlan'
+  command_config(agent, cmd, cmd)
+  cmd = 'vlan 2'
+  command_config(agent, cmd, cmd)
+  cmd = 'interface vlan 2'
+  command_config(agent, cmd, cmd)
+  cmd = 'interface port-channel 100 ; no switchport'
+  command_config(agent, cmd, cmd)
+  cmd = 'feature itd'
   command_config(agent, cmd, cmd)
   cmd = 'itd device-group udpGroup ; node ip 1.1.1.1'
   command_config(agent, cmd, cmd)
-  cmd = 'itd device-group icmpGroup ; node ip 2.2.2.2 ; exit ; node ip 3.3.3.3'
+  cmd = 'itd device-group icmpGroup ; node ip 2.2.2.2'
+  command_config(agent, cmd, cmd)
+  cmd = 'itd device-group icmpGroup ; node ip 3.3.3.3'
   command_config(agent, cmd, cmd)
 end
 
