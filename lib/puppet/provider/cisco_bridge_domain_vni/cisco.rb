@@ -37,19 +37,19 @@ Puppet::Type.type(:cisco_bridge_domain_vni).provide(:cisco) do
   BD_BOOL_PROPS = []
   BD_ALL_PROPS = BD_NON_BOOL_PROPS + BD_BOOL_PROPS
 
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@bd',
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@nu',
                                             BD_NON_BOOL_PROPS)
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@bd',
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@nu',
                                             BD_BOOL_PROPS)
 
   def initialize(value={})
     super(value)
-    @bd = Cisco::BridgeDomainVNI.rangebds[@property_hash[:name]]
+    @nu = Cisco::BridgeDomainVNI.rangebds[@property_hash[:name]]
     @property_flush = {}
     debug 'Created provider instance of cisco_bridge_domain.'
   end
 
-  def self.properties_get(bd_id, v)
+  def self.properties_get(bd_id, nu)
     debug "Checking instance, bd #{bd_id}"
     current_state = {
       bd:     bd_id,
@@ -59,10 +59,10 @@ Puppet::Type.type(:cisco_bridge_domain_vni).provide(:cisco) do
 
     # Call node_utils getter for each property
     BD_NON_BOOL_PROPS.each do |prop|
-      current_state[prop] = v.send(prop)
+      current_state[prop] = nu.send(prop)
     end
     BD_BOOL_PROPS.each do |prop|
-      val = v.send(prop)
+      val = nu.send(prop)
       if val.nil?
         current_state[prop] = nil
       else
@@ -75,8 +75,8 @@ Puppet::Type.type(:cisco_bridge_domain_vni).provide(:cisco) do
   def self.instances
     bds = []
 
-    Cisco::BridgeDomainVNI.rangebds.each do |bd_id, v|
-      bds << properties_get(bd_id, v)
+    Cisco::BridgeDomainVNI.rangebds.each do |bd_id, nu|
+      bds << properties_get(bd_id, nu)
     end
     bds
   end
@@ -117,21 +117,21 @@ Puppet::Type.type(:cisco_bridge_domain_vni).provide(:cisco) do
       next unless @resource[prop]
       send("#{prop}=", @resource[prop]) if new_bd
       unless @property_flush[prop].nil?
-        @bd.send("#{prop}=", @property_flush[prop]) if
-          @bd.respond_to?("#{prop}=")
+        @nu.send("#{prop}=", @property_flush[prop]) if
+          @nu.respond_to?("#{prop}=")
       end
     end
   end
 
   def flush
     if @property_flush[:ensure] == :absent
-      @bd.destroy
-      @bd = nil
+      @nu.destroy
+      @nu = nil
     else
       # Create/Update
-      if @bd.nil?
+      if @nu.nil?
         new_bd = true
-        @bd = Cisco::BridgeDomainVNI.new(@resource[:bd])
+        @nu = Cisco::BridgeDomainVNI.new(@resource[:bd])
       end
       properties_set(new_bd)
     end
@@ -139,7 +139,7 @@ Puppet::Type.type(:cisco_bridge_domain_vni).provide(:cisco) do
   end
 
   def puts_config
-    if @bd.nil?
+    if @nu.nil?
       info "BD=#{@resource[:bd]} is absent."
       return
     end
@@ -147,7 +147,7 @@ Puppet::Type.type(:cisco_bridge_domain_vni).provide(:cisco) do
     # Dump all current properties for this bd
     current = sprintf("\n%30s: %s", 'bd', instance_name)
     BD_ALL_PROPS.each do |prop|
-      current.concat(sprintf("\n%30s: %s", prop, @bd.send(prop)))
+      current.concat(sprintf("\n%30s: %s", prop, @nu.send(prop)))
     end
     debug current
   end # puts_config

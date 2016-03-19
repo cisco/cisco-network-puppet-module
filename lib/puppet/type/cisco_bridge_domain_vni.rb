@@ -17,20 +17,20 @@
 # limitations under the License.
 
 Puppet::Type.newtype(:cisco_bridge_domain_vni) do
-  @doc = "Manages a Cisco Bridge Domain (BD).
+  @doc = %{Manages a Cisco Bridge Domain (BD).
 
-  cisco_bridge_domain_vni {\"<bd>\":
+  cisco_bridge_domain_vni {"<bd>":
     ..attributes..
   }
 
   <bd> is the range of ids of bridge domain.
 
   Example:
-    cisco_bridge_domain_vni {\"100-110\":
+    cisco_bridge_domain_vni {"100-110":
       ensure          => present,
       member_vni      => '5100-5110',
     }
-  "
+  }
 
   ###################
   # Resource Naming #
@@ -53,14 +53,12 @@ Puppet::Type.newtype(:cisco_bridge_domain_vni) do
   end
 
   newparam(:bd, namevar: true) do
-    desc 'ID of the Bridge Domain. Valid values are range of integers.'
+    desc 'The bridge-domain ID. Valid values are range of integers.'
 
     validate do |value|
-      range = *(2..4096)
-      internal = *(3968..4096)
-      valid_ids = range - internal
+      valid_ids = *(2..3967)
 
-      fail 'Value is not of integer type' unless /^[\d\s,-]*$/.match(value)
+      fail "Value is not a valid range. Example usage: '2-10,12,14-16'" unless /^[\d\s,-]*$/.match(value)
       temp_val = value.scan(/\d+/)
       temp_val.each do |elem|
         warning('Cannot make changes to the default BD.') if elem.to_i == 1

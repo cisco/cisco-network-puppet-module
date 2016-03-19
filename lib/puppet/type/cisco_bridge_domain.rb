@@ -17,22 +17,22 @@
 # limitations under the License.
 
 Puppet::Type.newtype(:cisco_bridge_domain) do
-  @doc = "Manages a Cisco Bridge Domain (BD).
+  @doc = %{Manages a Cisco Bridge Domain (BD).
 
-  cisco_bridge_domain {\"<bd>\":
+  cisco_bridge_domain {"<bd>":
     ..attributes..
   }
 
   <bd> is the id of the bridge domain.
 
   Example:
-    cisco_bridge_domain {\"1000\":
+    cisco_bridge_domain {"1000":
       ensure          => present,
       bd_name         => 'red',
       fabric_control  => 'false',
       shutdown        => 'false',
     }
-  "
+  }
 
   ###################
   # Resource Naming #
@@ -58,10 +58,10 @@ Puppet::Type.newtype(:cisco_bridge_domain) do
     desc 'ID of the Bridge Domain. Valid values are integer.'
 
     validate do |value|
-      range = *(2..4096)
-      internal = *(3968..4096)
-      valid_ids = range - internal
+      puts "bridge-domain #{value}"
+      valid_ids = *(2..3967)
 
+      fail 'bridge-domain ID needs to be an integer' unless /\d+/.match(value)
       if value.to_i == 1
         warning('Cannot make changes to the default BD.')
       else
@@ -77,21 +77,19 @@ Puppet::Type.newtype(:cisco_bridge_domain) do
   ensurable
 
   newproperty(:bd_name) do
-    desc "The name of the BD. Valid values are string, keyword 'default'."
+    desc "The bridge-domain name. Valid values are String or keyword 'default'."
 
     munge do |value|
-      begin
-        value = :default if value == 'default'
-        value = String(value) unless value == :default
-      rescue
-        raise 'BD Name is not a valid string.'
-      end # rescue
+      fail 'BD Name is not a valid string' unless value.is_a?(String)
+      value = :default if value == 'default'
       value
     end
   end # property name
 
   newproperty(:fabric_control) do
-    desc "whether to change BD type to fabric-control, Only one BD can be fabric-control. Valid values are true, false ,'default'."
+    desc %(Specifies this bridge-domain as the fabric control bridge-domain.
+           Only one bridge-domain or VLAN can be configured as fabric-control.
+           Valid values are true, false ,'default'.)
 
     newvalues(
       :true,
@@ -100,7 +98,7 @@ Puppet::Type.newtype(:cisco_bridge_domain) do
   end # property fabric_control
 
   newproperty(:shutdown) do
-    desc "whether or not the BD is shutdown. Valid values are true, false, 'default'."
+    desc "Specifies the shutdown state of the bridge-domain. Valid values are true, false, 'default'."
 
     newvalues(
       :true,

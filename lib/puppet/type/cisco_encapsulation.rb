@@ -74,8 +74,13 @@ Puppet::Type.newtype(:cisco_encapsulation) do
 
   newproperty(:dot1q_map, array_matching: :all) do
     format = '[dot1q vlans, vnis]'
-    desc "Dot1q vlan to vni mapping under encapsulation profile.
-         Valid values match format #{format}"
+    desc %(The encapsulation profile dot1q vlan-to-vni mapping.
+         Valid values is a mapping Array of the format: #{format}.
+         Example:
+            dot1q_map => ['100-110,150', '5000-5010,6000']
+         or
+            dot1q_map => ['101-110,151-160', '5000-5020']
+         )
 
     validate do |value|
       fail 'Values in dot1q list is not of integer type' unless /^[\d\s,-]*$/.match(value)
@@ -83,7 +88,7 @@ Puppet::Type.newtype(:cisco_encapsulation) do
 
     munge do |value|
       value = value.gsub(/\s/, '')
-      value = PuppetX::Cisco::EncapUtils.batch_the_string(value)
+      value = PuppetX::Cisco::Utils.range_summarize(value.to_s, false)
       value
     end # munge
   end # property name
