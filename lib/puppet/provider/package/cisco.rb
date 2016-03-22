@@ -96,7 +96,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
         status = :present
       end
 
-      debug "determined package #{@resource[:name]} is #{status}."
+      debug "determined package #{@resource[:name]} is #{status}"
       @property_hash = { ensure: status, version: is_ver }
 
     elsif in_ios_xr?
