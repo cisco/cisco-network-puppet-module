@@ -59,7 +59,7 @@ Puppet::Type.newtype(:cisco_bridge_domain) do
 
     validate do |value|
       puts "bridge-domain #{value}"
-      valid_ids = *(2..3967)
+      valid_ids = *(2..4096)
 
       fail 'bridge-domain ID needs to be an integer' unless /\d+/.match(value)
       if value.to_i == 1
@@ -89,12 +89,11 @@ Puppet::Type.newtype(:cisco_bridge_domain) do
   newproperty(:fabric_control) do
     desc %(Specifies this bridge-domain as the fabric control bridge-domain.
            Only one bridge-domain or VLAN can be configured as fabric-control.
-           Valid values are true, false ,'default'.)
+           Valid values are true, false.)
 
     newvalues(
       :true,
-      :false,
-      :default)
+      :false)
   end # property fabric_control
 
   newproperty(:shutdown) do
@@ -102,7 +101,6 @@ Puppet::Type.newtype(:cisco_bridge_domain) do
 
     newvalues(
       :true,
-      :false,
-      :default)
+      :false)
   end # property shutdown
 end # Puppet::Type.newtype
