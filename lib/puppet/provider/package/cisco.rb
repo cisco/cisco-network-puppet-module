@@ -58,7 +58,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
     (os == 'ios_xr') ? true : false
   end
 
-  def is_cisco_rpm?
+  def cisco_rpm?
     if @resource[:source]
       name_var_arch_regex_xr = /^(.*\d.*)-([\d.]*)-(r\d+.*)\.(\w{4,}).rpm/
       @resource[:source].match(name_var_arch_regex_xr) ? true : false
@@ -76,13 +76,13 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
   # @property_hash is empty at this point
   def properties
     if (in_ios_xr?) ||
-        (in_guestshell? && target_host?)
+       (in_guestshell? && target_host?)
       normalize_resource
     else
       super
     end
 
-    if (in_ios_xr? && is_cisco_rpm?) ||
+    if (in_ios_xr? && cisco_rpm?) ||
        (in_guestshell? && target_host?)
 
       is_ver = current_version
@@ -103,11 +103,11 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
     elsif in_ios_xr?
       info = super
       if info[:version]
-        status=:present
+        status = :present
         ver = info[:version]
       else
-        status=:absent
-        ver=''
+        status = :absent
+        ver = ''
       end
       debug "determined package #{@resource[:name]} is #{status}."
       @property_hash = { ensure: status, version: ver }
@@ -130,13 +130,6 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
     # ex n9000-dk9.LIBPROCMIBREST-1.0.0-7.0.3.x86_64.rpm
     name_var_arch_regex_nx = /^(.*)-([\d\.]+-[\d\.]+)\.(\w{4,})\.rpm$/
 
-    # xrv9k-k9sec-1.0.0.0-r600.x86_64.rpm-6.0.0
-    # xrv9k-k9sec-1.0.0.0-r61102I.x86_64.rpm-XR-DEV-16.02.22C
-    # This regex is used to create a match group of
-    # 1. package name, 2. package version, 3. platform
-    # name_var_arch_regex_xr = /^(.*\d.*)-([\d.]*)-r\d+.*\.(\w{4,}).rpm-.*$/
-    name_var_arch_regex_xr = /^(.*\d.*)-([\d.]*)-(r\d+.*)\.(\w{4,}).rpm/
-
     # ex: b+z-ip2.x64_64
     name_arch_regex = /^([\w\-\+]+)\.(\w+)$/
 
@@ -148,34 +141,36 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
     # [source] overrides [name]
     return unless @resource[:source]
 
+    # ex xrv9k-k9sec-1.0.0.0-r600.x86_64.rpm-6.0.0
+    #    xrv9k-k9sec-1.0.0.0-r61102I.x86_64.rpm-XR-DEV-16.02.22C
+    # This regex is used to create a match group of
+    # 1. package name, 2. package version, 3. platform
+    name_var_arch_regex_xr = /^(.*\d.*)-([\d.]*)-(r\d+.*)\.(\w{4,}).rpm/
+    name_regex_xr = /(.*).rpm$/
+
     # convert to linux-style path before parsing filename
     filename = @resource[:source].strip.tr(':', '/').split('/').last
 
-    if in_nexus? &&
-       (filename =~ name_ver_arch_regex ||
-      filename =~ name_var_arch_regex_nx)
-
+    if in_ios_xr?
+      if filename =~ name_var_arch_regex_xr
+        @resource[:name] = Regexp.last_match(1)
+        @resource[:package_settings]['version'] = Regexp.last_match(2)
+        @resource[:package_settings]['xr_version'] = Regexp.last_match(3)
+        @resource[:platform] = Regexp.last_match(4)
+        debug "parsed name:#{Regexp.last_match(1)}," \
+          "version:#{Regexp.last_match(2)}, xr:#{Regexp.last_match(3)}" \
+          "arch:#{Regexp.last_match(4)}"
+      else
+        @resource[:name] = filename.match(name_regex_xr)[1]
+        return
+      end
+    elsif filename =~ name_ver_arch_regex ||
+          filename =~ name_var_arch_regex_nx
       @resource[:name] = Regexp.last_match(1)
       @resource[:package_settings]['version'] = Regexp.last_match(2)
       @resource[:platform] = Regexp.last_match(3)
-      debug "NXOS: parsed name:#{Regexp.last_match(1)}, \
-      version:#{Regexp.last_match(2)}, arch:#{Regexp.last_match(3)}"
-
-    elsif in_ios_xr? && filename =~ name_var_arch_regex_xr
-      @resource[:name] = Regexp.last_match(1)
-      @resource[:package_settings]['version'] = Regexp.last_match(2)
-      @resource[:package_settings]['xr_version'] = Regexp.last_match(3)
-      @resource[:platform] = Regexp.last_match(4)
-      debug "XR: parsed name:#{Regexp.last_match(1)}, \
-      version:#{Regexp.last_match(2)}, xr:#{Regexp.last_match(3)} \
-      arch:#{Regexp.last_match(4)}"
-
-    elsif in_ios_xr?
-      filename = @resource[:source].strip.tr(':', '/').split('/').last
-      filename.match(/(.*).rpm$/)
-      @resource[:name] = Regexp.last_match(1) 
-      return
-
+      debug "parsed name:#{Regexp.last_match(1)}," \
+          "version:#{Regexp.last_match(2)}, arch:#{Regexp.last_match(3)}"
     else
       @resource.fail 'Could not parse name|version|arch from source: ' \
         "#{@resource[:source]}"
@@ -229,7 +224,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
 
   def install
     if in_ios_xr?
-      if is_cisco_rpm?
+      if cisco_rpm?
         debug 'using sdr_instcmd for install'
         Cisco::Yum.install("#{@resource[:name]}-" \
                            "#{@resource[:package_settings]['version']}-" \
@@ -243,7 +238,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
       if @resource[:source]
         debug 'Guestshell + target=>host detected, using nxapi for install'
         Cisco::Yum.install(@resource[:source])
-      elsif
+      else
         Cisco::Yum.install(@resource[:name])
       end
     else
@@ -258,7 +253,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
 
   def uninstall
     if in_ios_xr?
-      if is_cisco_rpm?
+      if cisco_rpm?
         debug 'using sdr_instcmd for uninstall'
         Cisco::Yum.remove("#{@resource[:name]}-"\
                           "#{@resource[:package_settings]['version']}-"\
