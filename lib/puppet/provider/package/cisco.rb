@@ -58,6 +58,15 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
     (os == 'ios_xr') ? true : false
   end
 
+  def is_cisco_rpm?
+    if @resource[:source]
+      name_var_arch_regex_xr = /^(.*\d.*)-([\d.]*)-(r\d+.*)\.(\w{4,}).rpm/
+      @resource[:source].match(name_var_arch_regex_xr) ? true : false
+    else
+      @resource[:package_settings]['xr_version'] ? true : false
+    end
+  end
+
   # IMPORTANT: it's useless to override self.instances and prefetch,
   # because we can't know whether to retrieve packages for native or GS
   # because target->host is specified on a per-package basis. Instead,
@@ -66,8 +75,15 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
   # this method in package.rb determines how to set ensure
   # @property_hash is empty at this point
   def properties
-    if in_ios_xr? || (in_guestshell? && target_host?)
+    if (in_ios_xr?) ||
+        (in_guestshell? && target_host?)
       normalize_resource
+    else
+      super
+    end
+
+    if (in_ios_xr? && is_cisco_rpm?) ||
+       (in_guestshell? && target_host?)
 
       is_ver = current_version
       should_ver = @resource[:package_settings]['version']
@@ -83,6 +99,18 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
       debug "determined package #{@resource[:name]} is #{status}. Expected " \
             "version #{should_ver}, #{status} version #{is_ver}"
       @property_hash = { ensure: status, version: is_ver }
+
+    elsif in_ios_xr?
+      info = super
+      if info[:version]
+        status=:present
+        ver = info[:version]
+      else
+        status=:absent
+        ver=''
+      end
+      debug "determined package #{@resource[:name]} is #{status}."
+      @property_hash = { ensure: status, version: ver }
     else
       super
     end
@@ -141,6 +169,13 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
       debug "XR: parsed name:#{Regexp.last_match(1)}, \
       version:#{Regexp.last_match(2)}, xr:#{Regexp.last_match(3)} \
       arch:#{Regexp.last_match(4)}"
+
+    elsif in_ios_xr?
+      filename = @resource[:source].strip.tr(':', '/').split('/').last
+      filename.match(/(.*).rpm$/)
+      @resource[:name] = Regexp.last_match(1) 
+      return
+
     else
       @resource.fail 'Could not parse name|version|arch from source: ' \
         "#{@resource[:source]}"
@@ -151,25 +186,11 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
 
   # helper to retrieve version info for installed package
   def current_version
-    if @resource[:platform]
-      # nexus and ios_xr accept differently formatted filenames for query and remove function.
-      # @resource[:package_settings]['xr_version'] is set only on ios_xr platform.
-      if @resource[:package_settings]['xr_version'] && in_ios_xr?
-        ver = Cisco::Yum.query("#{@resource[:name]}-" \
-                               "#{@resource[:package_settings]['version']}-" \
-                               "#{@resource[:package_settings]['xr_version']}."\
-                               "#{@resource[:platform]}")
-      elsif in_nexus?
-        ver = Cisco::Yum.query("#{@resource[:name]}.#{@resource[:platform]}")
-      end
+    # Platform is not used in XR query.
+    if @resource[:platform] && in_nexus?
+      ver = Cisco::Yum.query("#{@resource[:name]}.#{@resource[:platform]}")
     else
-      if @resource[:package_settings]['xr_version'] && in_ios_xr?
-        ver = Cisco::Yum.query("#{@resource[:name]}-" \
-                               "#{@resource[:package_settings]['version']}-" \
-                               "#{@resource[:package_settings]['xr_version']}")
-      elsif in_nexus?
-        ver = Cisco::Yum.query("#{@resource[:name]}")
-      end
+      ver = Cisco::Yum.query("#{@resource[:name]}")
     end
     debug "retrieved version '#{ver}' for package #{@resource[:name]}"
     ver
@@ -207,23 +228,23 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
   end
 
   def install
-    if in_ios_xr? || (in_guestshell? && target_host?)
-      if in_nexus?
-        debug 'Guestshell + target=>host detected, using nxapi for install'
-      elsif in_ios_xr?
+    if in_ios_xr?
+      if is_cisco_rpm?
         debug 'using sdr_instcmd for install'
+        Cisco::Yum.install("#{@resource[:name]}-" \
+                           "#{@resource[:package_settings]['version']}-" \
+                           "#{@resource[:package_settings]['xr_version']}")
+      elsif @resource[:source]
+        debug "using yum for install #{@resource[:source]}"
+        @resource[:name] = @resource[:source]
+        super
       end
+    elsif in_nexus? && (in_guestshell? && target_host?)
       if @resource[:source]
+        debug 'Guestshell + target=>host detected, using nxapi for install'
         Cisco::Yum.install(@resource[:source])
-      else
-        if in_ios_xr?
-          Cisco::Yum.install("#{@resource[:name]}-" \
-                               "#{@resource[:package_settings]['version']}-" \
-                               "#{@resource[:package_settings]['xr_version']}."\
-                               "#{@resource[:platform]}.rpm")
-        elsif in_nexus?
-          Cisco::Yum.install(@resource[:name])
-        end
+      elsif
+        Cisco::Yum.install(@resource[:name])
       end
     else
       debug 'Not Guestshell + target=>host, use native yum provider for install'
@@ -236,25 +257,21 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
   # yum's update method calls self.install which will refer to this class' install
 
   def uninstall
-    if in_ios_xr? || (in_guestshell? && target_host?)
-      if in_nexus?
-        debug 'Guestshell + target=>host detected, using nxapi for uninstall'
-      elsif in_ios_xr?
-        debug 'target=>host detected, using sdr_instcmd for uninstall'
-      end
-
-      # nexus and ios_xr accept differently formatted filenames for query and remove function.
-      # @resource[:package_settings]['xr_version'] is set only on ios_xr platform.
-      if @resource[:package_settings]['xr_version'] && in_ios_xr?
+    if in_ios_xr?
+      if is_cisco_rpm?
+        debug 'using sdr_instcmd for uninstall'
         Cisco::Yum.remove("#{@resource[:name]}-"\
                           "#{@resource[:package_settings]['version']}-"\
                           "#{@resource[:package_settings]['xr_version']}")
-      elsif in_nexus?
-        if @resource[:platform]
-          Cisco::Yum.remove("#{@resource[:name]}.#{@resource[:platform]}")
-        else
-          Cisco::Yum.remove(@resource[:name])
-        end
+      else
+        debug "using yum for uninstall #{@resource[:name]}"
+        super
+      end
+    elsif in_nexus? && (in_guestshell? && target_host?)
+      if @resource[:platform]
+        Cisco::Yum.remove("#{@resource[:name]}.#{@resource[:platform]}")
+      else
+        Cisco::Yum.remove(@resource[:name])
       end
     else
       debug 'Not XR or Guestshell + target=>host, use native yum provider for uninstall'
