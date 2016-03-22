@@ -58,7 +58,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
     (os == 'ios_xr') ? true : false
   end
 
-  def cisco_rpm?
+  def cisco_rpm_xr?
     if @resource[:source]
       name_var_arch_regex_xr = /^(.*\d.*)-([\d.]*)-(r\d+.*)\.(\w{4,}).rpm/
       @resource[:source].match(name_var_arch_regex_xr) ? true : false
@@ -82,7 +82,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
       super
     end
 
-    if (in_ios_xr? && cisco_rpm?) ||
+    if (in_ios_xr? && cisco_rpm_xr?) ||
        (in_guestshell? && target_host?)
 
       is_ver = current_version
@@ -96,8 +96,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
         status = :present
       end
 
-      debug "determined package #{@resource[:name]} is #{status}. Expected " \
-            "version #{should_ver}, #{status} version #{is_ver}"
+      debug "determined package #{@resource[:name]} is #{status}."
       @property_hash = { ensure: status, version: is_ver }
 
     elsif in_ios_xr?
@@ -224,7 +223,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
 
   def install
     if in_ios_xr?
-      if cisco_rpm?
+      if cisco_rpm_xr?
         debug 'using sdr_instcmd for install'
         Cisco::Yum.install("#{@resource[:name]}-" \
                            "#{@resource[:package_settings]['version']}-" \
@@ -253,7 +252,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
 
   def uninstall
     if in_ios_xr?
-      if cisco_rpm?
+      if cisco_rpm_xr?
         debug 'using sdr_instcmd for uninstall'
         Cisco::Yum.remove("#{@resource[:name]}-"\
                           "#{@resource[:package_settings]['version']}-"\
@@ -269,7 +268,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
         Cisco::Yum.remove(@resource[:name])
       end
     else
-      debug 'Not XR or Guestshell + target=>host, use native yum provider for uninstall'
+      debug 'Not XR || Guestshell + target=>host, use native yum provider for uninstall'
       super
     end
   end
