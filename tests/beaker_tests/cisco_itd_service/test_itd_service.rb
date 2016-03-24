@@ -49,9 +49,9 @@ tests[:default] = {
   },
   code:           [0, 2],
   resource:       {
-    access_list:         'false',
-    device_group:        'false',
-    exclude_access_list: 'false',
+    access_list:         '',
+    device_group:        '',
+    exclude_access_list: '',
     fail_action:         'false',
     load_bal_enable:     'false',
     shutdown:            'true',
@@ -85,7 +85,7 @@ tests[:default_plat_2] = {
   },
   code:           [0, 2],
   resource:       {
-    'peer_local' => 'false'
+    'peer_local' => ''
   },
 }
 
