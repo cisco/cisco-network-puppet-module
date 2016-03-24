@@ -78,9 +78,13 @@ tests[:default_plat_2] = {
   title_pattern:  'myService',
   preclean:       'cisco_itd_service',
   manifest_props: {
-    peer_local: 'default'
+    fail_action: 'default',
+    peer_local:  'default',
   },
   code:           [0, 2],
+  resource:       {
+    fail_action: 'false'
+  },
 }
 
 ing_intf = [['vlan 2', '4.4.4.4'], ['ethernet 1/1', '5.5.5.5'], ['port-channel 100', '6.6.6.6']]
