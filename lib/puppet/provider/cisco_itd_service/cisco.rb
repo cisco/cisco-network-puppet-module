@@ -56,7 +56,7 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
     :vrf,
   ]
   ITDSERVICE_BOOL_PROPS = [
-    :failaction,
+    :fail_action,
     :load_bal_enable,
     :nat_destination,
   ]

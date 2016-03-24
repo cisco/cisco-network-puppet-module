@@ -155,7 +155,7 @@ class ciscopuppet::cisco::demo_itd {
     ensure                        => 'present',
     device_group                  => 'udpGroup',
     exclude_access_list           => 'eal',
-    failaction                    => false,
+    fail_action                   => false,
     ingress_interface             => [['vlan 2', '4.4.4.4'],
     ['ethernet 1/1', '6.6.6.6'], ['port-channel 100', '7.7.7.7']],
     load_bal_enable               => true,

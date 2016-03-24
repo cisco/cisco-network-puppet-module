@@ -32,7 +32,7 @@ Puppet::Type.newtype(:cisco_itd_service) do
      access_list                   => \"my_access1\",
      device_group                  => \"my_group\",
      exclude_access_list           => \"my_access2\",
-     failaction                    => true,
+     fail_action                   => true,
      ingress_interface             => [['vlan 2', '1.1.1.1'], ['ethernet 1/1', '2.2.2.2']],
      load_bal_buckets              => 256,
      load_bal_enable               => true,
@@ -112,11 +112,11 @@ Puppet::Type.newtype(:cisco_itd_service) do
     end
   end # property exclude_access_list
 
-  newproperty(:failaction) do
+  newproperty(:fail_action) do
     desc 'ITD failaction'
 
     newvalues(:true, :false, :default)
-  end # property failaction
+  end # property fail_action
 
   newproperty(:ingress_interface, array_matching: :all) do
     format = '[[interface_name, next_hop], [intf, nh]]'
@@ -165,7 +165,7 @@ Puppet::Type.newtype(:cisco_itd_service) do
     desc 'ITD load balance enable'
 
     newvalues(:true, :false, :default)
-  end # property failaction
+  end # property load_bal_enable
 
   newproperty(:load_bal_mask_pos) do
     desc 'ITD load balance mask position'
