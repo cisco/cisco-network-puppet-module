@@ -53,7 +53,6 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
     :load_bal_method_proto,
     :load_bal_method_start_port,
     :peer_local,
-    :vrf,
   ]
   ITDSERVICE_BOOL_PROPS = [
     :fail_action,

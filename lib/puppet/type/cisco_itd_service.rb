@@ -47,7 +47,6 @@ Puppet::Type.newtype(:cisco_itd_service) do
      peer_vdc                      => ['vdc1', 'ser'],
      shutdown                      => true,
      virtual_ip                    => ['ip 1.1.1.1 2.2.2.2', 'ip 2.2.2.2 255.0.0.0 udp 1000 device-group myGroup1'],
-     vrf                           => \"myvrf\",
     }"
 
   ###################
@@ -304,16 +303,6 @@ Puppet::Type.newtype(:cisco_itd_service) do
       end
     end
   end # property virtual_ip
-
-  newproperty(:vrf) do
-    desc "ITD service vrf. Valid values are string, keyword
-         'default'. "
-
-    munge do |value|
-      value = :default if value == 'default'
-      value
-    end
-  end # property vrf
 
   def check_nat_ingress
     return unless self[:nat_destination]

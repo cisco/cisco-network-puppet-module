@@ -49,12 +49,9 @@ tests[:default] = {
   },
   code:           [0, 2],
   resource:       {
-    access_list:         '',
-    device_group:        '',
-    exclude_access_list: '',
-    fail_action:         'false',
-    load_bal_enable:     'false',
-    shutdown:            'true',
+    fail_action:     'false',
+    load_bal_enable: 'false',
+    shutdown:        'true',
   },
 }
 
@@ -84,9 +81,6 @@ tests[:default_plat_2] = {
     peer_local: 'default'
   },
   code:           [0, 2],
-  resource:       {
-    'peer_local' => ''
-  },
 }
 
 ing_intf = [['vlan 2', '4.4.4.4'], ['ethernet 1/1', '5.5.5.5'], ['port-channel 100', '6.6.6.6']]
