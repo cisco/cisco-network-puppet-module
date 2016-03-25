@@ -149,15 +149,7 @@ Puppet::Type.newtype(:cisco_itd_service) do
   newproperty(:load_bal_buckets) do
     desc 'ITD load balance buckets for traffic distribution'
 
-    munge do |value|
-      value = :default if value == 'default'
-      begin
-        value = Integer(value) unless value == :default
-      rescue
-        raise 'load_bal_buckets must be a valid integer, or default.'
-      end
-      value
-    end
+    munge { |value| value == 'default' ? :default : value.to_i }
   end # property load_bal_buckets
 
   newproperty(:load_bal_enable) do
@@ -169,15 +161,7 @@ Puppet::Type.newtype(:cisco_itd_service) do
   newproperty(:load_bal_mask_pos) do
     desc 'ITD load balance mask position'
 
-    munge do |value|
-      value = :default if value == 'default'
-      begin
-        value = Integer(value)
-      rescue
-        raise 'load_bal_mask_pos must be a valid integer, or default.'
-      end
-      value
-    end
+    munge { |value| value == 'default' ? :default : value.to_i }
   end # property load_bal_mask_pos
 
   newproperty(:load_bal_method_bundle_hash) do
@@ -195,15 +179,7 @@ Puppet::Type.newtype(:cisco_itd_service) do
   newproperty(:load_bal_method_end_port) do
     desc 'ITD load balance protocol port end range'
 
-    munge do |value|
-      value = :default if value == 'default'
-      begin
-        value = Integer(value)
-      rescue
-        raise 'load_bal_method_end_port must be a valid integer, or default.'
-      end
-      value
-    end
+    munge { |value| value == 'default' ? :default : value.to_i }
   end # property load_bal_method_end_port
 
   newproperty(:load_bal_method_proto) do
@@ -215,15 +191,7 @@ Puppet::Type.newtype(:cisco_itd_service) do
   newproperty(:load_bal_method_start_port) do
     desc 'ITD load balance protocol port start range'
 
-    munge do |value|
-      value = :default if value == 'default'
-      begin
-        value = Integer(value)
-      rescue
-        raise 'load_bal_method_start_port must be a valid integer, or default.'
-      end
-      value
-    end
+    munge { |value| value == 'default' ? :default : value.to_i }
   end # property load_bal_method_start_port
 
   newproperty(:nat_destination) do
@@ -318,7 +286,7 @@ Puppet::Type.newtype(:cisco_itd_service) do
   end
 
   # Make sure that the ingress_interface has no duplicates
-  # and also even in the next-hop field
+  # and also no duplicates even in the next-hop field
   def check_ingress_duplicates
     return unless self[:ingress_interface]
     return if self[:ingress_interface][0] == :default
@@ -343,7 +311,26 @@ Puppet::Type.newtype(:cisco_itd_service) do
       self[:virtual_ip].length > 1
   end
 
+  def check_lb_enable_params
+    return if self[:load_bal_enable] == :true
+    vars = [
+      :load_bal_buckets,
+      :load_bal_mask_pos,
+      :load_bal_method_bundle_hash,
+      :load_bal_method_bundle_select,
+      :load_bal_method_end_port,
+      :load_bal_method_proto,
+      :load_bal_method_start_port,
+    ]
+    vars.each do |p|
+      fail ArgumentError,
+           'All load balance params should be default' unless
+        self[p].nil? || self[p] == :default
+    end
+  end
+
   validate do
+    check_lb_enable_params
     check_nat_ingress
     check_ingress_duplicates
     check_vip

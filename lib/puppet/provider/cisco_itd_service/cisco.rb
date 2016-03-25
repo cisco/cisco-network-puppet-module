@@ -230,7 +230,6 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
           attrs[p] = PuppetX::Cisco::Utils.bool_sym_to_s(attrs[p])
         end
       end
-      fail_load_balance(attrs)
       @nu.load_balance_set(attrs)
     else
       call_empty
@@ -239,18 +238,6 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
 
   # method to keep rubocop happy
   def call_empty
-  end
-
-  def fail_load_balance(attrs)
-    others = attrs[:load_bal_method_bundle_hash] ||
-             attrs[:load_bal_method_bundle_select] ||
-             attrs[:load_bal_buckets] ||
-             attrs[:load_bal_mask_pos] ||
-             attrs[:load_bal_method_proto] ||
-             attrs[:load_bal_method_start_port] ||
-             attrs[:load_bal_method_end_port]
-    fail ArgumentError, 'All lb params MUST be default when load_bal_enable is false' if
-      others && attrs[:load_bal_enable] == false
   end
 
   def flush
