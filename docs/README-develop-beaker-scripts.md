@@ -1,4 +1,4 @@
-# How To Create Beaker Test Cases
+# How To Create and Run Beaker Test Cases
 
 #### Table of Contents
 
@@ -18,36 +18,15 @@
 
 ## <a name="overview">Overview</a>
 
-This document describes the process for writing [Beaker](https://github.com/puppetlabs/beaker/blob/master/README.md) Test Cases for cisco puppet providers.
-
-## <a name="pre-install">Pre-Install Tasks</a>
+This document describes the process for writing and executing [Beaker](https://github.com/puppetlabs/beaker/blob/master/README.md) Test Cases for cisco puppet providers.
 
 ### Platform and Software Support
 
 Beaker Release 2.14.1 and later.
 
-### Disk space
+## <a name="pre-install">Pre-Install Tasks</a>
 
-400MB of free disk space on bootflash is recommended before installing the
-puppet agent software on the target agent node.
-
-### Environment
-NX-OS supports two possible environments for running 3rd party software:
-`bash-shell` and `guestshell`. Choose one environment for running the
-puppet agent software. You may run puppet from either environment but not both
-at the same time.
-
-* `bash-shell`
-  * This is the native WRL linux environment underlying NX-OS. It is disabled by default.
-* `guestshell`
-  * This is a secure linux container environment running CentOS. It is enabled by default.
-* `open agent container`
-  * This is a 32-bit CentOS-based container created specifically for running Puppet Agent software.
-  * OAC containers are created for specific platforms and must be downloaded from Cisco.
-  * The OAC must be installed before the Puppet Agent can be installed.
-
-
-Access the following [link](README-agent-install.md) for more information on enabling these environments.
+Install and set up the Puppet agent and `cisco_node_utils` gem as described in [README-agent-install.md](README-agent-install.md).
 
 ### Install Beaker
 
@@ -71,20 +50,9 @@ end
 
 ### Configure IOS XR
 
-#### Enable gRPC server
-
-[Enable the gRPC server](http://www.cisco.com/c/en/us/td/docs/iosxr/ncs5500/DataModels/b-Datamodels-cg-ncs5500/b-Datamodels-cg-ncs5500_chapter_010.html#concept_700172ED7CF44313B0D7E521B2983F32) and select a port for it to listen on. Example:
-
-~~~
-configure
-grpc port 57777
-commit
-end
-~~~
-
 #### Start SSHd for TPNNS
 
-IOS XR provides an SSH server daemon that runs within the [third-party network namespace (TPNNS)](http://www.cisco.com/c/en/us/td/docs/iosxr/AppHosting/AH_Config_Guide/AH_User_Guide_chapter_00.html#concept_B8195E8C04EF4900BF51B2F3832F52AE), which is where the Puppet agent needs to run. Start this daemon from the IOS XR bash shell:
+IOS XR provides an SSH server daemon that runs within the [third-party network namespace (TPNNS)](http://www.cisco.com/c/en/us/td/docs/iosxr/AppHosting/AH_Config_Guide/AH_User_Guide_chapter_00.html#concept_B8195E8C04EF4900BF51B2F3832F52AE), which is where Beaker needs to run the Puppet agent. Start this daemon from the IOS XR bash shell:
 
 ~~~bash
 run bash
