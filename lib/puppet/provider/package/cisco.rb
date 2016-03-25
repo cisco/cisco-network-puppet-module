@@ -62,9 +62,9 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
     name_var_arch_regex_xr = /^(.*\d.*)-([\d.]*)-(r\d+.*)\.(\w{4,}).rpm/
     if @resource[:source]
       @resource[:source].match(name_var_arch_regex_xr) ? true : false
-    elsif @resource[:name] && @resource[:package_settings] && @resource[:platform] 
+    elsif @resource[:name] && @resource[:package_settings] && @resource[:platform]
       source = @resource[:name] + '-' + @resource[:package_settings]['version'] + \
-        '.' + @resource[:platform] + '.rpm'
+               '.' + @resource[:platform] + '.rpm'
       source.match(name_var_arch_regex_xr) ? true : false
     end
   end
@@ -79,7 +79,6 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
       Regexp.last_match(2)
     end
   end
-
 
   # IMPORTANT: it's useless to override self.instances and prefetch,
   # because we can't know whether to retrieve packages for native or GS
