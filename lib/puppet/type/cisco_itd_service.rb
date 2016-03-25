@@ -183,7 +183,7 @@ Puppet::Type.newtype(:cisco_itd_service) do
   end # property load_bal_method_end_port
 
   newproperty(:load_bal_method_proto) do
-    desc 'ITD load balance bundle protocol'
+    desc 'ITD load balance protocol'
 
     newvalues(:default, :tcp, :udp)
   end # property load_bal_method_proto
