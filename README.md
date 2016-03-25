@@ -143,6 +143,7 @@ The following table indicates which providers are supported on each platform. As
 | [cisco_interface_service_vni](#type-cisco_interface_service_vni) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
 | [cisco_itd_device_group](#type-cisco_itd_device_group) | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
 | [cisco_itd_device_group_node](#type-cisco_itd_device_group_node) | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| [cisco_itd_service](#type-cisco_itd_service) | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | * [caveats](#cisco_itd_service-caveats) |
 | [cisco_ospf](#type-cisco_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_ospf_vrf](#type-cisco_ospf_vrf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | ✅ = Supported <br> ❌ = Unsupported  | N9k | N30xx | N31xx | N56xx | N6k | N7k | IOS XR | Caveats |
@@ -245,7 +246,8 @@ The following resources include cisco types and providers along with cisco provi
 * Itd Types
   * [`cisco_itd_device_group`](#type-cisco_itd_device_group)
   * [`cisco_itd_device_group_node`](#type-cisco_itd_device_group_node)
-  * 
+  * [`cisco_itd_service`](#type-cisco_itd_service)
+
 * Multicast Types
   * [`cisco_pim`](#type-cisco_pim)
   * [`cisco_pim_grouplist`](#type-cisco_pim_grouplist)
@@ -340,8 +342,11 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 * [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
 * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
-* [`cisco_itd_device_group`](#type-cisco_itd_device_group)
+* [`cisco_
+* 
+* _device_group`](#type-cisco_itd_device_group)
 * [`cisco_itd_device_group_node`](#type-cisco_itd_device_group_node)
+* [`cisco_itd_service`](#type-cisco_itd_service)
 * [`cisco_ospf`](#type-cisco_ospf)
 * [`cisco_ospf_vrf`](#type-cisco_ospf_vrf)
 * [`cisco_overlay_global`](#type-cisco_overlay_global)
@@ -2030,6 +2035,89 @@ Probe type. Valid values are 'icmp', 'dns', 'tcp', 'udp' or keyword 'default'.
 
 ##### `weight`
 Weight for traffic distribution. Valid values are Integer, keyword 'default'.
+
+--
+### Type: cisco_itd_service
+
+Manages configuration of ITD (Intelligent Traffic Director) service
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I3(1)        | 1.3.0                  |
+| N30xx    | unsupported        | unsupported            |
+| N31xx    | unsupported        | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| IOS XR   | unsupported        | unsupported            |
+
+#### <a name="cisco_itd_service-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `nat_destination` | Supported only on N7k |
+| `peer_local` | Supported only on N9k |
+| `peer_vdc` | Supported only on N7k |
+
+#### Parameters
+
+##### `ensure`
+Determine whether the config should be present or not. Valid values are 'present' and 'absent'.
+
+##### `access_list`
+User ACL name. Valid values are String or 'default'.
+
+##### `device_group`
+Device group name where this service belongs. Valid values are String or 'default'.
+
+##### `exclude_access_list`
+User ACL name to exclude from redirection. Valid values are String or 'default'.
+
+##### `fail_action`
+Failaction node reassign. Valid values are true, false or 'default'.
+
+##### `ingress_interface`
+Ingress interface. Valid values are an array of [interface, next-hop] pairs or 'default'.
+
+##### `load_bal_enable`
+Enable or disable load balance. Valid values are true, false or 'default'.
+
+##### `load_bal_buckets`
+Buckets for traffic distribution (in powers of 2). Valid values are Integer, keyword 'default'.
+
+##### `load_bal_mask_pos`
+Loadbalance mask position. Valid values are Integer, keyword 'default'.
+
+##### `load_bal_method_bundle_select`
+Loadbalance bundle select. Valid values are 'src, 'dst' or keyword 'default'.
+
+##### `load_bal_method_bundle_hash`
+Loadbalance bundle hash. Valid values are 'ip, 'ip-l4port' or keyword 'default'.
+
+##### `load_bal_method_proto`
+Loadbalance protocol. This is valid only when the bundle hash is 'ip-l4port'. Valid values are 'tcp, 'udp' or keyword 'default'.
+
+##### `load_bal_method_start_port`
+Start port of range (to match only packets in the range of port numbers). This is valid only when the bundle hash is 'ip-l4port'. Valid values are Integer, keyword 'default'.
+
+##### `load_bal_method_end_port`
+End port of range (to match only packets in the range of port numbers). This is valid only when the bundle hash is 'ip-l4port'. Valid values are Integer, keyword 'default'.
+
+##### `nat_destination`
+Destination NAT. Valid values are true, false or 'default'.
+
+##### `peer_local`
+Peer involved in sandwich mode. Valid values are String or 'default'.
+
+##### `peer_vdc`
+Peer involved in sandwich mode. Valid values are an array of [vdc, service] or 'default'.
+
+##### `shutdown`
+Whether or not the service is shutdown. Valid values are 'true', 'false' and
+keyword 'default'.
+
+##### `virtual_ip`
+Virtual ip configuration. Valid values are an array of Strings or 'default'.
 
 --
 ### Type: cisco_ospf
