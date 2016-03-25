@@ -124,9 +124,9 @@ Puppet::Type.newtype(:cisco_itd_service) do
 
     # Override puppet's insync method, which checks whether current value is
     # equal to value specified in manifest.  Make sure puppet considers
-    # 2 arrays with same elements but in different order as equal.
+    # 2 arrays with same elements but in different order with ignorecase as equal.
     def insync?(is)
-      (is.size == should.size && is.sort == should.sort)
+      (is.size == should.size && is.flatten.sort == should.flatten.map(&:downcase).sort)
     end
 
     def should_to_s(value)
@@ -304,6 +304,8 @@ Puppet::Type.newtype(:cisco_itd_service) do
     end
   end # property virtual_ip
 
+  # Make sure that when nat_destination is in the manifest,
+  # next_hop is specified
   def check_nat_ingress
     return unless self[:nat_destination]
     return if self[:ingress_interface][0] == :default
@@ -315,6 +317,8 @@ Puppet::Type.newtype(:cisco_itd_service) do
     end
   end
 
+  # Make sure that the ingress_interface has no duplicates
+  # and also even in the next-hop field
   def check_ingress_duplicates
     return unless self[:ingress_interface]
     return if self[:ingress_interface][0] == :default
@@ -323,38 +327,25 @@ Puppet::Type.newtype(:cisco_itd_service) do
       self[:ingress_interface].uniq.length == self[:ingress_interface].length
     # also fail if the interface or next_hop itself is duplicated
     array = self[:ingress_interface].flatten
-    # for default case
     hash = Hash[*array]
-    # remove empty next-hop if any
+    # For default case, remove empty next-hop if any
     no_empty_arr = hash.values.reject(&:empty?)
     fail ArgumentError, 'ingress_interface contains duplicate values' unless
       no_empty_arr.uniq.length == no_empty_arr.length
   end
 
-  def check_vip_advert
+  # Make sure that only one VIP is allowed
+  def check_vip
     return unless self[:virtual_ip]
     return if self[:virtual_ip][0] == :default
     # only one VIP can be configured for now
     fail ArgumentError, 'only one VIP is allowed' if
       self[:virtual_ip].length > 1
-    # this code will come into affect when there are more VIPs
-    vip = self[:virtual_ip].dup
-    excl_advert_array =
-        vip.reject { |elem| elem.include?('advertise enable') }
-    incl_advert_array = vip - excl_advert_array
-    incl_advert_array.each do |str|
-      no_advert_str = str.sub(' advertise enable', '').strip
-      excl_advert_array << no_advert_str
-      fail ArgumentError,
-           'virtual_ip contains duplicate values with advertise' unless
-          excl_advert_array.uniq.length == excl_advert_array.length
-      excl_advert_array = excl_advert_array.take excl_advert_array.size - 1
-    end
   end
 
   validate do
     check_nat_ingress
     check_ingress_duplicates
-    check_vip_advert
+    check_vip
   end
 end

@@ -59,6 +59,12 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
     :load_bal_enable,
     :nat_destination,
   ]
+  # shutdown property is treated separately due to the ordering.
+  # When shutdown goes from true to false, it needs to be set
+  # after all the other properties are set. For all other cases,
+  # shutdown needs to be set first before any other
+  # properties are set. Basically, no properties cannot be
+  # changed while the service is active.
   ITDSERVICE_SHUT_PROP = [
     :shutdown
   ]
@@ -202,14 +208,6 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
     @property_flush[:virtual_ip] = should_list
   end
 
-  # We need special handling for boolean properties in our custom
-  # setters below. This helper method returns true if the property
-  # flush contains a TrueClass or FalseClass value.
-  def flush_boolean?(prop)
-    @property_flush[prop].is_a?(TrueClass) ||
-      @property_flush[prop].is_a?(FalseClass)
-  end
-
   def load_balance_set
     attrs = {}
     vars = [
@@ -239,7 +237,7 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
     end
   end
 
-  # method to keep ribocop happy
+  # method to keep rubocop happy
   def call_empty
   end
 
