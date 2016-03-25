@@ -59,13 +59,27 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
   end
 
   def cisco_rpm_xr?
+    name_var_arch_regex_xr = /^(.*\d.*)-([\d.]*)-(r\d+.*)\.(\w{4,}).rpm/
     if @resource[:source]
-      name_var_arch_regex_xr = /^(.*\d.*)-([\d.]*)-(r\d+.*)\.(\w{4,}).rpm/
       @resource[:source].match(name_var_arch_regex_xr) ? true : false
-    else
-      @resource[:package_settings]['xr_version'] ? true : false
+    elsif @resource[:name] && @resource[:package_settings] && @resource[:platform] 
+      source = @resource[:name] + '-' + @resource[:package_settings]['version'] + \
+        '.' + @resource[:platform] + '.rpm'
+      source.match(name_var_arch_regex_xr) ? true : false
     end
   end
+
+  def version?(t)
+    return unless @resource[:package_settings]
+    regex = /^([\d.]*)-(r\d+.*)$/
+    @resource[:package_settings]['version'].match(regex)
+    if t == 'package'
+      Regexp.last_match(1)
+    elsif t == 'xr'
+      Regexp.last_match(2)
+    end
+  end
+
 
   # IMPORTANT: it's useless to override self.instances and prefetch,
   # because we can't know whether to retrieve packages for native or GS
@@ -86,7 +100,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
        (in_guestshell? && target_host?)
 
       is_ver = current_version
-      should_ver = @resource[:package_settings]['version']
+      should_ver = version?('package')
 
       # set absent if no version is installed, or if installed version
       # does not match @resource version (if should_ver is provided)
@@ -144,7 +158,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
     #    xrv9k-k9sec-1.0.0.0-r61102I.x86_64.rpm-XR-DEV-16.02.22C
     # This regex is used to create a match group of
     # 1. package name, 2. package version, 3. platform
-    name_var_arch_regex_xr = /^(.*\d.*)-([\d.]*)-(r\d+.*)\.(\w{4,}).rpm/
+    name_var_arch_regex_xr = /^(.*\d.*)-([\d.]*-r\d+.*)\.(\w{4,}).rpm/
     name_regex_xr = /(.*).rpm$/
 
     # convert to linux-style path before parsing filename
@@ -154,11 +168,10 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
       if filename =~ name_var_arch_regex_xr
         @resource[:name] = Regexp.last_match(1)
         @resource[:package_settings]['version'] = Regexp.last_match(2)
-        @resource[:package_settings]['xr_version'] = Regexp.last_match(3)
-        @resource[:platform] = Regexp.last_match(4)
+        @resource[:platform] = Regexp.last_match(3)
         debug "parsed name:#{Regexp.last_match(1)}," \
-          "version:#{Regexp.last_match(2)}, xr:#{Regexp.last_match(3)}" \
-          "arch:#{Regexp.last_match(4)}"
+          "version:#{Regexp.last_match(2)}, " \
+          "arch:#{Regexp.last_match(3)}"
       else
         @resource[:name] = filename.match(name_regex_xr)[1]
         return
@@ -226,8 +239,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
       if cisco_rpm_xr?
         debug 'using sdr_instcmd for install'
         Cisco::Yum.install("#{@resource[:name]}-" \
-                           "#{@resource[:package_settings]['version']}-" \
-                           "#{@resource[:package_settings]['xr_version']}")
+                           "#{@resource[:package_settings]['version']}")
       elsif @resource[:source]
         debug "using yum for install #{@resource[:source]}"
         @resource[:name] = @resource[:source]
@@ -255,8 +267,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
       if cisco_rpm_xr?
         debug 'using sdr_instcmd for uninstall'
         Cisco::Yum.remove("#{@resource[:name]}-"\
-                          "#{@resource[:package_settings]['version']}-"\
-                          "#{@resource[:package_settings]['xr_version']}")
+                          "#{@resource[:package_settings]['version']}")
       else
         debug "using yum for uninstall #{@resource[:name]}"
         super
