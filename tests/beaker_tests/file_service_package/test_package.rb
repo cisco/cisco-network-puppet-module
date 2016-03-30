@@ -111,6 +111,10 @@ tests[:uninstall_tp] = {
 # TEST CASE EXECUTION
 #################################################################
 test_name 'TestCase :: Source Present' do
+  if operating_system == 'nexus'
+    logger.error('This beaker test is written for io_xr')
+    return
+  end
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Install package testing")
   id = :install
