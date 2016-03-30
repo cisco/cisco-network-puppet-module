@@ -24,8 +24,7 @@ The Cisco **package** provider is a sub-class of Puppet's **yum_package**. It us
   * May also be managed directly with **yum_package** or **rpm_package**.
 
 * **Cisco RPM**
-  * These RPMS target 
-      the Cisco NX-OS host environment or IOS-XR.
+  * These RPMS target the Cisco NX-OS host environment or IOS-XR.
 
 
 ## <a name="Syntax">Syntax</a>
@@ -87,12 +86,12 @@ package { 'n9000_sample':
 ~~~
 # IOS-XR Local RPM file
   package { 'xrv9k-ospf-1.0.0.0-r61107I':
-    ensure                                   => 'present',
-    name                                     => 'xrv9k-ospf-1.0.0.0-r61107I.x86_64.rpm-XR-DEV-16.03.24C',
-    provider                                 => 'cisco',
-    source                                   => '/disk0:/xrv9k-ospf-1.0.0.0-r61107I.x86_64.rpm-XR-DEV-16.03.24C',
-    platform                                 => 'x86_64',
-    package_settings                         => {},
+    ensure           => 'present',
+    name             => 'xrv9k-ospf-1.0.0.0-r61107I.x86_64.rpm-XR-DEV-16.03.24C',
+    provider         => 'cisco',
+    source           => '/disk0:/xrv9k-ospf-1.0.0.0-r61107I.x86_64.rpm-XR-DEV-16.03.24C',
+    platform         => 'x86_64',
+    package_settings => {},
   }
 ~~~
 
