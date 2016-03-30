@@ -41,6 +41,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `source_interface_hold_down_time`
 - Extended `cisco_bgp` with the following attributes:
   - `nsr`
+- `package` install IOS XR RPMs to host via sdr_instcmd.
 
 ### Removed
 - Removed 'cisco_nxapi' fact as this gem is no longer a dependency.
