@@ -49,17 +49,19 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
   # Returns true if operating system is nexus else false.
   def in_nexus?
     os = Facter.value('operatingsystem')
-    (os == 'nexus') ? true : false
+    os == 'nexus'
   end
 
   # Returns true if operating system is ios_xr else false.
   def in_ios_xr?
     os = Facter.value('operatingsystem')
-    (os == 'ios_xr') ? true : false
+    os == 'ios_xr'
   end
 
-  # Returns true if rpm is ios-xr rpm. otherwise false.
+  # Returns true if the rpm specified in the manifest is an ios-xr rpm. 
+  # otherwise false.
   def cisco_rpm_xr?
+    # xrv9k-k9sec-1.0.0.0-r61102I.x86_64.rpm-XR-DEV-16.02.22C
     name_var_arch_regex_xr = /^(.*\d.*)-([\d.]*)-(r\d+.*)\.(\w{4,}).rpm/
     if @resource[:source]
       @resource[:source].match(name_var_arch_regex_xr) ? true : false
@@ -67,19 +69,27 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
       source = @resource[:name] + '-' + @resource[:package_settings]['version'] + \
                '.' + @resource[:platform] + '.rpm'
       source.match(name_var_arch_regex_xr) ? true : false
+    else
+      false
     end
   end
 
-  # Returns either ios xr version or rpm package version, based upon input.
-  def version?(t)
+  # Returns either ios xr version.
+  def xr_version?
     return unless @resource[:package_settings]
+    # matches pattern for 1.0.0.0-r61102I
     regex = /^([\d.]*)-(r\d+.*)$/
     @resource[:package_settings]['version'].match(regex)
-    if t == 'package'
-      Regexp.last_match(1)
-    elsif t == 'xr'
-      Regexp.last_match(2)
-    end
+    Regexp.last_match(2)
+  end
+
+  # Returns rpm package version.
+  def package_version?
+    return unless @resource[:package_settings]
+    # matches pattern for 1.0.0.0-r61102I
+    regex = /^([\d.]*)-(r\d+.*)$/
+    @resource[:package_settings]['version'].match(regex)
+    Regexp.last_match(1)
   end
 
   # IMPORTANT: it's useless to override self.instances and prefetch,
@@ -90,18 +100,12 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
   # this method in package.rb determines how to set ensure
   # @property_hash is empty at this point
   def properties
-    if (in_ios_xr?) ||
-       (in_guestshell? && target_host?)
-      normalize_resource
-    else
-      super
-    end
-
     if (in_ios_xr? && cisco_rpm_xr?) ||
        (in_guestshell? && target_host?)
 
+      normalize_resource
       is_ver = current_version
-      should_ver = version?('package')
+      should_ver = package_version?
 
       # set absent if no version is installed, or if installed version
       # does not match @resource version (if should_ver is provided)
@@ -114,17 +118,6 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
       debug "determined package #{@resource[:name]} is #{status}"
       @property_hash = { ensure: status, version: is_ver }
 
-    elsif in_ios_xr?
-      info = super
-      if info[:version]
-        status = :present
-        ver = info[:version]
-      else
-        status = :absent
-        ver = ''
-      end
-      debug "determined package #{@resource[:name]} is #{status}."
-      @property_hash = { ensure: status, version: ver }
     else
       super
     end
@@ -246,7 +239,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
         @resource[:name] = @resource[:source]
         super
       end
-    elsif in_nexus? && (in_guestshell? && target_host?)
+    elsif in_guestshell? && target_host?
       if @resource[:source]
         debug 'Guestshell + target=>host detected, using nxapi for install'
         Cisco::Yum.install(@resource[:source])
@@ -273,7 +266,8 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
         debug "using yum for uninstall #{@resource[:name]}"
         super
       end
-    elsif in_nexus? && (in_guestshell? && target_host?)
+    elsif in_guestshell? && target_host?
+      debug 'Guestshell + target=>host detected, using nxapi for uninstall'
       if @resource[:platform]
         Cisco::Yum.remove("#{@resource[:name]}.#{@resource[:platform]}")
       else

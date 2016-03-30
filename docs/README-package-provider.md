@@ -9,17 +9,9 @@
 
 ## <a name="overview">Overview</a>
 
-This document describes the Cisco **package** provider for Puppet, which serves as a common package provider for 
-  * NX-OS
-      * Cisco NX-OS RPM packages 
-      * third-party RPM packages
-  * IOS-XR
-      * Cisco IOS-XR RPM packages 
-      * third party RPM packages
+This document describes the Cisco **package** provider for Puppet, which serves as a common package provider for Cisco NX-OS and IO-XR RPM packages and third-party RPM packages.
 
-The Cisco **package** provider is a sub-class of Puppet's **yum_package**. It uses the yum provider for third-party RPM management but uses custom install and uninstall methods to support 
-  * NXAPI-based CLI installation on NX-OS that target the NX-OS host environment for Cisco RPMs.
-  * sdr_instcmd based installation on IOS-XR for Cisco RPMs.
+The Cisco **package** provider is a sub-class of Puppet's **yum_package**. It uses the yum provider for third-party RPM management but uses custom install and uninstall methods to support NXAPI-based CLI installation on NX-OS that target the NX-OS host environment for Cisco RPMs and sdr_instcmd based installation on IOS-XR for Cisco RPMs.
 
 * **Third-Party RPM**
   *  Third party RPMs target 
@@ -33,7 +25,7 @@ The Cisco **package** provider is a sub-class of Puppet's **yum_package**. It us
 
 * **Cisco RPM**
   * These RPMS target 
-      the Cisco NX-OS host environment. or IOS-XR.
+      the Cisco NX-OS host environment or IOS-XR.
 
 
 ## <a name="Syntax">Syntax</a>

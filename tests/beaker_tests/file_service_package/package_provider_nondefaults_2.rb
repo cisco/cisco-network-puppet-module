@@ -63,19 +63,32 @@ skipmsg = "\n\n*** WARNING ***\nThis test case relies on patches that are " \
   "built for specific image versions.\nMake sure the patch being tested is " \
   'compatible with the current image and then comment out this ' \
   "raise_skip_exception call to run the test.\n*** WARNING ***\n"
-raise_skip_exception(skipmsg, self)
+#raise_skip_exception(skipmsg, self)
 
 # @test_name [TestCase] Executes nondefaults testcase for PACKAGE Resource.
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
-    # Expected exit_code is 0 since this is a puppet agent cmd with no change.
-    cmd_str =
-      get_vshell_cmd('dir bootflash:n9000_sample-1.0.0-7.0.3.x86_64.rpm')
-    on(agent, cmd_str, acceptable_exit_codes: [0])
+    if operating_system == 'nexus'
+      source = 'bootflash:n9000_sample-1.0.0-7.0.3.x86_64.rpm'
+    else
+      source = '/disk0:/xrv9k-ospf-1.0.0.0-r61107I.x86_64.rpm-XR-DEV-16.03.24C'
+    end
+
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
+        "resource file '#{source}'", options)
+    on(agent, cmd_str) do
+      search_pattern_in_output(stdout,
+                               { 'ensure' => 'file' },
+                               false, self, logger)
+    end
 
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, FileSvcPkgLib.create_package_sample_manifest_absent)
+    if operating_system == 'nexus'
+      on(master, FileSvcPkgLib.create_package_sample_manifest_absent)
+    else
+      on(master, FileSvcPkgLib.create_package_sample_manifest_absent_xr)
+    end
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no change.
     # No change would imply that Sample package is uninstalled prior to test.
@@ -91,7 +104,11 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource present manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, FileSvcPkgLib.create_package_sample_manifest_present)
+    if operating_system == 'nexus'
+      on(master, FileSvcPkgLib.create_package_sample_manifest_present)
+    else
+      on(master, FileSvcPkgLib.create_package_sample_manifest_present_xr)
+    end
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     # Change would imply that Sample package is uninstalled prior to test and
@@ -99,6 +116,9 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
+    
+    # Idompotence test
+    on(agent, cmd_str, acceptable_exit_codes: [0])
 
     logger.info("Get resource present manifest from master :: #{result}")
   end
@@ -107,9 +127,14 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check package resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    # Sample package state should not be purged.
+    # Sample package state should not be "purged".
+    if operating_system == 'nexus'
+      pkg = 'n9000_sample' 
+    else
+      pkg = 'xrv9k-ospf-1.0.0.0-r61107I'
+    end
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource package 'n9000_sample'", options)
+        "resource package '#{pkg}'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ensure' => 'purged' },
@@ -117,6 +142,44 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Check package resource presence on agent :: #{result}")
+  end
+
+  step 'TestStep :: Uninstall package' do
+    # Expected exit_code is 0 since this is a bash shell cmd.
+    if operating_system == 'nexus'
+      on(master, FileSvcPkgLib.create_package_sample_manifest_absent)
+    else
+      on(master, FileSvcPkgLib.create_package_sample_manifest_absent_xr)
+    end
+
+    # expected exit_code is 2 since this is a puppet agent cmd with change.
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
+      'agent -t', options)
+    on(agent, cmd_str, acceptable_exit_codes: [2])
+
+    # Idompotence test
+    on(agent, cmd_str, acceptable_exit_codes: [0])
+
+    logger.info("Uninstall package :: #{result}")
+  end
+
+  step 'TestStep :: Check package resource absence on agent' do
+    # Expected exit_code is 0 since this is a puppet resource cmd.
+    # Flag is set to false to check for presence of RegExp pattern in stdout.
+    # Sample package state should be "purged".
+    if operating_system == 'nexus'
+      pkg = 'n9000_sample' 
+    else
+      pkg = 'xrv9k-ospf-1.0.0.0-r61107I'
+    end
+    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
+        "resource package '#{pkg}'", options)
+    on(agent, cmd_str) do
+      search_pattern_in_output(stdout,
+                               { 'ensure' => 'purged' },
+                               false, self, logger)
+    end
+    logger.info("Check package resource absence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.

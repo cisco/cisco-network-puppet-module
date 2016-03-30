@@ -35,16 +35,17 @@ third_party_rpm_source = '/disk0:/chef-12.8.1-1.ios_xr6.x86_64.rpm'
 tests = {
   master:        master,
   agent:         agent,
-  ensurable:     false,
+#  ensurable:     false,
   resource_name: 'package',
 }
 
 tests[:install] = {
-  desc:           'Install package',
-  title_pattern:  cisco_pkg_name,
-  manifest_props: {
+  desc:             'Install package',
+  operating_system: 'ios_xr',
+  title_pattern:    cisco_pkg_name,
+  ensure:           'present',
+  manifest_props:   {
     description:      'present',
-    ensure:           'present',
     name:             cisco_rpm_filename,
     provider:         'cisco',
     source:           cisco_rpm_source,
@@ -57,11 +58,12 @@ tests[:install] = {
 }
 
 tests[:uninstall] = {
-  desc:           'Uninstall package',
-  title_pattern:  cisco_pkg_name,
-  manifest_props: {
+  desc:             'Uninstall package',
+  operating_system: 'ios_xr',
+  title_pattern:    cisco_pkg_name,
+  ensure:           'absent',
+  manifest_props:   {
     description:      'absent',
-    ensure:           'absent',
     name:             cisco_rpm_filename,
     provider:         'cisco',
     source:           cisco_rpm_source,
@@ -75,6 +77,7 @@ tests[:uninstall] = {
 
 tests[:install_tp] = {
   desc:           'Install package',
+  operating_system: 'ios_xr',
   title_pattern:  third_party_rpm,
   manifest_props: {
     description:      'present',
@@ -92,6 +95,7 @@ tests[:install_tp] = {
 
 tests[:uninstall_tp] = {
   desc:           'Uninstall package',
+  operating_system: 'ios_xr',
   title_pattern:  third_party_rpm,
   manifest_props: {
     description:      'absent',
@@ -116,36 +120,28 @@ test_name 'TestCase :: Source Present' do
     return
   end
   # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 1. Install package testing")
+  #logger.info("\n#{'-' * 60}\nSection 1. Install package testing")
   id = :install
-  tests[id][:code] = [0, 2]
   test_harness_run(tests, id)
-  logger.info("\n#{'-' * 60}\nTest Complete")
   skipped_tests_summary(tests)
 
   # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 2. Uninstall package testing")
+  #logger.info("\n#{'-' * 60}\nSection 2. Uninstall package testing")
   id = :uninstall
-  tests[id][:code] = [0, 2]
   test_harness_run(tests, id)
-  logger.info("\n#{'-' * 60}\nTest Complete")
   skipped_tests_summary(tests)
 
-  # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 3. Install Third Party package testing")
-  id = :install_tp
-  tests[id][:code] = [0, 2]
-  test_harness_run(tests, id)
-  logger.info("\n#{'-' * 60}\nTest Complete")
-  skipped_tests_summary(tests)
+  ## -------------------------------------------------------------------
+  #logger.info("\n#{'-' * 60}\nSection 3. Install Third Party package testing")
+  #id = :install_tp
+  #test_harness_run(tests, id)
+  #skipped_tests_summary(tests)
 
-  # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 4. Uninstall Third Party package testing")
-  id = :uninstall_tp
-  tests[id][:code] = [0, 2]
-  test_harness_run(tests, id)
-  logger.info("\n#{'-' * 60}\nTest Complete")
-  skipped_tests_summary(tests)
+  ## -------------------------------------------------------------------
+  #logger.info("\n#{'-' * 60}\nSection 4. Uninstall Third Party package testing")
+  #id = :uninstall_tp
+  #test_harness_run(tests, id)
+  #skipped_tests_summary(tests)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
