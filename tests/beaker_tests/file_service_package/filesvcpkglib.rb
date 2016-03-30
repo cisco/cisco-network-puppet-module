@@ -218,5 +218,4 @@ node default {
 EOF"
     manifest_str
   end
-
 end

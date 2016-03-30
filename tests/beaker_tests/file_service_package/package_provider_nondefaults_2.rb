@@ -63,7 +63,7 @@ skipmsg = "\n\n*** WARNING ***\nThis test case relies on patches that are " \
   "built for specific image versions.\nMake sure the patch being tested is " \
   'compatible with the current image and then comment out this ' \
   "raise_skip_exception call to run the test.\n*** WARNING ***\n"
-#raise_skip_exception(skipmsg, self)
+raise_skip_exception(skipmsg, self)
 
 # @test_name [TestCase] Executes nondefaults testcase for PACKAGE Resource.
 test_name "TestCase :: #{testheader}" do
@@ -116,7 +116,7 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [2])
-    
+
     # Idompotence test
     on(agent, cmd_str, acceptable_exit_codes: [0])
 
@@ -129,7 +129,7 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     # Sample package state should not be "purged".
     if operating_system == 'nexus'
-      pkg = 'n9000_sample' 
+      pkg = 'n9000_sample'
     else
       pkg = 'xrv9k-ospf-1.0.0.0-r61107I'
     end
@@ -168,7 +168,7 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     # Sample package state should be "purged".
     if operating_system == 'nexus'
-      pkg = 'n9000_sample' 
+      pkg = 'n9000_sample'
     else
       pkg = 'xrv9k-ospf-1.0.0.0-r61107I'
     end
