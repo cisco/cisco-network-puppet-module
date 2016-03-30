@@ -58,7 +58,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
     os == 'ios_xr'
   end
 
-  # Returns true if the rpm specified in the manifest is an ios-xr rpm. 
+  # Returns true if the rpm specified in the manifest is an ios-xr rpm.
   # otherwise false.
   def cisco_rpm_xr?
     # xrv9k-k9sec-1.0.0.0-r61102I.x86_64.rpm-XR-DEV-16.02.22C
