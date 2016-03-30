@@ -58,6 +58,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
     (os == 'ios_xr') ? true : false
   end
 
+  # Returns true if rpm is ios-xr rpm. otherwise false.
   def cisco_rpm_xr?
     name_var_arch_regex_xr = /^(.*\d.*)-([\d.]*)-(r\d+.*)\.(\w{4,}).rpm/
     if @resource[:source]
@@ -69,6 +70,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
     end
   end
 
+  # Returns either ios xr version or rpm package version, based upon input.
   def version?(t)
     return unless @resource[:package_settings]
     regex = /^([\d.]*)-(r\d+.*)$/
