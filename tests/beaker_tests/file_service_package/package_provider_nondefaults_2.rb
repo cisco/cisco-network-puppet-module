@@ -70,7 +70,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
     if operating_system == 'nexus'
-      source = 'bootflash:n9000_sample-1.0.0-7.0.3.x86_64.rpm'
+      source = '/bootflash/n9000_sample-1.0.0-7.0.3.x86_64.rpm'
     else
       source = '/disk0:/xrv9k-ospf-1.0.0.0-r61107I.x86_64.rpm-XR-DEV-16.03.24C'
     end
