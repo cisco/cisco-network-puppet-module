@@ -23,6 +23,10 @@
 ###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
+cisco_rpm_filename='xrv9k-ospf-1.0.0.0-r61107I.x86_64.rpm-XR-DEV-16.03.24C'
+cisco_pkg_name='xrv9k-ospf-1.0.0.0-r61107I'
+cisco_rpm_source='/disk0:/xrv9k-ospf-1.0.0.0-r61107I.x86_64.rpm-XR-DEV-16.03.24C'
+
 # Test hash top-level keys
 tests = {
   master:        master,
@@ -33,13 +37,13 @@ tests = {
 
 tests[:install] = {
   desc:           'Install package',
-  title_pattern:  'xrv9k-ospf-1.0.0.0-r61107I',
+  title_pattern:  cisco_pkg_name,
   manifest_props: {
     description:        'present',
     ensure:             'present',
-    name:               'xrv9k-ospf-1.0.0.0-r61107I.x86_64.rpm-XR-DEV-16.03.24C',
+    name:               cisco_rpm_filename,
     provider:           'cisco',
-    source:             '/disk0:/xrv9k-ospf-1.0.0.0-r61107I.x86_64.rpm-XR-DEV-16.03.24C',
+    source:             cisco_rpm_source,
     platform:           'x86_64',
     package_settings:   {},
   },
@@ -50,13 +54,13 @@ tests[:install] = {
 
 tests[:uninstall] = {
   desc:           'Uninstall package',
-  title_pattern:  'xrv9k-ospf-1.0.0.0-r61107I',
+  title_pattern:  cisco_pkg_name,
   manifest_props: {
     description:        'absent',
     ensure:             'absent',
-    name:               'xrv9k-ospf-1.0.0.0-r61107I.x86_64.rpm-XR-DEV-16.03.24C',
+    name:               cisco_rpm_filename,
     provider:           'cisco',
-    source:             '/disk0:/xrv9k-ospf-1.0.0.0-r61107I.x86_64.rpm-XR-DEV-16.03.24C',
+    source:             cisco_rpm_source,
     platform:           'x86_64',
     package_settings:   {},
   },
