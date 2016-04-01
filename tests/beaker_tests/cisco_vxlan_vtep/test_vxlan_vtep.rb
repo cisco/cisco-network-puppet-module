@@ -70,9 +70,10 @@ testheader = 'Resource cisco_vxlan_vtep'
 # tests[:agent] - the agent object
 #
 tests = {
-  master:   master,
-  agent:    agent,
-  platform: 'n9k',
+  master:        master,
+  agent:         agent,
+  platform:      'n(8|9)k',
+  resource_name: 'cisco_vxlan_vtep',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -218,6 +219,8 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
+  skip_unless_supported(tests)
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   resource_absent_cleanup(agent, 'cisco_vxlan_vtep',

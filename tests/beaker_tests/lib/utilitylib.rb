@@ -999,6 +999,18 @@ def platform_supports_test(tests, id)
   false
 end
 
+# This is a simple top-level skip similar to what exists in the minitests.
+# Callers will skip all tests when true.
+# tests[:platform] - regex of supported platforms
+# tests[:resource_name] - provider name (e.g. 'cisco_vxlan_vtep')
+def skip_unless_supported(tests)
+  return false if platform.match(tests[:platform])
+  msg = "Skipping all tests; '#{tests[:resource_name]}' "\
+        'is unsupported on this node'
+  banner = '#' * msg.length
+  raise_skip_exception("\n#{banner}\n#{msg}\n#{banner}\n", self)
+end
+
 def skipped_tests_summary(tests)
   return unless tests[:skipped]
   logger.info("\n#{'-' * 60}\n  SKIPPED TESTS SUMMARY\n#{'-' * 60}")
