@@ -4,7 +4,7 @@ This document describes prerequisite setup to be done before running [Beaker](ht
 
 ## Platform and Software Support
 
-Beaker Release 2.37.0 and later
+Beaker Release 2.38.1 and later
 
 ## Install Beaker
 
