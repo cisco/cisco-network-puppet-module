@@ -129,27 +129,35 @@ class ciscopuppet::cisco::demo_itd {
     weight           => 1,
   }
 
-  cisco_command_config { 'ial':
-    command => 'ip access-list ial'
+  cisco_acl { 'ipv4 ial':
+    ensure => present
   }
 
-  cisco_command_config { 'eal':
-    command => 'ip access-list eal'
+  cisco_acl { 'ipv4 eal':
+    ensure => present
   }
 
-  cisco_command_config { 'intf_config':
-    command => "
-      interface ethernet 1/1
-        no switchport
-        exit
-      interface ethernet 1/2
-        no switchport
-        exit
-      feature interface-vlan
-      vlan 2
-      interface vlan 2
-      interface port-channel 100"
+  cisco_interface { 'ethernet1/1':
+    switchport_mode => disabled
   }
+
+  cisco_interface { 'ethernet1/2':
+    switchport_mode => disabled
+  }
+
+  cisco_vlan { '2':
+    ensure => present
+  }
+
+  cisco_interface { 'vlan2':
+    ensure => present,
+  }
+
+  cisco_interface { 'port-channel100':
+    ensure => present,
+    switchport_mode => disabled
+  }
+
 
   cisco_itd_service {'myservice1':
     ensure                        => 'present',
