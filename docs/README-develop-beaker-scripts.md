@@ -1,4 +1,4 @@
- How To Create and Run Beaker Test Cases
+# How To Create and Run Beaker Test Cases
 
 #### Table of Contents
 
