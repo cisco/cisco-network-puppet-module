@@ -124,7 +124,7 @@ The following table indicates which providers are supported on each platform. As
 
 ##### Cisco Providers
 | ✅ = Supported <br> ❌ = Unsupported | N9k | N30xx | N31xx | N56xx | N6k | N7k | N8k | IOS XR | Caveats |
-|:---|:---:|:-----:|:-----:|:-----:|:---:|:---:|:---:|:---:|
+|:---|:---:|:-----:|:-----:|:-----:|:---:|:---:|:---:|:---:|:---:|
 | [cisco_aaa_authentication_login](#type-cisco_aaa_authentication_login) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
 | [cisco_aaa_authorization_login_cfg_svc](#type-cisco_aaa_authorization_login_cfg_svc) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
 | [cisco_aaa_authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
@@ -170,7 +170,7 @@ The following table indicates which providers are supported on each platform. As
 ##### NetDev Providers
 
 | ✅ = Supported <br> ❌ = Unsupported  | N9k | N30xx | N31xx | N56xx | N6k | N7k | N8k | IOS XR |
-|:---|:---:|:-----:|:-----:|:-----:|:---:|:---:|:---:|
+|:---|:---:|:-----:|:-----:|:-----:|:---:|:---:|:---:|:---:|
 | [domain_name](#type-domain_name) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ✅ |
 | [name_server](#type-name_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ✅ |
 | [network_dns](#type-network_dns) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ✅ |
