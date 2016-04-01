@@ -182,7 +182,7 @@ The following table indicates which providers are supported on each platform. As
 | [ntp_server](#type-ntp_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
 | [network_snmp](#type-network_snmp) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [radius](#type-radius) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| [radius_global](#type-radius_global) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| [radius_global](#type-radius_global) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
 | [radius_server](#type-radius_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅* | * [caveats](#radius_server-caveats) |
 | [search_domain](#type-search_domain) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [snmp_community](#type-snmp_community) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
@@ -3463,7 +3463,7 @@ Enable or disable radius functionality.  Valid values are 'true' or 'false'.
 | N56xx    | unsupported        | unsupported            |
 | N6k      | unsupported        | unsupported            |
 | N7k      | unsupported        | unsupported            |
-| IOS XR   | unsupported        | unsupported            |
+| IOS XR   | TODO               | TODO                   |
 
 #### Parameters
 
