@@ -444,11 +444,11 @@ agents.each do |agent|
 
     # Clean agent certificats on master and agent
     if options['cert_clean']
-      on master, "#{PUPPET_PATH}/bin/puppet cert clean #{agent['ip']}",
+      on master, "#{PUPPET_PATH}/bin/puppet cert clean #{agent.hostname}",
          accept_all_exit_codes: true, pty: true
       ssl_dir = (on agent, 'puppet agent --configprint ssldir',
                     accept_all_exit_codes: true, pty: true).stdout.chomp
-      on agent, "find #{ssl_dir} -name #{agent['ip']}.pem -delete",
+      on agent, "find #{ssl_dir} -name #{agent.hostname}.pem -delete",
          accept_all_exit_codes: true, pty: true
     end
 
