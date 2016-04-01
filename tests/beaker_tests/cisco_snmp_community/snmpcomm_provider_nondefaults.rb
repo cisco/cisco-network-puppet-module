@@ -77,8 +77,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SnmpCommLib.create_snmpcommunity_manifest_nondefaults)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource nondefaults manifest from master :: #{result}")
@@ -88,8 +87,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_snmp_comm resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_snmp_community 'test'", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_snmp_community 'test'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ensure' => 'present',
@@ -107,8 +105,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SnmpCommLib.create_snmpcommunity_manifest_absent)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource absent manifest from master :: #{result}")
@@ -118,8 +115,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_snmp_comm resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_snmp_community 'test'", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_snmp_community 'test'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ensure' => 'present',

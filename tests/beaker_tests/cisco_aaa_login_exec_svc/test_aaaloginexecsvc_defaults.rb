@@ -81,8 +81,7 @@ def create_aaaloginexecsvc_defaults(tests, id, title, string=false)
   resource_cmd_str =
     PUPPET_BINPATH +
     "resource cisco_aaa_authorization_login_exec_svc '#{title}'"
-  tests[id][:resource_cmd] =
-    get_namespace_cmd(agent, resource_cmd_str, options)
+  tests[id][:resource_cmd] = resource_cmd_str
 end
 
 test_name "TestCase :: #{testheader}" do

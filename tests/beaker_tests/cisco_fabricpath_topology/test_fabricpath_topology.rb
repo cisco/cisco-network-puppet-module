@@ -120,8 +120,7 @@ tests['non_default_properties'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = PUPPET_BINPATH + 'resource cisco_fabricpath_topology'
-  get_namespace_cmd(agent, cmd, options)
+  PUPPET_BINPATH + 'resource cisco_fabricpath_topology'
 end
 
 def build_manifest_fabricpath_topology(tests, id)

@@ -20,71 +20,11 @@
 
 This document describes the process for writing and executing [Beaker](https://github.com/puppetlabs/beaker/blob/master/README.md) Test Cases for cisco puppet providers.
 
-### Platform and Software Support
-
-Beaker Release 2.14.1 and later.
-
 ## <a name="pre-install">Pre-Install Tasks</a>
 
+Refer to [README-beaker-prerequisites](README-beaker-prerequisites.md) for required setup steps for Beaker and the node(s) to be tested.
+
 Install and set up the Puppet agent and `cisco_node_utils` gem as described in [README-agent-install.md](README-agent-install.md).
-
-### Install Beaker
-
-[Install Beaker](https://github.com/puppetlabs/beaker/wiki/Beaker-Installation) on your designated beaker server.
-
-### Configure NX-OS
-
-You must enable the ssh feature and give sudo access to the 'devops' user for the Beaker workstation to access the Puppet agent during testing.
-
-**Example:**
-
-~~~bash
-configure terminal
-  feature ssh
-  username devops password devopspassword role network-admin
-  username devops shelltype bash
-end
-~~~
-
-*Note: To enable sshd inside the `open agent container (OAC)` reference `OAC` documentation.*
-
-### Configure IOS XR
-
-#### Start SSHd for TPNNS
-
-IOS XR provides an SSH server daemon that runs within the [third-party network namespace (TPNNS)](http://www.cisco.com/c/en/us/td/docs/iosxr/AppHosting/AH_Config_Guide/AH_User_Guide_chapter_00.html#concept_B8195E8C04EF4900BF51B2F3832F52AE), which is where Beaker needs to run the Puppet agent. Start this daemon from the IOS XR bash shell:
-
-~~~bash
-run bash
-service sshd_tpnns start
-chkconfig --add sshd_tpnns
-~~~
-
-Note that this daemon listens on port 57722 rather than the SSH default port of 22. You will configure `hosts.cfg` to specify this port for Beaker's use [below](#beaker-config), but if you want to manually SSH to the node, you will need to specify the port number as well:
-
-~~~bash
-ssh devops@192.168.122.222 -p 57722
-~~~
-
-#### Configure a user for passwordless sudo
-
-`sshd_tpnns` doesn't allow login as root, but the Puppet agent needs to run with root permissions. Beaker needs to be able to log in as a user that can transparently invoke `sudo` without a password prompt. There are several ways you can edit the `/etc/sudoers` file (using `visudo` from the Bash prompt) to permit this:
-
-Enable passwordless sudo for all users in group `sudo` (which includes all configured IOS XR users in IOS XR group `root-lr`, including the root-system user created at boot time):
-
-~~~diff
- #includedir /etc/sudoers.d
--%sudo ALL=(ALL) ALL
-+%sudo ALL=(ALL) NOPASSWD: ALL
-~~~
-
-Or, enable passwordless sudo only for a specific user, such as 'devops':
-
-~~~diff
- #includedir /etc/sudoers.d
- %sudo ALL=(ALL) ALL
-+devops ALL=(ALL) NOPASSWD: ALL
-~~~
 
 ## <a name="beaker-config">Beaker Server Configuration</a>
 
@@ -108,9 +48,8 @@ HOSTS:
     <IOS XR agent>:
         roles:
             - agent
-        platform: cisco-7-x86_64
+        platform: cisco_ios_xr-6-x86_64
         ip: <fully qualified domain name>
-        grpc_port: <grpc port number, such as 57777 or 57799
         ssh:
           auth_methods: ["password"]
           # SSHd for third-party network namespace (TPNNS) uses port 57722
@@ -121,7 +60,7 @@ HOSTS:
     <Nexus agent>:
         roles:
             - agent
-        platform: cisco-5-x86_64
+        platform: cisco_nexus-7-x86_64
         ip: <fully qualified domain name>
         vrf: <vrf used for beaker workstation and puppet master ip reachability>
         ssh:
@@ -170,9 +109,8 @@ HOSTS:
     xr-agent:
         roles:
             - agent
-        platform: cisco-7-x86_64
+        platform: cisco_ios_xr-6-x86_64
         ip: xr-agent.domain.com
-        grpc_port: 57777
         ssh:
           auth_methods: ["password"]
           port: 57722
@@ -369,8 +307,7 @@ tests['non_default_properties'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = UtilityLib::PUPPET_BINPATH + 'resource cisco_tunnel'
-  UtilityLib.get_namespace_cmd(agent, cmd, options)
+  UtilityLib::PUPPET_BINPATH + 'resource cisco_tunnel'
 end
 
 def build_manifest_tunnel(tests, id)
@@ -707,8 +644,7 @@ tests['non_default_properties_S'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = UtilityLib::PUPPET_BINPATH + 'resource cisco_router_eigrp'
-  UtilityLib.get_namespace_cmd(agent, cmd, options)
+  UtilityLib::PUPPET_BINPATH + 'resource cisco_router_eigrp'
 end
 
 def build_manifest_eigrp(tests, id)

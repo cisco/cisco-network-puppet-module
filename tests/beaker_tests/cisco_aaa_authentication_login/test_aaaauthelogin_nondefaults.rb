@@ -92,8 +92,7 @@ test_name "TestCase :: #{testheader}" do
     resource_cmd_str =
       PUPPET_BINPATH +
       "resource cisco_aaa_authentication_login 'default'"
-    tests[id][:resource_cmd] =
-      get_namespace_cmd(agent, resource_cmd_str, options)
+    tests[id][:resource_cmd] = resource_cmd_str
 
     tests[id][:code] = [0, 2]
     tests[id][:desc] =

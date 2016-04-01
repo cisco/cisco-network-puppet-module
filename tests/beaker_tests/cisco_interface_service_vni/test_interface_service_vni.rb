@@ -141,8 +141,7 @@ def build_manifest_interface_service_vni(tests, id)
     }\n  }\nEOF"
 
   cmd = PUPPET_BINPATH + "resource cisco_interface_service_vni '#{intf} #{sid}'"
-  tests[id][:resource_cmd] =
-    get_namespace_cmd(agent, cmd, options)
+  tests[id][:resource_cmd] = cmd
 end
 
 def test_harness_interface_service_vni(tests, id)

@@ -110,7 +110,7 @@ def build_manifest_vdc(tests, id)
   }\n      }\nEOF"
 
   cmd = PUPPET_BINPATH + "resource cisco_vdc '#{default_vdc_name}'"
-  tests[id][:resource_cmd] = get_namespace_cmd(agent, cmd, options)
+  tests[id][:resource_cmd] = cmd
 end
 
 def test_harness_vdc(tests, id)

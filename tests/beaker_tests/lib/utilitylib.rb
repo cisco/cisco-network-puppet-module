@@ -49,34 +49,6 @@ IGNORE_VALUE = :ignore_value
 # These methods are defined outside of a module so that
 # they can access the Beaker DSL API's.
 
-# Method to return the VRF namespace specific command string from basic
-# command string. VRF is declared in hosts.cfg.
-# @param host [String] Host on which to act upon.
-# @param cmdstr [String] The command string to execute on host.
-# @param options [Hash] Options hash literal to get configured VRF.
-# @result namespacestr [String] Returns 'sudo ip netns exec vrf <cmd>'
-# command string for 'cisco' platform.
-def get_namespace_cmd(host, cmdstr, options)
-  case host['platform']
-  when /cisco/
-    agentvrf = options[:HOSTS][host.to_s.to_sym][:vrf]
-    grpc_port = options[:HOSTS][host.to_s.to_sym][:grpc_port]
-    if grpc_port.nil?
-      # Nexus
-      return "sudo ip netns exec #{agentvrf} " + cmdstr
-    else
-      # IOS XR
-      # TODO: remove this workaround when we have grpc UDS support
-      user = options[:HOSTS][host.to_s.to_sym][:ssh][:user]
-      pass = options[:HOSTS][host.to_s.to_sym][:ssh][:password]
-      node_var = "NODE=\"127.0.0.1:#{grpc_port} #{user} #{pass}\""
-      return "sudo #{node_var} " + cmdstr
-    end
-  else
-    return cmdstr
-  end
-end
-
 # Method to return the Vegas shell command string for a NXOS CLI command.
 # @param nxosclistr [String] The NXOS CLI command string to execute on host.
 # @result vshellcmd [String] Returns 'vsh -c <cmd>' command string.
@@ -160,8 +132,7 @@ end
 
 # Full command string for puppet agent
 def puppet_agent_cmd
-  cmd = PUPPET_BINPATH + 'agent -t'
-  get_namespace_cmd(agent, cmd, options)
+  PUPPET_BINPATH + 'agent -t'
 end
 
 # Auto generation of properties for manifests
@@ -298,8 +269,7 @@ end
 # @param res_name [String] the resource to retrieve instances of
 # @return [Array] an array of string names of instances
 def get_current_resource_instances(agent, res_name)
-  cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource #{res_name}", options)
+  cmd_str = PUPPET_BINPATH + "resource #{res_name}"
   on(agent, cmd_str, acceptable_exit_codes: [0])
   names = stdout.scan(/#{res_name} { '(.+)':/).flatten
   names
@@ -326,8 +296,7 @@ def resource_absent_cleanup(agent, res_name, stepinfo='absent clean')
       when /cisco_vrf/
         next if title[/management/]
       end
-      cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-        "resource #{res_name} '#{title}' ensure=absent", options)
+      cmd_str = PUPPET_BINPATH + "resource #{res_name} '#{title}' ensure=absent"
       logger.info("  * #{stepinfo} Removing #{res_name} '#{title}'")
       on(agent, cmd_str, acceptable_exit_codes: [0])
     end
@@ -336,8 +305,7 @@ end
 
 # Helper to clean a specific resource by title name
 def resource_absent_by_title(agent, res_name, title)
-  res_cmd =
-    get_namespace_cmd(agent, PUPPET_BINPATH + "resource #{res_name}", options)
+  res_cmd = PUPPET_BINPATH + "resource #{res_name}"
   on(agent, "#{res_cmd} '#{title}' ensure=absent")
 end
 
@@ -345,8 +313,7 @@ end
 # Optionally remove all titles found.
 # Returns an array of titles.
 def resource_titles(agent, res_name, action=:find)
-  res_cmd =
-    get_namespace_cmd(agent, PUPPET_BINPATH + "resource #{res_name}", options)
+  res_cmd = PUPPET_BINPATH + "resource #{res_name}"
   on(agent, res_cmd)
 
   titles = []
@@ -391,7 +358,7 @@ def config_acl(agent, afi, acl, state, stepinfo='ACL:')
     state = state ? 'present' : 'absent'
     cmd = "resource cisco_acl '#{afi} #{acl}' ensure=#{state}"
     logger.info("Setup: puppet #{cmd}")
-    cmd = get_namespace_cmd(agent, PUPPET_BINPATH + cmd, options)
+    cmd = PUPPET_BINPATH + cmd
     on(agent, cmd, acceptable_exit_codes: [0, 2])
   end
 end
@@ -421,7 +388,7 @@ def config_bridge_domain(agent, test_bd, stepinfo='bridge-domain config:')
 
     # Remove vlan
     cmd = "resource cisco_vlan '#{test_bd}' ensure=absent"
-    cmd = get_namespace_cmd(agent, PUPPET_BINPATH + cmd, options)
+    cmd = PUPPET_BINPATH + cmd
     on(agent, cmd, acceptable_exit_codes: [0, 2])
 
     # Configure bridge-domain
@@ -444,7 +411,7 @@ def interface_cleanup(agent, intf, stepinfo='Pre Clean:')
   step "TestStep :: #{stepinfo}" do
     cmd = "resource cisco_command_config 'interface_cleanup' "\
           "command='default interface #{intf}'"
-    cmd = get_namespace_cmd(agent, PUPPET_BINPATH + cmd, options)
+    cmd = PUPPET_BINPATH + cmd
     logger.info("  * #{stepinfo} Set '#{intf}' to default state")
     on(agent, cmd, acceptable_exit_codes: [0, 2])
   end
@@ -559,7 +526,7 @@ def puppet_resource_cmd_from_params(tests, id)
     cmd = PUPPET_BINPATH + "resource #{tests[:resource_name]} '#{title_string}'"
 
     logger.info("\ntitle_string: '#{title_string}'")
-    tests[id][:resource_cmd] = get_namespace_cmd(agent, cmd, options)
+    tests[id][:resource_cmd] = cmd
   end
 end
 
@@ -812,7 +779,7 @@ end
 def command_config(agent, cmd, msg='')
   logger.info("\n#{msg}")
   cmd = "resource cisco_command_config 'cc' command='#{cmd}'"
-  cmd = get_namespace_cmd(agent, PUPPET_BINPATH + cmd, options)
+  cmd = PUPPET_BINPATH + cmd
   on(agent, cmd, acceptable_exit_codes: [0, 2])
 end
 
@@ -821,7 +788,7 @@ def resource_set(agent, resource, msg='')
   logger.info("\n#{msg}")
   cmd = "resource #{resource[:name]} '#{resource[:title]}' " \
                   "#{resource[:property]}='#{resource[:value]}'"
-  cmd = get_namespace_cmd(agent, PUPPET_BINPATH + cmd, options)
+  cmd = PUPPET_BINPATH + cmd
   on(agent, cmd, acceptable_exit_codes: [0, 2])
 end
 
@@ -912,7 +879,7 @@ end
 
 # Facter command builder helper method
 def facter_cmd(cmd)
-  get_namespace_cmd(agent, FACTER_BINPATH + cmd, options)
+  FACTER_BINPATH + cmd
 end
 
 # Used to cache the operation system information
