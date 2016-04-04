@@ -38,7 +38,7 @@ You must enable ssh to allow the Beaker workstation to access the Puppet agent d
 
 #### Enable SSH: bash-shell
 
-The ssh feature must be enabled and sudo access must be given to the 'devops' user.
+For `bash-shell`, ssh access is enabled by configuring `feature ssh` and userids are created with the `username` configuration. The example below create a 'devops' userid with the role and shelltype settings needed for beaker. 
 
 **Example:**
 
