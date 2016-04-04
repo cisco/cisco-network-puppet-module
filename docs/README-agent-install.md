@@ -37,6 +37,7 @@ Cisco N9kv         | NX-OS  | 7.0(3)I2(1) and later
 Cisco Nexus 56xx   | NX-OS  | 7.3(0)N1(1) and later
 Cisco Nexus 60xx   | NX-OS  | 7.3(0)N1(1) and later
 Cisco Nexus 7xxx   | NX-OS  | 7.3(0)D1(1) and later
+Cisco Nexus 85xx   | NX-OS  | 7.0(3)F1(1) and later
 Cisco IOS XRv 9000 | IOS XR | TODO
 Cisco NCS 55xx     | IOS XR | TODO
 
@@ -54,8 +55,8 @@ NX-OS supports three possible environments for running third party software:
 
 Environment                  | Supported Platforms                      |
 -----------------------------|------------------------------------------|
-`bash-shell`                 | Cisco Nexus 30xx, 31xx, 93xx, 95xx, N9Kv<br>Cisco IOS XRv 9000, NCS 55xx |
-`guestshell`                 | Cisco Nexus 30xx, 31xx, 93xx, 95xx, N9Kv |
+`bash-shell`                 | Cisco Nexus 30xx, 31xx, 85xx, 93xx, 95xx, N9Kv<br>Cisco IOS XRv 9000, NCS 55xx |
+`guestshell`                 | Cisco Nexus 30xx, 31xx, 85xx, 93xx, 95xx, N9Kv |
 `open agent container (OAC)` | Cisco Nexus 56xx, 60xx, 7xxx             |
 
 You may run Puppet from either `bash-shell` or `guestshell` on supported platforms but not from both at the same time.

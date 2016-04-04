@@ -34,7 +34,11 @@ Install and set up the Puppet agent and `cisco_node_utils` gem as described in [
 
 ### Configure NX-OS
 
-You must enable the ssh feature and give sudo access to the 'devops' user for the Beaker workstation to access the Puppet agent during testing.
+You must enable ssh to allow the Beaker workstation to access the Puppet agent during testing.
+
+#### Enable SSH: bash-shell
+
+For `bash-shell`, ssh access is enabled by configuring `feature ssh` and userids are created with the `username` configuration. The example below create a 'devops' userid with the role and shelltype settings needed for beaker. 
 
 **Example:**
 
@@ -46,7 +50,27 @@ configure terminal
 end
 ~~~
 
-*Note: To enable sshd inside the `open agent container (OAC)` reference `OAC` documentation.*
+#### Enable SSH: open agent container (OAC)
+
+Open a console session to the `OAC` using the `virtual-service connect` command:
+
+`virtual-service connect name oac console`
+
+~~~bash
+# First become root:
+sudo su -
+
+# Restart sshd
+[root@localhost ~]# /etc/init.d/sshd restart
+Stopping sshd:                                             [  OK  ]
+Starting sshd:                                             [  OK  ]
+~~~
+
+Note that this daemon listens on port 2222 rather than the SSH default port of 22. You will configure `hosts.cfg` to specify this port for Beaker's use [below](#beaker-config), but if you want to manually SSH to the node, you will need to specify the port number as well:
+
+~~~bash
+ssh root@<oac-mgmt-ip> -p 2222
+~~~
 
 ### Configure IOS XR
 
@@ -118,7 +142,7 @@ HOSTS:
           user: <configured admin username>
           password: <configured admin password>
 
-    <Nexus agent>:
+    <Nexus bash-shell or guestshell agent>:
         roles:
             - agent
         platform: cisco-5-x86_64
@@ -131,6 +155,18 @@ HOSTS:
         #Uncomment the following line to install into the guestshell
         #target: guestshell
 
+    <Nexus open agent container (OAC) agent>:
+        roles:
+            - agent
+        platform: cisco-oac-i386
+        ip: <fully qualified domain name>
+        vrf: <vrf used for beaker workstation and puppet master ip reachability>
+        ssh:
+          auth_methods: ["password"]
+          user: <configured bash-shell username>
+          password: <configured bash-shell password>
+          # SSHd for OAC uses port 2222
+          port: 2222
 
     #<agent3>:
     #  <...>
