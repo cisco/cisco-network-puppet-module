@@ -2065,6 +2065,7 @@ Manages configuration of ITD (Intelligent Traffic Director) service
 | N56xx    | unsupported        | unsupported            |
 | N6k      | unsupported        | unsupported            |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | unsupported        | unsupported            |
 | IOS XR   | unsupported        | unsupported            |
 
 #### <a name="cisco_itd_service-caveats">Caveats</a>
