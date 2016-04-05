@@ -154,18 +154,21 @@ class ciscopuppet::cisco::demo_itd {
   }
 
   cisco_interface { 'port-channel100':
-    ensure => present,
+    ensure          => present,
     switchport_mode => disabled
   }
 
+  $ingress_interface = [['vlan 2', '4.4.4.4'],
+  ['ethernet 1/1', '6.6.6.6'], ['port-channel 100', '7.7.7.7']]
+
+  $virtual_ip = ['ip 3.3.3.3 255.0.0.0 tcp 500 advertise enable']
 
   cisco_itd_service {'myservice1':
     ensure                        => 'present',
     device_group                  => 'udpGroup',
     exclude_access_list           => 'eal',
     fail_action                   => false,
-    ingress_interface             => [['vlan 2', '4.4.4.4'],
-    ['ethernet 1/1', '6.6.6.6'], ['port-channel 100', '7.7.7.7']],
+    ingress_interface             => $ingress_interface,
     load_bal_enable               => true,
     load_bal_buckets              => 8,
     load_bal_mask_pos             => 4,
@@ -178,8 +181,7 @@ class ciscopuppet::cisco::demo_itd {
     peer_vdc                      => $peer_vdc1,
     peer_local                    => $peer_local1,
     shutdown                      => true,
-    virtual_ip                    => [
-    'ip 3.3.3.3 255.0.0.0 tcp 500 advertise enable']
+    virtual_ip                    => $virtual_ip,
   }
 
   cisco_itd_service {'myservice2':

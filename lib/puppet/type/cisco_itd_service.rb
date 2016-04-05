@@ -1,4 +1,4 @@
-# Manages a Cisco ItdService.
+# Manages a Cisco Itd Service.
 #
 # March 2016
 #
@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 Puppet::Type.newtype(:cisco_itd_service) do
-  @doc = "Manages a Cisco ItdService.
+  @doc = "Manages a Cisco Itd Service.
 
   Any resource dependency should be run before the interface resource.
 
@@ -29,21 +29,21 @@ Puppet::Type.newtype(:cisco_itd_service) do
   Example:
     cisco_itd_service {\"my_service\":
      ensure                        => present,
-     access_list                   => \"my_access1\",
-     device_group                  => \"my_group\",
-     exclude_access_list           => \"my_access2\",
+     access_list                   => 'my_access1',
+     device_group                  => 'my_group',
+     exclude_access_list           => 'my_access2',
      fail_action                   => true,
      ingress_interface             => [['vlan 2', '1.1.1.1'], ['ethernet 1/1', '2.2.2.2']],
      load_bal_buckets              => 256,
      load_bal_enable               => true,
      load_bal_mask_pos             => 5,
-     load_bal_method_bundle_hash   => \"ip-l4port\",
-     load_bal_method_bundle_select => \"src\",
+     load_bal_method_bundle_hash   => 'ip-l4port',
+     load_bal_method_bundle_select => 'src',
      load_bal_method_end_port      => 100,
-     load_bal_method_proto         => \"tcp\",
+     load_bal_method_proto         => 'tcp',
      load_bal_method_start_port    => 50,
      nat_destination               => false,
-     peer_local                    => \"ser\",
+     peer_local                    => 'ser',
      peer_vdc                      => ['vdc1', 'ser'],
      shutdown                      => true,
      virtual_ip                    => ['ip 1.1.1.1 2.2.2.2', 'ip 2.2.2.2 255.0.0.0 udp 1000 device-group myGroup1'],
@@ -63,15 +63,16 @@ Puppet::Type.newtype(:cisco_itd_service) do
     patterns << [
       /^(\S+)$/,
       [
-        [:itdser, identity]
+        [:service_name, identity]
       ],
     ]
     patterns
   end
 
-  newparam(:itdser, namevar: :true) do
-    desc "Name of the itd service. Valid value is a string of
-          non-whitespace characters. It is case-sensitive"
+  newparam(:service_name, namevar: :true) do
+    desc "Name of the itd service. Valid value is a
+          case-sensitive string with no whitespace
+          characters"
     munge(&:strip)
   end # param name
 
@@ -112,7 +113,8 @@ Puppet::Type.newtype(:cisco_itd_service) do
   end # property exclude_access_list
 
   newproperty(:fail_action) do
-    desc 'ITD failaction'
+    desc "Failaction for ITD enables traffic on failed nodes to be
+          reassigned to the first available active node"
 
     newvalues(:true, :false, :default)
   end # property fail_action
@@ -280,8 +282,8 @@ Puppet::Type.newtype(:cisco_itd_service) do
     fail ArgumentError, 'ingress_interface not specified' if
       self[:ingress_interface].nil?
     self[:ingress_interface].each do |_intf, next_hop|
-      fail ArgumentError, 'next_hop not specified' if
-        next_hop.empty?
+      fail ArgumentError, 'next_hop must be specified when nat is enabled' if
+      next_hop.empty?
     end
   end
 

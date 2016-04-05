@@ -95,9 +95,9 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
   def self.properties_get(itd_service_name, nu_obj)
     debug "Checking instance, #{itd_service_name}."
     current_state = {
-      itdser: itd_service_name,
-      name:   itd_service_name,
-      ensure: :present,
+      service_name: itd_service_name,
+      name:         itd_service_name,
+      ensure:       :present,
     }
     # Call node_utils getter for each property
     ITDSERVICE_NON_BOOL_PROPS.each do |prop|
@@ -150,7 +150,7 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
   end
 
   def instance_name
-    itdser
+    service_name
   end
 
   def shutdown_set
@@ -248,7 +248,7 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
       # Create/Update
       if @nu.nil?
         new_itd = true
-        @nu = Cisco::ItdService.new(@resource[:itdser])
+        @nu = Cisco::ItdService.new(@resource[:service_name])
       end
       properties_set(new_itd)
     end

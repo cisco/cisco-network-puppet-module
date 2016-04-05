@@ -2078,6 +2078,7 @@ Manages configuration of ITD (Intelligent Traffic Director) service
 | `nat_destination` | Supported only on N7k |
 | `peer_local` | Supported only on N9k |
 | `peer_vdc` | Supported only on N7k |
+| `vrf` | vrf cannot be removed as an attribute to the service so this is not going to be supported in this release |
 
 #### Parameters
 
@@ -2085,25 +2086,25 @@ Manages configuration of ITD (Intelligent Traffic Director) service
 Determine whether the config should be present or not. Valid values are 'present' and 'absent'.
 
 ##### `access_list`
-User ACL name. Valid values are String or 'default'.
+ITD access-list name. Valid values are String or 'default'.
 
 ##### `device_group`
 Device group name where this service belongs. Valid values are String or 'default'.
 
 ##### `exclude_access_list`
-User ACL name to exclude from redirection. Valid values are String or 'default'.
+ITD exclude-access-list name. Valid values are String or 'default'.
 
 ##### `fail_action`
-Failaction node reassign. Valid values are true, false or 'default'.
+ITD failaction to reassign node. This enables traffic on failed nodes to be reassigned to the first available active node. Valid values are true, false or 'default'.
 
 ##### `ingress_interface`
-Ingress interface. Valid values are an array of [interface, next-hop] pairs or 'default'.
+Ingress interface. Valid values are an array of '[interface, next-hop]' pairs or 'default'.
 
 ##### `load_bal_enable`
 Enable or disable load balance. Valid values are true, false or 'default'.
 
 ##### `load_bal_buckets`
-Buckets for traffic distribution (in powers of 2). Valid values are Integer, keyword 'default'.
+Buckets for traffic distribution (in powers of 2). Valid values are Integer, or keyword 'default'.
 
 ##### `load_bal_mask_pos`
 Loadbalance mask position. Valid values are Integer, keyword 'default'.
@@ -2118,10 +2119,10 @@ Loadbalance bundle hash. Valid values are 'ip, 'ip-l4port' or keyword 'default'.
 Loadbalance protocol. This is valid only when the bundle hash is 'ip-l4port'. Valid values are 'tcp, 'udp' or keyword 'default'.
 
 ##### `load_bal_method_start_port`
-Start port of range (to match only packets in the range of port numbers). This is valid only when the bundle hash is 'ip-l4port'. Valid values are Integer, keyword 'default'.
+Starting port in range (to match only packets in the range of port numbers). This is valid only when the bundle hash is 'ip-l4port'. Valid values are Integer, keyword 'default'.
 
 ##### `load_bal_method_end_port`
-End port of range (to match only packets in the range of port numbers). This is valid only when the bundle hash is 'ip-l4port'. Valid values are Integer, keyword 'default'.
+Ending port in range (to match only packets in the range of port numbers). This is valid only when the bundle hash is 'ip-l4port'. Valid values are Integer, keyword 'default'.
 
 ##### `nat_destination`
 Destination NAT. Valid values are true, false or 'default'.
@@ -2130,7 +2131,7 @@ Destination NAT. Valid values are true, false or 'default'.
 Peer involved in sandwich mode. Valid values are String or 'default'.
 
 ##### `peer_vdc`
-Peer involved in sandwich mode. Valid values are an array of [vdc, service] or 'default'.
+Peer involved in sandwich mode. Valid values are an array of '[vdc, service]' or 'default'.
 
 ##### `shutdown`
 Whether or not the service is shutdown. Valid values are 'true', 'false' and

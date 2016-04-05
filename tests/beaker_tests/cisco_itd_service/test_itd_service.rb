@@ -34,7 +34,7 @@ tests = {
 
 # Test hash test cases
 tests[:default] = {
-  desc:           '1.1 Defaults',
+  desc:           '1.1 Common Defaults',
   title_pattern:  'myService',
   preclean:       'cisco_itd_service',
   manifest_props: {
@@ -56,7 +56,7 @@ tests[:default] = {
 }
 
 tests[:default_plat_1] = {
-  desc:           '1.2 Defaults for platform specific part 1',
+  desc:           '1.2 Defaults for n7k',
   platform:       'n7k',
   title_pattern:  'myService',
   preclean:       'cisco_itd_service',
@@ -73,7 +73,7 @@ tests[:default_plat_1] = {
 }
 
 tests[:default_plat_2] = {
-  desc:           '1.3 Defaults for platform specific part 2',
+  desc:           '1.3 Defaults for n9k',
   platform:       'n9k',
   title_pattern:  'myService',
   preclean:       'cisco_itd_service',
@@ -94,7 +94,7 @@ pv = %w(myVdc1 pvservice)
 # Non-default Tests. NOTE: [:resource] = [:manifest_props] for all non-default
 
 tests[:non_default] = {
-  desc:           '2.1 Non Defaults',
+  desc:           '2.1 Common Non Defaults',
   title_pattern:  'myService',
   preclean:       'cisco_itd_service',
   manifest_props: {
@@ -112,12 +112,11 @@ tests[:non_default] = {
     load_bal_method_proto:         'udp',
     load_bal_method_start_port:    '50',
     shutdown:                      'true',
-
   },
 }
 
 tests[:non_default_plat_1] = {
-  desc:           '2.2 Non Defaults for platform specific part 1',
+  desc:           '2.2 Non Defaults for n7k',
   platform:       'n7k',
   title_pattern:  'myService',
   preclean:       'cisco_itd_service',
@@ -137,7 +136,7 @@ tests[:non_default_plat_1] = {
 }
 
 tests[:non_default_plat_2] = {
-  desc:           '2.3 Non Defaults for platform specific part 2',
+  desc:           '2.3 Non Defaults for n9k',
   platform:       'n9k',
   title_pattern:  'myService',
   preclean:       'cisco_itd_service',
