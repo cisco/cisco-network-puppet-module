@@ -16,6 +16,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'ipaddr'
+begin
+  require 'puppet_x/cisco/cmnutils'
+rescue LoadError # seen on master, not on agent
+  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..',
+                                     'puppet_x', 'cisco', 'cmnutils.rb'))
+end
+
 Puppet::Type.newtype(:cisco_vpc_domain) do
   @doc = %q(
     Manages a Cisco VPC Domain.
@@ -27,32 +36,37 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
     <domain> is the id of the vpc_domain.
 
     Example:
-      cisco_vpc_domain {"100":
-        ensure                                           => 'present',
-        auto_recovery                                    => 'true',
-        auto_recovery_reload_delay                       => '300',
-        delay_restore                                    => '250',
-        delay_restore_interface_vlan                     => '300',
-        dual_active_exclude_interface_vlan_bridge_domain => '10-30,500',
-        graceful_consistency_check                       => 'true',
-        layer3_peer_routing                              => 'true',
-        peer_keepalive_dest                              => '1.1.1.1',
-        peer_keepalive_hold_timeout                      => 5,
-        peer_keepalive_interval                          => 1000,
-        peer_keepalive_interval_timeout                  => 3,
-        peer_keepalive_precedence                        => 5,
-        peer_keepalive_src                               => '1.1.1.2',
-        peer_keepalive_udp_port                          => 3200,
-        peer_keepalive_vrf                               => 'management',
-        peer_gateway                                     => 'true',
-        peer_gateway_exclude_vlan                        => '500-1000,1100,1120',
-        role_priority                                    => '32000',
-        self_isolation                                   => 'false',
-        shutdown                                         => 'false',
-        system_mac                                       => '00:0c:0d:11:22:33',
-        system_priority                                  => '32000',
-      }
-    )
+    cisco_vpc_domain {"100":
+      ensure                                           => 'present',
+      auto_recovery                                    => 'true',
+      auto_recovery_reload_delay                       => '300',
+      delay_restore                                    => '250',
+      delay_restore_interface_vlan                     => '300',
+      dual_active_exclude_interface_vlan_bridge_domain => '10-30,500',
+      graceful_consistency_check                       => 'true',
+      layer3_peer_routing                              => 'true',
+      peer_keepalive_dest                              => '1.1.1.1',
+      peer_keepalive_hold_timeout                      => 5,
+      peer_keepalive_interval                          => 1000,
+      peer_keepalive_interval_timeout                  => 3,
+      peer_keepalive_precedence                        => 5,
+      peer_keepalive_src                               => '1.1.1.2',
+      peer_keepalive_udp_port                          => 3200,
+      peer_keepalive_vrf                               => 'management',
+      peer_gateway                                     => 'true',
+      peer_gateway_exclude_vlan                        => '500-1000,1100,1120',
+      role_priority                                    => '32000',
+      self_isolation                                   => 'false',
+      shutdown                                         => 'false',
+      system_mac                                       => '00:0c:0d:11:22:33',
+      system_priority                                  => '32000',
+
+      #vPC+ parameters
+      fabricpath_emulated_switch_id                    => '100',
+      fabricpath_multicast_load_balance                => 'true'
+      port_channel_limit                               => 'false',
+    }
+  )
 
   ###################
   # Resource Naming #
@@ -138,21 +152,22 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
     desc 'Interface vlans or bds to exclude from suspension when dual-active
           Valid value is a string of integer ranges from 1 .. 4095'
     munge do |value|
-      # convert the string value to an array
-      arr = /,/.match(value) ? value.split(/\s*,\s*/) : value.lines.to_a
-      arr.each do |elem|
-        if (match = /(\d+)\s+\-\s+(\d+)/.match(elem))
-          num1, num2 = match.captures
-          fail "Invalid range #{elem} in the input range #{value}" unless
-            num1.to_i.between?(1, 4095) && num2.to_i.between?(1, 4095)
-        else
-          fail "Invalid value #{elem} in the input range #{value}" unless
-            elem.to_i.between?(1, 4095)
-        end
-      end
-      value.gsub!(/\s+/, '') # strip all spaces within and without
+      value = PuppetX::Cisco::Utils.range_summarize(value)
       value
     end
+  end # property name
+
+  newproperty(:fabricpath_emulated_switch_id) do
+    desc 'In vPC+ mode, configure the fabricpath switch-id aka the
+          Emulated switch-id.  Valid values are integers in the range 1..4095'
+    munge(&:to_i)
+  end # property name
+
+  newproperty(:fabricpath_multicast_load_balance) do
+    desc 'In vPC+ mode, enable or disable the fabricpath multicast load balance.
+          This loadbalances the Designated Forwarder selection for multicast
+          traffic. Valid values are true, false or default'
+    newvalues(:true, :false, :default)
   end # property name
 
   newproperty(:graceful_consistency_check) do
@@ -167,16 +182,17 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
   end # property name
 
   newproperty(:peer_keepalive_dest) do
-    desc 'Destination IPV4 address of the peer where Peer Keep-alives are terminated.
-          Valid values are IPV4 unicast address'
-    # use /x modifier to ignore whitespace in the regex which is split in 2 lines
+    desc 'Destination IPV4 address of the peer where Peer Keep-alives are
+          terminated. Valid values are IPV4 unicast address'
+    # use /x modifier to ignore whitespace in the regex which is split in
+    # 2 lines
     newvalues(/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}
                 (?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/x)
   end # property name
 
   newproperty(:peer_keepalive_hold_timeout) do
     desc 'Peer keep-alive hold timeout in secs. Valid Values are integers in the
-          range 3 .. 10'
+          range 3..10'
     validate do |value|
       if value != 'default'
         fail('pka hold_timeout should be a value in the range 3 .. 10') unless
@@ -187,11 +203,11 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
   end # property name
 
   newproperty(:peer_keepalive_interval) do
-    desc 'Peer keep-alive interval in millisecs. Valid Values are integers in the
-          range 400 .. 10000'
+    desc 'Peer keep-alive interval in millisecs. Valid Values are integers in
+          the range 400..10000'
     validate do |value|
       if value != 'default'
-        fail('pka interval should be a value in the range 400 .. 10000') unless
+        fail('pka interval should be a value in the range 400..10000') unless
           value.to_i.between?(400, 10_000)
       end
     end
@@ -200,10 +216,10 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
 
   newproperty(:peer_keepalive_interval_timeout) do
     desc 'Peer keep-alive interval timeout. Valid Values are integers in the
-          range 3 .. 20'
+          range 3..20'
     validate do |value|
       if value != 'default'
-        fail('pka interval timeout should be a value in the range 3 .. 20') unless
+        fail('pka interval timeout should be a value in the range 3..20') unless
           value.to_i.between?(3, 20)
       end
     end
@@ -212,10 +228,10 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
 
   newproperty(:peer_keepalive_precedence) do
     desc 'Peer keep-alive precedence. Valid Values are integers in the
-          range 0 .. 7'
+          range 0..7'
     validate do |value|
       if value != 'default'
-        fail('pka precedence should be a value in the range 0 .. 7') unless
+        fail('pka precedence should be a value in the range 0..7') unless
           value.to_i.between?(0, 7)
       end
     end
@@ -225,17 +241,18 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
   newproperty(:peer_keepalive_src) do
     desc 'Source IPV4 address of this switch where Peer Keep-alives are Sourced.
           Valid values are IPV4 unicast address'
-    # use /x modifier to ignore whitespace in the regex which is split in 2 lines
+    # use /x modifier to ignore whitespace in the regex which is split in
+    # 2 lines
     newvalues(/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}
                 (?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/x)
   end # property name
 
   newproperty(:peer_keepalive_udp_port) do
-    desc 'Peer keep-alive udp port used for hellos. Valid Values are integers in the
-          range 1024 .. 65000'
+    desc 'Peer keep-alive udp port used for hellos. Valid Values are integers
+          in the range 1024..65000'
     validate do |value|
       if value != 'default'
-        fail('pka udp port should be a value in the range 1024 .. 65000') unless
+        fail('pka udp port should be a value in the range 1024..65000') unless
           value.to_i.between?(1024, 65_000)
       end
     end
@@ -255,24 +272,12 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
 
   newproperty(:peer_gateway_exclude_bridge_domain) do
     desc 'Interface bds to exclude from peer gateway functionality
-          Valid value is a string of integer ranges from 1 .. 16383'
+          Valid value is a string of integer ranges from 1..16383'
     #
     # NOTE: This property depends on the availability of cisco_bridge_domain
     #
     munge do |value|
-      # convert the string value to an array
-      arr = /,/.match(value) ? value.split(/\s*,\s*/) : value.lines.to_a
-      arr.each do |elem|
-        if (match = /(\d+)\s+\-\s+(\d+)/.match(elem))
-          num1, num2 = match.captures
-          fail "Invalid range #{elem} in the input range #{value}" unless
-            num1.to_i.between?(1, 16_383) && num2.to_i.between?(1, 16_383)
-        else
-          fail "Invalid value #{elem} in the input range #{value}" unless
-            elem.to_i.between?(1, 16_383)
-        end
-      end
-      value.gsub!(/\s+/, '') # strip all spaces within and without
+      value = PuppetX::Cisco::Utils.range_summarize(value)
       value
     end
   end # property name
@@ -281,21 +286,15 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
     desc 'Interface vlans to exclude from peer gateway functionality
           Valid value is a string of integer ranges from 1 .. 4095'
     munge do |value|
-      # convert the string value to an array
-      arr = /,/.match(value) ? value.split(/\s*,\s*/) : value.lines.to_a
-      arr.each do |elem|
-        if (match = /(\d+)\s+\-\s+(\d+)/.match(elem))
-          num1, num2 = match.captures
-          fail "Invalid range #{elem} in the input range #{value}" unless
-            num1.to_i.between?(1, 4095) && num2.to_i.between?(1, 4095)
-        else
-          fail "Invalid value #{elem} in the input range #{value}" unless
-            elem.to_i.between?(1, 4095)
-        end
-      end
-      value.gsub!(/\s+/, '') # strip all spaces within and without
+      value = PuppetX::Cisco::Utils.range_summarize(value)
       value
     end
+  end # property name
+
+  newproperty(:port_channel_limit) do
+    desc 'In vPC+ mode, enable or disable the port channel scale limit of
+          244 vPCs.  Valid values are true, false or default'
+    newvalues(:true, :false, :default)
   end # property name
 
   newproperty(:role_priority) do
@@ -327,10 +326,10 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
   end # property name
 
   newproperty(:system_priority) do
-    desc 'VPC system priority. Valid values are integers in the range 1 .. 65535'
+    desc 'VPC system priority. Valid values are integers in the range 1..65535'
     validate do |value|
       if value != 'default'
-        fail('system_priority should be a value in the range 1 .. 65535') unless
+        fail('system_priority should be a value in the range 1..65535') unless
           value.to_i.between?(1, 65_535)
       end
     end

@@ -44,7 +44,7 @@ Puppet::Type.type(:cisco_bridge_domain_vni).provide(:cisco) do
 
   def initialize(value={})
     super(value)
-    @nu = Cisco::BridgeDomainVNI.rangebds[@property_hash[:name]]
+    @nu = Cisco::BridgeDomainVNI.range_bds[@property_hash[:name]]
     @property_flush = {}
     debug 'Created provider instance of cisco_bridge_domain.'
   end
@@ -75,7 +75,7 @@ Puppet::Type.type(:cisco_bridge_domain_vni).provide(:cisco) do
   def self.instances
     bds = []
 
-    Cisco::BridgeDomainVNI.rangebds.each do |bd_id, nu|
+    Cisco::BridgeDomainVNI.range_bds.each do |bd_id, nu|
       bds << properties_get(bd_id, nu)
     end
     bds

@@ -33,10 +33,13 @@ Puppet::Type.type(:cisco_encapsulation).provide(:cisco) do
 
   mk_resource_methods
 
-  ENCAP_NON_BOOL_PROPS = [:dot1q_map]
+  ENCAP_ARRAY_FLAT_PROPS = [:dot1q_map]
+  ENCAP_NON_BOOL_PROPS = []
   ENCAP_BOOL_PROPS = []
-  ENCAP_ALL_PROPS = ENCAP_NON_BOOL_PROPS + ENCAP_BOOL_PROPS
+  ENCAP_ALL_PROPS = ENCAP_ARRAY_FLAT_PROPS + ENCAP_NON_BOOL_PROPS + ENCAP_BOOL_PROPS
 
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:array_flat, self, '@nu',
+                                            ENCAP_ARRAY_FLAT_PROPS)
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@encap',
                                             ENCAP_NON_BOOL_PROPS)
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@encap',
@@ -49,7 +52,7 @@ Puppet::Type.type(:cisco_encapsulation).provide(:cisco) do
     debug 'Created provider instance of cisco_encapsulation.'
   end
 
-  def self.properties_get(encap, v)
+  def self.properties_get(encap, nu_obj)
     debug "Checking instance, encap #{encap}"
     current_state = {
       encap:  encap,
@@ -58,11 +61,14 @@ Puppet::Type.type(:cisco_encapsulation).provide(:cisco) do
     }
 
     # Call node_utils getter for each property
+    ENCAP_ARRAY_FLAT_PROPS.each do |prop|
+      current_state[prop] = nu_obj.send(prop)
+    end
     ENCAP_NON_BOOL_PROPS.each do |prop|
-      current_state[prop] = v.send(prop)
+      current_state[prop] = nu_obj.send(prop)
     end
     ENCAP_BOOL_PROPS.each do |prop|
-      val = v.send(prop)
+      val = nu_obj.send(prop)
       if val.nil?
         current_state[prop] = nil
       else
@@ -74,8 +80,8 @@ Puppet::Type.type(:cisco_encapsulation).provide(:cisco) do
 
   def self.instances
     encaps = []
-    Cisco::Encapsulation.encaps.each do |encap, v|
-      encaps << properties_get(encap, v)
+    Cisco::Encapsulation.encaps.each do |encap, nu_obj|
+      encaps << properties_get(encap, nu_obj)
     end
     encaps
   end

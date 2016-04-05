@@ -211,8 +211,15 @@ Puppet::Type.newtype(:cisco_interface) do
     desc "The allowed VLANs for the specified Ethernet interface. Valid values
           are string, keyword 'default'."
 
-    # Strip whitespace if manifest specified as '20, 30' vs '20,30'
-    munge { |value| value == 'default' ? :default : value.sub(/\s/, '') }
+    # Use the range summarize utility to normalize the vlan ranges
+    munge do |value|
+      if value == 'default'
+        value = :default
+      else
+        value = PuppetX::Cisco::Utils.range_summarize(value)
+      end
+      value
+    end
   end # property switchport_trunk_allowed_vlan
 
   newproperty(:switchport_trunk_native_vlan) do

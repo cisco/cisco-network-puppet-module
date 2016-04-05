@@ -33,6 +33,7 @@ class ciscopuppet::demo_all_cisco {
   include ciscopuppet::cisco::demo_fabricpath
   include ciscopuppet::cisco::demo_interface
   #include ciscopuppet::cisco::demo_interface_service_vni
+  include ciscopuppet::cisco::demo_itd
   include ciscopuppet::cisco::demo_ospf
   include ciscopuppet::cisco::demo_patching
   include ciscopuppet::cisco::demo_pim

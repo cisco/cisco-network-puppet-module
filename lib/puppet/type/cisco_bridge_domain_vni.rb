@@ -56,7 +56,7 @@ Puppet::Type.newtype(:cisco_bridge_domain_vni) do
     desc 'The bridge-domain ID. Valid values are range of integers.'
 
     validate do |value|
-      valid_ids = *(2..3967)
+      valid_ids = *(2..4096)
 
       fail "Value is not a valid range. Example usage: '2-10,12,14-16'" unless /^[\d\s,-]*$/.match(value)
       temp_val = value.scan(/\d+/)

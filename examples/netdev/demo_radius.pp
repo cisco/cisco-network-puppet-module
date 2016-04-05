@@ -16,6 +16,16 @@
 
 class ciscopuppet::netdev::demo_radius {
 
+  $accounting_only = $operatingsystem ? {
+    'nexus' => true,
+    default => undef
+  }
+
+  $authentication_only = $operatingsystem ? {
+    'nexus' => true,
+    default => undef
+  }
+
   radius { 'default':
     enable => true,
   }
@@ -29,10 +39,10 @@ class ciscopuppet::netdev::demo_radius {
 
   radius_server { '8.8.8.8':
     ensure              => 'present',
-    accounting_only     => true,
+    accounting_only     => $accounting_only,
     acct_port           => '66',
     auth_port           => '77',
-    authentication_only => true,
+    authentication_only => $authentication_only,
     key                 => '44444444',
     key_format          => '7',
     retransmit_count    => '4',

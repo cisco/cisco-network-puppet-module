@@ -57,14 +57,14 @@ The set of supported network element platforms is continuously expanding. Please
 
 ## Setup
 
-#### Puppet Master
+### Puppet Master
 
-The `ciscopuppet` module is installed on the Puppet Master server. Please see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html) for general information on Puppet module installation.
+The `ciscopuppet` module must be installed on the Puppet Master server. Please see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html) for general information on Puppet module installation.
 
-#### Puppet Agent
-The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md](docs/README-agent-install.md) document for detailed instructions on agent installation and configuration on Cisco Nexus devices.
+### Puppet Agent
+The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md](docs/README-agent-install.md) document for detailed instructions on agent installation and configuration on Cisco Nexus  and IOS XR devices.
 
-##### Artifacts
+#### Artifacts
 
 As noted in the agent installation guide, these are the current RPM versions for use with ciscopuppet:
 * NX-OS:
@@ -74,49 +74,9 @@ As noted in the agent installation guide, these are the current RPM versions for
 * IOS XR:
   * Native: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-7.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-7.noarch.rpm)
 
-##### Gems
+### `cisco_node_utils` Ruby gem
 
-The ciscopuppet module has dependencies on the [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) ruby gem. After installing the Puppet Agent software you will then need to install the gem on the agent device.
-
-This gem has various dependencies which differ between IOS XR and Nexus; installing `cisco_node_utils` by itself will automatically install the dependencies that are relevant to the target platform.
-
-Nexus example:
-
-~~~bash
-[root@guestshell]#  /opt/puppetlabs/puppet/bin/gem install cisco_node_utils
-
-[root@guestshell]#  /opt/puppetlabs/puppet/bin/gem list | egrep 'cisco|net_http'
-cisco_node_utils (1.2.0)
-net_http_unix (0.2.1)
-~~~
-
-IOS XR example:
-
-~~~bash
-bash-4.3# /opt/puppetlabs/puppet/bin/gem install cisco_node_utils
-
-bash-4.3# /opt/puppetlabs/puppet/bin/gem list 'cisco|grpc|google'
-cisco_node_utils (1.2.0)
-google-protobuf (3.0.0.alpha.5.0.3 x86_64-linux)
-googleauth (0.5.1)
-grpc (0.13.0 x86_64-linux)
-~~~
-
-*Please note: The `ciscopuppet` module requires a compatible `cisco_node_utils` gem. This is not an issue with release versions; however, when using a pre-release module it may be necessary to manually build a compatible gem. Please see the `cisco_node_utils` developer's guide for more information on building a `cisco_node_utils` gem:  [README-develop-node-utils-APIs.md](https://github.com/cisco/cisco-network-node-utils/blob/develop/docs/README-develop-node-utils-APIs.md#step-5-build-and-install-the-gem)*
-
-##### Gem Persistence (Nexus bash-shell only)
-
-Please note that in the Nexus `bash-shell` environment these gems are currently not persistent across system reload. This persistence issue can be mitigated by simply defining a manifest entry for installing the `cisco_node_utils` gem via the package provider.
-
-Example:
-
-~~~Puppet
-package { 'cisco_node_utils' :
-  provider => 'gem',
-  ensure => present,
-}
-~~~
-*This persistence issue does not affect the `guestshell` or `open agent container (OAC)` environments. Gems are persistent across reload in these environments.*
+This module has dependencies on the [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) ruby gem. After installing the Puppet Agent software you will then need to install (and possibly configure) the gem on the agent device. See [README-gem-install.md](docs/README-gem-install.md) for detailed instructions.
 
 ## Usage
 
@@ -181,6 +141,8 @@ The following table indicates which providers are supported on each platform. As
 | [cisco_interface_ospf](#type-cisco_interface_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_interface_portchannel](#type-cisco_interface_portchannel) | ❌* | ✅* | ✅* | ❌* | ❌* | ❌* | ❌ | * [caveats](#cisco_interface_portchannel-caveats) |
 | [cisco_interface_service_vni](#type-cisco_interface_service_vni) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| [cisco_itd_device_group](#type-cisco_itd_device_group) | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| [cisco_itd_device_group_node](#type-cisco_itd_device_group_node) | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
 | [cisco_ospf](#type-cisco_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_ospf_vrf](#type-cisco_ospf_vrf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | ✅ = Supported <br> ❌ = Unsupported  | N9k | N30xx | N31xx | N56xx | N6k | N7k | IOS XR | Caveats |
@@ -212,24 +174,24 @@ The following table indicates which providers are supported on each platform. As
 
 | ✅ = Supported <br> ❌ = Unsupported  | N9k | N30xx | N31xx | N56xx | N6k | N7k | IOS XR |
 |:---|:---:|:-----:|:-----:|:-----:|:---:|:---:|:---:|
-| [domain_name](#type-domain_name) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| [name_server](#type-name_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| [network_dns](#type-network_dns) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| [domain_name](#type-domain_name) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
+| [name_server](#type-name_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
+| [network_dns](#type-network_dns) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
 | [network_interface](#type-network_interface) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [network_snmp](#type-network_snmp) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [network_trunk](#type-network_trunk) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| [ntp_config](#type-ntp_config) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| [ntp_server](#type-ntp_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| [ntp_config](#type-ntp_config) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
+| [ntp_server](#type-ntp_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
 | [network_snmp](#type-network_snmp) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [radius](#type-radius) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [radius_global](#type-radius_global) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| [radius_server](#type-radius_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| [radius_server](#type-radius_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅* | * [caveats](#radius_server-caveats) |
 | [search_domain](#type-search_domain) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [snmp_community](#type-snmp_community) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [snmp_notification](#type-snmp_notification) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [snmp_notification_receiver](#type-snmp_notification_receiver) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [snmp_user](#type-snmp_user) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| [syslog_server](#type-syslog_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| [syslog_server](#type-syslog_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
 | [syslog_setting](#type-syslog_setting) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [tacacs](#type-tacacs) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
 | [tacacs_global](#type-tacacs_global) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
@@ -283,6 +245,10 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
   * [`network_interface (netdev_stdlib)`](#type-network_interface)
 
+* Itd Types
+  * [`cisco_itd_device_group`](#type-cisco_itd_device_group)
+  * [`cisco_itd_device_group_node`](#type-cisco_itd_device_group_node)
+  * 
 * Multicast Types
   * [`cisco_pim`](#type-cisco_pim)
   * [`cisco_pim_grouplist`](#type-cisco_pim_grouplist)
@@ -382,6 +348,8 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 * [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
 * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
+* [`cisco_itd_device_group`](#type-cisco_itd_device_group)
+* [`cisco_itd_device_group_node`](#type-cisco_itd_device_group_node)
 * [`cisco_ospf`](#type-cisco_ospf)
 * [`cisco_ospf_vrf`](#type-cisco_ospf_vrf)
 * [`cisco_overlay_global`](#type-cisco_overlay_global)
@@ -1978,6 +1946,103 @@ port-channel per port hash-distribution. Valid values are 'adaptive', 'fixed' or
 port-channel per port load-defer. Valid values are true, false or 'default'. This property is not supported on (Nexus 5|6k)
 
 --
+### Type: cisco_itd_device_group
+
+Manages configuration of ITD (Intelligent Traffic Director) device group
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I3(1)        | 1.3.0                  |
+| N30xx    | unsupported        | unsupported            |
+| N31xx    | unsupported        | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| IOS XR   | unsupported        | unsupported            |
+
+#### Parameters
+
+##### `ensure`
+Determine whether the config should be present or not. Valid values are 'present' and 'absent'.
+
+##### `probe_control`
+Enable control protocol for probe. Valid values are true, false or 'default'. This is applicable only when the probe type is 'tcp' or 'udp'
+
+##### `probe_dns_host`
+Host name or target address when the probe type is 'dns'. Valid values are String.
+
+##### `probe_frequency`
+Probe frequency in seconds. Valid values are Integer, keyword 'default'.
+
+##### `probe_port`
+Probe port number when the type is 'tcp' or 'udp'. Valid values are Integer.
+
+##### `probe_retry_down`
+Probe retry count when the node goes down. Valid values are Integer, keyword 'default'.
+
+##### `probe_retry_up`
+Probe retry count when the node comes back up. Valid values are Integer, keyword 'default'.
+
+##### `probe_timeout`
+Probe timeout in seconds. Valid values are Integer, keyword 'default'.
+
+##### `probe_type`
+Probe type. Valid values are 'icmp', 'dns', 'tcp', 'udp' or keyword 'default'.
+
+--
+### Type: cisco_itd_device_group_node
+
+Manages configuration of ITD (Intelligent Traffic Director) device group node
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I3(1)        | 1.3.0                  |
+| N30xx    | unsupported        | unsupported            |
+| N31xx    | unsupported        | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| IOS XR   | unsupported        | unsupported            |
+
+#### Parameters
+
+##### `ensure`
+Determine whether the config should be present or not. Valid values are 'present' and 'absent'.
+
+##### `hot_standby`
+Change mode of this node as hot-standby. Valid values are true, false or 'default'.
+
+##### `node_type`
+Type of the device group node. Valid values are ip and IPv6. It defaults to ip if not specified. IPv6 is not supported for N9k.
+
+##### `probe_control`
+Enable control protocol for probe. Valid values are true, false or 'default'. This is applicable only when the probe type is 'tcp' or 'udp'
+
+##### `probe_dns_host`
+Host name or target address when the probe type is 'dns'. Valid values are String.
+
+##### `probe_frequency`
+Probe frequency in seconds. Valid values are Integer, keyword 'default'.
+
+##### `probe_port`
+Probe port number when the type is 'tcp' or 'udp'. Valid values are Integer.
+
+##### `probe_retry_down`
+Probe retry count when the node goes down. Valid values are Integer, keyword 'default'.
+
+##### `probe_retry_up`
+Probe retry count when the node comes back up. Valid values are Integer, keyword 'default'.
+
+##### `probe_timeout`
+Probe timeout in seconds. Valid values are Integer, keyword 'default'.
+
+##### `probe_type`
+Probe type. Valid values are 'icmp', 'dns', 'tcp', 'udp' or keyword 'default'.
+
+##### `weight`
+Weight for traffic distribution. Valid values are Integer, keyword 'default'.
+
+--
 ### Type: cisco_ospf
 
 Manages configuration of an ospf instance.
@@ -2683,9 +2748,11 @@ Manages the virtual Port Channel (vPC) domain configuration of a Cisco device.
 | Property | Caveat Description |
 |:--------|:-------------|
 | `auto_recovery` | Not supported on N56xx, N6k |
+| `fabricpath_emulated_switch_id` | Not supported on N31xx, N9k, N56xx, N6k |
+| `fabricpath_multicast_load_balance` | Not supported on N31xx, N9k, N56xx, N6k |
 | `layer3_peer_routing` | Not supported on N9k, N30xx, N31xx, N56xx |
 | `peer_gateway_exclude_vlan` | Not supported on N9k, N30xx, N31xx |
-| `port_channel_limit` | Not supported on N9k, N56xx, N6k |
+| `port_channel_limit` | Not supported on N31xx, N9k, N56xx, N6k |
 | `self_isolation` | Not supported on N9k, N56xx, N6k |
 | `shutdown` | Not supported on N9k, N30xx, N31xx |
 
@@ -2712,6 +2779,16 @@ range 1..3600. Default value: 10.
 
 ##### `dual_active_exclude_interface_vlan_bridge_domain`
 Interface VLANs or BDs to exclude from suspension when dual-active. Valid value is a string of integer ranges from 1..4095. There is no default value.
+
+##### `fabricpath_emulated_switch_id`
+Configure a fabricpath switch_Id to enable vPC+ mode. This is also known as 
+the Emulated switch-id.  Valid values are integers in the range 1..4095.
+There is no default value.
+
+##### `fabricpath_multicast_load_balance`
+In vPC+ mode, enable or disable the fabricpath multicast load balance.
+This loadbalances the Designated Forwarder selection for multicast traffic. 
+Valid values are true, false or default
 
 ##### `graceful_consistency_check`
 Graceful conistency check . Valid values are true, false or default. Default value: true.
@@ -2749,6 +2826,10 @@ Enable or Disable Layer3 forwarding for packets with peer gateway-mac. Valid val
 ##### `peer_gateway_exclude_vlan`
 Interface vlans to exclude from peer gateway functionality. Valid value is a string of integer ranges from 1..4095. This parameter is available only in Nexus 5000, Nexus 6000 and Nexus 7000 series. There is no default value.
 
+##### `port_channel_limit`
+In vPC+ mode, enable or disable the port channel scale limit of
+244 vPCs.  Valid values are true, false or default
+
 ##### `role_priority`
 Priority to be used during vPC role selection of primary vs secondary. Valid values are integers in the range 1..65535. Default value: 32667.
 
@@ -2782,11 +2863,15 @@ device.
 
 #### <a name="cisco_vrf-caveats">Caveats</a>
 
-| Property                  | Caveat Description               |
-|---------------------------|----------------------------------|
-| route_distinguisher       | Only supported on N3k and N9k    |
-| shutdown                  | Only supported on N3k and N9k    |
-| vni                       | Only supported on N9k            |
+| Property                     | Caveat Description               |
+|------------------------------|----------------------------------|
+| mhost_ipv4_default_interface | Only supported on IOS XR         |
+| mhost_ipv6_default_interface | Only supported on IOS XR         |
+| remote_route_filtering       | Only supported on IOS XR         |
+| route_distinguisher          | Only supported on N3k and N9k    |
+| shutdown                     | Only supported on N3k and N9k    |
+| vni                          | Only supported on N9k            |
+| vpn_id                       | Only supported on IOS XR         |
 
 #### Parameters
 
@@ -2800,6 +2885,15 @@ not case-sensitive and overrides the title of the type.
 
 ##### `description`
 Description of the VRF. Valid value is string.
+
+##### `mhost_ipv4_default_interface`
+Specify multicast ipv4 host default interface. Valid value will be a valid interface or the keyword 'default'.
+
+##### `mhost_ipv6_default_interface`
+Specify multicast ipv6 host default interface. Valid value will be a valid interface or the keyword 'default'.
+
+##### `remote_route_filtering`
+Enable/disable remote route filtering. Valid value will be true, false or the keyword 'default'.
 
 <a name='vrf_rd'></a>
 ##### `route_distinguisher`
@@ -2817,6 +2911,9 @@ Shutdown state of the VRF. Valid values are 'true', 'false', and 'default'.
 
 ##### `vni`
 Specify virtual network identifier. Valid values are Integer or keyword 'default'.
+
+##### `vpn_id`
+Specify vpn_id. Valid values are <0-ffffff>:<0-ffffffff>  or keyword 'default'.
 
 --
 ### Type: cisco_vrf_af
@@ -3110,7 +3207,7 @@ Configure the domain name of the device
 | N56xx    | unsupported        | unsupported            |
 | N6k      | unsupported        | unsupported            |
 | N7k      | unsupported        | unsupported            |
-| IOS XR   | unsupported        | unsupported            |
+| IOS XR   | TODO               | TODO                   |
 
 #### Parameters
 
@@ -3131,7 +3228,7 @@ Domain name of the device. Valid value is a string.
 | N56xx    | unsupported        | unsupported            |
 | N6k      | unsupported        | unsupported            |
 | N7k      | unsupported        | unsupported            |
-| IOS XR   | unsupported        | unsupported            |
+| IOS XR   | TODO               | TODO                   |
 
 #### Parameters
 
@@ -3152,7 +3249,7 @@ Hostname or address of the DNS server.  Valid value is a string.
 | N56xx    | unsupported        | unsupported            |
 | N6k      | unsupported        | unsupported            |
 | N7k      | unsupported        | unsupported            |
-| IOS XR   | unsupported        | unsupported            |
+| IOS XR   | TODO               | TODO                   |
 
 #### Parameters
 
@@ -3400,7 +3497,14 @@ Encryption key format [0-7].  Valid value is an integer.
 | N56xx    | unsupported        | unsupported            |
 | N6k      | unsupported        | unsupported            |
 | N7k      | unsupported        | unsupported            |
-| IOS XR   | unsupported        | unsupported            |
+| IOS XR   | TODO               | TODO                   |
+
+#### <a name="radius_server-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `accouting_only` | Not supported in Cisco IOS XR |
+| `authentication_only` | Not supported in Cisco IOS XR |
 
 #### Parameters
 
@@ -3423,10 +3527,10 @@ Number of seconds before the timeout period ends.  Valid value is an integer.
 Number of times to retransmit.  Valid value is an integer.
 
 ##### `accouting_only`
-Enable this server for accounting only.  Valid values are 'true' or 'false'.
+Enable this server for accounting only.  Valid values are 'true' or 'false'. Not supported on IOS XR.
 
 ##### `authentication_only`
-Enable this server for authentication only.  Valid values are 'true' or 'false'.
+Enable this server for authentication only.  Valid values are 'true' or 'false'. Not supported on IOS XR.
 
 ##### `key`
 Encryption key (plaintext or in hash form depending on key_format).  Valid value is a string.
@@ -3610,7 +3714,7 @@ format (in case of true) or cleartext (in case of false). Valid values are 'true
 | N56xx    | unsupported        | unsupported            |
 | N6k      | unsupported        | unsupported            |
 | N7k      | unsupported        | unsupported            |
-| IOS XR   | unsupported        | unsupported            |
+| IOS XR   | TODO               | TODO                   |
 
 #### Parameters
 
@@ -3755,8 +3859,8 @@ Minimum Requirements:
   * Cisco Nexus 7xxx, OS Version 7.3(0)D1(1), Environments: Open Agent Container (OAC)
 * Cisco IOS XR:
   * Open source Puppet version 4.3.2+ or Puppet Enterprise 2015.3.2+
-  * Cisco IOS XRv 9000, OS Version TODO, Environments: TODO
-  * Cisco Network Convergence System (NCS) 55xx, OS Version TODO, Environments: TODO
+  * Cisco IOS XRv 9000, OS Version TODO, Environments: native (Bash-shell)
+  * Cisco Network Convergence System (NCS) 55xx, OS Version TODO, Environments: native (Bash-shell)
 
 ## Cisco OS Differences
 

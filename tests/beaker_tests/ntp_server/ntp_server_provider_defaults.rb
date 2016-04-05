@@ -95,20 +95,6 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check ntp_server resource presence on agent :: #{result}")
   end
 
-  # @step [Step] Checks ntp_server instance on agent using switch show cli
-  # cmds.
-  step 'TestStep :: Check ntp_server instance presence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config all | include "ntp server"')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, [/ntp server 5\.5\.5\.5/],
-                               false, self, logger)
-    end
-
-    logger.info("Check ntp_server instance presence on agent :: #{result}")
-  end
-
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource present and prefer true manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
@@ -138,20 +124,6 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check ntp_server resource presence on agent :: #{result}")
   end
 
-  # @step [Step] Checks ntp_server instance on agent using switch show cli
-  # cmds.
-  step 'TestStep :: Check ntp_server instance presence with prefer on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config all | include "ntp server"')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, [/ntp server 5\.5\.5\.5 prefer/],
-                               false, self, logger)
-    end
-
-    logger.info("Check ntp_server instance presence on agent :: #{result}")
-  end
-
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource absent manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
@@ -177,20 +149,6 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Check ntp_server resource absence on agent :: #{result}")
-  end
-
-  # @step [Step] Checks ntp_server instance on agent using switch show cli
-  # cmds.
-  step 'TestStep :: Check ntp_server instance absence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config all | include "ntp server"')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, [/ntp-server 5\.5\.5\.5/],
-                               true, self, logger)
-    end
-
-    logger.info("Check ntp_server instance absence on agent :: #{result}")
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
@@ -245,20 +203,6 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Check ntp_server resource absence on agent :: #{result}")
-  end
-
-  # @step [Step] Checks ntp_server instance on agent using switch show cli
-  # cmds.
-  step 'TestStep :: Check ntp_server instance absence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config all | include "ntp server"')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, [/ntp-server 2002::5/],
-                               true, self, logger)
-    end
-
-    logger.info("Check ntp_server instance absence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.

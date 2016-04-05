@@ -63,11 +63,24 @@ def dns_clean(agent)
   # remove any existing resources that we will be testing against
   resource_titles(agent, :domain_name, :clean)
 
-  # These resources currently do not support ensure=absent; they can use
-  # resource_titles above if they're ever updated.
-  on(agent, get_vshell_cmd('show run | i domain-list|name-server'))
-  stdout.scan(/ip domain-list \S+|ip name-server .*/).each do |cli|
-    command_config(agent, "no #{cli}", "removing #{cli}")
+  if operating_system == 'ios_xr'
+    clean_commands = ['no domain list test.com',
+                      'no domain list test.net',
+                      'no domain name switch1.test.com',
+                      'no domain name switch2.test.com',
+                      'no domain name-server 2001:4860:4860::8888',
+                      'no domain name-server 8.8.8.8']
+
+    clean_commands.each do |cmd|
+      command_config(agent, cmd, cmd)
+    end
+  else
+    # These resources currently do not support ensure=absent; they can use
+    # resource_titles above if they're ever updated.
+    on(agent, get_vshell_cmd('show run | i domain-list|name-server'))
+    stdout.scan(/ip domain-list \S+|ip name-server .*/).each do |cli|
+      command_config(agent, "no #{cli}", "removing #{cli}")
+    end
   end
 end
 
@@ -137,25 +150,6 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check network_dns resource on agent :: #{result}")
   end
 
-  # @step [Step] Checks network_dns instance on agent using switch show cli cmds.
-  step 'TestStep :: Check network_dns settings on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               [
-                                 /ip domain-name switch1\.test\.com/,
-                                 /ip domain-list test\.com/,
-                                 /ip domain-list test\.net/,
-                                 /ip name-server 2001:4860:4860::8888 8\.8\.8\.8/,
-                               ],
-                               false, self, logger)
-    end
-
-    logger.info("Check network_dns resource on agent :: #{result}")
-  end
-
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Set the properties in a manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
@@ -190,24 +184,6 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check network_dns resource on agent :: #{result}")
   end
 
-  # @step [Step] Checks network_dns instance on agent using switch show cli cmds.
-  step 'TestStep :: Check network_dns settings on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               [
-                                 /ip domain-name switch2\.test\.com/,
-                                 /ip domain-list test\.net/,
-                                 /ip name-server 2001:4860:4860::8888 8\.8\.4\.4/,
-                               ],
-                               false, self, logger)
-    end
-
-    logger.info("Check network_dns resource on agent :: #{result}")
-  end
-
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Set the properties in a manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
@@ -236,28 +212,6 @@ test_name "TestCase :: #{testheader}" do
                                  'domain' => 'switch2.test.com',
                                  'search' => "\\['test.com'\\]" },
                                false, self, logger)
-    end
-
-    logger.info("Check network_dns resource on agent :: #{result}")
-  end
-
-  # @step [Step] Checks network_dns instance on agent using switch show cli cmds.
-  step 'TestStep :: Check network_dns settings on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               [
-                                 /ip domain-name switch2\.test\.com/,
-                                 /ip domain-list test\.com/,
-                               ],
-                               false, self, logger)
-    end
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               [/ip name-server (8\.8\.8\.8|2001:4860:4860::8888|8\.8\.4\.4)$/],
-                               true, self, logger)
     end
 
     logger.info("Check network_dns resource on agent :: #{result}")
