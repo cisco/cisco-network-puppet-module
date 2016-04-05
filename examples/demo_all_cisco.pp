@@ -47,6 +47,8 @@ class ciscopuppet::demo_all_cisco {
   include ciscopuppet::cisco::demo_vpc_domain
   include ciscopuppet::cisco::demo_vrf
   include ciscopuppet::cisco::demo_vtp
+  include ciscopuppet::cisco::demo_bridge_domain
+  include ciscopuppet::cisco::demo_encapsulation
   # Conditionally include ciscopuppet::demo_vxlan 
   if platform_get() =~ /n9k/ {
     include ciscopuppet::cisco::demo_vxlan
