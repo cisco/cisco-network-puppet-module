@@ -2058,7 +2058,7 @@ Weight for traffic distribution. Valid values are Integer, keyword 'default'.
 --
 ### Type: cisco_itd_service
 
-Manages configuration of ITD (Intelligent Traffic Director) service
+Manages configuration of ITD (Intelligent Traffic Director) service.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
