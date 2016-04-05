@@ -63,6 +63,7 @@ tests[:default] = {
     maxas_limit:                            'default',
     neighbor_down_fib_accelerate:           'default',
     nsr:                                    'default',
+    reconnect_interval:                     'default',
     shutdown:                               'default',
     suppress_fib_pending:                   'default',
     timer_bestpath_limit:                   'default',
@@ -95,6 +96,7 @@ tests[:default] = {
     'maxas_limit'                            => 'false',
     'neighbor_down_fib_accelerate'           => 'false',
     'nsr'                                    => 'false',
+    'reconnect_interval'                     => '60',
     'shutdown'                               => 'false',
     'suppress_fib_pending'                   => 'false',
     'timer_bestpath_limit'                   => '300',
@@ -136,6 +138,7 @@ tests[:non_default] = {
     maxas_limit:                            '50',
     neighbor_down_fib_accelerate:           'true',
     nsr:                                    'true',
+    reconnect_interval:                     '55',
     router_id:                              '192.168.0.66',
     shutdown:                               'true',
     suppress_fib_pending:                   'true',
@@ -216,10 +219,15 @@ def unsupported_properties(tests, id)
         :flush_routes <<
         :neighbor_down_fib_accelerate
     end
+
+    if platform[/n(5|6|7)k/]
+      unprops <<
+        :disable_policy_batching_ipv4 <<
+        :disable_policy_batching_ipv6 <<
+        :neighbor_down_fib_accelerate <<
+        :reconnect_interval
+    end
   end
-
-  unprops << :neighbor_down_fib_accelerate unless /n(3|9)k/.match(platform)
-
   unprops
 end
 

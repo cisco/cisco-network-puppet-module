@@ -37,18 +37,19 @@ tests[:default] = {
   title_pattern:  '2 default 1.1.1.1',
   preclean:       'cisco_bgp',
   manifest_props: {
-    ebgp_multihop:      'default',
-    local_as:           'default',
-    low_memory_exempt:  'default',
-    remote_as:          'default',
-    suppress_4_byte_as: 'default',
-    timers_keepalive:   'default',
-    timers_holdtime:    'default',
-
+    ebgp_multihop:        'default',
+    local_as:             'default',
+    log_neighbor_changes: 'default',
+    low_memory_exempt:    'default',
+    remote_as:            'default',
+    suppress_4_byte_as:   'default',
+    timers_keepalive:     'default',
+    timers_holdtime:      'default',
   },
   resource:       {
     'ebgp_multihop'          => 'false',
     'local_as'               => '0',
+    'log_neighbor_changes'   => 'inherit',
     'low_memory_exempt'      => 'false',
     'maximum_peers'          => '0',
     'remote_as'              => '0',
@@ -69,6 +70,7 @@ tests[:non_def_uber] = {
     capability_negotiation: 'true',
     dynamic_capability:     'true',
     ebgp_multihop:          '2',
+    log_neighbor_changes:   'enable',
     low_memory_exempt:      'true',
     remote_as:              '12.1',
     remove_private_as:      'all',
@@ -78,10 +80,6 @@ tests[:non_def_uber] = {
     timers_holdtime:        '270',
   },
 }
-
-if platform[/n(3|9)k/]
-  tests[:non_def_uber][:manifest_props][:log_neighbor_changes] = 'enable'
-end
 
 tests[:non_def_local_remote_as] = {
   preclean:       'cisco_bgp_neighbor',
@@ -138,6 +136,9 @@ def unsupported_properties(_tests, _id)
       :low_memory_exempt <<
       :maximum_peers <<
       :remove_private_as
+
+  else
+    unprops << :log_neighbor_changes if platform[/n(5|6|7)/]
   end
 
   unprops
