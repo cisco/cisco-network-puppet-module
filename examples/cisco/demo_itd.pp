@@ -1,5 +1,6 @@
-# Manifest to demo cisco_itd_device_group and
-# cisco_itd_device_group_node providers providers
+# Manifest to demo cisco_itd_device_group,
+# cisco_itd_device_group_node and
+# cisco_itd_service providers
 #
 # Copyright (c) 2016 Cisco and/or its affiliates.
 #
@@ -16,6 +17,31 @@
 # limitations under the License.
 
 class ciscopuppet::cisco::demo_itd {
+
+  $nat_destination = platform_get() ? {
+    'n7k'   => true,
+    default => undef
+  }
+
+  $peer_local1 = platform_get() ? {
+    'n9k'   => 'pser1',
+    default => undef
+  }
+
+  $peer_local2 = platform_get() ? {
+    'n9k'   => 'pser2',
+    default => undef
+  }
+
+  $peer_vdc1 = platform_get() ? {
+    'n7k'   => ['vdc1', 'pser1'],
+    default => undef
+  }
+
+  $peer_vdc2 = platform_get() ? {
+    'n7k'   => ['vdc2', 'pser2'],
+    default => undef
+  }
 
   cisco_itd_device_group {'icmpGroup':
     ensure           => 'present',
@@ -101,5 +127,74 @@ class ciscopuppet::cisco::demo_itd {
     probe_timeout    => 5,
     probe_type       => default,
     weight           => 1,
+  }
+
+  cisco_acl { 'ipv4 ial':
+    ensure => present
+  }
+
+  cisco_acl { 'ipv4 eal':
+    ensure => present
+  }
+
+  cisco_interface { 'ethernet1/1':
+    switchport_mode => disabled
+  }
+
+  cisco_interface { 'ethernet1/2':
+    switchport_mode => disabled
+  }
+
+  cisco_vlan { '2':
+    ensure => present
+  }
+
+  cisco_interface { 'vlan2':
+    ensure => present,
+  }
+
+  cisco_interface { 'port-channel100':
+    ensure          => present,
+    switchport_mode => disabled
+  }
+
+  $ingress_interface = [['vlan 2', '4.4.4.4'],
+  ['ethernet 1/1', '6.6.6.6'], ['port-channel 100', '7.7.7.7']]
+
+  $virtual_ip = ['ip 3.3.3.3 255.0.0.0 tcp 500 advertise enable']
+
+  cisco_itd_service {'myservice1':
+    ensure                        => 'present',
+    device_group                  => 'udpGroup',
+    exclude_access_list           => 'eal',
+    fail_action                   => false,
+    ingress_interface             => $ingress_interface,
+    load_bal_enable               => true,
+    load_bal_buckets              => 8,
+    load_bal_mask_pos             => 4,
+    load_bal_method_bundle_hash   => 'ip-l4port',
+    load_bal_method_bundle_select => 'src',
+    load_bal_method_end_port      => 202,
+    load_bal_method_proto         => 'udp',
+    load_bal_method_start_port    => 101,
+    nat_destination               => $nat_destination,
+    peer_vdc                      => $peer_vdc1,
+    peer_local                    => $peer_local1,
+    shutdown                      => true,
+    virtual_ip                    => $virtual_ip,
+  }
+
+  cisco_itd_service {'myservice2':
+    ensure                        => 'present',
+    device_group                  => 'udpGroup',
+    ingress_interface             => [['ethernet 1/2', '22.2.2.2']],
+    load_bal_enable               => true,
+    load_bal_buckets              => 16,
+    load_bal_mask_pos             => 10,
+    load_bal_method_bundle_hash   => 'ip',
+    load_bal_method_bundle_select => 'dst',
+    peer_vdc                      => $peer_vdc2,
+    peer_local                    => $peer_local2,
+    shutdown                      => false,
   }
 }
