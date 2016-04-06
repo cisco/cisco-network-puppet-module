@@ -360,10 +360,9 @@ test_name "TestCase :: #{tests[:resource_name]}" do
       :non_def_D2,
       :non_def_M,
       :non_def_S1,
-      :non_def_S3,
       :non_def_misc_maps_1,
     ]
-    array.delete(:non_def_S3) if platform[/n(8|9)k/]
+    array << :non_def_S3 if operating_system == 'ios_xr'
 
     array.each do |id|
       tests[id][:title_pattern] = title

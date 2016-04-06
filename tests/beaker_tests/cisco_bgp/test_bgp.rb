@@ -249,7 +249,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # now test the defaults under a non-default vrf
   tests[id][:ensure] = :present
-  tests[id][:preclean] = 'cisco_bgp_neighbor'
+  tests[id][:preclean] = 'cisco_bgp'
   test_harness_bgp_vrf(tests, id, 'blue')
 
   # -------------------------------------------------------------------
