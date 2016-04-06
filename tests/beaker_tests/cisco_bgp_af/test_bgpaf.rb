@@ -208,7 +208,7 @@ tests[:non_def_N] = {
   },
 }
 
-redistribute = Array[%w(static RouteMap), %w(lisp RouteMap)]
+redistribute = Array[%w(lisp RouteMap), %w(static RouteMap)]
 tests[:non_def_R] = {
   desc:           "2.7 Non Default Properties: 'R' commands",
   title_pattern:  '2 default ipv4 unicast',
@@ -337,11 +337,12 @@ def unsupported_properties(tests, id)
         :dampening_routemap <<
         :dampening_suppress_time
     end
-  elsif vrf == 'default'
-    # NX-OS does not support these properties under the default vrf
-    unprops << :advertise_l2vpn_evpn
-  end
+  else
+    unprops << :advertise_l2vpn_evpn if
+      vrf == 'default' || platform[/n(3|6)k/]
 
+    unprops << :additional_paths_install if platform[/n(3|8|9)k/]
+  end
   unprops
 end
 
