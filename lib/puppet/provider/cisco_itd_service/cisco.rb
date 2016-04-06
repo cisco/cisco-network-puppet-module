@@ -153,10 +153,10 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
     service_name
   end
 
-  def shutdown_set
+  def service_shutdown?
     cur_shut = @property_hash[:shutdown]
     next_shut = @resource[:shutdown]
-    cur_shut == :false && (next_shut.nil? || next_shut == :true)
+    !(cur_shut == :false && (next_shut.nil? || next_shut == :true))
   end
 
   def all_prop_set(new_itd)
@@ -184,7 +184,7 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
   end
 
   def properties_set(new_itd=false)
-    if new_itd || !shutdown_set
+    if new_itd || service_shutdown?
       all_prop_set(new_itd)
       shut_prop_set(new_itd)
     else
@@ -220,24 +220,17 @@ Puppet::Type.type(:cisco_itd_service).provide(:cisco) do
       :load_bal_method_start_port,
       :load_bal_enable,
     ]
-    if vars.any? { |p| @property_flush.key?(p) }
-      # At least one var has changed, get all vals from manifest
-      vars.each do |p|
-        if @resource[p] == :default
-          attrs[p] = @nu.send("default_#{p}")
-        else
-          attrs[p] = @resource[p]
-          attrs[p] = PuppetX::Cisco::Utils.bool_sym_to_s(attrs[p])
-        end
+    return unless vars.any? { |p| @property_flush.key?(p) }
+    # At least one var has changed, get all vals from manifest
+    vars.each do |p|
+      if @resource[p] == :default
+        attrs[p] = @nu.send("default_#{p}")
+      else
+        attrs[p] = @resource[p]
+        attrs[p] = PuppetX::Cisco::Utils.bool_sym_to_s(attrs[p])
       end
-      @nu.load_balance_set(attrs)
-    else
-      call_empty
     end
-  end
-
-  # method to keep rubocop happy
-  def call_empty
+    @nu.load_balance_set(attrs)
   end
 
   def flush

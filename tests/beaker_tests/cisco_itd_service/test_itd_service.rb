@@ -153,8 +153,50 @@ tests[:non_default_plat_2] = {
   },
 }
 
+tests[:non_default_shut] = {
+  desc:           '3.1 Common create service and turn it on',
+  title_pattern:  'myService',
+  preclean:       'cisco_itd_service',
+  manifest_props: {
+    device_group:      'udpGroup',
+    ingress_interface: [['ethernet 1/1', '2.2.2.2']],
+    shutdown:          'false',
+  },
+}
+
+tests[:non_default_shut_2] = {
+  desc:           '3.2 Common change params and turn off service',
+  title_pattern:  'myService',
+  manifest_props: {
+    device_group:      'udpGroup',
+    ingress_interface: [['ethernet 1/1', '3.3.3.3']],
+    shutdown:          'true',
+  },
+}
+
+tests[:non_default_shut_3] = {
+  desc:           '3.3 Common change params and leave service off',
+  title_pattern:  'myService',
+  manifest_props: {
+    device_group:      'udpGroup',
+    ingress_interface: [['ethernet 1/1', '4.4.4.4']],
+    shutdown:          'true',
+  },
+}
+
+tests[:non_default_shut_4] = {
+  desc:           '3.4 Common change params and turn service back on',
+  title_pattern:  'myService',
+  manifest_props: {
+    device_group:      'udpGroup',
+    ingress_interface: [['ethernet 1/1', '5.5.5.5']],
+    shutdown:          'false',
+  },
+}
+
 # Overridden to properly handle dependencies for this test file.
-def test_harness_dependencies(_tests, _id)
+def test_harness_dependencies(_tests, id)
+  return if id.to_s.include?('non_default_shut_')
   cmd = 'no feature itd'
   command_config(agent, cmd, cmd)
   cmd = 'ip access-list iap'
@@ -205,6 +247,10 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :non_default)
   test_harness_run(tests, :non_default_plat_1)
   test_harness_run(tests, :non_default_plat_2)
+  test_harness_run(tests, :non_default_shut)
+  test_harness_run(tests, :non_default_shut_2)
+  test_harness_run(tests, :non_default_shut_3)
+  test_harness_run(tests, :non_default_shut_4)
   resource_absent_cleanup(agent, 'cisco_itd_service')
   resource_absent_cleanup(agent, 'cisco_itd_device_group_node')
   resource_absent_cleanup(agent, 'cisco_itd_device_group')
