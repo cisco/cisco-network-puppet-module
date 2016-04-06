@@ -131,7 +131,7 @@ Puppet::Type.newtype(:cisco_vlan) do
       :false,
       :default)
   end # property shutdown
-  
+
   newproperty(:fabric_control) do
     desc %(Specifies this VLAN as the fabric control VLAN. Only one bridge-domain or VLAN can be configured as fabric-control.
            Valid values are true, false.)
