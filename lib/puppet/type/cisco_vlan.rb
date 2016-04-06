@@ -32,6 +32,7 @@ Puppet::Type.newtype(:cisco_vlan) do
       mapped_vni => 20000,
       state      => 'active',
       shutdown   => 'true',
+      fabric_control   => 'true',
     }"
 
   ###################
@@ -130,4 +131,14 @@ Puppet::Type.newtype(:cisco_vlan) do
       :false,
       :default)
   end # property shutdown
+  
+  newproperty(:fabric_control) do
+    desc %(Specifies this VLAN as the fabric control VLAN. Only one bridge-domain or VLAN can be configured as fabric-control.
+           Valid values are true, false.)
+
+    newvalues(
+      :true,
+      :false,
+      :default)
+  end # property fabric_control
 end # Puppet::Type.newtype
