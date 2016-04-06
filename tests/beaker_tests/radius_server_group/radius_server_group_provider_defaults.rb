@@ -65,12 +65,9 @@ test_name "TestCase :: #{testheader}" do
     resource_absent_cleanup(agent, 'radius_server')
     resource_absent_cleanup(agent, 'radius_server_group')
 
-    cmd_str = get_vshell_cmd('conf t ; radius-server host 2.2.2.2')
-    on(agent, cmd_str)
-    cmd_str = get_vshell_cmd('conf t ; radius-server host 3.3.3.3')
-    on(agent, cmd_str)
-    cmd_str = get_vshell_cmd('conf t ; radius-server host 4.4.4.4')
-    on(agent, cmd_str)
+    command_config(agent, 'radius-server host 2.2.2.2')
+    command_config(agent, 'radius-server host 3.3.3.3')
+    command_config(agent, 'radius-server host 4.4.4.4')
 
     logger.info('Setup switch for provider')
   end

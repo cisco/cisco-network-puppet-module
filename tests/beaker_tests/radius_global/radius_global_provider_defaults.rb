@@ -160,20 +160,6 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check radius_global resource presence on agent :: #{result}")
   end
 
-  # @step [Step] Checks radius_server on agent using switch show cli
-  # cmds.
-  step 'TestStep :: Check radius_server instance on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config radius all')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, [/radius-server key.*$/],
-                               true, self, logger)
-    end
-
-    logger.info("Check radius_global instance on agent :: #{result}")
-  end
-
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   raise_passfail_exception(result, testheader, self, logger)
 end

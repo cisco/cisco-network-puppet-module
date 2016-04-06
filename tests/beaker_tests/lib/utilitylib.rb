@@ -960,6 +960,8 @@ def platform
     @cisco_hardware = 'n6k'
   when /Nexus\s?7\d\d\d/
     @cisco_hardware = 'n7k'
+  when /Nexus\s?8\d\d\d/
+    @cisco_hardware = 'n8k'
   when /Nexus\s?9\d\d\d/
     @cisco_hardware = 'n9k'
   when /NX-OSv/
@@ -995,6 +997,18 @@ def platform_supports_test(tests, id)
   tests[:skipped] ||= []
   tests[:skipped] << tests[id][:desc]
   false
+end
+
+# This is a simple top-level skip similar to what exists in the minitests.
+# Callers will skip all tests when true.
+# tests[:platform] - regex of supported platforms
+# tests[:resource_name] - provider name (e.g. 'cisco_vxlan_vtep')
+def skip_unless_supported(tests)
+  return false if platform.match(tests[:platform])
+  msg = "Skipping all tests; '#{tests[:resource_name]}' "\
+        'is unsupported on this node'
+  banner = '#' * msg.length
+  raise_skip_exception("\n#{banner}\n#{msg}\n#{banner}\n", self)
 end
 
 def skipped_tests_summary(tests)
