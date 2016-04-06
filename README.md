@@ -166,6 +166,9 @@ The following table indicates which providers are supported on each platform. As
  [cisco_vtp](#type-cisco_vtp) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
 | [cisco_vxlan_vtep](#type-cisco_vxlan_vtep) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
 | [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| [cisco_bridge_domain](#type-cisco_bridge_domain) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| [cisco_bridge_domain_vni](#type-cisco_bridge_domain_vni) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| [cisco_encapsulation](#type-cisco_encapsulation) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
 
 ##### NetDev Providers
 
@@ -316,11 +319,17 @@ The following resources include cisco types and providers along with cisco provi
 * VNI Types
    * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
    * [`cisco_vni`](#type-cisco_vni)
+   * [`cisco_encapsulation`](#type-cisco_encapsulation)
 
 * VXLAN Types
   * [`cisco_overlay_global`](#type-cisco_overlay_global)
   * [`cisco_vxlan_vtep`](#type-cisco_vxlan_vtep)
   * [`cisco_vxlan_vtep_vni`](#type-cisco_vxlan_vtep_vni)
+
+
+* Bridge_Domain Types
+  * [`cisco_bridge_domain`](#type-cisco_bridge_domain)
+  * [`cisco_bridge_domain_vni`](#type-cisco_bridge_domain_vni)
 
 --
 ### <a name="resource-by-name">Cisco Resource Type Catalog (by Name)<a>
@@ -371,6 +380,9 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_vtp`](#type-cisco_vtp)
 * [`cisco_vxlan_vtep`](#type-cisco_vxlan_vtep)
 * [`cisco_vxlan_vtep_vni`](#type-cisco_vxlan_vtep_vni)
+* [`cisco_bridge_domain`](#type-cisco_bridge_domain)
+* [`cisco_bridge_domain_vni`](#type-cisco_bridge_domain_vni)
+* [`cisco_encapsulation`](#type-cisco_encapsulation)
 
 ### <a name="resource-by-name-netdev">NetDev StdLib Resource Type Catalog (by Name)<a>
 
@@ -3226,6 +3238,90 @@ Set the ingress-replication static peer list. Valid values are an Array, a space
 
 ##### `suppress_arp`
 Suppress arp under layer 2 VNI. Valid values are true, false, or 'default'.
+
+--
+### Type: cisco_bridge_domain
+Managers a cisco Bridge-Domain
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | unsupported        | unsupported            |
+| N30xx    | unsupported        | unsupported            |
+| N31xx    | unsupported        | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `bd`
+ID of the Bridge Domain. Valid values are integer.
+
+##### `bd_name`
+The bridge-domain name. Valid values are String or keyword 'default'.
+
+##### `shutdown`
+Specifies the shutdown state of the bridge-domain. Valid values are true, false, 'default'.
+
+##### `fabric_control`
+Specifies this bridge-domain as the fabric control bridge-domain. Only one bridge-domain or VLAN can be configured as fabric-control. Valid values are true, false.
+
+--
+### Type: cisco_bridge_domain_vni
+Creates a Virtual Network Identifier member (VNI) mapping for cisco Bridge-Domain.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | unsupported        | unsupported            |
+| N30xx    | unsupported        | unsupported            |
+| N31xx    | unsupported        | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `bd`
+The bridge-domain ID. Valid values are one or range of integers.
+
+##### `member_vni`
+The Virtual Network Identifier (VNI) id that is mapped to the VLAN. Valid values are one or range of integers
+
+--
+### Type: cisco_encapsulation
+Manages a Global VNI Encapsulation profile
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | unsupported        | unsupported            |
+| N30xx    | unsupported        | unsupported            |
+| N31xx    | unsupported        | unsupported            |
+| N56xx    | unsupported        | unsupported            |
+| N6k      | unsupported        | unsupported            |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `encap`
+Profile name of the Encapsulation. Valid values is string.
+
+##### `dot1q_map`
+The encapsulation profile dot1q vlan-to-vni mapping. Valid values are an array of [vlans, vnis] pairs.
 
 --
 ### NetDev StdLib Resource Type Details

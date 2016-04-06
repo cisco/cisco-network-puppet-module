@@ -80,7 +80,7 @@ module PuppetX
       # Helper utility method for range summarization of VLAN and BD ranges
       # Input is a range string. For example: '10-20, 30, 14, 100-105, 21'
       # Output should be: '10-21,30,100-105'
-      def self.range_summarize(range_str)
+      def self.range_summarize(range_str, sort=true)
         ranges = []
         range_str.split(/,/).each do |elem|
           if elem =~ /\d+\s*\-\s*\d+/
@@ -100,7 +100,7 @@ module PuppetX
             nrange |= [item]
           end
         end
-        nrange.sort!
+        nrange.sort! if sort
         ranges = []
         left = nrange.first
         right = nil
