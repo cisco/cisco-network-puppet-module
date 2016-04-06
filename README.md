@@ -2098,7 +2098,7 @@ ITD exclude-access-list name. Valid values are String or 'default'.
 ITD failaction to reassign node. This enables traffic on failed nodes to be reassigned to the first available active node. Valid values are true, false or 'default'.
 
 ##### `ingress_interface`
-Ingress interface. Valid values are an array of '[interface, next-hop]' pairs or 'default'.
+Ingress interface. Valid values are an array of `[interface, next-hop]` pairs or 'default'.
 
 ##### `load_bal_enable`
 Enable or disable load balance. Valid values are true, false or 'default'.
@@ -2131,7 +2131,7 @@ Destination NAT. Valid values are true, false or 'default'.
 Peer involved in sandwich mode. Valid values are String or 'default'.
 
 ##### `peer_vdc`
-Peer involved in sandwich mode. Valid values are an array of '[vdc, service]' or 'default'.
+Peer involved in sandwich mode. Valid values are an array of `[vdc, service]` or 'default'.
 
 ##### `shutdown`
 Whether or not the service is shutdown. Valid values are 'true', 'false' and
