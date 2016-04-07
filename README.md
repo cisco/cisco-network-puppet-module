@@ -943,19 +943,28 @@ BGP autonomous system number.  Valid values are String, Integer in ASPLAIN or AS
 ##### `vrf`
 Name of the resource instance. Valid values are string. The name 'default' is a valid VRF representing the global bgp.
 
-<a name='bgp_rd'></a>
-##### `route_distinguisher`
-VPN Route Distinguisher (RD). The RD is combined with the IPv4 or IPv6 prefix learned by the PE router to create a globally unique address. Valid values are a String in one of the route-distinguisher formats (ASN2:NN, ASN4:NN, or IPV4:NN); the keyword 'auto', or the keyword 'default'.
+#### Properties
 
-*Please note:* The `route_distinguisher` property is typically configured within the VRF context configuration on most platforms (including NXOS) but it is tightly coupled to bgp and therefore configured within the BGP configuration on some platforms (XR for example). For this reason the `route_distinguisher` property has support (with limitations) in both `cisco_vrf` and `cisco_bgp` providers:
+##### `bestpath_always_compare_med`
+Enable/Disable MED comparison on paths from different autonomous systems. Valid values are 'true', 'false', and 'default'.
 
-* `cisco_bgp`: The property is fully supported on both NXOS and XR.
-* `cisco_vrf`: The property is only supported on NXOS. See: [cisco_vrf: route_distinguisher](#vrf_rd)
+##### `bestpath_aspath_multipath_relax`
+Enable/Disable load sharing across the providers with different (but equal-length) AS paths. Valid values are 'true', 'false', and 'default'
 
-*IMPORTANT: Choose only one provider to configure the `route_distinguisher` property on a given device. Using both providers simultaneously on the same device may have unpredictable results.*
+##### `bestpath_compare_routerid`
+Enable/Disable comparison of router IDs for identical eBGP paths. Valid values are 'true', 'false', and 'default'
 
-##### `router_id`
-Router Identifier (ID) of the BGP router VRF instance. Valid values are string, and keyword 'default'.
+##### `bestpath_cost_community_ignore`
+Enable/Disable Ignores the cost community for BGP best-path calculations. Valid values are 'true', 'false', and 'default'
+
+##### `bestpath_med_confed`
+Enable/Disable enforcement of bestpath to do a MED comparison only between paths originated within a confederation. Valid values are 'true', 'false', and 'default'. On IOS XR, this property is only supported in the global BGP context.
+
+##### `bestpath_med_missing_as_worst`
+Enable/Disable assigns the value of infinity to received routes that do not carry the MED attribute, making these routes the least desirable. Valid values are 'true', 'false', and 'default'.
+
+##### `bestpath_med_non_deterministic`
+Enable/Disable deterministic selection of the best MED path from among the paths from the same autonomous system. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 
 ##### `cluster_id`
 Route Reflector Cluster-ID. Valid values are String, keyword 'default'. On IOS XR, this property is only supported in the global BGP context.
@@ -996,8 +1005,23 @@ Enable/Disable immediately reset the session if the link to a directly connected
 ##### `flush_routes`
 Enable/Disable flush routes in RIB upon controlled restart. Valid values are 'true', 'false', and 'default'. On NX-OS, this property is only supported in the global BGP context. This property is not supported on IOS XR.
 
+##### `graceful_restart`
+Enable/Disable graceful restart. Valid values are 'true', 'false', and 'default'. On IOS XR, this property is only supported in the global BGP context.
+
+##### `graceful_restart_helper`
+Enable/Disable graceful restart helper mode. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
+
+##### `graceful_restart_timers_restart`
+Set maximum time for a restart sent to the BGP peer. Valid values are Integer, keyword 'default'. On IOS XR, this property is only supported in the global BGP context.
+
+##### `graceful_restart_timers_stalepath_time`
+Set maximum time that BGP keeps the stale routes from the restarting BGP peer. Valid values are Integer, keyword 'default'. On IOS XR, this property is only supported in the global BGP context.
+
 ##### `isolate`
 Enable/Disable isolate this router from BGP perspective. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
+
+##### `log_neighbor_changes`
+Enable/Disable message logging for neighbor up/down event. Valid values are 'true', 'false', and 'default'
 
 ##### `maxas_limit`
 Specify Maximum number of AS numbers allowed in the AS-path attribute. Valid values are integers between 1 and 512, or keyword 'default' to disable this property. This property is not supported on IOS XR.
@@ -1011,35 +1035,25 @@ Enable/Disable Non-Stop Routing (NSR). Valid values are 'true', 'false', and 'de
 ##### `reconnect_interval`
 The BGP reconnection interval for dropped sessions. Valid values are Integer or keyword 'default'.
 
+<a name='bgp_rd'></a>
+##### `route_distinguisher`
+VPN Route Distinguisher (RD). The RD is combined with the IPv4 or IPv6 prefix learned by the PE router to create a globally unique address. Valid values are a String in one of the route-distinguisher formats (ASN2:NN, ASN4:NN, or IPV4:NN); the keyword 'auto', or the keyword 'default'.
+
+*Please note:* The `route_distinguisher` property is typically configured within the VRF context configuration on most platforms (including NXOS) but it is tightly coupled to bgp and therefore configured within the BGP configuration on some platforms (XR for example). For this reason the `route_distinguisher` property has support (with limitations) in both `cisco_vrf` and `cisco_bgp` providers:
+
+* `cisco_bgp`: The property is fully supported on both NXOS and XR.
+* `cisco_vrf`: The property is only supported on NXOS. See: [cisco_vrf: route_distinguisher](#vrf_rd)
+
+*IMPORTANT: Choose only one provider to configure the `route_distinguisher` property on a given device. Using both providers simultaneously on the same device may have unpredictable results.*
+
+##### `router_id`
+Router Identifier (ID) of the BGP router VRF instance. Valid values are string, and keyword 'default'.
+
 ##### `shutdown`
 Administratively shutdown the BGP protocol. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 
 ##### `suppress_fib_pending`
 Enable/Disable advertise only routes programmed in hardware to peers. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
-
-##### `log_neighbor_changes`
-Enable/Disable message logging for neighbor up/down event. Valid values are 'true', 'false', and 'default'
-
-##### `bestpath_always_compare_med`
-Enable/Disable MED comparison on paths from different autonomous systems. Valid values are 'true', 'false', and 'default'.
-
-##### `bestpath_aspath_multipath_relax`
-Enable/Disable load sharing across the providers with different (but equal-length) AS paths. Valid values are 'true', 'false', and 'default'
-
-##### `bestpath_compare_routerid`
-Enable/Disable comparison of router IDs for identical eBGP paths. Valid values are 'true', 'false', and 'default'
-
-##### `bestpath_cost_community_ignore`
-Enable/Disable Ignores the cost community for BGP best-path calculations. Valid values are 'true', 'false', and 'default'
-
-##### `bestpath_med_confed`
-Enable/Disable enforcement of bestpath to do a MED comparison only between paths originated within a confederation. Valid values are 'true', 'false', and 'default'. On IOS XR, this property is only supported in the global BGP context.
-
-##### `bestpath_med_missing_as_worst`
-Enable/Disable assigns the value of infinity to received routes that do not carry the MED attribute, making these routes the least desirable. Valid values are 'true', 'false', and 'default'.
-
-##### `bestpath_med_non_deterministic`
-Enable/Disable deterministic selection of the best MED path from among the paths from the same autonomous system. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 
 ##### `timer_bestpath_limit`
 Specify timeout for the first best path after a restart, in seconds. Valid values are Integer, keyword 'default'. This property is not supported on IOS XR.
@@ -1047,23 +1061,11 @@ Specify timeout for the first best path after a restart, in seconds. Valid value
 ##### `timer_bestpath_limit_always`
 Enable/Disable update-delay-always option. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 
-##### `graceful_restart`
-Enable/Disable graceful restart. Valid values are 'true', 'false', and 'default'. On IOS XR, this property is only supported in the global BGP context.
-
-##### `graceful_restart_helper`
-Enable/Disable graceful restart helper mode. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
-
-##### `graceful_restart_timers_restart`
-Set maximum time for a restart sent to the BGP peer. Valid values are Integer, keyword 'default'. On IOS XR, this property is only supported in the global BGP context.
-
-##### `graceful_restart_timers_stalepath_time`
-Set maximum time that BGP keeps the stale routes from the restarting BGP peer. Valid values are Integer, keyword 'default'. On IOS XR, this property is only supported in the global BGP context.
+##### `timer_bgp_hold`
+Set bgp hold timer. Valid values are Integer, keyword 'default'.
 
 ##### `timer_bgp_keepalive`
 Set bgp keepalive timer. Valid values are Integer, keyword 'default'.
-
-##### `timer_bgp_hold`
-Set bgp hold timer. Valid values are Integer, keyword 'default'.
 
 --
 ### Type: cisco_bgp_af
