@@ -39,6 +39,8 @@ module Puppet
           cisco_hardware = 'n6k'
         when /Nexus\s?7\d\d\d/
           cisco_hardware = 'n7k'
+        when /Nexus\s?8\d\d\d/
+          cisco_hardware = 'n8k'
         when /Nexus\s?9\d\d\d/
           cisco_hardware = 'n9k'
         when /NX-OSv/
