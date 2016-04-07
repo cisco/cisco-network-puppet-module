@@ -197,7 +197,7 @@ The following table indicates which providers are supported on each platform. As
 | [tacacs](#type-tacacs) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
 | [tacacs_global](#type-tacacs_global) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
 | [tacacs_server_group](#type-tacacs_server_group) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| [tacacs_server](#type-tacacs_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| [tacacs_server](#type-tacacs_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ✅ |
 
 
 ## <a name ="resource-reference">Resource Reference<a>
@@ -3982,7 +3982,7 @@ Number of seconds before the timeout period ends
 | N6k      | unsupported        | unsupported            |
 | N7k      | unsupported        | unsupported            |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
-| IOS XR   | unsupported        | unsupported            |
+| IOS XR   | TODO               | TODO                   |
 
 ##### `ensure`
 Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
