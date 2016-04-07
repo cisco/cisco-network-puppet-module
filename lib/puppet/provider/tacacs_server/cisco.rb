@@ -105,6 +105,14 @@ Puppet::Type.type(:tacacs_server).provide(:cisco) do
     @property_flush[:ensure] = :present
   end
 
+  def create_new
+    if Facter.value('operatingsystem').eql?('ios_xr')
+      @tacacs_server = Cisco::TacacsServerHost.new(@resource[:name], true, @resource[:port])
+    else
+      @tacacs_server = Cisco::TacacsServerHost.new(@resource[:name], true)
+    end
+  end
+
   def destroy
     @property_flush[:ensure] = :absent
   end
@@ -133,9 +141,19 @@ Puppet::Type.type(:tacacs_server).provide(:cisco) do
       @tacacs_server = nil
       @property_hash[:ensure] = :absent
     else
-      if @property_hash.empty?
+      # On IOS XR, if the port values change, the entity has to be re-created as the ports
+      # form part of the uniquiness of the item on the device. This is opposed to using
+      # the setters on other platforms for the changing of port values.
+      if @property_hash.empty? ||
+         (Facter.value('operatingsystem').eql?('ios_xr') &&
+          @resource[:port] != @tacacs_server.port.to_i)
+
         # create a new Tacacs Server
-        @tacacs_server = Cisco::TacacsServerHost.new(@resource[:name])
+        create_new
+      end
+
+      if Facter.value('operatingsystem').eql?('ios_xr')
+        TACACS_SERVER_PROPS.delete(:port)
       end
 
       TACACS_SERVER_PROPS.each do |puppet_prop, cisco_prop|
