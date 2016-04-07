@@ -1087,7 +1087,7 @@ Manages configuration of a BGP Address-family instance.
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `additional_paths_install` | Not supported on IOS XR |
+| `additional_paths_install` | Not supported on N9k, N30xx, N31xx, N8k, IOS XR |
 | `advertise_l2vpn_evpn` | Not supported on N30xx, N31xx, N6k, IOS XR |
 | `client_to_client` | Only supported in global BGP context in IOS XR |
 | `dampen_igp_metric` | Not supported on IOS XR |
@@ -1116,6 +1116,8 @@ Address Family Identifier (AFI). Required. Valid values for Nexus and IOS XR are
 
 ##### `safi`
 Sub Address Family Identifier (SAFI). Required. Valid values are `unicast`, `multicast` and `evpn`.
+
+#### Properties
 
 ##### `additional_paths_install`
 Install a backup path into the forwarding table and provide prefix 'independent convergence (PIC) in case of a PE-CE link failure. Valid values are true, false, or 'default'. This property is not supported on IOS XR.
