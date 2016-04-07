@@ -1008,6 +1008,9 @@ Enable/Disable handle BGP neighbor down event, due to various reasons. Valid val
 ##### `nsr`
 Enable/Disable Non-Stop Routing (NSR). Valid values are 'true', 'false', and 'default'. This property is not supported on Nexus.
 
+##### `reconnect_interval`
+The BGP reconnection interval for dropped sessions. Valid values are Integer or keyword 'default'.
+
 ##### `shutdown`
 Administratively shutdown the BGP protocol. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 
