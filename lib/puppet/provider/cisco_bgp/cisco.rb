@@ -48,6 +48,7 @@ Puppet::Type.type(:cisco_bgp).provide(:cisco) do
     :graceful_restart_timers_restart,
     :graceful_restart_timers_stalepath_time,
     :maxas_limit,
+    :reconnect_interval,
     :route_distinguisher,
     :router_id,
     :timer_bestpath_limit,

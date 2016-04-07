@@ -17,6 +17,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 *
 
 ### Added
+- Extended `cisco_bgp` with the following attributes:
+  - `nsr`
+  - `reconnect_interval`
 - Extended `cisco_interface` with the following attributes:
   - `ipv4_forwarding`, `switchport_mode fabricpath`
   - `stp_bpdufilter`, `stp_bpduguard`, `stp_cost`, `stp_guard`, `stp_link_type`, `stp_mst_cost`
@@ -40,8 +43,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `route_target_import_stitching`
 - Extended `cisco_vxlan_vtep` with the following attributes:
   - `source_interface_hold_down_time`
-- Extended `cisco_bgp` with the following attributes:
-  - `nsr`
 
 ### Removed
 - Removed 'cisco_nxapi' fact as this gem is no longer a dependency.

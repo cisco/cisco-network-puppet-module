@@ -229,9 +229,8 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
   end
 
   newproperty(:log_neighbor_changes) do
-    desc "Log message for neighbor up/down event. Valid values are 'enable', to enable
-          it, 'disable' to disable it, or 'inherit' to use the config in
-          cisco_bgp type"
+    desc 'Enables logging of BGP neighbor status changes. '\
+         "Valid values are 'enable', 'disable', or 'inherit'."
     munge(&:to_sym)
     newvalues(:enable, :disable, :inherit)
   end
