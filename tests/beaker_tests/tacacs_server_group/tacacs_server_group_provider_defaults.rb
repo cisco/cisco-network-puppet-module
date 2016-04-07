@@ -65,13 +65,9 @@ test_name "TestCase :: #{testheader}" do
     resource_absent_cleanup(agent, 'tacacs_server')
     resource_absent_cleanup(agent, 'tacacs_server_group')
 
-    # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, TacacsServerGroupLib.create_tacacs_server_setup)
-
-    # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
-    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
+    command_config(agent, 'tacacs-server host 2.2.2.2')
+    command_config(agent, 'tacacs-server host 3.3.3.3')
+    command_config(agent, 'tacacs-server host 2004::44')
 
     logger.info('Setup switch for provider')
   end

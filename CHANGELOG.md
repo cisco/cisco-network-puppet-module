@@ -15,6 +15,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 #### NetDev Resources
 * Extended `tacacs_server` with support for ios_xr platform
+* Extended `tacacs_server_group` with support for ios_xr platform
 
 ### Added
 - Extended `cisco_interface` with the following attributes:
