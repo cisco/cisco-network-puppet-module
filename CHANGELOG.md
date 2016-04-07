@@ -14,7 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `cisco_stp_global` type and provider.
 
 #### NetDev Resources
-*
+* Added IOS XR support for tacacs_server
 
 ### Added
 - Extended `cisco_interface` with the following attributes:
