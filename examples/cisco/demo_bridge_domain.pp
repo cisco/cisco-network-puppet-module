@@ -1,10 +1,6 @@
 # Manifest to demo cisco_bridge_domain provider
 #
-<<<<<<< HEAD
 # Copyright (c) 2016 Cisco and/or its affiliates.
-=======
-# Copyright (c) 2016 Cisco and/or its affiliates. 
->>>>>>> 0df39e4b0f44d6684f044d91f5420594388d3940
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
