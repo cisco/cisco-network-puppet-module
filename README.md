@@ -1306,6 +1306,8 @@ VRF name. Required. Valid values are string. The name 'default' is a valid VRF r
 ##### `neighbor`
 Neighbor Identifier. Required. Valid values are string. Neighbors may use IPv4 or IPv6 notation, with or without prefix length. Specifying ip/prefix format is not supported on IOS XR.
 
+#### Properties
+
 ##### `description`
 Description of the neighbor. Valid value is string.
 
@@ -1422,6 +1424,8 @@ Neighbor Address Family Identifier (AFI). Required. Valid values are string. Val
 
 ##### `safi`
 Neighbor Sub Address Family Identifier (SAFI). Required. Valid values are string. Valid neighbor SAFIs are `unicast`, `multicast` and `evpn`. Note that some AFI/SAFI address-families may not be supported with some neighbors; e.g. an ipv6 neighbor may not support an ipv4 multicast address-family.
+
+#### Properties
 
 ##### `additional_paths_receive`
 `capability additional-paths receive`. Valid values are `enable` for basic command enablement; `disable` for disabling the command at the neighbor_af level (it adds the `disable` keyword to the basic command); and `inherit` to remove the command at this level (the command value is inherited from a higher BGP layer). This property is not supported on IOS XR.
