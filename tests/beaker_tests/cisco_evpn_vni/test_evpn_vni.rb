@@ -25,8 +25,9 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 # Test hash top-level keys
 tests = {
-  master:        master,
   agent:         agent,
+  master:        master,
+  platform:      'n(5|6|7|8|9)k',
   resource_name: 'cisco_evpn_vni',
 }
 
@@ -71,8 +72,9 @@ tests[:non_default] = {
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
+  skip_unless_supported(tests)
 
+  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   # -----------------------------------
   id = :default
   test_harness_run(tests, id)
