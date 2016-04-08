@@ -58,7 +58,6 @@ Puppet::Type.newtype(:cisco_bridge_domain) do
     desc 'ID of the Bridge Domain. Valid values are integer.'
 
     validate do |value|
-      puts "bridge-domain #{value}"
       valid_ids = *(2..4096)
 
       fail 'bridge-domain ID needs to be an integer' unless /\d+/.match(value)
