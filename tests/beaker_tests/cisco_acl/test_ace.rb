@@ -53,7 +53,7 @@ tests[:seq_10_v4] = {
 tests[:seq_10_v6] = {
   desc:           'IPv6 Seq 10',
   title_pattern:  'ipv6 beaker6 10',
-  platform:       'n(3|7|9)k', # TBD: N5k addrs display as 0001:0001::0001/128
+  platform:       'n(3|7|8|9)k', # TBD: N5k addrs display as 0001:0001::0001/128
   manifest_props: {
     action:   'permit',
     proto:    'tcp',
