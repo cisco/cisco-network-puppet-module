@@ -138,6 +138,7 @@ The following table indicates which providers are supported on each platform. As
 | [cisco_bridge_domain](#type-cisco_bridge_domain) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
 | [cisco_bridge_domain_vni](#type-cisco_bridge_domain_vni) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
 | [cisco_encapsulation](#type-cisco_encapsulation) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| [cisco_evpn_vni](#type-cisco_evpn_vni) | ✅ | ❌ | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_interface](#type-cisco_interface) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅ | ✅ | ✅ | * [caveats](#cisco_interface-caveats) |
 | [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
 | [cisco_interface_ospf](#type-cisco_interface_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
