@@ -2452,6 +2452,8 @@ Address Family Identifier (AFI). Required. Valid value is ipv4.
 ##### `vrf`
 Name of the resource instance. Required. Valid values are string. The name 'default' is a valid VRF representing the global vrf.
 
+#### Properties
+
 ##### `ssm_range`
 Configure group ranges for Source Specific Multicast (SSM). Valid values are multicast addresses or the keyword ‘none’.
 
