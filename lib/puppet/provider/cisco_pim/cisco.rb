@@ -66,7 +66,6 @@ Puppet::Type.type(:cisco_pim).provide(:cisco) do
   end # self.properties_get
 
   def self.instances
-    return [] unless Cisco::Pim.feature_enabled
     pim_instances = []
     Cisco::Pim.pims.each do |afi, vrfs|
       vrfs.each do |vrf, pim_inst|
