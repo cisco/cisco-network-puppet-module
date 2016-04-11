@@ -142,7 +142,7 @@ The following table indicates which providers are supported on each platform. As
 | [cisco_fabricpath_global](#type-cisco_fabricpath_global) | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ | * [caveats](#cisco_fabricpath_global-caveats) |
 | [cisco_fabricpath_topology](#type-cisco_fabricpath_topology) | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ |
 | [cisco_interface](#type-cisco_interface) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅ | ✅ | ✅ | * [caveats](#cisco_interface-caveats) |
-| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_interface_ospf](#type-cisco_interface_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_interface_portchannel](#type-cisco_interface_portchannel) | ❌* | ✅* | ✅* | ❌* | ❌* | ❌* | ✅ | ❌ | * [caveats](#cisco_interface_portchannel-caveats) |
 | [cisco_interface_service_vni](#type-cisco_interface_service_vni) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
