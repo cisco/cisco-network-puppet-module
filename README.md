@@ -327,6 +327,7 @@ The following resources include cisco types and providers along with cisco provi
    * [`cisco_encapsulation`](#type-cisco_encapsulation)
 
 * VXLAN Types
+  * [`cisco_evpn_vni`](#type-cisco_evpn_vni)
   * [`cisco_overlay_global`](#type-cisco_overlay_global)
   * [`cisco_vxlan_vtep`](#type-cisco_vxlan_vtep)
   * [`cisco_vxlan_vtep_vni`](#type-cisco_vxlan_vtep_vni)
@@ -348,6 +349,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_bridge_domain`](#type-cisco_bridge_domain)
 * [`cisco_bridge_domain_vni`](#type-cisco_bridge_domain_vni)
 * [`cisco_encapsulation`](#type-cisco_encapsulation)
+* [`cisco_evpn_vni`](#type-cisco_evpn_vni)
 * [`cisco_fabricpath_global`](#type-cisco_fabricpath_global)
 * [`cisco_fabricpath_topology`](#type-cisco_fabricpath_topology)
 * [`cisco_interface`](#type-cisco_interface)
@@ -355,9 +357,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 * [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
 * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
-* [`cisco_
-* 
-* _device_group`](#type-cisco_itd_device_group)
+* [`cisco_itd_device_group`](#type-cisco_itd_device_group)
 * [`cisco_itd_device_group_node`](#type-cisco_itd_device_group_node)
 * [`cisco_itd_service`](#type-cisco_itd_service)
 * [`cisco_ospf`](#type-cisco_ospf)
@@ -1514,7 +1514,7 @@ Site-of-origin. Valid values are a string defining a VPN extcommunity or 'defaul
 
 --
 ### Type: cisco_bridge_domain
-Managers a cisco Bridge-Domain
+Manages a cisco Bridge-Domain
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
@@ -1595,6 +1595,53 @@ Profile name of the Encapsulation. Valid values is string.
 
 ##### `dot1q_map`
 The encapsulation profile dot1q vlan-to-vni mapping. Valid values are an array of [vlans, vnis] pairs.
+
+--
+### Type: cisco_evpn_vni
+
+Manages Cisco Ethernet Virtual Private Network (EVPN) VXLAN Network Identifier (VNI) configurations of a Cisco device.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I3(1)        | 1.3.0                  |
+| N30xx    | unsupported        | 1.3.0                  |
+| N31xx    | unsupported        | 1.3.0                  |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.0                  |
+| IOS XR   | unsupported        | unsupported            |
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'. Default value is 'present'.
+
+##### `vni`
+The EVPN VXLAN Network Identifier. Valid values are Integer.
+
+#### Properties
+
+##### `route_distinguisher`
+
+The VPN Route Distinguisher (RD). The RD is combined with the IPv4 or IPv6 prefix learned by the PE router to create a globally unique address. Valid values are a String in one of the route-distinguisher formats (ASN2:NN, ASN4:NN, or IPV4:NN); the keyword 'auto', or the keyword 'default'.
+
+##### `route target both`
+
+Enables/Disables the route-target 'auto' setting for both import and export target communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'."
+
+##### `route_target_import`
+
+Sets the route-target 'import' extended communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
+route_target Examples:
+
+route_target_import => ['1.2.3.4:5', '33:55']
+route_target_export => '4:4 66:66'
+
+##### `route_target_export`
+
+Sets the route-target 'export' extended communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
 
 --
 ### Type: cisco_fabricpath_global
