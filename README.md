@@ -2893,7 +2893,7 @@ Manages a Cisco VDC (Virtual Device Context).
 | N56xx    | unsupported        | unsupported            |
 | N6k      | unsupported        | unsupported            |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| N8k      | 7.0(3)F1(1)        | 1.3.0                  |
+| N8k      | unsupported        | unsupported            |
 | IOS XR   | unsupported        | unsupported            |
 
 #### Parameters
