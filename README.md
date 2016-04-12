@@ -2981,6 +2981,8 @@ Manages a Cisco VLAN.
 | Property | Caveat Description |
 |:--------|:-------------|
 | `mode` | Not supported on N9k, N30xx, N31xx |
+| `private_vlan_type` | Not supported on N8k, IOS-XR |
+| `private_vlan_association` | Not supported on N8k, IOS-XR |
 
 #### Parameters
 
@@ -3007,10 +3009,11 @@ State of the VLAN. Valid values are 'active', 'suspend', and keyword 'default'.
 Whether or not the vlan is shutdown. Valid values are 'true', 'false' and
 keyword 'default'.
 
-##### `private_vlan_type`^M
-The private vlan type. Valid values are 'primary', 'isolated' and^M
-'community'.^M
-^M
+##### `private_vlan_type`
+The private vlan type. Valid values are 'primary', 'isolated' and
+'community'.
+##### `private_vlan_association`
+Associate the secondary vlanis to the primary vlan. Valid values are integer like 5,10-12.
 --
 ### Type: cisco_vpc_domain
 Manages the virtual Port Channel (vPC) domain configuration of a Cisco device.
