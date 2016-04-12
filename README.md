@@ -2955,6 +2955,8 @@ Name of the VDC. Valid value is a String or optional keyword 'default' when refe
 ##### `ensure`
 Determines whether the config should be present or not. Valid values are 'present' and 'absent'.
 
+#### Properties
+
 ##### `limit_resource_module_type`
 This command restricts the allowed module-types in a given VDC. Valid values are String or keyword 'default'.
 
