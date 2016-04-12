@@ -139,10 +139,12 @@ The following table indicates which providers are supported on each platform. As
 | [cisco_bridge_domain_vni](#type-cisco_bridge_domain_vni) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
 | [cisco_encapsulation](#type-cisco_encapsulation) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
 | [cisco_evpn_vni](#type-cisco_evpn_vni) | ✅ | ❌ | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [cisco_fabricpath_global](#type-cisco_fabricpath_global) | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ | * [caveats](#cisco_fabricpath_global-caveats) |
+| [cisco_fabricpath_topology](#type-cisco_fabricpath_topology) | ❌ | ❌ | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ |
 | [cisco_interface](#type-cisco_interface) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅ | ✅ | ✅ | * [caveats](#cisco_interface-caveats) |
-| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_interface_ospf](#type-cisco_interface_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
-| [cisco_interface_portchannel](#type-cisco_interface_portchannel) | ❌* | ✅* | ✅* | ❌* | ❌* | ❌* | ✅ | ❌ | * [caveats](#cisco_interface_portchannel-caveats) |
+| [cisco_interface_portchannel](#type-cisco_interface_portchannel) | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | ✅ | ❌ | * [caveats](#cisco_interface_portchannel-caveats) |
 | [cisco_interface_service_vni](#type-cisco_interface_service_vni) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
 | [cisco_itd_device_group](#type-cisco_itd_device_group) | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
 | [cisco_itd_device_group_node](#type-cisco_itd_device_group_node) | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
@@ -1645,6 +1647,30 @@ Sets the route-target 'export' extended communities. Valid values are an Array o
 
 --
 ### Type: cisco_fabricpath_global
+Manages Cisco fabricpath global parameters.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | unsupported        | unsupported            |
+| N30xx    | unsupported        | unsupported            |
+| N31xx    | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
+
+#### <a name="cisco_fabricpath_global-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:---------|:-------------|
+| `loadbalance_multicast_has_vlan` | Supported only on N7k |
+| `loadbalance_multicast_rotate` | Supported only on N7k |
+| `ttl_multicast` | Supported only on N7k |
+| `ttl_unicast` | Supported only on N7k |
+
+#### Parameters
+
 ##### `name`
 ID of the fabricpath global config. The only valid value is keyword 'default'.
 
@@ -1664,10 +1690,10 @@ Fabricpath Timers Link-up Delay in seconds. Valid values are integers from 1..12
 Fabricpath ECMP loadbalancing alogorithm. Valid values are 'destination', 'source', 'source-destination', 'symmetric' and the keyword 'default'. Default is symmetric for Nexus 7000 series and source-destination for others.
 
 ##### `loadbalance_multicast_has_vlan`
-Multicast Loadbalance flow parameters - include vlan or not. Valid values are true or false and keyword 'default'. Default value: true. This parameter is valid only on Nexus 7000 series platform.
+Multicast Loadbalance flow parameters - include vlan or not. Valid values are true or false and keyword 'default'. Default value: true.
 
 ##### `loadbalance_multicast_rotate`
-Multicast Loadbalance flow parameters -  rotate amount in bytes. Valid values are integer in range 0..15 and keyword 'default'. Default value: 1. This parameter is valid only on Nexus 7000 series platform.
+Multicast Loadbalance flow parameters -  rotate amount in bytes. Valid values are integer in range 0..15 and keyword 'default'. Default value: 1.
 
 ##### `loadbalance_unicast_has_vlan`
 Unicast Loadbalance flow parameters - include vlan or not. Valid values are true/false and keyword 'default'. Default value: 1.
@@ -1695,14 +1721,27 @@ The fabricpath switch_id. This parameter can be used to over-ride the automatica
 Fabricpath Timers Transition Delay in seconds. Valid values are integers from 1..1200 and keyword 'default'. Default value: 10.
 
 ##### `ttl_multicast`
-Fabricpath Multicast TTL value. Valid values are integers from 1..64 and keyword 'default'. Default value: 32. This parameter is valid only on Nexus 7000 series platform.
+Fabricpath Multicast TTL value. Valid values are integers from 1..64 and keyword 'default'. Default value: 32.
 
 ##### `ttl_unicast`
-Fabricpath Unicast TTL value. Valid values are integers from 1..64 and keyword 'default'. Default value: 32. This parameter is valid only on Nexus 7000 series platform.
+Fabricpath Unicast TTL value. Valid values are integers from 1..64 and keyword 'default'. Default value: 32.
 
 --
 ### Type: cisco_fabricpath_topology
 Manages a Cisco fabricpath Topology
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | unsupported        | unsupported            |
+| N30xx    | unsupported        | unsupported            |
+| N31xx    | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | unsupported        | unsupported            |
+| IOS XR   | unsupported        | unsupported            |
+
+#### Parameters
 
 ##### `topo_id`
 ID of the fabricpath topology. Valid values are integers in the range 1-63.

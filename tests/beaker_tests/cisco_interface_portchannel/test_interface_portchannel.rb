@@ -284,7 +284,7 @@ test_name "TestCase :: #{testheader}" do
     id = 'default_properties_asym'
   when /n5k|n6k/
     id = 'default_properties_eth'
-  when /n3k|n9k/
+  when /n3k|n8k|n9k/
     id = 'default_properties_sym'
   end
 
@@ -302,7 +302,7 @@ test_name "TestCase :: #{testheader}" do
     id = 'non_default_properties_asym'
   when /n5k|n6k/
     id = 'non_default_properties_eth'
-  when /n3k|n9k/
+  when /n3k|n8k|n9k/
     id = 'non_default_properties_sym'
   end
   tests[id][:desc] = '2.1 Non Default Properties'
