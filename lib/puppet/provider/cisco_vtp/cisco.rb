@@ -38,7 +38,7 @@ Puppet::Type.type(:cisco_vtp).provide(:cisco) do
 
   def initialize(value={})
     super(value)
-    @vtp = Cisco::Vtp.new if Cisco::Vtp.enabled
+    @vtp = Cisco::Vtp.new
     @property_flush = {}
   end
 
@@ -57,7 +57,7 @@ Puppet::Type.type(:cisco_vtp).provide(:cisco) do
 
   def self.instances
     vtps = []
-    return vtps unless Cisco::Vtp.enabled
+    return vtps unless Cisco::Feature.vtp_enabled?
 
     vtp = Cisco::Vtp.new
 
