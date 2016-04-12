@@ -3007,6 +3007,10 @@ State of the VLAN. Valid values are 'active', 'suspend', and keyword 'default'.
 Whether or not the vlan is shutdown. Valid values are 'true', 'false' and
 keyword 'default'.
 
+##### `private_vlan_type`^M
+The private vlan type. Valid values are 'primary', 'isolated' and^M
+'community'.^M
+^M
 --
 ### Type: cisco_vpc_domain
 Manages the virtual Port Channel (vPC) domain configuration of a Cisco device.
