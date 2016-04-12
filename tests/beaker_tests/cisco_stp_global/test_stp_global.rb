@@ -153,7 +153,7 @@ tests[:non_default] = {
 
 tests[:default_plat_1] = {
   desc:           '1.3 Default Properties platform specific part 1',
-  platform:       'n(3|9)k',
+  platform:       'n9k',
   title_pattern:  'default',
   manifest_props: {
     fcoe: 'default'
@@ -166,7 +166,7 @@ tests[:default_plat_1] = {
 
 tests[:non_default_plat_1] = {
   desc:           '2.2 Non Default Properties platform specific part 1',
-  platform:       'n(3|9)k',
+  platform:       'n9k',
   title_pattern:  'default',
   manifest_props: {
     fcoe: 'false'
