@@ -17,6 +17,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 *
 
 ### Added
+- Extended `cisco_vtp` support on the following platforms:
+    - `Nexus 56xx`, `Nexus 60xx`, `Nexus 7xxx`
 - Extended `cisco_bgp` with the following attributes:
   - `nsr`
   - `reconnect_interval`
