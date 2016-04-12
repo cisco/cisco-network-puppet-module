@@ -16,6 +16,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+begin
+  require 'puppet_x/cisco/cmnutils'
+rescue LoadError # seen on master, not on agent
+  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..',
+                                     'puppet_x', 'cisco', 'cmnutils.rb'))
+end
+
 Puppet::Type.newtype(:cisco_vlan) do
   @doc = "Manages a Cisco VLAN.
 
@@ -32,6 +40,8 @@ Puppet::Type.newtype(:cisco_vlan) do
       mapped_vni => 20000,
       state      => 'active',
       shutdown   => 'true',
+      private_vlan_type => 'primary',
+      private_vlan_association => ['101-104']
     }"
 
   ###################
@@ -130,4 +140,77 @@ Puppet::Type.newtype(:cisco_vlan) do
       :false,
       :default)
   end # property shutdown
+
+  newproperty(:private_vlan_type) do
+    desc 'The private vlan type for VLAN. Valid values are string
+          primary, isolated, community'
+
+    match_error = 'must be a string. Valid values primary,isolated,community'
+    valid_input = %w(primary isolated community)
+
+    validate do |value|
+      unless value.kind_of? String
+        fail "Private vlan type '#{value}' #{match_error}"
+      end
+
+      unless valid_input.include?(value)
+        fail "Private vlan type '#{value}' #{match_error}"
+      end
+    end
+
+    munge do |value|
+      begin
+        value = :default if value == 'default'
+        value = String(value) unless value == :default
+      rescue
+        raise 'Type is not a valid string.'
+      end # rescue
+      value
+    end
+  end # property private_vlan_type
+
+  newproperty(:private_vlan_association, array_matching: :all) do
+    desc 'The private association for the primary vlan.'\
+         "Valid values match format ['vlans']."
+
+    match_error = "must be of format ['vlans'] with vlans as integer"
+    validate do |value|
+      fail "Vlan '#{value}' #{match_error}" unless
+            value.kind_of? String
+      result = prepare_list(value)
+      result.each do |item|
+        fail "Vlan '#{value}' #{match_error}" unless
+             value == :default || /(\d+)/.match(item)
+      end
+    end
+
+    munge do |value|
+      begin
+        result = []
+        result = prepare_list(value)
+      rescue
+        raise 'vlan is not valid'
+      end
+      result
+    end
+
+    def insync?(is)
+      (is.size == should.flatten.size && is.sort == should.flatten.sort)
+    end
+
+    def prepare_list(input)
+      result = []
+      input.gsub!('-', '..')
+      if input.include?('..')
+        elema = input.split('..').map { |d| Integer(d) }
+        tr = elema[0]..elema[1]
+        tr.to_a.each do |item|
+          result.push(item.to_s)
+        end
+      else
+        result.push(input)
+      end
+      result
+    end
+  end # property private_vlan_association
 end # Puppet::Type.newtype
