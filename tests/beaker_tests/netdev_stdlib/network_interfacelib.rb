@@ -49,8 +49,8 @@ EOF"
     manifest_str
   end
 
-  def self.create_non_defaults
-    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+  def self.create_non_defaults(type)
+    nxos_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     network_interface { 'ethernet1/4':
       speed                        => '100m',
@@ -59,6 +59,14 @@ node default {
     }
 }
 EOF"
-    manifest_str
+
+    ios_xr_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+    network_interface { 'gigabitethernet0/0/0/0':
+      description                  => 'foo',
+    }
+}
+EOF"
+    type == 'ios_xr' ? ios_xr_str : nxos_str
   end
 end
