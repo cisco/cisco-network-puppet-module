@@ -3014,6 +3014,7 @@ The private vlan type. Valid values are 'primary', 'isolated' and
 'community'.
 ##### `private_vlan_association`
 Associate the secondary vlanis to the primary vlan. Valid values are integer like 5,10-12.
+
 --
 ### Type: cisco_vpc_domain
 Manages the virtual Port Channel (vPC) domain configuration of a Cisco device.
