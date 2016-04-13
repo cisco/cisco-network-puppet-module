@@ -26,4 +26,11 @@ class ciscopuppet::cisco::demo_vlan {
     shutdown   => true,
     state      => 'active',
   }
+  # For private vlan
+  cisco_vlan { '120':
+    ensure     => present,
+    private_vlan_type => 'primary',
+    private_vlan_association => ['200', '300-304'],
+  }
+
 }
