@@ -268,7 +268,7 @@ end
 # Wrapper for config pattern-match tests
 def test_show_cmd(tests, id, state=false)
   stepinfo = format_stepinfo(tests, id, 'SHOW CMD')
-  show_cmd = get_vshell_cmd(tests[:show_cmd])
+  show_cmd = get_vshell_cmd(tests[id][:show_cmd])
   step "TestStep :: #{stepinfo}" do
     logger.debug('test_show_cmd :: BEGIN')
     on(tests[:agent], show_cmd) do
