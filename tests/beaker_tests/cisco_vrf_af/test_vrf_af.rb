@@ -98,17 +98,25 @@ tests[:title_patterns_3] = {
 def unsupported_properties(_tests, _id)
   unprops = []
   if operating_system == 'nexus'
-    unprops = [
-      :route_target_export_stitching,
-      :route_target_import_stitching,
-    ]
+    unprops <<
+      :route_target_export_stitching <<
+      :route_target_import_stitching
+
+    if platform[/n3k/]
+      unprops <<
+        :route_target_both_auto <<
+        :route_target_both_auto_evpn <<
+        :route_target_export_evpn <<
+        :route_target_import_evpn
+    end
+
   else
-    unprops = [
-      :route_target_both_auto,
-      :route_target_both_auto_evpn,
-      :route_target_export_evpn,
-      :route_target_import_evpn,
-    ]
+    unprops <<
+      :route_target_both_auto <<
+      :route_target_both_auto_evpn <<
+      :route_target_export_evpn <<
+      :route_target_import_evpn
+
   end
   unprops
 end
