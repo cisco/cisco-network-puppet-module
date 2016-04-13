@@ -27,6 +27,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `modify switchport_trunk_allowed_vlan to use range_summarize() which takes care of idempotency issues with vlan ranges`
 - Extended `cisco_vlan` with the following attributes:
   - `mode`
+  - `private_vlan_type`
+  - `private_vlan_association`
 - Extended `cisco_vpc_domain` with the following attributes:
   - `fabricpath_emulated_switch_id`
   - `fabricpath_multicast_load_balance`
