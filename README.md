@@ -249,7 +249,10 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_interface`](#type-cisco_interface)
   * [`cisco_interface_channel_group`](#type-cisco_interface_channel_group)
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
-  * [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
+  * [`cisco_interface_
+  * 
+  * 
+  * `](#type-cisco_interface_portchannel)
   * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
   * [`network_interface (netdev_stdlib)`](#type-network_interface)
 
@@ -2582,7 +2585,7 @@ port-channel asymmetric hash. Valid values are true, false or 'default'.
 
 ##### `bundle_hash`
 port-channel bundle hash. Valid values are 'ip', 'ip-l4port', 'ip-l4port-vlan', 'ip-vlan', 'l4port', 'mac', 'port', 'ip-only', 'port-only', 'ip-gre' or 'default'.
-* port, 'ip-only', 'port-only' are only supported on N56xx, N6k.
+* 'port', 'ip-only', 'port-only' are only supported on N56xx, N6k.
 * 'ip-gre' is only supported on N9k.
 * 'ip-l4port', 'ip-l4port-vlan', 'ip-vlan', 'l4port' are only supported on N9k, N7k.
 
