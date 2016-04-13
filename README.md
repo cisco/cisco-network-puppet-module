@@ -1757,6 +1757,8 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | `svi_management` | Not supported on IOS XR |
 | `switchport` | Not supported on IOS XR |
 | `switchport_autostate_exclude` | Not supported on IOS XR |
+| `switchport_mode_private_vlan_host` | Not supported on N8k, IOS XR |
+| `switchport_mode_private_vlan_host_association` | Not supported on N8k, IOS XR |
 | `switchport_mode` | Not supported on IOS XR |
 | `switchport_trunk_allowed_vlan` | Not supported on IOS XR |
 | `switchport_trunk_native_vlan` | Not supported on IOS XR |
@@ -1806,6 +1808,10 @@ interface. Valid value is an integer.
 
 ##### `switchport_autostate_exclude`
 Exclude this port for the SVI link calculation. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
+##### `switchport_mode_private_vlan_host`
+Exclude this port for the SVI link calculation. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.^M
+##### `switchport_mode_private_vlan_host_association`
+Exclude this port for the SVI link calculation. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.^M
 
 ##### `switchport_trunk_allowed_vlan`
 The allowed VLANs for the specified Ethernet interface. Valid values are
@@ -2981,8 +2987,8 @@ Manages a Cisco VLAN.
 | Property | Caveat Description |
 |:--------|:-------------|
 | `mode` | Not supported on N9k, N30xx, N31xx |
-| `private_vlan_type` | Not supported on N8k, IOS-XR |
-| `private_vlan_association` | Not supported on N8k, IOS-XR |
+| `private_vlan_type` | Not supported on N8k, IOS XR |
+| `private_vlan_association` | Not supported on N8k, IOS XR |
 
 #### Parameters
 
