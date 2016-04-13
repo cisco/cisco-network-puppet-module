@@ -87,6 +87,7 @@ class ciscopuppet::cisco::demo_vpc_domain {
 
   cisco_interface { 'port-channel100' :
     switchport_mode => 'trunk',
+    # Note: peer-link is incompatible with NVE features
     vpc_peer_link   => true,
     shutdown        => false,
     require         => Cisco_interface_channel_group['Ethernet1/2'],
