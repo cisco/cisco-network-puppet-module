@@ -2636,7 +2636,7 @@ Manages spanning tree global parameters
 | `bd_priority` | Supported only on N7k |
 | `bd_root_priority` | Supported only on N7k |
 | `domain` | Supported only on N56k, N6k, N7k |
-| `fcoe` | Supported only on N9k, N30xx, N31xx |
+| `fcoe` | Supported only on N9k |
 
 #### Parameters
 
