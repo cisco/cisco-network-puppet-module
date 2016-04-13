@@ -139,11 +139,11 @@ class ciscopuppet::cisco::demo_itd {
     }
 
     cisco_interface { 'ethernet1/1':
-      switchport_mode => disabled
+      switchport_mode => 'disabled'
     }
 
     cisco_interface { 'ethernet1/2':
-      switchport_mode => disabled
+      switchport_mode => 'disabled'
     }
 
     cisco_vlan { '2':
@@ -156,7 +156,7 @@ class ciscopuppet::cisco::demo_itd {
 
     cisco_interface { 'port-channel100':
       ensure          => present,
-      switchport_mode => disabled
+      switchport_mode => 'disabled'
     }
 
     $ingress_interface = [['vlan 2', '4.4.4.4'],
@@ -198,5 +198,8 @@ class ciscopuppet::cisco::demo_itd {
       peer_local                    => $peer_local2,
       shutdown                      => false,
     }
+  }
+  else {
+    notify{'SKIP: This platform does not support cisco_itd_service': }
   }
 }
