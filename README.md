@@ -1809,9 +1809,9 @@ interface. Valid value is an integer.
 ##### `switchport_autostate_exclude`
 Exclude this port for the SVI link calculation. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 ##### `switchport_mode_private_vlan_host`
-Exclude this port for the SVI link calculation. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.^M
+Switchport host mode for private vlan. This a L2 access port.
 ##### `switchport_mode_private_vlan_host_association`
-Exclude this port for the SVI link calculation. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.^M
+This configuration specify which vlans are associated on this port. Host mode only support a pair of vlan: primary and secondary.
 
 ##### `switchport_trunk_allowed_vlan`
 The allowed VLANs for the specified Ethernet interface. Valid values are
