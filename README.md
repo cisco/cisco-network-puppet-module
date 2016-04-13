@@ -3099,14 +3099,10 @@ range 1..3600. Default value: 10.
 Interface VLANs or BDs to exclude from suspension when dual-active. Valid value is a string of integer ranges from 1..4095. There is no default value.
 
 ##### `fabricpath_emulated_switch_id`
-Configure a fabricpath switch_Id to enable vPC+ mode. This is also known as 
-the Emulated switch-id.  Valid values are integers in the range 1..4095.
-There is no default value.
+Configure a fabricpath switch_Id to enable vPC+ mode. This is also known as the Emulated switch-id.  Valid values are integers in the range 1..4095. There is no default value.
 
 ##### `fabricpath_multicast_load_balance`
-In vPC+ mode, enable or disable the fabricpath multicast load balance.
-This loadbalances the Designated Forwarder selection for multicast traffic. 
-Valid values are true, false or default
+In vPC+ mode, enable or disable the fabricpath multicast load balance. This loadbalances the Designated Forwarder selection for multicast traffic. Valid values are true, false or default
 
 ##### `graceful_consistency_check`
 Graceful conistency check . Valid values are true, false or default. Default value: true.
@@ -3174,9 +3170,9 @@ device.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | TODO               | TODO                   |
 
@@ -3201,6 +3197,8 @@ values are 'present' and 'absent'. Default value is 'present'.
 ##### `name`
 Name of the VRF. Valid value is a string of non-whitespace characters. It is
 not case-sensitive and overrides the title of the type.
+
+#### Properties
 
 ##### `description`
 Description of the VRF. Valid value is string.
@@ -3254,12 +3252,12 @@ Manages Cisco Virtual Routing and Forwarding (VRF) Address-Family configuration.
 
 | Property                      | Caveat Description                   |
 |-------------------------------|--------------------------------------|
-| route_target_both_auto        | Only supported on nexus              |
-| route_target_both_auto_evpn   | Only supported on nexus              |
-| route_target_export_evpn      | Only supported on nexus              |
-| route_target_export_stitching | Only supported on IOS XR             |
-| route_target_import_evpn      | Only supported on nexus              |
-| route_target_import_stitching | Only supported on IOS XR             |
+| route_target_both_auto        | Not supported on N3k, IOS XR         |
+| route_target_both_auto_evpn   | Not supported on N3k, IOS XR         |
+| route_target_export_evpn      | Not supported on N3k, IOS XR         |
+| route_target_export_stitching | Not supported on Nexus               |
+| route_target_import_evpn      | Not supported on N3k, IOS XR         |
+| route_target_import_stitching | Not supported on Nexus               |
 
 #### Parameters
 
@@ -3277,6 +3275,8 @@ Address-Family Identifier (AFI). Required. Valid values are 'ipv4' or 'ipv6'.
 ##### `safi`
 Sub Address-Family Identifier (SAFI). Required. Valid values are `unicast` or `multicast`.
 *`multicast` is not supported on some platforms.*
+
+#### Properties
 
 ##### `route policy export`
 Set route-policy(IOS XR) or map(nexus) export name. Valid value is string or keyword 'default'.
