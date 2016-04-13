@@ -156,7 +156,7 @@ The following table indicates which providers are supported on each platform. As
 | [cisco_pim](#type-cisco_pim) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_pim_rp_address](#type-cisco_pim_rp_address) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_pim_grouplist](#type-cisco_pim_grouplist) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
-| [cisco_portchannel_global](#type-cisco_portchannel_global) | ❌* | ✅* | ✅* | ❌* | ❌* | ❌ | ✅ | ❌ | * [caveats](#cisco_portchannel_global-caveats) |
+| [cisco_portchannel_global](#type-cisco_portchannel_global) | ✅* | ❌* | ❌* | ✅* | ✅* | ✅* | ✅* | ❌ | * [caveats](#cisco_portchannel_global-caveats) |
 | [cisco_stp_global](#type-cisco_stp_global) | ✅* | ✅* | ✅* | ✅* | ✅* | ✅ | ✅ | ❌ | * [caveats](#cisco_stp_global-caveats) |
 | [cisco_snmp_community](#type-cisco_snmp_community) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_snmp_group](#type-cisco_snmp_group) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
@@ -2557,12 +2557,12 @@ Manages configuration of a portchannel global parameters
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | unsupported        | unsupported            |
-| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | unsupported        | unsupported            |
+| N31xx    | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
@@ -2572,43 +2572,43 @@ Manages configuration of a portchannel global parameters
 |:--------|:-------------|
 | `hash_poly` | Supported only on N56xx, N6k |
 | `asymmetric` <br> `hash_distribution` <br> `load_defer` | Supported only on N7k |
-| `concatenation` <br> `resilient` <br> `symmetry`| Supported only on N9k, N30xx, N31xx |
-| `rotate` | Supported only on N9k, N30xx, N31xx and N7k |
+| `concatenation` <br> `resilient` <br> `symmetry`| Supported only on N9k|
+| `rotate` | Supported only on N7k, N8k, N9k |
 
 #### Parameters
 
 ##### `asymmetric`
-port-channel asymmetric hash. Valid values are true, false or 'default'. This property is supported only on N7k.
+port-channel asymmetric hash. Valid values are true, false or 'default'.
 
 ##### `bundle_hash`
 port-channel bundle hash. Valid values are 'ip', 'ip-l4port', 'ip-l4port-vlan', 'ip-vlan', 'l4port', 'mac', 'port', 'ip-only', 'port-only', 'ip-gre' or 'default'.
-* 'port', 'ip-only', 'port-only', 'ip-gre' are only supported on N9k, N30xx, N31xx, N56xx, N6k.
-* 'ip-l4port', 'ip-l4port-vlan', 'ip-vlan', 'l4port', 'ip-gre' are only supported on N9k, N30xx, N31xx, N7k.
-* 'port', 'ip-only', 'port-only' are only supported on N56xx, N6k, N7k.
+* port, 'ip-only', 'port-only' are only supported on N56xx, N6k.
+* 'ip-gre' is only supported on N9k.
+* 'ip-l4port', 'ip-l4port-vlan', 'ip-vlan', 'l4port' are only supported on N9k, N7k.
 
 ##### `bundle_select`
 port-channel bundle select. Valid values are 'src', 'dst', 'src-dst' or 'default'.
 
 ##### `concatenation`
-port-channel concatenation enable or disable. Valid values are true, false or 'default'. This property is only supported on N9k, N30xx, N31xx.
+port-channel concatenation enable or disable. Valid values are true, false or 'default'.
 
 ##### `hash_distribution`
-port-channel hash-distribution. Valid values are 'adaptive', 'fixed' or the keyword 'default'. This property is only supported on N7k.
+port-channel hash-distribution. Valid values are 'adaptive', 'fixed' or the keyword 'default'.
 
 ##### `hash_poly`
-port-channel hash-polynomial. Valid values are 'CRC10a', 'CRC10b', 'CRC10c' or 'CRC10d'. Note: This property does not support the keyword 'default' and it is only supported on N56xx and N6k.
+port-channel hash-polynomial. Valid values are 'CRC10a', 'CRC10b', 'CRC10c' or 'CRC10d'. Note: This property does not support the keyword 'default'.
 
 ##### `load_defer`
-port-channel load-defer time interval. Valid values are integer or 'default'. This property is only supported on N7k.
+port-channel load-defer time interval. Valid values are integer or 'default'.
 
 ##### `resilient`
-port-channel resilient mode. Valid values are true, false or 'default'. This property is only supported on N9k, N30xx, N31xx.
+port-channel resilient mode. Valid values are true, false or 'default'.
 
 ##### `rotate`
-port-channel hash input offset. Valid values are integer or 'default'. This property is only supported on N9k, N30xx, N31xx, N7k.
+port-channel hash input offset. Valid values are integer or 'default'.
 
 ##### `symmetry`
-port-channel symmetry hash. Valid values are true, false or 'default'. This property is only supported on N9k, N30xx, N31xx.
+port-channel symmetry hash. Valid values are true, false or 'default'.
 
 --
 ### Type: cisco_stp_global

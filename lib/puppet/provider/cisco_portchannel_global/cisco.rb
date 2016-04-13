@@ -36,6 +36,7 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:cisco) do
     :bundle_select,
     :hash_distribution,
     :hash_poly,
+    :load_balance_type,
     :load_defer,
     :rotate,
   ]
@@ -104,6 +105,7 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:cisco) do
 
   def properties_set
     PC_GLOBAL_ALL_PROPS.each do |prop|
+      next if prop == :load_balance_type
       next unless @resource[prop]
       unless @property_flush[prop].nil?
         @nu.send("#{prop}=", @property_flush[prop]) if
@@ -111,9 +113,10 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:cisco) do
       end
     end
     # custom setters which require one-shot multi-param setters
-    port_channel_load_balance_sym_concat_rot_set
-    port_channel_load_balance_hash_poly_set
-    port_channel_load_balance_asym_rot_set
+    port_channel_load_balance_sym_concat_rot_set if @nu.load_balance_type == 'symmetry'
+    port_channel_load_balance_hash_poly_set if @nu.load_balance_type == 'ethernet'
+    port_channel_load_balance_asym_rot_set if @nu.load_balance_type == 'asymmetric'
+    port_channel_load_balance_no_hash_set if @nu.load_balance_type == 'no_hash'
   end
 
   # We need special handling for boolean properties in our custom
@@ -239,6 +242,37 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:cisco) do
     end
     @nu.send(:port_channel_load_balance=,
              bs.to_s, bh.to_s, nil, as, nil, nil, ro)
+  end
+
+  # some platforms require all 3 properties to be set in the manifest
+  # port-channel load-balance src-dst ip rotate 4
+  # all the above properties will be set all at once so make sure
+  # all the needed resources are present
+  def port_channel_load_balance_no_hash_all?
+    @resource[:bundle_hash] &&
+      @resource[:bundle_select] &&
+      @resource[:rotate]
+  end
+
+  def port_channel_load_balance_no_hash_set
+    return unless port_channel_load_balance_no_hash_all?
+    if @property_flush[:bundle_hash]
+      bh = @property_flush[:bundle_hash]
+    else
+      bh = @nu.bundle_hash
+    end
+    if @property_flush[:bundle_select]
+      bs = @property_flush[:bundle_select]
+    else
+      bs = @nu.bundle_select
+    end
+    if @property_flush[:rotate]
+      ro = @property_flush[:rotate]
+    else
+      ro = @nu.rotate
+    end
+    @nu.send(:port_channel_load_balance=,
+             bs.to_s, bh.to_s, nil, nil, nil, nil, ro)
   end
 
   def flush
