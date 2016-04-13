@@ -90,6 +90,10 @@ Puppet::Type.newtype(:cisco_interface) do
      ipv4_arp_timeout             => 300,
      svi_autostate                => true,
      svi_management               => true,
+    }
+    cisco_interface { \"Ethernet8/1\" :
+     switchport_mode_private_vlan_host  => 'host',
+     switchport_mode_private_vlan_host_association => ['10', '11'],
     }"
 
   ###################
@@ -698,6 +702,51 @@ Puppet::Type.newtype(:cisco_interface) do
     end
   end # property stp_vlan_port_priority
 
+  ###########################
+  # private vlan attributes #
+  ###########################
+
+  newproperty(:switchport_mode_private_vlan_host) do
+    desc 'Switchport private host mode of the interface.'
+
+    newvalues(
+      :host,
+      :promiscuous,
+      :default)
+  end # property switchport_mode_private_vlan_host
+
+  newproperty(:switchport_mode_private_vlan_host_association, array_matching: :all) do
+    format = '["primary_vlan", "secondary_vlan"]'
+    desc 'An array of [primary_vlan, secondary_vlan] pair. '\
+         "Valid values match format #{format}."
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(String)
+        value
+      end
+    end
+
+    def insync?(is)
+      (is.size == should.flatten.size && is.sort == should.flatten.sort)
+    end
+  end # property vlan_mapping
+
+  def prepare_list(input)
+    result = []
+    input.gsub!('-', '..')
+    if input.include?('..')
+      elema = input.split('..').map { |d| Integer(d) }
+      tr = elema[0]..elema[1]
+      tr.to_a.each do |item|
+        result.push(item.to_s)
+      end
+    else
+      result.push(input)
+    end
+    result
+  end
   ################
   # Autorequires #
   ################

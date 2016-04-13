@@ -61,6 +61,7 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     :stp_link_type,
     :stp_port_priority,
     :stp_port_type,
+    :switchport_mode_private_vlan_host,
     :switchport_trunk_allowed_vlan,
     :switchport_trunk_native_vlan,
     :vlan_mapping,
@@ -86,6 +87,7 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     :stp_mst_port_priority,
     :stp_vlan_cost,
     :stp_vlan_port_priority,
+    :switchport_mode_private_vlan_host_association,
   ]
   INTF_ALL_PROPS = INTF_NON_BOOL_PROPS + INTF_BOOL_PROPS + INTF_ARRAY_FLAT_PROPS
 
