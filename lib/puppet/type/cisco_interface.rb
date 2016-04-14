@@ -754,6 +754,24 @@ Puppet::Type.newtype(:cisco_interface) do
     end
   end # switchport_mode_private_vlan_host_promisc
 
+  newproperty(:switchport_mode_private_vlan_trunk_promiscuous) do
+    desc 'Switchport private trunk promisc mode for the interface.'
+
+    newvalues(
+      :true,
+      :false,
+      :default)
+  end # property switchport_mode_private_vlan_trunk_promiscuous
+
+  newproperty(:switchport_mode_private_vlan_trunk_secondary) do
+    desc 'Switchport private trunk secondary mode for the interface.'
+
+    newvalues(
+      :true,
+      :false,
+      :default)
+  end # property switchport_mode_private_vlan_trunk_secondary
+
   ################
   # Autorequires #
   ################

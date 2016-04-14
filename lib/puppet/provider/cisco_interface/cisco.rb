@@ -76,6 +76,8 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     :negotiate_auto,
     :shutdown,
     :switchport_autostate_exclude,
+    :switchport_mode_private_vlan_trunk_promiscuous,
+    :switchport_mode_private_vlan_trunk_secondary,
     :switchport_vtp,
     :svi_autostate,
     :svi_management,
