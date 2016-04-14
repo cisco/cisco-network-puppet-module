@@ -1759,6 +1759,7 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | `switchport_autostate_exclude` | Not supported on IOS XR |
 | `switchport_mode_private_vlan_host` | Not supported on N8k, IOS XR |
 | `switchport_mode_private_vlan_host_association` | Not supported on N8k, IOS XR |
+| `switchport_mode_private_vlan_host_promisc` | Not supported on N8k, IOS XR |
 | `switchport_mode` | Not supported on IOS XR |
 | `switchport_trunk_allowed_vlan` | Not supported on IOS XR |
 | `switchport_trunk_native_vlan` | Not supported on IOS XR |
@@ -1813,6 +1814,8 @@ Switchport host mode for private vlan. This a L2 access port.
 ##### `switchport_mode_private_vlan_host_association`
 This configuration specify which vlans are associated on this port. Host mode only support a pair of vlan: primary and secondary.
 
+##### `switchport_mode_private_vlan_host_promisc`
+This configuration specify which vlans are associated on this port. promiscous mode only support a pair of vlan: primary and secondaries.
 ##### `switchport_trunk_allowed_vlan`
 The allowed VLANs for the specified Ethernet interface. Valid values are
 string, keyword 'default'. This property is not supported on IOS XR.

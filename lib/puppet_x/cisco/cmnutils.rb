@@ -123,6 +123,21 @@ module PuppetX
         end
         ranges.join(',').gsub('..', '-')
       end
+
+      def self.prepare_list(input)
+        result = []
+        input.gsub!('-', '..')
+        if input.include?('..')
+          elema = input.split('..').map { |d| Integer(d) }
+          tr = elema[0]..elema[1]
+          tr.to_a.each do |item|
+            result.push(item.to_s)
+          end
+        else
+          result.push(input)
+        end
+        result
+      end
     end # class Utils
 
     # PuppetX::Cisco::BgpUtil - Common BGP methods used by BGP Types/Providers

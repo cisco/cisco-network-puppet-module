@@ -712,7 +712,7 @@ Puppet::Type.newtype(:cisco_interface) do
     newvalues(
       :host,
       :promiscuous,
-      :default)
+      :disabled)
   end # property switchport_mode_private_vlan_host
 
   newproperty(:switchport_mode_private_vlan_host_association, array_matching: :all) do
@@ -731,22 +731,29 @@ Puppet::Type.newtype(:cisco_interface) do
     def insync?(is)
       (is.size == should.flatten.size && is.sort == should.flatten.sort)
     end
-  end # property vlan_mapping
+  end # property switchport_mode_private_vlan_host_association
 
-  def prepare_list(input)
-    result = []
-    input.gsub!('-', '..')
-    if input.include?('..')
-      elema = input.split('..').map { |d| Integer(d) }
-      tr = elema[0]..elema[1]
-      tr.to_a.each do |item|
-        result.push(item.to_s)
+  newproperty(:switchport_mode_private_vlan_host_promisc, array_matching: :all) do
+    format = '["primary_vlan", "vlans"]'
+    desc 'An array of [primary_vlan, secondary_vlans] pair. '\
+         "Valid values match format #{format} with vlans as integer"
+    match_error = "must be of format ['vlans'] with vlans as integer"
+
+    munge do |value|
+      begin
+        fail "Vlan '#{value}' #{match_error}" unless
+             value.kind_of? String
+      rescue
+        raise 'vlan is not valid'
       end
-    else
-      result.push(input)
+      value
     end
-    result
-  end
+
+    def insync?(is)
+      (is.size == should.flatten.size && is.sort == should.flatten.sort)
+    end
+  end # switchport_mode_private_vlan_host_promisc
+
   ################
   # Autorequires #
   ################
