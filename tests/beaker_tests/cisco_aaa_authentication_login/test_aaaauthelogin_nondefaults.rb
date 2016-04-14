@@ -94,7 +94,7 @@ test_name "TestCase :: #{testheader}" do
     tests[id][:resource_cmd] =
       get_namespace_cmd(agent, resource_cmd_str, options)
 
-    tests[id][:code] = [0, 2]
+    tests[id][:code] = [2]
     tests[id][:desc] =
       "1.1 Apply manifest with non-default #{prop}, and test harness"
     create_aaaauthelogin_manifest(tests, id)
