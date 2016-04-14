@@ -67,7 +67,6 @@ testheader = 'Resource cisco_fabricpath_global'
 # Top-level keys set by caller:
 # tests[:master] - the master object
 # tests[:agent] - the agent object
-# tests[:show_cmd] - the common show command to use for test_show_run
 #
 tests = {
   master:   master,
