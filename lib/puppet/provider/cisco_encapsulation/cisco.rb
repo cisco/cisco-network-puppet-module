@@ -41,9 +41,8 @@ Puppet::Type.type(:cisco_encapsulation).provide(:cisco) do
 
   def initialize(value={})
     super(value)
-    @encap = Cisco::Encapsulation.encaps[@property_hash[:name]]
+    @nu = Cisco::Encapsulation.encaps[@property_hash[:name]]
     @property_flush = {}
-    debug 'Created provider instance of cisco_encapsulation.'
   end
 
   def self.properties_get(encap, nu_obj)
@@ -99,21 +98,21 @@ Puppet::Type.type(:cisco_encapsulation).provide(:cisco) do
       next unless @resource[prop]
       send("#{prop}=", @resource[prop]) if new_encap
       unless @property_flush[prop].nil?
-        @encap.send("#{prop}=", @property_flush[prop]) if
-          @encap.respond_to?("#{prop}=")
+        @nu.send("#{prop}=", @property_flush[prop]) if
+          @nu.respond_to?("#{prop}=")
       end
     end
   end
 
   def flush
     if @property_flush[:ensure] == :absent
-      @encap.destroy
-      @encap = nil
+      @nu.destroy
+      @nu = nil
     else
       # Create/Update
-      if @encap.nil?
+      if @nu.nil?
         new_encap = true
-        @encap = Cisco::Encapsulation.new(@resource[:encap])
+        @nu = Cisco::Encapsulation.new(@resource[:encap])
       end
       properties_set(new_encap)
     end
