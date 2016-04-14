@@ -190,14 +190,12 @@ end
 # Top-level keys set by caller:
 # tests[:master] - the master object
 # tests[:agent] - the agent object
-# tests[:show_cmd] - the common show command to use for test_show_run
 #
 # tests[id] keys set by caller:
 # tests[id][:desc] - a string to use with logs & debugs
 # tests[id][:manifest] - the complete manifest, as used by test_harness_common
 # tests[id][:resource] - a hash of expected states, used by test_resource
 # tests[id][:resource_cmd] - 'puppet resource' command to use with test_resource
-# tests[id][:show_pattern] - array of regexp patterns to use with test_show_cmd
 # tests[id][:ensure] - (Optional) set to :present or :absent before calling
 # tests[id][:code] - (Optional) override the default exit code in some tests.
 #
@@ -213,7 +211,6 @@ def test_harness_common(tests, id)
 
   test_manifest(tests, id)
   test_resource(tests, id)
-  test_show_cmd(tests, id, tests[id][:state]) unless tests[id][:show_pattern].nil?
   test_idempotence(tests, id)
   tests[id].delete(:log_desc)
 end
@@ -259,23 +256,6 @@ def test_resource(tests, id, state=false)
       search_pattern_in_output(
         stdout, supported_property_hash(tests, id, tests[id][:resource]),
         state, self, logger)
-    end
-    logger.info("#{stepinfo} :: PASS")
-    tests[id].delete(:log_desc)
-  end
-end
-
-# Wrapper for config pattern-match tests
-def test_show_cmd(tests, id, state=false)
-  stepinfo = format_stepinfo(tests, id, 'SHOW CMD')
-  show_cmd = get_vshell_cmd(tests[id][:show_cmd])
-  step "TestStep :: #{stepinfo}" do
-    logger.debug('test_show_cmd :: BEGIN')
-    on(tests[:agent], show_cmd) do
-      logger.debug("test_show_cmd :: cmd:\n#{show_cmd}")
-      logger.debug("test_show_cmd :: pattern:\n#{tests[id][:show_pattern]}")
-      search_pattern_in_output(stdout, tests[id][:show_pattern],
-                               state, self, logger)
     end
     logger.info("#{stepinfo} :: PASS")
     tests[id].delete(:log_desc)
