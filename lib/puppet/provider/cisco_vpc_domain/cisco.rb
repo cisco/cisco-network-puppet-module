@@ -51,22 +51,26 @@ Puppet::Type.type(:cisco_vpc_domain).provide(:cisco) do
     :system_mac,
     :system_priority,
   ]
-  VPC_BOOL_PROPS = [
+  VPC_BOOL_PROPS1 = [
     :auto_recovery,
+    :peer_gateway,
+  ]
+  VPC_BOOL_PROPS2 = [
     :fabricpath_multicast_load_balance,
     :graceful_consistency_check,
     :layer3_peer_routing,
-    :peer_gateway,
     :port_channel_limit,
     :self_isolation,
     :shutdown,
   ]
-  VPC_PROPS = VPC_NON_BOOL_PROPS + VPC_BOOL_PROPS
+  VPC_PROPS = VPC_BOOL_PROPS1 + VPC_NON_BOOL_PROPS + VPC_BOOL_PROPS2
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@vpc_domain',
                                             VPC_NON_BOOL_PROPS)
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@vpc_domain',
-                                            VPC_BOOL_PROPS)
+                                            VPC_BOOL_PROPS1)
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@vpc_domain',
+                                            VPC_BOOL_PROPS2)
 
   def initialize(value={})
     super(value)
