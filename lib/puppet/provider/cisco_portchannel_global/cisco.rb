@@ -131,8 +131,11 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:cisco) do
   # port-channel load-balance src-dst ip rotate 4 concatenation symmetric
   # all the above properties will be set all at once so make sure
   # all the needed resources are present
-  def port_channel_load_balance_sym_concat_rot_all?
-    @resource[:bundle_hash] &&
+  def check_port_channel_load_balance_sym_concat_rot_all
+    fail ArgumentError, 'Invalid arguments present in manifest' if
+      @resource[:asymmetric] || @resource[:hash_poly]
+    fail ArgumentError, 'Required arguments not present in manifest' unless
+      @resource[:bundle_hash] &&
       @resource[:bundle_select] &&
       @resource[:concatenation] &&
       @resource[:symmetry] &&
@@ -140,7 +143,7 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:cisco) do
   end
 
   def port_channel_load_balance_sym_concat_rot_set
-    return unless port_channel_load_balance_sym_concat_rot_all?
+    check_port_channel_load_balance_sym_concat_rot_all
     if @property_flush[:bundle_hash]
       bh = @property_flush[:bundle_hash]
     else
@@ -180,14 +183,18 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:cisco) do
   # port-channel load-balance ethernet source-dest-ip CRC10c
   # all the above properties will be set all at once so make sure
   # all the needed resources are present
-  def port_channel_load_balance_hash_poly_all?
-    @resource[:bundle_hash] &&
+  def check_port_channel_load_balance_hash_poly_all
+    fail ArgumentError, 'Invalid arguments present in manifest' if
+      @resource[:asymmetric] || @resource[:concatenation] ||
+      @resource[:rotate] || @resource[:symmetry]
+    fail ArgumentError, 'Required arguments not present in manifest' unless
+      @resource[:bundle_hash] &&
       @resource[:bundle_select] &&
       @resource[:hash_poly]
   end
 
   def port_channel_load_balance_hash_poly_set
-    return unless port_channel_load_balance_hash_poly_all?
+    check_port_channel_load_balance_hash_poly_all
     if @property_flush[:bundle_hash]
       bh = @property_flush[:bundle_hash]
     else
@@ -211,15 +218,19 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:cisco) do
   # port-channel load-balance src-dst ip rotate 4 asymmetric
   # all the above properties will be set all at once so make sure
   # all the needed resources are present
-  def port_channel_load_balance_asym_rot_all?
-    @resource[:bundle_hash] &&
+  def check_port_channel_load_balance_asym_rot_all
+    fail ArgumentError, 'Invalid arguments present in manifest' if
+      @resource[:hash_poly] || @resource[:concatenation] ||
+      @resource[:symmetry]
+    fail ArgumentError, 'Required arguments not present in manifest' unless
+      @resource[:bundle_hash] &&
       @resource[:bundle_select] &&
       @resource[:asymmetric] &&
       @resource[:rotate]
   end
 
   def port_channel_load_balance_asym_rot_set
-    return unless port_channel_load_balance_asym_rot_all?
+    check_port_channel_load_balance_asym_rot_all
     if @property_flush[:bundle_hash]
       bh = @property_flush[:bundle_hash]
     else
@@ -248,14 +259,18 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:cisco) do
   # port-channel load-balance src-dst ip rotate 4
   # all the above properties will be set all at once so make sure
   # all the needed resources are present
-  def port_channel_load_balance_no_hash_all?
-    @resource[:bundle_hash] &&
+  def check_port_channel_load_balance_no_hash_all
+    fail ArgumentError, 'Invalid arguments present in manifest' if
+      @resource[:hash_poly] || @resource[:concatenation] ||
+      @resource[:symmetry] || @resource[:asymmetric]
+    fail ArgumentError, 'Required arguments not present in manifest' unless
+      @resource[:bundle_hash] &&
       @resource[:bundle_select] &&
       @resource[:rotate]
   end
 
   def port_channel_load_balance_no_hash_set
-    return unless port_channel_load_balance_no_hash_all?
+    check_port_channel_load_balance_no_hash_all
     if @property_flush[:bundle_hash]
       bh = @property_flush[:bundle_hash]
     else
