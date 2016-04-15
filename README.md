@@ -122,7 +122,7 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 
 The following table indicates which providers are supported on each platform. As platforms are added to the support list they may indicate `Unsupported` for some providers that have not completed the test validation process at the time of this release. Some providers will show caveats for a platform if there are limitations on usage, such as with unsupported properties or hardware limitations.
 ##### Cisco Providers
-| ✅ = Supported <br> ❌ = Unsupported | N9k | N30xx | N31xx | N56xx | N6k | N7k | N8k | IOS XR | Caveats |
+| ✅ = Supported <br> ❌ = Unsupported <br> :heavy_minus_sign: = Not Applicable | N9k | N30xx | N31xx | N56xx | N6k | N7k | N8k | IOS XR | Caveats |
 |:---|:---:|:-----:|:-----:|:-----:|:---:|:---:|:---:|:---:|:---:|
 | [cisco_aaa_authentication_login](#type-cisco_aaa_authentication_login) | ✅ | ✅ | ✅ | ✅ | ✅  | ✅  | ✅ | ❌   |
 | [cisco_aaa_authorization_login_cfg_svc](#type-cisco_aaa_authorization_login_cfg_svc) | ✅ | ✅ | ✅ | ✅  | ✅  | ✅  | ✅ | ❌ |
