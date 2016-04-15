@@ -127,15 +127,18 @@ module PuppetX
       def self.prepare_list(input)
         result = []
         input.gsub!('-', '..')
-        if input.include?('..')
-          elema = input.split('..').map { |d| Integer(d) }
-          elema.sort!
-          tr = elema[0]..elema[1]
-          tr.to_a.each do |item|
-            result.push(item.to_s)
+        new_list = input.split(',')
+        new_list.each do |member|
+          if member.include?('..')
+            elema = member.split('..').map { |d| Integer(d) }
+            elema.sort!
+            tr = elema[0]..elema[1]
+            tr.to_a.each do |item|
+              result.push(item.to_s)
+            end
+          else
+            result.push(member)
           end
-        else
-          result.push(input)
         end
         result
       end
