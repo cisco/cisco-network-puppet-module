@@ -1593,7 +1593,7 @@ Manages a Global VNI Encapsulation profile
 Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
 
 ##### `encap`
-Profile name of the Encapsulation. Valid values is string.
+Profile name of the Encapsulation. Valid values are String only.
 
 #### Properties
 
