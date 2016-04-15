@@ -51,10 +51,15 @@ Puppet::Type.type(:cisco_vpc_domain).provide(:cisco) do
     :system_mac,
     :system_priority,
   ]
+  # auto_recovery and peer_gateway need to be set before non_boolean
+  # properties like auto_recovery_reload_delay and peer_gateway_exclude_vlan
+  # so making it into a new array
   VPC_BOOL_PROPS1 = [
     :auto_recovery,
     :peer_gateway,
   ]
+  # these properties like port_channel_limit need to be set after non_boolean
+  # properties like fabricpath_emulated_switch_id
   VPC_BOOL_PROPS2 = [
     :fabricpath_multicast_load_balance,
     :graceful_consistency_check,
@@ -63,6 +68,9 @@ Puppet::Type.type(:cisco_vpc_domain).provide(:cisco) do
     :self_isolation,
     :shutdown,
   ]
+  # set the boolean properties which need to be set first and then the
+  # non_boolean properties and finally the rest of the boolean
+  # properties to maintain correct order.
   VPC_PROPS = VPC_BOOL_PROPS1 + VPC_NON_BOOL_PROPS + VPC_BOOL_PROPS2
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@vpc_domain',
