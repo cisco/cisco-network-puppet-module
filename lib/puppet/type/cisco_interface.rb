@@ -772,6 +772,29 @@ Puppet::Type.newtype(:cisco_interface) do
       :default)
   end # property switchport_mode_private_vlan_trunk_secondary
 
+  newproperty(:switchport_private_vlan_association_trunk, array_matching: :all) do
+    format = '["primary_vlan", "secondary_vlan"]'
+    desc 'An array of [primary_vlan, secondary_vlan] pair. '\
+         "Valid values match format #{format} with vlan as integer"
+    match_error = "must be of format ['vlan'] with "\
+                  'vlan as integer'
+
+    validate do |value|
+      fail "Vlan '#{value}' #{match_error}" unless
+            value.kind_of? String
+      fail "Vlan '#{value}' #{match_error}" unless
+             /^(\d+)$/.match(value).to_s == value
+    end
+
+    munge do |value|
+      value
+    end
+
+    def insync?(is)
+      (is.size == should.flatten.size && is.sort == should.flatten.sort)
+    end
+  end # switchport_private_vlan_association_trunk
+
   ################
   # Autorequires #
   ################

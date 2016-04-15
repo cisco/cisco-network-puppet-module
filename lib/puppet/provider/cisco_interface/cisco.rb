@@ -91,6 +91,7 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     :stp_vlan_port_priority,
     :switchport_mode_private_vlan_host_association,
     :switchport_mode_private_vlan_host_promisc,
+    :switchport_private_vlan_association_trunk,
   ]
   INTF_ALL_PROPS = INTF_NON_BOOL_PROPS + INTF_BOOL_PROPS + INTF_ARRAY_FLAT_PROPS
 

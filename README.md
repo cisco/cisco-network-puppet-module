@@ -1762,6 +1762,7 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | `switchport_mode_private_vlan_host_promisc` | Not supported on N8k, IOS XR |
 | `switchport_mode_private_vlan_trunk_promiscuous`| Not supported on N8k, IOS XR |
 | `switchport_mode_private_vlan_trunk_secondary` | Not supported on N8k, IOS XR |
+| `switchport_private_vlan_association_trunk` | Not supported on N8k, IOS XR |
 | `switchport_mode` | Not supported on IOS XR |
 | `switchport_trunk_allowed_vlan` | Not supported on IOS XR |
 | `switchport_trunk_native_vlan` | Not supported on IOS XR |
@@ -1817,11 +1818,13 @@ Switchport host mode for private vlan. This a L2 access port.
 This configuration specify which vlans are associated on this port. Host mode only support a pair of vlan: primary and secondary.
 
 ##### `switchport_mode_private_vlan_host_promisc`
-This configuration specify which vlans are associated on this port. promiscous mode only support a pair of vlan: primary and secondaries.
+This configuration specify which vlans are associated on this port. Promiscous mode only support a pair of vlan: primary and secondaries.
 ##### `switchport_mode_private_vlan_trunk_promiscuous`
 Switchport trunk promisc mode for private vlan. This a L2 trunk port capable of carrying multiple primary vlan.
 ##### `switchport_mode_private_vlan_trunk_secondary`
 Switchport trunk secondary mode for private vlan. This a L2 trunk port capable of carrying multiple secondary vlans.
+#### `switchport_private_vlan_association_trunk`
+This configuration specify which vlans are associated on this trunk secondary port. Pair of distinguish vlans in the form of primary and secondary are accepted per entry.
 ##### `switchport_trunk_allowed_vlan`
 The allowed VLANs for the specified Ethernet interface. Valid values are
 string, keyword 'default'. This property is not supported on IOS XR.

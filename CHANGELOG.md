@@ -26,7 +26,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `stp_mst_port_priority`, `stp_port_priority`, `stp_port_type`, `stp_vlan_cost`, `stp_vlan_port_priority`
   - `switchport_mode_private_vlan_host`, `switchport_mode_private_vlan_host_association`
   - `switchport_mode_private_vlan_host_promisc`, `switchport_mode_private_vlan_trunk_promiscuous`
-  - `switchport_mode_private_vlan_trunk_secondary`
+  - `switchport_mode_private_vlan_trunk_secondary`, `switchport_private_vlan_association_trunk`
   - `modify switchport_trunk_allowed_vlan to use range_summarize() which takes care of idempotency issues with vlan ranges`
 - Extended `cisco_vlan` with the following attributes:
   - `mode`
