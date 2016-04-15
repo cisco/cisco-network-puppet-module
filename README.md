@@ -1765,6 +1765,7 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | `switchport_private_vlan_association_trunk` | Not supported on N8k, IOS XR |
 | `switchport_private_vlan_mapping_trunk` | Not supported on N8k, IOS XR |
 | `switchport_private_vlan_trunk_allowed_vlan` | Not supported on N8k, IOS XR |
+| `switchport_private_vlan_trunk_native_vlan` | Not supported on N8k, IOS XR |
 | `switchport_mode` | Not supported on IOS XR |
 | `switchport_trunk_allowed_vlan` | Not supported on IOS XR |
 | `switchport_trunk_native_vlan` | Not supported on IOS XR |
@@ -1831,6 +1832,8 @@ This configuration specify which vlans are associated on this trunk secondary po
 This configuration specify which vlans are associated on this trunk promisc port. Pair of distinguish vlans in the form of primary vlan and secondary vlans (single or range) are accepted per entry. Valid values are integers.
 #### `switchport_private_vlan_trunk_allowed_vlan`
 This configuration specify which private vlans are associated on this trunk port. Valid values are integers.
+#### `switchport_private_vlan_trunk_native_vlan`
+This configuration specify the native vlan as a private vlan. Valid values are integers.
 ##### `switchport_trunk_allowed_vlan`
 The allowed VLANs for the specified Ethernet interface. Valid values are
 string, keyword 'default'. This property is not supported on IOS XR.

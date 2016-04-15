@@ -64,6 +64,7 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     :switchport_mode_private_vlan_host,
     :switchport_trunk_allowed_vlan,
     :switchport_trunk_native_vlan,
+    :switchport_private_vlan_trunk_native_vlan,
     :vlan_mapping,
     :vpc_id,
   ]

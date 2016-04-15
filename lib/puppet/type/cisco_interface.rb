@@ -844,6 +844,29 @@ Puppet::Type.newtype(:cisco_interface) do
     end
   end # switchport_private_vlan_trunk_allowed_vlan
 
+  newproperty(:switchport_private_vlan_trunk_native_vlan) do
+    format = '<vlan>'
+    desc 'The  private native vlan. '\
+         "Valid values match format #{format} with vlan as integer"
+    match_error = "must be of format #{format} with "\
+                  'vlan as integer. Ex 10 or 20'
+
+    validate do |value|
+      fail "Vlan '#{value}' #{match_error}" unless
+            value.kind_of? Integer
+    end
+
+    munge do |value|
+      value = :default if value == 1
+      begin
+        value = Integer(value) unless value == :default
+      rescue
+        raise 'native vlan must be a valid integer.'
+      end
+      value
+    end
+  end # switchport_private_vlan_trunk_native_vlan
+
   ################
   # Autorequires #
   ################
