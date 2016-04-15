@@ -129,6 +129,7 @@ module PuppetX
         input.gsub!('-', '..')
         if input.include?('..')
           elema = input.split('..').map { |d| Integer(d) }
+          elema.sort!
           tr = elema[0]..elema[1]
           tr.to_a.each do |item|
             result.push(item.to_s)

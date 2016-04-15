@@ -177,7 +177,7 @@ Puppet::Type.newtype(:cisco_vlan) do
     validate do |value|
       fail "Vlan '#{value}' #{match_error}" unless
             value.kind_of? String
-      result = prepare_list(value)
+      result = PuppetX::Cisco::Utils.prepare_list(value)
       result.each do |item|
         fail "Vlan '#{value}' #{match_error}" unless
              value == :default || /(\d+)/.match(item)
@@ -196,21 +196,6 @@ Puppet::Type.newtype(:cisco_vlan) do
 
     def insync?(is)
       (is.size == should.flatten.size && is.sort == should.flatten.sort)
-    end
-
-    def prepare_list(input)
-      result = []
-      input.gsub!('-', '..')
-      if input.include?('..')
-        elema = input.split('..').map { |d| Integer(d) }
-        tr = elema[0]..elema[1]
-        tr.to_a.each do |item|
-          result.push(item.to_s)
-        end
-      else
-        result.push(input)
-      end
-      result
     end
   end # property private_vlan_association
 end # Puppet::Type.newtype
