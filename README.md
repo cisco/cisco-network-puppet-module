@@ -152,7 +152,7 @@ The following table indicates which providers are supported on each platform. As
 | [cisco_ospf](#type-cisco_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_ospf_vrf](#type-cisco_ospf_vrf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | ✅ = Supported <br> ❌ = Unsupported <br> :heavy_minus_sign: = Not Applicable | N9k | N30xx | N31xx | N56xx | N6k | N7k | N8k | IOS XR | Caveats |
-| [cisco_overlay_global](#type-cisco_overlay_global) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌  | ✅ | ❌ |
+| [cisco_overlay_global](#type-cisco_overlay_global) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | ❌ | ❌ | ❌  | ✅ | :heavy_minus_sign: |
 | [cisco_pim](#type-cisco_pim) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_pim_rp_address](#type-cisco_pim_rp_address) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_pim_grouplist](#type-cisco_pim_grouplist) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
@@ -170,8 +170,8 @@ The following table indicates which providers are supported on each platform. As
 | [cisco_vrf](#type-cisco_vrf) | ✅ | ✅* | ✅* | ✅ | ✅ | ✅ | ✅ | ✅* | * [caveats](#cisco_vrf-caveats) |
 | [cisco_vrf_af](#type-cisco_vrf_af) | ✅ | ✅* | ✅* | ✅* | ✅* | ✅* | ✅ | ✅* | * [caveats](#cisco_vrf_af-caveats) |
 | [cisco_vtp](#type-cisco_vtp) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
-| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | ❌ | ❌ | ❌ | ✅ | :heavy_minus_sign: |
+| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | ❌ | ❌ | ❌ | ✅ | :heavy_minus_sign: |
 
 ##### NetDev Providers
 
