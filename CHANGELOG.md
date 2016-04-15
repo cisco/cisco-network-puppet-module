@@ -17,10 +17,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 *
 
 ### Added
-- Extended `cisco_aaa_authentication_login`, `cisco_aaa_authorization_login_cfg_svc`, `cisco_aaa_authorization_login_exec_svc`, and `cisco_aaa_group_tacacs` to support the following platforms:
-  - `Nexus 56xx`, `Nexus 60xx`, and `Nexus 7xxx`
-- Extended `cisco_vtp` to support the following platforms:
-  - `Nexus 56xx`, `Nexus 60xx`, `Nexus 7xxx`
+- Extended the following providers to support `Nexus 56xx`, `Nexus 60xx`, and `Nexus 7xxx`
+  - `cisco_aaa_authentication_login`, `cisco_aaa_authorization_login_cfg_svc`, `cisco_aaa_authorization_login_exec_svc`, `cisco_aaa_group_tacacs`
+  - `cisco_vtp`, `domain_name`
 - Extended `cisco_bgp` with the following attributes:
   - `nsr`
   - `reconnect_interval`
