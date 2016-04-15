@@ -2033,7 +2033,7 @@ Manages a Cisco Network Interface Service VNI.
 | N56xx    | not applicable     | not applicable         |
 | N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| N8k      | 7.0(3)F1(1)        | 1.3.0                  |
+| N8k      | not applicable     | not applicable         |
 | IOS XR   | not applicable     | not applicable         |
 
 #### Parameters
