@@ -1593,7 +1593,9 @@ Manages a Global VNI Encapsulation profile
 Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
 
 ##### `encap`
-Profile name of the Encapsulation. Valid values is string.
+Profile name of the Encapsulation. Valid values are String only.
+
+#### Properties
 
 ##### `dot1q_map`
 The encapsulation profile dot1q vlan-to-vni mapping. Valid values are an array of [vlans, vnis] pairs.
@@ -1813,6 +1815,8 @@ are 'present' and 'absent'.
 
 ###### `interface`
 Name of the interface on the network element. Valid value is a string.
+
+#### Properties
 
 ###### `description`
 Description of the interface. Valid values are a string or the keyword 'default'.
@@ -2044,6 +2048,8 @@ Name of the interface where the service resides. Valid value is a string.
 
 ###### `sid`
 The Service ID number. Valid value is an Integer.
+
+#### Properties
 
 ###### `encapsulation_profile_vni`
 The VNI Encapsulation Profile Name. Valid values are String or the keyword 'default'
