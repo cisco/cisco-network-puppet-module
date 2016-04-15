@@ -1520,14 +1520,14 @@ Manages a cisco Bridge-Domain
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | unsupported        | unsupported            |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
+| N9k      | not applicable     | not applicable         |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
+| N56xx    | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N8k      | unsupported        | unsupported            |
-| IOS XR   | unsupported        | unsupported            |
+| N8k      | not applicable     | not applicable         |
+| IOS XR   | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -1552,14 +1552,14 @@ Creates a Virtual Network Identifier member (VNI) mapping for cisco Bridge-Domai
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | unsupported        | unsupported            |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
+| N9k      | not applicable     | not applicable         |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
+| N56xx    | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N8k      | unsupported        | unsupported            |
-| IOS XR   | unsupported        | unsupported            |
+| N8k      | not applicable     | not applicable         |
+| IOS XR   | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -1578,14 +1578,14 @@ Manages a Global VNI Encapsulation profile
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | unsupported        | unsupported            |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
+| N9k      | not applicable     | not applicable         |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
+| N56xx    | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N8k      | unsupported        | unsupported            |
-| IOS XR   | unsupported        | unsupported            |
+| N8k      | not applicable     | not applicable         |
+| IOS XR   | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -1608,13 +1608,13 @@ Manages Cisco Ethernet Virtual Private Network (EVPN) VXLAN Network Identifier (
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
 | N9k      | 7.0(3)I3(1)        | 1.3.0                  |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
 | N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
-| IOS XR   | unsupported        | unsupported            |
+| IOS XR   | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -1653,14 +1653,14 @@ Manages Cisco fabricpath global parameters.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | unsupported        | unsupported            |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
+| N9k      | not applicable     | not applicable         |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
 | N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N8k      | unsupported        | unsupported            |
-| IOS XR   | unsupported        | unsupported            |
+| N8k      | not applicable     | not applicable         |
+| IOS XR   | not applicable     | not applicable         |
 
 #### <a name="cisco_fabricpath_global-caveats">Caveats</a>
 
@@ -1734,14 +1734,14 @@ Manages a Cisco fabricpath Topology
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | unsupported        | unsupported            |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
+| N9k      | not applicable     | not applicable         |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
 | N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N8k      | unsupported        | unsupported            |
-| IOS XR   | unsupported        | unsupported            |
+| N8k      | not applicable     | not applicable         |
+| IOS XR   | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -2027,14 +2027,14 @@ Manages a Cisco Network Interface Service VNI.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | unsupported        | unsupported            |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
+| N9k      | not applicable     | not applicable         |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
+| N56xx    | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
-| IOS XR   | unsupported        | unsupported            |
+| IOS XR   | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -2169,13 +2169,13 @@ Manages configuration of ITD (Intelligent Traffic Director) device group
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
 | N9k      | 7.0(3)I3(1)        | 1.3.0                  |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
+| N56xx    | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N8k      | 7.0(3)F1(1)        | 1.3.0                  |
-| IOS XR   | unsupported        | unsupported            |
+| N8k      | not applicable     | not applicable         |
+| IOS XR   | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -2214,13 +2214,13 @@ Manages configuration of ITD (Intelligent Traffic Director) device group node
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
 | N9k      | 7.0(3)I3(1)        | 1.3.0                  |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
+| N56xx    | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N8k      | 7.0(3)F1(1)        | 1.3.0                  |
-| IOS XR   | unsupported        | unsupported            |
+| N8k      | not applicable     | not applicable         |
+| IOS XR   | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -2268,13 +2268,13 @@ Manages configuration of ITD (Intelligent Traffic Director) service.
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
 | N9k      | 7.0(3)I3(1)        | 1.3.0                  |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
+| N56xx    | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N8k      | unsupported        | unsupported            |
-| IOS XR   | unsupported        | unsupported            |
+| N8k      | not applicable     | not applicable         |
+| IOS XR   | not applicable     | not applicable         |
 
 #### <a name="cisco_itd_service-caveats">Caveats</a>
 
@@ -2446,13 +2446,13 @@ Also configures anycast gateway MAC of the switch.
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
 | N56xx    | unsupported        | unsupported            |
 | N6k      | unsupported        | unsupported            |
 | N7k      | unsupported        | unsupported            |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
-| IOS XR   | unsupported        | unsupported            |
+| IOS XR   | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -2980,14 +2980,14 @@ Manages a Cisco VDC (Virtual Device Context).
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | unsupported        | unsupported            |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
+| N9k      | not applicable     | not applicable         |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
+| N56xx    | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| N8k      | unsupported        | unsupported            |
-| IOS XR   | unsupported        | unsupported            |
+| N8k      | not applicable     | not applicable         |
+| IOS XR   | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -3365,13 +3365,13 @@ Creates a VXLAN Network Virtualization Endpoint (NVE) overlay interface that ter
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
 | N56xx    | unsupported        | unsupported            |
 | N6k      | unsupported        | unsupported            |
 | N7k      | unsupported        | unsupported            |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
-| IOS XR   | unsupported        | unsupported            |
+| IOS XR   | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -3400,13 +3400,13 @@ Creates a Virtual Network Identifier member (VNI) for an NVE overlay interface.
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
 | N56xx    | unsupported        | unsupported            |
 | N6k      | unsupported        | unsupported            |
 | N7k      | unsupported        | unsupported            |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
-| IOS XR   | unsupported        | unsupported            |
+| IOS XR   | not applicable     | not applicable         |
 
 #### Parameters
 
