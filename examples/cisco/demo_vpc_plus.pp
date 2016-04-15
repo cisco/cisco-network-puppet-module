@@ -17,6 +17,7 @@
 class ciscopuppet::cisco::demo_vpc_plus {
 
   if platform_get() =~ /n7k/ {
+    # this next block is for future use when n5k and n6k support gets added
     if platform_get() == 'n7k' {
       $fabricpath_multicast_load_balance = true
       $port_channel_limit = false
