@@ -71,7 +71,6 @@ tests = {
   master:   master,
   agent:    agent,
   svi_name: 'vlan13',
-  bdi_name: 'bdi100',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -398,25 +397,6 @@ tests['speed_dup_mtu'] = {
   },
 }
 
-tests['BDI_non_default'] = {
-  desc:             '6.1 (BDI) Non Default BDI Properties',
-  operating_system: 'nexus',
-  platform:         'n(7)k',
-  intf_type:        'bdi',
-  manifest_props:   {
-    ipv4_address:        '10.10.10.1',
-    ipv4_netmask_length: '24',
-    shutdown:            'false',
-    vrf:                 'Coke',
-  },
-  resource:         {
-    'ipv4_address'        => '10.10.10.1',
-    'ipv4_netmask_length' => '24',
-    'shutdown'            => 'false',
-    'vrf'                 => 'Coke',
-  },
-}
-
 resource_cisco_overlay_global = {
   name:     'cisco_overlay_global',
   title:    'default',
@@ -451,8 +431,6 @@ def create_interface_title(tests, id)
     end
   when /vlan/
     intf = tests[:svi_name]
-  when /bdi/
-    intf = tests[:bdi_name]
   end
   logger.info("\nUsing interface: #{intf}")
   tests[id][:title_pattern] = intf
@@ -576,10 +554,6 @@ test_name "TestCase :: #{testheader}" do
   logger.info("\n#{'-' * 60}\nSection 5. MISC Property Testing")
   test_harness_interface(tests, 'negotiate')
   # TBD: test_harness_interface(tests, 'speed_dup_mtu')
-
-  # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 6. BDI Property Testing")
-  test_harness_interface(tests, 'BDI_non_default')
 
   # -------------------------------------------------------------------
   interface_cleanup(agent, tests[:ethernet]) if tests[:ethernet]
