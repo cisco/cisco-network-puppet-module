@@ -2703,6 +2703,7 @@ Manages a Cisco VLAN.
 | Property | Caveat Description |
 |:--------|:-------------|
 | `mode` | Not supported on N9k, N30xx, N31xx |
+| `fabric_control` | Supported on N7k with module minimum version as 1.3.0 |
 
 #### Parameters
 
