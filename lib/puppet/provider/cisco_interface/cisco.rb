@@ -86,6 +86,7 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     :vpc_peer_link,
   ]
   INTF_ARRAY_FLAT_PROPS = [
+    :private_vlan_mapping,
     :stp_mst_cost,
     :stp_mst_port_priority,
     :stp_vlan_cost,

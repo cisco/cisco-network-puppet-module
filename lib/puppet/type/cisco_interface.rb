@@ -718,14 +718,20 @@ Puppet::Type.newtype(:cisco_interface) do
   newproperty(:switchport_mode_private_vlan_host_association, array_matching: :all) do
     format = '["primary_vlan", "secondary_vlan"]'
     desc 'An array of [primary_vlan, secondary_vlan] pair. '\
-         "Valid values match format #{format}."
+         "Valid values match format #{format} with primary_vlan "\
+         'and secondary_vlan as integer string.'
+    match_error = "must be of format #{format} with primary_vlan and "\
+                  'secondary_vlan as integer string.'
+
+    validate do |value|
+      fail "Vlan '#{value}' #{match_error}" unless
+            value.kind_of? String
+      fail "Vlan '#{value}' #{match_error}" unless
+            /^(\s*\d+\s*)$/.match(value).to_s == value
+    end
 
     munge do |value|
-      begin
-        return value = :default if value == 'default'
-        fail("Value must match format #{format}") unless value.is_a?(String)
-        value
-      end
+      value.gsub(/\s+/, '')
     end
 
     def insync?(is)
@@ -736,17 +742,20 @@ Puppet::Type.newtype(:cisco_interface) do
   newproperty(:switchport_mode_private_vlan_host_promisc, array_matching: :all) do
     format = '["primary_vlan", "vlans"]'
     desc 'An array of [primary_vlan, secondary_vlans] pair. '\
-         "Valid values match format #{format} with vlans as integer"
-    match_error = "must be of format ['vlans'] with vlans as integer"
+         "Valid values match format #{format} with primary_vlan and "\
+         ' vlans as integer string.'
+    match_error = "must be of format #{format} with primary_vlan and "\
+                  'vlans as integer string.'
+
+    validate do |value|
+      fail "Vlan '#{value}' #{match_error}" unless
+            value.kind_of? String
+      fail "Vlan '#{value}' #{match_error}" unless
+           /^(\s*\d+\s*[,-]{0,1}\s*\d+\s*)$/.match(value).to_s == value
+    end
 
     munge do |value|
-      begin
-        fail "Vlan '#{value}' #{match_error}" unless
-             value.kind_of? String
-      rescue
-        raise 'vlan is not valid'
-      end
-      value
+      value.gsub(/\s+/, '')
     end
 
     def insync?(is)
@@ -775,19 +784,21 @@ Puppet::Type.newtype(:cisco_interface) do
   newproperty(:switchport_private_vlan_association_trunk, array_matching: :all) do
     format = '["primary_vlan", "secondary_vlan"]'
     desc 'An array of [primary_vlan, secondary_vlan] pair. '\
-         "Valid values match format #{format} with vlan as integer"
-    match_error = "must be of format ['vlan'] with "\
-                  'vlan as integer'
+         "Valid values match format #{format} with primary_vlan "\
+         'and secondary_vlan as integer string.'
+    match_error = "Input must be of #{format} with "\
+                  'primary_vlan and secondary_vlan as integerstring.'\
+                  "Ex ['10', '20']"
 
     validate do |value|
       fail "Vlan '#{value}' #{match_error}" unless
             value.kind_of? String
       fail "Vlan '#{value}' #{match_error}" unless
-             /^(\d+)$/.match(value).to_s == value
+             /^(\s*\d+\s*)$/.match(value).to_s == value
     end
 
     munge do |value|
-      value
+      value.gsub(/\s+/, '')
     end
 
     def insync?(is)
@@ -798,20 +809,23 @@ Puppet::Type.newtype(:cisco_interface) do
   newproperty(:switchport_private_vlan_mapping_trunk, array_matching: :all) do
     format = '["primary_vlan", "vlans"]'
     desc 'An array of [primary_vlan, secondary_vlans] pair. '\
-         "Valid values match format #{format} with vlan as integer"
-    match_error = "must be of format ['vlans'] with "\
-                  "vlans as integer. Ex ['10', '20'], ['10', '20-30']"\
+         "Valid values match format #{format} with primary_vlan and vlans "\
+         'as integer string.'
+
+    match_error = "Input must be of format #{format} with "\
+                  'primary_vlan and vlans as integer string.'\
+                  " Ex ['10', '20'], ['10', '20-30']"\
                   " or ['10', '20,24']"
 
     validate do |value|
       fail "Vlan '#{value}' #{match_error}" unless
             value.kind_of? String
       fail "Vlan '#{value}' #{match_error}" unless
-           /^(\d+[,-]*\d+)$/.match(value).to_s == value
+           /^(\s*\d+\s*[,-]{0,1}\s*\d+\s*)$/.match(value).to_s == value
     end
 
     munge do |value|
-      value
+      value.gsub(/\s+/, '')
     end
 
     def insync?(is)
@@ -822,17 +836,16 @@ Puppet::Type.newtype(:cisco_interface) do
   newproperty(:switchport_private_vlan_trunk_allowed_vlan, array_matching: :all) do
     format = '["vlans"]'
     desc 'An array of allowed private vlans. '\
-         "Valid values match format #{format} with vlans as integer"
+         "Valid values match format #{format} with vlans as integer string."
     match_error = "must be of format ['vlans'] with "\
-                  "vlans as integer. Ex ['10'], ['20-30']"\
+                  "vlans as integer string. Ex ['10'], ['20-30']"\
                   " or ['20,24']"
 
     validate do |value|
       fail "Vlan '#{value}' #{match_error}" unless
             value.kind_of? String
       fail "Vlan '#{value}' #{match_error}" unless
-           /^(\d+[,-]{0,1}\d+)+$/.match(value).to_s == value
-      # /^(\d+\s*[,-]{0,1}\s*\d+)+$/.match(value).to_s == value
+           /^(\s*\d+\s*[,-]{0,1}\s*\d+\s*)$/.match(value).to_s == value
     end
 
     munge do |value|
@@ -857,15 +870,33 @@ Puppet::Type.newtype(:cisco_interface) do
     end
 
     munge do |value|
-      value = :default if value == 1
-      begin
-        value = Integer(value) unless value == :default
-      rescue
-        raise 'native vlan must be a valid integer.'
-      end
-      value
+      Integer(value)
     end
   end # switchport_private_vlan_trunk_native_vlan
+
+  newproperty(:private_vlan_mapping, array_matching: :all) do
+    format = '["vlans"]'
+    desc 'An array of allowed secondary private vlans. '\
+         "Valid values match format #{format} with vlans as integer"
+    match_error = "must be of format #{format} with "\
+                  "vlans as integer string. Ex ['10'], ['20-30']"\
+                  " or ['20,24']"
+
+    validate do |value|
+      fail "Vlan '#{value}' #{match_error}" unless
+            value.kind_of? String
+      fail "Vlan '#{value}' #{match_error}" unless
+            /^(\s*\d+\s*[,-]{0,1}\s*\d+\s*)$/.match(value).to_s == value
+    end
+
+    munge do |value|
+      PuppetX::Cisco::Utils.prepare_list(value)
+    end
+
+    def insync?(is)
+      (is.size == should.flatten.size && is.sort == should.flatten.sort)
+    end
+  end # private_vlan_mapping
 
   ################
   # Autorequires #

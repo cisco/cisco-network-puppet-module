@@ -127,6 +127,7 @@ module PuppetX
       def self.prepare_list(input)
         result = []
         input.gsub!('-', '..')
+        input.gsub!(/\s+/, '')
         new_list = input.split(',')
         new_list.each do |member|
           if member.include?('..')

@@ -1757,6 +1757,7 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | `svi_management` | Not supported on IOS XR |
 | `switchport` | Not supported on IOS XR |
 | `switchport_autostate_exclude` | Not supported on IOS XR |
+| `private_vlan_mapping` | Not supported on N8k, IOS XR |
 | `switchport_mode_private_vlan_host` | Not supported on N8k, IOS XR |
 | `switchport_mode_private_vlan_host_association` | Not supported on N8k, IOS XR |
 | `switchport_mode_private_vlan_host_promisc` | Not supported on N8k, IOS XR |
@@ -1815,6 +1816,8 @@ interface. Valid value is an integer.
 
 ##### `switchport_autostate_exclude`
 Exclude this port for the SVI link calculation. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
+##### `private_vlan_mapping`
+Private vlan mapping for interface vlan. List of secondary vlan associated to the interface vlan primary.
 ##### `switchport_mode_private_vlan_host`
 Switchport host mode for private vlan. This a L2 access port.
 ##### `switchport_mode_private_vlan_host_association`
