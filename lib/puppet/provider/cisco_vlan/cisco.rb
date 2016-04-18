@@ -32,7 +32,7 @@ Puppet::Type.type(:cisco_vlan).provide(:cisco) do
   mk_resource_methods
 
   VLAN_NON_BOOL_PROPS = [:mapped_vni, :mode, :state, :vlan_name]
-  VLAN_BOOL_PROPS = [:shutdown, :fabric_control]
+  VLAN_BOOL_PROPS = [:fabric_control, :shutdown]
   VLAN_ALL_PROPS = VLAN_NON_BOOL_PROPS + VLAN_BOOL_PROPS
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@vlan',

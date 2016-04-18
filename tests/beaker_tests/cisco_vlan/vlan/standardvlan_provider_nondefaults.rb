@@ -61,6 +61,10 @@ require File.expand_path('../vlanlib.rb', __FILE__)
 
 result = 'PASS'
 testheader = 'STDVLAN Resource :: All Attributes NonDefaults'
+test_properties = {
+  mapped_vni:     platform.match('n9k'),
+  fabric_control: platform.match('n7k'),
+}
 
 # @test_name [TestCase] Executes nondefaults testcase for STDVLAN Resource.
 test_name "TestCase :: #{testheader}" do
@@ -81,7 +85,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource nondefaults manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, VlanLib.create_stdvlan_manifest_nondefaults(platform.match('n9k'), platform.match('n7k')))
+    on(master, VlanLib.create_stdvlan_manifest_nondefaults(test_properties))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
