@@ -2729,6 +2729,9 @@ State of the VLAN. Valid values are 'active', 'suspend', and keyword 'default'.
 Whether or not the vlan is shutdown. Valid values are 'true', 'false' and
 keyword 'default'.
 
+##### `fabric_control`
+Specifies this vlan as the fabric control vlan. Only one bridge-domain or VLAN can be configured as fabric-control. Valid values are true, false.
+
 --
 ### Type: cisco_vpc_domain
 Manages the virtual Port Channel (vPC) domain configuration of a Cisco device.
