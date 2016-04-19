@@ -3734,9 +3734,9 @@ Name of the port channel. eg port-channel100. Valid value is a string.
 | N9k      | 7.0(3)I2(1)        | 1.1.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
@@ -3756,9 +3756,9 @@ Enable or disable radius functionality.  Valid values are 'true' or 'false'.
 | N9k      | 7.0(3)I2(1)        | 1.1.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | TODO               | TODO                   |
 
@@ -3787,9 +3787,9 @@ Encryption key format [0-7].  Valid value is an integer.
 | N9k      | 7.0(3)I2(1)        | 1.1.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | TODO               | TODO                   |
 
@@ -3840,9 +3840,9 @@ Encryption key format [0-7].  Valid value is an integer.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | TODO               | TODO                   |
 
