@@ -136,6 +136,13 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check network_vlan resource on agent :: #{result}")
   end
 
+  step 'TestStep :: Cleanup' do
+    resource_absent_cleanup(agent, 'network_vlan',
+                            'Cleanup switch after network_vlan provider test')
+
+    logger.info("Cleanup switch after provider test :: #{result}")
+  end
+
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   raise_passfail_exception(result, testheader, self, logger)
 end
