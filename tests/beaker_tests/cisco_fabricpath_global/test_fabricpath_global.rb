@@ -67,7 +67,6 @@ testheader = 'Resource cisco_fabricpath_global'
 # Top-level keys set by caller:
 # tests[:master] - the master object
 # tests[:agent] - the agent object
-# tests[:show_cmd] - the common show command to use for test_show_run
 #
 tests = {
   master:   master,
@@ -128,9 +127,7 @@ tests['default_properties_exclusive'] = {
     linkup_delay_always            => 'default',
     linkup_delay_enable            => 'default',
     loadbalance_algorithm          => 'default',
-    loadbalance_multicast_rotate   => 'default',
     loadbalance_multicast_has_vlan => 'default',
-    loadbalance_unicast_rotate     => 'default',
     mode                           => 'default',
     ttl_multicast                  => 'default',
     ttl_unicast                    => 'default',
@@ -140,9 +137,7 @@ tests['default_properties_exclusive'] = {
     'linkup_delay_always'            => 'false',
     'linkup_delay_enable'            => 'true',
     'loadbalance_algorithm'          => 'symmetric',
-    'loadbalance_multicast_rotate'   => '1',
     'loadbalance_multicast_has_vlan' => 'true',
-    'loadbalance_unicast_rotate'     => '1',
     'mode'                           => 'normal',
     'ttl_multicast'                  => '32',
     'ttl_unicast'                    => '32',

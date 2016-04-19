@@ -1,4 +1,4 @@
-# Manifest to demo cisco_vdc
+# Manifest to demo evpn providers
 #
 # Copyright (c) 2016 Cisco and/or its affiliates.
 #
@@ -14,17 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet::cisco::demo_vdc {
-  if platform_get() =~ /n7k/ {
-    cisco_vdc { 'default' :
-      ensure                     => present,
+class ciscopuppet::cisco::demo_evpn {
 
-      # limit_resource is commented out because it may disrupt any
-      # follow-on testing.
-      # limit_resource_module_type => 'f3',
+  if platform_get() =~ /n(5|6|7|8|9)k/ {
+
+    cisco_evpn_vni { '4096':
+      ensure                        => present,
+      route_distinguisher           => '1:1',
+      route_target_import           => ['10.0.0.1:1', '10:1'],
+      route_target_export           => ['10.0.0.2:2', '10:2'],
+      route_target_both             => ['10.0.0.3:3', '10:3']
     }
 
   } else {
-    notify{'SKIP: This platform does not support cisco_vdc': }
+    notify{'SKIP: This platform does not support cisco_evpn_vni': }
   }
 }

@@ -27,33 +27,32 @@ Puppet::Type.type(:cisco_evpn_vni).provide(:cisco) do
   desc 'The Cisco provider for cisco evpn vni'
 
   confine feature: :cisco_node_utils
-  defaultfor operatingsystem: :nexus
 
   mk_resource_methods
 
-  # Property symbol array for method auto-generation.
-  #
-  # NOTE: For maintainability please keep this list in alphabetical order and
-  # one property per line.
-
-  EVPN_VNI_PROPS = [
-    :route_distinguisher,
+  # Property symbol arrays for method auto-generation.
+  EVPN_VNI_ARRAY_FLAT_PROPS = [
     :route_target_both,
     :route_target_export,
     :route_target_import,
   ]
+  EVPN_VNI_NON_BOOL_PROPS = [
+    :route_distinguisher
+  ]
+  EVPN_VNI_ALL_PROPS = EVPN_VNI_ARRAY_FLAT_PROPS + EVPN_VNI_NON_BOOL_PROPS
 
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@evpn_vni',
-                                            EVPN_VNI_PROPS)
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:array_flat, self, '@nu',
+                                            EVPN_VNI_ARRAY_FLAT_PROPS)
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@nu',
+                                            EVPN_VNI_NON_BOOL_PROPS)
 
   def initialize(value={})
     super(value)
-    @evpn_vni = Cisco::EvpnVni.vnis[@property_hash[:name]]
+    @nu = Cisco::EvpnVni.vnis[@property_hash[:name]]
     @property_flush = {}
-    debug 'Created provider instance of cisco_evpn_vni.'
   end # initialize
 
-  def self.properties_get(vni_id, vni)
+  def self.properties_get(vni_id, nu_obj)
     debug "Checking instance, vni #{vni_id}"
     current_state = {
       vni:    vni_id,
@@ -62,16 +61,15 @@ Puppet::Type.type(:cisco_evpn_vni).provide(:cisco) do
     }
 
     # Call node_utils getter for each property
-    EVPN_VNI_PROPS.each do |prop|
-      current_state[prop] = vni.send(prop)
-    end
+    EVPN_VNI_ALL_PROPS.each { |prop| current_state[prop] = nu_obj.send(prop) }
+
     new(current_state)
   end # self.properties_get
 
   def self.instances
     vnis = []
-    Cisco::EvpnVni.vnis.each do |vni_id, vni|
-      vnis << properties_get(vni_id, vni)
+    Cisco::EvpnVni.vnis.each do |vni_id, nu_obj|
+      vnis << properties_get(vni_id, nu_obj)
     end
     vnis
   end # self.instances
@@ -102,93 +100,27 @@ Puppet::Type.type(:cisco_evpn_vni).provide(:cisco) do
   end
 
   def properties_set(new_vni=false)
-    EVPN_VNI_PROPS.each do |prop|
+    EVPN_VNI_ALL_PROPS.each do |prop|
       next unless @resource[prop]
       send("#{prop}=", @resource[prop]) if new_vni
-      unless @property_flush[prop].nil?
-        @evpn_vni.send("#{prop}=", @property_flush[prop]) if
-          @evpn_vni.respond_to?("#{prop}=")
-      end
+
+      next if @property_flush[prop].nil?
+      @nu.send("#{prop}=", @property_flush[prop]) if
+        @nu.respond_to?("#{prop}=")
     end
-  end # properties_set
-
-  def route_target_both
-    return @property_hash[:route_target_both] if @resource[:route_target_import].nil?
-    if @resource[:route_target_both][0] == :default &&
-       @property_hash[:route_target_both] == @evpn_vni.default_route_target_both
-      return [:default]
-    else
-      @property_hash[:route_target_both]
-    end
-  end
-
-  # route_target setters: These properties expect a flat array but optionally
-  # support a string of space-separated values in the manifest; however,
-  # munge will transform the string into a nested array, hence the flatten.
-  def route_target_both=(should_list)
-    puts "setter: #{should_list}"
-    should_list = @evpn_vni.default_route_target_both if should_list[0] == :default
-    @property_flush[:route_target_both] = should_list.flatten
-  end
-
-  def route_target_export
-    return @property_hash[:route_target_export] if @resource[:route_target_import].nil?
-    if @resource[:route_target_export][0] == :default &&
-       @property_hash[:route_target_export] == @evpn_vni.default_route_target_export
-      return [:default]
-    else
-      @property_hash[:route_target_export]
-    end
-  end
-
-  def route_target_export=(should_list)
-    puts "setter: #{should_list}"
-    should_list = @evpn_vni.default_route_target_export if should_list[0] == :default
-    @property_flush[:route_target_export] = should_list.flatten
-  end
-
-  def route_target_import
-    return @property_hash[:route_target_import] if @resource[:route_target_import].nil?
-    if @resource[:route_target_import][0] == :default &&
-       @property_hash[:route_target_import] == @evpn_vni.default_route_target_import
-      return [:default]
-    else
-      @property_hash[:route_target_import]
-    end
-  end
-
-  def route_target_import=(should_list)
-    puts "setter: #{should_list}"
-    should_list = @evpn_vni.default_route_target_import if should_list[0] == :default
-    @property_flush[:route_target_import] = should_list.flatten
   end
 
   def flush
     if @property_flush[:ensure] == :absent
-      @evpn_vni.destroy
-      @evpn_vni = nil
+      @nu.destroy
+      @nu = nil
     else
       # Create/Update
-      if @evpn_vni.nil?
+      if @nu.nil?
         new_vni = true
-        @evpn_vni = Cisco::EvpnVni.new(@resource[:vni])
+        @nu = Cisco::EvpnVni.new(@resource[:vni])
       end
       properties_set(new_vni)
     end
-    puts_config
   end
-
-  def puts_config
-    if @evpn_vni.nil?
-      info "Vni=#{@resource[:vni]} is absent."
-      return
-    end
-
-    # Dump all current properties for this evpn_vni
-    current = sprintf("\n%30s: %s", 'evpn_vni', instance_name)
-    EVPN_VNI_PROPS.each do |prop|
-      current.concat(sprintf("\n%30s: %s", prop, @evpn_vni.send(prop)))
-    end
-    debug current
-  end # puts_config
 end # Puppet::Type

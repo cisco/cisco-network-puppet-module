@@ -61,12 +61,6 @@ require File.expand_path('../../cisco_tacacs_server/tacacsserverlib.rb', __FILE_
 result = 'PASS'
 testheader = 'AAAGROUP Resource :: All Attributes Negatives'
 
-# Check platform type and skip if necessary.
-unless /n(3|9)k/.match(platform)
-  msg = "Test not supported on this platform: #{platform}"
-  prereq_skip(testheader, self, msg)
-end
-
 # @test_name [TestCase] Executes negatives testcase for AAAGROUP Resource.
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
@@ -79,15 +73,6 @@ test_name "TestCase :: #{testheader}" do
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
       'agent -t', options)
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
-
-    # Expected exit_code is 16 since this is a vegas shell cmd with exec error.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config tacacs')
-    on(agent, cmd_str, acceptable_exit_codes: [16]) do
-      search_pattern_in_output(stdout,
-                               [/feature tacacs\+/],
-                               true, self, logger)
-    end
 
     # Expected exit_code is 0 since this is a bash shell cmd.
     on(master, TacacsServerLib.create_tacacsserver_present)
@@ -129,22 +114,6 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check cisco_aaa_group resource absence on agent :: #{result}")
   end
 
-  # @step [Step] Checks aaagroup instance on agent using switch show cli cmds.
-  step 'TestStep :: Check cisco_aaa_group instance absence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config tacacs all')
-    on(agent, cmd_str) do
-      search_pattern_in_output(
-        stdout,
-        [/aaa group server tacacs\+ test/,
-         /^\s+deadtime #{AaaGroupLib::DEADTIME_NEGATIVE}/],
-        true, self, logger)
-    end
-
-    logger.info("Check cisco_aaa_group instance absence on agent :: #{result}")
-  end
-
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get negative test resource manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
@@ -172,22 +141,6 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Check cisco_aaa_group resource absence on agent :: #{result}")
-  end
-
-  # @step [Step] Checks aaagroup instance on agent using switch show cli cmds.
-  step 'TestStep :: Check cisco_aaa_group instance absence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config tacacs all')
-    on(agent, cmd_str) do
-      search_pattern_in_output(
-        stdout,
-        [/aaa group server tacacs\+ test/,
-         /^\s+use-vrf #{AaaGroupLib::VRF_NAME_NEGATIVE}/],
-        true, self, logger)
-    end
-
-    logger.info("Check cisco_aaa_group instance absence on agent :: #{result}")
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
@@ -220,22 +173,6 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check cisco_aaa_group resource absence on agent :: #{result}")
   end
 
-  # @step [Step] Checks aaagroup instance on agent using switch show cli cmds.
-  step 'TestStep :: Check cisco_aaa_group instance absence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config tacacs all')
-    on(agent, cmd_str) do
-      search_pattern_in_output(
-        stdout,
-        [/aaa group server tacacs\+ test/,
-         /^\s+source-interface #{AaaGroupLib::SOURCE_INTERFACE_NEGATIVE}/],
-        true, self, logger)
-    end
-
-    logger.info("Check cisco_aaa_group instance absence on agent :: #{result}")
-  end
-
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get negative test resource manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
@@ -264,22 +201,6 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Check cisco_aaa_group resource absence on agent :: #{result}")
-  end
-
-  # @step [Step] Checks aaagroup instance on agent using switch show cli cmds.
-  step 'TestStep :: Check cisco_aaa_group instance absence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config tacacs all')
-    on(agent, cmd_str) do
-      search_pattern_in_output(
-        stdout,
-        [/aaa group server tacacs\+ test/,
-         /^\s+server #{AaaGroupLib::SERVER_HOSTS_NEGATIVE}/],
-        true, self, logger)
-    end
-
-    logger.info("Check cisco_aaa_group instance absence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.

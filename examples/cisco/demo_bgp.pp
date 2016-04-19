@@ -44,6 +44,10 @@ class ciscopuppet::cisco::demo_bgp {
     'ios_xr' => false,
     default  => undef
   }
+  $soo = $operatingsystem ? {
+    'nexus'  => '3:3',
+    default  => undef
+  }
   $disable_policy_batching_ipv4 = platform_get() ? {
     /(n3k|n9k)/ => 'my_v4_pfx_list',
     default => undef
@@ -136,6 +140,10 @@ class ciscopuppet::cisco::demo_bgp {
   }
   $default_information_originate = $operatingsystem ? {
     'nexus' => true,
+    default => undef
+  }
+  $default_information_originate_route_map = $operatingsystem ? {
+    'nexus' => 'dio_map',
     default => undef
   }
 
@@ -264,10 +272,7 @@ class ciscopuppet::cisco::demo_bgp {
     'nexus' => 'all',
     default => undef
   }
-  $update_source = $operatingsystem ? {
-    'nexus' => 'ethernet1/1',
-    default => 'fastethernet1/1/1/1'
-  }
+  $update_source = 'loopback151'
 
   cisco_bgp_neighbor {'55.77 blue 1.1.1.1':
     ensure                 => present,
@@ -281,7 +286,7 @@ class ciscopuppet::cisco::demo_bgp {
     local_as               => 55.88,
     log_neighbor_changes   => $log_neighbor_changes,
     low_memory_exempt      => $low_memory_exempt,
-    remote_as              => 120,
+    remote_as              => 2,
     remove_private_as      => $remove_private_as,
     shutdown               => true,
     suppress_4_byte_as     => true,
@@ -355,22 +360,19 @@ class ciscopuppet::cisco::demo_bgp {
   }
 
   if $operatingsystem == 'ios_xr' {
-    cisco_bgp_af { '55.77 default ipv4 unicast':
-      ensure                                 => present,
-    }
     cisco_bgp_neighbor { '55.77 default 1.1.1.1':
       ensure                                 => present,
       remote_as                              => 2,
     }
   }
 
-  cisco_bgp_neighbor_af { '55.77 blue 1.1.1.1 ipv4 unicast':
+  cisco_bgp_neighbor_af { '55.77 default 1.1.1.1 ipv4 unicast':
     ensure                      => present,
 
     # Properties
-    allows_in                   => 'default',
+    allowas_in                  => 'default',
     allowas_in_max              => 5,
-    default_originate           => 'my_def_map',
+    default_originate_route_map => $default_originate_route_map,
     max_prefix_limit            => 100,
     max_prefix_threshold        => 50,
     max_prefix_interval         => 30,
@@ -381,7 +383,6 @@ class ciscopuppet::cisco::demo_bgp {
     route_map_out               => 'rm_out',
     send_community              => 'extended',
     soft_reconfiguration_in     => $soft_reconfiguration_in,
-    soo                         => '3:3',
     suppress_inactive           => true,
     unsuppress_map              => 'unsup_map',
     weight                      => 30,
@@ -390,34 +391,21 @@ class ciscopuppet::cisco::demo_bgp {
   # --------------------------------------------------------------------------#
   # Configure Neighbor-level Address Family IPv4 Unicast (non-default vrf)
   # --------------------------------------------------------------------------#
-  cisco_bgp { '55.77':
-    ensure                                 => present,
-    router_id                              => '1.2.3.4',
-  }
+
   cisco_bgp_af { '55.77 default vpnv4 unicast':
     ensure                                 => present,
   }
-  cisco_bgp { '55.77 blue':
-    ensure                                 => present,
-    route_distinguisher                    => auto,
-  }
   cisco_bgp_af { '55.77 blue ipv4 unicast':
     ensure                                 => present,
-  }
-  if $operatingsystem == 'ios_xr' {
-    cisco_bgp_neighbor { '55.77 blue 1.1.1.1':
-      ensure                                 => present,
-      remote_as                              => 2,
-    }
   }
 
   cisco_bgp_neighbor_af { '55.77 blue 1.1.1.1 ipv4 unicast':
     ensure                      => present,
 
     # Properties
-    allows_in                   => 'default',
+    allowas_in                  => 'default',
     allowas_in_max              => 5,
-    default_originate           => 'my_def_map',
+    default_originate_route_map => $default_originate_route_map,
     as_override                 => true,
     disable_peer_as_check       => true,
     max_prefix_limit            => 100,
@@ -431,7 +419,7 @@ class ciscopuppet::cisco::demo_bgp {
     route_map_out               => 'rm_out',
     send_community              => 'extended',
     soft_reconfiguration_in     => $soft_reconfiguration_in,
-    soo                         => '3:3',
+    soo                         => $soo,
     suppress_inactive           => true,
     unsuppress_map              => 'unsup_map',
     weight                      => 30,
@@ -443,7 +431,7 @@ class ciscopuppet::cisco::demo_bgp {
     additional_paths_receive    => 'enable',
     additional_paths_send       => 'disable',
     allowas_in_max              => 5,
-    default_originate_route_map => 'my_def_map',
+    default_originate_route_map => $default_originate_route_map,
     filter_list_in              => 'flin',
     filter_list_out             => 'flout',
     max_prefix_limit            => 100,
@@ -457,7 +445,7 @@ class ciscopuppet::cisco::demo_bgp {
     route_map_out               => 'rm_out',
     send_community              => 'extended',
     soft_reconfiguration_in     => $soft_reconfiguration_in,
-    soo                         => '3:3',
+    soo                         => $soo,
     suppress_inactive           => true,
     unsuppress_map              => 'unsup_map',
     weight                      => 30,

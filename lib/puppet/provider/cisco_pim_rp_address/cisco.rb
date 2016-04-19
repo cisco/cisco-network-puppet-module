@@ -60,7 +60,6 @@ Puppet::Type.type(:cisco_pim_rp_address).provide(:cisco) do
   end # self.properties_get
 
   def self.instances
-    return [] unless Cisco::Pim.feature_enabled
     pim_rp_address_instances = []
     Cisco::PimRpAddress.rp_addresses.each do |afi, vrfs|
       vrfs.each do |vrf, rp_addrs|

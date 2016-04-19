@@ -33,14 +33,14 @@ Puppet::Type.type(:cisco_bridge_domain_vni).provide(:cisco) do
 
   mk_resource_methods
 
-  BD_NON_BOOL_PROPS = [:member_vni]
-  BD_BOOL_PROPS = []
-  BD_ALL_PROPS = BD_NON_BOOL_PROPS + BD_BOOL_PROPS
+  BDV_NON_BOOL_PROPS = [:member_vni]
+  BDV_BOOL_PROPS = []
+  BDV_ALL_PROPS = BDV_NON_BOOL_PROPS + BDV_BOOL_PROPS
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@nu',
-                                            BD_NON_BOOL_PROPS)
+                                            BDV_NON_BOOL_PROPS)
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@nu',
-                                            BD_BOOL_PROPS)
+                                            BDV_BOOL_PROPS)
 
   def initialize(value={})
     super(value)
@@ -58,10 +58,10 @@ Puppet::Type.type(:cisco_bridge_domain_vni).provide(:cisco) do
     }
 
     # Call node_utils getter for each property
-    BD_NON_BOOL_PROPS.each do |prop|
+    BDV_NON_BOOL_PROPS.each do |prop|
       current_state[prop] = nu.send(prop)
     end
-    BD_BOOL_PROPS.each do |prop|
+    BDV_BOOL_PROPS.each do |prop|
       val = nu.send(prop)
       if val.nil?
         current_state[prop] = nil
@@ -112,7 +112,7 @@ Puppet::Type.type(:cisco_bridge_domain_vni).provide(:cisco) do
   end
 
   def properties_set(new_bd=false)
-    BD_ALL_PROPS.each do |prop|
+    BDV_ALL_PROPS.each do |prop|
       next unless check_member_vni != @resource[prop]
       next unless @resource[prop]
       send("#{prop}=", @resource[prop]) if new_bd
@@ -140,13 +140,13 @@ Puppet::Type.type(:cisco_bridge_domain_vni).provide(:cisco) do
 
   def puts_config
     if @nu.nil?
-      info "BD=#{@resource[:bd]} is absent."
+      debug "BDV=#{@resource[:bd]} is absent."
       return
     end
 
     # Dump all current properties for this bd
     current = sprintf("\n%30s: %s", 'bd', instance_name)
-    BD_ALL_PROPS.each do |prop|
+    BDV_ALL_PROPS.each do |prop|
       current.concat(sprintf("\n%30s: %s", prop, @nu.send(prop)))
     end
     debug current

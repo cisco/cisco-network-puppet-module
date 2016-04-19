@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2015 Cisco and/or its affiliates.
+# Copyright (c) 2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,55 +13,75 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-
+#
+# See README-develop-beaker-scripts.md (Section: Test Script Variable Reference)
+# for information regarding:
+#  - test script general prequisites
+#  - command return codes
+#  - A description of the 'tests' hash and its usage
+#
+###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
-# -----------------------------
-# Common settings and variables
-# -----------------------------
-testheader = 'Resource cisco_encapsulation'
-
-# Define PUPPETMASTER_MANIFESTPATH.
-
-# The 'tests' hash is used to define all of the test data values and expected
-# results. It is also used to pass optional flags to the test methods when
-# necessary.
-
-# Top-level keys set by caller:
+# Test hash top-level keys
 tests = {
-  master:           master,
   agent:            agent,
-  resource_name:    'cisco_encapsulation',
+  master:           master,
   operating_system: 'nexus',
+  platform:         'n7k',
+  resource_name:    'cisco_encapsulation',
+}
+
+# Test hash test cases
+tests[:default] = {
+  desc:           '1.1 Default Properties',
+  manifest_props: {
+    dot1q_map: 'default'
+  },
+  resource:       {},
 }
 
 mapping = Array['100-151,200-250', '5100-5150,6000,5151-5201']
-tests['non_default_properties_change_mapping'] = {
-  desc:           '1.1 Non Default Properties change dot1q mapping',
+tests[:non_default] = {
+  desc:           '2.1 Non Default Properties change dot1q mapping',
   title_pattern:  'cisco',
   manifest_props: {
     dot1q_map: mapping
   },
 }
 
-mapping = Array['100-151,200-250', '8000-8001,5102-5150,6000,5151-5201']
-tests['non_default_properties_change_mapping_of_existing_profile'] = {
-  desc:           "1.2 Non Default Properties again change dot1q mapping of same profile'",
-  title_pattern:  'cisco',
-  manifest_props: {
-    dot1q_map: mapping
-  },
-}
+# TEST PRE-REQUISITES
+#   - F3 linecard assigned to admin vdc
+def dependency_manifest(*)
+  "
+    cisco_vdc { '#{default_vdc_name}':
+      ensure                     => present,
+      limit_resource_module_type => 'f3',
+    }
+  "
+end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name "TestCase :: #{testheader}" do
+test_name "TestCase :: #{tests[:resource_name]}" do
+  skip_unless_supported(tests)
+
+  # -------------------------------------------------------------------
+  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
+
+  id = :default
+  test_harness_run(tests, id)
+
+  tests[id][:ensure] = :absent
+  tests[id].delete(:preclean)
+  test_harness_run(tests, id)
+
+  # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Non Default Property Testing")
-  test_harness_run(tests, 'non_default_properties_change_mapping')
-  test_harness_run(tests, 'non_default_properties_change_mapping_of_existing_profile')
+  test_harness_run(tests, :non_default)
 
-  resource_absent_cleanup(agent, 'cisco_encapsulation', 'Encapsulation CLEANUP :: ')
+  # -------------------------------------------------------------------
+  resource_absent_cleanup(agent, 'cisco_encapsulation')
 end
-
-logger.info('TestCase :: # {testheader} :: End')
+logger.info("TestCase :: #{tests[:resource_name]} :: End")
