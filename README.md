@@ -183,6 +183,7 @@ The following table indicates which providers are supported on each platform. As
 | [network_interface](#type-network_interface) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
 | [network_snmp](#type-network_snmp) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [network_trunk](#type-network_trunk) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| [network_vlan](#type-network_vlan) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [ntp_config](#type-ntp_config) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [ntp_server](#type-ntp_server) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [radius](#type-radius) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
@@ -314,6 +315,7 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_vlan`](#type-cisco_vlan)
   * [`cisco_vtp`](#type-cisco_vtp)
   * [`network_trunk (netdev_stdlib)`](#type-network_trunk)
+  * [`network_vlan (netdev_stdlib)`](#type-network_vlan)
 
 * VPC Types
   * [`cisco_vpc_domain`](#type-cisco_vpc_domain)
@@ -391,8 +393,9 @@ The following resources include cisco types and providers along with cisco provi
 * [`name_server`](#type-name_server)
 * [`network_dns`](#type-network_dns)
 * [`network_interface`](#type-network_interface)
-* [`network_trunk`](#type-network_trunk)
 * [`network_snmp`](#type-network_snmp)
+* [`network_trunk`](#type-network_trunk)
+* [`network_vlan`](#type-network_vlan)
 * [`ntp_config`](#type-ntp_config)
 * [`ntp_server`](#type-ntp_server)
 * [`port_channel`](#type-port_channel)
@@ -3613,6 +3616,36 @@ Array of VLAN names used for tagged packets. Values must be in range of 1 to 409
 
 ###### `pruned_vlans`
 Array of VLAN ID numbers used for VLAN pruning. Values must be in range of 1 to 4095. Cisco do not implement the concept of pruned vlans.
+
+--
+### Type: `network_vlan`
+
+Manages a puppet netdev_stdlib Network Vlan.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.0                  |
+| IOS XR   | unsupported        | unsupported            |
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+###### `id`
+ID of the Virtual LAN. Valid value is a string.
+
+###### `shutdown`
+Whether or not the vlan is shutdown. Valid values are 'true' or 'false'.
+
+###### `vlan_name`
+The name of the VLAN.  Valid value is a string.
 
 --
 ### Type: ntp_config

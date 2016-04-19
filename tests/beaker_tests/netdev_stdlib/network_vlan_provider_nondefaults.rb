@@ -62,17 +62,9 @@ testheader = 'network_vlan Resource :: All Attributes NonDefaults'
 test_name "TestCase :: #{testheader}" do
   ## @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    cmd_str = get_vshell_cmd('conf t ; no vlan 666')
-    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
+    resource_absent_cleanup(agent, 'network_vlan',
+                            'Setup switch for network_vlan provider test')
 
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, [/vlan (\d+,)*666\D/],
-                               true, self, logger)
-    end
     logger.info("Setup switch for provider test :: #{result}")
   end
 
@@ -104,24 +96,6 @@ test_name "TestCase :: #{testheader}" do
                                { 'ensure'    => 'present',
                                  'shutdown'  => 'false',
                                  'vlan_name' => 'somename' },
-                               false, self, logger)
-    end
-
-    logger.info("Check network_vlan resource on agent :: #{result}")
-  end
-
-  # @step [Step] Checks network_vlan instance on agent using switch show cli cmds.
-  step 'TestStep :: Check network_vlan settings on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config vlan')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               [
-                                 /vlan (\d+,)*666\D/,
-                                 /vlan 666/,
-                                 /  name somename/,
-                               ],
                                false, self, logger)
     end
 
@@ -162,23 +136,11 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check network_vlan resource on agent :: #{result}")
   end
 
-  # @step [Step] Checks network_vlan instance on agent using switch show cli cmds.
-  step 'TestStep :: Check network_vlan settings on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               [
-                                 /vlan (\d+,)*666\D/,
-                                 /vlan 666/,
-                                 /  name othername/,
-                                 /  shutdown/,
-                               ],
-                               false, self, logger)
-    end
+  step 'TestStep :: Cleanup' do
+    resource_absent_cleanup(agent, 'network_vlan',
+                            'Cleanup switch after network_vlan provider test')
 
-    logger.info("Check network_vlan resource on agent :: #{result}")
+    logger.info("Cleanup switch after provider test :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
