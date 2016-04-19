@@ -191,10 +191,10 @@ The following table indicates which providers are supported on each platform. As
 | [radius_server_group](#type-tacacs_server_group) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [radius_server](#type-radius_server) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅* | * [caveats](#radius_server-caveats) |
 | [search_domain](#type-search_domain) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
-| [snmp_community](#type-snmp_community) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| [snmp_notification](#type-snmp_notification) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| [snmp_notification_receiver](#type-snmp_notification_receiver) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| [snmp_user](#type-snmp_user) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| [snmp_community](#type-snmp_community) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [snmp_notification](#type-snmp_notification) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [snmp_notification_receiver](#type-snmp_notification_receiver) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [snmp_user](#type-snmp_user) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [syslog_server](#type-syslog_server) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [syslog_setting](#type-syslog_setting) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [tacacs](#type-tacacs) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
@@ -3885,9 +3885,9 @@ Manages an SNMP community on a Cisco SNMP server.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
@@ -3915,9 +3915,9 @@ Manages an SNMP notification on a Cisco SNMP server.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
@@ -3937,9 +3937,9 @@ Manages an SNMP user on an cisco SNMP server.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
@@ -3983,9 +3983,9 @@ Manages an SNMP user on an cisco SNMP server.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
