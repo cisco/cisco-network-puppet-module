@@ -3026,6 +3026,7 @@ Manages a Cisco VLAN.
 | Property | Caveat Description |
 |:--------|:-------------|
 | `mode` | Not supported on N9k, N30xx, N31xx |
+| `fabric_control` | Supported on N7k with module minimum version as 1.3.0 |
 
 #### Parameters
 
@@ -3051,6 +3052,9 @@ State of the VLAN. Valid values are 'active', 'suspend', and keyword 'default'.
 ##### `shutdown`
 Whether or not the vlan is shutdown. Valid values are 'true', 'false' and
 keyword 'default'.
+
+##### `fabric_control`
+Specifies this vlan as the fabric control vlan. Only one bridge-domain or VLAN can be configured as fabric-control. Valid values are true, false.
 
 --
 ### Type: cisco_vpc_domain

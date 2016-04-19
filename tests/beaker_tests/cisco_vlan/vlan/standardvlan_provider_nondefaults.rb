@@ -61,6 +61,10 @@ require File.expand_path('../vlanlib.rb', __FILE__)
 
 result = 'PASS'
 testheader = 'STDVLAN Resource :: All Attributes NonDefaults'
+test_properties = {
+  mapped_vni:     platform.match('n9k'),
+  fabric_control: platform.match('n7k'),
+}
 
 # @test_name [TestCase] Executes nondefaults testcase for STDVLAN Resource.
 test_name "TestCase :: #{testheader}" do
@@ -81,7 +85,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource nondefaults manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, VlanLib.create_stdvlan_manifest_nondefaults(platform.match('n9k')))
+    on(master, VlanLib.create_stdvlan_manifest_nondefaults(test_properties))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
@@ -99,11 +103,12 @@ test_name "TestCase :: #{testheader}" do
       "resource cisco_vlan '128'", options)
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
-                               { 'ensure'     => 'present',
-                                 'mapped_vni' => ('128000' if platform.match('n9k')),
-                                 'shutdown'   => 'true',
-                                 'state'      => 'suspend',
-                                 'vlan_name'  => 'DESCR-VLAN0128' }.reject { |_k, v| v.nil? },
+                               { 'ensure'         => 'present',
+                                 'mapped_vni'     => ('128000' if test_properties[:mapped_vni]),
+                                 'shutdown'       => 'true',
+                                 'state'          => 'suspend',
+                                 'vlan_name'      => 'DESCR-VLAN0128',
+                                 'fabric_control' => ('true' if test_properties[:fabric_control]) }.reject { |_k, v| v.nil? },
                                false, self, logger)
     end
 
