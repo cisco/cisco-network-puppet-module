@@ -3931,7 +3931,7 @@ values are true and false.
 --
 ### Type: snmp_notification_receiver
 
-Manages an SNMP user on an cisco SNMP server.
+Manages an SNMP notification receiver on an cisco SNMP server.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
