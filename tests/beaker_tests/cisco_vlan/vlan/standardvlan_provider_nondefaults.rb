@@ -104,11 +104,11 @@ test_name "TestCase :: #{testheader}" do
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ensure'         => 'present',
-                                 'mapped_vni'     => ('128000' if platform.match('n9k')),
+                                 'mapped_vni'     => ('128000' if test_properties[:mapped_vni]),
                                  'shutdown'       => 'true',
                                  'state'          => 'suspend',
                                  'vlan_name'      => 'DESCR-VLAN0128',
-                                 'fabric_control' => ('true' if platform.match('n7k')) }.reject { |_k, v| v.nil? },
+                                 'fabric_control' => ('true' if test_properties[:fabric_control]) }.reject { |_k, v| v.nil? },
                                false, self, logger)
     end
 

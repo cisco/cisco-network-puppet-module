@@ -107,7 +107,7 @@ test_name "TestCase :: #{testheader}" do
                                  'shutdown'       => 'false',
                                  'state'          => 'active',
                                  'vlan_name'      => 'VLAN0128',
-                                 'fabric_control' => ('false' if platform.match('n7k')) }.reject { |_k, v| v.nil? },
+                                 'fabric_control' => ('false' if test_properties[:fabric_control]) }.reject { |_k, v| v.nil? },
                                false, self, logger)
     end
 
