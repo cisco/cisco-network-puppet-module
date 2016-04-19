@@ -36,7 +36,7 @@ Puppet::Type.type(:cisco_interface_capabilities).provide(:cisco) do
   def self.instances
     interfaces = []
     Cisco::Interface.interfaces.each do |intf, _|
-      next if intf.match(/mgmt/i)
+      next unless intf.match(/ethernet/i)
       current = { name: intf }
       interfaces << new(current)
     end
