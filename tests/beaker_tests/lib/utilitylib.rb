@@ -1029,3 +1029,39 @@ def find_interface(tests, id=nil, skipcheck=true)
   end
   intf
 end
+
+# Use puppet resource to get interface capability information.
+# TBD: Facter may be a better home for this method but the performance hit
+# appears to be 2s per hundred interfaces so it works better for now as an
+# on-demand method.
+def interface_capabilities(agent, intf)
+  cmd = get_namespace_cmd(agent, PUPPET_BINPATH +
+          "resource cisco_interface_capabilities '#{intf}'", options)
+
+  on(agent, cmd, options)
+
+  # Sample raw output:
+  # "cisco_interface_capabilities { 'ethernet9/1':\n  capabilities =>
+  # ['Model: N7K-F312FQ-25', '', 'Type (SFP capable):    QSFP-40G-4SFP10G', '',
+  # 'Speed: 10000,40000', '', 'Duplex: full', ''], }
+
+  str = stdout[/\[(.*)\]/][1..-2]
+  return {} if str.nil?
+
+  # 'Model: N7K-F312FQ-25', '', 'Type (SFP capable):    QSFP-40G-4SFP10G', '',
+  # 'Speed: 10000,40000', '', 'Duplex: full', ''
+  str.delete!("'")
+
+  # Model: N7K-F312FQ-25, , Type (SFP capable):    QSFP-40G-4SFP10G, ,
+  # Speed: 10000,40000, , Duplex: full, ,
+  hash = {}
+  str.split(', ,').each do |line|
+    k, v = line.split(':')
+    next if k.nil? || v.nil?
+    k.gsub!(/ \(.*\)/, '') # Remove any parenthetical text from key
+    k.strip!
+    v.strip!
+    hash[k] = v
+  end
+  hash
+end
