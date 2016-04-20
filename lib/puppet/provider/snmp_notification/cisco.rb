@@ -36,7 +36,7 @@ Puppet::Type.type(:snmp_notification).provide(:cisco) do
     Cisco::SnmpNotification.notifications.each do |name, v|
       snmpnotification << new(
         name:   name,
-        enable: v.enable,
+        enable: v.enable.to_s,
       )
     end
     snmpnotification
@@ -46,13 +46,12 @@ Puppet::Type.type(:snmp_notification).provide(:cisco) do
     snmpnotification = instances
 
     resources.keys.each do |id|
-      provider = snmpnotification.find { |instance| instance.name == id }
+      provider = snmpnotification.find do |instance|
+        instance.name == resources[id][:name] &&
+        instance.enable.to_s == resources[id][:enable].to_s
+      end
       resources[id].provider = provider unless provider.nil?
     end
-  end
-
-  def exists?
-    true
   end
 
   def flush
