@@ -367,16 +367,16 @@ tests['SVI_autostate'] = {
 tests['negotiate'] = {
   desc:               '5.1 negotiate-auto',
   operating_system:   'nexus',
-  platform:           'n(5|6|7)k',
+  platform:           'n(5|6)k',
   intf_type:          'ethernet',
   preclean:           true,
   sys_def_switchport: false,
   manifest_props:     {
     switchport_mode: 'disabled',
-    # negotiate_auto:  'false',, # TBD: Needs plat awareness
+    negotiate_auto:  'false',
   },
   resource:           {
-    # 'negotiate_auto' => 'false'
+    'negotiate_auto' => 'false'
   },
 }
 
