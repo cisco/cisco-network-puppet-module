@@ -578,9 +578,12 @@ test_name "TestCase :: #{testheader}" do
   # TBD: test_harness_interface(tests, 'speed_dup_mtu')
 
   # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 6. BDI Property Testing")
-  create_bridge_domain(tests)
-  test_harness_interface(tests, 'BDI_non_default')
+  if platform_supports_test(tests, 'BDI_non_default')
+    logger.info("\n#{'-' * 60}\nSection 6. BDI Property Testing")
+    bd = tests[:bdi_name][/(\d+)/]
+    config_bridge_domain(agent, bd)
+    test_harness_interface(tests, 'BDI_non_default')
+  end
 
   # -------------------------------------------------------------------
   interface_cleanup(agent, tests[:ethernet]) if tests[:ethernet]

@@ -1029,10 +1029,3 @@ def find_interface(tests, id=nil, skipcheck=true)
   end
   intf
 end
-
-def create_bridge_domain(tests)
-  # BDI_non_default test case requires to create a bridge domain
-  return unless platform == 'n7k'
-  bd = tests[:bdi_name][/(\d+)/]
-  config_bridge_domain(agent, bd)
-end
