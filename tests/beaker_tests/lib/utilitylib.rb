@@ -953,7 +953,8 @@ end
 # tests[:platform] - regex of supported platforms
 # tests[:resource_name] - provider name (e.g. 'cisco_vxlan_vtep')
 def skip_unless_supported(tests)
-  return false if platform.match(tests[:platform])
+  pattern = tests[:platform]
+  return false if pattern.nil? || platform.match(tests[:platform])
   msg = "Skipping all tests; '#{tests[:resource_name]}' "\
         'is unsupported on this node'
   banner = '#' * msg.length
