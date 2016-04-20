@@ -18,8 +18,18 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 - Extended the following providers to support `Nexus 56xx`, `Nexus 60xx`, and `Nexus 7xxx`
-  - `cisco_aaa_authentication_login`, `cisco_aaa_authorization_login_cfg_svc`, `cisco_aaa_authorization_login_exec_svc`, `cisco_aaa_group_tacacs`, `cisco_fabricpath_global`, `cisco_fabricpath_topology`, `cisco_interface_channel_group`, `cisco_interface_portchannel`, `cisco_portchannel_global`, `cisco_snmp_community`, `cisco_snmp_group`, `cisco_snmp_server`, `cisco_snmp_user`, `cisco_vpc_domain`, `cisco_vtp`
-  - `domain_name`, `name_server`, `network_snmp`, `network_vlan`, `ntp_config`, `ntp_server`, `port_channel`, `radius`, `radius_global`, `radius_server`, `radius_server_group`, `search_domain`, `snmp_community`, `snmp_notification`, `snmp_notification_receiver`, `snmp_user`, `tacacs`, `tacacs_global`
+  - `cisco_aaa_authentication_login`, `cisco_aaa_authorization_login_cfg_svc`, `cisco_aaa_authorization_login_exec_svc`, `cisco_aaa_group_tacacs`
+  - `cisco_fabricpath_global`, `cisco_fabricpath_topology`
+  - `cisco_interface_channel_group`, `cisco_interface_portchannel`, `cisco_portchannel_global`
+  - `cisco_snmp_community`, `cisco_snmp_group`, `cisco_snmp_server`, `cisco_snmp_user`
+  - `cisco_vpc_domain`
+  - `cisco_vtp`
+  - `domain_name`, `name_server`, `search_domain`, `network_vlan`
+  - `ntp_config`, `ntp_server`
+  - `port_channel`
+  - `radius`, `radius_global`, `radius_server`, `radius_server_group`
+  - `network_snmp`, `snmp_community`, `snmp_notification`, `snmp_notification_receiver`, `snmp_user`
+  - `tacacs`, `tacacs_global`
 - Extended `cisco_bgp` with the following attributes:
   - `nsr`
   - `reconnect_interval`
