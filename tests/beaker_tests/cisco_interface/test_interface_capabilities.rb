@@ -35,7 +35,7 @@ tests = {
 def parse_capabilities(agent, cmd)
   on(agent, cmd)
   caps = {}
-  caps['Speed'] = Regexp.last_match[1] if stdout[/Speed:\s+([\d,]+)/]
+  caps['Speed'] = Regexp.last_match[1] if stdout[/Speed:\s+([\w,]+)/]
   caps['Duplex'] = Regexp.last_match[1] if stdout[/Duplex:\s+([\w,-]+)/]
   logger.debug("\ncapabilities hash: #{caps}")
   caps
@@ -58,7 +58,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   resource_cmd = PUPPET_BINPATH + "resource cisco_interface_capabilities '#{intf}'"
   resource_caps = parse_capabilities(agent, resource_cmd)
 
-  testcase.fail_test('puppet resource mismatch with vsh :: FAIL') unless
+  fail_test('puppet resource mismatch with vsh :: FAIL') unless
     vsh_caps == resource_caps
 
   # -------------------------------------------------------------------
@@ -67,7 +67,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   vsh_caps.keys.each do |k|
     next if vsh_caps[k] == util_caps[k]
-    testcase.fail_test('utilitylib helper results mismatch with vsh')
+    fail_test('utilitylib helper results mismatch with vsh')
   end
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
