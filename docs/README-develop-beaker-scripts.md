@@ -109,7 +109,7 @@ HOSTS:
     nx-agent:
         roles:
             - agent
-        platform: cisco-5-x86_64
+        platform: cisco_nexus-5-x86_64
         ip: nx-agent.domain.com
         vrf: management
         #target: guestshell
