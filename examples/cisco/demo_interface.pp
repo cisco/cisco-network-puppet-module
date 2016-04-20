@@ -101,7 +101,7 @@ class ciscopuppet::cisco::demo_interface {
       shutdown              => false,
       ipv4_address          => "10.10.10.1",
       ipv4_netmask_length   => 24, 
-      vrf => 'Coke'
+      vrf                   => 'Coke'
     }
 
     #  Requires F3 or newer linecards

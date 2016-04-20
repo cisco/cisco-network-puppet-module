@@ -579,6 +579,7 @@ test_name "TestCase :: #{testheader}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 6. BDI Property Testing")
+  create_bridge_domain(tests)
   test_harness_interface(tests, 'BDI_non_default')
 
   # -------------------------------------------------------------------
