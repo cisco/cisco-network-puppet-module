@@ -24,7 +24,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `cisco_snmp_community`, `cisco_snmp_group`, `cisco_snmp_server`, `cisco_snmp_user`
   - `cisco_vpc_domain`
   - `cisco_vtp`
-  - `domain_name`, `name_server`, `search_domain`, `network_vlan`, `network_dns`
+  - `domain_name`, `name_server`, `network_dns`, `network_vlan`, `search_domain`
   - `ntp_config`, `ntp_server`
   - `port_channel`
   - `radius`, `radius_global`, `radius_server`, `radius_server_group`
