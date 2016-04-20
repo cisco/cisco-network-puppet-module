@@ -142,7 +142,7 @@ def build_manifest_interface_channel_group(tests, id)
 
   cmd = PUPPET_BINPATH +
         "resource cisco_interface_channel_group '#{tests[id][:title_pattern]}'"
-  tests[id][:resource_cmd] = get_namespace_cmd(agent, cmd, options)
+  tests[id][:resource_cmd] = cmd
 end
 
 # Wrapper for interface_channel_group specific settings prior to calling the

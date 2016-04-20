@@ -246,9 +246,7 @@ tests['non_default_properties_no_hash'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = PUPPET_BINPATH +
-        'resource cisco_portchannel_global'
-  get_namespace_cmd(agent, cmd, options)
+  PUPPET_BINPATH + 'resource cisco_portchannel_global'
 end
 
 def build_manifest_portchannel_global(tests, id)

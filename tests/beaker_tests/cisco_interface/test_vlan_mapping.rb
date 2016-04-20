@@ -144,8 +144,7 @@ def build_manifest_vlan_mapping(tests, id)
   }\n      }\nEOF"
 
   cmd = PUPPET_BINPATH + "resource cisco_interface '#{intf}'"
-  tests[id][:resource_cmd] =
-    get_namespace_cmd(agent, cmd, options)
+  tests[id][:resource_cmd] = cmd
 end
 
 def test_harness_vlan_mapping(tests, id)

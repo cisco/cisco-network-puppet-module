@@ -91,8 +91,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SnmpGroupLib.create_snmpgroup_manifest_defaults)
 
     # Expected exit_code is 0 since this is a puppet agent cmd without change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str)
 
     logger.info("Get default manifest from master :: #{result}")
@@ -102,8 +101,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_snmp_group resource state on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_snmp_group 'network-admin'", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_snmp_group 'network-admin'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ensure' => 'present' },
@@ -112,8 +110,7 @@ test_name "TestCase :: #{testheader}" do
 
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_snmp_group 'foobar'", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_snmp_group 'foobar'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ensure' => 'absent' },
