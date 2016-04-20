@@ -424,40 +424,6 @@ resource_cisco_overlay_global = {
   value:    '1.1.1',
 }
 
-# cisco_interface uses the interface name as the title.
-# Find an available interface and create an appropriate title.
-def create_interface_title(tests, id)
-  return tests[id][:title_pattern] if tests[id][:title_pattern]
-
-  # Prefer specific test key over the all tests key
-  type = tests[id][:intf_type] || tests[:intf_type]
-  case type
-  when /ethernet/i
-    if tests[:ethernet]
-      intf = tests[:ethernet]
-    else
-      intf = find_interface(tests, id)
-      # cache for later tests
-      tests[:ethernet] = intf
-    end
-  when /dot1q/
-    if tests[:ethernet]
-      intf = "#{tests[:ethernet]}.1"
-    else
-      intf = find_interface(tests, id)
-      # cache for later tests
-      tests[:ethernet] = intf
-      intf = "#{intf}.1" unless intf.nil?
-    end
-  when /vlan/
-    intf = tests[:svi_name]
-  when /bdi/
-    intf = tests[:bdi_name]
-  end
-  logger.info("\nUsing interface: #{intf}")
-  tests[id][:title_pattern] = intf
-end
-
 # Create actual manifest for a given test scenario.
 def build_manifest_interface(tests, id)
   manifest = prop_hash_to_manifest(tests[id][:manifest_props])
