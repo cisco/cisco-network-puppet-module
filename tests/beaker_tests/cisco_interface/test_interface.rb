@@ -407,13 +407,13 @@ tests['BDI_non_default'] = {
     ipv4_address:        '10.10.10.1',
     ipv4_netmask_length: '24',
     shutdown:            'false',
-    vrf:                 'Coke',
+    vrf:                 'test1',
   },
   resource:         {
     'ipv4_address'        => '10.10.10.1',
     'ipv4_netmask_length' => '24',
     'shutdown'            => 'false',
-    'vrf'                 => 'Coke',
+    'vrf'                 => 'test1',
   },
 }
 

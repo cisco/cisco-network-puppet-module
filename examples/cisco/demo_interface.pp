@@ -92,7 +92,7 @@ class ciscopuppet::cisco::demo_interface {
     cisco_bridge_domain { "100":
       ensure    => 'present',
       shutdown  => false,
-      bd_name   => 'Coke'
+      bd_name   => 'test1'
     }   
 
     cisco_interface { 'Bdi100':
@@ -101,7 +101,7 @@ class ciscopuppet::cisco::demo_interface {
       shutdown              => false,
       ipv4_address          => "10.10.10.1",
       ipv4_netmask_length   => 24, 
-      vrf                   => 'Coke'
+      vrf                   => 'test1'
     }
 
     #  Requires F3 or newer linecards
