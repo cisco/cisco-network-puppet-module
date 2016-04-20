@@ -1,4 +1,3 @@
-# Manages a Cisco Bridge Domain.
 #
 # March 2016
 #
@@ -41,25 +40,9 @@ Puppet::Type.newtype(:cisco_encapsulation) do
     }
   "
 
-  ###################
-  # Resource Naming #
-  ###################
-
-  # Parse out the title to fill in the attributes in these
-  # patterns. These attributes can be overwritten later.
-  def self.title_patterns
-    identity = ->(x) { x }
-    patterns = []
-
-    # Below pattern matches both parts of the full composite name.
-    patterns << [
-      /^(\S+)$/,
-      [
-        [:encap, identity]
-      ],
-    ]
-    patterns
-  end
+  ##############
+  # Parameters #
+  ##############
 
   newparam(:encap, namevar: true) do
     desc 'Profile name of the Encapsulation. Valid values are alphanumeric
@@ -67,7 +50,7 @@ Puppet::Type.newtype(:cisco_encapsulation) do
   end # param id
 
   ##############
-  # Attributes #
+  # Properties #
   ##############
 
   ensurable
@@ -75,7 +58,8 @@ Puppet::Type.newtype(:cisco_encapsulation) do
   newproperty(:dot1q_map, array_matching: :all) do
     format = '[dot1q vlans, vnis]'
     desc %(The encapsulation profile dot1q vlan-to-vni mapping.
-         Valid values is a mapping Array of the format: #{format}.
+         Valid values are a mapping Array of the format: #{format},
+         or keyword 'default'.
          Example:
             dot1q_map => ['100-110,150', '5000-5010,6000']
          or
@@ -83,13 +67,23 @@ Puppet::Type.newtype(:cisco_encapsulation) do
          )
 
     validate do |value|
-      fail 'Values in dot1q list is not of integer type' unless /^[\d\s,-]*$/.match(value)
+      fail 'Values in dot1q list are not of integer type' unless
+       /^[\d\s,-]*$/.match(value) || value[/default/]
     end
 
     munge do |value|
+      return :default if value == 'default'
+
       value = value.gsub(/\s/, '')
       value = PuppetX::Cisco::Utils.range_summarize(value.to_s, false)
       value
     end # munge
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
   end # property name
 end # Puppet::Type.newtype

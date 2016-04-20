@@ -38,20 +38,20 @@ Puppet::Type.type(:cisco_pim).provide(:cisco) do
   PIM_ALL_PROPS = PIM_NON_BOOL_PROPS + PIM_BOOL_PROPS
 
   # Dynamic method generation for getters & setters
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@pim',
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@nu',
                                             PIM_NON_BOOL_PROPS)
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@pim',
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@nu',
                                             PIM_BOOL_PROPS)
 
   def initialize(value={})
     super(value)
     afi = @property_hash[:afi]
     vrf = @property_hash[:vrf]
-    @pim = Cisco::Pim.pims[afi][vrf] unless afi.nil? && vrf.nil?
+    @nu = Cisco::Pim.pims[afi][vrf] unless afi.nil? && vrf.nil?
     @property_flush = {}
   end
 
-  def self.properties_get(afi, vrf, inst)
+  def self.properties_get(afi, vrf, nu_obj)
     current_state = {
       name:   "#{afi} #{vrf}",
       afi:    afi,
@@ -59,21 +59,20 @@ Puppet::Type.type(:cisco_pim).provide(:cisco) do
       ensure: :present,
     }
     # Call node_utils getter for each property
-    PIM_ALL_PROPS.each do |prop|
-      current_state[prop] = inst.send(prop)
+    PIM_NON_BOOL_PROPS.each do |prop|
+      current_state[prop] = nu_obj.send(prop)
     end
     new(current_state)
   end # self.properties_get
 
   def self.instances
-    return [] unless Cisco::Pim.feature_enabled
-    pim_instances = []
+    pims = []
     Cisco::Pim.pims.each do |afi, vrfs|
-      vrfs.each do |vrf, pim_inst|
-        pim_instances << properties_get(afi, vrf, pim_inst)
+      vrfs.each do |vrf, nu_obj|
+        pims << properties_get(afi, vrf, nu_obj)
       end
     end
-    pim_instances
+    pims
   end # self.instances
 
   def self.prefetch(resources)
@@ -104,20 +103,19 @@ Puppet::Type.type(:cisco_pim).provide(:cisco) do
       next unless @resource[prop]
       send("#{prop}=", @resource[prop]) if new_pim_instance
       next if @property_flush[prop].nil?
-      @pim.send("#{prop}=", @property_flush[prop]) if
-        @pim.respond_to?("#{prop}=")
+      @nu.send("#{prop}=", @property_flush[prop]) if
+        @nu.respond_to?("#{prop}=")
     end
   end
 
   def flush
     if @property_flush[:ensure] == :absent
-      @pim.destroy
-      @pim = nil
+      @nu.destroy
+      @nu = nil
     else
-      if @pim.nil?
-        # create new
+      if @nu.nil?
         new_pim_instance = true
-        @pim = Cisco::Pim.new(@resource[:afi], @resource[:vrf])
+        @nu = Cisco::Pim.new(@resource[:afi], @resource[:vrf])
       end
       properties_set(new_pim_instance)
     end

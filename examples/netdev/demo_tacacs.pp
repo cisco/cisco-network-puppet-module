@@ -16,7 +16,7 @@
 
 class ciscopuppet::netdev::demo_tacacs {
   tacacs {'default':
-    enabled  => true,
+    enable => true,
   }
 
   tacacs_global { 'default':

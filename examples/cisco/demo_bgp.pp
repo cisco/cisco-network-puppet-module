@@ -272,10 +272,7 @@ class ciscopuppet::cisco::demo_bgp {
     'nexus' => 'all',
     default => undef
   }
-  $update_source = $operatingsystem ? {
-    'nexus' => 'ethernet1/1',
-    default => 'fastethernet1/1/1/1'
-  }
+  $update_source = 'loopback151'
 
   cisco_bgp_neighbor {'55.77 blue 1.1.1.1':
     ensure                 => present,

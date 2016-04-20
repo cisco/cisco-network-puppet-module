@@ -70,7 +70,6 @@ testheader = 'Resource cisco_portchannel_global'
 # Top-level keys set by caller:
 # tests[:master] - the master object
 # tests[:agent] - the agent object
-# tests[:show_cmd] - the common show command to use for test_show_run
 #
 tests = {
   master: master,
@@ -84,7 +83,6 @@ tests = {
 # tests[id][:manifest] - the complete manifest, as used by test_harness_common
 # tests[id][:resource] - a hash of expected states, used by test_resource
 # tests[id][:resource_cmd] - 'puppet resource' command to use with test_resource
-# tests[id][:show_pattern] - array of regexp patterns to use with test_show_cmd
 # tests[id][:ensure] - (Optional) set to :present or :absent before calling
 # tests[id][:code] - (Optional) override the default exit code in some tests.
 #
@@ -213,6 +211,35 @@ tests['non_default_properties_sym'] = {
   },
 }
 
+tests['default_properties_no_hash'] = {
+  title_pattern:  'default',
+  manifest_props: "
+    bundle_hash                  => 'default',
+    bundle_select                => 'default',
+    rotate                       => 'default',
+  ",
+  code:           [0, 2],
+  resource_props: {
+    'bundle_hash'   => 'ip-l4port',
+    'bundle_select' => 'src-dst',
+    'rotate'        => '0',
+  },
+}
+
+tests['non_default_properties_no_hash'] = {
+  title_pattern:  'default',
+  manifest_props: "
+    bundle_hash                  => 'ip',
+    bundle_select                => 'dst',
+    rotate                       => '4',
+  ",
+  resource_props: {
+    'bundle_hash'   => 'ip',
+    'bundle_select' => 'dst',
+    'rotate'        => '4',
+  },
+}
+
 #################################################################
 # HELPER FUNCTIONS
 #################################################################
@@ -271,6 +298,8 @@ test_name "TestCase :: #{testheader}" do
     id = 'default_properties_eth'
   when /n3k|n9k/
     id = 'default_properties_sym'
+  when /n8k/
+    id = 'default_properties_no_hash'
   end
 
   tests[id][:desc] = '1.1 Default Properties'
@@ -317,8 +346,8 @@ test_name "TestCase :: #{testheader}" do
     tests['non_default_properties_eth'][:resource_props]['bundle_hash'] = 'port'
     tests['non_default_properties_eth'][:manifest_props]['dst'] = 'src'
     tests['non_default_properties_eth'][:resource_props]['bundle_select'] = 'src'
-    tests['non_default_properties_eth'][:manifest_props]['CRC10c'] = 'CRC10a'
-    tests['non_default_properties_eth'][:resource_props]['hash_poly'] = 'CRC10a'
+    tests['non_default_properties_eth'][:manifest_props]['CRC10c'] = 'CRC10a' if device == 'n6k'
+    tests['non_default_properties_eth'][:resource_props]['hash_poly'] = 'CRC10a' if device == 'n6k'
     test_harness_portchannel_global(tests, id)
 
     tests[id][:desc] = '2.3 Non Default Properties'
@@ -326,7 +355,8 @@ test_name "TestCase :: #{testheader}" do
     tests['non_default_properties_eth'][:resource_props]['bundle_hash'] = 'port-only'
     tests['non_default_properties_eth'][:manifest_props]['src'] = 'src-dst'
     tests['non_default_properties_eth'][:resource_props]['bundle_select'] = 'src-dst'
-    tests['non_default_properties_eth'][:manifest_props]['CRC10a'] = 'CRC10d'
+    tests['non_default_properties_eth'][:manifest_props]['CRC10a'] = 'CRC10d' if device == 'n6k'
+    tests['non_default_properties_eth'][:manifest_props]['CRC10c'] = 'CRC10d' if device == 'n5k'
     tests['non_default_properties_eth'][:resource_props]['hash_poly'] = 'CRC10d'
     test_harness_portchannel_global(tests, id)
 
@@ -379,6 +409,32 @@ test_name "TestCase :: #{testheader}" do
     tests['non_default_properties_sym'][:resource_props]['bundle_hash'] = 'ip-gre'
     test_harness_portchannel_global(tests, id)
 
+  elsif device == 'n8k'
+    id = 'non_default_properties_no_hash'
+    tests[id][:desc] = '2.1 Non Default Properties'
+    test_harness_portchannel_global(tests, id)
+
+    tests[id][:desc] = '2.2 Non Default Properties'
+    tests['non_default_properties_no_hash'][:manifest_props]['ip'] = 'ip-l4port-vlan'
+    tests['non_default_properties_no_hash'][:resource_props]['bundle_hash'] = 'ip-l4port-vlan'
+    test_harness_portchannel_global(tests, id)
+
+    tests[id][:desc] = '2.3 Non Default Properties'
+    tests['non_default_properties_no_hash'][:manifest_props]['ip-l4port-vlan'] = 'ip-vlan'
+    tests['non_default_properties_no_hash'][:resource_props]['bundle_hash'] = 'ip-vlan'
+    test_harness_portchannel_global(tests, id)
+
+    tests[id][:desc] = '2.4 Non Default Properties'
+    tests['non_default_properties_no_hash'][:manifest_props]['ip-vlan'] = 'l4port'
+    tests['non_default_properties_no_hash'][:resource_props]['bundle_hash'] = 'l4port'
+    test_harness_portchannel_global(tests, id)
+
+    tests[id][:desc] = '2.5 Non Default Properties'
+    tests['non_default_properties_no_hash'][:manifest_props]['l4port'] = 'mac'
+    tests['non_default_properties_no_hash'][:resource_props]['bundle_hash'] = 'mac'
+    tests['non_default_properties_no_hash'][:manifest_props]['dst'] = 'src'
+    tests['non_default_properties_no_hash'][:resource_props]['bundle_select'] = 'src'
+    test_harness_portchannel_global(tests, id)
   end
 
   # no absent test for portchannel_global

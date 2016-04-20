@@ -1,4 +1,4 @@
-# Manifest to demo cisco_vpc_domain provider
+# Manifest to demo cisco_vpc_domain provider with vPC+ features
 #
 # Copyright (c) 2016 Cisco and/or its affiliates.
 #
@@ -16,7 +16,8 @@
 
 class ciscopuppet::cisco::demo_vpc_plus {
 
-  if platform_get() =~ /n(5|6|7)k/ {
+  if platform_get() =~ /n7k/ {
+    # this next block is for future use when n5k and n6k support gets added
     if platform_get() == 'n7k' {
       $fabricpath_multicast_load_balance = true
       $port_channel_limit = false
@@ -24,14 +25,18 @@ class ciscopuppet::cisco::demo_vpc_plus {
       $fabricpath_multicast_load_balance = undef
       $port_channel_limit = undef
     }
-    # fabricpath feature must be enabled first. Just declare one of the
-    # fabricpath resources or a cisco_vlan with fabricpath mode to automatically
-    # enable fabricpath
+
+    # fabricpath feature must be enabled to use cisco_vlan: mode => 'fabricpath'.
+    # Just declare one of the fabricpath resources or a cisco_vlan with
+    # fabricpath mode to automatically enable fabricpath
+    cisco_fabricpath_global { 'default': ensure => present }
+
     cisco_vlan { '10' :
       ensure                            => present,
       mode                              => 'fabricpath',
       shutdown                          => false,
     }
+
     # Other than fabricpath_emulated_switch_id, only the peer_keepalive params
     # are mandatory to get the vPC+ domain up and running
     cisco_vpc_domain { '100' :
@@ -74,8 +79,8 @@ class ciscopuppet::cisco::demo_vpc_plus {
       shutdown        => false,
       require         => Cisco_interface_channel_group['Ethernet1/2'],
     }
-  } else {
-    warning('This platform does not support vPC+ feature')
-  }
 
+  } else {
+    notify{'SKIP: This platform does not support vPC+ feature': }
+  }
 }
