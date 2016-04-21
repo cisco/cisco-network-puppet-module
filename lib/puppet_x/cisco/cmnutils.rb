@@ -123,8 +123,12 @@ module PuppetX
         end
         ranges.join(',').gsub('..', '-')
       end
+    end # class Utils
 
+    # PuppetX::Cisco::PvlanUtils - Common BGP methods used by BGP Types/Providers
+    class PvlanUtils
       def self.prepare_list(input)
+        return [] if input.nil? || input.empty?
         result = []
         input.gsub!('-', '..')
         input.gsub!(/\s+/, '')
@@ -143,7 +147,7 @@ module PuppetX
         end
         result
       end
-    end # class Utils
+    end
 
     # PuppetX::Cisco::BgpUtil - Common BGP methods used by BGP Types/Providers
     class BgpUtils

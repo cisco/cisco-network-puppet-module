@@ -27,22 +27,68 @@ tests = {
   agent:            agent,
   resource_name:    'cisco_vlan',
   operating_system: 'nexus',
+  platform:         'n(5|6|7|9)k',
 }
 
-tests[:non_default] = {
-  desc:           "2.1 Non Default Properties 'configure pvlan type'",
+tests[:primary] = {
+  desc:           '2.1 configure pvlan primary type',
   title_pattern:  '100',
   manifest_props: {
-    private_vlan_type: 'primary',
-    shutdown:          false,
+    private_vlan_type: 'primary'
   },
 }
 
-tests[:non_default_change_type] = {
-  desc:           "2.2 Non Default Properties 'change type of previous pvlan'",
+tests[:community] = {
+  desc:           '2.2 change type: primary to community',
   title_pattern:  '100',
   manifest_props: {
     private_vlan_type: 'community'
+  },
+}
+
+tests[:isolated] = {
+  desc:           '2.3 change type: community to isolated',
+  title_pattern:  '100',
+  manifest_props: {
+    private_vlan_type: 'isolated'
+  },
+}
+
+tests[:isolated_101] = {
+  desc:           '2.4 configured isolated vlan',
+  title_pattern:  '101',
+  manifest_props: {
+    private_vlan_type: 'isolated'
+  },
+}
+
+tests[:community_102] = {
+  desc:           '2.5 configured community vlan',
+  title_pattern:  '102',
+  manifest_props: {
+    private_vlan_type: 'community'
+  },
+}
+
+vlan_assoc = %w(101 102)
+tests[:association] = {
+  desc:           '2.6 configured private vlan association',
+  title_pattern:  '100',
+  manifest_props: {
+    private_vlan_association: ['101-102']
+  },
+  resource:       {
+    'private_vlan_association' => "#{vlan_assoc}"
+  },
+}
+
+tests[:no_association] = {
+  desc:           '2.7 unconfigured private vlan association',
+  title_pattern:  '100',
+  manifest_props: {
+    private_vlan_association: []
+  },
+  resource:       {
   },
 }
 
@@ -51,9 +97,15 @@ tests[:non_default_change_type] = {
 #################################################################
 test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 1. Non Default Property Testing")
-  test_harness_run(tests, :non_default)
-  test_harness_run(tests, :non_default_change_type)
+  logger.info("\n#{'-' * 60}\nSection 1. Property Testing")
+  test_harness_run(tests, :primary)
+  test_harness_run(tests, :community)
+  test_harness_run(tests, :isolated)
+  test_harness_run(tests, :primary)
+  test_harness_run(tests, :isolated_101)
+  test_harness_run(tests, :community_102)
+  test_harness_run(tests, :association)
+  test_harness_run(tests, :no_association)
   resource_absent_cleanup(agent, 'cisco_vlan', 'private-vlan CLEANUP :: ')
 end
 

@@ -738,7 +738,6 @@ Puppet::Type.newtype(:cisco_interface) do
       (is.size == should.flatten.size && is.sort == should.flatten.sort)
     end
   end # property switchport_mode_private_vlan_host_association
-
   newproperty(:switchport_mode_private_vlan_host_promisc, array_matching: :all) do
     format = '["primary_vlan", "vlans"]'
     desc 'An array of [primary_vlan, secondary_vlans] pair. '\
@@ -751,7 +750,7 @@ Puppet::Type.newtype(:cisco_interface) do
       fail "Vlan '#{value}' #{match_error}" unless
             value.kind_of? String
       fail "Vlan '#{value}' #{match_error}" unless
-           /^(\s*\d+\s*[,-]{0,1}\s*\d+\s*)$/.match(value).to_s == value
+           /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value
     end
 
     munge do |value|
@@ -802,7 +801,8 @@ Puppet::Type.newtype(:cisco_interface) do
     end
 
     def insync?(is)
-      (is.size == should.flatten.size && is.sort == should.flatten.sort)
+      pair = should.join(' ')
+      is.include? pair
     end
   end # switchport_private_vlan_association_trunk
 
@@ -821,7 +821,7 @@ Puppet::Type.newtype(:cisco_interface) do
       fail "Vlan '#{value}' #{match_error}" unless
             value.kind_of? String
       fail "Vlan '#{value}' #{match_error}" unless
-           /^(\s*\d+\s*[,-]{0,1}\s*\d+\s*)$/.match(value).to_s == value
+           /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value
     end
 
     munge do |value|
@@ -829,7 +829,8 @@ Puppet::Type.newtype(:cisco_interface) do
     end
 
     def insync?(is)
-      (is.size == should.flatten.size && is.sort == should.flatten.sort)
+      pair = should.join(' ')
+      is.include? pair
     end
   end # switchport_private_vlan_mapping_trunk
 
@@ -845,15 +846,16 @@ Puppet::Type.newtype(:cisco_interface) do
       fail "Vlan '#{value}' #{match_error}" unless
             value.kind_of? String
       fail "Vlan '#{value}' #{match_error}" unless
-           /^(\s*\d+\s*[,-]{0,1}\s*\d+\s*)$/.match(value).to_s == value
+           /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value
     end
 
     munge do |value|
-      PuppetX::Cisco::Utils.prepare_list(value)
+      value.gsub(/\s+/, '')
     end
 
     def insync?(is)
-      (is.size == should.flatten.size && is.sort == should.flatten.sort)
+      list = should[0].split(',')
+      (is.size == list.size && is.sort == list.sort)
     end
   end # switchport_private_vlan_trunk_allowed_vlan
 
@@ -886,14 +888,16 @@ Puppet::Type.newtype(:cisco_interface) do
       fail "Vlan '#{value}' #{match_error}" unless
             value.kind_of? String
       fail "Vlan '#{value}' #{match_error}" unless
-            /^(\s*\d+\s*[,-]{0,1}\s*\d+\s*)$/.match(value).to_s == value
+            /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value
     end
 
     munge do |value|
-      PuppetX::Cisco::Utils.prepare_list(value)
+      value.gsub!(/\s+/, '')
+      PuppetX::Cisco::PvlanUtils.prepare_list(value)
     end
 
     def insync?(is)
+      is = PuppetX::Cisco::PvlanUtils.prepare_list(is[0])
       (is.size == should.flatten.size && is.sort == should.flatten.sort)
     end
   end # private_vlan_mapping

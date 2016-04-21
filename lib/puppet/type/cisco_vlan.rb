@@ -177,21 +177,12 @@ Puppet::Type.newtype(:cisco_vlan) do
     validate do |value|
       fail "Vlan '#{value}' #{match_error}" unless
             value.kind_of? String
-      result = PuppetX::Cisco::Utils.prepare_list(value)
-      result.each do |item|
-        fail "Vlan '#{value}' #{match_error}" unless
-             value == :default || /(\d+)/.match(item)
-      end
+      fail "Vlan '#{value}' #{match_error}" unless
+            /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value
     end
 
     munge do |value|
-      begin
-        result = []
-        result = prepare_list(value)
-      rescue
-        raise 'vlan is not valid'
-      end
-      result
+      PuppetX::Cisco::PvlanUtils.prepare_list(value)
     end
 
     def insync?(is)
