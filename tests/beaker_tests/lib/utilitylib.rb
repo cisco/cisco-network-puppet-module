@@ -1091,7 +1091,7 @@ def interface_probe(tests, probe={})
   probe[:caps] = interface_capabilities(agent, intf) if probe[:caps].nil?
   fail 'interface_probe: capabilities data not present' if probe[:caps].nil?
 
-  debug_probe(probe, 'Probing')
+  debug_probe(probe, 'Probe Begin')
   probe[:probe_props].each do |prop|
     success = []
     probe[:caps][prop].to_s.split(',').each do |val|
@@ -1109,6 +1109,7 @@ def interface_probe(tests, probe={})
 end
 
 def debug_probe(probe, msg)
-  logger.info("\n      #{msg}: %s",
-              probe[:probe_props].map { |p| "#{p} => #{probe[:caps][p]}" })
+  dbg = ''
+  probe[:probe_props].each { |p| dbg += "'#{p}' => #{probe[:caps][p]}, " }
+  logger.info("\n      #{msg}: #{dbg}")
 end
