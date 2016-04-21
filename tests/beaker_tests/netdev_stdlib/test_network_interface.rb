@@ -48,84 +48,56 @@ tests[:auto] = {
   },
 }
 
-# Capabilities-to-Manifest syntax converter
-def manifest_speed(speed)
-  case speed.to_s
-  when '100' then '100m'
-  when '1000' then '1g'
-  when '10000' then '10g'
-  when '40000' then '40g'
-  when '100000' then '100g'
-  else speed
-  end
-end
-
 # This helper method is used for testbed initial setup. It also defines
 # some property test values based on the discovered interface capabilities.
 def interface_pre_check(tests)
   # Discover a usable test interface
   intf = find_interface(tests)
   [:non_default, :auto].each { |t| tests[t][:title_pattern] = intf }
-  resource_cmd = PUPPET_BINPATH + "resource network_interface '#{intf}' "
 
   # Clean the test interface
-  agent = tests[:agent]
   system_default_switchport(agent, false)
   interface_cleanup(agent, intf, 'Initial Cleanup')
 
-  cap = interface_capabilities(agent, intf)
-  precheck_testable_non_defaults(tests, resource_cmd, cap)
-  precheck_testable_auto(tests, resource_cmd)
-  interface_cleanup(agent, intf, 'Post-Pre-Check Cleanup')
-end
+  # Get the capabilities and update the caps list with any add'l test values
+  caps = interface_capabilities(agent, intf)
+  caps['Speed'] += ',auto'
+  caps['Duplex'] += ',auto'
+  mtu = '1600'
+  caps['MTU'] = mtu
 
-# Discover testable non-default property values
-def precheck_testable_non_defaults(tests, cmd, cap)
-  agent = tests[:agent]
-  testable = {}
-  cap['Speed'].to_s.split(',').each do |cap_speed|
-    man_speed = manifest_speed(cap_speed)
-    on(agent, cmd + "speed=#{man_speed}",
-       acceptable_exit_codes: [0, 2, 1], pty: true)
-    next if stdout[/error/i]
-    testable[:speed] = man_speed
-    break
+  # Create a probe hash to pre-test the properties
+  probe = {
+    cmd:          PUPPET_BINPATH + 'resource network_interface ',
+    intf:         intf,
+    caps:         caps,
+    probe_props:  %w(Speed Duplex MTU),
+    netdev_speed: true,
+  }
+
+  probe = interface_probe(tests, probe)
+
+  # Fixup the test manifests
+  probe[:caps]['Speed'].each do |val|
+    if val[/auto/]
+      tests[:auto][:manifest_props][:speed] = val
+    else
+      tests[:non_default][:manifest_props][:speed] = val
+    end
   end
 
-  cap['Duplex'].to_s.split(',').each do |duplex|
-    on(agent, cmd + "duplex=#{duplex}",
-       acceptable_exit_codes: [0, 2, 1], pty: true)
-    next if stdout[/error/i]
-    testable[:duplex] = duplex
-    break
+  probe[:caps]['Duplex'].each do |val|
+    if val[/auto/]
+      tests[:auto][:manifest_props][:duplex] = val
+    else
+      tests[:non_default][:manifest_props][:duplex] = val
+    end
   end
+  tests[:non_default][:manifest_props][:mtu] = mtu if probe[:caps]['MTU']
 
-  # MTU isn't provided by interface_capabilities
-  mtu = 1600
-  on(agent, cmd + "mtu=#{mtu}",
-     acceptable_exit_codes: [0, 2, 1], pty: true)
-  testable[:mtu] = mtu unless stdout[/error/i]
-
-  # Update the :non_default test with the testable values
-  testable.keys.each do |k|
-    tests[:non_default][:manifest_props][k] = testable[k]
-  end
   logger.info "\n    Pre-Check :non_default hash: #{tests[:non_default]}"
-end
-
-# Discover testable 'auto' property values
-def precheck_testable_auto(tests, cmd)
-  agent = tests[:agent]
-
-  on(agent, cmd + "speed='auto'",
-     acceptable_exit_codes: [0, 2, 1], pty: true)
-  tests[:auto][:manifest_props][:speed] = 'auto' unless stdout[/error/i]
-
-  on(agent, cmd + "duplex='auto'",
-     acceptable_exit_codes: [0, 2, 1], pty: true)
-  tests[:auto][:manifest_props][:duplex] = 'auto' unless stdout[/error/i]
-
   logger.info "\n    Pre-Check :auto hash: #{tests[:auto]}"
+  interface_cleanup(agent, intf, 'Post-Pre-Check Cleanup')
 end
 
 #################################################################
