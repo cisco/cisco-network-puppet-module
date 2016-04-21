@@ -1076,18 +1076,20 @@ def interface_probe(tests, probe={})
 
   # Use tests[:probe] if caller does not supply a separate probe hash
   probe = tests[:probe] if probe.empty?
+  fail 'interface_probe: probe hash not found' if probe.nil?
 
   # Find a usable interface
   probe[:intf] = find_interface(tests) if probe[:intf].nil?
   intf = probe[:intf]
+  fail 'interface_probe: interface not found' if intf.nil?
 
   # Create the puppet resource command syntax
-  fail if intf.nil? || probe[:cmd].nil?
+  fail 'interface_probe: resource command not found' if probe[:cmd].nil?
   cmd = probe[:cmd] + " '#{intf}' "
 
   # Get the interface capabilities
   probe[:caps] = interface_capabilities(agent, intf) if probe[:caps].nil?
-  fail if probe[:caps].nil?
+  fail 'interface_probe: capabilities data not present' if probe[:caps].nil?
 
   debug_probe(probe, 'Probing')
   probe[:probe_props].each do |prop|
