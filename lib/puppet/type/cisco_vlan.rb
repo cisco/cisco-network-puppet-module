@@ -42,6 +42,7 @@ Puppet::Type.newtype(:cisco_vlan) do
       shutdown   => 'true',
       private_vlan_type => 'primary',
       private_vlan_association => ['101-104']
+      fabric_control   => 'true',
     }"
 
   ###################
@@ -189,4 +190,14 @@ Puppet::Type.newtype(:cisco_vlan) do
       (is.size == should.flatten.size && is.sort == should.flatten.sort)
     end
   end # property private_vlan_association
+
+  newproperty(:fabric_control) do
+    desc %(Specifies this VLAN as the fabric control VLAN. Only one bridge-domain or VLAN can be configured as fabric-control.
+           Valid values are true, false.)
+
+    newvalues(
+      :true,
+      :false,
+      :default)
+  end # property fabric_control
 end # Puppet::Type.newtype

@@ -74,10 +74,17 @@ Puppet::Type.newtype(:cisco_vtp) do
   newproperty(:filename) do
     desc "VTP file name. Valid values are string, keyword 'default'."
 
-    munge do |file_name|
-      file_name = :default if file_name == 'default'
+    validate do |file_name|
       fail 'File name is not a string.' unless
         file_name == :default || file_name.is_a?(String)
+    end
+
+    munge do |file_name|
+      file_name = :default if file_name == 'default'
+      unless file_name == :default || /(bootflash:|usb.*:)/.match(file_name)
+        # Use 'bootflash:/' if only the filename is specified.
+        file_name = 'bootflash:/' + file_name
+      end
       file_name
     end
   end # property filename

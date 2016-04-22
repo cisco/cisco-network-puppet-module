@@ -27,47 +27,18 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 tests = {
   agent:            agent,
   master:           master,
+  intf_type:        'ethernet',
   operating_system: 'nexus',
-  platform:         'n7k',
-  resource_name:    'cisco_interface_service_vni',
-  sid:              22,
+  resource_name:    'cisco_interface_capabilities',
 }
 
-# Test hash test cases
-tests[:default] = {
-  desc:           '1.1 Default Properties',
-  manifest_props: {
-    encapsulation_profile_vni: 'default',
-    shutdown:                  'default',
-  },
-  resource:       {
-    # 'encapsulation_profile_vni' is nil
-    'shutdown' => 'true'
-  },
-}
-
-tests[:non_default] = {
-  desc:           '2.1 Non Default Properties',
-  manifest_props: {
-    encapsulation_profile_vni: 'vni_500_5000',
-    shutdown:                  'false',
-  },
-}
-
-# TEST PRE-REQUISITES
-#   - F3 linecard assigned to admin vdc
-#   - Global encap profile vni config
-def dependency_manifest(*)
-  "
-    cisco_vdc { '#{default_vdc_name}':
-      ensure                     => present,
-      limit_resource_module_type => 'f3',
-    }
-
-    cisco_encapsulation { 'vni_500_5000':
-      dot1q_map => #{Array['500', '5000']}
-    }
-  "
+def parse_capabilities(agent, cmd)
+  on(agent, cmd)
+  caps = {}
+  caps['Speed'] = Regexp.last_match[1] if stdout[/Speed:\s+([\w,]+)/]
+  caps['Duplex'] = Regexp.last_match[1] if stdout[/Duplex:\s+([\w,-]+)/]
+  logger.debug("\ncapabilities hash: #{caps}")
+  caps
 end
 
 #################################################################
@@ -75,27 +46,28 @@ end
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
   skip_unless_supported(tests)
-  if (intf = mt_full_interface).nil?
-    prereq_skip(nil, self,
-                'MT-full tests require F3 or compatible line module')
-  end
-
-  # Clean up any stale pre-req configs that might conflict with our test
-  resource_absent_cleanup(agent, 'cisco_encapsulation')
 
   # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
+  logger.info("\n#{'-' * 60}\n1.1 Test puppet resource vs vsh results")
 
-  id = :default
-  tests[id][:title_pattern] = "#{intf} #{tests[:sid]}"
-  test_harness_run(tests, id)
+  intf = find_interface(tests)
 
-  tests[id][:ensure] = :absent
-  tests[id].delete(:preclean)
-  test_harness_run(tests, id)
+  vsh_cmd = get_vshell_cmd("show interface #{intf} capabilities")
+  vsh_caps = parse_capabilities(agent, vsh_cmd)
 
-  # -----------------------------------
-  resource_absent_cleanup(agent, 'cisco_interface_service_vni')
-  resource_absent_cleanup(agent, 'cisco_encapsulation')
+  resource_cmd = PUPPET_BINPATH + "resource cisco_interface_capabilities '#{intf}'"
+  resource_caps = parse_capabilities(agent, resource_cmd)
+
+  fail_test('puppet resource mismatch with vsh :: FAIL') unless
+    vsh_caps == resource_caps
+
+  # -------------------------------------------------------------------
+  logger.info("\n#{'-' * 60}\n1.2 Test with utilitylib helper results")
+  util_caps = interface_capabilities(agent, intf)
+
+  vsh_caps.keys.each do |k|
+    next if vsh_caps[k] == util_caps[k]
+    fail_test('utilitylib helper results mismatch with vsh')
+  end
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

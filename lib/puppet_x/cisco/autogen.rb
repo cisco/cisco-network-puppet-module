@@ -74,7 +74,7 @@ module PuppetX
             #   fail '@property_flush not defined' if
             #     @property_flush.nil?
             #   val = @nu.default_foo_array_flat if
-            #     val[0] == :default
+            #     val == :default
             #   @property_flush[:foo_array_flat] = val.flatten
             # end
             define_method("#{prop}=") do |val|

@@ -5,7 +5,7 @@
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
@@ -15,8 +15,12 @@
 # limitations under the License.
 
 class ciscopuppet::cisco::demo_encapsulation {
-  cisco_encapsulation {"PepsiCo" :
-    ensure          => present,
-    dot1q_map       => ['101-150,151, 201-250', '9000, 5102-5150,6000,7000-7050'],
+  if platform_get() =~ /n7k/ {
+    cisco_encapsulation {"test_encap" :
+      ensure          => present,
+      dot1q_map       => ['101-102,151, 201-202', '5101-5104,5202'],
+    }
+  } else {
+     notify{'SKIP: This platform does not support cisco_encapsulation': }
   }
 }

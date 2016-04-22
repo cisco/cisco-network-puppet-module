@@ -26,6 +26,7 @@ tests = {
   master:           master,
   agent:            agent,
   resource_name:    'cisco_bridge_domain_vni',
+  platform:         'n7k',
   operating_system: 'nexus',
 }
 

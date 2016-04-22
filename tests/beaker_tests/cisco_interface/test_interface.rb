@@ -71,6 +71,7 @@ tests = {
   master:   master,
   agent:    agent,
   svi_name: 'vlan13',
+  bdi_name: 'bdi100',
 }
 
 tests_2 = {
@@ -568,6 +569,23 @@ tests['pvlan_mapping_svi'] = {
   },
   resource:         {
     'private_vlan_mapping' => "['102-103']"
+
+tests['BDI_non_default'] = {
+  desc:             '7.1 (BDI) Non Default BDI Properties',
+  operating_system: 'nexus',
+  platform:         'n(7)k',
+  intf_type:        'bdi',
+  manifest_props:   {
+    ipv4_address:        '10.10.10.1',
+    ipv4_netmask_length: '24',
+    shutdown:            'false',
+    vrf:                 'test1',
+  },
+  resource:         {
+    'ipv4_address'        => '10.10.10.1',
+    'ipv4_netmask_length' => '24',
+    'shutdown'            => 'false',
+    'vrf'                 => 'test1',
   },
 }
 
@@ -605,6 +623,8 @@ def create_interface_title(tests, id)
     end
   when /vlan/
     intf = tests[:svi_name]
+  when /bdi/
+    intf = tests[:bdi_name]
   end
   logger.info("\nUsing interface: #{intf}")
   tests[id][:title_pattern] = intf
@@ -629,7 +649,7 @@ def build_manifest_interface(tests, id)
 
   cmd = PUPPET_BINPATH +
         "resource cisco_interface '#{tests[id][:title_pattern]}'"
-  tests[id][:resource_cmd] = get_namespace_cmd(agent, cmd, options)
+  tests[id][:resource_cmd] = cmd
 end
 
 # Helper for 'system default switchport'
@@ -751,6 +771,14 @@ test_name "TestCase :: #{testheader}" do
   interface_cleanup(agent, tests[:svi_name])
   # -------------------------------------------------------------------
 
+  if platform_supports_test(tests, 'BDI_non_default')
+    logger.info("\n#{'-' * 60}\nSection 7. BDI Property Testing")
+    bd = tests[:bdi_name][/(\d+)/]
+    config_bridge_domain(agent, bd)
+    test_harness_interface(tests, 'BDI_non_default')
+  end
+
+  # -------------------------------------------------------------------
   interface_cleanup(agent, tests[:ethernet]) if tests[:ethernet]
   skipped_tests_summary(tests)
 end

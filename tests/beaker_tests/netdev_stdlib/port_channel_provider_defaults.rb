@@ -70,7 +70,6 @@ testheader = 'Resource port_channel'
 # Top-level keys set by caller:
 # tests[:master] - the master object
 # tests[:agent] - the agent object
-# tests[:show_cmd] - the common show command to use for test_show_run
 #
 tests = {
   master: master,
@@ -84,7 +83,6 @@ tests = {
 # tests[id][:manifest] - the complete manifest, as used by test_harness_common
 # tests[id][:resource] - a hash of expected states, used by test_resource
 # tests[id][:resource_cmd] - 'puppet resource' command to use with test_resource
-# tests[id][:show_pattern] - array of regexp patterns to use with test_show_cmd
 # tests[id][:ensure] - (Optional) set to :present or :absent before calling
 # tests[id][:code] - (Optional) override the default exit code in some tests.
 #
@@ -137,9 +135,7 @@ tests['non_default_properties'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = PUPPET_BINPATH +
-        'resource port_channel port-channel100'
-  get_namespace_cmd(agent, cmd, options)
+  PUPPET_BINPATH + 'resource port_channel port-channel100'
 end
 
 def build_manifest_portchannel(tests, id)

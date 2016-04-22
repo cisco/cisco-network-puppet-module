@@ -122,12 +122,12 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 
 The following table indicates which providers are supported on each platform. As platforms are added to the support list they may indicate `Unsupported` for some providers that have not completed the test validation process at the time of this release. Some providers will show caveats for a platform if there are limitations on usage, such as with unsupported properties or hardware limitations.
 ##### Cisco Providers
-| ✅ = Supported <br> ❌ = Unsupported | N9k | N30xx | N31xx | N56xx | N6k | N7k | N8k | IOS XR | Caveats |
+| ✅ = Supported <br> ❌ = Unsupported <br> :heavy_minus_sign: = Not Applicable | N9k | N30xx | N31xx | N56xx | N6k | N7k | N8k | IOS XR | Caveats |
 |:---|:---:|:-----:|:-----:|:-----:|:---:|:---:|:---:|:---:|:---:|
-| [cisco_aaa_authentication_login](#type-cisco_aaa_authentication_login) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| [cisco_aaa_authorization_login_cfg_svc](#type-cisco_aaa_authorization_login_cfg_svc) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| [cisco_aaa_authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| [cisco_aaa_authentication_login](#type-cisco_aaa_authentication_login) | ✅ | ✅ | ✅ | ✅ | ✅  | ✅  | ✅ | ❌   |
+| [cisco_aaa_authorization_login_cfg_svc](#type-cisco_aaa_authorization_login_cfg_svc) | ✅ | ✅ | ✅ | ✅  | ✅  | ✅  | ✅ | ❌ |
+| [cisco_aaa_authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ✅  | ✅  | ✅  | ✅ | ❌ |
+| [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs) | ✅ | ✅ | ✅ | ✅  | ✅  | ✅  | ✅ | ❌ |
 | [cisco_acl](#type-cisco_acl) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_ace](#type-cisco_ace) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅* | ✅ | ❌ | * [caveats](#cisco_ace-caveats) |
 | [cisco_command_config](#type-cisco_command_config) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
@@ -135,26 +135,28 @@ The following table indicates which providers are supported on each platform. As
 | [cisco_bgp_af](#type-cisco_bgp_af) | ✅* | ✅* | ✅ | ✅ | ✅*  | ✅ | ✅ | ✅ | * [caveats](#cisco_bgp_af-caveats) |
 | [cisco_bgp_neighbor](#type-cisco_bgp_neighbor) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_bridge_domain](#type-cisco_bridge_domain) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| [cisco_bridge_domain_vni](#type-cisco_bridge_domain_vni) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| [cisco_encapsulation](#type-cisco_encapsulation) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| [cisco_evpn_vni](#type-cisco_evpn_vni) | ✅ | ❌ | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [cisco_bridge_domain](#type-cisco_bridge_domain) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: | :heavy_minus_sign: |
+| [cisco_bridge_domain_vni](#type-cisco_bridge_domain_vni) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: | :heavy_minus_sign: |
+| [cisco_encapsulation](#type-cisco_encapsulation) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: | :heavy_minus_sign: |
+| [cisco_evpn_vni](#type-cisco_evpn_vni) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅ | ✅ | :heavy_minus_sign: |
+| [cisco_fabricpath_global](#type-cisco_fabricpath_global) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | * [caveats](#cisco_fabricpath_global-caveats) |
+| [cisco_fabricpath_topology](#type-cisco_fabricpath_topology) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅ | :heavy_minus_sign: | :heavy_minus_sign: |
 | [cisco_interface](#type-cisco_interface) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅ | ✅ | ✅ | * [caveats](#cisco_interface-caveats) |
-| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_interface_ospf](#type-cisco_interface_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
-| [cisco_interface_portchannel](#type-cisco_interface_portchannel) | ❌* | ✅* | ✅* | ❌* | ❌* | ❌* | ✅ | ❌ | * [caveats](#cisco_interface_portchannel-caveats) |
-| [cisco_interface_service_vni](#type-cisco_interface_service_vni) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| [cisco_itd_device_group](#type-cisco_itd_device_group) | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| [cisco_itd_device_group_node](#type-cisco_itd_device_group_node) | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| [cisco_itd_service](#type-cisco_itd_service) | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ | * [caveats](#cisco_itd_service-caveats) |
+| [cisco_interface_portchannel](#type-cisco_interface_portchannel) | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | ✅ | ❌ | * [caveats](#cisco_interface_portchannel-caveats) |
+| [cisco_interface_service_vni](#type-cisco_interface_service_vni) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: | :heavy_minus_sign: |
+| [cisco_itd_device_group](#type-cisco_itd_device_group) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: | :heavy_minus_sign: |
+| [cisco_itd_device_group_node](#type-cisco_itd_device_group_node) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: | :heavy_minus_sign: |
+| [cisco_itd_service](#type-cisco_itd_service) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | * [caveats](#cisco_itd_service-caveats) |
 | [cisco_ospf](#type-cisco_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_ospf_vrf](#type-cisco_ospf_vrf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
-| ✅ = Supported <br> ❌ = Unsupported | N9k | N30xx | N31xx | N56xx | N6k | N7k | N8k | IOS XR | Caveats |
-| [cisco_overlay_global](#type-cisco_overlay_global) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌  | ✅ | ❌ |
+| ✅ = Supported <br> ❌ = Unsupported <br> :heavy_minus_sign: = Not Applicable | N9k | N30xx | N31xx | N56xx | N6k | N7k | N8k | IOS XR | Caveats |
+| [cisco_overlay_global](#type-cisco_overlay_global) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | ❌ | ❌ | ❌  | ✅ | :heavy_minus_sign: |
 | [cisco_pim](#type-cisco_pim) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_pim_rp_address](#type-cisco_pim_rp_address) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_pim_grouplist](#type-cisco_pim_grouplist) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
-| [cisco_portchannel_global](#type-cisco_portchannel_global) | ❌* | ✅* | ✅* | ❌* | ❌* | ❌ | ✅ | ❌ | * [caveats](#cisco_portchannel_global-caveats) |
+| [cisco_portchannel_global](#type-cisco_portchannel_global) | ✅* | ❌* | ❌* | ✅* | ✅* | ✅* | ✅* | ❌ | * [caveats](#cisco_portchannel_global-caveats) |
 | [cisco_stp_global](#type-cisco_stp_global) | ✅* | ✅* | ✅* | ✅* | ✅* | ✅ | ✅ | ❌ | * [caveats](#cisco_stp_global-caveats) |
 | [cisco_snmp_community](#type-cisco_snmp_community) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_snmp_group](#type-cisco_snmp_group) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
@@ -162,41 +164,42 @@ The following table indicates which providers are supported on each platform. As
 | [cisco_snmp_user](#type-cisco_snmp_user) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_tacacs_server](#type-cisco_tacacs_server) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_tacacs_server_host](#type-cisco_tacacs_server_host) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
-| [cisco_vdc](#type-cisco_vdc) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| [cisco_vdc](#type-cisco_vdc) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: | :heavy_minus_sign: |
 | [cisco_vlan](#type-cisco_vlan) | ✅* | ✅* | ✅* | ✅ | ✅ | ✅ | ✅ | ❌ | * [caveats](#cisco_vlan-caveats) |
-| [cisco_vpc_domain](#type-cisco_vpc_domain) | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | ❌ | * [caveats](#cisco_vlan-caveats) |
-| [cisco_vrf](#type-cisco_vrf) | ✅ | ✅* | ✅* | ❌ | ❌ | ❌ | ✅ | ✅* | * [caveats](#cisco_vrf-caveats) |
-| [cisco_vrf_af](#type-cisco_vrf_af) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅* | ✅ | ✅* | * [caveats](#cisco_vrf_af-caveats) |
-| [cisco_vtp](#type-cisco_vtp) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| [cisco_vpc_domain](#type-cisco_vpc_domain) | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | ❌ | ❌ | * [caveats](#cisco_vpc_domain-caveats) |
+| [cisco_vrf](#type-cisco_vrf) | ✅ | ✅* | ✅* | ✅ | ✅ | ✅ | ✅ | ✅* | * [caveats](#cisco_vrf-caveats) |
+| [cisco_vrf_af](#type-cisco_vrf_af) | ✅ | ✅* | ✅* | ✅* | ✅* | ✅* | ✅ | ✅* | * [caveats](#cisco_vrf_af-caveats) |
+| [cisco_vtp](#type-cisco_vtp) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | ❌ | ❌ | ❌ | ✅ | :heavy_minus_sign: |
+| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | ❌ | ❌ | ❌ | ✅ | :heavy_minus_sign: |
 
 ##### NetDev Providers
 
-| ✅ = Supported <br> ❌ = Unsupported  | N9k | N30xx | N31xx | N56xx | N6k | N7k | N8k | IOS XR |
+| ✅ = Supported <br> ❌ = Unsupported <br> :heavy_minus_sign: = Not Applicable | N9k | N30xx | N31xx | N56xx | N6k | N7k | N8k | IOS XR |
 |:---|:---:|:-----:|:-----:|:-----:|:---:|:---:|:---:|:---:|
-| [domain_name](#type-domain_name) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ✅ |
-| [name_server](#type-name_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ✅ |
-| [network_dns](#type-network_dns) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ✅ |
-| [network_interface](#type-network_interface) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| [network_snmp](#type-network_snmp) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| [domain_name](#type-domain_name) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [name_server](#type-name_server) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [network_dns](#type-network_dns) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [network_interface](#type-network_interface) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [network_snmp](#type-network_snmp) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [network_trunk](#type-network_trunk) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| [ntp_config](#type-ntp_config) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ✅ |
-| [ntp_server](#type-ntp_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ✅ |
-| [network_snmp](#type-network_snmp) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| [radius](#type-radius) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| [radius_global](#type-radius_global) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ✅ |
-| [radius_server_group](#type-tacacs_server_group) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ✅ |
-| [radius_server](#type-radius_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ✅* | * [caveats](#radius_server-caveats) |
-| [search_domain](#type-search_domain) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| [snmp_community](#type-snmp_community) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| [snmp_notification](#type-snmp_notification) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| [snmp_notification_receiver](#type-snmp_notification_receiver) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| [snmp_user](#type-snmp_user) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| [syslog_server](#type-syslog_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ✅ |
-| [syslog_setting](#type-syslog_setting) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| [tacacs](#type-tacacs) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| [tacacs_global](#type-tacacs_global) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| [network_vlan](#type-network_vlan) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [ntp_config](#type-ntp_config) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [ntp_server](#type-ntp_server) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [port_channel](#type-port_channel) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [radius](#type-radius) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [radius_global](#type-radius_global) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [radius_server_group](#type-tacacs_server_group) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [radius_server](#type-radius_server) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅* | * [caveats](#radius_server-caveats) |
+| [search_domain](#type-search_domain) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [snmp_community](#type-snmp_community) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [snmp_notification](#type-snmp_notification) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [snmp_notification_receiver](#type-snmp_notification_receiver) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [snmp_user](#type-snmp_user) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [syslog_server](#type-syslog_server) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [syslog_setting](#type-syslog_setting) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [tacacs](#type-tacacs) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| [tacacs_global](#type-tacacs_global) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [tacacs_server_group](#type-tacacs_server_group) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
 | [tacacs_server](#type-tacacs_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
 
@@ -313,6 +316,7 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_vlan`](#type-cisco_vlan)
   * [`cisco_vtp`](#type-cisco_vtp)
   * [`network_trunk (netdev_stdlib)`](#type-network_trunk)
+  * [`network_vlan (netdev_stdlib)`](#type-network_vlan)
 
 * VPC Types
   * [`cisco_vpc_domain`](#type-cisco_vpc_domain)
@@ -390,8 +394,9 @@ The following resources include cisco types and providers along with cisco provi
 * [`name_server`](#type-name_server)
 * [`network_dns`](#type-network_dns)
 * [`network_interface`](#type-network_interface)
-* [`network_trunk`](#type-network_trunk)
 * [`network_snmp`](#type-network_snmp)
+* [`network_trunk`](#type-network_trunk)
+* [`network_vlan`](#type-network_vlan)
 * [`ntp_config`](#type-ntp_config)
 * [`ntp_server`](#type-ntp_server)
 * [`port_channel`](#type-port_channel)
@@ -460,9 +465,9 @@ Manages AAA Authentication Login configuration.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
@@ -496,9 +501,9 @@ Manages configuration for Authorization Login Config Service.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
@@ -526,9 +531,9 @@ Manages configuration for Authorization Login Exec Service.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
@@ -556,9 +561,9 @@ Manages configuration for a TACACS+ server group.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
@@ -1518,14 +1523,14 @@ Manages a cisco Bridge-Domain
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | unsupported        | unsupported            |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
+| N9k      | not applicable     | not applicable         |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
+| N56xx    | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N8k      | unsupported        | unsupported            |
-| IOS XR   | unsupported        | unsupported            |
+| N8k      | not applicable     | not applicable         |
+| IOS XR   | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -1550,14 +1555,14 @@ Creates a Virtual Network Identifier member (VNI) mapping for cisco Bridge-Domai
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | unsupported        | unsupported            |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
+| N9k      | not applicable     | not applicable         |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
+| N56xx    | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N8k      | unsupported        | unsupported            |
-| IOS XR   | unsupported        | unsupported            |
+| N8k      | not applicable     | not applicable         |
+| IOS XR   | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -1576,14 +1581,14 @@ Manages a Global VNI Encapsulation profile
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | unsupported        | unsupported            |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
+| N9k      | not applicable     | not applicable         |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
+| N56xx    | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N8k      | unsupported        | unsupported            |
-| IOS XR   | unsupported        | unsupported            |
+| N8k      | not applicable     | not applicable         |
+| IOS XR   | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -1591,7 +1596,9 @@ Manages a Global VNI Encapsulation profile
 Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
 
 ##### `encap`
-Profile name of the Encapsulation. Valid values is string.
+Profile name of the Encapsulation. Valid values are String only.
+
+#### Properties
 
 ##### `dot1q_map`
 The encapsulation profile dot1q vlan-to-vni mapping. Valid values are an array of [vlans, vnis] pairs.
@@ -1604,13 +1611,13 @@ Manages Cisco Ethernet Virtual Private Network (EVPN) VXLAN Network Identifier (
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
 | N9k      | 7.0(3)I3(1)        | 1.3.0                  |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
 | N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
-| IOS XR   | unsupported        | unsupported            |
+| IOS XR   | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -1645,6 +1652,30 @@ Sets the route-target 'export' extended communities. Valid values are an Array o
 
 --
 ### Type: cisco_fabricpath_global
+Manages Cisco fabricpath global parameters.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | not applicable     | not applicable         |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | not applicable     | not applicable         |
+| IOS XR   | not applicable     | not applicable         |
+
+#### <a name="cisco_fabricpath_global-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:---------|:-------------|
+| `loadbalance_multicast_has_vlan` | Supported only on N7k |
+| `loadbalance_multicast_rotate` | Supported only on N7k |
+| `ttl_multicast` | Supported only on N7k |
+| `ttl_unicast` | Supported only on N7k |
+
+#### Parameters
+
 ##### `name`
 ID of the fabricpath global config. The only valid value is keyword 'default'.
 
@@ -1664,10 +1695,10 @@ Fabricpath Timers Link-up Delay in seconds. Valid values are integers from 1..12
 Fabricpath ECMP loadbalancing alogorithm. Valid values are 'destination', 'source', 'source-destination', 'symmetric' and the keyword 'default'. Default is symmetric for Nexus 7000 series and source-destination for others.
 
 ##### `loadbalance_multicast_has_vlan`
-Multicast Loadbalance flow parameters - include vlan or not. Valid values are true or false and keyword 'default'. Default value: true. This parameter is valid only on Nexus 7000 series platform.
+Multicast Loadbalance flow parameters - include vlan or not. Valid values are true or false and keyword 'default'. Default value: true.
 
 ##### `loadbalance_multicast_rotate`
-Multicast Loadbalance flow parameters -  rotate amount in bytes. Valid values are integer in range 0..15 and keyword 'default'. Default value: 1. This parameter is valid only on Nexus 7000 series platform.
+Multicast Loadbalance flow parameters -  rotate amount in bytes. Valid values are integer in range 0..15 and keyword 'default'. Default value: 1.
 
 ##### `loadbalance_unicast_has_vlan`
 Unicast Loadbalance flow parameters - include vlan or not. Valid values are true/false and keyword 'default'. Default value: 1.
@@ -1695,14 +1726,27 @@ The fabricpath switch_id. This parameter can be used to over-ride the automatica
 Fabricpath Timers Transition Delay in seconds. Valid values are integers from 1..1200 and keyword 'default'. Default value: 10.
 
 ##### `ttl_multicast`
-Fabricpath Multicast TTL value. Valid values are integers from 1..64 and keyword 'default'. Default value: 32. This parameter is valid only on Nexus 7000 series platform.
+Fabricpath Multicast TTL value. Valid values are integers from 1..64 and keyword 'default'. Default value: 32.
 
 ##### `ttl_unicast`
-Fabricpath Unicast TTL value. Valid values are integers from 1..64 and keyword 'default'. Default value: 32. This parameter is valid only on Nexus 7000 series platform.
+Fabricpath Unicast TTL value. Valid values are integers from 1..64 and keyword 'default'. Default value: 32.
 
 --
 ### Type: cisco_fabricpath_topology
 Manages a Cisco fabricpath Topology
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | not applicable     | not applicable         |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | not applicable     | not applicable         |
+| IOS XR   | not applicable     | not applicable         |
+
+#### Parameters
 
 ##### `topo_id`
 ID of the fabricpath topology. Valid values are integers in the range 1-63.
@@ -1784,6 +1828,8 @@ are 'present' and 'absent'.
 
 ###### `interface`
 Name of the interface on the network element. Valid value is a string.
+
+#### Properties
 
 ###### `description`
 Description of the interface. Valid values are a string or the keyword 'default'.
@@ -2014,14 +2060,14 @@ Manages a Cisco Network Interface Service VNI.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | unsupported        | unsupported            |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
+| N9k      | not applicable     | not applicable         |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
+| N56xx    | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| N8k      | 7.0(3)F1(1)        | 1.3.0                  |
-| IOS XR   | unsupported        | unsupported            |
+| N8k      | not applicable     | not applicable         |
+| IOS XR   | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -2035,6 +2081,8 @@ Name of the interface where the service resides. Valid value is a string.
 
 ###### `sid`
 The Service ID number. Valid value is an Integer.
+
+#### Properties
 
 ###### `encapsulation_profile_vni`
 The VNI Encapsulation Profile Name. Valid values are String or the keyword 'default'
@@ -2154,13 +2202,13 @@ Manages configuration of ITD (Intelligent Traffic Director) device group
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
 | N9k      | 7.0(3)I3(1)        | 1.3.0                  |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
+| N56xx    | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N8k      | 7.0(3)F1(1)        | 1.3.0                  |
-| IOS XR   | unsupported        | unsupported            |
+| N8k      | not applicable     | not applicable         |
+| IOS XR   | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -2199,13 +2247,13 @@ Manages configuration of ITD (Intelligent Traffic Director) device group node
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
 | N9k      | 7.0(3)I3(1)        | 1.3.0                  |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
+| N56xx    | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N8k      | 7.0(3)F1(1)        | 1.3.0                  |
-| IOS XR   | unsupported        | unsupported            |
+| N8k      | not applicable     | not applicable         |
+| IOS XR   | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -2253,13 +2301,13 @@ Manages configuration of ITD (Intelligent Traffic Director) service.
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
 | N9k      | 7.0(3)I3(1)        | 1.3.0                  |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
+| N56xx    | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N8k      | unsupported        | unsupported            |
-| IOS XR   | unsupported        | unsupported            |
+| N8k      | not applicable     | not applicable         |
+| IOS XR   | not applicable     | not applicable         |
 
 #### <a name="cisco_itd_service-caveats">Caveats</a>
 
@@ -2431,13 +2479,13 @@ Also configures anycast gateway MAC of the switch.
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
 | N56xx    | unsupported        | unsupported            |
 | N6k      | unsupported        | unsupported            |
 | N7k      | unsupported        | unsupported            |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
-| IOS XR   | unsupported        | unsupported            |
+| IOS XR   | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -2548,12 +2596,12 @@ Manages configuration of a portchannel global parameters
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | unsupported        | unsupported            |
-| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | unsupported        | unsupported            |
+| N31xx    | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
@@ -2563,43 +2611,41 @@ Manages configuration of a portchannel global parameters
 |:--------|:-------------|
 | `hash_poly` | Supported only on N56xx, N6k |
 | `asymmetric` <br> `hash_distribution` <br> `load_defer` | Supported only on N7k |
-| `concatenation` <br> `resilient` <br> `symmetry`| Supported only on N9k, N30xx, N31xx |
-| `rotate` | Supported only on N9k, N30xx, N31xx and N7k |
+| `concatenation` <br> `resilient` <br> `symmetry`| Supported only on N9k|
+| `rotate` | Supported only on N7k, N8k, N9k |
+| `bundle_hash` | 'port', 'ip-only', 'port-only' are only supported on N56xx, N6k. 'ip-gre' is only supported on N9k. 'ip-l4port', 'ip-l4port-vlan', 'ip-vlan', 'l4port' are only supported on N9k, N7k. |
 
 #### Parameters
 
 ##### `asymmetric`
-port-channel asymmetric hash. Valid values are true, false or 'default'. This property is supported only on N7k.
+port-channel asymmetric hash. Valid values are true, false or 'default'.
 
 ##### `bundle_hash`
 port-channel bundle hash. Valid values are 'ip', 'ip-l4port', 'ip-l4port-vlan', 'ip-vlan', 'l4port', 'mac', 'port', 'ip-only', 'port-only', 'ip-gre' or 'default'.
-* 'port', 'ip-only', 'port-only', 'ip-gre' are only supported on N9k, N30xx, N31xx, N56xx, N6k.
-* 'ip-l4port', 'ip-l4port-vlan', 'ip-vlan', 'l4port', 'ip-gre' are only supported on N9k, N30xx, N31xx, N7k.
-* 'port', 'ip-only', 'port-only' are only supported on N56xx, N6k, N7k.
 
 ##### `bundle_select`
 port-channel bundle select. Valid values are 'src', 'dst', 'src-dst' or 'default'.
 
 ##### `concatenation`
-port-channel concatenation enable or disable. Valid values are true, false or 'default'. This property is only supported on N9k, N30xx, N31xx.
+port-channel concatenation enable or disable. Valid values are true, false or 'default'.
 
 ##### `hash_distribution`
-port-channel hash-distribution. Valid values are 'adaptive', 'fixed' or the keyword 'default'. This property is only supported on N7k.
+port-channel hash-distribution. Valid values are 'adaptive', 'fixed' or the keyword 'default'.
 
 ##### `hash_poly`
-port-channel hash-polynomial. Valid values are 'CRC10a', 'CRC10b', 'CRC10c' or 'CRC10d'. Note: This property does not support the keyword 'default' and it is only supported on N56xx and N6k.
+port-channel hash-polynomial. Valid values are 'CRC10a', 'CRC10b', 'CRC10c' or 'CRC10d'. Note: This property does not support the keyword 'default'.
 
 ##### `load_defer`
-port-channel load-defer time interval. Valid values are integer or 'default'. This property is only supported on N7k.
+port-channel load-defer time interval. Valid values are integer or 'default'.
 
 ##### `resilient`
-port-channel resilient mode. Valid values are true, false or 'default'. This property is only supported on N9k, N30xx, N31xx.
+port-channel resilient mode. Valid values are true, false or 'default'.
 
 ##### `rotate`
-port-channel hash input offset. Valid values are integer or 'default'. This property is only supported on N9k, N30xx, N31xx, N7k.
+port-channel hash input offset. Valid values are integer or 'default'.
 
 ##### `symmetry`
-port-channel symmetry hash. Valid values are true, false or 'default'. This property is only supported on N9k, N30xx, N31xx.
+port-channel symmetry hash. Valid values are true, false or 'default'.
 
 --
 ### Type: cisco_stp_global
@@ -2627,7 +2673,7 @@ Manages spanning tree global parameters
 | `bd_priority` | Supported only on N7k |
 | `bd_root_priority` | Supported only on N7k |
 | `domain` | Supported only on N56k, N6k, N7k |
-| `fcoe` | Supported only on N9k, N30xx, N31xx |
+| `fcoe` | Supported only on N9k |
 
 #### Parameters
 
@@ -2967,14 +3013,14 @@ Manages a Cisco VDC (Virtual Device Context).
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | unsupported        | unsupported            |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
+| N9k      | not applicable     | not applicable         |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
+| N56xx    | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| N8k      | unsupported        | unsupported            |
-| IOS XR   | unsupported        | unsupported            |
+| N8k      | not applicable     | not applicable         |
+| IOS XR   | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -3013,6 +3059,7 @@ Manages a Cisco VLAN.
 | `mode` | Not supported on N9k, N30xx, N31xx |
 | `private_vlan_type` | Not supported on N8k, IOS XR |
 | `private_vlan_association` | Not supported on N8k, IOS XR |
+| `fabric_control` | Supported on N7k with module minimum version as 1.3.0 |
 
 #### Parameters
 
@@ -3044,6 +3091,8 @@ The private vlan type. Valid values are 'primary', 'isolated' and
 'community'.
 ##### `private_vlan_association`
 Associate the secondary vlanis to the primary vlan. Valid values are integer like 5,10-12.
+##### `fabric_control`
+Specifies this vlan as the fabric control vlan. Only one bridge-domain or VLAN can be configured as fabric-control. Valid values are true, false.
 
 --
 ### Type: cisco_vpc_domain
@@ -3098,14 +3147,10 @@ range 1..3600. Default value: 10.
 Interface VLANs or BDs to exclude from suspension when dual-active. Valid value is a string of integer ranges from 1..4095. There is no default value.
 
 ##### `fabricpath_emulated_switch_id`
-Configure a fabricpath switch_Id to enable vPC+ mode. This is also known as 
-the Emulated switch-id.  Valid values are integers in the range 1..4095.
-There is no default value.
+Configure a fabricpath switch_Id to enable vPC+ mode. This is also known as the Emulated switch-id.  Valid values are integers in the range 1..4095. There is no default value.
 
 ##### `fabricpath_multicast_load_balance`
-In vPC+ mode, enable or disable the fabricpath multicast load balance.
-This loadbalances the Designated Forwarder selection for multicast traffic. 
-Valid values are true, false or default
+In vPC+ mode, enable or disable the fabricpath multicast load balance. This loadbalances the Designated Forwarder selection for multicast traffic. Valid values are true, false or default
 
 ##### `graceful_consistency_check`
 Graceful conistency check . Valid values are true, false or default. Default value: true.
@@ -3173,9 +3218,9 @@ device.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | TODO               | TODO                   |
 
@@ -3200,6 +3245,8 @@ values are 'present' and 'absent'. Default value is 'present'.
 ##### `name`
 Name of the VRF. Valid value is a string of non-whitespace characters. It is
 not case-sensitive and overrides the title of the type.
+
+#### Properties
 
 ##### `description`
 Description of the VRF. Valid value is string.
@@ -3253,12 +3300,12 @@ Manages Cisco Virtual Routing and Forwarding (VRF) Address-Family configuration.
 
 | Property                      | Caveat Description                   |
 |-------------------------------|--------------------------------------|
-| route_target_both_auto        | Only supported on nexus              |
-| route_target_both_auto_evpn   | Only supported on nexus              |
-| route_target_export_evpn      | Only supported on nexus              |
-| route_target_export_stitching | Only supported on IOS XR             |
-| route_target_import_evpn      | Only supported on nexus              |
-| route_target_import_stitching | Only supported on IOS XR             |
+| route_target_both_auto        | Not supported on N3k, IOS XR         |
+| route_target_both_auto_evpn   | Not supported on N3k, IOS XR         |
+| route_target_export_evpn      | Not supported on N3k, IOS XR         |
+| route_target_export_stitching | Not supported on Nexus               |
+| route_target_import_evpn      | Not supported on N3k, IOS XR         |
+| route_target_import_stitching | Not supported on Nexus               |
 
 #### Parameters
 
@@ -3276,6 +3323,8 @@ Address-Family Identifier (AFI). Required. Valid values are 'ipv4' or 'ipv6'.
 ##### `safi`
 Sub Address-Family Identifier (SAFI). Required. Valid values are `unicast` or `multicast`.
 *`multicast` is not supported on some platforms.*
+
+#### Properties
 
 ##### `route policy export`
 Set route-policy(IOS XR) or map(nexus) export name. Valid value is string or keyword 'default'.
@@ -3326,9 +3375,9 @@ There can only be one instance of the cisco_vtp.
 | N9k      | 7.0(3)I2(1)        | 1.0.1                  |
 | N30xx    | 7.0(3)I2(1)        | 1.0.1                  |
 | N31xx    | 7.0(3)I2(1)        | 1.0.1                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
@@ -3360,13 +3409,13 @@ Creates a VXLAN Network Virtualization Endpoint (NVE) overlay interface that ter
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
 | N56xx    | unsupported        | unsupported            |
 | N6k      | unsupported        | unsupported            |
 | N7k      | unsupported        | unsupported            |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
-| IOS XR   | unsupported        | unsupported            |
+| IOS XR   | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -3395,13 +3444,13 @@ Creates a Virtual Network Identifier member (VNI) for an NVE overlay interface.
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N30xx    | unsupported        | unsupported            |
-| N31xx    | unsupported        | unsupported            |
+| N30xx    | not applicable     | not applicable         |
+| N31xx    | not applicable     | not applicable         |
 | N56xx    | unsupported        | unsupported            |
 | N6k      | unsupported        | unsupported            |
 | N7k      | unsupported        | unsupported            |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
-| IOS XR   | unsupported        | unsupported            |
+| IOS XR   | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -3445,9 +3494,9 @@ Configure the domain name of the device
 | N9k      | 7.0(3)I2(1)        | 1.1.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | TODO               | TODO                   |
 
@@ -3467,9 +3516,9 @@ Domain name of the device. Valid value is a string.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | TODO               | TODO                   |
 
@@ -3489,9 +3538,9 @@ Hostname or address of the DNS server.  Valid value is a string.
 | N9k      | 7.0(3)I2(1)        | 1.1.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | TODO               | TODO                   |
 
@@ -3522,9 +3571,9 @@ Manages a puppet netdev_stdlib Network Interface. Any resource dependency should
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
@@ -3532,6 +3581,8 @@ Manages a puppet netdev_stdlib Network Interface. Any resource dependency should
 
 ###### `name`
 Name of the interface on the network element. Valid value is a string.
+
+#### Properties
 
 ###### `description`
 Description of the interface. Valid values are a string or the keyword 'default'.
@@ -3554,9 +3605,9 @@ interface. Valid value is an integer.
 | N9k      | 7.0(3)I2(1)        | 1.1.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
@@ -3584,9 +3635,9 @@ Manages a puppet netdev_stdlib Network Trunk. It should be noted that while the 
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
@@ -3594,6 +3645,8 @@ Manages a puppet netdev_stdlib Network Trunk. It should be noted that while the 
 
 ###### `name`
 The switch interface name. Valid value is a string.
+
+#### Properties
 
 ###### `encapsulation`
 The vlan-tagging encapsulation protocol, usually dot1q. Valid values are 'dot1q', 'isl', 'negotiate' and 'none'. Cisco devices use dot1q encapsulation.
@@ -3611,6 +3664,36 @@ Array of VLAN names used for tagged packets. Values must be in range of 1 to 409
 Array of VLAN ID numbers used for VLAN pruning. Values must be in range of 1 to 4095. Cisco do not implement the concept of pruned vlans.
 
 --
+### Type: `network_vlan`
+
+Manages a puppet netdev_stdlib Network Vlan.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.0                  |
+| IOS XR   | unsupported        | unsupported            |
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+###### `id`
+ID of the Virtual LAN. Valid value is a string.
+
+###### `shutdown`
+Whether or not the vlan is shutdown. Valid values are 'true' or 'false'.
+
+###### `vlan_name`
+The name of the VLAN.  Valid value is a string.
+
+--
 ### Type: ntp_config
 
 | Platform | OS Minimum Version | Module Minimum Version |
@@ -3618,9 +3701,9 @@ Array of VLAN ID numbers used for VLAN pruning. Values must be in range of 1 to 
 | N9k      | 7.0(3)I2(1)        | 1.1.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | TODO               | TODO                   |
 
@@ -3640,9 +3723,9 @@ Source interface for the NTP server.  Valid value is a string.
 | N9k      | 7.0(3)I2(1)        | 1.1.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | TODO               | TODO                   |
 
@@ -3662,9 +3745,9 @@ Hostname or IPv4/IPv6 address of the NTP server.  Valid value is a string.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
@@ -3693,9 +3776,9 @@ Name of the port channel. eg port-channel100. Valid value is a string.
 | N9k      | 7.0(3)I2(1)        | 1.1.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
@@ -3715,9 +3798,9 @@ Enable or disable radius functionality.  Valid values are 'true' or 'false'.
 | N9k      | 7.0(3)I2(1)        | 1.1.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | TODO               | TODO                   |
 
@@ -3746,9 +3829,9 @@ Encryption key format [0-7].  Valid value is an integer.
 | N9k      | 7.0(3)I2(1)        | 1.1.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | TODO               | TODO                   |
 
@@ -3799,9 +3882,9 @@ Encryption key format [0-7].  Valid value is an integer.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | TODO               | TODO                   |
 
@@ -3820,9 +3903,9 @@ Configure the search domain of the device. Note that this type is functionally e
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
@@ -3844,9 +3927,9 @@ Manages an SNMP community on a Cisco SNMP server.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
@@ -3874,9 +3957,9 @@ Manages an SNMP notification on a Cisco SNMP server.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
@@ -3889,16 +3972,16 @@ values are true and false.
 --
 ### Type: snmp_notification_receiver
 
-Manages an SNMP user on an cisco SNMP server.
+Manages an SNMP notification receiver on an cisco SNMP server.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
@@ -3942,9 +4025,9 @@ Manages an SNMP user on an cisco SNMP server.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
@@ -3988,9 +4071,9 @@ format (in case of true) or cleartext (in case of false). Valid values are 'true
 | N9k      | 7.0(3)I2(1)        | 1.1.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | TODO               | TODO                   |
 
@@ -4016,9 +4099,9 @@ Interface to send syslog data from, e.g. "management".  Valid value is a string.
 | N9k      | 7.0(3)I2(1)        | 1.1.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.1.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.1.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
@@ -4038,9 +4121,9 @@ The unit of measurement for log time values.  Valid values are 'seconds' and 'mi
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
@@ -4057,9 +4140,9 @@ Enable or disable radius functionality [true|false]
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
 | N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
