@@ -59,6 +59,11 @@ require File.expand_path('../network_trunklib.rb', __FILE__)
 result = 'PASS'
 testheader = 'ROUTEDINTF Resource :: All Attributes Defaults'
 
+intf = find_interface(agent: agent, intf_type: 'ethernet',
+                      resource_name: 'network_trunk')
+show_run_intf = get_vshell_cmd("show running-config interface #{intf} all")
+resource_cmd_str = PUPPET_BINPATH + "resource network_trunk '#{intf}'"
+
 # @test_name [TestCase] Executes defaults testcase for ROUTEDINTF Resource.
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
@@ -66,7 +71,7 @@ test_name "TestCase :: #{testheader}" do
     logger.info('Setup switch for provider')
 
     # Make sure radius server is not configured before test starts.
-    on(master, NetworkTrunkLib.create_absent)
+    on(master, NetworkTrunkLib.create_absent(intf))
 
     # Expected exit_code is 0,2 since server may or may not be configured.
     cmd_str = PUPPET_BINPATH + 'agent -t'
@@ -75,7 +80,7 @@ test_name "TestCase :: #{testheader}" do
 
   step 'TestStep :: Setup switch for provider test' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, NetworkTrunkLib.create_defaults)
+    on(master, NetworkTrunkLib.create_defaults(intf))
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no change.
     # Or expected exit_code is 2 since this is a puppet agent cmd with change.
@@ -84,8 +89,7 @@ test_name "TestCase :: #{testheader}" do
 
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config interface eth1/4 all')
-    on(agent, cmd_str) do
+    on(agent, show_run_intf) do
       search_pattern_in_output(stdout,
                                [
                                  /switchport trunk native vlan 128/,
@@ -100,7 +104,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource present manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, NetworkTrunkLib.create_non_defaults)
+    on(master, NetworkTrunkLib.create_non_defaults(intf))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = PUPPET_BINPATH + 'agent -t'
@@ -113,8 +117,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check network_trunk resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = PUPPET_BINPATH + "resource network_trunk 'ethernet1/4'"
-    on(agent, cmd_str) do
+    on(agent, resource_cmd_str) do
       search_pattern_in_output(stdout,
                                { 'untagged_vlan' => '1',
                                  'tagged_vlans'  => '\[\'2\', \'3\', \'4\', \'6\', \'7\', \'8\'\]',
@@ -128,8 +131,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check trunk instance presence on agent' do
     # Expected exit_code is 0 since this is a vegas shell cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config interface eth1/4 all')
-    on(agent, cmd_str) do
+    on(agent, show_run_intf) do
       search_pattern_in_output(stdout,
                                [
                                  /switchport trunk native vlan 1/,
