@@ -569,7 +569,8 @@ tests['pvlan_mapping_svi'] = {
   },
   resource:         {
     'private_vlan_mapping' => "['102-103']"
-
+  },
+}
 tests['BDI_non_default'] = {
   desc:             '7.1 (BDI) Non Default BDI Properties',
   operating_system: 'nexus',
