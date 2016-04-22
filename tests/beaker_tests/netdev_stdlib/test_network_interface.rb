@@ -53,7 +53,8 @@ tests[:auto] = {
 def interface_pre_check(tests)
   # Discover a usable test interface
   intf = find_interface(tests)
-  [:non_default, :auto].each { |t| tests[t][:title_pattern] = intf }
+  tests[:non_default][:title_pattern] = intf
+  tests[:auto][:title_pattern] = intf
 
   # Clean the test interface
   system_default_switchport(agent, false)
@@ -63,8 +64,7 @@ def interface_pre_check(tests)
   caps = interface_capabilities(agent, intf)
   caps['Speed'] += ',auto'
   caps['Duplex'] += ',auto'
-  mtu = '1600'
-  caps['MTU'] = mtu
+  caps['MTU'] = '1600'
 
   # Create a probe hash to pre-test the properties
   probe = {
@@ -75,28 +75,22 @@ def interface_pre_check(tests)
     netdev_speed: true,
   }
 
-  probe = interface_probe(tests, probe)
+  caps = interface_probe(tests, probe)[:caps]
 
-  # Fixup the test manifests
-  probe[:caps]['Speed'].each do |val|
-    if val[/auto/]
-      tests[:auto][:manifest_props][:speed] = val
-    else
-      tests[:non_default][:manifest_props][:speed] = val
-    end
-  end
+  # Fixup the test manifests with usable values
+  spd = caps['Speed']
+  dup = caps['Duplex']
+  mtu = caps['MTU']
 
-  probe[:caps]['Duplex'].each do |val|
-    if val[/auto/]
-      tests[:auto][:manifest_props][:duplex] = val
-    else
-      tests[:non_default][:manifest_props][:duplex] = val
-    end
-  end
-  tests[:non_default][:manifest_props][:mtu] = mtu if probe[:caps]['MTU']
+  tests[:auto][:manifest_props][:speed] = 'auto' if spd.delete('auto')
+  tests[:auto][:manifest_props][:duplex] = 'auto' if dup.delete('auto')
 
-  logger.info "\n    Pre-Check :non_default hash: #{tests[:non_default]}"
-  logger.info "\n    Pre-Check :auto hash: #{tests[:auto]}"
+  tests[:non_default][:manifest_props][:speed] = spd.pop unless spd.empty?
+  tests[:non_default][:manifest_props][:duplex] = dup.pop unless dup.empty?
+  tests[:non_default][:manifest_props][:mtu] = mtu.pop unless mtu.empty?
+
+  logger.info "\n      Pre-Check :non_default hash: #{tests[:non_default]}"\
+              "\n      Pre-Check :auto hash: #{tests[:auto]}"
   interface_cleanup(agent, intf, 'Post-Pre-Check Cleanup')
 end
 

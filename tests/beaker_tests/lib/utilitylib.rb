@@ -1062,7 +1062,7 @@ end
 #            discovered by this method. On completion, :caps will be updated
 #            with the successful values.
 #    :probe_props = An array of capabilities to probe.
-#    :manifest_speed = Set to True for syntax conversion (netdev only)
+#    :netdev_speed = Set to True for syntax conversion (netdev only)
 #
 # Example:
 #   tests[:probe] = {
