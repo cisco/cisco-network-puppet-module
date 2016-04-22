@@ -38,6 +38,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `stp_bpdufilter`, `stp_bpduguard`, `stp_cost`, `stp_guard`, `stp_link_type`, `stp_mst_cost`
   - `stp_mst_port_priority`, `stp_port_priority`, `stp_port_type`, `stp_vlan_cost`, `stp_vlan_port_priority`
   - `modify switchport_trunk_allowed_vlan to use range_summarize() which takes care of idempotency issues with vlan ranges`
+- Extended `cisco_portchannel_global` provider to support `Nexus 3xxx`
 - Extended `cisco_vlan` with the following attributes:
   - `mode`
 - Extended `cisco_vpc_domain` with the following attributes:
