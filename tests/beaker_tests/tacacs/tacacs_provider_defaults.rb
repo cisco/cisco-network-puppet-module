@@ -65,8 +65,6 @@ test_name "TestCase :: #{testheader}" do
     on(master, TacacsLib.create_tacacs_manifest_change_disabled)
     cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
-
-    logger.info('Setup switch for provider')
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
@@ -117,6 +115,12 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Check tacacs resource presence on agent :: #{result}")
+  end
+
+  step 'TestStep :: Cleanup' do
+    on(master, TacacsLib.create_tacacs_manifest_change_disabled)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
+    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.

@@ -53,6 +53,7 @@
 
 # Require UtilityLib.rb and SnmpGroupLib.rb paths.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
+require File.expand_path('../../tacacs/tacacslib.rb', __FILE__)
 require File.expand_path('../tacacs_globallib.rb', __FILE__)
 
 result = 'PASS'
@@ -62,7 +63,9 @@ testheader = 'tacacs_global Resource :: All Attributes Defaults'
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider' do
-    logger.info('Setup switch for provider')
+    on(master, TacacsLib.create_tacacs_manifest_change_disabled)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
+    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
@@ -150,6 +153,12 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Check tacacs_global resource presence on agent :: #{result}")
+  end
+
+  step 'TestStep :: Cleanup' do
+    on(master, TacacsLib.create_tacacs_manifest_change_disabled)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
+    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
