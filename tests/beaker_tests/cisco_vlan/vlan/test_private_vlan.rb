@@ -27,7 +27,7 @@ tests = {
   agent:            agent,
   resource_name:    'cisco_vlan',
   operating_system: 'nexus',
-  platform:         'n(5|6|7|9)k',
+  platform:         'n(3|5|6|7|9)k',
 }
 
 tests[:primary] = {
