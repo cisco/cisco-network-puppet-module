@@ -29,7 +29,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `port_channel`
   - `radius`, `radius_global`, `radius_server`, `radius_server_group`
   - `network_snmp`, `snmp_community`, `snmp_notification`, `snmp_notification_receiver`, `snmp_user`
-  - `tacacs`, `tacacs_global`
+  - `tacacs`, `tacacs_global`, `tacacs_server`, `tacacs_server_group`
 - Extended `cisco_bgp` with the following attributes:
   - `nsr`
   - `reconnect_interval`
