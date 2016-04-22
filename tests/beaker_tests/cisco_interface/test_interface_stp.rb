@@ -151,7 +151,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   test_harness_interface(tests, :non_default)
 
-  interface_cleanup(agent, tests[:ethernet]) if tests[:ethernet]
+  interface_cleanup(agent, tests[:non_default])
   skipped_tests_summary(tests)
 end
 
