@@ -44,8 +44,9 @@ Facter.add(:cisco) do
 
     hash['virtual_service'] = Platform.virtual_services
 
-    hash['feature_compatible_module_iflist']['fabricpath'] = 
-      Feature.compatible_interfaces('fabricpath')
+    hash['feature_compatible_module_iflist'] = {}
+    interface_list = Feature.compatible_interfaces('fabricpath')
+    hash['feature_compatible_module_iflist']['fabricpath'] = interface_list
 
     hash
   end
