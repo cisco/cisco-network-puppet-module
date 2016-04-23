@@ -22,7 +22,7 @@ class ciscopuppet::cisco::demo_portchannel {
   }
 
   $concatenation = platform_get() ? {
-    /(n3k|n9k)/ => true,
+    'n9k' => true,
     default => undef
   }
 
@@ -57,7 +57,7 @@ class ciscopuppet::cisco::demo_portchannel {
   }
 
   $rotate = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => '4',
+    /(n7k|n8k|n9k)/ => '4',
     default => undef
   }
 
