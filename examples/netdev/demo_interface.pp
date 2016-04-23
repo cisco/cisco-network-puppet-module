@@ -21,6 +21,7 @@ class ciscopuppet::netdev::demo_interface {
     # Removed because of too many differences between platforms and linecards
     # duplex      => 'auto',
     # speed       => '100m',
+    # mtu         => '9000',
   }
 
 }

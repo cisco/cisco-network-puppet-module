@@ -945,7 +945,8 @@ end
 # tests[:platform] - regex of supported platforms
 # tests[:resource_name] - provider name (e.g. 'cisco_vxlan_vtep')
 def skip_unless_supported(tests)
-  return false if platform.match(tests[:platform])
+  pattern = tests[:platform]
+  return false if pattern.nil? || platform.match(tests[:platform])
   msg = "Skipping all tests; '#{tests[:resource_name]}' "\
         'is unsupported on this node'
   banner = '#' * msg.length
@@ -995,8 +996,7 @@ end
 # on-demand method.
 def interface_capabilities(agent, intf)
   cmd = PUPPET_BINPATH + "resource cisco_interface_capabilities '#{intf}'"
-
-  on(agent, cmd, options)
+  on(agent, cmd, pty: true)
 
   # Sample raw output:
   # "cisco_interface_capabilities { 'ethernet9/1':\n  capabilities =>
@@ -1004,6 +1004,8 @@ def interface_capabilities(agent, intf)
   # 'Speed: 10000,40000', '', 'Duplex: full', ''], }
 
   str = stdout[/\[(.*)\]/][1..-2]
+  return {} if str.nil?
+  str = str[1..-2]
   return {} if str.nil?
 
   # 'Model: N7K-F312FQ-25', '', 'Type (SFP capable):    QSFP-40G-4SFP10G', '',
@@ -1022,4 +1024,84 @@ def interface_capabilities(agent, intf)
     hash[k] = v
   end
   hash
+end
+
+# Capabilities-to-Netdev-Manifest syntax converter
+def netdev_speed(speed)
+  case speed.to_s
+  when '100' then '100m'
+  when '1000' then '1g'
+  when '10000' then '10g'
+  when '40000' then '40g'
+  when '100000' then '100g'
+  else speed
+  end
+end
+
+# 'interface_probe' tests reported capabilities. Why? Speed, duplex, and mtu
+# are somewhat unreliably reported (ie. some values still raise errors when
+# used) so this method tries each value to eliminate the ambiguity.
+# The probe options are passed in as a hash, either as a standalone argument or
+# via tests[:probe], in which case the successfully probed caps will overwrite
+# the tests[:probe][:caps] value.
+# Note that this function is only useful with ethernet interfaces.
+#
+# probe = A hash of probe arguments:
+#    :cmd = The puppet resource command to use with the probe.
+#    :intf = The interface to test. If not present one will be discovered.
+#    :caps = A hash of interface capabilities, typically the output from
+#            interface_capabilities(). If not present the capabilities will be
+#            discovered by this method. On completion, :caps will be updated
+#            with the successful values.
+#    :probe_props = An array of capabilities to probe.
+#    :netdev_speed = Set to True for syntax conversion (netdev only)
+#
+# Example:
+#   tests[:probe] = {
+#     cmd:         '<PUPPET_BINPATH> resource network_interface ',
+#     intf:        'ethernet1/1',
+#     caps:        {'Speed' => '10,100,1000', 'Duplex' => 'auto,half,full'},
+#     probe_props: %w(Speed Duplex)
+#
+def interface_probe(tests, probe={})
+  agent = tests[:agent]
+
+  # Use tests[:probe] if caller does not supply a separate probe hash
+  probe = tests[:probe] if probe.empty?
+  fail 'interface_probe: probe hash not found' if probe.nil?
+
+  # Find a usable interface
+  probe[:intf] = find_interface(tests) if probe[:intf].nil?
+  intf = probe[:intf]
+  fail 'interface_probe: interface not found' if intf.nil?
+
+  # Create the puppet resource command syntax
+  fail 'interface_probe: resource command not found' if probe[:cmd].nil?
+  cmd = probe[:cmd] + " '#{intf}' "
+
+  # Get the interface capabilities
+  probe[:caps] = interface_capabilities(agent, intf) if probe[:caps].nil?
+  fail 'interface_probe: capabilities data not present' if probe[:caps].nil?
+
+  debug_probe(probe, 'Probe Begin')
+  probe[:probe_props].each do |prop|
+    success = []
+    probe[:caps][prop].to_s.split(',').each do |val|
+      val = netdev_speed(val) if prop[/Speed/] && probe[:netdev_speed]
+      on(agent, cmd + "#{prop}=#{val}",
+         acceptable_exit_codes: [0, 2, 1], pty: true)
+      next if stdout[/error/i]
+      success << val
+    end
+    probe[:caps][prop] = success
+  end
+  # probe[:caps]=>{"Speed"=>["100", "1000"], "Duplex"=>["full"],
+  debug_probe(probe, 'Probe Complete')
+  probe
+end
+
+def debug_probe(probe, msg)
+  dbg = ''
+  probe[:probe_props].each { |p| dbg += "'#{p}' => #{probe[:caps][p]}, " }
+  logger.info("\n      #{msg}: #{dbg}")
 end

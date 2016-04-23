@@ -73,7 +73,7 @@ HOSTS:
     <Nexus open agent container (OAC) agent>:
         roles:
             - agent
-        platform: cisco-oac-i386
+        platform: cisco_nexus-oac-i386
         ip: <fully qualified domain name>
         vrf: <vrf used for beaker workstation and puppet master ip reachability>
         ssh:
@@ -109,7 +109,7 @@ HOSTS:
     nx-agent:
         roles:
             - agent
-        platform: cisco-5-x86_64
+        platform: cisco_nexus-5-x86_64
         ip: nx-agent.domain.com
         vrf: management
         #target: guestshell

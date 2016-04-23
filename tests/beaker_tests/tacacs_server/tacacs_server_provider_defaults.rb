@@ -210,6 +210,10 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check tacacs_server resource presence on agent :: #{result}")
   end
 
+  step 'TestStep :: Cleanup' do
+    resource_absent_cleanup(agent, 'tacacs_server')
+  end
+
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   raise_passfail_exception(result, testheader, self, logger)
 end

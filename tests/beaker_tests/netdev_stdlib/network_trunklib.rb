@@ -37,13 +37,13 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 module NetworkTrunkLib
   # A. Methods to create manifests for network_trunk Puppet provider test cases.
 
-  def self.create_absent
+  def self.create_absent(intf)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   network_vlan { '128':
     ensure        => 'absent',
   }
-  network_trunk { 'ethernet1/4':
+  network_trunk { '#{intf}':
     ensure        => 'present',
     mode          => 'trunk',
     untagged_vlan => 1,
@@ -53,13 +53,13 @@ EOF"
     manifest_str
   end
 
-  def self.create_defaults
+  def self.create_defaults(intf)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   network_vlan { '128':
     ensure        => 'present',
   }
-  network_trunk { 'ethernet1/4':
+  network_trunk { '#{intf}':
     ensure        => 'present',
     mode          => 'trunk',
     tagged_vlans  => [2],
@@ -70,13 +70,13 @@ EOF"
     manifest_str
   end
 
-  def self.create_non_defaults
+  def self.create_non_defaults(intf)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   network_vlan { '128':
     ensure        => 'absent',
   }
-  network_trunk { 'ethernet1/4':
+  network_trunk { '#{intf}':
     ensure        => 'present',
     mode          => 'trunk',
     tagged_vlans  => [2,3,4,6,7,8],
