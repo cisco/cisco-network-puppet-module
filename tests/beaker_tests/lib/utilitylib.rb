@@ -743,15 +743,6 @@ def setup_fabricpath_env(tests, testcase)
     prereq_skip(testheader, testcase,
                 "Unable to set limit-resource module-type to '#{mod}'")
   end
-#
-#  step "Verify that '#{intf}' is allocated to VDC" do
-#    break if vdc_allocate_interface_get(vdc, intf)
-#    logger.info("'#{intf}' is not allocated to VDC, allocate it now...")
-#    vdc_allocate_interface_set(vdc, intf)
-#    break if vdc_allocate_interface_get(vdc, intf)
-#    prereq_skip(testheader, testcase,
-#                "Unable to allocate interface '#{intf}' to VDC")
-#  end
 end
 # rubocop:enable Metrics/AbcSize
 
@@ -792,10 +783,11 @@ end
 # found
 def fabricpath_interface
   # Search for F2E/F3 cards on device, create an interface name if found
-  cmd = get_vshell_cmd('sh mod')
-  out = on(agent, cmd, pty: true).stdout[/^(\d+)\s.*N7K-F(?:2.*25E|3)/]
-  slot = out.nil? ? nil : Regexp.last_match[1]
-  "ethernet#{slot}/1" unless slot.nil?
+  cmd = '-p cisco.feature_compatible_module_iflist.fabricpath'
+  if_array_str = on(agent, facter_cmd(cmd)).stdout.chomp
+  if_array_str.gsub!(/[\[\]\n\s"]/, '')
+  if_array = if_array_str.split(',')
+  if_array[0] unless if_array.empty?
 end
 
 # Return the default vdc name
