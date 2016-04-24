@@ -806,7 +806,7 @@ def limit_resource_module_type_get(vdc, mod)
 end
 
 # Set limit-resource module-type
-def limit_resource_module_type_set(vdc, mod, default=false)
+def limit_resource_module_type_set(_vdc, mod, default=false)
   mod = '' if default
   resource_vdc_mod = {
     name:     'cisco_vdc',
@@ -814,7 +814,7 @@ def limit_resource_module_type_set(vdc, mod, default=false)
     property: 'limit_resource_module_type',
     value:    mod,
   }
-  resource_set(agent, resource_vdc_mod, "Enable #{mod} card(s)") 
+  resource_set(agent, resource_vdc_mod, "Enable #{mod} card(s)")
 end
 
 # Check for presence of interface in vdc allocated interfaces
