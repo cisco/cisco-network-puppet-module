@@ -924,6 +924,19 @@ def platform
   @cisco_hardware
 end
 
+# Used to cache the system image information
+@csco_img = nil
+# Use facter to return cisco system image information
+def skip_nexus_i2_img(tests)
+  return @csco_img unless @csco_img.nil?
+  @csco_img = on(agent, facter_cmd('-p cisco.images.system_image')).stdout.chomp
+  return unless @csco_img[/7.0.3.I2/]
+  msg = "Skipping all tests; '#{tests[:resource_name]}' "\
+        'is unsupported on this node'
+  banner = '#' * msg.length
+  raise_skip_exception("\n#{banner}\n#{msg}\n#{banner}\n", self)
+end
+
 # Helper to skip tests on unsupported platforms.
 # tests[:operating_system] - An OS regexp pattern for all tests (caller set)
 # tests[:platform] - A platform regexp pattern for all tests (caller set)
