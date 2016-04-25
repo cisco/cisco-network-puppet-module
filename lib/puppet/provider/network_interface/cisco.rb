@@ -39,7 +39,6 @@ Puppet::Type.type(:network_interface).provide(:cisco, parent: Puppet::Type.type(
 
   def flush
     if @property_flush[:ensure] == :absent
-      # This provider is not currently ensurable
       @interface.destroy
       @interface = nil
       @property_hash[:ensure] = :absent
