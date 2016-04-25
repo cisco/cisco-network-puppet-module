@@ -16,6 +16,7 @@ Facter.add(:cisco) do
     rescue NameError
       # In more recent versions, Platform moved into the Cisco namespace.
       Platform = Cisco::Platform
+      Feature = Cisco::Feature
       hash['images']['system_image'] = Platform.system_image
     end
     hash['images']['packages'] = Platform.packages
@@ -42,6 +43,10 @@ Facter.add(:cisco) do
     end
 
     hash['virtual_service'] = Platform.virtual_services
+
+    hash['feature_compatible_module_iflist'] = {}
+    interface_list = Feature.compatible_interfaces('fabricpath')
+    hash['feature_compatible_module_iflist']['fabricpath'] = interface_list
 
     hash
   end

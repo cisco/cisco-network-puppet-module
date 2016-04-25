@@ -743,15 +743,6 @@ def setup_fabricpath_env(tests, testcase)
     prereq_skip(testheader, testcase,
                 "Unable to set limit-resource module-type to '#{mod}'")
   end
-
-  step "Verify that '#{intf}' is allocated to VDC" do
-    break if vdc_allocate_interface_get(vdc, intf)
-    logger.info("'#{intf}' is not allocated to VDC, allocate it now...")
-    vdc_allocate_interface_set(vdc, intf)
-    break if vdc_allocate_interface_get(vdc, intf)
-    prereq_skip(testheader, testcase,
-                "Unable to allocate interface '#{intf}' to VDC")
-  end
 end
 # rubocop:enable Metrics/AbcSize
 
@@ -792,10 +783,11 @@ end
 # found
 def fabricpath_interface
   # Search for F2E/F3 cards on device, create an interface name if found
-  cmd = get_vshell_cmd('sh mod')
-  out = on(agent, cmd, pty: true).stdout[/^(\d+)\s.*N7K-F(?:2.*25E|3)/]
-  slot = out.nil? ? nil : Regexp.last_match[1]
-  "ethernet#{slot}/1" unless slot.nil?
+  cmd = '-p cisco.feature_compatible_module_iflist.fabricpath'
+  if_array_str = on(agent, facter_cmd(cmd)).stdout.chomp
+  if_array_str.gsub!(/[\[\]\n\s"]/, '')
+  if_array = if_array_str.split(',')
+  if_array[0] unless if_array.empty?
 end
 
 # Return the default vdc name
@@ -814,23 +806,15 @@ def limit_resource_module_type_get(vdc, mod)
 end
 
 # Set limit-resource module-type
-def limit_resource_module_type_set(vdc, mod, default=false)
-  # Turn off prompting
-  cmd = get_vshell_cmd('terminal dont-ask persist')
-  on(agent, cmd, pty: true)
-
-  if default
-    cmd = get_vshell_cmd("conf t ; vdc #{vdc} ; "\
-                         'no limit-resource module-type')
-  else
-    cmd = get_vshell_cmd("conf t ; vdc #{vdc} ; "\
-                         "limit-resource module-type #{mod}")
-  end
-  on(agent, cmd, pty: true)
-
-  # Reset dont-ask to default setting
-  cmd = get_vshell_cmd('no terminal dont-ask persist')
-  on(agent, cmd, pty: true)
+def limit_resource_module_type_set(_vdc, mod, default=false)
+  mod = '' if default
+  resource_vdc_mod = {
+    name:     'cisco_vdc',
+    title:    'default',
+    property: 'limit_resource_module_type',
+    value:    mod,
+  }
+  resource_set(agent, resource_vdc_mod, "Enable #{mod} card(s)")
 end
 
 # Check for presence of interface in vdc allocated interfaces
