@@ -214,30 +214,18 @@ tests[:non_default_shut_4] = {
 
 # Overridden to properly handle dependencies for this test file.
 def test_harness_dependencies(_tests, id)
-  return if id.to_s.include?('non_default_shut_')
-  cmd = 'no feature itd'
-  command_config(agent, cmd, cmd)
-  cmd = 'ip access-list iap'
-  command_config(agent, cmd, cmd)
-  cmd = 'ip access-list eap'
-  command_config(agent, cmd, cmd)
-  cmd = 'interface ' + @ing_eth_int + ' ; no switchport'
-  command_config(agent, cmd, cmd)
-  cmd = 'feature interface-vlan'
-  command_config(agent, cmd, cmd)
-  cmd = 'vlan 2'
-  command_config(agent, cmd, cmd)
-  cmd = 'interface vlan 2'
-  command_config(agent, cmd, cmd)
-  cmd = 'interface port-channel 100 ; no switchport'
-  command_config(agent, cmd, cmd)
-  cmd = 'feature itd'
-  command_config(agent, cmd, cmd)
-  cmd = 'itd device-group udpGroup ; node ip 1.1.1.1'
-  command_config(agent, cmd, cmd)
-  cmd = 'itd device-group icmpGroup ; node ip 2.2.2.2'
-  command_config(agent, cmd, cmd)
-  cmd = 'itd device-group icmpGroup ; node ip 3.3.3.3'
+  return if id[/non_default_shut_/]
+  cmd = [
+    'no feature itd',
+    'ip access-list iap ; ip access-list eap',
+    "interface #{@ing_eth_int} ; no switchport",
+    'feature interface-vlan',
+    'vlan 2 ; interface vlan 2',
+    'interface port-channel 100 ; no switchport',
+    'feature itd',
+    'itd device-group udpGroup ; node ip 1.1.1.1',
+    'itd device-group icmpGroup ; node ip 2.2.2.2 ; node ip 3.3.3.3',
+  ].join(' ; ')
   command_config(agent, cmd, cmd)
 end
 
