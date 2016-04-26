@@ -76,6 +76,8 @@ def create_interface_title(tests, id)
     end
   when /vlan/
     intf = tests[:svi_name]
+  when /bdi/
+    intf = tests[:bdi_name]
   end
   logger.info("\nUsing interface: #{intf}")
   tests[id][:title_pattern] = intf
@@ -477,9 +479,10 @@ def puppet_resource_title_pattern_munge(tests, id)
   params = tests[id][:title_params]
   return params if title.nil?
 
+  resource_name = test_resource_name(tests, id)
   tests[id][:title_params] = {} if params.nil?
   t = {}
-  case tests[:resource_name]
+  case resource_name
   when 'cisco_acl'
     t[:afi], t[:acl_name] = title.split
   when 'cisco_bgp'
@@ -502,7 +505,7 @@ def puppet_resource_title_pattern_munge(tests, id)
   t.merge!(tests[id][:title_params])
 
   if t[:vrf].nil?
-    case tests[:resource_name]
+    case resource_name
     when 'cisco_acl'
     else
       t[:vrf] = 'default'
@@ -519,10 +522,12 @@ end
 # [:title_params] (optional) This hash will be merged with the :title_pattern
 #                  to create the cmd string
 def puppet_resource_cmd_from_params(tests, id)
-  fail 'tests[:resource_name] is not defined' unless tests[:resource_name]
+  resource_name = test_resource_name(tests, id)
+  fail ':resource_name is not defined' unless resource_name
+
   params = tests[id][:title_params]
   stepinfo = 'Create resource command title string:'\
-             "\n  [:resource_name] '#{tests[:resource_name]}'"\
+             "\n  [:resource_name] '#{resource_name}'"\
              "\n  [:title_pattern] '#{tests[id][:title_pattern]}'"
   stepinfo += "\n  [:title_params]  #{params}" if params
 
@@ -535,7 +540,7 @@ def puppet_resource_cmd_from_params(tests, id)
       title_string = tests[id][:title_pattern]
     end
 
-    cmd = PUPPET_BINPATH + "resource #{tests[:resource_name]} '#{title_string}'"
+    cmd = PUPPET_BINPATH + "resource #{resource_name} '#{title_string}'"
 
     logger.info("\ntitle_string: '#{title_string}'")
     tests[id][:resource_cmd] = cmd
@@ -558,7 +563,9 @@ end
 #   command string becomes a combination of the title pattern and these params.
 #
 def create_manifest_and_resource(tests, id)
-  fail 'tests[:resource_name] is not defined' unless tests[:resource_name]
+  resource_name = test_resource_name(tests, id)
+  fail ':resource_name is not defined' unless resource_name
+
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
 
   # Create the cmd string for puppet_resource
@@ -598,7 +605,7 @@ def create_manifest_and_resource(tests, id)
   tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   \nnode default {
   #{dependency_manifest(tests, id)}
-  #{tests[:resource_name]} { '#{tests[id][:title_pattern]}':
+  #{resource_name} { '#{tests[id][:title_pattern]}':
     #{state}\n#{manifest}
   }\n}\nEOF"
 
@@ -688,7 +695,7 @@ def setup_mt_full_env(tests, testcase)
   # MT-full tests require a specific linecard. Search for a compatible
   # module and enable it.
 
-  testheader = tests[:resource_name]
+  testheader = test_resource_name(tests, testcase)
   mod = 'f3'
   step 'Check for Compatible Line Module' do
     tests[:intf] = mt_full_interface
@@ -750,7 +757,7 @@ def setup_fabricpath_env(tests, testcase)
 
   return unless platform == 'n7k'
 
-  testheader = tests[:resource_name]
+  testheader = test_resource_name(tests, testcase)
   mod = 'f2e f3'
   step 'Check for Compatible Line Module' do
     tests[:intf_type] = 'ethernet'
@@ -980,7 +987,7 @@ end
 # This is a simple top-level skip similar to what exists in the minitests.
 # Callers will skip all tests when true.
 # tests[:platform] - regex of supported platforms
-# tests[:resource_name] - provider name (e.g. 'cisco_vxlan_vtep')
+# [:resource_name] - provider name (e.g. 'cisco_vxlan_vtep')
 def skip_unless_supported(tests)
   pattern = tests[:platform]
   return false if pattern.nil? || platform.match(tests[:platform])
@@ -1017,12 +1024,12 @@ def find_interface(tests, id=nil, skipcheck=true)
     all = get_current_resource_instances(tests[:agent], 'cisco_interface')
     # Skip the first interface we find in case it's our access interface.
     # TODO: check the interface IP address like we do in node_utils
-    intf = all.grep(%r{ethernet\d+/\d+})[1]
+    intf = all.grep(%r{ethernet\d+/\d+$})[1]
   end
 
   if skipcheck && intf.nil?
     msg = 'Unable to find suitable interface module for this test.'
-    prereq_skip(tests[:resource_name], self, msg)
+    prereq_skip(test_resource_name(tests, id), self, msg)
   end
   intf
 end
@@ -1068,7 +1075,9 @@ def interface_capabilities(agent, intf)
   # ['Model: N7K-F312FQ-25', '', 'Type (SFP capable):    QSFP-40G-4SFP10G', '',
   # 'Speed: 10000,40000', '', 'Duplex: full', ''], }
 
-  str = stdout[/\[(.*)\]/][1..-2]
+  str = stdout[/\[(.*)\]/]
+  return {} if str.nil?
+  str = str[1..-2]
   return {} if str.nil?
   str = str[1..-2]
   return {} if str.nil?
@@ -1169,4 +1178,11 @@ def debug_probe(probe, msg)
   dbg = ''
   probe[:probe_props].each { |p| dbg += "'#{p}' => #{probe[:caps][p]}, " }
   logger.info("\n      #{msg}: #{dbg}")
+end
+
+# Helper to return the name of the test resource
+def test_resource_name(tests, id)
+  t = tests[id]
+  return tests[:resource_name] if t.nil?
+  t[:resource_name].nil? ? tests[:resource_name] : t[:resource_name]
 end

@@ -114,7 +114,7 @@ def build_manifest_interface(tests, id)
 
   cmd = PUPPET_BINPATH +
         "resource cisco_interface '#{tests[id][:title_pattern]}'"
-  tests[id][:resource_cmd] = get_namespace_cmd(agent, cmd, options)
+  tests[id][:resource_cmd] = cmd
 end
 
 # Wrapper for interface specific settings prior to calling the
@@ -151,7 +151,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   test_harness_interface(tests, :non_default)
 
-  interface_cleanup(agent, tests[:non_default])
   skipped_tests_summary(tests)
 end
 

@@ -63,8 +63,8 @@ def interface_pre_check(tests)
 
   # Get the capabilities and update the caps list with any add'l test values
   caps = interface_capabilities(agent, intf)
-  caps['Speed'] += ',auto'
-  caps['Duplex'] += ',auto'
+  caps['Speed'] += ',auto' unless caps['Speed']['auto']
+  caps['Duplex'] += ',auto' unless caps['Duplex']['auto']
   caps['MTU'] = '1600'
 
   # Create a probe hash to pre-test the properties

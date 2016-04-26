@@ -364,37 +364,28 @@ tests['SVI_autostate'] = {
   },
 }
 
-tests['negotiate'] = {
-  desc:               '5.1 negotiate-auto',
+tests[:auto] = {
+  desc:               '5.1 Misc. Auto Value Properties',
   operating_system:   'nexus',
-  platform:           'n(5|6)k',
   intf_type:          'ethernet',
-  preclean:           true,
   sys_def_switchport: false,
+  resource_name:      'cisco_interface',
+  code:               [0, 2],
   manifest_props:     {
     switchport_mode: 'disabled',
-    negotiate_auto:  'false',
-  },
-  resource:           {
-    'negotiate_auto' => 'false'
+    # duplex and speed are defined by interface_pre_check
   },
 }
 
-tests['speed_dup_mtu'] = {
-  desc:               '5.2 Speed/Duplex/MTU',
+tests[:non_default] = {
+  desc:               '5.2 Misc. Non-default Value Properties',
+  operating_system:   'nexus',
   intf_type:          'ethernet',
-  preclean:           true,
   sys_def_switchport: false,
+  resource_name:      'cisco_interface',
   manifest_props:     {
     switchport_mode: 'disabled',
-    mtu:             1556,
-    # speed:           100, # TBD: Needs plat awareness
-    duplex:          'full',
-  },
-  resource:           {
-    'mtu'    => '1556',
-    # 'speed'  => '100',
-    'duplex' => 'full',
+    # duplex, speed, and mtu are defined by interface_pre_check
   },
 }
 
@@ -444,6 +435,63 @@ def build_manifest_interface(tests, id)
   cmd = PUPPET_BINPATH +
         "resource cisco_interface '#{tests[id][:title_pattern]}'"
   tests[id][:resource_cmd] = cmd
+end
+
+def interface_pre_check(tests)
+  # Discover a usable test interface
+  intf = find_interface(tests, :auto)
+  tests[:auto][:title_pattern] = intf
+  tests[:non_default][:title_pattern] = intf
+
+  # Clean the test interface
+  system_default_switchport(agent, false)
+  interface_cleanup(agent, intf, 'Initial Cleanup')
+
+  # Get the capabilities and update the caps list with any add'l test values
+  caps = interface_capabilities(agent, intf)
+
+  if caps.empty?
+    tests[:skipped] ||= []
+    tests[:skipped] << tests[:auto][:desc]
+    tests[:skipped] << tests[:non_default][:desc]
+    return false
+  end
+
+  caps['Speed'] += ',auto' unless caps['Speed']['auto']
+  caps['Duplex'] += ',auto' unless caps['Duplex']['auto']
+  caps['MTU'] = '1600'
+
+  # Create a probe hash to pre-test the properties
+  probe = {
+    cmd:         PUPPET_BINPATH + 'resource cisco_interface ',
+    intf:        intf,
+    caps:        caps,
+    probe_props: %w(Speed Duplex MTU),
+  }
+  caps = interface_probe(tests, probe)[:caps]
+
+  # Fixup the test manifests with usable values
+  spd = caps['Speed']
+  dup = caps['Duplex']
+  mtu = caps['MTU']
+
+  tests[:auto][:manifest_props][:negotiate_auto] = 'true' unless platform[/n7k/]
+  tests[:auto][:manifest_props][:duplex] = 'auto' if dup.delete('auto')
+  tests[:auto][:manifest_props][:speed] = 'auto' if spd.delete('auto')
+
+  tests[:non_default][:manifest_props][:duplex] = dup.shift unless dup.empty?
+  tests[:non_default][:manifest_props][:speed] = spd.shift unless spd.empty?
+  tests[:non_default][:manifest_props][:mtu] = mtu.shift unless mtu.empty?
+
+  # Cannot turn off auto-negotiate for speeds 10G+
+  non_default_speed = tests[:non_default][:manifest_props][:speed]
+  tests[:non_default][:manifest_props][:negotiate_auto] = 'false' unless
+    platform[/n7k/] || non_default_speed.to_i >= 10_000
+
+  logger.info "\n      Pre-Check :non_default hash: #{tests[:non_default]}"\
+              "\n      Pre-Check :auto hash: #{tests[:auto]}"
+  interface_cleanup(agent, intf, 'Post-Pre-Check Cleanup')
+  true
 end
 
 # Helper for 'system default switchport'
@@ -538,10 +586,18 @@ test_name "TestCase :: #{testheader}" do
   test_harness_interface(tests, 'SVI_autostate_default')
   test_harness_interface(tests, 'SVI_autostate')
 
-  # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 5. MISC Property Testing")
-  test_harness_interface(tests, 'negotiate')
-  # TBD: test_harness_interface(tests, 'speed_dup_mtu')
+  ### -------------------------------------------------------------------
+  logger.info("\n#{'-' * 60}\nSection 5. Negotiate Auto, MTU, Speed, Duplex")
+  if interface_pre_check(tests)
+    test_harness_run(tests, :auto)
+    test_harness_run(tests, :non_default)
+  else
+    msg = 'Could not find interface capabiilities'
+    logger.error("\n#{tests[:auto][:desc]} :: auto :: SKIP" \
+                 "\n#{msg}")
+    logger.error("\n#{tests[:non_default][:desc]} :: non_default :: SKIP" \
+                 "\n#{msg}")
+  end
 
   # -------------------------------------------------------------------
   if platform_supports_test(tests, 'BDI_non_default')
