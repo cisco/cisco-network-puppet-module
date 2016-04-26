@@ -1863,7 +1863,7 @@ interface. Valid value is an integer.
 ##### `switchport_autostate_exclude`
 Exclude this port for the SVI link calculation. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
 ##### `private_vlan_mapping`
-Private vlan mapping for interface vlan. List of secondary vlan associated to the interface vlan primary.
+Private vlan mapping for interface vlan. List of secondary vlans associated to the interface vlan primary.
 ##### `switchport_mode_private_vlan_host`
 Switchport host mode for private vlan. This a L2 access port.
 ##### `switchport_mode_private_vlan_host_association`
