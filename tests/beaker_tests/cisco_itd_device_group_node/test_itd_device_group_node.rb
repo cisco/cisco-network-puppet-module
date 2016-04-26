@@ -138,6 +138,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   device = platform
   logger.info("#### This device is of type: #{device} #####")
+  skip_nexus_i2_img(tests)
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
   test_harness_run(tests, :default)
