@@ -32,10 +32,14 @@ class ciscopuppet::cisco::demo_vlan {
     fabric_control  => $fabric_control
   }
   # For private vlan
-  cisco_vlan { '120':
-    ensure     => present,
-    private_vlan_type => 'primary',
-    private_vlan_association => ['200', '300-304'],
+  if platform_get() =~ /n(3|5|6|7|9)k/ {
+    cisco_vlan { '120':
+      ensure     => present,
+      private_vlan_type => 'primary',
+      private_vlan_association => ['200', '300-304'],
+    }
+  
+  } else {
+    warning('This platform does not support the private vlan feature')
   }
-
 }

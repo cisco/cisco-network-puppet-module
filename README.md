@@ -1865,22 +1865,22 @@ Exclude this port for the SVI link calculation. Valid values are 'true', 'false'
 ##### `private_vlan_mapping`
 Private vlan mapping for interface vlan. List of secondary vlans associated to the interface vlan primary.
 ##### `switchport_mode_private_vlan_host`
-Switchport host mode for private vlan. This a L2 access port.
+Switchport host mode for private vlan. This a L2 access port. There are two modes: host and promiscous.
 ##### `switchport_mode_private_vlan_host_association`
-This configuration specify which vlans are associated on this port. Host mode only support a pair of vlan: primary and secondary. Valid values are integers.
+This configuration specify which vlans are associated on this port. Host mode only support a pair of vlans: primary and secondary. Valid values are an array of ["primary_vlan", "secondary_vlan"] pairs.
 
 ##### `switchport_mode_private_vlan_host_promisc`
-This configuration specify which vlans are associated on this port. Promiscous mode only support a pair of vlan: primary and secondaries. Valid values are integers.
+This configuration specify which vlans are associated on this port. Promiscous mode only support a pair of vlans: primary and secondaries. Valid values are an array of ["primary_vlan", "secondary_vlan"] pairs.
 ##### `switchport_mode_private_vlan_trunk_promiscuous`
-Switchport trunk promisc mode for private vlan. This a L2 trunk port capable of carrying multiple primary vlan.
+Switchport trunk promisc mode for private vlan. This a L2 trunk port capable of carrying multiple primary vlans.
 ##### `switchport_mode_private_vlan_trunk_secondary`
 Switchport trunk secondary mode for private vlan. This a L2 trunk port capable of carrying multiple secondary vlans.
 #### `switchport_private_vlan_association_trunk`
-This configuration specify which vlans are associated on this trunk secondary port. Pair of distinguish vlans in the form of primary and secondary are accepted per entry. Valid values are integers.
+This configuration specify which vlans are associated on this trunk secondary port. Pair of distinguish vlans in the form of primary and secondary are accepted per entry. Valid values are an array of ["primary_vlan", "secondary_vlan"] pairs.
 #### `switchport_private_vlan_mapping_trunk`
-This configuration specify which vlans are associated on this trunk promisc port. Pair of distinguish vlans in the form of primary vlan and secondary vlans (single or range) are accepted per entry. Valid values are integers.
+This configuration specify which vlans are associated on this trunk promisc port. Pair of distinguish vlans in the form of primary vlan and secondary vlans (single or range) are accepted per entry. Valid values are an array of ["primary_vlan", "secondary_vlan"] pairs.
 #### `switchport_private_vlan_trunk_allowed_vlan`
-This configuration specify which private vlans are associated on this trunk port. Valid values are integers.
+This configuration specify which private vlans are associated on this trunk port. Valid values are an array of ["vlan"].
 #### `switchport_private_vlan_trunk_native_vlan`
 This configuration specify the native vlan as a private vlan. Valid values are integers.
 ##### `switchport_trunk_allowed_vlan`

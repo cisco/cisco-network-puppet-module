@@ -91,9 +91,31 @@ Puppet::Type.newtype(:cisco_interface) do
      svi_autostate                => true,
      svi_management               => true,
     }
+    #Private vlan config example
     cisco_interface { \"Ethernet8/1\" :
      switchport_mode_private_vlan_host  => 'host',
      switchport_mode_private_vlan_host_association => ['10', '11'],
+    }
+    cisco_interface { \"Ethernet8/1\" :
+     switchport_mode_private_vlan_host  => 'promiscuous',
+     switchport_mode_private_vlan_host_promisc=> ['10', '11'],
+    }
+    cisco_interface { \"Ethernet8/1\" :
+     switchport_mode_private_vlan_trunk_promiscuous => true,
+     switchport_private_vlan_mapping_trunk => ['10', '11'],
+    }
+    cisco_interface { \"Ethernet8/1\" :
+     switchport_mode_private_vlan_trunk_secondary => true,
+     switchport_private_vlan_association_trunk => ['10', '11'],
+    }
+    cisco_interface { \"Ethernet8/1\" :
+     switchport_private_vlan_trunk_allowed_vlan => ['10-11'],
+    }
+    cisco_interface { \"Ethernet8/1\" :
+     switchport_private_vlan_trunk_native_vlan => 10,
+    }
+    cisco_interface {\"Vlan98\":
+     private_vlan_mapping => ['10-11'],
     }"
 
   ###################
@@ -717,11 +739,11 @@ Puppet::Type.newtype(:cisco_interface) do
 
   newproperty(:switchport_mode_private_vlan_host_association, array_matching: :all) do
     format = '["primary_vlan", "secondary_vlan"]'
-    desc 'An array of [primary_vlan, secondary_vlan] pair. '\
-         "Valid values match format #{format} with primary_vlan "\
-         'and secondary_vlan as integer string.'
-    match_error = "must be of format #{format} with primary_vlan and "\
-                  'secondary_vlan as integer string.'
+    desc "An array of #{format} pairs. "\
+         "Valid values match format #{format}. "\
+         'primary_vlan and secondary_vlan are integers.'
+    match_error = "must be of format #{format}. "\
+                  'primary_vlan and secondary_vlan must be specified as integers.'
 
     validate do |value|
       fail "Vlan '#{value}' #{match_error}" unless
@@ -739,12 +761,12 @@ Puppet::Type.newtype(:cisco_interface) do
     end
   end # property switchport_mode_private_vlan_host_association
   newproperty(:switchport_mode_private_vlan_host_promisc, array_matching: :all) do
-    format = '["primary_vlan", "vlans"]'
-    desc 'An array of [primary_vlan, secondary_vlans] pair. '\
-         "Valid values match format #{format} with primary_vlan and "\
-         ' vlans as integer string.'
-    match_error = "must be of format #{format} with primary_vlan and "\
-                  'vlans as integer string.'
+    format = '["primary_vlan", "secondary_vlan"]'
+    desc "An array of #{format} pairs. "\
+         "Valid values match format #{format}. "\
+         'primary_vlan and secondary_vlan are integers.'
+    match_error = "must be of format #{format}. "\
+                  'primary_vlan and secondary_vlan must be specified as integers.'
 
     validate do |value|
       fail "Vlan '#{value}' #{match_error}" unless
@@ -782,11 +804,11 @@ Puppet::Type.newtype(:cisco_interface) do
 
   newproperty(:switchport_private_vlan_association_trunk, array_matching: :all) do
     format = '["primary_vlan", "secondary_vlan"]'
-    desc 'An array of [primary_vlan, secondary_vlan] pair. '\
-         "Valid values match format #{format} with primary_vlan "\
-         'and secondary_vlan as integer string.'
-    match_error = "Input must be of #{format} with "\
-                  'primary_vlan and secondary_vlan as integerstring.'\
+    desc "An array of #{format} pairs. "\
+         "Valid values match format #{format}. "\
+         'primary_vlan and secondary_vlan are integers.'
+    match_error = "Input must be of #{format}. "\
+                  'primary_vlan and secondary_vlan must be specified as integers. '\
                   "Ex ['10', '20']"
 
     validate do |value|
@@ -807,13 +829,13 @@ Puppet::Type.newtype(:cisco_interface) do
   end # switchport_private_vlan_association_trunk
 
   newproperty(:switchport_private_vlan_mapping_trunk, array_matching: :all) do
-    format = '["primary_vlan", "vlans"]'
-    desc 'An array of [primary_vlan, secondary_vlans] pair. '\
-         "Valid values match format #{format} with primary_vlan and vlans "\
-         'as integer string.'
+    format = '["primary_vlan", "secondary_vlan"]'
+    desc "An array of #{format} pairs. "\
+         "Valid values match format #{format}. "\
+         'primary_vlan and secondary_vlan are integers.'
 
-    match_error = "Input must be of format #{format} with "\
-                  'primary_vlan and vlans as integer string.'\
+    match_error = "Input must be of format #{format}. "\
+                  'primary_vlan and secondary_vlan must be specified as integers.'\
                   " Ex ['10', '20'], ['10', '20-30']"\
                   " or ['10', '20,24']"
 
@@ -836,11 +858,11 @@ Puppet::Type.newtype(:cisco_interface) do
 
   newproperty(:switchport_private_vlan_trunk_allowed_vlan, array_matching: :all) do
     format = '["vlans"]'
-    desc 'An array of allowed private vlans. '\
-         "Valid values match format #{format} with vlans as integer string."
-    match_error = "must be of format ['vlans'] with "\
-                  "vlans as integer string. Ex ['10'], ['20-30']"\
-                  " or ['20,24']"
+    desc "An array of #{format}. "\
+         "Valid values match format #{format} with vlans as integers."
+    match_error = "must be of format #{format}. "\
+                  'vlans must be specified as integers.'\
+                  " Ex ['10'], ['20-30'] or ['20,24']"
 
     validate do |value|
       fail "Vlan '#{value}' #{match_error}" unless
@@ -863,8 +885,8 @@ Puppet::Type.newtype(:cisco_interface) do
     format = '<vlan>'
     desc 'The  private native vlan. '\
          "Valid values match format #{format} with vlan as integer"
-    match_error = "must be of format #{format} with "\
-                  'vlan as integer. Ex 10 or 20'
+    match_error = "must be of format #{format}. "\
+                  'vlan must be specified as integer. Ex 10 or 20'
 
     validate do |value|
       fail "Vlan '#{value}' #{match_error}" unless
@@ -878,11 +900,11 @@ Puppet::Type.newtype(:cisco_interface) do
 
   newproperty(:private_vlan_mapping, array_matching: :all) do
     format = '["vlans"]'
-    desc 'An array of allowed secondary private vlans. '\
+    desc "An array of #{format}. "\
          "Valid values match format #{format} with vlans as integer"
-    match_error = "must be of format #{format} with "\
-                  "vlans as integer string. Ex ['10'], ['20-30']"\
-                  " or ['20,24']"
+    match_error = "must be of format #{format}. "\
+                  'vlans must be specified as integers. '\
+                  "Ex ['10'], ['20-30'] or ['20,24']"
 
     validate do |value|
       fail "Vlan '#{value}' #{match_error}" unless
