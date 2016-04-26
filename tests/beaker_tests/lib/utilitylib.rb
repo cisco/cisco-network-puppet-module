@@ -908,6 +908,19 @@ def platform
   @cisco_hardware
 end
 
+# Used to cache the system image information
+@csco_img = nil
+# Use facter to return cisco system image information
+def skip_nexus_i2_img(tests)
+  return @csco_img unless @csco_img.nil?
+  @csco_img = on(agent, facter_cmd('-p cisco.images.system_image')).stdout.chomp
+  return unless @csco_img[/7.0.3.I2/]
+  msg = "Skipping all tests; '#{tests[:resource_name]}' "\
+        'is unsupported on this node'
+  banner = '#' * msg.length
+  raise_skip_exception("\n#{banner}\n#{msg}\n#{banner}\n", self)
+end
+
 # Helper to skip tests on unsupported platforms.
 # tests[:operating_system] - An OS regexp pattern for all tests (caller set)
 # tests[:platform] - A platform regexp pattern for all tests (caller set)
@@ -980,6 +993,34 @@ def find_interface(tests, id=nil, skipcheck=true)
     prereq_skip(tests[:resource_name], self, msg)
   end
   intf
+end
+
+# Find an array of test interface on the agent.
+# Callers should include the following hash keys:
+#   [:agent]
+#   [:intf_type]
+#   [:resource_name]
+def find_interface_array(tests, id=nil, skipcheck=true)
+  # Prefer specific test key over the all tests key
+  if id
+    type = tests[id][:intf_type] || tests[:intf_type]
+  else
+    type = tests[:intf_type]
+  end
+
+  case type
+  when /ethernet/i, /dot1q/
+    all = get_current_resource_instances(tests[:agent], 'cisco_interface')
+    # Skip the first interface we find in case it's our access interface.
+    # TODO: check the interface IP address like we do in node_utils
+    array = all.grep(%r{ethernet\d+/\d+})
+  end
+
+  if skipcheck && array.nil? && array.empty?
+    msg = 'Unable to find suitable interface module for this test.'
+    prereq_skip(tests[:resource_name], self, msg)
+  end
+  array
 end
 
 # Use puppet resource to get interface capability information.
