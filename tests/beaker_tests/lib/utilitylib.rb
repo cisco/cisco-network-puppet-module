@@ -995,6 +995,34 @@ def find_interface(tests, id=nil, skipcheck=true)
   intf
 end
 
+# Find an array of test interface on the agent.
+# Callers should include the following hash keys:
+#   [:agent]
+#   [:intf_type]
+#   [:resource_name]
+def find_interface_array(tests, id=nil, skipcheck=true)
+  # Prefer specific test key over the all tests key
+  if id
+    type = tests[id][:intf_type] || tests[:intf_type]
+  else
+    type = tests[:intf_type]
+  end
+
+  case type
+  when /ethernet/i, /dot1q/
+    all = get_current_resource_instances(tests[:agent], 'cisco_interface')
+    # Skip the first interface we find in case it's our access interface.
+    # TODO: check the interface IP address like we do in node_utils
+    array = all.grep(%r{ethernet\d+/\d+})
+  end
+
+  if skipcheck && array.nil? && array.empty?
+    msg = 'Unable to find suitable interface module for this test.'
+    prereq_skip(tests[:resource_name], self, msg)
+  end
+  array
+end
+
 # Use puppet resource to get interface capability information.
 # TBD: Facter may be a better home for this method but the performance hit
 # appears to be 2s per hundred interfaces so it works better for now as an

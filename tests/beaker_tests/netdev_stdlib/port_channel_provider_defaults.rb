@@ -72,9 +72,29 @@ testheader = 'Resource port_channel'
 # tests[:agent] - the agent object
 #
 tests = {
-  master: master,
-  agent:  agent,
+  master:    master,
+  agent:     agent,
+  intf_type: 'ethernet',
 }
+
+def find_ethernet_interface_array(tests)
+  if tests[:ethernet]
+    array = tests[:ethernet]
+  else
+    array = find_interface_array(tests)
+    # cache for later tests
+    tests[:ethernet] = array
+  end
+  msg = 'Unable to find suitable interface module for this test.'
+  prereq_skip(tests[:resource_name], self, msg) if
+    array.length < 3
+  array
+end
+
+def find_ethernet_interface(tests, index)
+  array = find_ethernet_interface_array(tests)
+  array[index]
+end
 
 # tests[id] keys set by caller and used by test_harness_common:
 #
@@ -100,31 +120,37 @@ tests = {
 #   :title_pattern will be set to 'id'.
 #
 
+int_arr1 = []
+int_arr1 << find_ethernet_interface(tests, 1)
+
 tests['default_properties'] = {
   title_pattern:  'port-channel100',
   manifest_props: "
     id            => '100',
-    interfaces    => ['ethernet1/8'],
+    interfaces    => #{int_arr1},
     minimum_links => '1',
   ",
   code:           [0, 2],
   resource_props: {
     'id'            => '100',
-    'interfaces'    => "['ethernet1/8']",
+    'interfaces'    => int_arr1,
     'minimum_links' => '1',
   },
 }
+
+int_arr2 = []
+int_arr2 << int_arr1[0] << find_ethernet_interface(tests, 2)
 
 tests['non_default_properties'] = {
   title_pattern:  'port-channel100',
   manifest_props: "
     id            => '100',
-    interfaces    => ['ethernet1/8', 'ethernet1/9'],
+    interfaces    => #{int_arr2},
     minimum_links => '3',
   ",
   resource_props: {
     'id'            => '100',
-    'interfaces'    => "['ethernet1/8', 'ethernet1/9']",
+    'interfaces'    => int_arr2,
     'minimum_links' => '3',
   },
 }
