@@ -870,6 +870,7 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
+=begin
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. (L3) Property Testing")
   test_harness_interface(tests, 'L3_default')
@@ -913,9 +914,10 @@ test_name "TestCase :: #{testheader}" do
     logger.error("\n#{tests[:non_default][:desc]} :: non_default :: SKIP" \
                  "\n#{msg}")
   end
-
+=end
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 6. Private vlan Property Testing")
+=begin
   test_harness_run(tests_2, :primary)
   test_harness_run(tests_2, :community)
   test_harness_run(tests_2, :isolated)
@@ -937,7 +939,9 @@ test_name "TestCase :: #{testheader}" do
   test_harness_interface(tests, 'pvlan_host_port_default')
   test_harness_interface(tests, 'pvlan_promisc_port_default')
   test_harness_interface(tests, 'switchport_private_vlan_trunk_native_vlan_default')
+=end
   test_harness_interface(tests, 'switchport_private_vlan_mapping_trunk_default')
+=begin
   test_harness_interface(tests, 'switchport_private_vlan_association_trunk_default')
   interface_cleanup(agent, tests[:svi_name])
   test_harness_interface(tests, 'private_vlan_mapping_svi_default')
@@ -952,6 +956,7 @@ test_name "TestCase :: #{testheader}" do
     test_harness_interface(tests, 'BDI_non_default')
   end
   # -------------------------------------------------------------------
+=end
   resource_absent_cleanup(agent, 'cisco_vlan', 'private-vlan CLEANUP :: ')
   interface_cleanup(agent, tests[:ethernet]) if tests[:ethernet]
   skipped_tests_summary(tests)
