@@ -9,12 +9,17 @@
 # rubocop run of all checks as part of the pre-push hook
 
 step_name "Running RuboCop lint checks"
-rubocop --lint
+staged_ruby_files=$(get_staged_ruby_files)
+if [ -z "$staged_ruby_files" ]; then
+  # quit since there are no ruby files to check
+  exit 0
+fi
+rubocop --lint $staged_ruby_files
 check_rc "Please fix RuboCop lint failures before committing."
 
 # Do a full rubocop run to warn the user, but don't block a commit by it.
 step_name "Running all RuboCop checks"
-rubocop
+rubocop $staged_ruby_files
 check_rc_optional "Fix all RuboCop failures before pushing upstream"
 
 exit 0

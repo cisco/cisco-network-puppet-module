@@ -22,6 +22,13 @@ fi
 # Note that the use of brackets around a tr range is ok here, (it's
 # even required, for portability to Solaris 10's /usr/bin/tr), since
 # the square bracket bytes happen to fall in the designated range.
-git diff --cached --name-only --diff-filter=A -z $against |
-        LC_ALL=C tr -d '[ -~]\0' | wc -c
+added_files=$(git diff --cached --name-only --diff-filter=A -z $against | tr '\0' ' ')
+added_files_array=(`echo $added_files`)
+# Print the files that have non-ascii text
+for i in ${added_files_array[@]}; do
+  bad_chars=$(echo -n $i | LC_ALL=C tr -d '[ -~]\0')
+  if [ -n "$bad_chars" ]; then echo $i; fi
+done
+# Fail if any non-ASCII characters are discovered
+(echo -n $added_files | LC_ALL=C tr -d '[ -~]\0' | exit $(wc -c))
 check_rc "Rename non-ASCII file name(s) before committing"

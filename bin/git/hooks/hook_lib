@@ -86,6 +86,13 @@ get_last_version() {
 }
 export -f get_last_version
 
+get_staged_ruby_files() {
+  rubocop_target=$(rubocop --list-target-files)
+  staged_files=$(git diff --name-only --staged)
+  printf '%s' "$(printf '%s' "$rubocop_target $staged_files " | tr ' ' '\n' | sort | uniq -d)"
+}
+export -f get_staged_ruby_files
+
 add_changelog_diff_link() {
     local OLD_VERSION=$1
     local NEW_VERSION=$2

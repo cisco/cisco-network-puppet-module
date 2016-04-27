@@ -1,0 +1,18 @@
+#!/usr/bin/env ruby
+#
+# Check if a staged file has unstaged changes and print a warning
+
+staged_files = `git diff --name-only --staged`.split(' ')
+unstaged_files = `git diff --name-only`.split(' ')
+files = (staged_files << unstaged_files).flatten!
+
+if files.length != files.uniq.length
+  puts 'Warning: a staged file has unstaged changes!'
+  fd = IO.sysopen('/dev/tty', 'w+')
+  a = IO.new(fd, 'w+')
+  a.print 'Continue anyway? [y/N] '
+  input = a.gets.chomp
+  exit input =~ /^y/i ? 0 : -1
+end
+
+exit 0
