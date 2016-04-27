@@ -70,6 +70,8 @@ test_properties = {
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
+    resource_absent_cleanup(agent, 'cisco_bridge_domain',
+                            'bridge-domain CLEANUP :: ')
     # Expected exit_code is 0 since this is a bash shell cmd.
     on(master, VlanLib.create_stdvlan_manifest_absent)
 
