@@ -49,6 +49,40 @@ IGNORE_VALUE = :ignore_value
 # These methods are defined outside of a module so that
 # they can access the Beaker DSL API's.
 
+# cisco_interface uses the interface name as the title.
+# Find an available interface and create an appropriate title.
+def create_interface_title(tests, id)
+  return tests[id][:title_pattern] if tests[id][:title_pattern]
+
+  # Prefer specific test key over the all tests key
+  type = tests[id][:intf_type] || tests[:intf_type]
+  case type
+  when /ethernet/i
+    if tests[:ethernet]
+      intf = tests[:ethernet]
+    else
+      intf = find_interface(tests, id)
+      # cache for later tests
+      tests[:ethernet] = intf
+    end
+  when /dot1q/
+    if tests[:ethernet]
+      intf = "#{tests[:ethernet]}.1"
+    else
+      intf = find_interface(tests, id)
+      # cache for later tests
+      tests[:ethernet] = intf
+      intf = "#{intf}.1" unless intf.nil?
+    end
+  when /vlan/
+    intf = tests[:svi_name]
+  when /bdi/
+    intf = tests[:bdi_name]
+  end
+  logger.info("\nUsing interface: #{intf}")
+  tests[id][:title_pattern] = intf
+end
+
 # Method to return the Vegas shell command string for a NXOS CLI command.
 # @param nxosclistr [String] The NXOS CLI command string to execute on host.
 # @result vshellcmd [String] Returns 'vsh -c <cmd>' command string.
@@ -439,8 +473,7 @@ end
 # is used to create an appropriate title by merging a partial title from
 # [:title_pattern] with the [:title_params] values.
 #
-# rubocop:disable Metrics/AbcSize
-def puppet_resource_title_pattern_munge(tests, id)
+def puppet_resource_title_pattern_munge(tests, id) # rubocop:disable Metrics/AbcSize
   title = tests[id][:title_pattern]
   params = tests[id][:title_params]
   return params if title.nil?
@@ -478,7 +511,6 @@ def puppet_resource_title_pattern_munge(tests, id)
   end
   t
 end
-# rubocop:enable Metrics/AbcSize
 
 # Helper method to create a puppet resource command string for providers
 # that use complex title patterns (bgp, vrf_af, etc).
@@ -488,6 +520,7 @@ end
 #                  to create the cmd string
 def puppet_resource_cmd_from_params(tests, id)
   fail 'tests[:resource_name] is not defined' unless tests[:resource_name]
+
   params = tests[id][:title_params]
   stepinfo = 'Create resource command title string:'\
              "\n  [:resource_name] '#{tests[:resource_name]}'"\
@@ -527,6 +560,7 @@ end
 #
 def create_manifest_and_resource(tests, id)
   fail 'tests[:resource_name] is not defined' unless tests[:resource_name]
+
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
 
   # Create the cmd string for puppet_resource
@@ -991,7 +1025,7 @@ def find_interface(tests, id=nil, skipcheck=true)
     all = get_current_resource_instances(tests[:agent], 'cisco_interface')
     # Skip the first interface we find in case it's our access interface.
     # TODO: check the interface IP address like we do in node_utils
-    intf = all.grep(%r{ethernet\d+/\d+})[1]
+    intf = all.grep(%r{ethernet\d+/\d+$})[1]
   end
 
   if skipcheck && intf.nil?
@@ -1042,7 +1076,9 @@ def interface_capabilities(agent, intf)
   # ['Model: N7K-F312FQ-25', '', 'Type (SFP capable):    QSFP-40G-4SFP10G', '',
   # 'Speed: 10000,40000', '', 'Duplex: full', ''], }
 
-  str = stdout[/\[(.*)\]/][1..-2]
+  str = stdout[/\[(.*)\]/]
+  return {} if str.nil?
+  str = str[1..-2]
   return {} if str.nil?
   str = str[1..-2]
   return {} if str.nil?
