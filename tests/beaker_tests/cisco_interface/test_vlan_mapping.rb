@@ -140,6 +140,7 @@ def build_manifest_vlan_mapping(tests, id)
   tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   node default {
     cisco_interface { '#{intf}':\n
+    switchport_mode => '#{tests[:switchport_mode]}',
     #{prop_hash_to_manifest(tests[id][:manifest_props])}
   }\n      }\nEOF"
 

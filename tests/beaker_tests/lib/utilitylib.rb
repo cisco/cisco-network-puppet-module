@@ -49,6 +49,40 @@ IGNORE_VALUE = :ignore_value
 # These methods are defined outside of a module so that
 # they can access the Beaker DSL API's.
 
+# cisco_interface uses the interface name as the title.
+# Find an available interface and create an appropriate title.
+def create_interface_title(tests, id)
+  return tests[id][:title_pattern] if tests[id][:title_pattern]
+
+  # Prefer specific test key over the all tests key
+  type = tests[id][:intf_type] || tests[:intf_type]
+  case type
+  when /ethernet/i
+    if tests[:ethernet]
+      intf = tests[:ethernet]
+    else
+      intf = find_interface(tests, id)
+      # cache for later tests
+      tests[:ethernet] = intf
+    end
+  when /dot1q/
+    if tests[:ethernet]
+      intf = "#{tests[:ethernet]}.1"
+    else
+      intf = find_interface(tests, id)
+      # cache for later tests
+      tests[:ethernet] = intf
+      intf = "#{intf}.1" unless intf.nil?
+    end
+  when /vlan/
+    intf = tests[:svi_name]
+  when /bdi/
+    intf = tests[:bdi_name]
+  end
+  logger.info("\nUsing interface: #{intf}")
+  tests[id][:title_pattern] = intf
+end
+
 # Method to return the Vegas shell command string for a NXOS CLI command.
 # @param nxosclistr [String] The NXOS CLI command string to execute on host.
 # @result vshellcmd [String] Returns 'vsh -c <cmd>' command string.
@@ -210,7 +244,7 @@ def test_manifest(tests, id)
     logger.debug("test_manifest :: manifest:\n#{tests[id][:manifest]}")
     on(tests[:master], tests[id][:manifest])
     code = tests[id][:code] ? tests[id][:code] : [2]
-    logger.debug('test_manifest :: check puppet agent cmd')
+    logger.debug("test_manifest :: check puppet agent cmd (code: #{code})")
     on(tests[:agent], puppet_agent_cmd, acceptable_exit_codes: code)
     test_stderr(tests, id) if tests[id][:stderr_pattern]
   end
@@ -439,8 +473,7 @@ end
 # is used to create an appropriate title by merging a partial title from
 # [:title_pattern] with the [:title_params] values.
 #
-# rubocop:disable Metrics/AbcSize
-def puppet_resource_title_pattern_munge(tests, id)
+def puppet_resource_title_pattern_munge(tests, id) # rubocop:disable Metrics/AbcSize
   title = tests[id][:title_pattern]
   params = tests[id][:title_params]
   return params if title.nil?
@@ -478,7 +511,6 @@ def puppet_resource_title_pattern_munge(tests, id)
   end
   t
 end
-# rubocop:enable Metrics/AbcSize
 
 # Helper method to create a puppet resource command string for providers
 # that use complex title patterns (bgp, vrf_af, etc).
@@ -488,6 +520,7 @@ end
 #                  to create the cmd string
 def puppet_resource_cmd_from_params(tests, id)
   fail 'tests[:resource_name] is not defined' unless tests[:resource_name]
+
   params = tests[id][:title_params]
   stepinfo = 'Create resource command title string:'\
              "\n  [:resource_name] '#{tests[:resource_name]}'"\
@@ -527,6 +560,7 @@ end
 #
 def create_manifest_and_resource(tests, id)
   fail 'tests[:resource_name] is not defined' unless tests[:resource_name]
+
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
 
   # Create the cmd string for puppet_resource
@@ -743,15 +777,6 @@ def setup_fabricpath_env(tests, testcase)
     prereq_skip(testheader, testcase,
                 "Unable to set limit-resource module-type to '#{mod}'")
   end
-
-  step "Verify that '#{intf}' is allocated to VDC" do
-    break if vdc_allocate_interface_get(vdc, intf)
-    logger.info("'#{intf}' is not allocated to VDC, allocate it now...")
-    vdc_allocate_interface_set(vdc, intf)
-    break if vdc_allocate_interface_get(vdc, intf)
-    prereq_skip(testheader, testcase,
-                "Unable to allocate interface '#{intf}' to VDC")
-  end
 end
 # rubocop:enable Metrics/AbcSize
 
@@ -792,10 +817,11 @@ end
 # found
 def fabricpath_interface
   # Search for F2E/F3 cards on device, create an interface name if found
-  cmd = get_vshell_cmd('sh mod')
-  out = on(agent, cmd, pty: true).stdout[/^(\d+)\s.*N7K-F(?:2.*25E|3)/]
-  slot = out.nil? ? nil : Regexp.last_match[1]
-  "ethernet#{slot}/1" unless slot.nil?
+  cmd = '-p cisco.feature_compatible_module_iflist.fabricpath'
+  if_array_str = on(agent, facter_cmd(cmd)).stdout.chomp
+  if_array_str.gsub!(/[\[\]\n\s"]/, '')
+  if_array = if_array_str.split(',')
+  if_array[0] unless if_array.empty?
 end
 
 # Return the default vdc name
@@ -814,23 +840,15 @@ def limit_resource_module_type_get(vdc, mod)
 end
 
 # Set limit-resource module-type
-def limit_resource_module_type_set(vdc, mod, default=false)
-  # Turn off prompting
-  cmd = get_vshell_cmd('terminal dont-ask persist')
-  on(agent, cmd, pty: true)
-
-  if default
-    cmd = get_vshell_cmd("conf t ; vdc #{vdc} ; "\
-                         'no limit-resource module-type')
-  else
-    cmd = get_vshell_cmd("conf t ; vdc #{vdc} ; "\
-                         "limit-resource module-type #{mod}")
-  end
-  on(agent, cmd, pty: true)
-
-  # Reset dont-ask to default setting
-  cmd = get_vshell_cmd('no terminal dont-ask persist')
-  on(agent, cmd, pty: true)
+def limit_resource_module_type_set(_vdc, mod, default=false)
+  mod = '' if default
+  resource_vdc_mod = {
+    name:     'cisco_vdc',
+    title:    'default',
+    property: 'limit_resource_module_type',
+    value:    mod,
+  }
+  resource_set(agent, resource_vdc_mod, "Enable #{mod} card(s)")
 end
 
 # Check for presence of interface in vdc allocated interfaces
@@ -924,6 +942,25 @@ def platform
   @cisco_hardware
 end
 
+# Check if this image is an I2 image
+@i2_image = nil # Cache the lookup result
+def nexus_i2_image
+  return @i2_image unless @i2_image.nil?
+  on(agent, facter_cmd('-p cisco.images.system_image'))
+  @i2_image = stdout[/7.0.3.I2/] ? true : false
+  @i2_image
+end
+
+# This is a skip-all-testcases-if-I2-image check.
+# Do not use this for skipping individual properties.
+def skip_nexus_i2_image(tests)
+  return unless nexus_i2_image
+  msg = "Skipping all tests; '#{tests[:resource_name]}' "\
+        'is not supported on 7.0.3(I2) images'
+  banner = '#' * msg.length
+  raise_skip_exception("\n#{banner}\n#{msg}\n#{banner}\n", self)
+end
+
 # Helper to skip tests on unsupported platforms.
 # tests[:operating_system] - An OS regexp pattern for all tests (caller set)
 # tests[:platform] - A platform regexp pattern for all tests (caller set)
@@ -988,7 +1025,7 @@ def find_interface(tests, id=nil, skipcheck=true)
     all = get_current_resource_instances(tests[:agent], 'cisco_interface')
     # Skip the first interface we find in case it's our access interface.
     # TODO: check the interface IP address like we do in node_utils
-    intf = all.grep(%r{ethernet\d+/\d+})[1]
+    intf = all.grep(%r{ethernet\d+/\d+$})[1]
   end
 
   if skipcheck && intf.nil?
@@ -998,21 +1035,52 @@ def find_interface(tests, id=nil, skipcheck=true)
   intf
 end
 
+# Find an array of test interface on the agent.
+# Callers should include the following hash keys:
+#   [:agent]
+#   [:intf_type]
+#   [:resource_name]
+def find_interface_array(tests, id=nil, skipcheck=true)
+  # Prefer specific test key over the all tests key
+  if id
+    type = tests[id][:intf_type] || tests[:intf_type]
+  else
+    type = tests[:intf_type]
+  end
+
+  case type
+  when /ethernet/i, /dot1q/
+    all = get_current_resource_instances(tests[:agent], 'cisco_interface')
+    # Skip the first interface we find in case it's our access interface.
+    # TODO: check the interface IP address like we do in node_utils
+    array = all.grep(%r{ethernet\d+/\d+})
+  end
+
+  if skipcheck && array.nil? && array.empty?
+    msg = 'Unable to find suitable interface module for this test.'
+    prereq_skip(tests[:resource_name], self, msg)
+  end
+  array
+end
+
 # Use puppet resource to get interface capability information.
 # TBD: Facter may be a better home for this method but the performance hit
 # appears to be 2s per hundred interfaces so it works better for now as an
 # on-demand method.
 def interface_capabilities(agent, intf)
   cmd = PUPPET_BINPATH + "resource cisco_interface_capabilities '#{intf}'"
-
-  on(agent, cmd, options)
+  on(agent, cmd, pty: true)
 
   # Sample raw output:
   # "cisco_interface_capabilities { 'ethernet9/1':\n  capabilities =>
   # ['Model: N7K-F312FQ-25', '', 'Type (SFP capable):    QSFP-40G-4SFP10G', '',
   # 'Speed: 10000,40000', '', 'Duplex: full', ''], }
 
-  str = stdout[/\[(.*)\]/][1..-2]
+  str = stdout[/\[(.*)\]/]
+  return {} if str.nil?
+  str = str[1..-2]
+  return {} if str.nil?
+  str = str[1..-2]
   return {} if str.nil?
 
   # 'Model: N7K-F312FQ-25', '', 'Type (SFP capable):    QSFP-40G-4SFP10G', '',
@@ -1031,4 +1099,84 @@ def interface_capabilities(agent, intf)
     hash[k] = v
   end
   hash
+end
+
+# Capabilities-to-Netdev-Manifest syntax converter
+def netdev_speed(speed)
+  case speed.to_s
+  when '100' then '100m'
+  when '1000' then '1g'
+  when '10000' then '10g'
+  when '40000' then '40g'
+  when '100000' then '100g'
+  else speed
+  end
+end
+
+# 'interface_probe' tests reported capabilities. Why? Speed, duplex, and mtu
+# are somewhat unreliably reported (ie. some values still raise errors when
+# used) so this method tries each value to eliminate the ambiguity.
+# The probe options are passed in as a hash, either as a standalone argument or
+# via tests[:probe], in which case the successfully probed caps will overwrite
+# the tests[:probe][:caps] value.
+# Note that this function is only useful with ethernet interfaces.
+#
+# probe = A hash of probe arguments:
+#    :cmd = The puppet resource command to use with the probe.
+#    :intf = The interface to test. If not present one will be discovered.
+#    :caps = A hash of interface capabilities, typically the output from
+#            interface_capabilities(). If not present the capabilities will be
+#            discovered by this method. On completion, :caps will be updated
+#            with the successful values.
+#    :probe_props = An array of capabilities to probe.
+#    :netdev_speed = Set to True for syntax conversion (netdev only)
+#
+# Example:
+#   tests[:probe] = {
+#     cmd:         '<PUPPET_BINPATH> resource network_interface ',
+#     intf:        'ethernet1/1',
+#     caps:        {'Speed' => '10,100,1000', 'Duplex' => 'auto,half,full'},
+#     probe_props: %w(Speed Duplex)
+#
+def interface_probe(tests, probe={})
+  agent = tests[:agent]
+
+  # Use tests[:probe] if caller does not supply a separate probe hash
+  probe = tests[:probe] if probe.empty?
+  fail 'interface_probe: probe hash not found' if probe.nil?
+
+  # Find a usable interface
+  probe[:intf] = find_interface(tests) if probe[:intf].nil?
+  intf = probe[:intf]
+  fail 'interface_probe: interface not found' if intf.nil?
+
+  # Create the puppet resource command syntax
+  fail 'interface_probe: resource command not found' if probe[:cmd].nil?
+  cmd = probe[:cmd] + " '#{intf}' "
+
+  # Get the interface capabilities
+  probe[:caps] = interface_capabilities(agent, intf) if probe[:caps].nil?
+  fail 'interface_probe: capabilities data not present' if probe[:caps].nil?
+
+  debug_probe(probe, 'Probe Begin')
+  probe[:probe_props].each do |prop|
+    success = []
+    probe[:caps][prop].to_s.split(',').each do |val|
+      val = netdev_speed(val) if prop[/Speed/] && probe[:netdev_speed]
+      on(agent, cmd + "#{prop}=#{val}",
+         acceptable_exit_codes: [0, 2, 1], pty: true)
+      next if stdout[/error/i]
+      success << val
+    end
+    probe[:caps][prop] = success
+  end
+  # probe[:caps]=>{"Speed"=>["100", "1000"], "Duplex"=>["full"],
+  debug_probe(probe, 'Probe Complete')
+  probe
+end
+
+def debug_probe(probe, msg)
+  dbg = ''
+  probe[:probe_props].each { |p| dbg += "'#{p}' => #{probe[:caps][p]}, " }
+  logger.info("\n      #{msg}: #{dbg}")
 end

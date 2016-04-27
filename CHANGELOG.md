@@ -29,7 +29,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `port_channel`
   - `radius`, `radius_global`, `radius_server`, `radius_server_group`
   - `network_snmp`, `snmp_community`, `snmp_notification`, `snmp_notification_receiver`, `snmp_user`
-  - `tacacs`, `tacacs_global`
+  - `tacacs`, `tacacs_global`, `tacacs_server`, `tacacs_server_group`
 - Extended `cisco_bgp` with the following attributes:
   - `nsr`
   - `reconnect_interval`
@@ -43,6 +43,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `switchport_private_vlan_mapping_trunk`, `switchport_private_vlan_trunk_allowed_vlan`
   - `switchport_private_vlan_trunk_native_vlan`, `private_vlan_mapping`
   - `modify switchport_trunk_allowed_vlan to use range_summarize() which takes care of idempotency issues with vlan ranges`
+- Extended `cisco_portchannel_global` provider to support `Nexus 3xxx`
 - Extended `cisco_vlan` with the following attributes:
   - `mode`
   - `private_vlan_type`

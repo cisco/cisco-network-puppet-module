@@ -43,8 +43,8 @@ Puppet::Type.type(:network_interface).provide(:cisco, parent: Puppet::Type.type(
       @interface = nil
       @property_hash[:ensure] = :absent
     else
-      if @property_hash.empty?
-        @interface = Cisco::Interface.new(@resource[:interface])
+      if @property_hash.empty? || @interface.nil?
+        @interface = Cisco::Interface.new(@resource[:name])
       end
       @interface.mtu = @resource[:mtu] if @resource[:mtu]
       @interface.description = @resource[:description] if @resource[:description]
