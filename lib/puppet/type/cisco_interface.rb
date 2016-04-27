@@ -747,19 +747,19 @@ Puppet::Type.newtype(:cisco_interface) do
 
     validate do |value|
       fail "Vlan '#{value}' #{match_error}" unless
-            value.kind_of? String
-      fail "Vlan '#{value}' #{match_error}" unless
-            /^(\s*\d+\s*)$/.match(value).to_s == value
+            /^(\d+)$/.match(value.to_s).to_s == value.to_s ||
+            value == 'default' || value == :default
     end
 
     munge do |value|
-      value.gsub(/\s+/, '')
+      value == 'default' ? :default : value.to_s.gsub(/\s+/, '')
     end
 
     def insync?(is)
       (is.size == should.flatten.size && is.sort == should.flatten.sort)
     end
   end # property switchport_mode_private_vlan_host_association
+
   newproperty(:switchport_mode_private_vlan_host_promisc, array_matching: :all) do
     format = '["primary_vlan", "secondary_vlan"]'
     desc "An array of #{format} pairs. "\
@@ -772,11 +772,12 @@ Puppet::Type.newtype(:cisco_interface) do
       fail "Vlan '#{value}' #{match_error}" unless
             value.kind_of? String
       fail "Vlan '#{value}' #{match_error}" unless
-           /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value
+           /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value ||
+           value == 'default' || value == :default
     end
 
     munge do |value|
-      value.gsub(/\s+/, '')
+      value == 'default' ? :default : value.to_s.gsub(/\s+/, '')
     end
 
     def insync?(is)
@@ -813,16 +814,16 @@ Puppet::Type.newtype(:cisco_interface) do
 
     validate do |value|
       fail "Vlan '#{value}' #{match_error}" unless
-            value.kind_of? String
-      fail "Vlan '#{value}' #{match_error}" unless
-             /^(\s*\d+\s*)$/.match(value).to_s == value
+             /^(\s*\d+\s*)$/.match(value).to_s == value ||
+             value == 'default' || value == :default
     end
 
     munge do |value|
-      value.gsub(/\s+/, '')
+      value == 'default' ? :default : value.to_s.gsub(/\s+/, '')
     end
 
     def insync?(is)
+      return true if should == [:default] && is == [:default]
       pair = should.join(' ')
       is.include? pair
     end
@@ -841,16 +842,16 @@ Puppet::Type.newtype(:cisco_interface) do
 
     validate do |value|
       fail "Vlan '#{value}' #{match_error}" unless
-            value.kind_of? String
-      fail "Vlan '#{value}' #{match_error}" unless
-           /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value
+           /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value ||
+           value == 'default' || value == :default
     end
 
     munge do |value|
-      value.gsub(/\s+/, '')
+      value == 'default' ? :default : value.to_s.gsub(/\s+/, '')
     end
 
     def insync?(is)
+      return true if should == [:default] && is == [:default]
       pair = should.join(' ')
       is.include? pair
     end
@@ -868,14 +869,17 @@ Puppet::Type.newtype(:cisco_interface) do
       fail "Vlan '#{value}' #{match_error}" unless
             value.kind_of? String
       fail "Vlan '#{value}' #{match_error}" unless
-           /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value
+           /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value ||
+           value == 'default' || value == :default
     end
 
     munge do |value|
-      value.gsub(/\s+/, '')
+      value == 'default' ? :default : value.to_s.gsub(/\s+/, '')
     end
 
     def insync?(is)
+      return true if should == [:default] && is == [:default]
+      return false if should == [:default]
       list = should[0].split(',')
       (is.size == list.size && is.sort == list.sort)
     end
@@ -890,11 +894,12 @@ Puppet::Type.newtype(:cisco_interface) do
 
     validate do |value|
       fail "Vlan '#{value}' #{match_error}" unless
-            value.kind_of? Integer
+            /^(\d+)$/.match(value.to_s).to_s == value.to_s ||
+            value == 'default' || value == :default
     end
 
     munge do |value|
-      Integer(value)
+      value == 'default' ? :default : Integer(value)
     end
   end # switchport_private_vlan_trunk_native_vlan
 
@@ -908,18 +913,15 @@ Puppet::Type.newtype(:cisco_interface) do
 
     validate do |value|
       fail "Vlan '#{value}' #{match_error}" unless
-            value.kind_of? String
-      fail "Vlan '#{value}' #{match_error}" unless
-            /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value
+            /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value ||
+            value == 'default' || value == :default
     end
 
     munge do |value|
-      value.gsub!(/\s+/, '')
-      PuppetX::Cisco::PvlanUtils.prepare_list(value)
+      value == 'default' ? :default : value.gsub(/\s+/, '')
     end
 
     def insync?(is)
-      is = PuppetX::Cisco::PvlanUtils.prepare_list(is[0])
       (is.size == should.flatten.size && is.sort == should.flatten.sort)
     end
   end # private_vlan_mapping

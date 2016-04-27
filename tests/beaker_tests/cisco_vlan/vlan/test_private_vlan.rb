@@ -70,23 +70,33 @@ tests[:community_102] = {
   },
 }
 
-vlan_assoc = %w(101 102)
+vlan_assoc = %w(99 101 102 105)
 tests[:association] = {
   desc:           '2.6 configured private vlan association',
   title_pattern:  '100',
   manifest_props: {
-    private_vlan_association: ['101-102']
+    private_vlan_association: ['99,101-102,105']
   },
   resource:       {
     'private_vlan_association' => "#{vlan_assoc}"
   },
 }
 
-tests[:no_association] = {
-  desc:           '2.7 unconfigured private vlan association',
+tests[:association_default] = {
+  desc:           '2.7 private vlan association default',
   title_pattern:  '100',
   manifest_props: {
-    private_vlan_association: []
+    private_vlan_association: 'default'
+  },
+  resource:       {
+  },
+}
+
+tests[:type_default] = {
+  desc:           '2.8 private vlan type default',
+  title_pattern:  '100',
+  manifest_props: {
+    private_vlan_type: 'default'
   },
   resource:       {
   },
@@ -98,6 +108,7 @@ tests[:no_association] = {
 test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Property Testing")
+  resource_absent_cleanup(agent, 'cisco_vlan', 'private-vlan CLEANUP :: ')
   test_harness_run(tests, :primary)
   test_harness_run(tests, :community)
   test_harness_run(tests, :isolated)
@@ -105,7 +116,8 @@ test_name "TestCase :: #{testheader}" do
   test_harness_run(tests, :isolated_101)
   test_harness_run(tests, :community_102)
   test_harness_run(tests, :association)
-  test_harness_run(tests, :no_association)
+  test_harness_run(tests, :association_default)
+  test_harness_run(tests, :type_default)
   resource_absent_cleanup(agent, 'cisco_vlan', 'private-vlan CLEANUP :: ')
 end
 

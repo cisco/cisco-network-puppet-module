@@ -573,6 +573,147 @@ tests['pvlan_mapping_svi'] = {
     'private_vlan_mapping' => "['102-103']"
   },
 }
+
+tests['pvlan_host_port_association_default'] = {
+  desc:               '6.16 Pvlan host port association default config',
+  operating_system:   'nexus',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_mode_private_vlan_host_association: 'default'
+  },
+  resource:           {
+  },
+}
+
+tests['pvlan_promisc_port_association_default'] = {
+  desc:               '6.17 Pvlan promisc port association default config',
+  operating_system:   'nexus',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_mode_private_vlan_host_promisc: 'default'
+  },
+  resource:           {
+  },
+}
+
+tests['pvlan_trunk_promisc_port_default'] = {
+  desc:               '6.18 Pvlan trunk promisc port default config',
+  operating_system:   'nexus',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_mode_private_vlan_trunk_promiscuous: 'default'
+  },
+  resource:           {
+  },
+}
+
+tests['pvlan_trunk_sec_port_default'] = {
+  desc:               '6.19 Pvlan trunk sec port default config',
+  operating_system:   'nexus',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_mode_private_vlan_trunk_secondary: 'default'
+  },
+  resource:           {
+  },
+}
+
+tests['pvlan_trunk_allow_vlan_default'] = {
+  desc:               '6.20 Pvlan trunk vlan allow port default config',
+  operating_system:   'nexus',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_private_vlan_trunk_allowed_vlan: 'default'
+  },
+  resource:           {
+  },
+}
+
+tests['pvlan_host_port_default'] = {
+  desc:               '6.21 Pvlan host port default config',
+  operating_system:   'nexus',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_mode_private_vlan_host: 'disabled'
+  },
+  resource:           {
+  },
+}
+
+tests['pvlan_promisc_port_default'] = {
+  desc:               '6.22 Pvlan promisc port default config',
+  operating_system:   'nexus',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_mode_private_vlan_host: 'disabled'
+  },
+  resource:           {
+  },
+}
+
+tests['switchport_private_vlan_trunk_native_vlan_default'] = {
+  desc:               '6.23 Pvlan trunk native vlan default config',
+  operating_system:   'nexus',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_private_vlan_trunk_native_vlan: 'default'
+  },
+  resource:           {
+  },
+}
+
+tests['switchport_private_vlan_mapping_trunk_default'] = {
+  desc:               '6.24 Pvlan trunk promisc association default config',
+  operating_system:   'nexus',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_private_vlan_mapping_trunk: 'default'
+  },
+  resource:           {
+  },
+}
+tests['switchport_private_vlan_association_trunk_default'] = {
+  desc:               '6.25 Pvlan trunk secondary association default config',
+  operating_system:   'nexus',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_private_vlan_association_trunk: 'default'
+  },
+  resource:           {
+  },
+}
+
+tests['private_vlan_mapping_svi_default'] = {
+  desc:             '6.26 Pvlan svi association default config',
+  operating_system: 'nexus',
+  intf_type:        'vlan',
+  manifest_props:   {
+    private_vlan_mapping: 'default'
+  },
+  resource:         {
+  },
+}
+
 tests['BDI_non_default'] = {
   desc:             '7.1 (BDI) Non Default BDI Properties',
   operating_system: 'nexus',
@@ -755,7 +896,6 @@ test_name "TestCase :: #{testheader}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 6. Private vlan Property Testing")
-
   test_harness_run(tests_2, :primary)
   test_harness_run(tests_2, :community)
   test_harness_run(tests_2, :isolated)
@@ -769,19 +909,30 @@ test_name "TestCase :: #{testheader}" do
   test_harness_interface(tests, 'pvlan_trunk_sec_port')
   test_harness_interface(tests, 'pvlan_trunk_allow_vlan')
   test_harness_interface(tests, 'pvlan_trunk_native_vlan')
+  test_harness_interface(tests, 'pvlan_host_port_association_default')
+  test_harness_interface(tests, 'pvlan_promisc_port_association_default')
+  test_harness_interface(tests, 'pvlan_trunk_promisc_port_default')
+  test_harness_interface(tests, 'pvlan_trunk_sec_port_default')
+  test_harness_interface(tests, 'pvlan_trunk_allow_vlan_default')
+  test_harness_interface(tests, 'pvlan_host_port_default')
+  test_harness_interface(tests, 'pvlan_promisc_port_default')
+  test_harness_interface(tests, 'switchport_private_vlan_trunk_native_vlan_default')
+  test_harness_interface(tests, 'switchport_private_vlan_mapping_trunk_default')
+  test_harness_interface(tests, 'switchport_private_vlan_association_trunk_default')
   interface_cleanup(agent, tests[:svi_name])
+  test_harness_interface(tests, 'private_vlan_mapping_svi_default')
   test_harness_interface(tests, 'pvlan_mapping_svi')
   interface_cleanup(agent, tests[:svi_name])
-  # -------------------------------------------------------------------
 
+  # -------------------------------------------------------------------
   if platform_supports_test(tests, 'BDI_non_default')
     logger.info("\n#{'-' * 60}\nSection 7. BDI Property Testing")
     bd = tests[:bdi_name][/(\d+)/]
     config_bridge_domain(agent, bd)
     test_harness_interface(tests, 'BDI_non_default')
   end
-
   # -------------------------------------------------------------------
+  resource_absent_cleanup(agent, 'cisco_vlan', 'private-vlan CLEANUP :: ')
   interface_cleanup(agent, tests[:ethernet]) if tests[:ethernet]
   skipped_tests_summary(tests)
 end

@@ -154,7 +154,8 @@ Puppet::Type.newtype(:cisco_vlan) do
         fail "Private vlan type '#{value}' #{match_error}"
       end
 
-      unless valid_input.include?(value)
+      unless valid_input.include?(value) ||
+             value == 'default' || value == :default
         fail "Private vlan type '#{value}' #{match_error}"
       end
     end
@@ -177,17 +178,22 @@ Puppet::Type.newtype(:cisco_vlan) do
     match_error = "must be of format ['vlans'] with vlans as integer"
     validate do |value|
       fail "Vlan '#{value}' #{match_error}" unless
-            value.kind_of? String
-      fail "Vlan '#{value}' #{match_error}" unless
-            /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value
+            /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value ||
+            value == 'default' || value == :default
     end
 
     munge do |value|
-      PuppetX::Cisco::PvlanUtils.prepare_list(value)
+      value == 'default' ? :default : value.to_s.gsub(/\s+/, '')
     end
 
     def insync?(is)
-      (is.size == should.flatten.size && is.sort == should.flatten.sort)
+      return true if should == [:default] && is == [:default]
+      return false if should == [:default]
+      vlans = should
+      # For pvlan association we need to massage the should value
+      # since the returned is value is a flat array of vlans.
+      should = PuppetX::Cisco::PvlanUtils.prepare_list(vlans[0])
+      (is.size == should.size && is.sort == should.sort)
     end
   end # property private_vlan_association
 
