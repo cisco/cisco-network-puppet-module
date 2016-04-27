@@ -473,7 +473,7 @@ end
 # is used to create an appropriate title by merging a partial title from
 # [:title_pattern] with the [:title_params] values.
 #
-def puppet_resource_title_pattern_munge(tests, id)
+def puppet_resource_title_pattern_munge(tests, id) # rubocop:disable Metrics/AbcSize
   title = tests[id][:title_pattern]
   params = tests[id][:title_params]
   return params if title.nil?

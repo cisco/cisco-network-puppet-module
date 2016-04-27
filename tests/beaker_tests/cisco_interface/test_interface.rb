@@ -436,7 +436,7 @@ def build_manifest_interface(tests, id)
   tests[id][:resource_cmd] = cmd
 end
 
-def interface_pre_check(tests)
+def interface_pre_check(tests) # rubocop:disable Metrics/AbcSize
   # Discover a usable test interface
   intf = find_interface(tests, :auto)
   tests[:auto][:title_pattern] = intf
