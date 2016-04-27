@@ -73,6 +73,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # Restore original testbed settings
   logger.info("\nRestore module type to '#{orig_type}'\n")
-  limit_resource_module_type_set(default_vdc_name, orig_type, true)
+  limit_resource_module_type_set(default_vdc_name, orig_type)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
