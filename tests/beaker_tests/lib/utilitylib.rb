@@ -210,7 +210,7 @@ def test_manifest(tests, id)
     logger.debug("test_manifest :: manifest:\n#{tests[id][:manifest]}")
     on(tests[:master], tests[id][:manifest])
     code = tests[id][:code] ? tests[id][:code] : [2]
-    logger.debug('test_manifest :: check puppet agent cmd')
+    logger.debug("test_manifest :: check puppet agent cmd (code: #{code})")
     on(tests[:agent], puppet_agent_cmd, acceptable_exit_codes: code)
     test_stderr(tests, id) if tests[id][:stderr_pattern]
   end
@@ -908,15 +908,21 @@ def platform
   @cisco_hardware
 end
 
-# Used to cache the system image information
-@csco_img = nil
-# Use facter to return cisco system image information
-def skip_nexus_i2_img(tests)
-  return @csco_img unless @csco_img.nil?
-  @csco_img = on(agent, facter_cmd('-p cisco.images.system_image')).stdout.chomp
-  return unless @csco_img[/7.0.3.I2/]
+# Check if this image is an I2 image
+@i2_image = nil # Cache the lookup result
+def nexus_i2_image
+  return @i2_image unless @i2_image.nil?
+  on(agent, facter_cmd('-p cisco.images.system_image'))
+  @i2_image = stdout[/7.0.3.I2/] ? true : false
+  @i2_image
+end
+
+# This is a skip-all-testcases-if-I2-image check.
+# Do not use this for skipping individual properties.
+def skip_nexus_i2_image(tests)
+  return unless nexus_i2_image
   msg = "Skipping all tests; '#{tests[:resource_name]}' "\
-        'is unsupported on this node'
+        'is not supported on 7.0.3(I2) images'
   banner = '#' * msg.length
   raise_skip_exception("\n#{banner}\n#{msg}\n#{banner}\n", self)
 end
