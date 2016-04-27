@@ -62,7 +62,7 @@ tests = {
 test_name "TestCase :: #{tests[:resource_name]} - #{id}" do
   resource_absent_cleanup(agent, 'cisco_bgp')
 
-  os = fact_on(agent, 'os.name')
+  os = on(agent, facter_cmd('-p os.name')).stdout.chomp
   vrf = 'red'
   neighbor = '1.1.1.1'
 
