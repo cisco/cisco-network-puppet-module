@@ -68,10 +68,11 @@ testheader = 'Resource cisco_interface'
 #                    This key can be overridden by a tests[id][:platform] key
 #
 tests = {
-  master:   master,
-  agent:    agent,
-  svi_name: 'vlan13',
-  bdi_name: 'bdi100',
+  master:        master,
+  agent:         agent,
+  svi_name:      'vlan13',
+  bdi_name:      'bdi100',
+  resource_name: 'cisco_interface',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -369,7 +370,6 @@ tests[:auto] = {
   operating_system:   'nexus',
   intf_type:          'ethernet',
   sys_def_switchport: false,
-  resource_name:      'cisco_interface',
   code:               [0, 2],
   manifest_props:     {
     switchport_mode: 'disabled',
@@ -382,7 +382,6 @@ tests[:non_default] = {
   operating_system:   'nexus',
   intf_type:          'ethernet',
   sys_def_switchport: false,
-  resource_name:      'cisco_interface',
   manifest_props:     {
     switchport_mode: 'disabled',
     # duplex, speed, and mtu are defined by interface_pre_check
@@ -592,7 +591,7 @@ test_name "TestCase :: #{testheader}" do
     test_harness_run(tests, :auto)
     test_harness_run(tests, :non_default)
   else
-    msg = 'Could not find interface capabiilities'
+    msg = 'Could not find interface capabilities'
     logger.error("\n#{tests[:auto][:desc]} :: auto :: SKIP" \
                  "\n#{msg}")
     logger.error("\n#{tests[:non_default][:desc]} :: non_default :: SKIP" \

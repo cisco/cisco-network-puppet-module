@@ -478,10 +478,9 @@ def puppet_resource_title_pattern_munge(tests, id)
   params = tests[id][:title_params]
   return params if title.nil?
 
-  resource_name = test_resource_name(tests, id)
   tests[id][:title_params] = {} if params.nil?
   t = {}
-  case resource_name
+  case tests[:resource_name]
   when 'cisco_acl'
     t[:afi], t[:acl_name] = title.split
   when 'cisco_bgp'
@@ -504,7 +503,7 @@ def puppet_resource_title_pattern_munge(tests, id)
   t.merge!(tests[id][:title_params])
 
   if t[:vrf].nil?
-    case resource_name
+    case tests[:resource_name]
     when 'cisco_acl'
     else
       t[:vrf] = 'default'
@@ -520,12 +519,11 @@ end
 # [:title_params] (optional) This hash will be merged with the :title_pattern
 #                  to create the cmd string
 def puppet_resource_cmd_from_params(tests, id)
-  resource_name = test_resource_name(tests, id)
-  fail ':resource_name is not defined' unless resource_name
+  fail 'tests[:resource_name] is not defined' unless tests[:resource_name]
 
   params = tests[id][:title_params]
   stepinfo = 'Create resource command title string:'\
-             "\n  [:resource_name] '#{resource_name}'"\
+             "\n  [:resource_name] '#{tests[:resource_name]}'"\
              "\n  [:title_pattern] '#{tests[id][:title_pattern]}'"
   stepinfo += "\n  [:title_params]  #{params}" if params
 
@@ -538,7 +536,7 @@ def puppet_resource_cmd_from_params(tests, id)
       title_string = tests[id][:title_pattern]
     end
 
-    cmd = PUPPET_BINPATH + "resource #{resource_name} '#{title_string}'"
+    cmd = PUPPET_BINPATH + "resource #{tests[:resource_name]} '#{title_string}'"
 
     logger.info("\ntitle_string: '#{title_string}'")
     tests[id][:resource_cmd] = cmd
@@ -561,8 +559,7 @@ end
 #   command string becomes a combination of the title pattern and these params.
 #
 def create_manifest_and_resource(tests, id)
-  resource_name = test_resource_name(tests, id)
-  fail ':resource_name is not defined' unless resource_name
+  fail 'tests[:resource_name] is not defined' unless tests[:resource_name]
 
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
 
@@ -603,7 +600,7 @@ def create_manifest_and_resource(tests, id)
   tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   \nnode default {
   #{dependency_manifest(tests, id)}
-  #{resource_name} { '#{tests[id][:title_pattern]}':
+  #{tests[:resource_name]} { '#{tests[id][:title_pattern]}':
     #{state}\n#{manifest}
   }\n}\nEOF"
 
@@ -693,7 +690,7 @@ def setup_mt_full_env(tests, testcase)
   # MT-full tests require a specific linecard. Search for a compatible
   # module and enable it.
 
-  testheader = test_resource_name(tests, testcase)
+  testheader = tests[:resource_name]
   mod = 'f3'
   step 'Check for Compatible Line Module' do
     tests[:intf] = mt_full_interface
@@ -755,7 +752,7 @@ def setup_fabricpath_env(tests, testcase)
 
   return unless platform == 'n7k'
 
-  testheader = test_resource_name(tests, testcase)
+  testheader = tests[:resource_name]
   mod = 'f2e f3'
   step 'Check for Compatible Line Module' do
     tests[:intf_type] = 'ethernet'
@@ -985,7 +982,7 @@ end
 # This is a simple top-level skip similar to what exists in the minitests.
 # Callers will skip all tests when true.
 # tests[:platform] - regex of supported platforms
-# [:resource_name] - provider name (e.g. 'cisco_vxlan_vtep')
+# tests[:resource_name] - provider name (e.g. 'cisco_vxlan_vtep')
 def skip_unless_supported(tests)
   pattern = tests[:platform]
   return false if pattern.nil? || platform.match(tests[:platform])
@@ -1027,7 +1024,7 @@ def find_interface(tests, id=nil, skipcheck=true)
 
   if skipcheck && intf.nil?
     msg = 'Unable to find suitable interface module for this test.'
-    prereq_skip(test_resource_name(tests, id), self, msg)
+    prereq_skip(tests[:resource_name], self, msg)
   end
   intf
 end
@@ -1176,11 +1173,4 @@ def debug_probe(probe, msg)
   dbg = ''
   probe[:probe_props].each { |p| dbg += "'#{p}' => #{probe[:caps][p]}, " }
   logger.info("\n      #{msg}: #{dbg}")
-end
-
-# Helper to return the name of the test resource
-def test_resource_name(tests, id)
-  t = tests[id]
-  return tests[:resource_name] if t.nil?
-  t[:resource_name].nil? ? tests[:resource_name] : t[:resource_name]
 end
