@@ -53,53 +53,55 @@ end
 def dependency_manifest(tests, id)
   af = puppet_resource_title_pattern_munge(tests, id)
   remote_as = tests[id][:remote_as]
+  remote_as = 1 if remote_as.nil? && operating_system == 'ios_xr'
 
   extra_config = ''
-  # XR requires the following before a vrf AF can be configured:
-  #   1. a global router_id
-  #   2. a global address family
-  #   3. route_distinguisher configured on the vrf
-  #   4. remote-as is required for neightbor
-  remote_as = 1 if remote_as.nil? && operating_system == 'ios_xr'
-  if af[:vrf] != 'default'
-    if af[:afi] == 'ipv6'
-      global_afi = 'vpnv6'
-    else
-      global_afi = 'vpnv4'
+  if operating_system[/ios_xr/]
+    extra_config += "
+      cisco_command_config { 'policy_config':
+        command => '
+          route-policy rm_in
+            end-policy
+          route-policy rm_out
+            end-policy
+        '
+      }
+    "
+    # XR requires the following before a vrf AF can be configured:
+    #   1. a global router_id
+    #   2. a global address family
+    #   3. route_distinguisher configured on the vrf
+    #   4. remote-as is required for neighbor
+    if af[:vrf] != 'default'
+      global_afi = (af[:afi] == 'ipv6') ? 'vpnv6' : 'vpnv4'
+      extra_config += "
+        cisco_bgp { '#{af[:asn]}':
+          ensure              => present,
+          router_id           => '1.2.3.4',
+        }
+        cisco_bgp_af { '#{af[:asn]} default #{global_afi} #{af[:safi]}':
+          ensure              => present,
+        }
+        cisco_bgp { '#{af[:asn]} #{af[:vrf]}':
+          ensure              => present,
+          route_distinguisher => auto,
+        }
+      "
     end
-    extra_config = "
-    cisco_bgp { '#{af[:asn]}':
-      ensure                                 => present,
-      router_id                              => '1.2.3.4',
-    }
-    cisco_bgp_af { '#{af[:asn]} default #{global_afi} #{af[:safi]}':
-      ensure                                 => present,
-    }
-    cisco_bgp { '#{af[:asn]} #{af[:vrf]}':
-      ensure                                 => present,
-      route_distinguisher                    => auto,
-    }"
-  end
-  extra_config += "
-    cisco_bgp_af { '#{af[:asn]} #{af[:vrf]} #{af[:afi]} #{af[:safi]}':
-        ensure                                 => present,
-    }"
+    extra_config += "
+      cisco_bgp_af { '#{af[:asn]} #{af[:vrf]} #{af[:afi]} #{af[:safi]}':
+        ensure                => present,
+      }
+    "
+  end # if ios_xr
+
   if remote_as
     extra_config += "
-    cisco_bgp_neighbor { '#{af[:asn]} #{af[:vrf]} #{af[:neighbor]}':
-      ensure                                 => present,
-      remote_as                              => #{remote_as},
-    }"
-  end
-  if operating_system == 'ios_xr'
-    extra_config += "
-    cisco_command_config { 'policy_config':
-      command => '
-        route-policy rm_in
-          end-policy
-        route-policy rm_out
-          end-policy'
-    }"
+      cisco_bgp_neighbor { '#{af[:asn]} #{af[:vrf]} #{af[:neighbor]}':
+        ensure               => present,
+        remote_as            => #{remote_as},
+      }
+    "
   end
   extra_config
 end
