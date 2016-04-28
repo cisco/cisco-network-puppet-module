@@ -37,19 +37,19 @@ tests = {
 intf = find_interface(tests)
 
 # Test hash test cases
-tagged_man = [2, 3, 4, 6, 7, 8]
-tagged_res = %w(2 3 4 6 7 8)
+tagged_manifest = [2, 3, 4, 6, 7, 8]
+tagged_resource = %w(2 3 4 6 7 8)
 tests[:non_default] = {
   desc:           '2. Non Default',
   title_pattern:  intf,
   manifest_props: {
     mode:          'trunk',
-    tagged_vlans:  tagged_man,
+    tagged_vlans:  tagged_manifest,
     untagged_vlan: 128,
   },
   resource:       {
     mode:          'trunk',
-    tagged_vlans:  "#{tagged_res}",
+    tagged_vlans:  "#{tagged_resource}",
     untagged_vlan: '128',
   },
 }
