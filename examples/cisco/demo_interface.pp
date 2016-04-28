@@ -106,16 +106,13 @@ class ciscopuppet::cisco::demo_interface {
 
     # For private vlan
     if platform_get() =~ /n(3|5|6|7|9)k/ {
-      cisco_vlan { '444':
-        ensure     => present,
-        private_vlan_type => 'primary',
-      }
       cisco_vlan { '445':
         ensure     => present,
         private_vlan_type => 'isolated',
       }
       cisco_vlan { '444':
         ensure     => present,
+        private_vlan_type => 'primary',
         private_vlan_association => ['445'],
       }
       cisco_interface { 'Ethernet1/6':
