@@ -49,7 +49,7 @@ class ciscopuppet::cisco::demo_patching {
     '7.0(3)I3(1)': {
       $ciscoPatchName = 'CSCuxdublin-1.0.0-7.0.3.I3.1.lib32_n9000.rpm'
     }
-    default:  { fail("## NO COMPATIBLE SAMPLE PATCH RPMs AVAILABLE FOR THIS IMAGE: ${image_ver}")
+    default:  { fail("\n## NO COMPATIBLE SAMPLE PATCH RPMs AVAILABLE FOR THIS IMAGE: ${image_ver}\n")
     }
   }
   $ciscoPatchSource = "puppet:///modules/ciscopuppet/${ciscoPatchName}"
