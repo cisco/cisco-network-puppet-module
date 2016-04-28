@@ -125,10 +125,10 @@ tests['non_default_properties'] = {
     source_interface                => 'loopback55',
   ",
   resource_props: {
-    'description'                     => 'Configured by Puppet',
-    'host_reachability'               => 'evpn',
-    'shutdown'                        => 'false',
-    'source_interface'                => 'loopback55',
+    'description'       => 'Configured by Puppet',
+    'host_reachability' => 'evpn',
+    'shutdown'          => 'false',
+    'source_interface'  => 'loopback55',
   },
 }
 
@@ -147,10 +147,10 @@ tests['change_parameters'] = {
     source_interface                => 'loopback1',
   ",
   resource_props: {
-    'description'                     => 'Configured by Puppet',
-    'host_reachability'               => 'flood',
-    'shutdown'                        => 'true',
-    'source_interface'                => 'loopback1',
+    'description'       => 'Configured by Puppet',
+    'host_reachability' => 'flood',
+    'shutdown'          => 'true',
+    'source_interface'  => 'loopback1',
   },
 }
 

@@ -174,7 +174,7 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
   newproperty(:suppress_uuc) do
     desc "Suppress uuc under layer 2 VNI. Valid values are true,
           false, or 'default'"
- 
+
     newvalues(:true, :false, :default)
   end
 
