@@ -594,6 +594,7 @@ def create_manifest_and_resource(tests, id)
 
     # Automatically create a hash of expected states for puppet resource
     # -or- use a static hash
+    # TBD: Need a prop_hash_to_resource to handle array patterns
     tests[id][:resource] = manifest_props unless tests[id][:resource]
   end
 
