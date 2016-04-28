@@ -124,10 +124,10 @@ The following table indicates which providers are supported on each platform. As
 ##### Cisco Providers
 | ✅ = Supported <br> ❌ = Unsupported <br> :heavy_minus_sign: = Not Applicable | N9k | N30xx | N31xx | N56xx | N6k | N7k | N8k | IOS XR | Caveats |
 |:---|:---:|:-----:|:-----:|:-----:|:---:|:---:|:---:|:---:|:---:|
-| [cisco_aaa_authentication_login](#type-cisco_aaa_authentication_login) | ✅ | ✅ | ✅ | ✅ | ✅  | ✅  | ✅ | ❌   |
-| [cisco_aaa_authorization_login_cfg_svc](#type-cisco_aaa_authorization_login_cfg_svc) | ✅ | ✅ | ✅ | ✅  | ✅  | ✅  | ✅ | ❌ |
-| [cisco_aaa_authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ✅  | ✅  | ✅  | ✅ | ❌ |
-| [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs) | ✅ | ✅ | ✅ | ✅  | ✅  | ✅  | ✅ | ❌ |
+| [cisco_aaa_authentication_login](#type-cisco_aaa_authentication_login) | ✅ | ✅ | ✅ | ✅ | ✅  | ✅  | ✅ | ❌   | * [caveats](#cisco_aaa-caveats) |
+| [cisco_aaa_authorization_login_cfg_svc](#type-cisco_aaa_authorization_login_cfg_svc) | ✅ | ✅ | ✅ | ✅  | ✅  | ✅  | ✅ | ❌ | * [caveats](#cisco_aaa-caveats) |
+| [cisco_aaa_authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ✅  | ✅  | ✅  | ✅ | ❌ | * [caveats](#cisco_aaa-caveats) |
+| [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs) | ✅ | ✅ | ✅ | ✅  | ✅  | ✅  | ✅ | ❌ | * [caveats](#cisco_aaa-caveats) |
 | [cisco_acl](#type-cisco_acl) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_ace](#type-cisco_ace) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅* | ✅ | ❌ | * [caveats](#cisco_ace-caveats) |
 | [cisco_command_config](#type-cisco_command_config) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
@@ -471,6 +471,12 @@ Manages AAA Authentication Login configuration.
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
+#### <a name="cisco_aaa-caveats">Caveats</a>
+
+| Platform OS Caveat |
+|:-------------------|
+| Because of an OS issue, cisco_aaa* providers are not supported on N9K Platforms running OS Version 7.0(3)I3(1) |
+
 #### Parameters
 
 ##### `name`
@@ -507,6 +513,12 @@ Manages configuration for Authorization Login Config Service.
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
+#### <a name="cisco_aaa-caveats">Caveats</a>
+
+| Platform OS Caveat |
+|:-------------------|
+| Because of an OS issue, cisco_aaa* providers are not supported on N9K Platforms running OS Version 7.0(3)I3(1) |
+
 #### Parameters
 
 ##### `ensure`
@@ -537,6 +549,12 @@ Manages configuration for Authorization Login Exec Service.
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
 
+#### <a name="cisco_aaa-caveats">Caveats</a>
+
+| Platform OS Caveat |
+|:-------------------|
+| Because of an OS issue, cisco_aaa* providers are not supported on N9K Platforms running OS Version 7.0(3)I3(1) |
+
 #### Parameters
 
 ##### `ensure`
@@ -566,6 +584,12 @@ Manages configuration for a TACACS+ server group.
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | unsupported        | unsupported            |
+
+#### <a name="cisco_aaa-caveats">Caveats</a>
+
+| Platform OS Caveat |
+|:-------------------|
+| Because of an OS issue, cisco_aaa* providers are not supported on N9K Platforms running OS Version 7.0(3)I3(1) |
 
 #### Parameters
 
