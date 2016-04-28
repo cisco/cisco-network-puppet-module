@@ -138,7 +138,7 @@ The following table indicates which providers are supported on each platform. As
 | [cisco_bridge_domain](#type-cisco_bridge_domain) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: | :heavy_minus_sign: |
 | [cisco_bridge_domain_vni](#type-cisco_bridge_domain_vni) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: | :heavy_minus_sign: |
 | [cisco_encapsulation](#type-cisco_encapsulation) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: | :heavy_minus_sign: |
-| [cisco_evpn_vni](#type-cisco_evpn_vni) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅ | ✅ | :heavy_minus_sign: |
+| [cisco_evpn_vni](#type-cisco_evpn_vni) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅ | ✅ | :heavy_minus_sign: | * [caveats](#cisco_evpn_vni-caveats) |
 | [cisco_fabricpath_global](#type-cisco_fabricpath_global) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | * [caveats](#cisco_fabricpath_global-caveats) |
 | [cisco_fabricpath_topology](#type-cisco_fabricpath_topology) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅ | :heavy_minus_sign: | :heavy_minus_sign: |
 | [cisco_interface](#type-cisco_interface) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅ | ✅ | ✅ | * [caveats](#cisco_interface-caveats) |
@@ -1619,6 +1619,12 @@ Manages Cisco Ethernet Virtual Private Network (EVPN) VXLAN Network Identifier (
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | not applicable     | not applicable         |
 
+#### <a name="cisco_evpn_vni-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:---------|:-------------|
+| `route_target_both` | Supported on most Nexus platforms but usage is *discouraged*. See `route_target_both` below. |
+
 #### Parameters
 
 ##### `ensure`
@@ -1633,13 +1639,15 @@ The EVPN VXLAN Network Identifier. Valid values are Integer.
 
 The VPN Route Distinguisher (RD). The RD is combined with the IPv4 or IPv6 prefix learned by the PE router to create a globally unique address. Valid values are a String in one of the route-distinguisher formats (ASN2:NN, ASN4:NN, or IPV4:NN); the keyword 'auto', or the keyword 'default'.
 
-##### `route target both`
+##### `route_target_both`
 
-Enables/Disables the route-target 'auto' setting for both import and export target communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'."
+Enables/Disables route-target settings for both import and export target communities using a single property. Valid values are an Array or space-separated String of extended communities, or the keywords 'auto' or 'default'."
+
+*Caveat*: The `route_target_both` property is discouraged due to the inconsistent behavior of the property across Nexus platforms and image versions. The 'both' keyword has a transformative behavior on some platforms/versions in which it creates two cli configurations: one for import targets, a second for export targets, while the 'both' command itself may not appear at all. When the 'both' keyword does not appear in the configuration it causes an idempotency problem for puppet. For this reason it is recommended to use explicit 'route_target_export' and 'route_target_import' properties instead of `route_target_both`.
 
 ##### `route_target_import`
 
-Sets the route-target 'import' extended communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+Sets the route-target 'import' extended communities. Valid values are an Array or space-separated String of extended communities, or the keywords 'auto' or 'default'.
 
 route_target Examples:
 
@@ -1648,7 +1656,7 @@ route_target_export => '4:4 66:66'
 
 ##### `route_target_export`
 
-Sets the route-target 'export' extended communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+Sets the route-target 'export' extended communities. Valid values are an Array or space-separated String of extended communities, or the keywords 'auto' or 'default'.
 
 --
 ### Type: cisco_fabricpath_global
