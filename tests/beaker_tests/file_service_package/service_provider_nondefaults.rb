@@ -64,7 +64,7 @@ testheader = 'SERVICE Resource :: All Attributes NonDefaults'
 # @test_name [TestCase] Executes nondefaults testcase for SERVICE Resource.
 test_name "TestCase :: #{testheader}" do
   raise_skip_exception('Not supported for OAC platforms', self) if
-  platform[/'n5|6|7|k'/]
+    platform[/'n5|6|7|k'/]
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
     # Expected exit_code is 0 since this is a bash shell cmd.
