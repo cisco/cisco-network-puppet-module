@@ -491,7 +491,7 @@ tests['pvlan_promisc_port'] = {
 tests['pvlan_trunk_promisc_port'] = {
   desc:               '6.11 Pvlan trunk promisc port config',
   operating_system:   'nexus',
-  platform:           'n(5||6|7|9)k',
+  platform:           'n(5|6|7|9)k',
   intf_type:          'ethernet',
   preclean:           true,
   sys_def_switchport: true,
@@ -508,7 +508,7 @@ tests['pvlan_trunk_promisc_port'] = {
 tests['pvlan_trunk_sec_port'] = {
   desc:               '6.12 Pvlan trunk sec port config',
   operating_system:   'nexus',
-  platform:           'n(5||6|7|9)k',
+  platform:           'n(5|6|7|9)k',
   intf_type:          'ethernet',
   preclean:           true,
   sys_def_switchport: true,

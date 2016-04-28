@@ -33,10 +33,10 @@ class ciscopuppet::cisco::demo_vlan {
   }
   # For private vlan
   if platform_get() =~ /n(3|5|6|7|9)k/ {
-    cisco_vlan { '120':
+    cisco_vlan { '333':
       ensure     => present,
       private_vlan_type => 'primary',
-      private_vlan_association => ['200', '300-304'],
+      private_vlan_association => ['334', '336-339'],
     }
   
   } else {
