@@ -72,7 +72,7 @@ testheader = 'Resource cisco_vxlan_vtep'
 tests = {
   master:        master,
   agent:         agent,
-  platform:      'n(8|9)k',
+  platform:      'n(5|6|7|8|9)k',
   resource_name: 'cisco_vxlan_vtep',
 }
 
@@ -109,7 +109,6 @@ tests['default_properties'] = {
     host_reachability               => 'default',
     shutdown                        => 'default',
     source_interface                => 'default',
-    source_interface_hold_down_time => 'default',
   ",
   resource_props: {
     'host_reachability' => 'flood',
@@ -124,16 +123,21 @@ tests['non_default_properties'] = {
     host_reachability               => 'evpn',
     shutdown                        => 'false',
     source_interface                => 'loopback55',
-    source_interface_hold_down_time => '50',
   ",
   resource_props: {
     'description'                     => 'Configured by Puppet',
     'host_reachability'               => 'evpn',
     'shutdown'                        => 'false',
     'source_interface'                => 'loopback55',
-    'source_interface_hold_down_time' => '50',
   },
 }
+
+# Source Interface Hold-down Time
+if platform[/n(8|9)k/]
+  tests['default_properties'][:manifest_props][:source_interface_hold_down_time] = 'default'
+  tests['non_default_properties'][:manifest_props][:source_interface_hold_down_time] = '100'
+  tests['non_default_properties'][:resource_props][:source_interface_hold_down_time] = '100'
+end
 
 tests['change_parameters'] = {
   title_pattern:  'nve1',
@@ -141,14 +145,12 @@ tests['change_parameters'] = {
     host_reachability               => 'flood',
     shutdown                        => 'true',
     source_interface                => 'loopback1',
-    source_interface_hold_down_time => '100',
   ",
   resource_props: {
     'description'                     => 'Configured by Puppet',
     'host_reachability'               => 'flood',
     'shutdown'                        => 'true',
     'source_interface'                => 'loopback1',
-    'source_interface_hold_down_time' => '100',
   },
 }
 

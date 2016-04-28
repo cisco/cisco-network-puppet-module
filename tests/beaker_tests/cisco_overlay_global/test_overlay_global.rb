@@ -73,7 +73,7 @@ testheader = 'Resource cisco_overlay_global'
 tests = {
   master:   master,
   agent:    agent,
-  platform: 'n9k',
+  platform: 'n(5|6|7|8|9)k',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
