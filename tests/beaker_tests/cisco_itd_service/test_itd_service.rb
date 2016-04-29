@@ -28,9 +28,27 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 tests = {
   master:        master,
   agent:         agent,
+  intf_type:     'ethernet',
   platform:      'n(7|9)k',
   resource_name: 'cisco_itd_service',
 }
+
+def find_ingress_ethernet_interface(tests)
+  if tests[:ethernet]
+    intf = tests[:ethernet]
+  else
+    int = find_interface(tests)
+    # make sure the interface name is like 'ethernet 1/1'
+    intf = int.dup
+    intf.insert(8, ' ')
+    # cache for later tests
+    tests[:ethernet] = intf
+  end
+  logger.info("\nUsing interface: #{intf}")
+  intf
+end
+
+@ing_eth_int = find_ingress_ethernet_interface(tests)
 
 # Test hash test cases
 tests[:default] = {
@@ -87,7 +105,7 @@ tests[:default_plat_2] = {
   },
 }
 
-ing_intf = [['vlan 2', '4.4.4.4'], ['ethernet 1/1', '5.5.5.5'], ['port-channel 100', '6.6.6.6']]
+ing_intf = [['vlan 2', '4.4.4.4'], [@ing_eth_int, '5.5.5.5'], ['port-channel 100', '6.6.6.6']]
 vip = ['ip 3.3.3.3 255.0.0.0 tcp 500 advertise enable']
 pv = %w(myVdc1 pvservice)
 
@@ -159,7 +177,7 @@ tests[:non_default_shut] = {
   preclean:       'cisco_itd_service',
   manifest_props: {
     device_group:      'udpGroup',
-    ingress_interface: [['ethernet 1/1', '2.2.2.2']],
+    ingress_interface: [[@ing_eth_int, '2.2.2.2']],
     shutdown:          'false',
   },
 }
@@ -169,7 +187,7 @@ tests[:non_default_shut_2] = {
   title_pattern:  'myService',
   manifest_props: {
     device_group:      'udpGroup',
-    ingress_interface: [['ethernet 1/1', '3.3.3.3']],
+    ingress_interface: [[@ing_eth_int, '3.3.3.3']],
     shutdown:          'true',
   },
 }
@@ -179,7 +197,7 @@ tests[:non_default_shut_3] = {
   title_pattern:  'myService',
   manifest_props: {
     device_group:      'udpGroup',
-    ingress_interface: [['ethernet 1/1', '4.4.4.4']],
+    ingress_interface: [[@ing_eth_int, '4.4.4.4']],
     shutdown:          'true',
   },
 }
@@ -189,37 +207,27 @@ tests[:non_default_shut_4] = {
   title_pattern:  'myService',
   manifest_props: {
     device_group:      'udpGroup',
-    ingress_interface: [['ethernet 1/1', '5.5.5.5']],
+    ingress_interface: [[@ing_eth_int, '5.5.5.5']],
     shutdown:          'false',
   },
 }
 
 # Overridden to properly handle dependencies for this test file.
 def test_harness_dependencies(_tests, id)
-  return if id.to_s.include?('non_default_shut_')
-  cmd = 'no feature itd'
-  command_config(agent, cmd, cmd)
-  cmd = 'ip access-list iap'
-  command_config(agent, cmd, cmd)
-  cmd = 'ip access-list eap'
-  command_config(agent, cmd, cmd)
-  cmd = 'interface ethernet 1/1 ; no switchport'
-  command_config(agent, cmd, cmd)
-  cmd = 'feature interface-vlan'
-  command_config(agent, cmd, cmd)
-  cmd = 'vlan 2'
-  command_config(agent, cmd, cmd)
-  cmd = 'interface vlan 2'
-  command_config(agent, cmd, cmd)
-  cmd = 'interface port-channel 100 ; no switchport'
-  command_config(agent, cmd, cmd)
-  cmd = 'feature itd'
-  command_config(agent, cmd, cmd)
-  cmd = 'itd device-group udpGroup ; node ip 1.1.1.1'
-  command_config(agent, cmd, cmd)
-  cmd = 'itd device-group icmpGroup ; node ip 2.2.2.2'
-  command_config(agent, cmd, cmd)
-  cmd = 'itd device-group icmpGroup ; node ip 3.3.3.3'
+  return if id[/non_default_shut_/]
+
+  resource_absent_cleanup(agent, 'cisco_itd_service')
+  resource_absent_cleanup(agent, 'cisco_itd_device_group_node')
+  resource_absent_cleanup(agent, 'cisco_itd_device_group')
+
+  cmd = [
+    'ip access-list iap ; ip access-list eap',
+    "interface #{@ing_eth_int} ; no switchport",
+    'feature interface-vlan',
+    'vlan 2 ; interface vlan 2',
+    'interface port-channel 100 ; no switchport',
+    'itd device-group udpGroup ; node ip 1.1.1.1',
+  ].join(' ; ')
   command_config(agent, cmd, cmd)
 end
 
@@ -230,6 +238,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   device = platform
   logger.info("#### This device is of type: #{device} #####")
+  skip_nexus_i2_image(tests)
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
   test_harness_run(tests, :default)

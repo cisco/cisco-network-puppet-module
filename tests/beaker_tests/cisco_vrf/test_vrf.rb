@@ -65,20 +65,24 @@ tests[:non_default] = {
 }
 
 def unsupported_properties(_tests, _id)
+  unprops = []
   if operating_system == 'nexus'
-    [
-      :mhost_ipv4_default_interface,
-      :mhost_ipv6_default_interface,
-      :remote_route_filtering,
-      :vpn_id,
-    ]
+    unprops <<
+      :mhost_ipv4_default_interface <<
+      :mhost_ipv6_default_interface <<
+      :remote_route_filtering <<
+      :vpn_id
+
+    unprops << :vni unless platform[/n9k/]
+    unprops << :route_distinguisher if nexus_i2_image
+
   else
-    [
-      :route_distinguisher,
-      :shutdown,
-      :vni,
-    ]
+    unprops <<
+      :route_distinguisher <<
+      :shutdown <<
+      :vni
   end
+  unprops
 end
 
 # Overridden to properly handle dependencies for this test file.

@@ -15,8 +15,16 @@
 # limitations under the License.
 
 class ciscopuppet::cisco::demo_vdc {
-  cisco_vdc { 'default' :
-    ensure                     => present,
-    limit_resource_module_type => 'm1',
+  if platform_get() =~ /n7k/ {
+    cisco_vdc { 'default' :
+      ensure                     => present,
+
+      # limit_resource is commented out because it may disrupt any
+      # follow-on testing.
+      # limit_resource_module_type => 'f3',
+    }
+
+  } else {
+    notify{'SKIP: This platform does not support cisco_vdc': }
   }
 }

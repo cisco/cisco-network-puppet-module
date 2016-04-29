@@ -27,7 +27,11 @@ end
 beaker_version = ENV['BEAKER_VERSION']
 beaker_rspec_version = ENV['BEAKER_RSPEC_VERSION']
 group :system_tests do
-  gem 'beaker', *location_for(beaker_version) if beaker_version
+  if beaker_version
+    gem 'beaker', *location_for(beaker_version)
+  else
+    gem 'beaker', '~> 2.38', '>= 2.38.1', require: false
+  end
   if beaker_rspec_version
     gem 'beaker-rspec', *location_for(beaker_rspec_version)
   else

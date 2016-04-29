@@ -66,8 +66,9 @@ testheader = 'Resource cisco_interface_channel_group'
 #                    This key can be overridden by a tests[id][:platform] key
 #
 tests = {
-  master: master,
-  agent:  agent,
+  master:    master,
+  agent:     agent,
+  intf_type: 'ethernet',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -92,10 +93,8 @@ tests = {
 #   without destroying the hash
 # tests[id][:title_pattern] - (Optional) defines the manifest title.
 #
-intf = 'ethernet1/1'
 tests['default_properties'] = {
   desc:           '1.1 Default Properties',
-  title_pattern:  intf,
   code:           [0, 2],
   manifest_props: {
     channel_group: 'default',
@@ -110,7 +109,6 @@ tests['default_properties'] = {
 
 tests['non_default_properties'] = {
   desc:           '2.1 Non Default Properties commands',
-  title_pattern:  intf,
   manifest_props: {
     channel_group: 201,
     description:   'chan group desc',
@@ -123,6 +121,18 @@ tests['non_default_properties'] = {
   },
 }
 
+def find_int_channel_group_intf(tests)
+  if tests[:ethernet]
+    intf = tests[:ethernet]
+  else
+    intf = find_interface(tests)
+    # cache for later tests
+    tests[:ethernet] = intf
+  end
+  logger.info("\nUsing interface: #{intf}")
+  intf
+end
+
 # Create actual manifest for a given test scenario.
 def build_manifest_interface_channel_group(tests, id)
   manifest = prop_hash_to_manifest(tests[id][:manifest_props])
@@ -133,7 +143,7 @@ def build_manifest_interface_channel_group(tests, id)
     state = 'ensure => present,'
   end
 
-  tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
+  tests[id][:title_pattern] = find_int_channel_group_intf(tests)
   tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   \nnode default {
   cisco_interface_channel_group { '#{tests[id][:title_pattern]}':
@@ -142,7 +152,7 @@ def build_manifest_interface_channel_group(tests, id)
 
   cmd = PUPPET_BINPATH +
         "resource cisco_interface_channel_group '#{tests[id][:title_pattern]}'"
-  tests[id][:resource_cmd] = get_namespace_cmd(agent, cmd, options)
+  tests[id][:resource_cmd] = cmd
 end
 
 # Wrapper for interface_channel_group specific settings prior to calling the
@@ -163,7 +173,7 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
-  interface_cleanup(agent, intf)
+  interface_cleanup(agent, find_int_channel_group_intf(tests))
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
@@ -175,6 +185,6 @@ test_name "TestCase :: #{testheader}" do
   test_harness_interface_channel_group(tests, 'non_default_properties')
 
   # -------------------------------------------------------------------
-  interface_cleanup(agent, intf)
+  interface_cleanup(agent, find_int_channel_group_intf(tests))
 end
 logger.info("TestCase :: #{testheader} :: End")

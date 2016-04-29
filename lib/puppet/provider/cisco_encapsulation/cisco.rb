@@ -34,22 +34,15 @@ Puppet::Type.type(:cisco_encapsulation).provide(:cisco) do
   mk_resource_methods
 
   ENCAP_ARRAY_FLAT_PROPS = [:dot1q_map]
-  ENCAP_NON_BOOL_PROPS = []
-  ENCAP_BOOL_PROPS = []
-  ENCAP_ALL_PROPS = ENCAP_ARRAY_FLAT_PROPS + ENCAP_NON_BOOL_PROPS + ENCAP_BOOL_PROPS
+  ENCAP_ALL_PROPS = ENCAP_ARRAY_FLAT_PROPS
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:array_flat, self, '@nu',
                                             ENCAP_ARRAY_FLAT_PROPS)
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@encap',
-                                            ENCAP_NON_BOOL_PROPS)
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@encap',
-                                            ENCAP_BOOL_PROPS)
 
   def initialize(value={})
     super(value)
-    @encap = Cisco::Encapsulation.encaps[@property_hash[:name]]
+    @nu = Cisco::Encapsulation.encaps[@property_hash[:name]]
     @property_flush = {}
-    debug 'Created provider instance of cisco_encapsulation.'
   end
 
   def self.properties_get(encap, nu_obj)
@@ -63,17 +56,6 @@ Puppet::Type.type(:cisco_encapsulation).provide(:cisco) do
     # Call node_utils getter for each property
     ENCAP_ARRAY_FLAT_PROPS.each do |prop|
       current_state[prop] = nu_obj.send(prop)
-    end
-    ENCAP_NON_BOOL_PROPS.each do |prop|
-      current_state[prop] = nu_obj.send(prop)
-    end
-    ENCAP_BOOL_PROPS.each do |prop|
-      val = nu_obj.send(prop)
-      if val.nil?
-        current_state[prop] = nil
-      else
-        current_state[prop] = val ? :true : :false
-      end
     end
     new(current_state)
   end # self.properties_get
@@ -116,38 +98,23 @@ Puppet::Type.type(:cisco_encapsulation).provide(:cisco) do
       next unless @resource[prop]
       send("#{prop}=", @resource[prop]) if new_encap
       unless @property_flush[prop].nil?
-        @encap.send("#{prop}=", @property_flush[prop]) if
-          @encap.respond_to?("#{prop}=")
+        @nu.send("#{prop}=", @property_flush[prop]) if
+          @nu.respond_to?("#{prop}=")
       end
     end
   end
 
   def flush
     if @property_flush[:ensure] == :absent
-      @encap.destroy
-      @encap = nil
+      @nu.destroy
+      @nu = nil
     else
       # Create/Update
-      if @encap.nil?
+      if @nu.nil?
         new_encap = true
-        @encap = Cisco::Encapsulation.new(@resource[:encap])
+        @nu = Cisco::Encapsulation.new(@resource[:encap])
       end
       properties_set(new_encap)
     end
-    puts_config
   end
-
-  def puts_config
-    if @encap.nil?
-      info "ENCAP=#{@resource[:encap]} is absent."
-      return
-    end
-
-    # Dump all current properties for this encap
-    current = sprintf("\n%30s: %s", 'encap', instance_name)
-    ENCAP_ALL_PROPS.each do |prop|
-      current.concat(sprintf("\n%30s: %s", prop, @encap.send(prop)))
-    end
-    debug current
-  end # puts_config
 end   # Puppet::Type

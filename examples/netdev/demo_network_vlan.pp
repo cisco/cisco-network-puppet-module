@@ -1,6 +1,6 @@
-# Sample site.pp manifest used to demo ipv4 bgp 
+# Manifest to demo cisco_interface provider
 #
-# Copyright (c) 2014-2016 Cisco and/or its affiliates.
+# Copyright (c) 2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,6 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-node 'cisco_bgpv4_device_name' {
-  include ciscopuppet::cisco::demo_bgp_ipv4
+class ciscopuppet::netdev::demo_network_vlan {
+  network_vlan { '128':
+    ensure        => 'present',
+    vlan_name     => 'netdev_vlan',
+    shutdown      => false,
+  } 
 }

@@ -70,7 +70,6 @@ testheader = 'Resource cisco_vpc_domain'
 # Top-level keys set by caller:
 # tests[:master] - the master object
 # tests[:agent] - the agent object
-# tests[:show_cmd] - the common show command to use for test_show_run
 #
 tests = {
   master:           master,
@@ -87,7 +86,6 @@ tests = {
 # tests[id][:manifest] - the complete manifest, as used by test_harness_common
 # tests[id][:resource] - a hash of expected states, used by test_resource
 # tests[id][:resource_cmd] - 'puppet resource' command to use with test_resource
-# tests[id][:show_pattern] - array of regexp patterns to use with test_show_cmd
 # tests[id][:ensure] - (Optional) set to :present or :absent before calling
 # tests[id][:code] - (Optional) override the default exit code in some tests.
 #
@@ -258,6 +256,8 @@ tests[:vpc_plus_non_default_properties_n7k] = {
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
+  resource_absent_cleanup(agent, 'cisco_bridge_domain',
+                          'bridge-domain CLEANUP :: ')
   resource_absent_cleanup(agent, 'cisco_vpc_domain',
                           'Setup for cisco_vpc_domain provider test')
   device = platform

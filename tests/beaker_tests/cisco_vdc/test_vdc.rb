@@ -13,140 +13,66 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-# TestCase Name:
-# -------------
-# test_vdc.rb
 #
-# TestCase Prerequisites:
-# -----------------------
-# This is a Puppet Interface resource testcase of vdc properties,
-# for use with Puppet Agent on Nexus devices.
-# The test case assumes the following prerequisites are already satisfied:
-#   - Host configuration file contains agent and master information.
-#   - SSH is enabled on the N9K Agent.
-#   - Puppet master/server is started.
-#   - Puppet agent certificate has been signed on the Puppet master/server.
-#
-###############################################################################
-#
-# TestCase:
-# ---------
-# This resource test verifies default values for all properties.
-#
-# The following exit_codes are validated for Puppet, Vegas shell and
-# Bash shell commands.
-#
-# Vegas and Bash Shell Commands:
-# 0   - successful command execution
-# > 0 - failed command execution.
-#
-# Puppet Commands:
-# 0 - no changes have occurred
-# 1 - errors have occurred,
-# 2 - changes have occurred
-# 4 - failures have occurred and
-# 6 - changes and failures have occurred.
-#
-# NOTE: 0 is the default exit_code checked in Beaker::DSL::Helpers::on() method.
-#
-# The test cases use RegExp pattern matching on stdout or output IO
-# instance attributes to verify resource properties.
+# See README-develop-beaker-scripts.md (Section: Test Script Variable Reference)
+# for information regarding:
+#  - test script general prequisites
+#  - command return codes
+#  - A description of the 'tests' hash and its usage
 #
 ###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
-# -----------------------------
-# Common settings and variables
-# -----------------------------
-testheader = 'Resource cisco_vdc properties'
-
-# The 'tests' hash is used to define all of the test data values and expected
-# results. It is also used to pass optional flags to the test methods when
-# necessary.
-
-# 'tests' hash
-# Top-level keys set by caller:
-# tests[:master] - the master object
-# tests[:agent] - the agent object
-#
+# Test hash top-level keys
 tests = {
-  master:        master,
-  agent:         agent,
-  resource_name: 'cisco_vdc',
+  agent:            agent,
+  master:           master,
+  mod_type:         'f3',
+  operating_system: 'nexus',
+  platform:         'n7k',
+  resource_name:    'cisco_vdc',
 }
 
-# tests[id] keys set by caller and used by test_harness_common:
-#
-# tests[id] keys set by caller:
-# tests[id][:desc] - a string to use with logs & debugs
-# tests[id][:manifest] - the complete manifest, as used by test_harness_common
-# tests[id][:resource] - a hash of expected states, used by test_resource
-# tests[id][:resource_cmd] - 'puppet resource' command to use with test_resource
-# tests[id][:ensure] - (Optional) set to :present or :absent before calling
-# tests[id][:code] - (Optional) override the default exit code in some tests.
-#
+# Test hash test cases
+tests[:non_default] = {
+  desc:           '1.1 non default properties',
+  title_pattern:  default_vdc_name,
 
-tests['limit_resource_module_type'] = {
   # This property does not have a meaningful default state because the module
   # types depend on which linecards are installed. Simply set the list to
   # a single common mod type and ensure that is the only type shown.
-  manifest_props: {
-    limit_resource_module_type: 'm1'
-  },
-  resource:       {
-    'limit_resource_module_type' => 'm1'
-  },
+  manifest_props: { limit_resource_module_type: tests[:mod_type] },
 }
 
-#################################################################
-# HELPER FUNCTIONS
-#################################################################
-
-def build_manifest_vdc(tests, id)
-  tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
-  node default {
-    cisco_vdc { '#{default_vdc_name}':\n
-    #{prop_hash_to_manifest(tests[id][:manifest_props])}
-  }\n      }\nEOF"
-
-  cmd = PUPPET_BINPATH + "resource cisco_vdc '#{default_vdc_name}'"
-  tests[id][:resource_cmd] = get_namespace_cmd(agent, cmd, options)
-end
-
-def test_harness_vdc(tests, id)
-  tests[id][:ensure] = :present if tests[id][:ensure].nil?
-
-  # Build the manifest for this test
-  build_manifest_vdc(tests, id)
-
-  # Workaround for (ioctl) facter bug on n7k ***
-  tests[id][:code] = [0, 2] if platform[/n7k/]
-
-  test_harness_common(tests, id)
-  tests[id][:ensure] = nil
+def current_module_type
+  cmd = PUPPET_BINPATH + 'resource cisco_vdc'
+  # sample output:
+  #   limit_resource_module_type => 'f3'
+  out = on(agent, cmd, pty: true).stdout[/limit_resource_module_type => '(.*)'/]
+  type = out.nil? ? '' : Regexp.last_match[1]
+  logger.info("\nCurrent module type: '#{type}'\n")
+  type
 end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name "TestCase :: #{testheader}" do
-  # Pre-test Cleanup
-  raise_skip_exception('ONLY SUPPORTED ON N7K', self) unless platform == 'n7k'
-  limit_resource_module_type_set(default_vdc_name, nil, true)
+test_name "TestCase :: #{tests[:resource_name]}" do
+  skip_unless_supported(tests)
+
+  # initial setup
+  orig_type = current_module_type
+  if orig_type == tests[:mod_type]
+    logger.info("\nReset module type to default\n")
+    limit_resource_module_type_set(default_vdc_name, nil, true)
+  end
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Non Default Property Testing")
+  test_harness_run(tests, :non_default)
 
-  id = 'limit_resource_module_type'
-  tests[id][:desc] = '1.1 limit_resource_module_type non default'
-  test_harness_vdc(tests, id)
-
-  tests[id][:desc] = '1.2 limit_resource_module_type default'
-  tests[id][:manifest_props] = { limit_resource_module_type: 'default' }
-  build_manifest_vdc(tests, id)
-  test_manifest(tests, id)
-
-  skipped_tests_summary(tests)
+  # Restore original testbed settings
+  logger.info("\nRestore module type to '#{orig_type}'\n")
+  limit_resource_module_type_set(default_vdc_name, orig_type)
 end
-
-logger.info("TestCase :: #{testheader} :: End")
+logger.info("TestCase :: #{tests[:resource_name]} :: End")

@@ -87,8 +87,7 @@ def create_aaaauthelogin_defaults(tests, id, string=false)
   resource_cmd_str =
     PUPPET_BINPATH +
     "resource cisco_aaa_authentication_login '#{title}'"
-  tests[id][:resource_cmd] =
-    get_namespace_cmd(agent, resource_cmd_str, options)
+  tests[id][:resource_cmd] = resource_cmd_str
 end
 
 test_name "TestCase :: #{testheader}" do

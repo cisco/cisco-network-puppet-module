@@ -34,7 +34,7 @@ tests = {
 # Test hash test cases
 tests[:default] = {
   desc:           '1.1 Default Properties',
-  title_pattern:  'ethernet1/4',
+  intf_type:      'ethernet',
   preclean:       'cisco_interface',
   manifest_props: {
     stp_bpdufilter:         'default',
@@ -49,7 +49,6 @@ tests[:default] = {
     stp_vlan_cost:          'default',
     stp_vlan_port_priority: 'default',
   },
-  code:           [0, 2],
   resource:       {
     'stp_bpdufilter'    => 'false',
     'stp_bpduguard'     => 'false',
@@ -73,7 +72,7 @@ stp_vlan_cost_ndp = Array[%w(1-4,6,8-12 1000), %w(1000 2568)]
 stp_vlan_port_priority_ndp = Array[%w(1-11,20-33 64), %w(1111 160)]
 tests[:non_default] = {
   desc:           '2.1 Non Defaults',
-  title_pattern:  'ethernet1/4',
+  intf_type:      'ethernet',
   manifest_props: {
     switchport_mode:        'trunk',
     stp_bpdufilter:         'enable',
@@ -96,6 +95,46 @@ tests[:non_default] = {
   },
 }
 
+# Create actual manifest for a given test scenario.
+def build_manifest_interface(tests, id)
+  manifest = prop_hash_to_manifest(tests[id][:manifest_props])
+  if tests[id][:ensure] == :absent
+    state = 'ensure => absent,'
+    tests[id][:resource] = { 'ensure' => 'absent' }
+  else
+    state = 'ensure => present,'
+  end
+  create_interface_title(tests, id)
+
+  tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+  \nnode default {
+  cisco_interface { '#{tests[id][:title_pattern]}':
+    #{state}\n#{manifest}
+  }\n}\nEOF"
+
+  cmd = PUPPET_BINPATH +
+        "resource cisco_interface '#{tests[id][:title_pattern]}'"
+  tests[id][:resource_cmd] = cmd
+end
+
+# Wrapper for interface specific settings prior to calling the
+# common test_harness.
+def test_harness_interface(tests, id)
+  return unless platform_supports_test(tests, id)
+
+  tests[id][:ensure] = :present if tests[id][:ensure].nil?
+
+  # Build the manifest for this test
+  build_manifest_interface(tests, id)
+
+  tests[id][:code] = [0, 2]
+
+  interface_cleanup(agent, tests[id][:title_pattern]) if tests[id][:preclean]
+
+  test_harness_common(tests, id)
+  tests[id][:ensure] = nil
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
@@ -103,15 +142,17 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   device = platform
   logger.info("#### This device is of type: #{device} #####")
+  resource_absent_cleanup(agent, 'cisco_bridge_domain',
+                          'bridge-domain CLEANUP :: ')
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
-  test_harness_run(tests, :default)
+  test_harness_interface(tests, :default)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
-  test_harness_run(tests, :non_default)
-  resource_absent_cleanup(agent, 'cisco_interface')
+  test_harness_interface(tests, :non_default)
+
   skipped_tests_summary(tests)
 end
 

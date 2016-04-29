@@ -37,7 +37,7 @@ class <<Puppet.features
       @results['cisco_node_utils'] = test('cisco_node_utils',
                                           libs: ['cisco_node_utils'])
       if @results['cisco_node_utils']
-        rec_version = Gem::Version.new('1.2.0')
+        rec_version = Gem::Version.new('1.3.0')
         gem_version = Gem::Version.new(CiscoNodeUtils::VERSION)
         if gem_version < rec_version
           warn "This module works best with version #{rec_version} of gem "\

@@ -30,6 +30,7 @@ class ciscopuppet::demo_all_cisco {
   include ciscopuppet::cisco::demo_acl
   include ciscopuppet::cisco::demo_bgp
   include ciscopuppet::cisco::demo_command_config
+  include ciscopuppet::cisco::demo_evpn
   include ciscopuppet::cisco::demo_fabricpath
   include ciscopuppet::cisco::demo_interface
   #include ciscopuppet::cisco::demo_interface_service_vni
@@ -50,8 +51,5 @@ class ciscopuppet::demo_all_cisco {
   include ciscopuppet::cisco::demo_vtp
   include ciscopuppet::cisco::demo_bridge_domain
   include ciscopuppet::cisco::demo_encapsulation
-  # Conditionally include ciscopuppet::demo_vxlan 
-  if platform_get() =~ /n9k/ {
-    include ciscopuppet::cisco::demo_vxlan
-  }
+  include ciscopuppet::cisco::demo_vxlan
 }

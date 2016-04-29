@@ -266,7 +266,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   resource_absent_cleanup(agent, 'cisco_bgp')
-  skipped_tests_summary(tests)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

@@ -22,7 +22,7 @@ class ciscopuppet::cisco::demo_stp_vlan {
   }
 
   $fcoe = platform_get() ? {
-    /(n3k|n9k)/ => false,
+    'n9k' => false,
     default => undef
   }
 
