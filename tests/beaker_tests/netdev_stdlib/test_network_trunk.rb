@@ -27,52 +27,48 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 tests = {
   agent:            agent,
   master:           master,
-  mod_type:         'f3',
+  ensurable:        false,
+  intf_type:        'ethernet',
   operating_system: 'nexus',
-  platform:         'n7k',
-  resource_name:    'cisco_vdc',
+  resource_name:    'network_trunk',
 }
+
+# Discover a usable test interface
+intf = find_interface(tests)
 
 # Test hash test cases
+tagged_manifest = [2, 3, 4, 6, 7, 8]
+tagged_resource = %w(2 3 4 6 7 8)
 tests[:non_default] = {
-  desc:           '1.1 non default properties',
-  title_pattern:  default_vdc_name,
-
-  # This property does not have a meaningful default state because the module
-  # types depend on which linecards are installed. Simply set the list to
-  # a single common mod type and ensure that is the only type shown.
-  manifest_props: { limit_resource_module_type: tests[:mod_type] },
+  desc:           '2. Non Default',
+  title_pattern:  intf,
+  manifest_props: {
+    mode:          'trunk',
+    tagged_vlans:  tagged_manifest,
+    untagged_vlan: 128,
+  },
+  resource:       {
+    mode:          'trunk',
+    tagged_vlans:  "#{tagged_resource}",
+    untagged_vlan: '128',
+  },
 }
-
-def current_module_type
-  cmd = PUPPET_BINPATH + 'resource cisco_vdc'
-  # sample output:
-  #   limit_resource_module_type => 'f3'
-  out = on(agent, cmd, pty: true).stdout[/limit_resource_module_type => '(.*)'/]
-  type = out.nil? ? '' : Regexp.last_match[1]
-  logger.info("\nCurrent module type: '#{type}'\n")
-  type
-end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  skip_unless_supported(tests)
-
-  # initial setup
-  orig_type = current_module_type
-  if orig_type == tests[:mod_type]
-    logger.info("\nReset module type to default\n")
-    limit_resource_module_type_set(default_vdc_name, nil, true)
-  end
+  logger.info("\n#{'-' * 60}\nSection 0. Testbed setup")
+  interface_cleanup(agent, intf, 'Initial Cleanup')
 
   # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 1. Non Default Property Testing")
+  logger.info("\n#{'-' * 60}\nSection 1. Defaults")
+  logger.info("\nn/a. Provider does not support explicit 'default' values.")
+
+  # -------------------------------------------------------------------
+  logger.info("\n#{'-' * 60}\nSection 2. Non Defaults")
   test_harness_run(tests, :non_default)
 
-  # Restore original testbed settings
-  logger.info("\nRestore module type to '#{orig_type}'\n")
-  limit_resource_module_type_set(default_vdc_name, orig_type)
+  interface_cleanup(agent, intf, 'Test Complete')
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

@@ -93,6 +93,8 @@ tests = {
   resource_name:    'cisco_interface',
   bridge_domain:    '199',
   switchport_mode:  'trunk',
+  # On N7k, feature vni requires solely F3 cards in the vdc
+  vdc_limit_module: 'f3',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -182,6 +184,7 @@ test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   test_harness_vlan_mapping(tests, 'non_default_properties')
-end
 
+  interface_cleanup(agent, tests[:intf], 'Post-test cleanup: ')
+end
 logger.info("TestCase :: #{testheader} :: End")

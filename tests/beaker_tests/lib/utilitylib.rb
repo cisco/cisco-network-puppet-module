@@ -297,6 +297,7 @@ def resource_absent_cleanup(agent, res_name, stepinfo='absent clean')
   step "\n--------\n * TestStep :: #{stepinfo}" do
     # set each resource to ensure=absent
     get_current_resource_instances(agent, res_name).each do |title|
+      # Some resources have exceptions
       case res_name
       when /cisco_bgp$/
         # cleaning default cleans them all
@@ -594,6 +595,7 @@ def create_manifest_and_resource(tests, id)
 
     # Automatically create a hash of expected states for puppet resource
     # -or- use a static hash
+    # TBD: Need a prop_hash_to_resource to handle array patterns
     tests[id][:resource] = manifest_props unless tests[id][:resource]
   end
 
@@ -686,12 +688,15 @@ end
 # test interface name to use for testing.
 # tests[:vdc] The default vdc name
 # tests[:intf] A compatible interface to use for MT-full testing.
+# rubocop:disable Metrics/AbcSize
 def setup_mt_full_env(tests, testcase)
   # MT-full tests require a specific linecard. Search for a compatible
   # module and enable it.
 
   testheader = tests[:resource_name]
-  mod = 'f3'
+  mod = tests[:vdc_limit_module]
+  mod = 'f3' if mod.nil?
+
   step 'Check for Compatible Line Module' do
     tests[:intf] = mt_full_interface
     break if tests[:intf]
@@ -709,9 +714,7 @@ def setup_mt_full_env(tests, testcase)
   vdc = tests[:vdc]
 
   step "Check for 'limit-resource module-type #{mod}'" do
-    break if limit_resource_module_type_get(vdc, mod)
-    logger.info("limit-resource module-type does not include '#{mod}', "\
-                'update it now...')
+    break if limit_resource_module_type_get(vdc, mod, :exact)
     limit_resource_module_type_set(vdc, mod)
     break if limit_resource_module_type_get(vdc, mod)
     prereq_skip(testheader, testcase,
@@ -738,6 +741,7 @@ def setup_mt_full_env(tests, testcase)
   config_encap_profile_vni_global(agent, tests[:encap_prof_global]) if
     tests[:encap_prof_global]
 end
+# rubocop:enable Metrics/AbcSize
 
 # setup_fabricpath_env
 # Check and set up prerequisites for fabricpath testing.
@@ -753,7 +757,9 @@ def setup_fabricpath_env(tests, testcase)
   return unless platform == 'n7k'
 
   testheader = tests[:resource_name]
-  mod = 'f2e f3'
+  mod = tests[:vdc_limit_module]
+  mod = 'f2e f3' if mod.nil?
+
   step 'Check for Compatible Line Module' do
     tests[:intf_type] = 'ethernet'
     tests[:intf] = fabricpath_interface
@@ -832,23 +838,32 @@ def default_vdc_name
 end
 
 # Check for presence of limit-resource module-type
-def limit_resource_module_type_get(vdc, mod)
+# The lookup is a loose match by default but some features like 'vni' are
+# required to use a specific set of modules only, in which case specify
+# ':exact' for a strict match of the current modules.
+def limit_resource_module_type_get(vdc, mod, match=nil)
   cmd = get_vshell_cmd("sh vdc #{vdc} detail")
-  pat = Regexp.new("vdc supported linecards:.*(#{mod})")
+  if match == :exact
+    # Must be this list of modules only
+    pat = Regexp.new("vdc supported linecards: (#{mod})")
+  else
+    # Just make sure module type is in list
+    pat = Regexp.new("vdc supported linecards:.*(#{mod})")
+  end
   out = on(agent, cmd, pty: true).stdout.match(pat)
   out.nil? ? nil : Regexp.last_match[1]
 end
 
 # Set limit-resource module-type
-def limit_resource_module_type_set(_vdc, mod, default=false)
-  mod = '' if default
+def limit_resource_module_type_set(vdc, mod, default=false)
+  mod = 'default' if default || mod.nil?
   resource_vdc_mod = {
     name:     'cisco_vdc',
-    title:    'default',
+    title:    vdc,
     property: 'limit_resource_module_type',
     value:    mod,
   }
-  resource_set(agent, resource_vdc_mod, "Enable #{mod} card(s)")
+  resource_set(agent, resource_vdc_mod, "Enable module-type #{mod}")
 end
 
 # Check for presence of interface in vdc allocated interfaces
@@ -1007,6 +1022,9 @@ def skipped_tests_summary(tests)
   raise_skip_exception(tests[:resource_name], self)
 end
 
+# TBD: This needs to be more selective when used with modular platforms,
+# particularly to ignore L2-only F2 cards on N7k.
+#
 # Find a test interface on the agent.
 # Callers should include the following hash keys:
 #   [:agent]
@@ -1179,4 +1197,11 @@ def debug_probe(probe, msg)
   dbg = ''
   probe[:probe_props].each { |p| dbg += "'#{p}' => #{probe[:caps][p]}, " }
   logger.info("\n      #{msg}: #{dbg}")
+end
+
+def remove_all_vlans(agent, stepinfo='Remove all vlans')
+  step "\n--------\n * TestStep :: #{stepinfo}" do
+    resource_absent_cleanup(agent, 'cisco_bridge_domain', 'bridge domains')
+    resource_absent_cleanup(agent, 'cisco_vlan', 'vlans')
+  end
 end
