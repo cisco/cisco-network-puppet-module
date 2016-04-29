@@ -17,43 +17,86 @@
 # limitations under the License.
 
 class ciscopuppet::cisco::demo_vxlan {
-  cisco_overlay_global { 'default':
-    dup_host_ip_addr_detection_host_moves => '100',
-    dup_host_ip_addr_detection_timeout    => '10',
-    anycast_gateway_mac                   => '1234.4567.6789',
-    dup_host_mac_detection_host_moves     => '100',
-    dup_host_mac_detection_timeout        => '10',
-  }
 
-  cisco_vxlan_vtep { 'nve1':
-    ensure                          => present,
-    description                     => 'Configured by puppet',
-    host_reachability               => 'evpn',
-    shutdown                        => 'false',
-    source_interface                => 'loopback55',
-    source_interface_hold_down_time => '50',
-  }
+  if platform_get() =~ /n(5|6|7|8|9)k/ {
 
-  cisco_vxlan_vtep_vni {'nve1 10000':
-    ensure              => present,
-    assoc_vrf           => false,
-    ingress_replication => 'static',
-    multicast_group     => undef,
-    peer_list           => ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
-    suppress_arp        => 'default',
-  }
-  
-  cisco_vxlan_vtep_vni {'nve1 20000':
-    ensure              => present,
-    assoc_vrf           => false,
-    ingress_replication => undef,
-    multicast_group     => '224.1.1.1',
-    suppress_arp        => 'default',
-  }
+    if platform_get() =~ /n7k/ {
+      cisco_vdc { 'default':
+        ensure                     => present,
+        limit_resource_module_type => 'f3'
+      }
+    }
 
-  cisco_interface { 'vlan97':
-    ensure => present,
-    fabric_forwarding_anycast_gateway => 'true',
-    require                           => Cisco_overlay_global['default'],
+    cisco_overlay_global { 'default':
+      dup_host_ip_addr_detection_host_moves => '100',
+      dup_host_ip_addr_detection_timeout    => '10',
+      anycast_gateway_mac                   => '1234.4567.6789',
+      dup_host_mac_detection_host_moves     => '100',
+      dup_host_mac_detection_timeout        => '10',
+    }
+
+    $source_interface_hold_down_time = platform_get() ? {
+      /n(8|9)k/  => '50',
+      default    => undef,
+    }
+
+    $ingress_replication = platform_get() ? {
+      /n(8|9)k/  => 'static',
+      default    => undef,
+    }
+
+    $peer_list = platform_get() ? {
+      /n(8|9)k/  => ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
+      default    => undef,
+    }
+
+    $suppress_uuc = platform_get() ? {
+      /n(5|6)k/  => 'default',
+      default    => undef,
+     }
+
+    cisco_vxlan_vtep { 'nve1':
+      ensure                          => present,
+      description                     => 'Configured by puppet',
+      host_reachability               => 'evpn',
+      shutdown                        => 'false',
+      source_interface                => 'loopback55',
+      source_interface_hold_down_time => $source_interface_hold_down_time,
+    }
+
+    cisco_vxlan_vtep_vni {'nve1 10000':
+      ensure              => present,
+      assoc_vrf           => false,
+      multicast_group     => undef,
+      ingress_replication => $ingress_replication,
+      peer_list           => $peer_list,
+      suppress_uuc        => $suppress_uuc,
+    }
+
+    cisco_vxlan_vtep_vni {'nve1 20000':
+      ensure              => present,
+      assoc_vrf           => false,
+      multicast_group     => '224.1.1.1',
+      suppress_arp        => 'default',
+    }
+
+    # TBD: Anycast gateway mode
+    # if platform_get() =~ /n7k/ {
+    #   cisco_interface { 'Bdi100':
+    #     require => Cisco_overlay_global['default'],
+    #     ensure  => present,
+    #     fabric_forwarding_anycast_gateway => 'true',
+    #   }
+    # }
+    #
+    # else {
+    #   cisco_interface { 'vlan97':
+    #     require => Cisco_overlay_global['default'],
+    #     ensure  => present,
+    #     fabric_forwarding_anycast_gateway => 'true',
+    #   }
+    # }
+  } else {
+    notify{'SKIP: This platform does not support vxlan': }
   }
 }
