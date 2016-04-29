@@ -919,6 +919,7 @@ test_name "TestCase :: #{testheader}" do
   end
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 6. Private vlan Property Testing")
+  resource_absent_cleanup(agent, 'cisco_vlan', 'private-vlan CLEANUP :: ')
   test_harness_run(tests_2, :primary)
   test_harness_run(tests_2, :community)
   test_harness_run(tests_2, :isolated)
