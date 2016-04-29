@@ -82,6 +82,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # Clean up any stale pre-req configs that might conflict with our test
   resource_absent_cleanup(agent, 'cisco_encapsulation')
+  interface_cleanup(agent, intf)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
@@ -97,5 +98,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -----------------------------------
   resource_absent_cleanup(agent, 'cisco_interface_service_vni')
   resource_absent_cleanup(agent, 'cisco_encapsulation')
+
+  interface_cleanup(agent, intf, 'Post-test cleanup: ')
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
