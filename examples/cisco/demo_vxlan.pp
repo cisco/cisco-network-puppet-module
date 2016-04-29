@@ -96,9 +96,7 @@ class ciscopuppet::cisco::demo_vxlan {
     #     fabric_forwarding_anycast_gateway => 'true',
     #   }
     # }
-  }
-
-  else {
-    warning('SKIP: This platform does not support vxlan feature')
+  } else {
+    notify{'SKIP: This platform does not support vxlan': }
   }
 }
