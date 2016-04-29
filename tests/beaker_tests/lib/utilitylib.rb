@@ -1008,6 +1008,9 @@ def skipped_tests_summary(tests)
   raise_skip_exception(tests[:resource_name], self)
 end
 
+# TBD: This needs to be more selective when used with modular platforms,
+# particularly to ignore L2-only F2 cards on N7k.
+#
 # Find a test interface on the agent.
 # Callers should include the following hash keys:
 #   [:agent]
