@@ -36,7 +36,7 @@ class ciscopuppet::cisco::demo_vlan {
     cisco_vlan { '333':
       ensure     => present,
       private_vlan_type => 'primary',
-      private_vlan_association => ['334', '336-339'],
+      private_vlan_association => ['334,336-339'],
     }
   
   } else {

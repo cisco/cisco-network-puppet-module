@@ -593,6 +593,7 @@ tests['pvlan_promisc_port_association_default'] = {
 tests['pvlan_trunk_promisc_port_default'] = {
   desc:               '6.18 Pvlan trunk promisc port default config',
   operating_system:   'nexus',
+  platform:           'n(5|6|7|9)k',
   intf_type:          'ethernet',
   preclean:           true,
   sys_def_switchport: true,
@@ -606,6 +607,7 @@ tests['pvlan_trunk_promisc_port_default'] = {
 tests['pvlan_trunk_sec_port_default'] = {
   desc:               '6.19 Pvlan trunk sec port default config',
   operating_system:   'nexus',
+  platform:           'n(5|6|7|9)k',
   intf_type:          'ethernet',
   preclean:           true,
   sys_def_switchport: true,
@@ -671,6 +673,7 @@ tests['switchport_private_vlan_trunk_native_vlan_default'] = {
 tests['switchport_private_vlan_mapping_trunk_default'] = {
   desc:               '6.24 Pvlan trunk promisc association default config',
   operating_system:   'nexus',
+  platform:           'n(5|6|7|9)k',
   intf_type:          'ethernet',
   preclean:           true,
   sys_def_switchport: true,
@@ -683,6 +686,7 @@ tests['switchport_private_vlan_mapping_trunk_default'] = {
 tests['switchport_private_vlan_association_trunk_default'] = {
   desc:               '6.25 Pvlan trunk secondary association default config',
   operating_system:   'nexus',
+  platform:           'n(5|6|7|9)k',
   intf_type:          'ethernet',
   preclean:           true,
   sys_def_switchport: true,

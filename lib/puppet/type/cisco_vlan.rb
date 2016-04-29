@@ -189,11 +189,11 @@ Puppet::Type.newtype(:cisco_vlan) do
     def insync?(is)
       return true if should == [:default] && is == [:default]
       return false if should == [:default]
-      vlans = should
       # For pvlan association we need to massage the should value
       # since the returned is value is a flat array of vlans.
-      should = PuppetX::Cisco::PvlanUtils.prepare_list(vlans[0])
-      (is.size == should.size && is.sort == should.sort)
+      result = PuppetX::Cisco::PvlanUtils.prepare_list(should[0])
+
+      (is.size == result.size && is.sort == result.sort)
     end
   end # property private_vlan_association
 
