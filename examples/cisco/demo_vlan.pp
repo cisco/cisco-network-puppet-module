@@ -19,11 +19,16 @@ class ciscopuppet::cisco::demo_vlan {
     /(n3k|n9k)/ => 22000,
     default => undef
   }
+  $fabric_control = platform_get() ? {
+    /(n7k)/ => true,
+    default => undef
+  }
   cisco_vlan { '220':
-    ensure     => present,
-    mapped_vni => $mapped_vni,
-    vlan_name  => 'newtest',
-    shutdown   => true,
-    state      => 'active',
+    ensure          => present,
+    mapped_vni      => $mapped_vni,
+    vlan_name       => 'newtest',
+    shutdown        => true,
+    state           => 'active',
+    fabric_control  => $fabric_control
   }
 }

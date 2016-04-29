@@ -53,6 +53,7 @@
 
 # Require UtilityLib.rb and SnmpGroupLib.rb paths.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
+require File.expand_path('../../tacacs/tacacslib.rb', __FILE__)
 require File.expand_path('../tacacs_globallib.rb', __FILE__)
 
 result = 'PASS'
@@ -62,7 +63,9 @@ testheader = 'tacacs_global Resource :: All Attributes Defaults'
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider' do
-    logger.info('Setup switch for provider')
+    on(master, TacacsLib.create_tacacs_manifest_change_disabled)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
+    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
@@ -71,8 +74,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, TacacsGlobalLib.create_tacacs_global_manifest)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource present manifest from master :: #{result}")
@@ -82,8 +84,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check tacacs_global resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource tacacs_global default', options)
+    cmd_str = PUPPET_BINPATH + 'resource tacacs_global default'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'key' => '44444444' },
                                false, self, logger)
@@ -104,8 +105,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, TacacsGlobalLib.create_tacacs_global_manifest_change)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource present manifest from master :: #{result}")
@@ -115,8 +115,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check tacacs_global resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource tacacs_global default', options)
+    cmd_str = PUPPET_BINPATH + 'resource tacacs_global default'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'key' => '44444444' },
                                false, self, logger)
@@ -137,8 +136,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, TacacsGlobalLib.create_tacacs_global_manifest_change_disabled)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource present manifest from master :: #{result}")
@@ -148,14 +146,19 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check tacacs_global resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource tacacs_global default', options)
+    cmd_str = PUPPET_BINPATH + 'resource tacacs_global default'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'enable' => 'false' },
                                false, self, logger)
     end
 
     logger.info("Check tacacs_global resource presence on agent :: #{result}")
+  end
+
+  step 'TestStep :: Cleanup' do
+    on(master, TacacsLib.create_tacacs_manifest_change_disabled)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
+    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.

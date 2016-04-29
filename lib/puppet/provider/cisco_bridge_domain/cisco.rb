@@ -133,7 +133,7 @@ Puppet::Type.type(:cisco_bridge_domain).provide(:cisco) do
 
   def puts_config
     if @nu.nil?
-      info "BD=#{@resource[:bd]} is absent."
+      debug "BD=#{@resource[:bd]} is absent."
       return
     end
 

@@ -95,8 +95,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, OspfIntfLib.create_ospfintf_manifest_cost_negative(interface))
 
     # Expected exit_code is 6 since this is a puppet agent cmd with failure.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [6])
 
     logger.info("Get negative test resource manifest from master :: #{result}")
@@ -106,8 +105,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_intf_ospf resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface_ospf '#{interface} test'", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_interface_ospf '#{interface} test'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'cost' => OspfIntfLib::COST_NEGATIVE },
@@ -120,8 +118,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Checks ospfintf instance on agent using switch show cli cmds.
   step 'TestStep :: Check ospfintf instance absence on agent' do
     # Cleanup partially configured resource.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface_ospf '#{interface} test' ensure=absent", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_interface_ospf '#{interface} test' ensure=absent"
     on(agent, cmd_str)
 
     logger.info("Check ospfintf instance absence on agent :: #{result}")
@@ -133,8 +130,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, OspfIntfLib.create_ospfintf_manifest_hellointerval_negative(interface))
 
     # Expected exit_code is 6 since this is a puppet agent cmd with failure.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [6])
 
     logger.info("Get negative test resource manifest from master :: #{result}")
@@ -144,8 +140,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_intf_ospf resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface_ospf '#{interface} test'", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_interface_ospf '#{interface} test'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'hello_interval' => OspfIntfLib::HELLOINTERVAL_NEGATIVE },
@@ -158,8 +153,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Checks ospfintf instance on agent using switch show cli cmds.
   step 'TestStep :: Check ospfintf instance absence on agent' do
     # Cleanup partially configured resource.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface_ospf '#{interface} test' ensure=absent", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_interface_ospf '#{interface} test' ensure=absent"
     on(agent, cmd_str)
 
     logger.info("Check ospfintf instance absence on agent :: #{result}")
@@ -171,8 +165,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, OspfIntfLib.create_ospfintf_manifest_deadinterval_negative(interface))
 
     # Expected exit_code is 6 since this is a puppet agent cmd with failure.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [6])
 
     logger.info("Get negative test resource manifest from master :: #{result}")
@@ -182,8 +175,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_intf_ospf resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface_ospf '#{interface} test'", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_interface_ospf '#{interface} test'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'dead_interval' => OspfIntfLib::DEADINTERVAL_NEGATIVE },
@@ -196,8 +188,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Checks ospfintf instance on agent using switch show cli cmds.
   step 'TestStep :: Check ospfintf instance absence on agent' do
     # Cleanup partially configured resource.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface_ospf '#{interface} test' ensure=absent", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_interface_ospf '#{interface} test' ensure=absent"
     on(agent, cmd_str)
 
     logger.info("Check ospfintf instance absence on agent :: #{result}")
@@ -209,8 +200,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, OspfIntfLib.create_ospfintf_manifest_passiveintf_negative(interface))
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
     logger.info("Get negative test resource manifest from master :: #{result}")
@@ -220,8 +210,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_intf_ospf resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface_ospf '#{interface} test'", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_interface_ospf '#{interface} test'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'passive_interface' => OspfIntfLib::PASSIVEINTF_NEGATIVE },
@@ -234,8 +223,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Checks ospfintf instance on agent using switch show cli cmds.
   step 'TestStep :: Check ospfintf instance absence on agent' do
     # Cleanup partially configured resource.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface_ospf '#{interface} test' ensure=absent", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_interface_ospf '#{interface} test' ensure=absent"
     on(agent, cmd_str)
 
     logger.info("Check ospfintf instance absence on agent :: #{result}")

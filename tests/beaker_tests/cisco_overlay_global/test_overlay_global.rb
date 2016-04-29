@@ -69,12 +69,11 @@ testheader = 'Resource cisco_overlay_global'
 # Top-level keys set by caller:
 # tests[:master] - the master object
 # tests[:agent] - the agent object
-# tests[:show_cmd] - the common show command to use for test_show_run
 #
 tests = {
   master:   master,
   agent:    agent,
-  platform: 'n9k',
+  platform: 'n(5|6|7|8|9)k',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -84,7 +83,6 @@ tests = {
 # tests[id][:manifest] - the complete manifest, as used by test_harness_common
 # tests[id][:resource] - a hash of expected states, used by test_resource
 # tests[id][:resource_cmd] - 'puppet resource' command to use with test_resource
-# tests[id][:show_pattern] - array of regexp patterns to use with test_show_cmd
 # tests[id][:code] - (Optional) override the default exit code in some tests.
 #
 # These keys are local use only and not used by test_harness_common:
@@ -150,8 +148,7 @@ tests['non_default_properties'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = PUPPET_BINPATH + 'resource cisco_overlay_global'
-  get_namespace_cmd(agent, cmd, options)
+  PUPPET_BINPATH + 'resource cisco_overlay_global'
 end
 
 def build_manifest_overlay_global(tests, id)

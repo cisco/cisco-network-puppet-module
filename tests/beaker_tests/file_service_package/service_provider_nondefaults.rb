@@ -63,6 +63,8 @@ testheader = 'SERVICE Resource :: All Attributes NonDefaults'
 
 # @test_name [TestCase] Executes nondefaults testcase for SERVICE Resource.
 test_name "TestCase :: #{testheader}" do
+  raise_skip_exception('Not supported for OAC platforms', self) if
+    platform[/'n5|6|7|k'/]
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
     # Expected exit_code is 0 since this is a bash shell cmd.
@@ -70,8 +72,7 @@ test_name "TestCase :: #{testheader}" do
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     # Or expected exit_code is 0 since this is a puppet agent cmd with no change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
     logger.info("Setup switch for provider test :: #{result}")
@@ -83,8 +84,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, FileSvcPkgLib.create_service_manifest_nondefaults)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource nondefaults manifest from master :: #{result}")
@@ -94,8 +94,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check service resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource service '#{FileSvcPkgLib::TEST_SERVICE}'", options)
+    cmd_str = PUPPET_BINPATH + "resource service '#{FileSvcPkgLib::TEST_SERVICE}'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ensure' => 'running' },
@@ -111,8 +110,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, FileSvcPkgLib.create_service_manifest_stopped)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
     logger.info('Pause 5 seconds to allow state transition')
     sleep 5
@@ -124,8 +122,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check service resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource service '#{FileSvcPkgLib::TEST_SERVICE}'", options)
+    cmd_str = PUPPET_BINPATH + "resource service '#{FileSvcPkgLib::TEST_SERVICE}'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ensure' => 'running' },

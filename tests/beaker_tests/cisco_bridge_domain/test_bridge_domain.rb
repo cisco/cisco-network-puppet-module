@@ -23,14 +23,14 @@ testheader = 'Resource cisco_bridge_domain'
 
 # Top-level keys set by caller:
 tests = {
-  master:           master,
-  agent:            agent,
-  resource_name:    'cisco_bridge_domain',
-  operating_system: 'nexus',
+  master:        master,
+  agent:         agent,
+  resource_name: 'cisco_bridge_domain',
+  platform:      'n7k',
 }
 
 tests[:non_default] = {
-  desc:           "2.1 Non Default Properties 'change name, state and fabric_control",
+  desc:           "1.1 Non Default Properties 'change name, state and fabric_control",
   title_pattern:  '100',
   manifest_props: {
     bd_name:        'PepsiCo',
@@ -40,7 +40,7 @@ tests[:non_default] = {
 }
 
 tests[:non_default_change_state] = {
-  desc:           "2.2 Non Default Properties 'change state of previous bridge-domain'",
+  desc:           "1.2 Non Default Properties 'change state of previous bridge-domain'",
   title_pattern:  '100',
   manifest_props: {
     bd_name:        'PepsiCo',

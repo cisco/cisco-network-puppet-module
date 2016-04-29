@@ -67,7 +67,6 @@ testheader = 'Resource cisco_fabricpath_global'
 # Top-level keys set by caller:
 # tests[:master] - the master object
 # tests[:agent] - the agent object
-# tests[:show_cmd] - the common show command to use for test_show_run
 #
 tests = {
   master:   master,
@@ -128,9 +127,7 @@ tests['default_properties_exclusive'] = {
     linkup_delay_always            => 'default',
     linkup_delay_enable            => 'default',
     loadbalance_algorithm          => 'default',
-    loadbalance_multicast_rotate   => 'default',
     loadbalance_multicast_has_vlan => 'default',
-    loadbalance_unicast_rotate     => 'default',
     mode                           => 'default',
     ttl_multicast                  => 'default',
     ttl_unicast                    => 'default',
@@ -140,9 +137,7 @@ tests['default_properties_exclusive'] = {
     'linkup_delay_always'            => 'false',
     'linkup_delay_enable'            => 'true',
     'loadbalance_algorithm'          => 'symmetric',
-    'loadbalance_multicast_rotate'   => '1',
     'loadbalance_multicast_has_vlan' => 'true',
-    'loadbalance_unicast_rotate'     => '1',
     'mode'                           => 'normal',
     'ttl_multicast'                  => '32',
     'ttl_unicast'                    => '32',
@@ -183,7 +178,6 @@ tests['non_default_properties_exclusive'] = {
     loadbalance_multicast_rotate   => '3',
     loadbalance_multicast_has_vlan => 'true',
     loadbalance_unicast_rotate     => '5',
-    mode                           => 'transit',
     ttl_multicast                  => '20',
     ttl_unicast                    => '20',
   ",
@@ -194,7 +188,6 @@ tests['non_default_properties_exclusive'] = {
     'loadbalance_multicast_rotate'   => '3',
     'loadbalance_multicast_has_vlan' => 'true',
     'loadbalance_unicast_rotate'     => '5',
-    'mode'                           => 'transit',
     'ttl_multicast'                  => '20',
     'ttl_unicast'                    => '20',
   },
@@ -206,8 +199,7 @@ tests['non_default_properties_exclusive'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = PUPPET_BINPATH + 'resource cisco_fabricpath_global'
-  get_namespace_cmd(agent, cmd, options)
+  PUPPET_BINPATH + 'resource cisco_fabricpath_global'
 end
 
 def build_manifest_fabricpath_global(tests, id)
@@ -246,14 +238,16 @@ def test_harness_fabricpath_global(tests, id)
   tests[id][:ensure] = nil
 end
 
+def testbed_cleanup(agent)
+  remove_all_vlans(agent)
+  resource_absent_cleanup(agent, 'cisco_fabricpath_global')
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
-  resource_absent_cleanup(agent, 'cisco_fabricpath_global',
-                          'Setup for cisco_fabricpath_global provider test')
-  device = platform
-  logger.info("#### This device is of type: #{device} #####")
+  testbed_cleanup(agent)
 
   logger.info("\n#{'-' * 60}\nSection 0. Testbed Initialization")
   setup_fabricpath_env(tests, self)
@@ -297,6 +291,8 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:desc] = '4.2 Non Default Properties exclusive to Platform (abs)'
   tests[id][:ensure] = :absent
   test_harness_fabricpath_global(tests, id)
+
+  testbed_cleanup(agent)
 end
 
 logger.info('TestCase :: # {testheader} :: End')

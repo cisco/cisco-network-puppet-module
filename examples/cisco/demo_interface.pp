@@ -88,6 +88,21 @@ class ciscopuppet::cisco::demo_interface {
       svi_management   => true,
       ipv4_arp_timeout => 300,
     }
+    
+    cisco_bridge_domain { "100":
+      ensure    => 'present',
+      shutdown  => false,
+      bd_name   => 'test1'
+    }   
+
+    cisco_interface { 'Bdi100':
+      require               => Cisco_bridge_domain['100'],
+      ensure                => 'present',
+      shutdown              => false,
+      ipv4_address          => "10.10.10.1",
+      ipv4_netmask_length   => 24, 
+      vrf                   => 'test1'
+    }
 
     #  Requires F3 or newer linecards
     # cisco_interface { 'Ethernet9/1':

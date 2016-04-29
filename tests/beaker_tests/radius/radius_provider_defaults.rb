@@ -71,8 +71,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, RadiusLib.create_radius_manifest_true)
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no changes.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [0])
 
     logger.info("Get resource present manifest from master :: #{result}")
@@ -84,8 +83,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, RadiusLib.create_radius_manifest_false)
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no changes.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [0])
 
     logger.info("Get resource present manifest from master :: #{result}")

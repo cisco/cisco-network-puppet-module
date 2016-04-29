@@ -21,11 +21,6 @@ class ciscopuppet::cisco::demo_vrf {
     default  => undef
   }
 
-  $mhost_intf = $operatingsystem ? {
-    'ios_xr' => 'Loopback100',
-    default  => undef
-  }
-
   $remote_route_disable = $operatingsystem ? {
     'ios_xr' => false,
     default  => undef

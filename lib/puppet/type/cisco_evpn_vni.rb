@@ -1,7 +1,7 @@
 #
-# December 2013
+# December 2015
 #
-# Copyright (c) 2013-2015 Cisco and/or its affiliates.
+# Copyright (c) 2015-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,40 +16,27 @@
 # limitations under the License.
 
 Puppet::Type.newtype(:cisco_evpn_vni) do
-  @doc = "Manages a Cisco Evpn Vni.
-  cisco_evpn_vni {\"<vni>\":
+  @doc = %(Manages a Cisco Evpn Vni.
+
+  cisco_evpn_vni {'<vni>':
     ..attributes..
   }
+
   <vni> is the id of the vni.
 
   Example:
-    $routetargetboth = ['1.2.3.4:55', '2:2', '55:33', 'auto']
-    $routetargetexport = ['1.2.3.4:55', '2:2', '55:33', 'auto']
-    $routetargetimport = ['1.2.3.4:55', '2:2', '55:33', 'auto']
-    cisco_vlan {\"4096\":
+    $both =   ['1.2.3.4:55', '2:2', '55:33', 'auto']
+    $export = ['1.2.3.4:55', '2:2', '55:33', 'auto']
+    $import = ['1.2.3.4:55', '2:2', '55:33', 'auto']
+
+    cisco_evpn_vni {'4096':
       ensure                    => present,
       route_distinguisher       => 'auto',
-      route_target_both         => $routetargetboth,
-      route_target_export       => $routetargetexport,
-      route_target_import       => $routetargetimport,
-    }"
-
-  ###################
-  # Resource Naming #
-  ###################
-  # Parse out the title to fill in the attributes in these patterns. These
-  # attributes can be overwritten later.
-  def self.title_patterns
-    identity = ->(x) { x }
-    patterns = []
-    patterns << [
-      /^(\d+)$/,
-      [
-        [:vni, identity]
-      ],
-    ]
-    patterns
-  end
+      route_target_both         => $both,
+      route_target_export       => $export,
+      route_target_import       => $import,
+    }
+  )
 
   ##############
   # Parameters #

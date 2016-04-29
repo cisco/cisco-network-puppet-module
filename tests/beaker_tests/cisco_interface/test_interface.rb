@@ -68,9 +68,11 @@ testheader = 'Resource cisco_interface'
 #                    This key can be overridden by a tests[id][:platform] key
 #
 tests = {
-  master:   master,
-  agent:    agent,
-  svi_name: 'vlan13',
+  master:        master,
+  agent:         agent,
+  svi_name:      'vlan13',
+  bdi_name:      'bdi100',
+  resource_name: 'cisco_interface',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -363,37 +365,45 @@ tests['SVI_autostate'] = {
   },
 }
 
-tests['negotiate'] = {
-  desc:               '5.1 negotiate-auto',
+tests[:auto] = {
+  desc:               '5.1 Misc. Auto Value Properties',
   operating_system:   'nexus',
-  platform:           'n(5|6|7)k',
   intf_type:          'ethernet',
-  preclean:           true,
   sys_def_switchport: false,
+  code:               [0, 2],
   manifest_props:     {
     switchport_mode: 'disabled',
-    # negotiate_auto:  'false',, # TBD: Needs plat awareness
-  },
-  resource:           {
-    # 'negotiate_auto' => 'false'
+    # duplex and speed are defined by interface_pre_check
   },
 }
 
-tests['speed_dup_mtu'] = {
-  desc:               '5.2 Speed/Duplex/MTU',
+tests[:non_default] = {
+  desc:               '5.2 Misc. Non-default Value Properties',
+  operating_system:   'nexus',
   intf_type:          'ethernet',
-  preclean:           true,
   sys_def_switchport: false,
   manifest_props:     {
     switchport_mode: 'disabled',
-    mtu:             1556,
-    # speed:           100, # TBD: Needs plat awareness
-    duplex:          'full',
+    # duplex, speed, and mtu are defined by interface_pre_check
   },
-  resource:           {
-    'mtu'    => '1556',
-    # 'speed'  => '100',
-    'duplex' => 'full',
+}
+
+tests['BDI_non_default'] = {
+  desc:             '6.1 (BDI) Non Default BDI Properties',
+  operating_system: 'nexus',
+  platform:         'n(7)k',
+  intf_type:        'bdi',
+  manifest_props:   {
+    ipv4_address:        '10.10.10.1',
+    ipv4_netmask_length: '24',
+    shutdown:            'false',
+    vrf:                 'test1',
+  },
+  resource:         {
+    'ipv4_address'        => '10.10.10.1',
+    'ipv4_netmask_length' => '24',
+    'shutdown'            => 'false',
+    'vrf'                 => 'test1',
   },
 }
 
@@ -403,38 +413,6 @@ resource_cisco_overlay_global = {
   property: 'anycast_gateway_mac',
   value:    '1.1.1',
 }
-
-# cisco_interface uses the interface name as the title.
-# Find an available interface and create an appropriate title.
-def create_interface_title(tests, id)
-  return tests[id][:title_pattern] if tests[id][:title_pattern]
-
-  # Prefer specific test key over the all tests key
-  type = tests[id][:intf_type] || tests[:intf_type]
-  case type
-  when /ethernet/i
-    if tests[:ethernet]
-      intf = tests[:ethernet]
-    else
-      intf = find_interface(tests, id)
-      # cache for later tests
-      tests[:ethernet] = intf
-    end
-  when /dot1q/
-    if tests[:ethernet]
-      intf = "#{tests[:ethernet]}.1"
-    else
-      intf = find_interface(tests, id)
-      # cache for later tests
-      tests[:ethernet] = intf
-      intf = "#{intf}.1" unless intf.nil?
-    end
-  when /vlan/
-    intf = tests[:svi_name]
-  end
-  logger.info("\nUsing interface: #{intf}")
-  tests[id][:title_pattern] = intf
-end
 
 # Create actual manifest for a given test scenario.
 def build_manifest_interface(tests, id)
@@ -455,7 +433,64 @@ def build_manifest_interface(tests, id)
 
   cmd = PUPPET_BINPATH +
         "resource cisco_interface '#{tests[id][:title_pattern]}'"
-  tests[id][:resource_cmd] = get_namespace_cmd(agent, cmd, options)
+  tests[id][:resource_cmd] = cmd
+end
+
+def interface_pre_check(tests) # rubocop:disable Metrics/AbcSize
+  # Discover a usable test interface
+  intf = find_interface(tests, :auto)
+  tests[:auto][:title_pattern] = intf
+  tests[:non_default][:title_pattern] = intf
+
+  # Clean the test interface
+  system_default_switchport(agent, false)
+  interface_cleanup(agent, intf, 'Initial Cleanup')
+
+  # Get the capabilities and update the caps list with any add'l test values
+  caps = interface_capabilities(agent, intf)
+
+  if caps.empty?
+    tests[:skipped] ||= []
+    tests[:skipped] << tests[:auto][:desc]
+    tests[:skipped] << tests[:non_default][:desc]
+    return false
+  end
+
+  caps['Speed'] += ',auto' unless caps['Speed']['auto']
+  caps['Duplex'] += ',auto' unless caps['Duplex']['auto']
+  caps['MTU'] = '1600'
+
+  # Create a probe hash to pre-test the properties
+  probe = {
+    cmd:         PUPPET_BINPATH + 'resource cisco_interface ',
+    intf:        intf,
+    caps:        caps,
+    probe_props: %w(Speed Duplex MTU),
+  }
+  caps = interface_probe(tests, probe)[:caps]
+
+  # Fixup the test manifests with usable values
+  spd = caps['Speed']
+  dup = caps['Duplex']
+  mtu = caps['MTU']
+
+  tests[:auto][:manifest_props][:negotiate_auto] = 'true' unless platform[/n7k/]
+  tests[:auto][:manifest_props][:duplex] = 'auto' if dup.delete('auto')
+  tests[:auto][:manifest_props][:speed] = 'auto' if spd.delete('auto')
+
+  tests[:non_default][:manifest_props][:duplex] = dup.shift unless dup.empty?
+  tests[:non_default][:manifest_props][:speed] = spd.shift unless spd.empty?
+  tests[:non_default][:manifest_props][:mtu] = mtu.shift unless mtu.empty?
+
+  # Cannot turn off auto-negotiate for speeds 10G+
+  non_default_speed = tests[:non_default][:manifest_props][:speed]
+  tests[:non_default][:manifest_props][:negotiate_auto] = 'false' unless
+    platform[/n7k/] || non_default_speed.to_i >= 10_000
+
+  logger.info "\n      Pre-Check :non_default hash: #{tests[:non_default]}"\
+              "\n      Pre-Check :auto hash: #{tests[:auto]}"
+  interface_cleanup(agent, intf, 'Post-Pre-Check Cleanup')
+  true
 end
 
 # Helper for 'system default switchport'
@@ -550,10 +585,26 @@ test_name "TestCase :: #{testheader}" do
   test_harness_interface(tests, 'SVI_autostate_default')
   test_harness_interface(tests, 'SVI_autostate')
 
+  ### -------------------------------------------------------------------
+  logger.info("\n#{'-' * 60}\nSection 5. Negotiate Auto, MTU, Speed, Duplex")
+  if interface_pre_check(tests)
+    test_harness_run(tests, :auto)
+    test_harness_run(tests, :non_default)
+  else
+    msg = 'Could not find interface capabilities'
+    logger.error("\n#{tests[:auto][:desc]} :: auto :: SKIP" \
+                 "\n#{msg}")
+    logger.error("\n#{tests[:non_default][:desc]} :: non_default :: SKIP" \
+                 "\n#{msg}")
+  end
+
   # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 5. MISC Property Testing")
-  test_harness_interface(tests, 'negotiate')
-  # TBD: test_harness_interface(tests, 'speed_dup_mtu')
+  if platform_supports_test(tests, 'BDI_non_default')
+    logger.info("\n#{'-' * 60}\nSection 6. BDI Property Testing")
+    bd = tests[:bdi_name][/(\d+)/]
+    config_bridge_domain(agent, bd)
+    test_harness_interface(tests, 'BDI_non_default')
+  end
 
   # -------------------------------------------------------------------
   interface_cleanup(agent, tests[:ethernet]) if tests[:ethernet]

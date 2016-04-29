@@ -49,7 +49,7 @@ tests[:non_default] = {
   title_pattern:  'ipv4 beaker',
   manifest_props: {
     stats_per_entry: 'true',
-    fragments:       'permit-all',
+    fragments:       'permit',
   },
 }
 

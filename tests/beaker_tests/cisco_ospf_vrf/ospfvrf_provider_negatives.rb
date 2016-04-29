@@ -82,8 +82,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, OspfVrfLib.create_ospfvrf_manifest_autocost_negative)
 
     # Expected exit_code is 6 since this is a puppet agent cmd with failures.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [6])
 
     logger.info("Get negative test resource manifest from master :: #{result}")
@@ -93,8 +92,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_ospf_vrf resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_ospf_vrf 'test green'", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_ospf_vrf 'test green'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'auto_cost' => OspfVrfLib::AUTOCOST_NEGATIVE },
@@ -110,8 +108,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, OspfVrfLib.create_ospfvrf_manifest_defaultmetric_negative)
 
     # Expected exit_code is 6 since this is a puppet agent cmd with failures.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [6])
 
     logger.info("Get negative test resource manifest from master :: #{result}")
@@ -121,8 +118,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_ospf_vrf resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_ospf_vrf 'test green'", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_ospf_vrf 'test green'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'default_metric' => OspfVrfLib::DEFAULTMETRIC_NEGATIVE },
@@ -138,8 +134,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, OspfVrfLib.create_ospfvrf_manifest_lsahold_negative)
 
     # Expected exit_code is 6 since this is a puppet agent cmd with failures.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [6])
 
     logger.info("Get negative test resource manifest from master :: #{result}")
@@ -149,8 +144,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_ospf_vrf resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_ospf_vrf 'test green'", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_ospf_vrf 'test green'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'timer_throttle_lsa_hold' => OspfVrfLib::LSAHOLD_NEGATIVE },
@@ -166,8 +160,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, OspfVrfLib.create_ospfvrf_manifest_lsamax_negative)
 
     # Expected exit_code is 6 since this is a puppet agent cmd with failures.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [6])
 
     logger.info("Get negative test resource manifest from master :: #{result}")
@@ -177,8 +170,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_ospf_vrf resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_ospf_vrf 'test green'", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_ospf_vrf 'test green'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'timer_throttle_lsa_max' => OspfVrfLib::LSAMAX_NEGATIVE },
@@ -194,8 +186,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, OspfVrfLib.create_ospfvrf_manifest_lsastart_negative)
 
     # Expected exit_code is 6 since this is a puppet agent cmd with failures.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [6])
 
     logger.info("Get negative test resource manifest from master :: #{result}")
@@ -205,8 +196,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_ospf_vrf resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_ospf_vrf 'test green'", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_ospf_vrf 'test green'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'timer_throttle_lsa_start' => OspfVrfLib::LSASTART_NEGATIVE },
@@ -222,8 +212,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, OspfVrfLib.create_ospfvrf_manifest_spfhold_negative)
 
     # Expected exit_code is 6 since this is a puppet agent cmd with failures.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [6])
 
     logger.info("Get negative test resource manifest from master :: #{result}")
@@ -233,8 +222,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_ospf_vrf resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_ospf_vrf 'test green'", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_ospf_vrf 'test green'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'timer_throttle_spf_hold' => OspfVrfLib::SPFHOLD_NEGATIVE },
@@ -250,8 +238,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, OspfVrfLib.create_ospfvrf_manifest_spfmax_negative)
 
     # Expected exit_code is 6 since this is a puppet agent cmd with failures.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [6])
 
     logger.info("Get negative test resource manifest from master :: #{result}")
@@ -261,8 +248,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_ospf_vrf resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_ospf_vrf 'test green'", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_ospf_vrf 'test green'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'timer_throttle_spf_max' => OspfVrfLib::SPFMAX_NEGATIVE },
@@ -278,8 +264,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, OspfVrfLib.create_ospfvrf_manifest_spfstart_negative)
 
     # Expected exit_code is 6 since this is a puppet agent cmd with failures.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [6])
 
     logger.info("Get negative test resource manifest from master :: #{result}")
@@ -289,8 +274,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_ospf_vrf resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_ospf_vrf 'test green'", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_ospf_vrf 'test green'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'timer_throttle_spf_start' => OspfVrfLib::SPFSTART_NEGATIVE },

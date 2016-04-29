@@ -171,6 +171,13 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
     newvalues(:true, :false, :default)
   end
 
+  newproperty(:suppress_uuc) do
+    desc "Suppress uuc under layer 2 VNI. Valid values are true,
+          false, or 'default'"
+
+    newvalues(:true, :false, :default)
+  end
+
   # Multicast-group and ingress-replication are mutually exclusive properties.
   validate do
     fail 'Only one of multicast-group or ingress-replication can be configured, '\
@@ -184,6 +191,7 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
     assoc_vrf_incompatible_props = self[:ingress_replication] ||
                                    self[:multicast_group] ||
                                    self[:suppress_arp] ||
+                                   self[:suppress_uuc] ||
                                    self[:peer_list]
 
     fail 'ingress_replication, multicast_group, peer_list & suppress_arp' \

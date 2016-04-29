@@ -18,11 +18,28 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 * Extended `tacacs_server_group` with support for ios_xr platform
 
 ### Added
+- Extended the following providers to support `Nexus 56xx`, `Nexus 60xx`, and `Nexus 7xxx`
+  - `cisco_aaa_authentication_login`, `cisco_aaa_authorization_login_cfg_svc`, `cisco_aaa_authorization_login_exec_svc`, `cisco_aaa_group_tacacs`
+  - `cisco_fabricpath_global`, `cisco_fabricpath_topology`
+  - `cisco_interface_channel_group`, `cisco_interface_portchannel`, `cisco_portchannel_global`
+  - `cisco_snmp_community`, `cisco_snmp_group`, `cisco_snmp_server`, `cisco_snmp_user`
+  - `cisco_vpc_domain`
+  - `cisco_vtp`
+  - `domain_name`, `name_server`, `network_dns`, `network_vlan`, `search_domain`
+  - `ntp_config`, `ntp_server`
+  - `port_channel`
+  - `radius`, `radius_global`, `radius_server`, `radius_server_group`
+  - `network_snmp`, `snmp_community`, `snmp_notification`, `snmp_notification_receiver`, `snmp_user`
+  - `tacacs`, `tacacs_global`, `tacacs_server`, `tacacs_server_group`
+- Extended `cisco_bgp` with the following attributes:
+  - `nsr`
+  - `reconnect_interval`
 - Extended `cisco_interface` with the following attributes:
   - `ipv4_forwarding`, `switchport_mode fabricpath`
   - `stp_bpdufilter`, `stp_bpduguard`, `stp_cost`, `stp_guard`, `stp_link_type`, `stp_mst_cost`
   - `stp_mst_port_priority`, `stp_port_priority`, `stp_port_type`, `stp_vlan_cost`, `stp_vlan_port_priority`
   - `modify switchport_trunk_allowed_vlan to use range_summarize() which takes care of idempotency issues with vlan ranges`
+- Extended `cisco_portchannel_global` provider to support `Nexus 3xxx`
 - Extended `cisco_vlan` with the following attributes:
   - `mode`
 - Extended `cisco_vpc_domain` with the following attributes:
@@ -41,8 +58,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `route_target_import_stitching`
 - Extended `cisco_vxlan_vtep` with the following attributes:
   - `source_interface_hold_down_time`
-- Extended `cisco_bgp` with the following attributes:
-  - `nsr`
 
 ### Removed
 - Removed 'cisco_nxapi' fact as this gem is no longer a dependency.
@@ -216,6 +231,7 @@ This version was never released.
 - Please note: 0.9.0 is an EFT pre-release for a limited audience with access to NX-OS 7.0(3)I2(1). Additional code changes may occur in 0.9.x prior to the final 1.0.0 release.
 
 [unreleased]: https://github.com/cisco/cisco-network-puppet-module/compare/master...develop
+[1.3.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.2.3...v1.3.0
 [1.2.3]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.2.0...v1.2.2
 [1.2.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.1.0...v1.2.0
