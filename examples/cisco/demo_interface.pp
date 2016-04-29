@@ -104,6 +104,26 @@ class ciscopuppet::cisco::demo_interface {
       vrf                   => 'test1'
     }
 
+    # For private vlan
+    if platform_get() =~ /n(3|5|6|7|9)k/ {
+      cisco_vlan { '445':
+        ensure     => present,
+        private_vlan_type => 'isolated',
+      }
+      cisco_vlan { '444':
+        ensure     => present,
+        private_vlan_type => 'primary',
+        private_vlan_association => ['445'],
+      }
+      cisco_interface { 'Ethernet1/6':
+        description     => 'private_vlan_host_port',
+        switchport_mode_private_vlan_host => 'host',
+        switchport_mode_private_vlan_host_association  => ['444', '445'],
+      }
+    } else {
+      warning('This platform does not support the private vlan feature')
+    }
+
     #  Requires F3 or newer linecards
     # cisco_interface { 'Ethernet9/1':
     #   switchport_mode                => trunk,

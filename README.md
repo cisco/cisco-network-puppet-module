@@ -1690,8 +1690,9 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 
 | Property | Caveat Description |
 |:---------|:-------------|
-| `svi_autostate` | Not supported on N5k, N6k |
-| `vlan_mapping`  | Only supported on N7k |
+| `svi_autostate`       | Only supported on N3k,N7k,N9k |
+| `vlan_mapping`        | Only supported on N7k         |
+| `vlan_mapping_enable` | Only supported on N7k         |
 
 #### Parameters
 
@@ -1737,6 +1738,36 @@ interface. Valid value is an integer.
 
 ##### `switchport_autostate_exclude`
 Exclude this port for the SVI link calculation. Valid values are 'true', 'false', and 'default'.
+
+##### `private_vlan_mapping`
+Private vlan mapping for interface vlan. List of secondary vlans associated to the interface vlan primary.
+
+##### `switchport_mode_private_vlan_host`
+Switchport host mode for private vlan. This a L2 access port. There are two modes: host and promiscous.
+
+##### `switchport_mode_private_vlan_host_association`
+This configuration specify which vlans are associated on this port. Host mode only support a pair of vlans: primary and secondary. Valid values are an array of ["primary_vlan", "secondary_vlan"] pairs.
+
+##### `switchport_mode_private_vlan_host_promisc`
+This configuration specify which vlans are associated on this port. Promiscous mode only support a pair of vlans: primary and secondaries. Valid values are an array of ["primary_vlan", "secondary_vlan"] pairs.
+
+##### `switchport_mode_private_vlan_trunk_promiscuous`
+Switchport trunk promisc mode for private vlan. This a L2 trunk port capable of carrying multiple primary vlans.
+
+##### `switchport_mode_private_vlan_trunk_secondary`
+Switchport trunk secondary mode for private vlan. This a L2 trunk port capable of carrying multiple secondary vlans.
+
+#### `switchport_private_vlan_association_trunk`
+This configuration specify which vlans are associated on this trunk secondary port. Pair of distinguish vlans in the form of primary and secondary are accepted per entry. Valid values are an array of ["primary_vlan", "secondary_vlan"] pairs.
+
+#### `switchport_private_vlan_mapping_trunk`
+This configuration specify which vlans are associated on this trunk promisc port. Pair of distinguish vlans in the form of primary vlan and secondary vlans (single or range) are accepted per entry. Valid values are an array of ["primary_vlan", "secondary_vlan"] pairs.
+
+#### `switchport_private_vlan_trunk_allowed_vlan`
+This configuration specify which private vlans are associated on this trunk port. Valid values are an array of ["vlan"].
+
+#### `switchport_private_vlan_trunk_native_vlan`
+This configuration specify the native vlan as a private vlan. Valid values are integers.
 
 ##### `switchport_trunk_allowed_vlan`
 The allowed VLANs for the specified Ethernet interface. Valid values are
@@ -2845,8 +2876,8 @@ Manages a Cisco VLAN.
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `mode`           | Not supported on N3k, N9k |
 | `fabric_control` | Only supported on N7k (support added in ciscopuppet 1.3.0) |
+| `mode`           | Only supported on N5k,N6k,N7k |
 
 #### Parameters
 
@@ -2872,6 +2903,12 @@ State of the VLAN. Valid values are 'active', 'suspend', and keyword 'default'.
 ##### `shutdown`
 Whether or not the vlan is shutdown. Valid values are 'true', 'false' and
 keyword 'default'.
+
+##### `private_vlan_type`
+The private vlan type. Valid values are 'primary', 'isolated' and 'community'.
+
+##### `private_vlan_association`
+Associate the secondary vlanis to the primary vlan. Valid values are integer like 5,10-12.
 
 ##### `fabric_control`
 Specifies this vlan as the fabric control vlan. Only one bridge-domain or VLAN can be configured as fabric-control. Valid values are true, false.
