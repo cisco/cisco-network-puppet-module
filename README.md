@@ -138,7 +138,7 @@ The following table indicates which providers are supported on each platform. As
 | [cisco_bridge_domain](#type-cisco_bridge_domain) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: | :heavy_minus_sign: |
 | [cisco_bridge_domain_vni](#type-cisco_bridge_domain_vni) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: | :heavy_minus_sign: |
 | [cisco_encapsulation](#type-cisco_encapsulation) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: | :heavy_minus_sign: |
-| [cisco_evpn_vni](#type-cisco_evpn_vni) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅ | ✅ | :heavy_minus_sign: |
+| [cisco_evpn_vni](#type-cisco_evpn_vni) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅ | ✅ | :heavy_minus_sign: | * [caveats](#cisco_evpn_vni-caveats) |
 | [cisco_fabricpath_global](#type-cisco_fabricpath_global) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | * [caveats](#cisco_fabricpath_global-caveats) |
 | [cisco_fabricpath_topology](#type-cisco_fabricpath_topology) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅ | :heavy_minus_sign: | :heavy_minus_sign: |
 | [cisco_interface](#type-cisco_interface) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅ | ✅ | ✅ | * [caveats](#cisco_interface-caveats) |
@@ -152,7 +152,7 @@ The following table indicates which providers are supported on each platform. As
 | [cisco_ospf](#type-cisco_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_ospf_vrf](#type-cisco_ospf_vrf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | ✅ = Supported <br> ❌ = Unsupported <br> :heavy_minus_sign: = Not Applicable | N9k | N30xx | N31xx | N56xx | N6k | N7k | N8k | IOS XR | Caveats |
-| [cisco_overlay_global](#type-cisco_overlay_global) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | ❌ | ❌ | ❌  | ✅ | :heavy_minus_sign: |
+| [cisco_overlay_global](#type-cisco_overlay_global) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅  | ✅ | :heavy_minus_sign: |
 | [cisco_pim](#type-cisco_pim) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_pim_rp_address](#type-cisco_pim_rp_address) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [cisco_pim_grouplist](#type-cisco_pim_grouplist) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
@@ -170,8 +170,8 @@ The following table indicates which providers are supported on each platform. As
 | [cisco_vrf](#type-cisco_vrf) | ✅ | ✅* | ✅* | ✅ | ✅ | ✅ | ✅ | ✅* | * [caveats](#cisco_vrf-caveats) |
 | [cisco_vrf_af](#type-cisco_vrf_af) | ✅ | ✅* | ✅* | ✅* | ✅* | ✅* | ✅ | ✅* | * [caveats](#cisco_vrf_af-caveats) |
 | [cisco_vtp](#type-cisco_vtp) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
-| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | ❌ | ❌ | ❌ | ✅ | :heavy_minus_sign: |
-| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | ❌ | ❌ | ❌ | ✅ | :heavy_minus_sign: |
+| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅ | ✅ | :heavy_minus_sign: |
+| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅ | ✅ | :heavy_minus_sign: |
 
 ##### NetDev Providers
 
@@ -182,7 +182,7 @@ The following table indicates which providers are supported on each platform. As
 | [network_dns](#type-network_dns) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [network_interface](#type-network_interface) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [network_snmp](#type-network_snmp) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
-| [network_trunk](#type-network_trunk) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| [network_trunk](#type-network_trunk) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [network_vlan](#type-network_vlan) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | [ntp_config](#type-ntp_config) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [ntp_server](#type-ntp_server) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
@@ -1619,6 +1619,12 @@ Manages Cisco Ethernet Virtual Private Network (EVPN) VXLAN Network Identifier (
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | not applicable     | not applicable         |
 
+#### <a name="cisco_evpn_vni-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:---------|:-------------|
+| `route_target_both` | Supported on most Nexus platforms but usage is *discouraged*. See `route_target_both` below. |
+
 #### Parameters
 
 ##### `ensure`
@@ -1633,13 +1639,15 @@ The EVPN VXLAN Network Identifier. Valid values are Integer.
 
 The VPN Route Distinguisher (RD). The RD is combined with the IPv4 or IPv6 prefix learned by the PE router to create a globally unique address. Valid values are a String in one of the route-distinguisher formats (ASN2:NN, ASN4:NN, or IPV4:NN); the keyword 'auto', or the keyword 'default'.
 
-##### `route target both`
+##### `route_target_both`
 
-Enables/Disables the route-target 'auto' setting for both import and export target communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'."
+Enables/Disables route-target settings for both import and export target communities using a single property. Valid values are an Array or space-separated String of extended communities, or the keywords 'auto' or 'default'."
+
+*Caveat*: The `route_target_both` property is discouraged due to the inconsistent behavior of the property across Nexus platforms and image versions. The 'both' keyword has a transformative behavior on some platforms/versions in which it creates two cli configurations: one for import targets, a second for export targets, while the 'both' command itself may not appear at all. When the 'both' keyword does not appear in the configuration it causes an idempotency problem for puppet. For this reason it is recommended to use explicit 'route_target_export' and 'route_target_import' properties instead of `route_target_both`.
 
 ##### `route_target_import`
 
-Sets the route-target 'import' extended communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+Sets the route-target 'import' extended communities. Valid values are an Array or space-separated String of extended communities, or the keywords 'auto' or 'default'.
 
 route_target Examples:
 
@@ -1648,7 +1656,7 @@ route_target_export => '4:4 66:66'
 
 ##### `route_target_export`
 
-Sets the route-target 'export' extended communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+Sets the route-target 'export' extended communities. Valid values are an Array or space-separated String of extended communities, or the keywords 'auto' or 'default'.
 
 --
 ### Type: cisco_fabricpath_global
@@ -1801,6 +1809,16 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | `svi_management` | Not supported on IOS XR |
 | `switchport` | Not supported on IOS XR |
 | `switchport_autostate_exclude` | Not supported on IOS XR |
+| `private_vlan_mapping` | Not supported on N8k, IOS XR |
+| `switchport_mode_private_vlan_host` | Not supported on N8k, IOS XR |
+| `switchport_mode_private_vlan_host_association` | Not supported on N8k, IOS XR |
+| `switchport_mode_private_vlan_host_promisc` | Not supported on N8k, IOS XR |
+| `switchport_mode_private_vlan_trunk_promiscuous`| Not supported on N8k, IOS XR |
+| `switchport_mode_private_vlan_trunk_secondary` | Not supported on N8k, IOS XR |
+| `switchport_private_vlan_association_trunk` | Not supported on N8k, IOS XR |
+| `switchport_private_vlan_mapping_trunk` | Not supported on N8k, IOS XR |
+| `switchport_private_vlan_trunk_allowed_vlan` | Not supported on N8k, IOS XR |
+| `switchport_private_vlan_trunk_native_vlan` | Not supported on N8k, IOS XR |
 | `switchport_mode` | Not supported on IOS XR |
 | `switchport_trunk_allowed_vlan` | Not supported on IOS XR |
 | `switchport_trunk_native_vlan` | Not supported on IOS XR |
@@ -1852,7 +1870,27 @@ interface. Valid value is an integer.
 
 ##### `switchport_autostate_exclude`
 Exclude this port for the SVI link calculation. Valid values are 'true', 'false', and 'default'. This property is not supported on IOS XR.
+##### `private_vlan_mapping`
+Private vlan mapping for interface vlan. List of secondary vlans associated to the interface vlan primary.
+##### `switchport_mode_private_vlan_host`
+Switchport host mode for private vlan. This a L2 access port. There are two modes: host and promiscous.
+##### `switchport_mode_private_vlan_host_association`
+This configuration specify which vlans are associated on this port. Host mode only support a pair of vlans: primary and secondary. Valid values are an array of ["primary_vlan", "secondary_vlan"] pairs.
 
+##### `switchport_mode_private_vlan_host_promisc`
+This configuration specify which vlans are associated on this port. Promiscous mode only support a pair of vlans: primary and secondaries. Valid values are an array of ["primary_vlan", "secondary_vlan"] pairs.
+##### `switchport_mode_private_vlan_trunk_promiscuous`
+Switchport trunk promisc mode for private vlan. This a L2 trunk port capable of carrying multiple primary vlans.
+##### `switchport_mode_private_vlan_trunk_secondary`
+Switchport trunk secondary mode for private vlan. This a L2 trunk port capable of carrying multiple secondary vlans.
+#### `switchport_private_vlan_association_trunk`
+This configuration specify which vlans are associated on this trunk secondary port. Pair of distinguish vlans in the form of primary and secondary are accepted per entry. Valid values are an array of ["primary_vlan", "secondary_vlan"] pairs.
+#### `switchport_private_vlan_mapping_trunk`
+This configuration specify which vlans are associated on this trunk promisc port. Pair of distinguish vlans in the form of primary vlan and secondary vlans (single or range) are accepted per entry. Valid values are an array of ["primary_vlan", "secondary_vlan"] pairs.
+#### `switchport_private_vlan_trunk_allowed_vlan`
+This configuration specify which private vlans are associated on this trunk port. Valid values are an array of ["vlan"].
+#### `switchport_private_vlan_trunk_native_vlan`
+This configuration specify the native vlan as a private vlan. Valid values are integers.
 ##### `switchport_trunk_allowed_vlan`
 The allowed VLANs for the specified Ethernet interface. Valid values are
 string, keyword 'default'. This property is not supported on IOS XR.
@@ -2451,9 +2489,9 @@ Also configures anycast gateway MAC of the switch.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | not applicable     | not applicable         |
 | N31xx    | not applicable     | not applicable         |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | not applicable     | not applicable         |
 
@@ -3028,6 +3066,8 @@ Manages a Cisco VLAN.
 | Property | Caveat Description |
 |:--------|:-------------|
 | `mode` | Not supported on N9k, N30xx, N31xx |
+| `private_vlan_type` | Not supported on N8k, IOS XR |
+| `private_vlan_association` | Not supported on N8k, IOS XR |
 | `fabric_control` | Supported on N7k with module minimum version as 1.3.0 |
 
 #### Parameters
@@ -3055,6 +3095,11 @@ State of the VLAN. Valid values are 'active', 'suspend', and keyword 'default'.
 Whether or not the vlan is shutdown. Valid values are 'true', 'false' and
 keyword 'default'.
 
+##### `private_vlan_type`
+The private vlan type. Valid values are 'primary', 'isolated' and
+'community'.
+##### `private_vlan_association`
+Associate the secondary vlanis to the primary vlan. Valid values are integer like 5,10-12.
 ##### `fabric_control`
 Specifies this vlan as the fabric control vlan. Only one bridge-domain or VLAN can be configured as fabric-control. Valid values are true, false.
 
@@ -3375,9 +3420,9 @@ Creates a VXLAN Network Virtualization Endpoint (NVE) overlay interface that ter
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | not applicable     | not applicable         |
 | N31xx    | not applicable     | not applicable         |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | not applicable     | not applicable         |
 
@@ -3410,9 +3455,9 @@ Creates a Virtual Network Identifier member (VNI) for an NVE overlay interface.
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N30xx    | not applicable     | not applicable         |
 | N31xx    | not applicable     | not applicable         |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N56xx    | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N8k      | 7.0(3)F1(1)        | 1.3.0                  |
 | IOS XR   | not applicable     | not applicable         |
 

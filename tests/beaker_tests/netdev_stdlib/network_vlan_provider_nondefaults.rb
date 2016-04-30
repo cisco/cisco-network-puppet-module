@@ -64,6 +64,8 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Setup switch for provider test' do
     resource_absent_cleanup(agent, 'network_vlan',
                             'Setup switch for network_vlan provider test')
+    resource_absent_cleanup(agent, 'cisco_bridge_domain',
+                            'bridge-domain CLEANUP :: ')
 
     logger.info("Setup switch for provider test :: #{result}")
   end

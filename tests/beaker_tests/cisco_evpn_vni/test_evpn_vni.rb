@@ -48,25 +48,31 @@ tests[:default] = {
 #
 # non_default_properties
 #
-routetargetboth = ['1.2.3.4:55', '2:2', '55:33', 'auto']
-routetargetexport = ['1.2.3.4:55', '2:2', '55:33', 'auto']
-routetargetimport = ['1.2.3.4:55', '2:2', '55:33', 'auto']
+export_tgts = ['2.2.2.2:2', '2:2', 'auto']
+import_tgts = ['3.3.3.3:3', '3:3', 'auto']
 tests[:non_default] = {
   desc:           '2.1 Non Default Properties',
   title_pattern:  '4096',
   manifest_props: {
     route_distinguisher: 'auto',
-    route_target_both:   routetargetboth,
-    route_target_export: routetargetexport,
-    route_target_import: routetargetimport,
+    # route_target_both: n/a <-- Do not use. Behavior is unpredictable
+    # on some platforms/versions; readme discourages usage.
+    route_target_export: export_tgts,
+    route_target_import: import_tgts,
   },
   resource:       {
     route_distinguisher: 'auto',
-    route_target_both:   "#{routetargetboth}",
-    route_target_export: "#{routetargetexport}",
-    route_target_import: "#{routetargetimport}",
+    route_target_export: "#{export_tgts}",
+    route_target_import: "#{import_tgts}",
   },
 }
+
+# The harness will remove any "unprops" from the manifests.
+def unsupported_properties(*)
+  unprops = []
+  unprops << :route_target_both if nexus_i2_image
+  unprops
+end
 
 #################################################################
 # TEST CASE EXECUTION

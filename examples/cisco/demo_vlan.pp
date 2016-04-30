@@ -31,4 +31,15 @@ class ciscopuppet::cisco::demo_vlan {
     state           => 'active',
     fabric_control  => $fabric_control
   }
+  # For private vlan
+  if platform_get() =~ /n(3|5|6|7|9)k/ {
+    cisco_vlan { '333':
+      ensure     => present,
+      private_vlan_type => 'primary',
+      private_vlan_association => ['334,336-339'],
+    }
+  
+  } else {
+    warning('This platform does not support the private vlan feature')
+  }
 }

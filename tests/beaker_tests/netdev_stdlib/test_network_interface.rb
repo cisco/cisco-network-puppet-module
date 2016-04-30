@@ -27,6 +27,7 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 tests = {
   agent:            agent,
   master:           master,
+  ensurable:        false,
   intf_type:        'ethernet',
   operating_system: 'nexus',
   resource_name:    'network_interface',
@@ -50,7 +51,7 @@ tests[:auto] = {
 
 # This helper method is used for testbed initial setup. It also defines
 # some property test values based on the discovered interface capabilities.
-def interface_pre_check(tests)
+def interface_pre_check(tests) # rubocop:disable Metrics/AbcSize
   # Discover a usable test interface
   intf = find_interface(tests)
   tests[:non_default][:title_pattern] = intf
@@ -62,8 +63,8 @@ def interface_pre_check(tests)
 
   # Get the capabilities and update the caps list with any add'l test values
   caps = interface_capabilities(agent, intf)
-  caps['Speed'] += ',auto'
-  caps['Duplex'] += ',auto'
+  caps['Speed'] += ',auto' unless caps['Speed']['auto']
+  caps['Duplex'] += ',auto' unless caps['Duplex']['auto']
   caps['MTU'] = '1600'
 
   # Create a probe hash to pre-test the properties

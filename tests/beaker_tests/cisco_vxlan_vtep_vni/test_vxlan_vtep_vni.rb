@@ -72,7 +72,7 @@ testheader = 'Resource cisco_vxlan_vtep_vni'
 tests = {
   master:        master,
   agent:         agent,
-  platform:      'n(8|9)k',
+  platform:      'n(5|6|7|8|9)k',
   resource_name: 'cisco_vxlan_vtep_vni',
 }
 
@@ -104,6 +104,7 @@ tests = {
 #
 tests['default_properties_ingress_replication'] = {
   title_pattern:  'nve1 10000',
+  platform:       'n(8|9)k',
   manifest_props: "
     ingress_replication => 'default',
     suppress_arp        => 'default',
@@ -126,8 +127,15 @@ tests['default_properties_multicast_group'] = {
   },
 }
 
+# Suppress Unknown Unicast
+if platform[/n(5|6)k/]
+  tests['default_properties_multicast_group'][:manifest_props][:suppress_uuc] = 'default'
+  tests['default_properties_multicast_group'][:resource_props][:suppress_uuc] = 'false'
+end
+
 tests['ingress_replication_static_peer_list_empty'] = {
   title_pattern:  'nve1 10000',
+  platform:       'n(8|9)k',
   manifest_props: "
     ingress_replication => 'static',
     peer_list           => [],
@@ -142,6 +150,7 @@ tests['ingress_replication_static_peer_list_empty'] = {
 
 tests['peer_list'] = {
   title_pattern:  'nve1 10000',
+  platform:       'n(8|9)k',
   manifest_props: "
     ingress_replication => 'static',
     peer_list           => ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
@@ -156,6 +165,7 @@ tests['peer_list'] = {
 
 tests['peer_list_change_add'] = {
   title_pattern:  'nve1 10000',
+  platform:       'n(8|9)k',
   manifest_props: "
     ingress_replication => 'static',
     peer_list           => ['1.1.1.1', '6.6.6.6', '3.3.3.3', '4.4.4.4'],
@@ -170,6 +180,7 @@ tests['peer_list_change_add'] = {
 
 tests['peer_list_default'] = {
   title_pattern:  'nve1 10000',
+  platform:       'n(8|9)k',
   manifest_props: "
     ingress_replication => 'static',
     peer_list           => 'default',
@@ -184,6 +195,7 @@ tests['peer_list_default'] = {
 
 tests['ingress_replication_bgp'] = {
   title_pattern:  'nve1 10000',
+  platform:       'n(8|9)k',
   manifest_props: "
     ingress_replication => 'bgp',
     suppress_arp        => 'default'
@@ -223,6 +235,28 @@ tests['suppress_arp_false'] = {
   ",
   resource_props: {
     'suppress_arp' => 'false'
+  },
+}
+
+tests['suppress_uuc_true'] = {
+  title_pattern:  'nve1 10000',
+  platform:       'n(5|6)k',
+  manifest_props: "
+    suppress_uuc => 'true'
+  ",
+  resource_props: {
+    'suppress_uuc' => 'true'
+  },
+}
+
+tests['suppress_uuc_false'] = {
+  title_pattern:  'nve1 10000',
+  platform:       'n(5|6)k',
+  manifest_props: "
+    suppress_uuc => 'false'
+  ",
+  resource_props: {
+    'suppress_uuc' => 'false'
   },
 }
 
@@ -351,6 +385,14 @@ test_name "TestCase :: #{testheader}" do
 
   # id = 'suppress_arp_false'
   # tests[id][:desc] = '2.8 Suppress ARP'
+  # test_harness_cisco_vxlan_vtep_vni(tests, id)
+
+  # id = 'suppress_uuc_true'
+  # tests[id][:desc] = '2.9 Suppress Unknown Unicast'
+  # test_harness_cisco_vxlan_vtep_vni(tests, id)
+  #
+  # id = 'suppress_uuc_false'
+  # tests[id][:desc] = '2.10 Suppress Unknown Unicast'
   # test_harness_cisco_vxlan_vtep_vni(tests, id)
 
   resource_absent_cleanup(agent, 'cisco_vxlan_vtep_vni',

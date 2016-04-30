@@ -38,8 +38,20 @@ class ciscopuppet::cisco::demo_patching {
 
   #Use Case 1: install cisco package
 
-  # Sample rpm is only compatible with FCS release version 7.0(3)I2(1) image.
-  $ciscoPatchName = 'n9000_sample-1.0.0-7.0.3.x86_64.rpm'
+  # Sample rpm is only compatible with the following FCS release versions:
+  # - 7.0(3)I2(1)
+  # - 7.0(3)I3(1)
+  $image_ver = $::os['release']['full'] 
+  case $image_ver {
+    '7.0(3)I2(1)': {
+      $ciscoPatchName = 'n9000_sample-1.0.0-7.0.3.x86_64.rpm'
+    }
+    '7.0(3)I3(1)': {
+      $ciscoPatchName = 'CSCuxdublin-1.0.0-7.0.3.I3.1.lib32_n9000.rpm'
+    }
+    default:  { fail("\n## NO COMPATIBLE SAMPLE PATCH RPMs AVAILABLE FOR THIS IMAGE: ${image_ver}\n")
+    }
+  }
   $ciscoPatchSource = "puppet:///modules/ciscopuppet/${ciscoPatchName}"
   $ciscoPatchFile = "/bootflash/${ciscoPatchName}"
 
