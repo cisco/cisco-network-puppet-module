@@ -28,14 +28,11 @@ This document describes Puppet agent installation and setup on Cisco Nexus switc
 
 Platform           | OS     | OS Version           |
 -------------------|--------|----------------------|
-Cisco Nexus 30xx   | NX-OS  | 7.0(3)I2(1) and later
-Cisco Nexus 31xx   | NX-OS  | 7.0(3)I2(1) and later
-Cisco Nexus 93xx   | NX-OS  | 7.0(3)I2(1) and later
-Cisco Nexus 95xx   | NX-OS  | 7.0(3)I2(1) and later
-Cisco N9kv         | NX-OS  | 7.0(3)I2(1) and later
-Cisco Nexus 56xx   | NX-OS  | 7.3(0)N1(1) and later
-Cisco Nexus 60xx   | NX-OS  | 7.3(0)N1(1) and later
-Cisco Nexus 7xxx   | NX-OS  | 7.3(0)D1(1) and later
+Cisco Nexus N9k    | NX-OS  | 7.0(3)I2(1) and later
+Cisco Nexus N3k    | NX-OS  | 7.0(3)I2(1) and later
+Cisco Nexus N5k    | NX-OS  | 7.3(0)N1(1) and later
+Cisco Nexus N6k    | NX-OS  | 7.3(0)N1(1) and later
+Cisco Nexus N7k    | NX-OS  | 7.3(0)D1(1) and later
 
 Please note: A virtual Nexus N9000/N3000 may be helpful for development and testing. Users with a valid [cisco.com](http://cisco.com) user ID can obtain a copy of a virtual Nexus N9000/N3000 by sending their [cisco.com](http://cisco.com) user ID in an email to <get-n9kv@cisco.com>. If you do not have a [cisco.com](http://cisco.com) user ID please register for one at [https://tools.cisco.com/IDREG/guestRegistration](https://tools.cisco.com/IDREG/guestRegistration)
 
@@ -51,9 +48,9 @@ NX-OS supports three possible environments for running third party software:
 
 Environment                  | Supported Platforms                      |
 -----------------------------|------------------------------------------|
-`bash-shell`                 | Cisco Nexus 30xx, 31xx, 85xx, 93xx, 95xx, N9Kv |
-`guestshell`                 | Cisco Nexus 30xx, 31xx, 85xx, 93xx, 95xx, N9Kv |
-`open agent container (OAC)` | Cisco Nexus 56xx, 60xx, 7xxx             |
+`bash-shell`                 | Cisco Nexus N3k, N9k                     |
+`guestshell`                 | Cisco Nexus N3k, N9k                     |
+`open agent container (OAC)` | Cisco Nexus N5k, N6k, N7k                |
 
 You may run Puppet from either `bash-shell` or `guestshell` on supported platforms but not from both at the same time.
 
@@ -232,8 +229,8 @@ Download the `OAC` `oac.1.0.0.ova` file.
 
 | Platform | OAC Download Link |
 |----------|-------------------|
-| Nexus 7xxx | [Download Link](https://software.cisco.com/download/release.html?i=!y&mdfid=283748960&softwareid=282088129&release=7.3%280%29D1%281%29&os=)|
-| Nexus 56xx and 60xx | [Download Link](https://software.cisco.com/download/release.html?i=!y&mdfid=284360574&softwareid=282088130&release=7.3%280%29N1%281%29&os=)|
+| Nexus N7k | [Download Link](https://software.cisco.com/download/release.html?i=!y&mdfid=283748960&softwareid=282088129&release=7.3%280%29D1%281%29&os=)|
+| Nexus N5k and N6k | [Download Link](https://software.cisco.com/download/release.html?i=!y&mdfid=284360574&softwareid=282088130&release=7.3%280%29N1%281%29&os=)|
 
 Copy the `ova` file to the `bootflash:` device.
 
