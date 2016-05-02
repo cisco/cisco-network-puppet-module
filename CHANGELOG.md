@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.3.0] - DATE:TBD
+## [1.3.0] - 2016-05-02
 
 ### New feature support
 #### Cisco Resources
@@ -12,9 +12,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `cisco_itd_device_group_node` type and provider.
 - `cisco_itd_service` type and provider.
 - `cisco_stp_global` type and provider.
-
-#### NetDev Resources
-*
 
 ### Added
 - Extended the following providers to support `Nexus N5k`, `Nexus N6k`, and `Nexus N7k`
@@ -43,7 +40,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `switchport_private_vlan_mapping_trunk`, `switchport_private_vlan_trunk_allowed_vlan`
   - `switchport_private_vlan_trunk_native_vlan`, `private_vlan_mapping`
   - `modify switchport_trunk_allowed_vlan to use range_summarize() which takes care of idempotency issues with vlan ranges`
-- Extended `cisco_portchannel_global` provider to support `Nexus 3xxx`
+- Extended `cisco_portchannel_global` provider to support `Nexus N3k`
 - Extended `cisco_vlan` with the following attributes:
   - `mode`
   - `private_vlan_type`
@@ -52,11 +49,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `fabricpath_emulated_switch_id`
   - `fabricpath_multicast_load_balance`
   - `port_channel_limit`
-- Extended `cisco_vrf` with the following attributes for eXR:
-  - `mhost_ipv4_default_interface`
-  - `mhost_ipv6_default_interface`
-  - `remote_route_filtering`
-  - `vpn_id`
 - Extended `cisco_vrf_af` with the following attributes:
   - `route_policy_export`
   - `route_policy_import`
