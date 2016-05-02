@@ -1909,9 +1909,9 @@ Manages a Cisco Network Interface Channel-group.
 |----------|:------------------:|:----------------------:|
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
 | N3k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N5k      | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
