@@ -263,9 +263,7 @@ end
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
-  device = platform
-  logger.info("#### This device is of type: #{device} #####")
-  resource_absent_cleanup(agent, 'cisco_bridge_domain', 'bridge-domain CLEANUP :: ')
+  remove_all_vlans(agent)
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
   test_harness_run(tests, :default)
@@ -280,6 +278,8 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :non_default_bd)
   test_harness_run(tests, :non_default_plat_1)
   test_harness_run(tests, :non_default_plat_2)
+
+  remove_all_vlans(agent)
   skipped_tests_summary(tests)
 end
 
