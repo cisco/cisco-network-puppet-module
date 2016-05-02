@@ -1050,6 +1050,19 @@ def find_interface(tests, id=nil, skipcheck=true)
     msg = 'Unable to find suitable interface module for this test.'
     prereq_skip(tests[:resource_name], self, msg)
   end
+
+  if type =~ /ethernet/i
+    slot_num = intf[/\d+/]
+    cmd = "-p cisco.inventory.'Slot #{slot_num}'.pid"
+    pid = on(agent, facter_cmd(cmd)).stdout.chomp
+    if pid =~ /N7.-F2/
+      vdc = default_vdc_name
+      unless limit_resource_module_type_get(vdc, 'f2e f3', :exact)
+        limit_resource_module_type_set(vdc, 'f2e f3')
+      end
+    end
+  end
+
   intf
 end
 

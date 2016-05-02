@@ -258,6 +258,12 @@ def test_harness_dependencies(_tests, id)
   end
 end
 
+# Clean-up all bridge-domains
+def test_cleanup_all_bridge_domains
+  cmd = 'system bridge-domain none'
+  command_config(agent, cmd, cmd)
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
@@ -280,6 +286,8 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :non_default_bd)
   test_harness_run(tests, :non_default_plat_1)
   test_harness_run(tests, :non_default_plat_2)
+
+  test_cleanup_all_bridge_domains
   skipped_tests_summary(tests)
 end
 
