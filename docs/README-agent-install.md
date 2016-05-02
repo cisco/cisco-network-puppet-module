@@ -181,7 +181,6 @@ Regardless of OS, set up DNS configuration:
 cat >> /etc/resolv.conf << EOF
 nameserver 10.0.0.202
 domain mycompany.com
-search mycompany.com
 EOF
 ~~~
 
@@ -272,7 +271,6 @@ echo 'n3k' > /etc/hostname
 cat >> /etc/resolv.conf << EOF
 nameserver 10.0.0.202
 domain mycompany.com
-search mycompany.com
 EOF
 ~~~
 
@@ -419,7 +417,6 @@ echo 'n7k' > /etc/hostname
 cat >> /etc/resolv.conf << EOF
 nameserver 10.0.0.202
 domain mycompany.com
-search mycompany.com
 EOF
 ~~~
 
