@@ -20,7 +20,7 @@
 # TestCase Prerequisites:
 # -----------------------
 # This is a Puppet X__RESOURCE_NAME__X resource testcase for Puppet Agent on
-# Nexus and IOS XR devices.
+# Nexus devices.
 # The test case assumes the following prerequisites are already satisfied:
 #   - Host configuration file contains agent and master information.
 #   - SSH is enabled on the Agent.
