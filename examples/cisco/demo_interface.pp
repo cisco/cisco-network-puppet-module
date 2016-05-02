@@ -105,7 +105,7 @@ class ciscopuppet::cisco::demo_interface {
         vrf                   => 'test1'
       }
     } else {
-      warning('This platform does not support the bdi feature')
+      warning('This platform does not support cisco_bridge_domain')
     }
 
     # For private vlan
