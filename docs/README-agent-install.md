@@ -1,4 +1,4 @@
-# Puppet Agent Installation & Setup: Cisco Nexus
+# Puppet Agent Installation & Setup: Cisco Nexus and Cisco IOS XR
 
 #### Table of Contents
 
@@ -15,7 +15,7 @@
 
 ## <a name="overview">Overview</a>
 
-This document describes Puppet agent installation and setup on Cisco Nexus switches. These instructions focus on manual setup. See the [Automated Installation](#auto-install) section for documentation regarding alternative installation methods.
+This document describes Puppet agent installation and setup on Cisco Nexus switches and Cisco IOS XR routers. These instructions focus on manual setup. See the [Automated Installation](#auto-install) section for documentation regarding alternative installation methods.
 
 ![1](puppet_outline.png)
 
@@ -24,15 +24,22 @@ This document describes Puppet agent installation and setup on Cisco Nexus switc
 #### Platform and Software Minimum Requirements
 
 * The Cisco NX-OS Puppet implementation requires open source Puppet version 4.0 or Puppet Enterprise 2015.2
+* The Cisco IOS XR Puppet implementation requires open source Puppet version 4.3.2 or Puppet Enterprise 2015.3.2
 * The following table lists supported platforms and OS versions.
 
 Platform           | OS     | OS Version           |
 -------------------|--------|----------------------|
-Cisco Nexus N9k    | NX-OS  | 7.0(3)I2(1) and later
-Cisco Nexus N3k    | NX-OS  | 7.0(3)I2(1) and later
-Cisco Nexus N5k    | NX-OS  | 7.3(0)N1(1) and later
-Cisco Nexus N6k    | NX-OS  | 7.3(0)N1(1) and later
-Cisco Nexus N7k    | NX-OS  | 7.3(0)D1(1) and later
+Cisco Nexus 30xx   | NX-OS  | 7.0(3)I2(1) and later
+Cisco Nexus 31xx   | NX-OS  | 7.0(3)I2(1) and later
+Cisco Nexus 93xx   | NX-OS  | 7.0(3)I2(1) and later
+Cisco Nexus 95xx   | NX-OS  | 7.0(3)I2(1) and later
+Cisco N9kv         | NX-OS  | 7.0(3)I2(1) and later
+Cisco Nexus 56xx   | NX-OS  | 7.3(0)N1(1) and later
+Cisco Nexus 60xx   | NX-OS  | 7.3(0)N1(1) and later
+Cisco Nexus 7xxx   | NX-OS  | 7.3(0)D1(1) and later
+Cisco Nexus 85xx   | NX-OS  | 7.0(3)F1(1) and later
+Cisco IOS XRv 9000 | IOS XR | TODO
+Cisco NCS 55xx     | IOS XR | TODO
 
 Please note: A virtual Nexus N9000/N3000 may be helpful for development and testing. Users with a valid [cisco.com](http://cisco.com) user ID can obtain a copy of a virtual Nexus N9000/N3000 by sending their [cisco.com](http://cisco.com) user ID in an email to <get-n9kv@cisco.com>. If you do not have a [cisco.com](http://cisco.com) user ID please register for one at [https://tools.cisco.com/IDREG/guestRegistration](https://tools.cisco.com/IDREG/guestRegistration)
 
@@ -44,18 +51,18 @@ Puppet agent software.
 #### Environment
 
 NX-OS supports three possible environments for running third party software:
-`bash-shell`, `guestshell` and the `open agent container (OAC)`.
+`bash-shell`, `guestshell` and the `open agent container (OAC)`. IOS XR supports `bash-shell` at present.
 
 Environment                  | Supported Platforms                      |
 -----------------------------|------------------------------------------|
-`bash-shell`                 | Cisco Nexus N3k, N9k                     |
-`guestshell`                 | Cisco Nexus N3k, N9k                     |
-`open agent container (OAC)` | Cisco Nexus N5k, N6k, N7k                |
+`bash-shell`                 | Cisco Nexus 30xx, 31xx, 85xx, 93xx, 95xx, N9Kv<br>Cisco IOS XRv 9000, NCS 55xx |
+`guestshell`                 | Cisco Nexus 30xx, 31xx, 85xx, 93xx, 95xx, N9Kv |
+`open agent container (OAC)` | Cisco Nexus 56xx, 60xx, 7xxx             |
 
 You may run Puppet from either `bash-shell` or `guestshell` on supported platforms but not from both at the same time.
 
 * `bash-shell`
-  * This is the native WRL Linux environment underlying NX-OS. It is disabled by default on NX-OS.
+  * This is the native WRL Linux environment underlying NX-OS and IOS XR. It is disabled by default on NX-OS but enabled on IOS XR by default.
 * `guestshell`
   * This is a secure Linux container environment running CentOS. It is enabled by default in most platforms that support it.
 * `open agent container`
@@ -85,6 +92,49 @@ config term
     ip address 10.0.0.99/24
 end
 ~~~
+
+**Example:** Connectivity via GigabitEthernet interface - IOS XR
+
+See also the [Cisco IOS XR Application Hosting Configuration Guide](http://www.cisco.com/c/en/us/td/docs/iosxr/AppHosting/App-Hosting-Config-Guide.html)
+
+~~~
+config
+!
+hostname xrv9k
+domain name mycompany.com
+!
+interface GigabitEthernet0/0/0/0
+ ipv4 address 10.0.0.98 255.255.255.0
+ no shutdown
+!
+router static
+ address-family ipv4 unicast
+  0.0.0.0/0 GigabitEthernet0/0/0/0 10.0.0.1
+!
+grpc
+ port 57799 # optional - default is 57400
+!
+tpa
+ address-family ipv4
+  update-source GigabitEthernet0/0/0/0
+!
+commit
+end
+~~~
+
+#### Enable gRPC server (IOS XR only)
+
+~~~
+config
+!
+grpc
+ port 57799 # optional - default is 57400
+!
+commit
+end
+~~~
+
+Refer to the [gRPC configuration guide](http://www.cisco.com/c/en/us/td/docs/iosxr/ncs5500/DataModels/b-Datamodels-cg-ncs5500/b-Datamodels-cg-ncs5500_chapter_010.html#concept_700172ED7CF44313B0D7E521B2983F32) for more options.
 
 ## <a name="env-bs">Puppet Agent Environment: bash-shell</a>
 
@@ -116,6 +166,13 @@ If you're using the management interface, you must next switch to the management
 
 ~~~bash
 ip netns exec management bash
+~~~
+
+**Example:** IOS XR
+
+~~~bash
+xrv9k# run bash
+bash-4.3# ip netns exec tpnns bash
 ~~~
 
 Regardless of OS, set up DNS configuration:
@@ -229,8 +286,8 @@ Download the `OAC` `oac.1.0.0.ova` file.
 
 | Platform | OAC Download Link |
 |----------|-------------------|
-| Nexus N7k | [Download Link](https://software.cisco.com/download/release.html?i=!y&mdfid=283748960&softwareid=282088129&release=7.3%280%29D1%281%29&os=)|
-| Nexus N5k and N6k | [Download Link](https://software.cisco.com/download/release.html?i=!y&mdfid=284360574&softwareid=282088130&release=7.3%280%29N1%281%29&os=)|
+| Nexus 7xxx | [Download Link](https://software.cisco.com/download/release.html?i=!y&mdfid=283748960&softwareid=282088129&release=7.3%280%29D1%281%29&os=)|
+| Nexus 56xx and 60xx | [Download Link](https://software.cisco.com/download/release.html?i=!y&mdfid=284360574&softwareid=282088130&release=7.3%280%29N1%281%29&os=)|
 
 Copy the `ova` file to the `bootflash:` device.
 
@@ -391,6 +448,8 @@ The recommended Puppet RPM varies by environment:
   * `bash-shell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm)
   * `guestshell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm)
   * `open agent container (OAC)`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm)
+* IOS XR:
+  * Native: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-7.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-7.noarch.rpm)
 
 Using the appropriate RPM for your environment as described above, do:
 
@@ -480,6 +539,21 @@ modification is needed to ensure that Puppet runs in the correct namespace:
          [ $RETVAL = 0 ] && touch ${lockfile}
 ~~~
 
+**IOS XR**
+~~~diff
+--- /etc/init.d/puppet.old
++++ /etc/init.d/puppet
+@@ -38,7 +38,7 @@
+ 
+ start() {
+     echo -n $"Starting puppet agent: "
+-    daemon $daemonopts $puppetd ${PUPPET_OPTS} ${PUPPET_EXTRA_OPTS}
++    daemon $daemonopts ip netns exec tpnns $puppetd ${PUPPET_OPTS} ${PUPPET_EXTRA_OPTS}
+     RETVAL=$?
+     echo
+         [ $RETVAL = 0 ] && touch ${lockfile}
+~~~
+
 Next, in any case, enable the puppet service to be automatically started at boot time, and optionally start it now:
 
 ~~~bash
@@ -531,6 +605,11 @@ systemctl start my_puppet
 [Cisco Nexus 5000 and 6000 Programmability Guide](http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus5000/sw/programmability/guide/b_Cisco_Nexus_5K6K_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_5K6K_Series_NX-OS_Programmability_Guide_chapter_01001.html) - Open Agent Container Documentation
 
 [Cisco Nexus 7000 Programmability Guide](http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus7000/sw/programmability/guide/b_Cisco_Nexus_7000_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_7000_Series_NX-OS_Programmability_Guide_chapter_01001.html) - Open Agent Container Documentation
+
+[Cisco IOS XR Application Hosting Configuration Guide](http://www.cisco.com/c/en/us/td/docs/iosxr/AppHosting/App-Hosting-Config-Guide.html)
+
+[Cisco IOS XR Data Models Configuration Guide](http://www.cisco.com/c/en/us/td/docs/iosxr/ncs5500/DataModels/b-Datamodels-cg-ncs5500/b-Datamodels-cg-ncs5500_chapter_010.html#concept_700172ED7CF44313B0D7E521B2983F32) - gRPC Server Documentation
+
 
 ----
 ~~~
