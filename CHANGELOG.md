@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.3.0] - DATE:TBD
+## [1.3.0] - 2016-05-02
 
 ### New feature support
 #### Cisco Resources
@@ -12,9 +12,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `cisco_itd_device_group_node` type and provider.
 - `cisco_itd_service` type and provider.
 - `cisco_stp_global` type and provider.
-
-#### NetDev Resources
-*
 
 ### Added
 - Extended the following providers to support `Nexus 56xx`, `Nexus 60xx`, and `Nexus 7xxx`
@@ -52,11 +49,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `fabricpath_emulated_switch_id`
   - `fabricpath_multicast_load_balance`
   - `port_channel_limit`
-- Extended `cisco_vrf` with the following attributes for eXR:
-  - `mhost_ipv4_default_interface`
-  - `mhost_ipv6_default_interface`
-  - `remote_route_filtering`
-  - `vpn_id`
 - Extended `cisco_vrf_af` with the following attributes:
   - `route_policy_export`
   - `route_policy_import`
