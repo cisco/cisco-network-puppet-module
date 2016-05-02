@@ -88,8 +88,7 @@ test_name "TestCase :: #{testheader}" do
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no change.
     # Or expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
     logger.info("Setup switch for provider test :: #{result}")
@@ -101,8 +100,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, AccessVlanLib.create_accessvlan_manifest_ipv4proxyarp_negative(int))
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
     logger.info("Get negative test resource manifest from master :: #{result}")
@@ -112,8 +110,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_interface resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface '#{int}'", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_interface '#{int}'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ipv4_proxy_arp' => AccessVlanLib::IPV4PROXYARP_NEGATIVE },
@@ -129,8 +126,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, AccessVlanLib.create_accessvlan_manifest_ipv4redir_negative(int))
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
     logger.info("Get negative test resource manifest from master :: #{result}")
@@ -140,8 +136,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_interface resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface '#{int}'", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_interface '#{int}'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ipv4_redirects' => AccessVlanLib::IPV4REDIRECTS_NEGATIVE },
@@ -158,8 +153,7 @@ test_name "TestCase :: #{testheader}" do
   #  on(master, AccessVlanLib.create_accessvlan_manifest_negoauto_negative(int))
   #
   #  # Expected exit_code is 1 since this is a puppet agent cmd with error.
-  #  cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-  #    'agent -t', options)
+  #  cmd_str = PUPPET_BINPATH + 'agent -t'
   #  on(agent, cmd_str, acceptable_exit_codes: [1])
   #
   #  logger.info("Get negative test resource manifest from master :: #{result}")
@@ -170,8 +164,7 @@ test_name "TestCase :: #{testheader}" do
   # step 'TestStep :: Check cisco_interface resource absence on agent' do
   #  # Expected exit_code is 0 since this is a puppet resource cmd.
   #  # Flag is set to true to check for absence of RegExp pattern in stdout.
-  #  cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-  #    "resource cisco_interface '#{int}'", options)
+  #  cmd_str = PUPPET_BINPATH + "resource cisco_interface '#{int}'"
   #  on(agent, cmd_str) do
   #    search_pattern_in_output(stdout,
   #                             { 'negotiate_auto' => AccessVlanLib::NEGOTIATEAUTO_NEGATIVE },
@@ -188,8 +181,7 @@ test_name "TestCase :: #{testheader}" do
   #  on(master, AccessVlanLib.create_accessvlan_manifest_shutdown_negative(int))
   #
   #  # Expected exit_code is 1 since this is a puppet agent cmd with error.
-  #  cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-  #    'agent -t', options)
+  #  cmd_str = PUPPET_BINPATH + 'agent -t'
   #  on(agent, cmd_str, acceptable_exit_codes: [1])
   #
   #  logger.info("Get negative test resource manifest from master :: #{result}")
@@ -199,8 +191,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_interface resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface '#{int}'", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_interface '#{int}'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'shutdown' => AccessVlanLib::SHUTDOWN_NEGATIVE },
@@ -216,8 +207,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, AccessVlanLib.create_accessvlan_manifest_autostate_negative(int))
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
     logger.info("Get negative test resource manifest from master :: #{result}")
@@ -227,8 +217,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_interface resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface '#{int}'", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_interface '#{int}'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'switchport_autostate_exclude' => AccessVlanLib::AUTOSTATE_NEGATIVE },
@@ -244,8 +233,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, AccessVlanLib.create_accessvlan_manifest_vtp_negative(int))
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
     logger.info("Get negative test resource manifest from master :: #{result}")
@@ -255,8 +243,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_interface resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_interface '#{int}'", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_interface '#{int}'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'switchport_vtp' => AccessVlanLib::SWITCHPORTVTP_NEGATIVE },

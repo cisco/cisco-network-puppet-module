@@ -46,7 +46,7 @@ where:
 
 * `source`: Optional. Path to local file or URI for remote RPMs.
 
-* `provider`: Optional. Set to 'nxapi' if installling a Cisco package.
+* `provider`: Optional. Set to 'cisco' if installling a Cisco package.
 
 
 ## <a name="examples">Examples</a>
@@ -57,7 +57,7 @@ where:
 package { 'n9000_sample':
   source           => "http://myrepo.my_company.com/n9000_sample-1.0.0-7.0.3.x86_64.rpm",
   package_settings => {'target' => 'host'}
-  provider         => 'nxapi',
+  provider         => 'cisco',
 }
 ~~~
 
@@ -65,7 +65,7 @@ package { 'n9000_sample':
 package { 'n9000_sample':
   ensure           => absent,
   package_settings => {'target' => 'host'},
-  provider         => 'nxapi',
+  provider         => 'cisco',
 }
 ~~~
 

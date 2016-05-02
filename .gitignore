@@ -3,3 +3,6 @@ junit/
 log/
 pkg/
 Gemfile.lock
+*~
+*.swp
+hosts.cfg

@@ -70,11 +70,13 @@ testheader = 'Resource cisco_vpc_domain'
 # Top-level keys set by caller:
 # tests[:master] - the master object
 # tests[:agent] - the agent object
-# tests[:show_cmd] - the common show command to use for test_show_run
 #
 tests = {
-  master: master,
-  agent:  agent,
+  master:           master,
+  agent:            agent,
+  operating_system: 'nexus',
+  resource_name:    'cisco_vpc_domain',
+  platform:         'n(3|6|7|9)k',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -84,7 +86,6 @@ tests = {
 # tests[id][:manifest] - the complete manifest, as used by test_harness_common
 # tests[id][:resource] - a hash of expected states, used by test_resource
 # tests[id][:resource_cmd] - 'puppet resource' command to use with test_resource
-# tests[id][:show_pattern] - array of regexp patterns to use with test_show_cmd
 # tests[id][:ensure] - (Optional) set to :present or :absent before calling
 # tests[id][:code] - (Optional) override the default exit code in some tests.
 #
@@ -102,21 +103,20 @@ tests = {
 #   :title_pattern will be set to 'id'.
 #
 
-tests['default_properties'] = {
+tests[:default_properties] = {
   title_pattern:  '200',
-  manifest_props: "
-    auto_recovery_reload_delay                         => 'default',
-    delay_restore                                      => 'default',
-    delay_restore_interface_vlan                       => 'default',
-    graceful_consistency_check                         => 'default',
-    peer_gateway                                       => 'default',
-    role_priority                                      => 'default',
-    system_priority                                    => 'default',
+  desc:           '1.1 Default Properties on All Nexus Platforms',
+  manifest_props: {
+    delay_restore:                'default',
+    delay_restore_interface_vlan: 'default',
+    graceful_consistency_check:   'default',
+    peer_gateway:                 'default',
+    role_priority:                'default',
+    system_priority:              'default',
 
-  ",
+  },
   code:           [0, 2],
-  resource_props: {
-    'auto_recovery_reload_delay'   => '240',
+  resource:       {
     'delay_restore'                => '30',
     'delay_restore_interface_vlan' => '10',
     'graceful_consistency_check'   => 'true',
@@ -126,30 +126,31 @@ tests['default_properties'] = {
   },
 }
 
-tests['non_default_properties'] = {
+tests[:non_default_properties] = {
+  desc:           '2.1 Non Default Properties on All Nexus Platforms',
   title_pattern:  '200',
-  manifest_props: "
-    auto_recovery_reload_delay                         => '300',
-    delay_restore                                      => '250',
-    delay_restore_interface_vlan                       => '300',
-    dual_active_exclude_interface_vlan_bridge_domain   => '10-30, 500',
-    graceful_consistency_check                         => 'true',
-    peer_keepalive_dest                                => '1.1.1.1',
-    peer_keepalive_hold_timeout                        => 5,
-    peer_keepalive_interval                            => 1000,
-    peer_keepalive_interval_timeout                    => 3,
-    peer_keepalive_precedence                          => 5,
-    peer_keepalive_src                                 => '1.1.1.2',
-    peer_keepalive_udp_port                            => 3200,
-    peer_keepalive_vrf                                 => 'management',
-    peer_gateway                                       => 'true',
-    role_priority                                      => '1024',
-    system_mac                                         => '00:0c:0d:11:22:33',
-    system_priority                                    => '3000',
+  manifest_props: {
+    auto_recovery_reload_delay:                       '300',
+    delay_restore:                                    '250',
+    delay_restore_interface_vlan:                     '300',
+    dual_active_exclude_interface_vlan_bridge_domain: '10-30, 500',
+    graceful_consistency_check:                       'true',
+    peer_keepalive_dest:                              '1.1.1.1',
+    peer_keepalive_hold_timeout:                      5,
+    peer_keepalive_interval:                          1000,
+    peer_keepalive_interval_timeout:                  3,
+    peer_keepalive_precedence:                        5,
+    peer_keepalive_src:                               '1.1.1.2',
+    peer_keepalive_udp_port:                          3200,
+    peer_keepalive_vrf:                               'management',
+    peer_gateway:                                     'true',
+    role_priority:                                    '1024',
+    system_mac:                                       '00:0c:0d:11:22:33',
+    system_priority:                                  '3000',
 
-  ",
+  },
   code:           [0, 2],
-  resource_props: {
+  resource:       {
     'auto_recovery_reload_delay'                       => '300',
     'delay_restore'                                    => '250',
     'delay_restore_interface_vlan'                     => '300',
@@ -170,155 +171,128 @@ tests['non_default_properties'] = {
   },
 }
 
-tests['default_properties_n6k7k'] = {
+tests[:default_properties_n6k7k] = {
+  desc:           '1.2 Default Properties exclusive to N6K and N7K',
   title_pattern:  '200',
-  manifest_props: "
-    layer3_peer_routing                                => 'default',
-    shutdown                                           => 'default',
-  ",
+  platform:       'n(6|7)k',
+  manifest_props: {
+    layer3_peer_routing: 'default',
+    shutdown:            'default',
+  },
   code:           [0, 2],
-  resource_props: {
+  resource:       {
     'layer3_peer_routing' => 'false',
     'shutdown'            => 'false',
   },
 }
 
-tests['non_default_properties_n6k7k'] = {
+tests[:non_default_properties_n6k7k] = {
+  desc:           '2.2 Non Default Properties exclusive to N6K and N7K',
   title_pattern:  '200',
-  manifest_props: "
-    layer3_peer_routing                                => 'true',
-    peer_gateway_exclude_vlan                          => '500-510, 1100, 1120',
-    shutdown                                           => 'true',
+  platform:       'n(6|7)k',
+  manifest_props: {
+    layer3_peer_routing:       'true',
+    peer_gateway_exclude_vlan: '500-510, 1100, 1120',
+    shutdown:                  'true',
 
-  ",
+  },
   code:           [0, 2],
-  resource_props: {
+  resource:       {
     'layer3_peer_routing'       => 'true',
     'peer_gateway_exclude_vlan' => '500-510,1100,1120',
     'shutdown'                  => 'true',
   },
 }
 
-tests['default_properties_n7k'] = {
+tests[:default_properties_n7k] = {
+  desc:           '1.3 Default Properties exclusive to N7K',
   title_pattern:  '200',
-  manifest_props: "
-    auto_recovery                                      => 'default',
-    self_isolation                                     => 'default',
-  ",
+  platform:       'n7k',
+  manifest_props: {
+    auto_recovery:  'default',
+    self_isolation: 'default',
+  },
   code:           [0, 2],
-  resource_props: {
+  resource:       {
     'auto_recovery'  => 'true',
     'self_isolation' => 'false',
   },
 }
 
-tests['non_default_properties_n7k'] = {
+tests[:non_default_properties_n7k] = {
+  desc:           '2.3 Non Default Properties exclusive to N7K',
   title_pattern:  '200',
-  manifest_props: "
-    auto_recovery                                      => 'false',
-    self_isolation                                     => 'true',
-  ",
+  platform:       'n7k',
+  manifest_props: {
+    auto_recovery:  'false',
+    self_isolation: 'true',
+  },
   code:           [0, 2],
-  resource_props: {
+  resource:       {
     'auto_recovery'  => 'false',
     'self_isolation' => 'true',
   },
 }
 
-#################################################################
-# HELPER FUNCTIONS
-#################################################################
-
-# Full command string for puppet resource command
-def puppet_resource_cmd
-  cmd = PUPPET_BINPATH +
-        'resource cisco_vpc_domain'
-  get_namespace_cmd(agent, cmd, options)
-end
-
-def build_manifest_vpc_domain(tests, id)
-  manifest = tests[id][:manifest_props]
-  tests[id][:resource] = tests[id][:resource_props]
-
-  tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
-  logger.debug(
-    "build_manifest_vpc_domain :: title_pattern:\n" +
-             tests[id][:title_pattern])
-  tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
-  node 'default' {
-    cisco_vpc_domain { '200':
-      #{manifest}
-    }
-  }
-EOF"
-end
-
-def test_harness_vpc_domain(tests, id)
-  tests[id][:resource_cmd] = puppet_resource_cmd
-
-  # Build the manifest for this test
-  build_manifest_vpc_domain(tests, id)
-
-  # test_harness_common(tests, id)
-  test_manifest(tests, id)
-  test_resource(tests, id)
-  test_idempotence(tests, id)
-
-  tests[id][:ensure] = nil
-end
+tests[:vpc_plus_non_default_properties_n7k] = {
+  desc:           '3.1 vPC+ Non Default Properties on N7K',
+  title_pattern:  '200',
+  platform:       'n7k',
+  manifest_props: {
+    fabricpath_emulated_switch_id:     '1015',
+    fabricpath_multicast_load_balance: 'true',
+    port_channel_limit:                'false',
+  },
+  code:           [0, 2],
+  resource:       {
+    'fabricpath_emulated_switch_id'     => '1015',
+    'fabricpath_multicast_load_balance' => 'true',
+    'port_channel_limit'                => 'false',
+  },
+}
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name "TestCase :: #{testheader}" do
+test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
+  resource_absent_cleanup(agent, 'cisco_bridge_domain',
+                          'bridge-domain CLEANUP :: ')
+  resource_absent_cleanup(agent, 'cisco_vpc_domain',
+                          'Setup for cisco_vpc_domain provider test')
   device = platform
   logger.info("#### This device is of type: #{device} #####")
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
-  id = 'default_properties'
-  tests[id][:desc] = '1.1 Default Properties on All Nexus Platforms'
-  test_harness_vpc_domain(tests, id)
+  test_harness_run(tests, :default_properties)
+  test_harness_run(tests, :default_properties_n6k7k)
+  test_harness_run(tests, :default_properties_n7k)
 
-  # Add device specifics
-  if device =~ /(n6k|n7k)/
-    id = 'default_properties_n6k7k'
-    tests[id][:desc] = '1.2 Default Properties exclusive to N6K and N7K'
-    test_harness_vpc_domain(tests, id)
-  end
-  if device == 'n7k'
-    id = 'default_properties_n7k'
-    tests[id][:desc] = '1.3 Default Properties exclusive to N7K'
-    test_harness_vpc_domain(tests, id)
-  end
-
-  id = 'default_properties'
-  tests[id][:desc] = '1.4 Default Properties (absent)'
-  tests[id][:ensure] = :absent
-  test_harness_vpc_domain(tests, id)
+  # Resource absent test
+  tests[:default_properties][:ensure] = :absent
+  test_harness_run(tests, :default_properties)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  id = 'non_default_properties'
-  tests[id][:desc] = '2.1 Non Default Properties on All Nexus Platforms'
-  test_harness_vpc_domain(tests, id)
+  test_harness_run(tests, :non_default_properties)
+  test_harness_run(tests, :non_default_properties_n6k7k)
+  test_harness_run(tests, :non_default_properties_n7k)
 
-  # Add device specifics
-  if device =~ /(n6k|n7k)/
-    id = 'non_default_properties_n6k7k'
-    tests[id][:desc] = '2.2 Non Default Properties exclusive to N6K and N7K'
-    test_harness_vpc_domain(tests, id)
-  end
-  if device == 'n7k'
-    id = 'non_default_properties_n7k'
-    tests[id][:desc] = '2.3 Non Default Properties exclusive to N7K'
-    test_harness_vpc_domain(tests, id)
-  end
+  # Resource absent test
+  tests[:non_default_properties][:ensure] = :absent
+  test_harness_run(tests, :non_default_properties)
 
-  id = 'non_default_properties'
-  tests[id][:desc] = '2.4 Non Default Properties (absent)'
-  tests[id][:ensure] = :absent
-  test_harness_vpc_domain(tests, id)
+  # ------------------------------------------------------------------------
+  logger.info("\n#{'-' * 60}\nSection 3. vPC+ Non Default Property Testing")
+  # Need to setup fabricapth env for vPC+
+  setup_fabricpath_env(tests, self)
+  test_harness_run(tests, :vpc_plus_non_default_properties_n7k)
+
+  # Resource absent test
+  tests[:vpc_plus_non_default_properties_n7k][:ensure] = :absent
+  test_harness_run(tests, :vpc_plus_non_default_properties_n7k)
+
+  skipped_tests_summary(tests)
 end
 
 logger.info("TestCase :: #{testheader} :: End")

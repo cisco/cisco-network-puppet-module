@@ -16,6 +16,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+begin
+  require 'puppet_x/cisco/cmnutils'
+rescue LoadError # seen on master, not on agent
+  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..',
+                                     'puppet_x', 'cisco', 'cmnutils.rb'))
+end
+
 Puppet::Type.newtype(:cisco_interface) do
   @doc = "Manages a Cisco Network Interface.
 
@@ -43,10 +51,24 @@ Puppet::Type.newtype(:cisco_interface) do
      ipv4_netmask_length            => 24,
      ipv4_address_secondary         => \"192.168.2.1\",
      ipv4_netmask_length_secondary  => 24,
+     ipv4_forwarding                => true,
      ipv4_redirects                 => true,
      ipv4_proxy_arp                 => true,
      ipv4_pim_sparse_mode           => true,
      negotiate_auto                 => true,
+    }
+    cisco_interface { \"Ethernet1/17\" :
+     stp_bpdufilter               => 'enable',
+     stp_bpduguard                => 'enable',
+     stp_cost                     => 2000,
+     stp_guard                    => 'loop',
+     stp_link_type                => 'shared',
+     stp_port_priority            => 32,
+     stp_port_type                => 'network',
+     stp_mst_cost                 => [[0,2-4,6,8-12, 1000], [1000, 2568]],
+     stp_mst_port_priority        => [[0,2-11,20-33, 64], [1111, 160],
+     stp_vlan_cost                => [[1-4,6,8-12, 1000], [1000, 2568]],
+     stp_vlan_port_priority       => [[1-11,20-33, 64], [1111, 160],
     }
     cisco_interface { \"Ethernet9/1\" :
      switchport_mode              => 'trunk',
@@ -68,6 +90,32 @@ Puppet::Type.newtype(:cisco_interface) do
      ipv4_arp_timeout             => 300,
      svi_autostate                => true,
      svi_management               => true,
+    }
+    #Private vlan config example
+    cisco_interface { \"Ethernet8/1\" :
+     switchport_mode_private_vlan_host  => 'host',
+     switchport_mode_private_vlan_host_association => ['10', '11'],
+    }
+    cisco_interface { \"Ethernet8/1\" :
+     switchport_mode_private_vlan_host  => 'promiscuous',
+     switchport_mode_private_vlan_host_promisc=> ['10', '11'],
+    }
+    cisco_interface { \"Ethernet8/1\" :
+     switchport_mode_private_vlan_trunk_promiscuous => true,
+     switchport_private_vlan_mapping_trunk => ['10', '11'],
+    }
+    cisco_interface { \"Ethernet8/1\" :
+     switchport_mode_private_vlan_trunk_secondary => true,
+     switchport_private_vlan_association_trunk => ['10', '11'],
+    }
+    cisco_interface { \"Ethernet8/1\" :
+     switchport_private_vlan_trunk_allowed_vlan => ['10-11'],
+    }
+    cisco_interface { \"Ethernet8/1\" :
+     switchport_private_vlan_trunk_native_vlan => 10,
+    }
+    cisco_interface {\"Vlan98\":
+     private_vlan_mapping => ['10-11'],
     }"
 
   ###################
@@ -94,7 +142,7 @@ Puppet::Type.newtype(:cisco_interface) do
     desc 'Name of the interface on the network element. Valid values are string.'
 
     validate do |name|
-      if name == 'mgmt0'
+      if name[/mgmt/i]
         fail('Stay away from the management port.')
       end # if
     end
@@ -160,6 +208,7 @@ Puppet::Type.newtype(:cisco_interface) do
       :tunnel,
       :fex_fabric,
       :trunk,
+      :fabricpath,
       :default)
   end # property switchport_mode
 
@@ -188,8 +237,15 @@ Puppet::Type.newtype(:cisco_interface) do
     desc "The allowed VLANs for the specified Ethernet interface. Valid values
           are string, keyword 'default'."
 
-    # Strip whitespace if manifest specified as '20, 30' vs '20,30'
-    munge { |value| value == 'default' ? :default : value.sub(/\s/, '') }
+    # Use the range summarize utility to normalize the vlan ranges
+    munge do |value|
+      if value == 'default'
+        value = :default
+      else
+        value = PuppetX::Cisco::Utils.range_summarize(value)
+      end
+      value
+    end
   end # property switchport_trunk_allowed_vlan
 
   newproperty(:switchport_trunk_native_vlan) do
@@ -373,6 +429,13 @@ Puppet::Type.newtype(:cisco_interface) do
     end
   end # property ipv4_acl_out
 
+  newproperty(:ipv4_forwarding) do
+    desc '<L3 attribute> Enables or disables IP forwarding on the interface. '\
+         "Valid values are true, false, keyword 'default'"
+
+    newvalues(:true, :false, :default)
+  end # property ipv4_forwarding
+
   newproperty(:ipv6_acl_in) do
     desc "<L3 attribute> ipv6 ingress access list on the interface. Valid values
           are string, keyword 'default'."
@@ -463,6 +526,405 @@ Puppet::Type.newtype(:cisco_interface) do
 
     newvalues(:true, :false, :default)
   end # property vlan_mapping_enable
+
+  ############################
+  # spanning-tree attributes #
+  ############################
+
+  newproperty(:stp_bpdufilter) do
+    desc 'Enable/Disable BPDU filtering for this interface.'
+
+    newvalues(:enable, :disable, :default)
+  end # property stp_bpdufilter
+
+  newproperty(:stp_bpduguard) do
+    desc 'Enable/Disable BPDU guard for this interface.'
+
+    newvalues(:enable, :disable, :default)
+  end # property stp_bpduguard
+
+  newproperty(:stp_cost) do
+    desc "Spanning tree port path cost for this interface. Valid values are
+          integer, keyword 'auto' or 'default'."
+
+    munge do |value|
+      value = :default if value == 'default'
+      value = :auto if value == 'auto'
+      begin
+        value = Integer(value) unless value == :default || value == :auto
+      rescue
+        raise 'stp_cost must be a valid integer, or auto or default.'
+      end
+      value
+    end
+  end # property stp_cost
+
+  newproperty(:stp_guard) do
+    desc 'Spanning-tree guard mode for this interface.'
+
+    newvalues(:loop, :none, :root, :default)
+  end # property stp_guard
+
+  newproperty(:stp_link_type) do
+    desc 'Link type for spanning tree tree protocol use.'
+
+    newvalues(:auto, :shared, :'point-to-point', :default)
+  end # property stp_link_type
+
+  newproperty(:stp_mst_cost, array_matching: :all) do
+    format = '[[mst_inst_list, cost], [mil, cost]]'
+    desc 'An array of [mst_instance_list, cost] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      slist = []
+      should.each do |elem|
+        slist << elem unless elem[1] == 'default'
+      end
+      (is.size == slist.size && is.sort == slist.sort)
+    end
+
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property stp_mst_cost
+
+  newproperty(:stp_mst_port_priority, array_matching: :all) do
+    format = '[[mst_inst_list, port_priority], [vr, port_priority]]'
+    desc 'An array of [mst_inst_list, port_priority] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      slist = []
+      should.each do |elem|
+        slist << elem unless elem[1] == 'default'
+      end
+      (is.size == slist.size && is.sort == slist.sort)
+    end
+
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property stp_mst_port_priority
+
+  newproperty(:stp_port_priority) do
+    desc "Spanning tree port priority for this interface. Valid values are
+          integer, keyword 'default'."
+
+    munge do |value|
+      value = :default if value == 'default'
+      begin
+        value = Integer(value) unless value == :default
+      rescue
+        raise 'stp_port_priority must be a valid integer, or default.'
+      end
+      value
+    end
+  end # property stp_port_priority
+
+  newproperty(:stp_port_type) do
+    desc 'Spanning tree port type for this interface.'
+
+    newvalues(:edge, :network, :normal, :'edge trunk', :default)
+  end # property stp_port_type
+
+  newproperty(:stp_vlan_cost, array_matching: :all) do
+    format = '[[vlan_range, cost], [vr, cost]]'
+    desc 'An array of [vlan_range, cost] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      slist = []
+      should.each do |elem|
+        slist << elem unless elem[1] == 'default'
+      end
+      (is.size == slist.size && is.sort == slist.sort)
+    end
+
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property stp_vlan_cost
+
+  newproperty(:stp_vlan_port_priority, array_matching: :all) do
+    format = '[[vlan_range, port_priority], [vr, pp]]'
+    desc 'An array of [vlan_range, port_priority] pairs. '\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      slist = []
+      should.each do |elem|
+        slist << elem unless elem[1] == 'default'
+      end
+      (is.size == slist.size && is.sort == slist.sort)
+    end
+
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property stp_vlan_port_priority
+
+  ###########################
+  # private vlan attributes #
+  ###########################
+
+  newproperty(:switchport_mode_private_vlan_host) do
+    desc 'Switchport private host mode of the interface.'
+
+    newvalues(
+      :host,
+      :promiscuous,
+      :disabled)
+  end # property switchport_mode_private_vlan_host
+
+  newproperty(:switchport_mode_private_vlan_host_association, array_matching: :all) do
+    format = '["primary_vlan", "secondary_vlan"]'
+    desc "An array of #{format} pairs. "\
+         "Valid values match format #{format}. "\
+         'primary_vlan and secondary_vlan are integers.'
+    match_error = "must be of format #{format}. "\
+                  'primary_vlan and secondary_vlan must be specified as integers.'
+
+    validate do |value|
+      fail "Vlan '#{value}' #{match_error}" unless
+            /^(\d+)$/.match(value.to_s).to_s == value.to_s ||
+            value == 'default' || value == :default
+    end
+
+    munge do |value|
+      value == 'default' ? :default : value.to_s.gsub(/\s+/, '')
+    end
+
+    def insync?(is)
+      (is.size == should.flatten.size && is.sort == should.flatten.sort)
+    end
+  end # property switchport_mode_private_vlan_host_association
+
+  newproperty(:switchport_mode_private_vlan_host_promisc, array_matching: :all) do
+    format = '["primary_vlan", "secondary_vlan"]'
+    desc "An array of #{format} pairs. "\
+         "Valid values match format #{format}. "\
+         'primary_vlan and secondary_vlan are integers.'
+    match_error = "must be of format #{format}. "\
+                  'primary_vlan and secondary_vlan must be specified as integers.'
+
+    validate do |value|
+      fail "Vlan '#{value}' #{match_error}" unless
+            value.kind_of? String
+      fail "Vlan '#{value}' #{match_error}" unless
+           /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value ||
+           value == 'default' || value == :default
+    end
+
+    munge do |value|
+      value == 'default' ? :default : value.to_s.gsub(/\s+/, '')
+    end
+
+    def insync?(is)
+      (is.size == should.flatten.size && is.sort == should.flatten.sort)
+    end
+  end # switchport_mode_private_vlan_host_promisc
+
+  newproperty(:switchport_mode_private_vlan_trunk_promiscuous) do
+    desc 'Switchport private trunk promisc mode for the interface.'
+
+    newvalues(
+      :true,
+      :false,
+      :default)
+  end # property switchport_mode_private_vlan_trunk_promiscuous
+
+  newproperty(:switchport_mode_private_vlan_trunk_secondary) do
+    desc 'Switchport private trunk secondary mode for the interface.'
+
+    newvalues(
+      :true,
+      :false,
+      :default)
+  end # property switchport_mode_private_vlan_trunk_secondary
+
+  newproperty(:switchport_private_vlan_association_trunk, array_matching: :all) do
+    format = '["primary_vlan", "secondary_vlan"]'
+    desc "An array of #{format} pairs. "\
+         "Valid values match format #{format}. "\
+         'primary_vlan and secondary_vlan are integers.'
+    match_error = "Input must be of #{format}. "\
+                  'primary_vlan and secondary_vlan must be specified as integers. '\
+                  "Ex ['10', '20']"
+
+    validate do |value|
+      fail "Vlan '#{value}' #{match_error}" unless
+             /^(\s*\d+\s*)$/.match(value).to_s == value ||
+             value == 'default' || value == :default
+    end
+
+    munge do |value|
+      value == 'default' ? :default : value.to_s.gsub(/\s+/, '')
+    end
+
+    def insync?(is)
+      return true if should == [:default] && is == [:default]
+      pair = should.join(' ')
+      is.include? pair
+    end
+  end # switchport_private_vlan_association_trunk
+
+  newproperty(:switchport_private_vlan_mapping_trunk, array_matching: :all) do
+    format = '["primary_vlan", "secondary_vlan"]'
+    desc "An array of #{format} pairs. "\
+         "Valid values match format #{format}. "\
+         'primary_vlan and secondary_vlan are integers.'
+
+    match_error = "Input must be of format #{format}. "\
+                  'primary_vlan and secondary_vlan must be specified as integers.'\
+                  " Ex ['10', '20'], ['10', '20-30']"\
+                  " or ['10', '20,24']"
+
+    validate do |value|
+      fail "Vlan '#{value}' #{match_error}" unless
+           /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value ||
+           value == 'default' || value == :default
+    end
+
+    munge do |value|
+      value == 'default' ? :default : value.to_s.gsub(/\s+/, '')
+    end
+
+    def insync?(is)
+      return true if should == [:default] && is == [:default]
+      pair = should.join(' ')
+      is.include? pair
+    end
+  end # switchport_private_vlan_mapping_trunk
+
+  newproperty(:switchport_private_vlan_trunk_allowed_vlan, array_matching: :all) do
+    format = '["vlans"]'
+    desc "An array of #{format}. "\
+         "Valid values match format #{format} with vlans as integers."
+    match_error = "must be of format #{format}. "\
+                  'vlans must be specified as integers.'\
+                  " Ex ['10'], ['20-30'] or ['20,24']"
+
+    validate do |value|
+      fail "Vlan '#{value}' #{match_error}" unless
+            value.kind_of? String
+      fail "Vlan '#{value}' #{match_error}" unless
+           /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value ||
+           value == 'default' || value == :default
+    end
+
+    munge do |value|
+      value == 'default' ? :default : value.to_s.gsub(/\s+/, '')
+    end
+
+    def insync?(is)
+      return true if should == [:default] && is == [:default]
+      return false if should == [:default]
+      list = should[0].split(',')
+      (is.size == list.size && is.sort == list.sort)
+    end
+  end # switchport_private_vlan_trunk_allowed_vlan
+
+  newproperty(:switchport_private_vlan_trunk_native_vlan) do
+    format = '<vlan>'
+    desc 'The  private native vlan. '\
+         "Valid values match format #{format} with vlan as integer"
+    match_error = "must be of format #{format}. "\
+                  'vlan must be specified as integer. Ex 10 or 20'
+
+    validate do |value|
+      fail "Vlan '#{value}' #{match_error}" unless
+            /^(\d+)$/.match(value.to_s).to_s == value.to_s ||
+            value == 'default' || value == :default
+    end
+
+    munge do |value|
+      value == 'default' ? :default : Integer(value)
+    end
+  end # switchport_private_vlan_trunk_native_vlan
+
+  newproperty(:private_vlan_mapping, array_matching: :all) do
+    format = '["vlans"]'
+    desc "An array of #{format}. "\
+         "Valid values match format #{format} with vlans as integer"
+    match_error = "must be of format #{format}. "\
+                  'vlans must be specified as integers. '\
+                  "Ex ['10'], ['20-30'] or ['20,24']"
+
+    validate do |value|
+      fail "Vlan '#{value}' #{match_error}" unless
+            /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value ||
+            value == 'default' || value == :default
+    end
+
+    munge do |value|
+      value == 'default' ? :default : value.gsub(/\s+/, '')
+    end
+
+    def insync?(is)
+      (is.size == should.flatten.size && is.sort == should.flatten.sort)
+    end
+  end # private_vlan_mapping
 
   ################
   # Autorequires #

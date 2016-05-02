@@ -89,8 +89,7 @@ test_name "TestCase :: #{testheader}" do
     resource_cmd_str =
       PUPPET_BINPATH +
       "resource cisco_aaa_authorization_login_cfg_svc '#{title}'"
-    tests[id][:resource_cmd] =
-      get_namespace_cmd(agent, resource_cmd_str, options)
+    tests[id][:resource_cmd] = resource_cmd_str
 
     tests[id][:desc] =
       '1.1 Apply manifest with non-default attributes, and test'

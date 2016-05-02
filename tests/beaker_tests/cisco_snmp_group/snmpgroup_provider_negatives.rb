@@ -90,8 +90,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SnmpGroupLib.create_snmpgroup_manifest_negative_1)
 
     # Expected exit_code is 4 since this is a puppet agent cmd with failure.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [4])
 
     logger.info("Get negative test manifest #1 from master :: #{result}")
@@ -102,8 +101,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SnmpGroupLib.create_snmpgroup_manifest_negative_2)
 
     # Expected exit_code is 4 since this is a puppet agent cmd with failure.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [4])
 
     logger.info("Get negative test manifest #2 from master :: #{result}")
@@ -113,8 +111,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_snmp_group resource state on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_snmp_group 'network-operator'", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_snmp_group 'network-operator'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ensure' => 'present' },
@@ -123,8 +120,7 @@ test_name "TestCase :: #{testheader}" do
 
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource cisco_snmp_group 'go-jackets'", options)
+    cmd_str = PUPPET_BINPATH + "resource cisco_snmp_group 'go-jackets'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ensure' => 'absent' },

@@ -30,7 +30,82 @@ tests = {
   resource_name: 'cisco_bgp_neighbor_af',
 }
 
-# Test hash test cases
+# Overridden to properly handle unsupported properties.
+def unsupported_properties(_, _)
+  return [] if operating_system == 'nexus'
+
+  [
+    :additional_paths_receive,
+    :additional_paths_send,
+    :default_originate_route_map,
+    :disable_peer_as_check,
+    :filter_list_in,
+    :filter_list_out,
+    :next_hop_third_party,
+    :prefix_list_in,
+    :prefix_list_out,
+    :suppress_inactive,
+    :unsuppress_map,
+  ]
+end
+
+# Overridden to properly handle dependencies for this test file.
+def dependency_manifest(tests, id)
+  af = puppet_resource_title_pattern_munge(tests, id)
+  remote_as = tests[id][:remote_as]
+  remote_as = 1 if remote_as.nil? && operating_system == 'ios_xr'
+
+  extra_config = ''
+  if operating_system[/ios_xr/]
+    extra_config += "
+      cisco_command_config { 'policy_config':
+        command => '
+          route-policy rm_in
+            end-policy
+          route-policy rm_out
+            end-policy
+        '
+      }
+    "
+    # XR requires the following before a vrf AF can be configured:
+    #   1. a global router_id
+    #   2. a global address family
+    #   3. route_distinguisher configured on the vrf
+    #   4. remote-as is required for neighbor
+    if af[:vrf] != 'default'
+      global_afi = (af[:afi] == 'ipv6') ? 'vpnv6' : 'vpnv4'
+      extra_config += "
+        cisco_bgp { '#{af[:asn]}':
+          ensure              => present,
+          router_id           => '1.2.3.4',
+        }
+        cisco_bgp_af { '#{af[:asn]} default #{global_afi} #{af[:safi]}':
+          ensure              => present,
+        }
+        cisco_bgp { '#{af[:asn]} #{af[:vrf]}':
+          ensure              => present,
+          route_distinguisher => auto,
+        }
+      "
+    end
+    extra_config += "
+      cisco_bgp_af { '#{af[:asn]} #{af[:vrf]} #{af[:afi]} #{af[:safi]}':
+        ensure                => present,
+      }
+    "
+  end # if ios_xr
+
+  if remote_as
+    extra_config += "
+      cisco_bgp_neighbor { '#{af[:asn]} #{af[:vrf]} #{af[:neighbor]}':
+        ensure               => present,
+        remote_as            => #{remote_as},
+      }
+    "
+  end
+  extra_config
+end
+
 tests[:default] = {
   desc:           '1.1 Default Properties',
   title_pattern:  '2 default 1.1.1.1 ipv4 unicast',
@@ -78,16 +153,18 @@ tests[:non_def_A1] = {
 }
 
 tests[:non_def_A2] = {
-  desc:           'Non Default: (A2) additional-paths (disable)',
-  manifest_props: {
+  desc:             'Non Default: (A2) additional-paths (disable)',
+  operating_system: 'nexus',
+  manifest_props:   {
     additional_paths_receive: 'disable',
     additional_paths_send:    'disable',
   },
 }
 
 tests[:non_def_A3] = {
-  desc:           'Non Default: (A3) additional-paths (enable)',
-  manifest_props: {
+  desc:             'Non Default: (A3) additional-paths (enable)',
+  operating_system: 'nexus',
+  manifest_props:   {
     additional_paths_receive: 'enable',
     additional_paths_send:    'enable',
   },
@@ -102,8 +179,9 @@ tests[:non_def_D1] = {
 }
 
 tests[:non_def_D2] = {
-  desc:           'Non Default: (D2) disable_peer_as_check',
-  manifest_props: {
+  desc:             'Non Default: (D2) disable_peer_as_check',
+  operating_system: 'nexus',
+  manifest_props:   {
     disable_peer_as_check: 'true'
   },
 }
@@ -133,21 +211,15 @@ tests[:non_def_S1] = {
   },
 }
 
-tests[:non_def_S2] = {
-  desc:           'Non Default: (S2) soft-reconfig always',
-  platform:       'n(3|9)k',
-  manifest_props: { soft_reconfiguration_in: 'always' },
-}
-
 tests[:non_def_S3] = {
   desc:           'Non Default: (S3) soft-reconfig enable',
-  platform:       'n(3|9)k',
   manifest_props: { soft_reconfiguration_in: 'enable' },
 }
 
 tests[:non_def_S4] = {
-  desc:           'Non Default: (S4) suppress*',
-  manifest_props: {
+  desc:             'Non Default: (S4) suppress*',
+  operating_system: 'nexus',
+  manifest_props:   {
     suppress_inactive: 'true',
     unsuppress_map:    'unsup_map',
   },
@@ -159,8 +231,9 @@ tests[:non_def_W] = {
 }
 
 tests[:non_def_vrf_only] = {
-  desc:           'Non Default: (vrf-only) soo',
-  manifest_props: { soo: '3:3' },
+  desc:             'Non Default: (vrf-only) soo',
+  operating_system: 'nexus',
+  manifest_props:   { soo: '3:3' },
 }
 
 tests[:non_def_misc_maps_1] = {
@@ -178,22 +251,24 @@ tests[:non_def_misc_maps_1] = {
 ad_map_exist = %w(admap_e exist_map)
 ad_map_non_exist = %w(admap_ne non_exist)
 tests[:non_def_misc_maps_2] = {
-  desc:           'Non Default: (Misc Maps 2) advertise-map exist',
-  manifest_props: { advertise_map_exist: ad_map_exist },
-  resource:       { advertise_map_exist: "#{ad_map_exist}" },
+  desc:             'Non Default: (Misc Maps 2) advertise-map exist',
+  operating_system: 'nexus',
+  manifest_props:   { advertise_map_exist: ad_map_exist },
+  resource:         { advertise_map_exist: "#{ad_map_exist}" },
 }
 
 tests[:non_def_misc_maps_3] = {
-  desc:           'Non Default: (Misc Maps 3) advertise-map non-exist',
-  manifest_props: { advertise_map_non_exist: ad_map_non_exist },
-  resource:       { advertise_map_non_exist: "#{ad_map_non_exist}" },
+  desc:             'Non Default: (Misc Maps 3) advertise-map non-exist',
+  operating_system: 'nexus',
+  manifest_props:   { advertise_map_non_exist: ad_map_non_exist },
+  resource:         { advertise_map_non_exist: "#{ad_map_non_exist}" },
 }
 
 tests[:non_def_ebgp_only] = {
   desc:           'Non Default: (ebgp-only) as-override',
   preclean:       'cisco_bgp',
   title_pattern:  '2 yellow 3.3.3.3 ipv4 unicast',
-  remote_as:      '2 yellow  3.3.3.3 3',
+  remote_as:      3,
   manifest_props: { as_override: 'true' },
 }
 
@@ -201,17 +276,18 @@ tests[:non_def_ibgp_only] = {
   desc:           'Non Default: (ibgp-only) route-reflector-client',
   preclean:       'cisco_bgp',
   title_pattern:  '2 default 2.2.2.2 ipv4 unicast',
-  remote_as:      '2 default 2.2.2.2 2',
+  remote_as:      2,
   manifest_props: { route_reflector_client: 'true' },
 }
 
 tests[:title_patterns_1] = {
-  desc:          'T.1 Title Pattern',
-  preclean:      'cisco_bgp',
-  title_pattern: 'new_york',
-  title_params:  { asn: '11.4', vrf: 'red', neighbor: '1.1.1.1',
-                   afi: 'ipv4', safi: 'unicast' },
-  resource:      { 'ensure' => 'present' },
+  desc:           'T.1 Title Pattern',
+  preclean:       'cisco_bgp',
+  title_pattern:  'new_york',
+  manifest_props: {},
+  title_params:   { asn: '11.4', vrf: 'red', neighbor: '1.1.1.1',
+                    afi: 'ipv4', safi: 'unicast' },
+  resource:       { 'ensure' => 'present' },
 }
 
 tests[:title_patterns_2] = {
@@ -261,7 +337,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
     :non_def_M,
     :non_def_N,
     :non_def_S1,
-    :non_def_S2,
     :non_def_S3,
     :non_def_S4,
     :non_def_W,
@@ -278,19 +353,20 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :non_def_ibgp_only)
 
   # -------------------------------------------------------------------
-  if platform[/n(5|6|7|9)k/]
+  unless platform[/n3k/]
     logger.info("\n#{'-' * 60}\nSection 3. L2VPN Property Testing")
     resource_absent_cleanup(agent, 'cisco_bgp', 'BGP CLEAN :: ')
     title = '2 default 1.1.1.1 l2vpn evpn'
-    [
+    array = [
       :non_def_A1,
       :non_def_D2,
       :non_def_M,
       :non_def_S1,
-      :non_def_S2,
-      :non_def_S3,
       :non_def_misc_maps_1,
-    ].each do |id|
+    ]
+    array << :non_def_S3 if operating_system == 'ios_xr'
+
+    array.each do |id|
       tests[id][:title_pattern] = title
       test_harness_run(tests, id)
     end

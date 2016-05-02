@@ -44,8 +44,8 @@ module RadiusServerLib
   # where 'ensure' is set to present.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_radius_server_manifest_present
-    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+  def self.create_radius_server_manifest_present(type)
+    nxos_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   radius_server { '8.8.8.8':
     ensure              => 'present',
@@ -60,15 +60,30 @@ node default {
   }
 }
 EOF"
-    manifest_str
+
+    ios_xr_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+  radius_server { '8.8.8.8':
+    ensure              => 'present',
+    acct_port           => '66',
+    auth_port           => '77',
+    key                 => '44444444',
+    key_format          => '7',
+    retransmit_count    => '4',
+    timeout             => '2',
+  }
+}
+EOF"
+
+    type == 'ios_xr' ? ios_xr_str : nxos_str
   end
 
   # Method to create a manifest for radius_server resource attribute 'ensure'
   # where 'ensure' is set to present, and a few changes made from above.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_radius_server_manifest_present_change
-    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+  def self.create_radius_server_manifest_present_change(type)
+    nxos_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   radius_server { '8.8.8.8':
     ensure              => 'present',
@@ -82,7 +97,21 @@ node default {
   }
 }
 EOF"
-    manifest_str
+
+    ios_xr_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+  radius_server { '8.8.8.8':
+    ensure              => 'present',
+    acct_port           => '44',
+    auth_port           => '55',
+    key                 => 'unset',
+    retransmit_count    => '-1',
+    timeout             => '-1',
+  }
+}
+EOF"
+
+    type == 'ios_xr' ? ios_xr_str : nxos_str
   end
 
   # Method to create a manifest for radius_server resource attribute 'ensure'
@@ -104,8 +133,8 @@ EOF"
   # where 'ensure' is set to present.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_radius_server_manifest_present_ipv6
-    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+  def self.create_radius_server_manifest_present_ipv6(type)
+    nxos_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   radius_server { '2003::7':
     ensure              => 'present',
@@ -120,7 +149,22 @@ node default {
   }
 }
 EOF"
-    manifest_str
+
+    ios_xr_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+  radius_server { '2003::7':
+    ensure              => 'present',
+    acct_port           => '66',
+    auth_port           => '77',
+    key                 => '44444444',
+    key_format          => '7',
+    retransmit_count    => '4',
+    timeout             => '2',
+  }
+}
+EOF"
+
+    type == 'ios_xr' ? ios_xr_str : nxos_str
   end
 
   # Method to create a manifest for radius_server resource attribute 'ensure'

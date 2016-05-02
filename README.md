@@ -33,6 +33,7 @@ Please see [Learning Resources](#learning-resources) for additional references.
    * [Resource Type Catalog (by Technology)](#resource-by-tech)
    * [Resource Type Catalog (by Name)](#resource-by-name)
 1. [Limitations - OS compatibility, etc.](#limitations)
+1. [Cisco OS Differences](#cisco-os-differences)
 1. [Learning Resources](#learning-resources)
 
 
@@ -56,56 +57,24 @@ The set of supported network element platforms is continuously expanding. Please
 
 ## Setup
 
-#### Puppet Master
+### Puppet Master
 
-The `ciscopuppet` module is installed on the Puppet Master server. Please see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html) for general information on Puppet module installation.
+The `ciscopuppet` module must be installed on the Puppet Master server. Please see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html) for general information on Puppet module installation.
 
-#### Puppet Agent
+### Puppet Agent
 The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md](docs/README-agent-install.md) document for detailed instructions on agent installation and configuration on Cisco Nexus devices.
 
-##### Artifacts
+#### Artifacts
 
 As noted in the agent installation guide, these are the current RPM versions for use with ciscopuppet:
-* `bash-shell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm)
-* `guestshell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm)
-* `open agent container (OAC)`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm)
+* NX-OS:
+  * `bash-shell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm)
+  * `guestshell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm)
+  * `open agent container (OAC)`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm)
 
-##### Gems
+### `cisco_node_utils` Ruby gem
 
-The ciscopuppet module has dependencies on a few ruby gems. After installing the Puppet Agent software you will then need to install the following gems on the agent device:
-
-* [`net_http_unix`](https://rubygems.org/gems/net_http_unix)
-* [`cisco_nxapi`](https://rubygems.org/gems/cisco_nxapi)
-* [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils)
-
-These gems have dependencies on each other so installing `cisco_node_utils` by itself will automatically install `net_http_unix` and `cisco_nxapi`.
-
-Example:
-
-~~~bash
-[root@guestshell]#  gem install cisco_node_utils
-
-[root@guestshell]#  gem list | egrep 'cisco|net_http'
-cisco_node_utils (1.2.0)
-cisco_nxapi (1.0.1)
-net_http_unix (0.2.1)
-~~~
-
-*Please note: The `ciscopuppet` module requires a compatible `cisco_node_utils` gem. This is not an issue with release versions; however, when using a pre-release module it may be necessary to manually build a compatible gem. Please see the `cisco_node_utils` developer's guide for more information on building a `cisco_node_utils` gem:  [README-develop-node-utils-APIs.md](https://github.com/cisco/cisco-network-node-utils/blob/develop/docs/README-develop-node-utils-APIs.md#step-5-build-and-install-the-gem)*
-
-##### Gem Persistence (bash-shell only)
-
-Please note that in the Nexus `bash-shell` environment these gems are currently not persistent across system reload. This persistence issue can be mitigated by simply defining a manifest entry for installing the `cisco_node_utils` gem via the package provider.
-
-Example:
-
-~~~Puppet
-package { 'cisco_node_utils' :
-  provider => 'gem',
-  ensure => present,
-}
-~~~
-*This persistence issue does not affect the `guestshell` or `open agent container (OAC)` environments. Gems are persistent across reload in these environments.*
+This module has dependencies on the [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) ruby gem. After installing the Puppet Agent software you will then need to install (and possibly configure) the gem on the agent device. See [README-gem-install.md](docs/README-gem-install.md) for detailed instructions.
 
 ## Usage
 
@@ -149,80 +118,104 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 
 ### <a name="provider-platform-support">Provider Support Across Platforms</a>
 
-The following table indicates which providers are supported on each platform. As platforms are added to the support list they may indicate `Unsupported` for some providers that have not completed the test validation process at the time of this release. Some providers will show caveats for a platform if there are limitations on usage, such as with unsupported properties or hardware limitations.
+The Nexus family of switches support various hardware and software features depending on the model and version. The following table will guide you through the provider support matrix.
 
-##### Cisco Providers
+✅ =  Supported
+  * The provider has been validated to work on the platform family. An asterisk '*' indicates that some provider properties may have software/hardware limitations, caveats, or noted behaviors. Click on the associated caveat link for more information.
 
-| ✅ = Supported <br> ❌ = Unsupported | N9k | N30xx | N31xx | N56xx | N6k | N7k | Caveats |
-|:---|:---:|:-----:|:-----:|:-----:|:---:|:---:|:---:|
-| [cisco_aaa_authentication_login](#type-cisco_aaa_authentication_login) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_aaa_authorization_cfg_svc](#type-cisco_aaa_authorization_cfg_svc) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_aaa_authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_acl](#type-cisco_acl) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_ace](#type-cisco_ace) | ✅ | ✅ | ✅ | ❌* | ❌* | ❌* | * [caveats](#cisco_ace-caveats) |
-| [cisco_command_config](#type-cisco_command_config) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_bgp](#type-cisco_bgp) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅* | * [caveats](#cisco_bgp-caveats) |
-| [cisco_bgp_af](#type-cisco_bgp_af) | ✅* | ✅* | ✅ | ✅ | ✅*  | ✅ | * [caveats](#cisco_bgp_af-caveats) |
-| [cisco_bgp_neighbor](#type-cisco_bgp_neighbor) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_interface](#type-cisco_interface) | ✅ | ✅ | ✅ | ✅* | ✅* | ✅ | * [caveats](#cisco_interface-caveats) |
-| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_interface_ospf](#type-cisco_interface_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_portchannel_global](#type-cisco_portchannel_global) | ❌* | ✅* | ✅* | ❌* | ❌* | ❌* | * [caveats](#cisco_portchannel_global-caveats) |
-| [cisco_interface_service_vni](#type-cisco_interface_service_vni) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | 
-| [cisco_ospf](#type-cisco_ospf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_ospf_vrf](#type-cisco_ospf_vrf) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| ✅ = Supported <br> ❌ = Unsupported  | N9k | N30xx | N31xx | N56xx | N6k | N7k | Caveats |
-| [cisco_overlay_global](#type-cisco_overlay_global) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌  |
-| [cisco_pim](#type-cisco_pim) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_pim_rp_address](#type-cisco_pim_rp_address) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_pim_group_list](#type-cisco_pim_group_list) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_portchannel_global](#type-cisco_portchannel_global) | ❌* | ✅* | ✅* | ❌* | ❌* | ❌ | * [caveats](#cisco_portchannel_global-caveats) |
-| [cisco_snmp_community](#type-cisco_snmp_community) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_snmp_group](#type-cisco_snmp_group) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_snmp_server](#type-cisco_snmp_server) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_snmp_user](#type-cisco_snmp_user) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_tacacs_server](#type-cisco_tacacs_server) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_tacacs_server_host](#type-cisco_tacacs_server_host) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_vdc](#type-cisco_vdc) | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
-| [cisco_vlan](#type-cisco_vlan) | ✅* | ✅* | ✅* | ✅ | ✅ | ✅ | * [caveats](#cisco_vlan-caveats) |
-| [cisco_vpc_domain](#type-cisco_vpc_domain) | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | * [caveats](#cisco_vlan-caveats) |
-| [cisco_vrf](#type-cisco_vrf) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_vrf_af](#type-cisco_vrf_af) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_vtp](#type-cisco_vtp) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni) | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+:heavy_minus_sign: = Not Applicable
+  * The provider is not supported at all on the platform because of hardware or software limitations.
+
+A note about support for specific platform models:
+
+  * "**N9k**" support includes all N9xxx models.
+  * "**N3k**" support includes N30xx and N31xx models only. **_The N35xx model is not supported_.**
+  * "**N5k**" support includes N56xx models only. **_The N50xx and N55xx models are not supported at this time_.**
+  * "**N6k**" support includes all N6xxx models.
+  * "**N7k**" support includes all N7xxx models.
+
+| ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | Caveats |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|
+| [cisco_aaa_<br>authentication_login](#type-cisco_aaa_authentication_login)                 | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_aaa_<br>authorization_login_cfg_svc](#type-cisco_aaa_authorization_login_cfg_svc)   | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_aaa_<br>authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs)     | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_acl](#type-cisco_acl)                               | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_ace](#type-cisco_ace)                               | ✅  | ✅  | ✅* | ✅* | ✅* | \*[caveats](#cisco_ace-caveats) |
+| [cisco_command_config](#type-cisco_command_config)         | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_bgp](#type-cisco_bgp)                               | ✅  | ✅  | ✅* | ✅* | ✅* | \*[caveats](#cisco_bgp-caveats) |
+| [cisco_bgp_af](#type-cisco_bgp_af)                         | ✅* | ✅* | ✅  | ✅* | ✅  | \*[caveats](#cisco_bgp_af-caveats) |
+| [cisco_bgp_neighbor](#type-cisco_bgp_neighbor)             | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af)       | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_bridge_domain](#type-cisco_bridge_domain)           | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
+| [cisco_bridge_domain_vni](#type-cisco_bridge_domain_vni)   | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
+| [cisco_encapsulation](#type-cisco_encapsulation)           | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
+| [cisco_evpn_vni](#type-cisco_evpn_vni)                     | ✅ | :heavy_minus_sign: | ✅ | ✅ | ✅ | \*[caveats](#cisco_evpn_vni-caveats) |
+| [cisco_fabricpath_global](#type-cisco_fabricpath_global)     | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅* | \*[caveats](#cisco_fabricpath_global-caveats) |
+| [cisco_fabricpath_topology](#type-cisco_fabricpath_topology) | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅  |
+| [cisco_interface](#type-cisco_interface)                             | ✅  | ✅  | ✅* | ✅* | ✅  | \*[caveats](#cisco_interface-caveats) |
+| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_interface_ospf](#type-cisco_interface_ospf)                   | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_interface_portchannel](#type-cisco_interface_portchannel)     | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_interface_portchannel-caveats) |
+| [cisco_interface_service_vni](#type-cisco_interface_service_vni) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
+| [cisco_itd_device_group](#type-cisco_itd_device_group)           | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
+| [cisco_itd_device_group_node](#type-cisco_itd_device_group_node) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
+| [cisco_itd_service](#type-cisco_itd_service)                     | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | \*[caveats](#cisco_itd_service-caveats) |
+| [cisco_ospf](#type-cisco_ospf)                             | ✅  | ✅  | ✅ | ✅  | ✅  |
+| [cisco_ospf_vrf](#type-cisco_ospf_vrf)                     | ✅  | ✅  | ✅ | ✅  | ✅  |
+| ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | Caveats |
+| [cisco_overlay_global](#type-cisco_overlay_global)         | ✅  | :heavy_minus_sign: | ✅ | ✅ | ✅ |
+| [cisco_pim](#type-cisco_pim)                               | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_pim_rp_address](#type-cisco_pim_rp_address)         | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_pim_grouplist](#type-cisco_pim_grouplist)           | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_portchannel_global](#type-cisco_portchannel_global) | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_portchannel_global-caveats) |
+| [cisco_stp_global](#type-cisco_stp_global)                 | ✅* | ✅* | ✅* | ✅* | ✅  | \*[caveats](#cisco_stp_global-caveats) |
+| [cisco_snmp_community](#type-cisco_snmp_community)         | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_snmp_group](#type-cisco_snmp_group)                 | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_snmp_server](#type-cisco_snmp_server)               | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_snmp_user](#type-cisco_snmp_user)                   | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_tacacs_server](#type-cisco_tacacs_server)           | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_tacacs_server_host](#type-cisco_tacacs_server_host) | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_vdc](#type-cisco_vdc)                               | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
+| [cisco_vlan](#type-cisco_vlan)                             | ✅* | ✅* | ✅  | ✅  | ✅  | \*[caveats](#cisco_vlan-caveats) |
+| [cisco_vpc_domain](#type-cisco_vpc_domain)                 | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_vpc_domain-caveats) |
+| [cisco_vrf](#type-cisco_vrf)                               | ✅  | ✅* | ✅  | ✅  | ✅  | \*[caveats](#cisco_vrf-caveats) |
+| [cisco_vrf_af](#type-cisco_vrf_af)                         | ✅  | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_vrf_af-caveats) |
+| [cisco_vtp](#type-cisco_vtp)                               | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep)                 | ✅  | :heavy_minus_sign: | ✅  | ✅  | ✅  |
+| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni)         | ✅  | :heavy_minus_sign: | ✅  | ✅  | ✅  |
 
 ##### NetDev Providers
 
-| ✅ = Supported <br> ❌ = Unsupported  | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|:---|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| [domain_name](#type-domain_name) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [name_server](#type-name_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [network_dns](#type-network_dns) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [network_interface](#type-network_interface) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [network_snmp](#type-network_snmp) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [network_trunk](#type-network_trunk) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [ntp_config](#type-ntp_config) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [ntp_server](#type-ntp_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [network_snmp](#type-network_snmp) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [radius](#type-radius) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [radius_global](#type-radius_global) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [radius_server](#type-radius_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [search_domain](#type-search_domain) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [snmp_community](#type-snmp_community) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [snmp_notification](#type-snmp_notification) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [snmp_notification_receiver](#type-snmp_notification_receiver) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [snmp_user](#type-snmp_user) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [syslog_server](#type-syslog_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [syslog_setting](#type-syslog_setting) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [tacacs](#type-tacacs) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [tacacs_global](#type-tacacs_global) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [tacacs_server_group](#type-tacacs_server_group) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| [tacacs_server](#type-tacacs_server) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | Caveats |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|
+| [domain_name](#type-domain_name)                           | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [name_server](#type-name_server)                           | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_dns](#type-network_dns)                           | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_interface](#type-network_interface)               | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_snmp](#type-network_snmp)                         | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_trunk](#type-network_trunk)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_vlan](#type-network_vlan)                         | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [ntp_config](#type-ntp_config)                             | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [ntp_server](#type-ntp_server)                             | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [port_channel](#type-port_channel)                         | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [radius](#type-radius)                                     | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [radius_global](#type-radius_global)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [radius_server_group](#type-tacacs_server_group)           | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [radius_server](#type-radius_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [search_domain](#type-search_domain)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [snmp_community](#type-snmp_community)                     | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [snmp_notification](#type-snmp_notification)               | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [snmp_notification_receiver](#type-snmp_notification_receiver) | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [snmp_user](#type-snmp_user)                               | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [syslog_server](#type-syslog_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [syslog_setting](#type-syslog_setting)                     | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [tacacs](#type-tacacs)                                     | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [tacacs_global](#type-tacacs_global)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [tacacs_server](#type-tacacs_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [tacacs_server_group](#type-tacacs_server_group)           | ✅  | ✅  | ✅  | ✅  | ✅  |
 
-
+--
 ## <a name ="resource-reference">Resource Reference<a>
 
 The following resources include cisco types and providers along with cisco provider support for netdev stdlib types.  Installing the `ciscopuppet` module will install both the `ciscopuppet` and `netdev_stdlib` modules.
@@ -251,11 +244,19 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_bgp_neighbor`](#type-cisco_bgp_neighbor)
   * [`cisco_bgp_neighbor_af`](#type-cisco_bgp_neighbor_af)
 
+* Bridge_Domain Types
+  * [`cisco_bridge_domain`](#type-cisco_bridge_domain)
+  * [`cisco_bridge_domain_vni`](#type-cisco_bridge_domain_vni)
+
 * Domain Types
   * [`domain_name (netdev_stdlib)`](#type-domain_name)
   * [`name_server (netdev_stdlib)`](#type-name_server)
   * [`network_dns (netdev_stdlib)`](#type-network_dns)
   * [`search_domain (netdev_stdlib)`](#type-search_domain)
+
+* Fabricpath Types
+  * [`cisco_fabricpath_global`](#type-cisco_fabricpath_global)
+  * [`cisco_fabricpath_topology`](#type-cisco_fabricpath_topology)
 
 * Interface Types
   * [`cisco_interface`](#type-cisco_interface)
@@ -264,6 +265,11 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
   * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
   * [`network_interface (netdev_stdlib)`](#type-network_interface)
+
+* Itd Types
+  * [`cisco_itd_device_group`](#type-cisco_itd_device_group)
+  * [`cisco_itd_device_group_node`](#type-cisco_itd_device_group_node)
+  * [`cisco_itd_service`](#type-cisco_itd_service)
 
 * Multicast Types
   * [`cisco_pim`](#type-cisco_pim)
@@ -290,6 +296,10 @@ The following resources include cisco types and providers along with cisco provi
   * [`radius (netdev_stdlib)`](#type-radius)
   * [`radius_global (netdev_stdlib)`](#type-radius_global)
   * [`radius_server (netdev_stdlib)`](#type-radius_server)
+  * [`radius_server_group (netdev_stdlib)`](#type-radius_server_group)
+
+* STP Types
+  * [`cisco_stp_global`](#type-cisco_stp_global)
 
 * SNMP Types
   * [`cisco_snmp_community`](#type-cisco_snmp_community)
@@ -318,10 +328,11 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_vlan`](#type-cisco_vlan)
   * [`cisco_vtp`](#type-cisco_vtp)
   * [`network_trunk (netdev_stdlib)`](#type-network_trunk)
+  * [`network_vlan (netdev_stdlib)`](#type-network_vlan)
 
 * VPC Types
   * [`cisco_vpc_domain`](#type-cisco_vpc_domain)
-  
+
 * VRF Types
   * [`cisco_vrf`](#type-cisco_vrf)
   * [`cisco_vrf_af`](#type-cisco_vrf_af)
@@ -329,8 +340,10 @@ The following resources include cisco types and providers along with cisco provi
 * VNI Types
    * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
    * [`cisco_vni`](#type-cisco_vni)
+   * [`cisco_encapsulation`](#type-cisco_encapsulation)
 
 * VXLAN Types
+  * [`cisco_evpn_vni`](#type-cisco_evpn_vni)
   * [`cisco_overlay_global`](#type-cisco_overlay_global)
   * [`cisco_vxlan_vtep`](#type-cisco_vxlan_vtep)
   * [`cisco_vxlan_vtep_vni`](#type-cisco_vxlan_vtep_vni)
@@ -349,11 +362,20 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_bgp_af`](#type-cisco_bgp_af)
 * [`cisco_bgp_neighbor`](#type-cisco_bgp_neighbor)
 * [`cisco_bgp_neighbor_af`](#type-cisco_bgp_neighbor_af)
+* [`cisco_bridge_domain`](#type-cisco_bridge_domain)
+* [`cisco_bridge_domain_vni`](#type-cisco_bridge_domain_vni)
+* [`cisco_encapsulation`](#type-cisco_encapsulation)
+* [`cisco_evpn_vni`](#type-cisco_evpn_vni)
+* [`cisco_fabricpath_global`](#type-cisco_fabricpath_global)
+* [`cisco_fabricpath_topology`](#type-cisco_fabricpath_topology)
 * [`cisco_interface`](#type-cisco_interface)
 * [`cisco_interface_channel_group`](#type-cisco_interface_channel_group)
 * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 * [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
 * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
+* [`cisco_itd_device_group`](#type-cisco_itd_device_group)
+* [`cisco_itd_device_group_node`](#type-cisco_itd_device_group_node)
+* [`cisco_itd_service`](#type-cisco_itd_service)
 * [`cisco_ospf`](#type-cisco_ospf)
 * [`cisco_ospf_vrf`](#type-cisco_ospf_vrf)
 * [`cisco_overlay_global`](#type-cisco_overlay_global)
@@ -361,6 +383,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_pim_grouplist`](#type-cisco_pim_grouplist)
 * [`cisco_pim_rp_address`](#type-cisco_pim_rp_address)
 * [`cisco_portchannel_global`](#type-cisco_portchannel_global)
+* [`cisco_stp_global`](#type-cisco_stp_global)
 * [`cisco_snmp_community`](#type-cisco_snmp_community)
 * [`cisco_snmp_group`](#type-cisco_snmp_group)
 * [`cisco_snmp_server`](#type-cisco_snmp_server)
@@ -383,13 +406,15 @@ The following resources include cisco types and providers along with cisco provi
 * [`name_server`](#type-name_server)
 * [`network_dns`](#type-network_dns)
 * [`network_interface`](#type-network_interface)
-* [`network_trunk`](#type-network_trunk)
 * [`network_snmp`](#type-network_snmp)
+* [`network_trunk`](#type-network_trunk)
+* [`network_vlan`](#type-network_vlan)
 * [`ntp_config`](#type-ntp_config)
 * [`ntp_server`](#type-ntp_server)
 * [`port_channel`](#type-port_channel)
 * [`radius`](#type-radius)
 * [`radius_global`](#type-radius_global)
+* [`radius_server_group`](#type-radius_server_group)
 * [`radius_server`](#type-radius_server)
 * [`search_domain`](#type-search_domain)
 * [`snmp_community`](#type-snmp_community)
@@ -413,10 +438,13 @@ The following resources are listed alphabetically.
 
 Allows execution of configuration commands.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N3k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N5k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 
 #### Parameters
 
@@ -441,10 +469,13 @@ This provider allows raw configurations to be managed by Puppet. It serves as a 
 
 Manages AAA Authentication Login configuration.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -471,10 +502,13 @@ Enable/disable mschapv2 for AAA Authentication Login.
 
 Manages configuration for Authorization Login Config Service.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -495,10 +529,13 @@ Authentication methods on this device. Valid values are 'local', 'unselected', '
 
 Manages configuration for Authorization Login Exec Service.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -519,10 +556,13 @@ Authentication methods on this device. Valid values are 'local', 'unselected', '
 
 Manages configuration for a TACACS+ server group.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -549,10 +589,19 @@ Specifies the virtual routing and forwarding instance (VRF) to use to contact th
 
 Manages configuration of a Access Control List (ACL) instance.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+
+#### <a name="cisco_acl-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `fragments` | Not supported on N5k, N6k |
 
 #### Parameters
 
@@ -579,23 +628,22 @@ Manages configuration of an Access Control List (ACL) Access Control Entry (ACE)
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N30xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N31xx    | 7.0(3)I2(1)        | 1.2.0                  |
-| N56xx    | unsupported        | unsupported            |
-| N6k      | unsupported        | unsupported            |
-| N7k      | unsupported        | unsupported            |
-| IOS XR   | unsupported        | unsupported            |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### <a name="cisco_ace-caveats">Caveats</a>
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `http_method` | Not supported on N56xx, N6k, N7k |
-| `packet_length` | Not supported on N56xx, N6k |
-| `redirect` | Not supported on N56xx, N6k, N7k |
-| `time_range` | Not supported on N56xx, N6k |
-| `ttl` | Not supported on N56xx, N6k, N7k |
-| `tcp_option_length` | Not supported on N56xx, N6k, N7k |
+| `http_method`        | ipv4 only <br> Not supported on N5k, N6k, N7k |
+| `packet_length`      | Not supported on N5k, N6k |
+| `precedence`         | ipv4 only |
+| `redirect`           | ipv4 only <br> Not supported on N5k, N6k, N7k |
+| `time_range`         | Not supported on N5k, N6k |
+| `ttl`                | Not supported on N5k, N6k, N7k |
+| `tcp_option_length`  | ipv4 only <br> Not supported on N5k, N6k, N7k |
 
 #### Example Usage
 
@@ -612,15 +660,23 @@ cisco_ace { 'ipv4 my_acl 42':
 
   dscp                => 'af11',
   established         => 'true',
-  http_method         => 'post',
   log                 => 'true',
   packet_length       => 'range 512 1024'
   precedence          => 'flash',
   redirect            => 'Ethernet1/2,Port-Channel42',
   tcp_flags           => 'ack psh',
-  tcp_option_length   => '36',
   time_range          => 'my_time_range',
   ttl                 => '128',
+}
+
+cisco_ace { 'ipv6 my_v6_acl 42':
+  ensure              => 'present',
+  remark              => 'East Branch',
+  action              => 'permit',
+  proto               => 'tcp',
+  src_addr            => '1:1::1/128',
+  dst_addr            => 'any',
+}
 ```
 
 #### Parameters
@@ -706,7 +762,7 @@ Allows matching against TCP Established connections. Valid values are true or fa
 | `established => true`
 
 ##### `http_method`
-Allows matching based on http-method. Valid values are String, which must be one of the following forms:
+(ipv4 only) Allows matching based on http-method. Valid values are String, which must be one of the following forms:
 
 * A numeric http-method value
 * One of the http-method keyword names
@@ -735,7 +791,7 @@ Allows matching based on Layer 3 Packet Length. Valid values are type String, wh
 | `packet_length => 'range 512 1024'`
 
 ##### `precedence`
-Allows matching by precedence value. Valid values are String, which must be one of the following forms:
+(ipv4 only) Allows matching by precedence value. Valid values are String, which must be one of the following forms:
 
 * A numeric precedence value
 * One of the precedence keyword names
@@ -753,7 +809,7 @@ The protocol to match against. Valid values are String or Integer. Examples are:
 | `proto => 'tcp'`
 
 ##### `redirect`
-Allows for redirecting traffic to one or more interfaces. This property is only useful with VLAN ACL (VACL) applications. Valid values are a String containing a list of interface names.
+(ipv4 only) Allows for redirecting traffic to one or more interfaces. This property is only useful with VLAN ACL (VACL) applications. Valid values are a String containing a list of interface names.
 
 | Examples
 |:--
@@ -808,7 +864,7 @@ The TCP flags or control bits. Valid values are a String of some or all of flags
 | `tcp_flags => 'ack psh'`
 
 ##### `tcp_option_length`
-Allows matching on TCP options length. Valid values are type Integer or String, which must be a multiple of 4 in the range 0-40.
+(ipv4 only) Allows matching on TCP options length. Valid values are type Integer or String, which must be a multiple of 4 in the range 0-40.
 
 | Examples
 |:--
@@ -835,16 +891,22 @@ Allows matching based on Time-To-Live (TTL) value. Valid values are type Integer
 
 Manages configuration of a BGP instance.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 
 #### <a name="cisco_bgp-caveats">Caveats</a>
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `disable_policy_batching_ipv4` <br> `disable_policy_batching_ipv4` <br> `neighbor_down_fib_accelerate` <br> `reconnect_interval` | Not supported on N56xx, N6k, N7k |
+| `disable_policy_batching_ipv4` | Not supported on N5k, N6k, N7k |
+| `disable_policy_batching_ipv6` | Not supported on N5k, N6k, N7k |
+| `neighbor_down_fib_accelerate` | Not supported on N5k, N6k, N7k |
+| `reconnect_interval`           | Not supported on N5k, N6k, N7k |
 
 #### Parameters
 
@@ -857,76 +919,7 @@ BGP autonomous system number.  Valid values are String, Integer in ASPLAIN or AS
 ##### `vrf`
 Name of the resource instance. Valid values are string. The name 'default' is a valid VRF representing the global bgp.
 
-<a name='bgp_rd'></a>
-##### `route_distinguisher`
-VPN Route Distinguisher (RD). The RD is combined with the IPv4 or IPv6 prefix learned by the PE router to create a globally unique address. Valid values are a String in one of the route-distinguisher formats (ASN2:NN, ASN4:NN, or IPV4:NN); the keyword 'auto', or the keyword 'default'.
-
-*Please note:* The `route_distinguisher` property is typically configured within the VRF context configuration on most platforms (including NXOS) but it is tightly coupled to bgp and therefore configured within the BGP configuration on some platforms (XR for example). For this reason the `route_distinguisher` property has support (with limitations) in both `cisco_vrf` and `cisco_bgp` providers:
-
-* `cisco_bgp`: The property is fully supported on both NXOS and XR.
-* `cisco_vrf`: The property is only supported on NXOS. See: [cisco_vrf: route_distinguisher](#vrf_rd)
-
-*IMPORTANT: Choose only one provider to configure the `route_distinguisher` property on a given device. Using both providers simultaneously on the same device may have unpredictable results.*
-
-##### `router_id`
-Router Identifier (ID) of the BGP router VRF instance. Valid values are string, and keyword 'default'.
-
-##### `cluster_id`
-Route Reflector Cluster-ID. Valid values are String, keyword 'default'.
-
-##### `confederation_id`
-Routing domain confederation AS. Valid values are String, keyword 'default'.
-
-##### `confederation_peers`
-AS confederation parameters. Valid values are String, keyword 'default'.
-
-##### `disable_policy_batching` 
-Enable/Disable the batching evaluation of prefix advertisements to all peers. Valid values are 'true', 'false', and 'default'.
-
-##### `disable_policy_batching_ipv4`
-Enable/Disable the batching evaluation of prefix advertisements to all peers with prefix list. Valid values are String, keyword 'default'.  
-
-##### `disable_policy_batching_ipv6`
-Enable/Disable the batching evaluation of prefix advertisements to all peers with prefix list. Valid values are String, keyword 'default'.  
-
-##### `enforce_first_as`
-Enable/Disable enforces the neighbor autonomous system to be the first AS number listed in the AS path attribute for eBGP. Valid values are 'true', 'false', and 'default'.
-
-##### `event_history_cli`
-Enable/Disable cli event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
-
-##### `event_history_detail`
-Enable/Disable detail event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
-
-##### `event_history_events`
-Enable/Disable event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
-
-##### `event_history_periodic`
-Enable/Disable periodic event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
-
-##### `fast_external_fallover`
-Enable/Disable immediately reset the session if the link to a directly connected BGP peer goes down. Valid values are 'true', 'false', and 'default'.
-
-##### `flush_routes`
-Enable/Disable flush routes in RIB upon controlled restart. Valid values are 'true', 'false', and 'default'.
-
-##### `isolate`
-Enable/Disable isolate this router from BGP perspective. Valid values are 'true', 'false', and 'default'.
-
-##### `maxas_limit`
-Specify Maximum number of AS numbers allowed in the AS-path attribute. Valid values are integers between 1 and 512, or keyword 'default' to disable this property.
-
-##### `neighbor_down_fib_accelerate`
-Enable/Disable handle BGP neighbor down event, due to various reasons. Valid values are 'true', 'false', and 'default'.
-
-##### `shutdown`
-Administratively shutdown the BGP protocol. Valid values are 'true', 'false', and 'default'.
-
-##### `supress_fib_pending`
-Enable/Disable advertise only routes programmed in hardware to peers. Valid values are 'true', 'false', and 'default'
-
-##### `log_neighbor_changes`
-Enable/Disable message logging for neighbor up/down event. Valid values are 'true', 'false', and 'default'
+#### Properties
 
 ##### `bestpath_always_compare_med`
 Enable/Disable MED comparison on paths from different autonomous systems. Valid values are 'true', 'false', and 'default'.
@@ -941,25 +934,58 @@ Enable/Disable comparison of router IDs for identical eBGP paths. Valid values a
 Enable/Disable Ignores the cost community for BGP best-path calculations. Valid values are 'true', 'false', and 'default'
 
 ##### `bestpath_med_confed`
-Enable/Disable enforcement of bestpath to do a MED comparison only between paths originated within a confederation. Valid values are 'true', 'false', and 'default'
+Enable/Disable enforcement of bestpath to do a MED comparison only between paths originated within a confederation. Valid values are 'true', 'false', and 'default'.
 
 ##### `bestpath_med_missing_as_worst`
 Enable/Disable assigns the value of infinity to received routes that do not carry the MED attribute, making these routes the least desirable. Valid values are 'true', 'false', and 'default'.
 
 ##### `bestpath_med_non_deterministic`
-Enable/Disable deterministic selection of the best MED path from among the paths from the same autonomous system. Valid values are 'true', 'false', and 'default'
+Enable/Disable deterministic selection of the best MED path from among the paths from the same autonomous system. Valid values are 'true', 'false', and 'default'.
 
-##### `timer_bestpath_limit`
-Specify timeout for the first best path after a restart, in seconds. Valid values are Integer, keyword 'default'.
+##### `cluster_id`
+Route Reflector Cluster-ID. Valid values are String, keyword 'default'.
 
-##### `timer_bestpath_limit_always`
-Enable/Disable update-delay-always option. Valid values are 'true', 'false', and 'default'
+##### `confederation_id`
+Routing domain confederation AS. Valid values are String, keyword 'default'.
+
+##### `confederation_peers`
+AS confederation parameters. Valid values are String, keyword 'default'.
+
+##### `disable_policy_batching`
+Enable/Disable the batching evaluation of prefix advertisements to all peers. Valid values are 'true', 'false', and 'default'.
+
+##### `disable_policy_batching_ipv4`
+Enable/Disable the batching evaluation of prefix advertisements to all peers with prefix list. Valid values are String, keyword 'default'.
+
+##### `disable_policy_batching_ipv6`
+Enable/Disable the batching evaluation of prefix advertisements to all peers with prefix list. Valid values are String, keyword 'default'.
+
+##### `enforce_first_as`
+Enable/Disable enforces the neighbor autonomous system to be the first AS number listed in the AS path attribute for eBGP. Valid values are 'true', 'false', and 'default'. On NX-OS, this property is only supported in the global BGP context.
+
+##### `event_history_cli`
+Enable/Disable cli event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
+
+##### `event_history_detail`
+Enable/Disable detail event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
+
+##### `event_history_events`
+Enable/Disable event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
+
+##### `event_history_periodic`
+Enable/Disable periodic event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
+
+##### `fast_external_fallover`
+Enable/Disable immediately reset the session if the link to a directly connected BGP peer goes down. Valid values are 'true', 'false', and 'default'. On NX-OS, this property is only supported in the global BGP context.
+
+##### `flush_routes`
+Enable/Disable flush routes in RIB upon controlled restart. Valid values are 'true', 'false', and 'default'. On NX-OS, this property is only supported in the global BGP context.
 
 ##### `graceful_restart`
-Enable/Disable graceful restart. Valid values are 'true', 'false', and 'default'
+Enable/Disable graceful restart. Valid values are 'true', 'false', and 'default'.
 
 ##### `graceful_restart_helper`
-Enable/Disable graceful restart helper mode. Valid values are 'true', 'false', and 'default'
+Enable/Disable graceful restart helper mode. Valid values are 'true', 'false', and 'default'.
 
 ##### `graceful_restart_timers_restart`
 Set maximum time for a restart sent to the BGP peer. Valid values are Integer, keyword 'default'.
@@ -967,27 +993,74 @@ Set maximum time for a restart sent to the BGP peer. Valid values are Integer, k
 ##### `graceful_restart_timers_stalepath_time`
 Set maximum time that BGP keeps the stale routes from the restarting BGP peer. Valid values are Integer, keyword 'default'.
 
-##### `timer_bgp_keepalive`
-Set bgp keepalive timer. Valid values are Integer, keyword 'default'.
+##### `isolate`
+Enable/Disable isolate this router from BGP perspective. Valid values are 'true', 'false', and 'default'.
+
+##### `log_neighbor_changes`
+Enable/Disable message logging for neighbor up/down event. Valid values are 'true', 'false', and 'default'
+
+##### `maxas_limit`
+Specify Maximum number of AS numbers allowed in the AS-path attribute. Valid values are integers between 1 and 512, or keyword 'default' to disable this property.
+
+##### `neighbor_down_fib_accelerate`
+Enable/Disable handle BGP neighbor down event, due to various reasons. Valid values are 'true', 'false', and 'default'.
+
+##### `nsr`
+Enable/Disable Non-Stop Routing (NSR). Valid values are 'true', 'false', and 'default'. This property is not supported on Nexus.
+
+##### `reconnect_interval`
+The BGP reconnection interval for dropped sessions. Valid values are Integer or keyword 'default'.
+
+<a name='bgp_rd'></a>
+##### `route_distinguisher`
+VPN Route Distinguisher (RD). The RD is combined with the IPv4 or IPv6 prefix learned by the PE router to create a globally unique address. Valid values are a String in one of the route-distinguisher formats (ASN2:NN, ASN4:NN, or IPV4:NN); the keyword 'auto', or the keyword 'default'.
+
+*Please note:* The `route_distinguisher` property is typically configured within the VRF context configuration on most platforms (including NXOS) but it is tightly coupled to bgp and therefore configured within the BGP configuration on some non-NXOS platforms. For this reason the `route_distinguisher` property has support (with limitations) in both `cisco_vrf` and `cisco_bgp` providers:
+
+* `cisco_bgp`: The property is supported on NXOS and some non-NXOS platforms.
+* `cisco_vrf`: The property is only supported on NXOS. See: [cisco_vrf: route_distinguisher](#vrf_rd)
+
+*IMPORTANT: Choose only one provider to configure the `route_distinguisher` property on a given device. Using both providers simultaneously on the same device may have unpredictable results.*
+
+##### `router_id`
+Router Identifier (ID) of the BGP router VRF instance. Valid values are string, and keyword 'default'.
+
+##### `shutdown`
+Administratively shutdown the BGP protocol. Valid values are 'true', 'false', and 'default'.
+
+##### `suppress_fib_pending`
+Enable/Disable advertise only routes programmed in hardware to peers. Valid values are 'true', 'false', and 'default'.
+
+##### `timer_bestpath_limit`
+Specify timeout for the first best path after a restart, in seconds. Valid values are Integer, keyword 'default'.
+
+##### `timer_bestpath_limit_always`
+Enable/Disable update-delay-always option. Valid values are 'true', 'false', and 'default'.
 
 ##### `timer_bgp_hold`
 Set bgp hold timer. Valid values are Integer, keyword 'default'.
+
+##### `timer_bgp_keepalive`
+Set bgp keepalive timer. Valid values are Integer, keyword 'default'.
 
 --
 ### Type: cisco_bgp_af
 
 Manages configuration of a BGP Address-family instance.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 
 #### <a name="cisco_bgp_af-caveats">Caveats</a>
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `advertise_l2vpn_evpn ` | Not supported on N30xx, N31xx, N6k |
+| `additional_paths_install` | Not supported on N3k, N9k |
+| `advertise_l2vpn_evpn`     | Not supported on N3k, N6k |
 
 #### Parameters
 
@@ -1002,25 +1075,27 @@ BGP autonomous system number. Required. Valid values are String, Integer in ASPL
 VRF name. Required. Valid values are string. The name 'default' is a valid VRF representing the global bgp.
 
 ##### `afi`
-Address Family Identifier (AFI). Required. Valid values are `ipv4` and `ipv6`.
+Address Family Identifier (AFI). Required. Valid values are `ipv4`, `ipv6`, `vpnv4`, `vpnv6` and `l2vpn`.
 
 ##### `safi`
-Sub Address Family Identifier (SAFI). Required. Valid values are `unicast` and `multicast`.
+Sub Address Family Identifier (SAFI). Required. Valid values are `unicast`, `multicast` and `evpn`.
+
+#### Properties
 
 ##### `additional_paths_install`
-install a backup path into the forwarding table and provide prefix 'independent convergence (PIC) in case of a PE-CE link failure. Valid values are true, false, or 'default'
+Install a backup path into the forwarding table and provide prefix 'independent convergence (PIC) in case of a PE-CE link failure. Valid values are true, false, or 'default'.
 
 ##### `additional_paths_receive`
 Enables the receive capability of additional paths for all of the neighbors under this address family for which the capability has not been disabled.  Valid values are true, false, or 'default'
 
 ##### `additional_paths_selection`
-Configures the capability of selecting additional paths for a prefix. Valid values are a string defining the name of the route-map.
+Configures the capability of selecting additional paths for a prefix. Valid values are a string defining the name of the [route-map](#cisco-os-differences).
 
 ##### `additional_paths_send`
 Enables the send capability of additional paths for all of the neighbors under this address family for which the capability has not been disabled. Valid values are true, false, or 'default'
 
 ##### `advertise_l2vpn_evpn`
-advertise evpn routes. Valid values are true and false.
+Advertise evpn routes. Valid values are true and false.
 
 ##### `client_to_client`
 Configure client-to-client route reflection. Valid values are true and false.
@@ -1029,7 +1104,7 @@ Configure client-to-client route reflection. Valid values are true and false.
 Specify dampen value for IGP metric-related changes, in seconds. Valid values are Integer, keyword 'default'.
 
 ##### `dampening_state`
-Enable/disable route-flap dampening. Valid values are true, false or 'default'
+Enable/disable route-flap dampening. Valid values are true, false or 'default'.
 
 ##### `dampening_half_time`
 Specify decay half-life in minutes for route-flap dampening. Valid values are Integer, keyword 'default'.
@@ -1041,7 +1116,7 @@ Specify max suppress time for route-flap dampening stable route. Valid values ar
 Specify route reuse time for route-flap dampening. Valid values are Integer, keyword 'default'.
 
 ##### `dampening_routemap`
-Specify route-map for route-flap dampening. Valid values are a string defining the name of the route-map.
+Specify [route-map](#cisco-os-differences) for route-flap dampening. Valid values are a string defining the name of the route-map.
 
 ##### `dampening_suppress_time`
 Specify route suppress time for route-flap dampening. Valid values are Integer, keyword 'default'.
@@ -1084,7 +1159,7 @@ Configures the maximum number of equal-cost paths for load sharing. Valid value 
 Configures the maximum number of ibgp equal-cost paths for load sharing. Valid value is an integer in the range 1-64. Default value is 1.
 
 ##### `networks`
-Networks to configure. Valid value is a list of network prefixes to advertise.  The list must be in the form of an array.  Each entry in the array must include a prefix address and an optional route-map.
+Networks to configure. Valid value is a list of network prefixes to advertise.  The list must be in the form of an array.  Each entry in the array must include a prefix address and an optional [route-map](#cisco-os-differences).
 
 Example: IPv4 Networks Array
 
@@ -1108,10 +1183,10 @@ Example: IPv6 Networks Array
 ```
 
 ##### `next_hop_route_map`
-Configure route map for valid nexthops. Valid values are a string defining the name of the route-map.
+Configure a [route-map](#cisco-os-differences) for valid nexthops. Valid values are a string defining the name of the route-map.
 
 ##### `redistribute`
-A list of redistribute directives. Multiple redistribute entries are allowed. The list must be in the form of a nested array: the first entry of each array defines the source-protocol to redistribute from; the second entry defines a route-map/route-policy name. A route-map/route-policy is highly advised but may be optional on some platforms, in which case it may be omitted from the array list.
+A list of redistribute directives. Multiple redistribute entries are allowed. The list must be in the form of a nested array: the first entry of each array defines the source-protocol to redistribute from; the second entry defines a [route-map](#cisco-os-differences) name. A route-map is highly advised but may be optional on some platforms, in which case it may be omitted from the array list.
 
 Example: Platform requiring route-maps
 
@@ -1137,23 +1212,32 @@ redistribute => [['direct'],
 ```
 
 ##### `suppress_inactive`
-Advertises only active routes to peersy. Valid values are true, false, or 'default'.
+Advertises only active routes to peers. Valid values are true, false, or 'default'.
 
 ##### `table_map`
 Apply table-map to filter routes downloaded into URIB. Valid values are a string.
 
 ##### `table_map_filter`
-Filters routes rejected by the route map and does not download them to the RIB. Valid values are true, false, or 'default'.
+Filters routes rejected by the route-map and does not download them to the RIB. Valid values are true, false, or 'default'.
 
 --
 ### Type: cisco_bgp_neighbor
 
 Manages configuration of a BGP Neighbor.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+
+#### <a name="cisco_bgp_neighbor-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `log_neighbor_changes` | Not supported on N5k, N6k, N7k |
 
 #### Parameters
 
@@ -1169,6 +1253,8 @@ VRF name. Required. Valid values are string. The name 'default' is a valid VRF r
 ##### `neighbor`
 Neighbor Identifier. Required. Valid values are string. Neighbors may use IPv4 or IPv6 notation, with or without prefix length.
 
+#### Properties
+
 ##### `description`
 Description of the neighbor. Valid value is string.
 
@@ -1176,13 +1262,13 @@ Description of the neighbor. Valid value is string.
 Configure whether or not to check for directly connected peer. Valid values are true and false.
 
 ##### `capability_negotiation`
-Configure whether or not to negotiate capability with this neighbor. Valid  values are true and false.
+Configure whether or not to negotiate capability with this neighbor. Valid values are true and false.
 
 ##### `dynamic_capability`
 Configure whether or not to enable dynamic capability. Valid values are true and false.
 
 ##### `ebgp_multihop`
-Specify multihop TTL for a remote peer. Valid values are integers between 2  and 255, or keyword 'default' to disable this property.
+Specify multihop TTL for a remote peer. Valid values are integers between 2 and 255, or keyword 'default' to disable this property.
 
 ##### `local_as`
 Specify the local-as number for the eBGP neighbor. Valid values are String or Integer in ASPLAIN or ASDOT notation, or 'default', which means not to configure it.
@@ -1191,22 +1277,22 @@ Specify the local-as number for the eBGP neighbor. Valid values are String or In
 Specify whether or not to enable log messages for neighbor up/down event. Valid values are 'enable', to enable it, 'disable' to disable it, or 'inherit' to use the configuration in the cisco_bgp type.
 
 ##### `low_memory_exempt`
-Specify whether or not to shut down this neighbor under memory pressure. Valid values are 'true' to exempt the neighbor from being shutdown, 'false' to shut it down, or 'default' to perform the default shutdown behavior"
+Specify whether or not to shut down this neighbor under memory pressure. Valid values are 'true' to exempt the neighbor from being shutdown, 'false' to shut it down, or 'default' to perform the default shutdown behavior.
 
 ##### `maximum_peers`
-Specify Maximum number of peers for this neighbor prefix. Valid values are between 1 and 1000, or 'default', which does not impose the limit. This  attribute can only be configured if neighbor is in 'ip/prefix' format.
+Specify Maximum number of peers for this neighbor prefix. Valid values are between 1 and 1000, or 'default', which does not impose the limit.
 
 ##### `password`
 Specify the password for neighbor. Valid value is string.
 
 ##### `password_type`
-Specify the encryption type the password will use. Valid values are 'cleartext', '3des' or 'cisco_type_7' encryption, and 'default',which defaults to 'cleartext'.
+Specify the encryption type the password will use. Valid values for Nexus are 'cleartext', '3des' or 'cisco_type_7' encryption, and 'default', which defaults to 'cleartext'.
 
 ##### `remote_as`
 Specify Autonomous System Number of the neighbor. Valid values are String or Integer in ASPLAIN or ASDOT notation, or 'default', which means not to configure it.
 
 ##### `remove_private_as`
-Specify the config to remove private AS number from outbound updates. Valid  values are 'enable' to enable this config, 'disable' to disable this config, 'all' to remove all private AS number, or 'replace-as', to replace the private AS number.
+Specify the config to remove private AS number from outbound updates. Valid values are 'enable' to enable this config, 'disable' to disable this config, 'all' to remove all private AS number, or 'replace-as', to replace the private AS number.
 
 ##### `shutdown`
 Configure to administratively shutdown this neighbor. Valid values are true and false.
@@ -1220,8 +1306,12 @@ Specify keepalive timer value. Valid values are integers between 0 and 3600 in t
 ##### `timers_holdtime`
 Specify holdtime timer value. Valid values are integers between 0 and 3600 in terms of seconds, or 'default', which is 180.
 
+##### `transport_passive_mode`
+Specify whether BGP sessions can be established from incoming or outgoing TCP connection requests (or both).
+Valid values for Nexus are 'passive_only', 'both', 'clear' and 'default', which defaults to 'clear'.  This property can only be configured when the neighbor is in 'ip' address format without prefix length. This property and the transport_passive_only property are mutually exclusive.
+
 ##### `transport_passive_only`
-Configure whether or not to only allow passive connection setup. Valid values are 'true', 'false', and 'default', which defaults to 'false'. This attribute can only be configured when the neighbor is in 'ip' address format without prefix length.
+Specify whether or not to only allow passive connection setup. Valid values are 'true', 'false', and 'default', which defaults to 'false'. This property can only be configured when the neighbor is in 'ip' address format without prefix length. This property and the transport_passive_mode property are mutually exclusive.
 
 ##### `update_source`
 Specify source interface of BGP session and updates. Valid value is a string of the interface name.
@@ -1231,10 +1321,18 @@ Specify source interface of BGP session and updates. Valid value is a string of 
 
 Manages configuration of a BGP Neighbor Address-family instance.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+
+#### <a name="cisco_bgp_neighbor_af-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
 
 #### Parameters
 
@@ -1253,10 +1351,18 @@ VRF name. Required. Valid values are string. The name 'default' is a valid VRF r
 Neighbor Identifier. Required. Valid values are string. Neighbors may use IPv4 or IPv6 notation, with or without a subnet mask.
 
 ##### `afi`
-Neighbor Address Family Identifier (AFI). Required. Valid values are string. Valid neighbor AFIs are `ipv4` and `ipv6`. Note that some AFI/SAFI address-families may not be supported with some neighbors; e.g. an ipv6 neighbor may not support an ipv4 multicast address-family.
+Neighbor Address Family Identifier (AFI). Required. Valid values are string. Valid neighbor AFIs are `ipv4`, `ipv6`, `vpnv4`, `vpnv6` and `l2vpn`. Note that some AFI/SAFI address-families may not be supported with some neighbors; e.g. an ipv6 neighbor may not support an ipv4 multicast address-family.
 
 ##### `safi`
-Neighbor Sub Address Family Identifier (SAFI). Required. Valid values are string. Valid neighbor SAFIs are `unicast` and `multicast`. Note that some AFI/SAFI address-families may not be supported with some neighbors; e.g. an ipv6 neighbor may not support an ipv4 multicast address-family.
+Neighbor Sub Address Family Identifier (SAFI). Required. Valid values are string. Valid neighbor SAFIs are `unicast`, `multicast` and `evpn`. Note that some AFI/SAFI address-families may not be supported with some neighbors; e.g. an ipv6 neighbor may not support an ipv4 multicast address-family.
+
+#### Properties
+
+##### `additional_paths_receive`
+`capability additional-paths receive`. Valid values are `enable` for basic command enablement; `disable` for disabling the command at the neighbor_af level (it adds the `disable` keyword to the basic command); and `inherit` to remove the command at this level (the command value is inherited from a higher BGP layer).
+
+##### `additional_paths_send`
+`capability additional-paths send`. Valid values are `enable` for basic command enablement; `disable` for disabling the command at the neighbor_af level (it adds the `disable` keyword to the basic command); and `inherit` to remove the command at this level (the command value is inherited from a higher BGP layer).
 
 ##### `advertise_map_exist`
 Conditional route advertisement. This property requires two route maps: an advertise-map and an exist-map. Valid values are an array specifying both the advertise-map name and the exist-map name, or simply 'default'; e.g. `['my_advertise_map', 'my_exist_map']`. This command is mutually exclusive with the advertise_map_non_exist property.
@@ -1273,17 +1379,11 @@ Optional max-occurrences value for `allowas_in`. Valid values are an integer val
 ##### `as_override`
 `as-override`. Valid values are true, false, or 'default'.
 
-##### `additional_paths_receive`
-`capability additional-paths receive`. Valid values are `enable` for basic command enablement; `disable` for disabling the command at the neighbor_af level (it adds the `disable` keyword to the basic command); and `inherit` to remove the command at this level (the command value is inherited from a higher BGP layer).
-
-##### `additional_paths_send`
-`capability additional-paths send`. Valid values are `enable` for basic command enablement; `disable` for disabling the command at the neighbor_af level (it adds the `disable` keyword to the basic command); and `inherit` to remove the command at this level (the command value is inherited from a higher BGP layer).
-
 ##### `default_originate`
 `default-originate`. Valid values are True, False, or 'default'. Related: `default_originate_route_map`.
 
 ##### `default_originate_route_map`
-Optional route-map for the `default_originate` property. Can be used independently or in conjunction with `default_originate`. Valid values are a string defining a route-map name, or 'default'.
+Optional [route-map](#cisco-os-differences) for the `default_originate` property. Can be used independently or in conjunction with `default_originate`. Valid values are a string defining a route-map name, or 'default'.
 
 ##### `filter_list_in`
 Valid values are a string defining a filter-list name, or 'default'.
@@ -1316,10 +1416,10 @@ Valid values are a string defining a prefix-list name, or 'default'.
 Valid values are a string defining a prefix-list name, or 'default'.
 
 ##### `route_map_in`
-Valid values are a string defining a route-map name, or 'default'.
+Valid values are a string defining a [route-map](#cisco-os-differences) name, or 'default'.
 
 ##### `route_map_out`
-Valid values are a string defining a route-map name, or 'default'.
+Valid values are a string defining a [route-map](#cisco-os-differences) name, or 'default'.
 
 ##### `route_reflector_client`
 `route-reflector-client`. Valid values are True, False, or 'default'.
@@ -1343,21 +1443,256 @@ Site-of-origin. Valid values are a string defining a VPN extcommunity or 'defaul
 `weight` value. Valid values are an integer value or 'default'.
 
 --
+### Type: cisco_bridge_domain
+Manages a cisco Bridge-Domain
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | not applicable     | not applicable         |
+| N3k      | not applicable     | not applicable         |
+| N5k      | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `bd`
+ID of the Bridge Domain. Valid values are integer.
+
+##### `bd_name`
+The bridge-domain name. Valid values are String or keyword 'default'.
+
+##### `shutdown`
+Specifies the shutdown state of the bridge-domain. Valid values are true, false, 'default'.
+
+##### `fabric_control`
+Specifies this bridge-domain as the fabric control bridge-domain. Only one bridge-domain or VLAN can be configured as fabric-control. Valid values are true, false.
+
+--
+### Type: cisco_bridge_domain_vni
+Creates a Virtual Network Identifier member (VNI) mapping for cisco Bridge-Domain.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | not applicable     | not applicable         |
+| N3k      | not applicable     | not applicable         |
+| N5k      | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `bd`
+The bridge-domain ID. Valid values are one or range of integers.
+
+##### `member_vni`
+The Virtual Network Identifier (VNI) id that is mapped to the VLAN. Valid values are one or range of integers
+
+--
+### Type: cisco_encapsulation
+Manages a Global VNI Encapsulation profile
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | not applicable     | not applicable         |
+| N3k      | not applicable     | not applicable         |
+| N5k      | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `encap`
+Profile name of the Encapsulation. Valid values are String only.
+
+#### Properties
+
+##### `dot1q_map`
+The encapsulation profile dot1q vlan-to-vni mapping. Valid values are an array of [vlans, vnis] pairs.
+
+--
+### Type: cisco_evpn_vni
+
+Manages Cisco Ethernet Virtual Private Network (EVPN) VXLAN Network Identifier (VNI) configurations of a Cisco device.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I3(1)        | 1.3.0                  |
+| N3k      | not applicable     | not applicable         |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+
+#### <a name="cisco_evpn_vni-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:---------|:-------------|
+| `route_target_both` | Supported on most Nexus platforms but usage is *discouraged*. See `route_target_both` below. |
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'. Default value is 'present'.
+
+##### `vni`
+The EVPN VXLAN Network Identifier. Valid values are Integer.
+
+#### Properties
+
+##### `route_distinguisher`
+
+The VPN Route Distinguisher (RD). The RD is combined with the IPv4 or IPv6 prefix learned by the PE router to create a globally unique address. Valid values are a String in one of the route-distinguisher formats (ASN2:NN, ASN4:NN, or IPV4:NN); the keyword 'auto', or the keyword 'default'.
+
+##### `route_target_both`
+
+Enables/Disables route-target settings for both import and export target communities using a single property. Valid values are an Array or space-separated String of extended communities, or the keywords 'auto' or 'default'."
+
+*Caveat*: The `route_target_both` property is discouraged due to the inconsistent behavior of the property across Nexus platforms and image versions. The 'both' keyword has a transformative behavior on some platforms/versions in which it creates two cli configurations: one for import targets, a second for export targets, while the 'both' command itself may not appear at all. When the 'both' keyword does not appear in the configuration it causes an idempotency problem for puppet. For this reason it is recommended to use explicit 'route_target_export' and 'route_target_import' properties instead of `route_target_both`.
+
+##### `route_target_import`
+
+Sets the route-target 'import' extended communities. Valid values are an Array or space-separated String of extended communities, or the keywords 'auto' or 'default'.
+
+route_target Examples:
+
+route_target_import => ['1.2.3.4:5', '33:55']
+route_target_export => '4:4 66:66'
+
+##### `route_target_export`
+
+Sets the route-target 'export' extended communities. Valid values are an Array or space-separated String of extended communities, or the keywords 'auto' or 'default'.
+
+--
+### Type: cisco_fabricpath_global
+Manages Cisco fabricpath global parameters.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | not applicable     | not applicable         |
+| N3k      | not applicable     | not applicable         |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+
+#### <a name="cisco_fabricpath_global-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:---------|:-------------|
+| `loadbalance_multicast_has_vlan` | Supported only on N7k |
+| `loadbalance_multicast_rotate`   | Supported only on N7k |
+| `ttl_multicast`                  | Supported only on N7k |
+| `ttl_unicast`                    | Supported only on N7k |
+
+#### Parameters
+
+##### `name`
+ID of the fabricpath global config. The only valid value is keyword 'default'.
+
+##### `aggregate_multicast_routes`
+Aggregate Multicast Routes on same tree in the topology. Valid values are true/false and keyword 'default'. Default value: false.
+
+##### `allocate_delay`
+Fabricpath Timers Allocate Delay in seconds. Valid values are integers from 1..1200 and keyword 'default'. Default value: 10.
+
+##### `graceful_merge`
+Graceful merge for conflicting switch-id or FTAG allocation. Valid values are enable/disable and keyword 'default'. Default value: true.
+
+##### `linkup_delay`
+Fabricpath Timers Link-up Delay in seconds. Valid values are integers from 1..1200 and keyword 'default'. Default value: 10.
+
+##### `loadbalance_algorithm`
+Fabricpath ECMP loadbalancing alogorithm. Valid values are 'destination', 'source', 'source-destination', 'symmetric' and the keyword 'default'. Default is symmetric for Nexus 7000 series and source-destination for others.
+
+##### `loadbalance_multicast_has_vlan`
+Multicast Loadbalance flow parameters - include vlan or not. Valid values are true or false and keyword 'default'. Default value: true.
+
+##### `loadbalance_multicast_rotate`
+Multicast Loadbalance flow parameters -  rotate amount in bytes. Valid values are integer in range 0..15 and keyword 'default'. Default value: 1.
+
+##### `loadbalance_unicast_has_vlan`
+Unicast Loadbalance flow parameters - include vlan or not. Valid values are true/false and keyword 'default'. Default value: 1.
+
+##### `loadbalance_unicast_layer`
+Unicast Loadbalance flow parameters - layer. Valid values are : layer2, layer3,
+layer4, mixed, and keyword 'default'. Default value: mixed.
+
+##### `loadbalance_unicast_rotate`
+Unicast Loadbalance flow parameters - rotate amount in bytes. Valid values are Integers in range 0..15 and keyword 'default'. Default value: 1.
+
+##### `linkup_delay_always`
+Fabricpath Timers Link-up delay always. This configuration introduces a linkup delay always whether the link is administratively brought up or whether it is restored after events such as a module reload. Valid values are true/false. Default: true.
+
+##### `linkup_delay_enable`
+Fabricpath Timers Link-up delay enable. Valid values are true/false and keyword 'default'. Default value: true.
+
+##### `mode`
+Mode of operation of this switch w.r.t to segmentation. Valid values are normal/transit and keyword 'default'. Default: normal.
+
+##### `switch_id`
+The fabricpath switch_id. This parameter can be used to over-ride the automatically assigned switch-id for this switch. Valid values are integers from 1..4094.
+
+##### `transition_delay`
+Fabricpath Timers Transition Delay in seconds. Valid values are integers from 1..1200 and keyword 'default'. Default value: 10.
+
+##### `ttl_multicast`
+Fabricpath Multicast TTL value. Valid values are integers from 1..64 and keyword 'default'. Default value: 32.
+
+##### `ttl_unicast`
+Fabricpath Unicast TTL value. Valid values are integers from 1..64 and keyword 'default'. Default value: 32.
+
+--
+### Type: cisco_fabricpath_topology
+Manages a Cisco fabricpath Topology
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | not applicable     | not applicable         |
+| N3k      | not applicable     | not applicable         |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+
+#### Parameters
+
+##### `topo_id`
+ID of the fabricpath topology. Valid values are integers in the range 1-63.
+Value of 0 is reserved for default topology.
+
+##### `member_vlans`
+ID of the VLAN(s) tha are members of this topology. Valid values are integer/integer ranges.
+
+##### `topo_name`
+Descriptive name of the topology. Valid values are string
+
+--
 ### Type: cisco_interface
 
 Manages a Cisco Network Interface. Any resource dependency should be run before the interface resource.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N3k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N5k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 
 #### <a name="cisco_interface-caveats">Caveats</a>
 
 | Property | Caveat Description |
 |:---------|:-------------|
-| svi_autostate | Not supported on N56xx, N6k |
-| vlan_mapping | Not supported on N9k, N3k, N56xx, N6k |
+| `svi_autostate`       | Only supported on N3k,N7k,N9k |
+| `vlan_mapping`        | Only supported on N7k         |
+| `vlan_mapping_enable` | Only supported on N7k         |
 
 #### Parameters
 
@@ -1369,6 +1704,8 @@ are 'present' and 'absent'.
 
 ###### `interface`
 Name of the interface on the network element. Valid value is a string.
+
+#### Properties
 
 ###### `description`
 Description of the interface. Valid values are a string or the keyword 'default'.
@@ -1384,30 +1721,12 @@ Shutdown state of the interface. Valid values are 'true', 'false', and
 'default'.
 
 ###### `switchport_mode`
-Switchport mode of the interface. To make an interface Layer 3, set
-`switchport_mode` to 'disabled'. Valid values are 'disabled', 'access', 'tunnel', 'fex_fabric', 'trunk', and 'default'.
-
-###### `ipv4_acl_in`
-Apply ipv4 access list on the interface in ingress direction. Access-list should be present on the network device 
-prior this configuration. Valid values are string, keyword 'default'.
-
-###### `ipv4_acl_out`
-Apply ipv4 access list on the interface in egress direction. Access-list should be present on the network device 
-prior this configuration. Valid values are string, keyword 'default'.
-
-###### `ipv6_acl_in`
-Apply ipv6 access list on the interface in ingress direction. Access-list should be present on the network device 
-prior this configuration. Valid values are string, keyword 'default'.
-
-###### `ipv6_acl_out`
-Apply ipv6 access list on the interface in egress direction. Access-list should be present on the network device 
-prior this configuration. Valid values are string, keyword 'default'.
+Switchport mode of the interface. Interfaces that support `switchport_mode` may default to layer 2 or layer 3 depending on platform, interface type, or the `system default switchport` setting. An interface may be explicitly set to Layer 3 by setting `switchport_mode` to 'disabled'. Valid values are 'disabled', 'access', 'tunnel', 'fex_fabric', 'trunk', 'fabricpath' and 'default'.
 
 ##### L2 interface config attributes
 
 ###### `access_vlan`
-The VLAN ID assigned to the interface. Valid values are an integer or the keyword
-'default'.
+The VLAN ID assigned to the interface. Valid values are an integer or the keyword 'default'.
 
 ##### `encapsulation_dot1q`
 Enable IEEE 802.1Q encapsulation of traffic on a specified subinterface.
@@ -1419,6 +1738,36 @@ interface. Valid value is an integer.
 
 ##### `switchport_autostate_exclude`
 Exclude this port for the SVI link calculation. Valid values are 'true', 'false', and 'default'.
+
+##### `private_vlan_mapping`
+Private vlan mapping for interface vlan. List of secondary vlans associated to the interface vlan primary.
+
+##### `switchport_mode_private_vlan_host`
+Switchport host mode for private vlan. This a L2 access port. There are two modes: host and promiscous.
+
+##### `switchport_mode_private_vlan_host_association`
+This configuration specify which vlans are associated on this port. Host mode only support a pair of vlans: primary and secondary. Valid values are an array of ["primary_vlan", "secondary_vlan"] pairs.
+
+##### `switchport_mode_private_vlan_host_promisc`
+This configuration specify which vlans are associated on this port. Promiscous mode only support a pair of vlans: primary and secondaries. Valid values are an array of ["primary_vlan", "secondary_vlan"] pairs.
+
+##### `switchport_mode_private_vlan_trunk_promiscuous`
+Switchport trunk promisc mode for private vlan. This a L2 trunk port capable of carrying multiple primary vlans.
+
+##### `switchport_mode_private_vlan_trunk_secondary`
+Switchport trunk secondary mode for private vlan. This a L2 trunk port capable of carrying multiple secondary vlans.
+
+#### `switchport_private_vlan_association_trunk`
+This configuration specify which vlans are associated on this trunk secondary port. Pair of distinguish vlans in the form of primary and secondary are accepted per entry. Valid values are an array of ["primary_vlan", "secondary_vlan"] pairs.
+
+#### `switchport_private_vlan_mapping_trunk`
+This configuration specify which vlans are associated on this trunk promisc port. Pair of distinguish vlans in the form of primary vlan and secondary vlans (single or range) are accepted per entry. Valid values are an array of ["primary_vlan", "secondary_vlan"] pairs.
+
+#### `switchport_private_vlan_trunk_allowed_vlan`
+This configuration specify which private vlans are associated on this trunk port. Valid values are an array of ["vlan"].
+
+#### `switchport_private_vlan_trunk_native_vlan`
+This configuration specify the native vlan as a private vlan. Valid values are integers.
 
 ##### `switchport_trunk_allowed_vlan`
 The allowed VLANs for the specified Ethernet interface. Valid values are
@@ -1437,14 +1786,17 @@ Enable/Disable negotiate auto on the interface. Valid values are 'true',
 
 ##### L3 interface config attributes
 
+###### `ipv4_acl_in`
+Applies an ipv4 access list on the interface in the ingress direction. An access-list should be present on the network device prior to this configuration. Valid values are string, keyword 'default'.
+
+###### `ipv4_acl_out`
+Applies an ipv4 access list on the interface in the egress direction. An access-list should be present on the network device prior to this configuration. Valid values are string, keyword 'default'.
+
 ###### `ipv4_pim_sparse_mode`
 Enables or disables ipv4 pim sparse mode on the interface. Valid values are 'true', 'false', and 'default'.
 
 ###### `ipv4_proxy_arp`
 Enables or disables proxy arp on the interface. Valid values are 'true', 'false', and 'default'.
-
-###### `ipv4_redirects`
-Enables or disables sending of IP redirect messages. Valid values are 'true', 'false', and 'default'.
 
 ###### `ipv4_address`
 IP address of the interface. Valid values are a string of ipv4 address or the
@@ -1462,6 +1814,24 @@ Network mask length of the secondary IP address on the interface. Valid values a
 
 ###### `ipv4_arp_timeout`
 Address Resolution Protocol (ARP) timeout value. Valid values are integer and keyword 'default'. Currently only supported on vlan interfaces.
+
+###### `ipv4_forwarding`
+IP forwarding state.  Valid values are string or keyword 'default'.
+
+###### `ipv4_pim_sparse_mode`
+Enables or disables ipv4 pim sparse mode on the interface. Valid values are 'true', 'false', and 'default'.
+
+###### `ipv4_proxy_arp`
+Enables or disables proxy arp on the interface. Valid values are 'true', 'false', and 'default'.
+
+###### `ipv4_redirects`
+Enables or disables sending of IP redirect messages. Valid values are 'true', 'false', and 'default'.
+
+###### `ipv6_acl_in`
+Applies an ipv6 access list on the interface in the ingress direction. An access-list should be present on the network device prior to this configuration. Valid values are string, keyword 'default'.
+
+###### `ipv6_acl_out`
+Applies an ipv6 access list on the interface in the egress direction. An access-list should be present on the network device prior to this configuration. Valid values are string, keyword 'default'.
 
 ###### `vlan_mapping`
 This property is a nested array of [original_vlan, translated_vlan] pairs. Valid values are an array specifying the mapped vlans or keyword 'default'; e.g.:
@@ -1482,6 +1852,41 @@ Configure this port-channel interface to be a vPC peer-link. A vPC peer-link is 
 ###### `vrf`
 VRF member of the interface.  Valid values are a string or the keyword 'default'.
 
+##### STP config attributes
+
+##### `stp_bpdufilter`
+Enable/Disable BPDU (Bridge Protocol Data Unit) filter for this interface. Valid values are enable, disable or 'default'.
+
+##### `stp_bpduguard`
+Enable/Disable BPDU (Bridge Protocol Data Unit) guard for this interface. Valid values are enable, disable or 'default'.
+
+##### `stp_cost`
+Path cost. Valid values are integer, 'auto' or 'default'.
+
+##### `stp_guard`
+Guard mode. Valid values are loop, none, root or 'default'.
+
+##### `stp_link_type`
+Link type. Valid values are auto, shared, point-to-point or 'default'.
+
+##### `stp_mst_cost`
+Mst cost. Valid values are an array of [mst_range, cost] pairs or 'default'.
+
+##### `stp_mst_port_priority`
+Mst port priority. Valid values are an array of [mst_range, port_priority] pairs or 'default'.
+
+##### `stp_port_priority`
+Port priority. Valid values are integer or 'default'.
+
+##### `stp_port_type`
+Port type. Valid values are edge, network, normal, edge_trunk or 'default'.
+
+##### `stp_vlan_cost`
+Vlan path cost. Valid values are an array of [vlan_range, cost] pairs or 'default'.
+
+##### `stp_vlan_port_priority`
+Vlan port priority. Valid values are an array of [vlan_range, port_priority] pairs or 'default'.
+
 ##### SVI interface config attributes
 
 ###### `fabric_forwarding_anycast_gateway`
@@ -1498,12 +1903,15 @@ Enable/Disable management on the SVI interface. Valid values are 'true', 'false'
 --
 ### Type: cisco_interface_channel_group
 
-Manages a Cisco Network Interface Channel-group
+Manages a Cisco Network Interface Channel-group.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -1531,10 +1939,13 @@ Shutdown state of the interface. Valid values are 'true', 'false', and 'default'
 
 Manages a Cisco Network Interface Service VNI.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | unsupported | unsupported | unsupported | unsupported | unsupported | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | not applicable     | not applicable         |
+| N3k      | not applicable     | not applicable         |
+| N5k      | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 
 #### Parameters
 
@@ -1548,6 +1959,8 @@ Name of the interface where the service resides. Valid value is a string.
 
 ###### `sid`
 The Service ID number. Valid value is an Integer.
+
+#### Properties
 
 ###### `encapsulation_profile_vni`
 The VNI Encapsulation Profile Name. Valid values are String or the keyword 'default'
@@ -1594,7 +2007,7 @@ Enables or disables the usage of message digest authentication.
 Valid values are 'true' and 'false'.
 
 ##### `message_digest_key_id`
-md5 authentication key-id associated with thecisco_interface_ospf instance.
+md5 authentication key-id associated with the cisco_interface_ospf instance.
 If this is present in the manifest, message_digest_encryption_type,
 message_digest_algorithm_type and message_digest_password are mandatory.
 Valid value is an integer.
@@ -1619,16 +2032,19 @@ Specifies the message_digest password. Valid value is a string.
 
 Manages configuration of a portchannel interface instance.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 
 #### <a name="cisco_interface_portchannel-caveats">Caveats</a>
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `port_hash_distribution ` <br> `port_load_defer ` | Not supported on N56xx, N6k |
+| `port_hash_distribution ` <br> `port_load_defer ` | Not supported on N5k, N6k |
 
 #### Parameters
 
@@ -1654,14 +2070,191 @@ port-channel per port hash-distribution. Valid values are 'adaptive', 'fixed' or
 port-channel per port load-defer. Valid values are true, false or 'default'. This property is not supported on (Nexus 5|6k)
 
 --
+### Type: cisco_itd_device_group
+
+Manages configuration of ITD (Intelligent Traffic Director) device group
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I3(1)        | 1.3.0                  |
+| N3k      | not applicable     | not applicable         |
+| N5k      | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+
+#### Parameters
+
+##### `ensure`
+Determine whether the config should be present or not. Valid values are 'present' and 'absent'.
+
+##### `probe_control`
+Enable control protocol for probe. Valid values are true, false or 'default'. This is applicable only when the probe type is 'tcp' or 'udp'
+
+##### `probe_dns_host`
+Host name or target address when the probe type is 'dns'. Valid values are String.
+
+##### `probe_frequency`
+Probe frequency in seconds. Valid values are Integer, keyword 'default'.
+
+##### `probe_port`
+Probe port number when the type is 'tcp' or 'udp'. Valid values are Integer.
+
+##### `probe_retry_down`
+Probe retry count when the node goes down. Valid values are Integer, keyword 'default'.
+
+##### `probe_retry_up`
+Probe retry count when the node comes back up. Valid values are Integer, keyword 'default'.
+
+##### `probe_timeout`
+Probe timeout in seconds. Valid values are Integer, keyword 'default'.
+
+##### `probe_type`
+Probe type. Valid values are 'icmp', 'dns', 'tcp', 'udp' or keyword 'default'.
+
+--
+### Type: cisco_itd_device_group_node
+
+Manages configuration of ITD (Intelligent Traffic Director) device group node
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I3(1)        | 1.3.0                  |
+| N3k      | not applicable     | not applicable         |
+| N5k      | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+
+#### Parameters
+
+##### `ensure`
+Determine whether the config should be present or not. Valid values are 'present' and 'absent'.
+
+##### `hot_standby`
+Change mode of this node as hot-standby. Valid values are true, false or 'default'.
+
+##### `node_type`
+Type of the device group node. Valid values are ip and IPv6. It defaults to ip if not specified. IPv6 is not supported for N9k.
+
+##### `probe_control`
+Enable control protocol for probe. Valid values are true, false or 'default'. This is applicable only when the probe type is 'tcp' or 'udp'
+
+##### `probe_dns_host`
+Host name or target address when the probe type is 'dns'. Valid values are String.
+
+##### `probe_frequency`
+Probe frequency in seconds. Valid values are Integer, keyword 'default'.
+
+##### `probe_port`
+Probe port number when the type is 'tcp' or 'udp'. Valid values are Integer.
+
+##### `probe_retry_down`
+Probe retry count when the node goes down. Valid values are Integer, keyword 'default'.
+
+##### `probe_retry_up`
+Probe retry count when the node comes back up. Valid values are Integer, keyword 'default'.
+
+##### `probe_timeout`
+Probe timeout in seconds. Valid values are Integer, keyword 'default'.
+
+##### `probe_type`
+Probe type. Valid values are 'icmp', 'dns', 'tcp', 'udp' or keyword 'default'.
+
+##### `weight`
+Weight for traffic distribution. Valid values are Integer, keyword 'default'.
+
+--
+### Type: cisco_itd_service
+
+Manages configuration of ITD (Intelligent Traffic Director) service.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I3(1)        | 1.3.0                  |
+| N3k      | not applicable     | not applicable         |
+| N5k      | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+
+#### <a name="cisco_itd_service-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `nat_destination` | Supported only on N7k |
+| `peer_local`      | Supported only on N9k |
+| `peer_vdc`        | Supported only on N7k |
+
+#### Parameters
+
+##### `ensure`
+Determine whether the config should be present or not. Valid values are 'present' and 'absent'.
+
+##### `access_list`
+ITD access-list name. Valid values are String or 'default'.
+
+##### `device_group`
+Device group name where this service belongs. Valid values are String or 'default'.
+
+##### `exclude_access_list`
+ITD exclude-access-list name. Valid values are String or 'default'.
+
+##### `fail_action`
+ITD failaction to reassign node. This enables traffic on failed nodes to be reassigned to the first available active node. Valid values are true, false or 'default'.
+
+##### `ingress_interface`
+Ingress interface. Valid values are an array of `[interface, next-hop]` pairs or 'default'.
+
+##### `load_bal_enable`
+Enable or disable load balance. Valid values are true, false or 'default'.
+
+##### `load_bal_buckets`
+Buckets for traffic distribution (in powers of 2). Valid values are Integer, or keyword 'default'.
+
+##### `load_bal_mask_pos`
+Loadbalance mask position. Valid values are Integer, keyword 'default'.
+
+##### `load_bal_method_bundle_select`
+Loadbalance bundle select. Valid values are 'src, 'dst' or keyword 'default'.
+
+##### `load_bal_method_bundle_hash`
+Loadbalance bundle hash. Valid values are 'ip, 'ip-l4port' or keyword 'default'.
+
+##### `load_bal_method_proto`
+Loadbalance protocol. This is valid only when the bundle hash is 'ip-l4port'. Valid values are 'tcp, 'udp' or keyword 'default'.
+
+##### `load_bal_method_start_port`
+Starting port in range (to match only packets in the range of port numbers). This is valid only when the bundle hash is 'ip-l4port'. Valid values are Integer, keyword 'default'.
+
+##### `load_bal_method_end_port`
+Ending port in range (to match only packets in the range of port numbers). This is valid only when the bundle hash is 'ip-l4port'. Valid values are Integer, keyword 'default'.
+
+##### `nat_destination`
+Destination NAT. Valid values are true, false or 'default'.
+
+##### `peer_local`
+Peer involved in sandwich mode. Valid values are String or 'default'.
+
+##### `peer_vdc`
+Peer involved in sandwich mode. Valid values are an array of `[vdc, service]` or 'default'.
+
+##### `shutdown`
+Whether or not the service is shutdown. Valid values are 'true', 'false' and
+keyword 'default'.
+
+##### `virtual_ip`
+Virtual ip configuration. Valid values are an array of Strings or 'default'.
+
+--
 ### Type: cisco_ospf
 
 Manages configuration of an ospf instance.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N3k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N5k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 
 #### Parameters
 
@@ -1677,10 +2270,13 @@ Name of the ospf router. Valid value is a string.
 
 Manages a VRF for an OSPF router.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N3k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N5k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 
 #### Parameters
 
@@ -1739,10 +2335,13 @@ Valid values are an integer, in Mbps, or the keyword 'default'.
 Handles the detection of duplicate IP or MAC addresses based on the number of moves in a given time-interval (seconds).
 Also configures anycast gateway MAC of the switch.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | unsupported | unsupported | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | not applicable     | not applicable         |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -1768,10 +2367,13 @@ The duplicate detection timeout in seconds for the number of host moves. The ran
 ### Type: cisco_pim
 Manages configuration of an Protocol Independent Multicast (PIM) instance.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 
 #### Parameters
 
@@ -1781,6 +2383,8 @@ Address Family Identifier (AFI). Required. Valid value is ipv4.
 ##### `vrf`
 Name of the resource instance. Required. Valid values are string. The name 'default' is a valid VRF representing the global vrf.
 
+#### Properties
+
 ##### `ssm_range`
 Configure group ranges for Source Specific Multicast (SSM). Valid values are multicast addresses or the keyword ‘none’.
 
@@ -1788,10 +2392,13 @@ Configure group ranges for Source Specific Multicast (SSM). Valid values are mul
 ### Type: cisco_pim_grouplist
 Manages configuration of an Protocol Independent Multicast (PIM) static route processor (RP) address for a multicast group range.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 
 #### Parameters
 
@@ -1811,10 +2418,13 @@ Specifies a group range for a static route processor (RP) address. Required. Val
 ### Type: cisco_pim_rp_address
 Manages configuration of an Protocol Independent Multicast (PIM) static route processor (RP) address instance.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 
 #### Parameters
 
@@ -1831,60 +2441,184 @@ Configures a Protocol Independent Multicast (PIM) static route processor (RP) ad
 ### Type: cisco_portchannel_global
 Manages configuration of a portchannel global parameters
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | unsupported | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.3.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 
 #### <a name="cisco_portchannel_global-caveats">Caveats</a>
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `asymmetric` <br> `hash_distribution` <br> `load_defer` | Supported only on N7k |
-| `concatenation` <br> `resilient` | Supported only on N9k, N30xx, N31xx |
-| `hash_poly` <br> `rotate` | Supported only on N56xx, N6k |
-| `symmetry ` | Supported only on N9k |
+| `asymmetric` <br> `hash_distribution` <br> `load_defer`                  | Supported only on N7k |
+| `bundle_hash` values: `port`, `ip-only`, `port-only`                     | Only supported on N3k, N5k, N6k |
+| `bundle_hash` values: `ip-gre`                                           | Only supported on N3k, N9k |
+| `bundle_hash` values: `ip-l4port`, `ip-l4port-vlan`, `ip-vlan`, `l4port` | Only supported on N7k, N9k |
+| `concatenation`             | Supported only on N9k      |
+| `hash_poly`                 | Supported only on N5k, N6k |
+| `resilient` <br> `symmetry` | Supported only on N3k, N9k |
+| `rotate`                    | Supported only on N7k, N9k |
 
 #### Parameters
 
 ##### `asymmetric`
-port-channel asymmetric hash. Valid values are true, false or 'default'. This property is supported only on (Nexus 7k)
+port-channel asymmetric hash. Valid values are true, false or 'default'.
 
 ##### `bundle_hash`
-port-channel bundle hash. Valid values are 'ip', 'ip-l4port', 'ip-l4port-vlan', 'ip-vlan', 'l4port', 'mac', 'port', 'ip-only', 'port-only', 'ip-gre' or 'default'. 'port', 'ip-only', 'port-only', 'ip-gre' are not supported on (Nexus 7k). 'ip-l4port', 'ip-l4port-vlan', 'ip-vlan', 'l4port', 'ip-gre' are not supported on (Nexus 5|6k). 'port', 'ip-only', 'port-only' are not supported on (Nexus 3|9k)
+port-channel bundle hash. Valid values are 'ip', 'ip-l4port', 'ip-l4port-vlan', 'ip-vlan', 'l4port', 'mac', 'port', 'ip-only', 'port-only', 'ip-gre' or 'default'.
 
 ##### `bundle_select`
 port-channel bundle select. Valid values are 'src', 'dst', 'src-dst' or 'default'.
 
 ##### `concatenation`
-port-channel concatenation enable or disable. Valid values are true, false or 'default'. This property is supported only on (Nexus 3|9k)
+port-channel concatenation enable or disable. Valid values are true, false or 'default'.
 
 ##### `hash_distribution`
-port-channel hash-distribution. Valid values are 'adaptive', 'fixed' or the keyword 'default'. This property is supported only on (Nexus 7k)
+port-channel hash-distribution. Valid values are 'adaptive', 'fixed' or the keyword 'default'.
 
 ##### `hash_poly`
-port-channel hash-polynomial. Valid values are 'CRC10a', 'CRC10b', 'CRC10c', 'CRC10d'. This property is supported only on (Nexus 5|6k).
+port-channel hash-polynomial. Valid values are 'CRC10a', 'CRC10b', 'CRC10c' or 'CRC10d'. Note: This property does not support the keyword 'default'.
 
 ##### `load_defer`
-port-channel load-defer time interval. Valid values are integer or 'default'. This property is supported only on (Nexus 7k)
+port-channel load-defer time interval. Valid values are integer or 'default'.
 
 ##### `resilient`
-port-channel resilient mode. Valid values are true, false or 'default'. This property is supported only on (Nexus 3|9k)
+port-channel resilient mode. Valid values are true, false or 'default'.
 
 ##### `rotate`
-port-channel hash input offset. Valid values are integer or 'default'. This property is not supported on (Nexus 5|6k)
+port-channel hash input offset. Valid values are integer or 'default'.
 
 ##### `symmetry`
-port-channel symmetry hash. Valid values are true, false or 'default'. This property is supported only on (Nexus 3|9k)
+port-channel symmetry hash. Valid values are true, false or 'default'.
+
+--
+### Type: cisco_stp_global
+Manages spanning tree global parameters
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.3.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.3.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+
+#### <a name="cisco_stp_global-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `bd_designated_priority` | Supported only on N7k |
+| `bd_forward_time`        | Supported only on N7k |
+| `bd_hello_time`          | Supported only on N7k |
+| `bd_max_age`             | Supported only on N7k |
+| `bd_priority`            | Supported only on N7k |
+| `bd_root_priority`       | Supported only on N7k |
+| `domain`                 | Supported only on N5k, N6k, N7k |
+| `fcoe`                   | Supported only on N9k |
+
+#### Parameters
+
+##### `bd_designated_priority`
+Designated bridge priority. Valid values are an array of [bd_range, designated_priority] pairs or 'default'.
+
+##### `bd_forward_time`
+Forward delay. Valid values are an array of [bd_range, forward_time] pairs or 'default'.
+
+##### `bd_hello_time`
+Hello interval. Valid values are an array of [bd_range, hello_time] pairs or 'default'.
+
+##### `bd_max_age`
+Max age interval. Valid values are an array of [bd_range, max_age] pairs or 'default'.
+
+##### `bd_priority`
+Bridge priority. Valid values are an array of [bd_range, priority] pairs or 'default'.
+
+##### `bd_root_priority`
+Root bridge priority. Valid values are an array of [bd_range, root_priority] pairs or 'default'.
+
+##### `bpdufilter`
+Edge port (portfast) bpdu filter. Valid values are true, false or 'default'.
+
+##### `bpduguard`
+Edge port (portfast) bpdu guard. Valid values are true, false or 'default'.
+
+##### `bridge_assurance`
+Bridge Assurance on all network ports. Valid values are true, false or 'default'.
+
+##### `domain`
+Domain. Valid values are integer or 'default'.
+
+##### `fcoe`
+Spanning tree protocol for FCoE VLAN. Valid values are true, false or 'default'.
+
+##### `loopguard`
+Enable loopguard by default on all ports. Valid values are true, false or 'default'.
+
+##### `mode`
+Operating mode. Valid values are mst, rapid-pvst or 'default'.
+
+##### `mst_designated_priority`
+Designated priority for multiple spanning tree configuration. Valid values are an array of [mst_range, designated_priority] pairs or 'default'
+
+##### `mst_hello_time`
+Hello interval for multiple spanning tree configuration. Valid values are integer or 'default'.
+
+##### `mst_inst_vlan_map`
+Map vlans to an MST instance. Valid values are an array of [mst_instance, vlan_range] pairs or 'default'
+
+##### `mst_max_age`
+Max age interval for multiple spanning tree configuration. Valid values are integer or 'default'.
+
+##### `mst_max_hops`
+Max hops for multiple spanning tree configuration. Valid values are integer or 'default'
+
+##### `mst_name`
+Name for multiple spanning tree configuration. Valid values are String or 'default'
+
+##### `mst_priority`
+Priority for multiple spanning tree configuration. Valid values are an array of [mst_range, priority] pairs or 'default'
+
+##### `mst_revision`
+Configuration revision number for multiple spanning tree configuration. Valid values are String or 'default'
+
+##### `mst_root_priority`
+Root priority for multiple spanning tree configuration. Valid values are an array of [mst_range, root_priority] pairs or 'default'
+
+##### `pathcost`
+Pathcost option. Valid values are long, short or 'default'.
+
+##### `vlan_designated_priority`
+Designated priority for vlan. Valid values are an array of [vlan_range, designated_priority] pairs or 'default'
+
+##### `vlan_forward_time`
+Forward delay for vlan. Valid values are an array of [vlan_range, forward_time] pairs or 'default'
+
+##### `vlan_hello_time`
+Hello interval for vlan. Valid values are an array of [vlan_range, hello_time] pairs or 'default'
+
+##### `vlan_max_age`
+Max age interval for vlan. Valid values are an array of [vlan_range, max_age] pairs or 'default'
+
+##### `vlan_priority`
+Priority for vlan. Valid values are an array of [vlan_range, priority] pairs or 'default'
+
+##### `vlan_root_priority`
+Root priority for vlan. Valid values are an array of [vlan_range, root_priority] pairs or 'default'
 
 --
 ### Type: cisco_snmp_community
 Manages an SNMP community on a Cisco SNMP server.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N3k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N5k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 
 #### Parameters
 
@@ -1911,10 +2645,13 @@ Manages a Cisco SNMP Group on a Cisco SNMP Server.
 The term 'group' is a standard SNMP term, but in NXOS role it serves the purpose
 of group; thus this provider utility does not create snmp groups and only reports group (role) existence.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N3k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N5k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 
 #### Parameters
 
@@ -1930,10 +2667,13 @@ Name of the snmp group. Valid value is a string.
 Manages a Cisco SNMP Server. There can only be one instance of the
 cisco_snmp_server.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N3k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N5k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 
 #### Parameters
 
@@ -1971,10 +2711,13 @@ Valid values are 'true', 'false', and 'default'.
 
 Manages an SNMP user on an cisco SNMP server.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N3k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N5k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 
 #### Parameters
 
@@ -2016,10 +2759,13 @@ format (in case of true) or cleartext (in case of false). Valid values are 'true
 Manages a Cisco TACACS+ Server global configuration. There can only be one
 instance of the cisco_tacacs_server.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N3k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N5k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 
 #### Parameters
 
@@ -2055,10 +2801,13 @@ Valid values are string, and keyword 'default'.
 
 Configures Cisco TACACS+ server hosts.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N3k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N5k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 
 #### Parameters
 
@@ -2088,10 +2837,13 @@ Specifies a preshared key for the host. Valid values are 'clear', 'encrypted',
 
 Manages a Cisco VDC (Virtual Device Context).
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | unsupported | unsupported | unsupported | unsupported | unsupported | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | not applicable     | not applicable         |
+| N3k      | not applicable     | not applicable         |
+| N5k      | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 
 #### Parameters
 
@@ -2102,6 +2854,8 @@ Name of the VDC. Valid value is a String or optional keyword 'default' when refe
 ##### `ensure`
 Determines whether the config should be present or not. Valid values are 'present' and 'absent'.
 
+#### Properties
+
 ##### `limit_resource_module_type`
 This command restricts the allowed module-types in a given VDC. Valid values are String or keyword 'default'.
 
@@ -2110,16 +2864,20 @@ This command restricts the allowed module-types in a given VDC. Valid values are
 
 Manages a Cisco VLAN.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N3k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N5k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 
 #### <a name="cisco_vlan-caveats">Caveats</a>
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `mode` | Not supported on N9k, N30xx, N31xx |
+| `fabric_control` | Only supported on N7k (support added in ciscopuppet 1.3.0) |
+| `mode`           | Only supported on N5k,N6k,N7k |
 
 #### Parameters
 
@@ -2132,6 +2890,10 @@ Determines whether the config should be present or not. Valid values are 'presen
 ##### `mapped_vni`
 The Virtual Network Identifier (VNI) id that is mapped to the VLAN. Valid values are integer and keyword 'default'.
 
+##### `mode`
+Determines mode of the VLAN. Valid values are 'CE', 'fabricpath' and
+keyword 'default'.
+
 ##### `vlan_name`
 The name of the VLAN. Valid values are a string or the keyword 'default'.
 
@@ -2142,25 +2904,39 @@ State of the VLAN. Valid values are 'active', 'suspend', and keyword 'default'.
 Whether or not the vlan is shutdown. Valid values are 'true', 'false' and
 keyword 'default'.
 
+##### `private_vlan_type`
+The private vlan type. Valid values are 'primary', 'isolated' and 'community'.
+
+##### `private_vlan_association`
+Associate the secondary vlanis to the primary vlan. Valid values are integer like 5,10-12.
+
+##### `fabric_control`
+Specifies this vlan as the fabric control vlan. Only one bridge-domain or VLAN can be configured as fabric-control. Valid values are true, false.
+
 --
 ### Type: cisco_vpc_domain
 Manages the virtual Port Channel (vPC) domain configuration of a Cisco device.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 
 #### <a name="cisco_vpc_domain-caveats">Caveats</a>
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `auto_recovery` | Not supported on N56xx, N6k |
-| `layer3_peer_routing` | Not supported on N9k, N30xx, N31xx, N56xx |
-| `peer_gateway_exclude_vlan` | Not supported on N9k, N30xx, N31xx |
-| `port_channel_limit` | Not supported on N9k, N56xx, N6k |
-| `self_isolation` | Not supported on N9k, N56xx, N6k |
-| `shutdown` | Not supported on N9k, N30xx, N31xx |
+| `auto_recovery`                     | Only supported on N3k, N7k, N9k |
+| `fabricpath_emulated_switch_id`     | Only supported on N7k           |
+| `fabricpath_multicast_load_balance` | Only supported on N7k           |
+| `layer3_peer_routing`               | Only supported on N5k, N6k, N7k |
+| `peer_gateway_exclude_vlan`         | Only supported on N5k, N6k, N7k |
+| `port_channel_limit`                | Only supported on N7k           |
+| `self_isolation`                    | Only supported on N7k           |
+| `shutdown`                          | Only supported on N5k, N6k, N7k |
 
 #### Parameters
 
@@ -2185,6 +2961,12 @@ range 1..3600. Default value: 10.
 
 ##### `dual_active_exclude_interface_vlan_bridge_domain`
 Interface VLANs or BDs to exclude from suspension when dual-active. Valid value is a string of integer ranges from 1..4095. There is no default value.
+
+##### `fabricpath_emulated_switch_id`
+Configure a fabricpath switch_Id to enable vPC+ mode. This is also known as the Emulated switch-id.  Valid values are integers in the range 1..4095. There is no default value.
+
+##### `fabricpath_multicast_load_balance`
+In vPC+ mode, enable or disable the fabricpath multicast load balance. This loadbalances the Designated Forwarder selection for multicast traffic. Valid values are true, false or default
 
 ##### `graceful_consistency_check`
 Graceful conistency check . Valid values are true, false or default. Default value: true.
@@ -2222,6 +3004,10 @@ Enable or Disable Layer3 forwarding for packets with peer gateway-mac. Valid val
 ##### `peer_gateway_exclude_vlan`
 Interface vlans to exclude from peer gateway functionality. Valid value is a string of integer ranges from 1..4095. This parameter is available only in Nexus 5000, Nexus 6000 and Nexus 7000 series. There is no default value.
 
+##### `port_channel_limit`
+In vPC+ mode, enable or disable the port channel scale limit of
+244 vPCs.  Valid values are true, false or default
+
 ##### `role_priority`
 Priority to be used during vPC role selection of primary vs secondary. Valid values are integers in the range 1..65535. Default value: 32667.
 
@@ -2229,7 +3015,7 @@ Priority to be used during vPC role selection of primary vs secondary. Valid val
 Enable or Disable self-isolation function for vPC. Valid values are true, false or default. This parameter is available only in Nexus 7000 series. Default value: false.
 
 ##### `shutdown`
-Whether or not the vPC domain is shutdown. This property is not avialable on Nexus 9000 and Nexus 3000 series. Default value: false.
+Whether or not the vPC domain is shutdown.  Default value: false.
 
 ##### `system_mac`
 vPC system mac. Valid values are in mac addresses format. There is no default value.
@@ -2243,10 +3029,25 @@ vPC system priority. Valid values are integers in the range 1..65535. Default va
 Manages Cisco Virtual Routing and Forwarding (VRF) configuration of a Cisco
 device.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+
+#### <a name="cisco_vrf-caveats">Caveats</a>
+
+| Property                     | Caveat Description               |
+|------------------------------|----------------------------------|
+| mhost_ipv4_default_interface | Not supported on Nexus           |
+| mhost_ipv6_default_interface | Not supported on Nexus           |
+| remote_route_filtering       | Not supported on Nexus           |
+| route_distinguisher          | Only supported on N3k, N9k       |
+| shutdown                     | Only supported on N3k, N9k       |
+| vni                          | Only supported on N9k            |
+| vpn_id                       | Not supported on Nexus           |
 
 #### Parameters
 
@@ -2258,16 +3059,27 @@ values are 'present' and 'absent'. Default value is 'present'.
 Name of the VRF. Valid value is a string of non-whitespace characters. It is
 not case-sensitive and overrides the title of the type.
 
+#### Properties
+
 ##### `description`
 Description of the VRF. Valid value is string.
+
+##### `mhost_ipv4_default_interface`
+Specify multicast ipv4 host default interface. Valid value will be a valid interface or the keyword 'default'.
+
+##### `mhost_ipv6_default_interface`
+Specify multicast ipv6 host default interface. Valid value will be a valid interface or the keyword 'default'.
+
+##### `remote_route_filtering`
+Enable/disable remote route filtering. Valid value will be true, false or the keyword 'default'.
 
 <a name='vrf_rd'></a>
 ##### `route_distinguisher`
 VPN Route Distinguisher (RD). The RD is combined with the IPv4 or IPv6 prefix learned by the PE router to create a globally unique address. Valid values are a String in one of the route-distinguisher formats (ASN2:NN, ASN4:NN, or IPV4:NN); the keyword 'auto', or the keyword 'default'.
 
-*Please note:* The `route_distinguisher` property is typically configured within the VRF context configuration on most platforms (including NXOS) but it is tightly coupled to bgp and therefore configured within the BGP configuration on some platforms (XR for example). For this reason the `route_distinguisher` property has support (with limitations) in both `cisco_vrf` and `cisco_bgp` providers:
+*Please note:* The `route_distinguisher` property is typically configured within the VRF context configuration on most platforms (including NXOS) but it is tightly coupled to bgp and therefore configured within the BGP configuration on some non-NXOS platforms. For this reason the `route_distinguisher` property has support (with limitations) in both `cisco_vrf` and `cisco_bgp` providers:
 
-* `cisco_bgp`: The property is fully supported on both NXOS and XR. See: [cisco_bgp: route_distinguisher](#bgp_rd)
+* `cisco_bgp`: The property is supported on both NXOS and some non-NXOS platforms. See: [cisco_bgp: route_distinguisher](#bgp_rd)
 * `cisco_vrf`: The property is only supported on NXOS.
 
 *IMPORTANT: Choose only one provider to configure the `route_distinguisher` property on a given device. Using both providers simultaneously on the same device may have unpredictable results.*
@@ -2278,15 +3090,32 @@ Shutdown state of the VRF. Valid values are 'true', 'false', and 'default'.
 ##### `vni`
 Specify virtual network identifier. Valid values are Integer or keyword 'default'.
 
+##### `vpn_id`
+Specify vpn_id. Valid values are <0-ffffff>:<0-ffffffff>  or keyword 'default'.
+
 --
 ### Type: cisco_vrf_af
 
 Manages Cisco Virtual Routing and Forwarding (VRF) Address-Family configuration.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 | 1.2.0 |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+
+#### <a name="cisco_vrf_af-caveats">Caveats</a>
+
+| Property                      | Caveat Description                   |
+|-------------------------------|--------------------------------------|
+| route_target_both_auto        | Not supported on N3k                 |
+| route_target_both_auto_evpn   | Not supported on N3k                 |
+| route_target_export_evpn      | Not supported on N3k                 |
+| route_target_export_stitching | Not supported on Nexus               |
+| route_target_import_evpn      | Not supported on N3k                 |
+| route_target_import_stitching | Not supported on Nexus               |
 
 #### Parameters
 
@@ -2304,6 +3133,14 @@ Address-Family Identifier (AFI). Required. Valid values are 'ipv4' or 'ipv6'.
 ##### `safi`
 Sub Address-Family Identifier (SAFI). Required. Valid values are `unicast` or `multicast`.
 *`multicast` is not supported on some platforms.*
+
+#### Properties
+
+##### `route policy export`
+Set route-policy (route-map) export name. Valid value is string or keyword 'default'.
+
+##### `route policy import`
+Set route-policy (route-map) import name. Valid value is string or keyword 'default'.
 
 ##### `route target both auto`
 Enable/Disable the route-target 'auto' setting for both import and export target communities. Valid values are true, false, or 'default'.
@@ -2325,11 +3162,17 @@ route_target_export_evpn => '5:5'
 ##### `route_target_import_evpn`
 (EVPN only) Sets the route-target import extended communities for EVPN. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
 
+##### `route_target_import_stitching`
+(Stitching only) Sets the route-target import extended communities for stitching. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
 ##### `route_target_export`
 Sets the route-target export extended communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
 
 ##### `route_target_export_evpn`
 (EVPN only) Sets the route-target export extended communities for EVPN. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
+##### `route_target_export_stitching`
+(Stitching only) Sets the route-target export extended communities for stitching. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
 
 --
 ### Type: cisco_vtp
@@ -2337,10 +3180,13 @@ Sets the route-target export extended communities. Valid values are an Array or 
 Manages the VTP (VLAN Trunking Protocol) configuration of a Cisco device.
 There can only be one instance of the cisco_vtp.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.0.1 | 1.0.1 | 1.0.1 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N3k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -2367,10 +3213,13 @@ Password for the VTP domain. Valid values are a string or the keyword 'default'.
 ### Type: cisco_vxlan_vtep
 Creates a VXLAN Network Virtualization Endpoint (NVE) overlay interface that terminates VXLAN tunnels.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | unsupported | unsupported | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | not applicable     | not applicable         |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -2389,14 +3238,20 @@ Administratively shutdown the NVE interface. Valid values are true, false or key
 ##### `source_interface`
 Specify the loopback interface whose IP address should be used for the NVE interface. Valid values are string or keyword 'default'.
 
+##### `source_interface_hold_down_time`
+Suppresses advertisement of the NVE loopback address until the overlay has converged. Valid values are Integer or keyword 'default'.
+
 --
 ### Type: cisco_vxlan_vtep_vni
 Creates a Virtual Network Identifier member (VNI) for an NVE overlay interface.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | unsupported | unsupported | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | not applicable     | not applicable         |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -2435,10 +3290,13 @@ The following resources are listed alphabetically.
 
 Configure the domain name of the device
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -2451,10 +3309,13 @@ Domain name of the device. Valid value is a string.
 --
 ### Type: name_server
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -2467,10 +3328,13 @@ Hostname or address of the DNS server.  Valid value is a string.
 --
 ### Type: network_dns
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -2494,15 +3358,20 @@ Array of DNS servers to use for name resolution.  Valid value is an array of str
 
 Manages a puppet netdev_stdlib Network Interface. Any resource dependency should be run before the interface resource.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
 ###### `name`
 Name of the interface on the network element. Valid value is a string.
+
+#### Properties
 
 ###### `description`
 Description of the interface. Valid values are a string or the keyword 'default'.
@@ -2520,10 +3389,13 @@ interface. Valid value is an integer.
 --
 ### Type: network_snmp
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -2544,15 +3416,20 @@ Location of this device.  Valid value is a string.
 
 Manages a puppet netdev_stdlib Network Trunk. It should be noted that while the NetDev stdlib has certain specified accepted parameters these may not be applicable to different network devices. For example, certain Cisco devices only use dot1q encapsulation, and therefore other values will cause errors.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
 ###### `name`
 The switch interface name. Valid value is a string.
+
+#### Properties
 
 ###### `encapsulation`
 The vlan-tagging encapsulation protocol, usually dot1q. Valid values are 'dot1q', 'isl', 'negotiate' and 'none'. Cisco devices use dot1q encapsulation.
@@ -2570,12 +3447,42 @@ Array of VLAN names used for tagged packets. Values must be in range of 1 to 409
 Array of VLAN ID numbers used for VLAN pruning. Values must be in range of 1 to 4095. Cisco do not implement the concept of pruned vlans.
 
 --
+### Type: network_vlan
+
+Manages a puppet netdev_stdlib Network Vlan.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+###### `id`
+ID of the Virtual LAN. Valid value is a string.
+
+###### `shutdown`
+Whether or not the vlan is shutdown. Valid values are 'true' or 'false'.
+
+###### `vlan_name`
+The name of the VLAN.  Valid value is a string.
+
+--
 ### Type: ntp_config
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -2588,10 +3495,13 @@ Source interface for the NTP server.  Valid value is a string.
 --
 ### Type: ntp_server
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -2604,10 +3514,13 @@ Hostname or IPv4/IPv6 address of the NTP server.  Valid value is a string.
 --
 ### Type: port_channel
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -2629,10 +3542,13 @@ Name of the port channel. eg port-channel100. Valid value is a string.
 --
 ### Type: radius
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -2645,10 +3561,13 @@ Enable or disable radius functionality.  Valid values are 'true' or 'false'.
 --
 ### Type: radius_global
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -2670,10 +3589,18 @@ Encryption key format [0-7].  Valid value is an integer.
 --
 ### Type: radius_server
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+
+#### <a name="radius_server-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
 
 #### Parameters
 
@@ -2695,7 +3622,7 @@ Number of seconds before the timeout period ends.  Valid value is an integer.
 ##### `retransmit_count`
 Number of times to retransmit.  Valid value is an integer.
 
-##### `accouting_only`
+##### `accounting_only`
 Enable this server for accounting only.  Valid values are 'true' or 'false'.
 
 ##### `authentication_only`
@@ -2708,14 +3635,33 @@ Encryption key (plaintext or in hash form depending on key_format).  Valid value
 Encryption key format [0-7].  Valid value is an integer.
 
 --
+### Type: radius_server_group
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+
+#### Parameters
+
+##### `servers`
+Array of servers associated with this group.
+
+--
 ### Type: search_domain
 
 Configure the search domain of the device. Note that this type is functionally equivalent to the netdev_stdlib domain_name type.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -2730,10 +3676,13 @@ Search domain of the device. Valid value is a string.
 
 Manages an SNMP community on a Cisco SNMP server.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -2754,10 +3703,13 @@ requests. Valid values are a string or the keyword 'default'.
 
 Manages an SNMP notification on a Cisco SNMP server.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -2768,12 +3720,15 @@ values are true and false.
 --
 ### Type: snmp_notification_receiver
 
-Manages an SNMP user on an cisco SNMP server.
+Manages an SNMP notification receiver on an cisco SNMP server.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -2810,10 +3765,13 @@ Source interface to send SNMP data from, e.g. "ethernet 2/1".
 
 Manages an SNMP user on an cisco SNMP server.
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -2850,10 +3808,13 @@ format (in case of true) or cleartext (in case of false). Valid values are 'true
 --
 ### Type: syslog_server
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -2872,10 +3833,13 @@ Interface to send syslog data from, e.g. "management".  Valid value is a string.
 --
 ### Type: syslog_setting
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.1.0 | 1.1.0 | 1.1.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -2888,10 +3852,13 @@ The unit of measurement for log time values.  Valid values are 'seconds' and 'mi
 --
 ### Type: tacacs
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -2901,10 +3868,13 @@ Enable or disable radius functionality [true|false]
 --
 ### Type: tacacs_global
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -2923,10 +3893,13 @@ Number of seconds before the timeout period ends
 --
 ### Type: tacacs_server
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 ##### `ensure`
 Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
@@ -2949,10 +3922,13 @@ Number of seconds before the timeout period ends
 --
 ### Type: tacacs_server_group
 
-| Minimum Requirements | N9k | N30xx | N31xx | N56xx | N6k | N7k |
-|----------------------|:---:|:-----:|:-----:|:-----:|:---:|:---:|
-| OS Image | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.0(3)I2(1) | 7.3(0)N1(1) | 7.3(0)N1(1) | 7.3(0)D1(1) |
-| Puppet Module | 1.2.0 | 1.2.0 | 1.2.0 | unsupported | unsupported | unsupported |
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.3.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### Parameters
 
@@ -2962,15 +3938,13 @@ Array of servers associated with this group.
 ## Limitations
 
 Minimum Requirements:
-* Cisco NX-OS Puppet implementation requires open source Puppet version 4.0 or Puppet Enterprise 2015.2
-* Supported Platforms:
-  * Cisco Nexus 95xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
-  * Cisco Nexus 93xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
-  * Cisco Nexus 31xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
-  * Cisco Nexus 30xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
-  * Cisco Nexus 56xx, OS Version 7.3(0)N1(1), Environments: Open Agent Container (OAC)
-  * Cisco Nexus 60xx, OS Version 7.3(0)N1(1), Environments: Open Agent Container (OAC)
-  * Cisco Nexus 7xxx, OS Version 7.3(0)D1(1), Environments: Open Agent Container (OAC)
+* Cisco NX-OS:
+  * Open source Puppet version 4.0+ or Puppet Enterprise 2015.2+
+  * Cisco Nexus N9k, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
+  * Cisco Nexus N3k, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
+  * Cisco Nexus N5k, OS Version 7.3(0)N1(1), Environments: Open Agent Container (OAC)
+  * Cisco Nexus N6k, OS Version 7.3(0)N1(1), Environments: Open Agent Container (OAC)
+  * Cisco Nexus N7k, OS Version 7.3(0)D1(1), Environments: Open Agent Container (OAC)
 
 ## Learning Resources
 

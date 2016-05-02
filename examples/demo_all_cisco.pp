@@ -30,21 +30,26 @@ class ciscopuppet::demo_all_cisco {
   include ciscopuppet::cisco::demo_acl
   include ciscopuppet::cisco::demo_bgp
   include ciscopuppet::cisco::demo_command_config
+  include ciscopuppet::cisco::demo_evpn
+  include ciscopuppet::cisco::demo_fabricpath
   include ciscopuppet::cisco::demo_interface
   #include ciscopuppet::cisco::demo_interface_service_vni
+  include ciscopuppet::cisco::demo_itd
   include ciscopuppet::cisco::demo_ospf
   include ciscopuppet::cisco::demo_patching
   include ciscopuppet::cisco::demo_pim
   include ciscopuppet::cisco::demo_portchannel
   include ciscopuppet::cisco::demo_snmp
+  #stp_bd and stp_vlan are exclusive, so comment one of them
+  #include ciscopuppet::cisco::demo_stp_bd
+  include ciscopuppet::cisco::demo_stp_vlan
   include ciscopuppet::cisco::demo_tacacs_server
   include ciscopuppet::cisco::demo_tacacs_server_host
   include ciscopuppet::cisco::demo_vlan
   include ciscopuppet::cisco::demo_vpc_domain
   include ciscopuppet::cisco::demo_vrf
   include ciscopuppet::cisco::demo_vtp
-  # Conditionally include ciscopuppet::demo_vxlan 
-  if platform_get() =~ /n9k/ { 
-    include ciscopuppet::cisco::demo_vxlan 
-  }
+  include ciscopuppet::cisco::demo_bridge_domain
+  include ciscopuppet::cisco::demo_encapsulation
+  include ciscopuppet::cisco::demo_vxlan
 }

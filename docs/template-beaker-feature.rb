@@ -15,7 +15,7 @@
 ###############################################################################
 # TestCase Name:
 # -------------
-# test-X__RESOURCE_NAME__X.rb
+# test_X__RESOURCE_NAME__X.rb
 #
 # TestCase Prerequisites:
 # -----------------------
@@ -23,18 +23,17 @@
 # Nexus devices.
 # The test case assumes the following prerequisites are already satisfied:
 #   - Host configuration file contains agent and master information.
-#   - SSH is enabled on the N9K Agent.
+#   - SSH is enabled on the Agent.
 #   - Puppet master/server is started.
 #   - Puppet agent certificate has been signed on the Puppet master/server.
 #
 # TestCase:
 # ---------
-# This X__RESOURCE_NAME__X resource test verifies default values for all properties.
+# This X__RESOURCE_NAME__X resource test verifies all properties.
 #
-# The following exit_codes are validated for Puppet, Vegas shell and
-# Bash shell commands.
+# The following exit_codes are validated for Puppet and Bash shell commands.
 #
-# Vegas and Bash Shell Commands:
+# Bash Shell Commands:
 # 0   - successful command execution
 # > 0 - failed command execution.
 #
@@ -65,64 +64,75 @@ UtilityLib.set_manifest_path(master, self)
 # The 'tests' hash is used to define all of the test data values and expected
 # results. It is also used to pass optional flags to the test methods when
 # necessary.
+def generate_tests_hash(agent)
+  # 'tests' hash
+  # Top-level keys set by caller:
+  # tests[:master] - the master object
+  # tests[:agent] - the agent object
+  tests = {
+    master: master,
+    agent:  agent,
+  }
 
-# 'tests' hash
-# Top-level keys set by caller:
-# tests[:master] - the master object
-# tests[:agent] - the agent object
-# tests[:show_cmd] - the common show command to use for test_show_run
-#
-tests = {
-  master:   master,
-  agent:    agent,
-  show_cmd: 'show run section X__RESOURCE_NAME__X',
-}
+  # tests[id] keys set by caller and used by test_harness_common:
+  #
+  # tests[id] keys set by caller:
+  # tests[id][:desc] - a string to use with logs & debugs
+  # tests[id][:manifest] - the complete manifest, as used by test_harness_common
+  # tests[id][:resource] - a hash of expected states, used by test_resource
+  # tests[id][:resource_cmd] - 'puppet resource' command to use with test_resource
+  # tests[id][:ensure] - (Optional) set to :present or :absent before calling
+  # tests[id][:code] - (Optional) override the default exit code in some tests.
+  #
+  # These keys are local use only and not used by test_harness_common:
+  #
+  # tests[id][:manifest_props] - This is essentially a master list of properties
+  #   that permits re-use of the properties for both :present and :absent testing
+  #   without destroying the list
+  # tests[id][:resource_props] - This is essentially a master hash of properties
+  #   that permits re-use of the properties for both :present and :absent testing
+  #   without destroying the hash
+  # tests[id][:title_pattern] - (Optional) defines the manifest title.
+  #   Can be used with :af for mixed title/af testing. If mixing, :af values will
+  #   be merged with title values and override any duplicates. If omitted,
+  #   :title_pattern will be set to 'id'.
+  tests['preclean'] = {
+    ensure:         :absent,
+    manifest_props: '',
+    resource_props: {},
+    code:           [0, 2],
+  }
 
-# tests[id] keys set by caller and used by test_harness_common:
-#
-# tests[id] keys set by caller:
-# tests[id][:desc] - a string to use with logs & debugs
-# tests[id][:manifest] - the complete manifest, as used by test_harness_common
-# tests[id][:resource] - a hash of expected states, used by test_resource
-# tests[id][:resource_cmd] - 'puppet resource' command to use with test_resource
-# tests[id][:show_pattern] - array of regexp patterns to use with test_show_cmd
-# tests[id][:ensure] - (Optional) set to :present or :absent before calling
-# tests[id][:code] - (Optional) override the default exit code in some tests.
-#
-# These keys are local use only and not used by test_harness_common:
-#
-# tests[id][:manifest_props] - This is essentially a master list of properties
-#   that permits re-use of the properties for both :present and :absent testing
-#   without destroying the list
-# tests[id][:resource_props] - This is essentially a master hash of properties
-#   that permits re-use of the properties for both :present and :absent testing
-#   without destroying the hash
-# tests[id][:title_pattern] - (Optional) defines the manifest title.
-#   Can be used with :af for mixed title/af testing. If mixing, :af values will
-#   be merged with title values and override any duplicates. If omitted,
-#   :title_pattern will be set to 'id'.
-#
-tests['default_properties'] = {
-  manifest_props: "
+  tests['default_properties'] = {
     # PLEASE NOTE: The feature template has no additional properties so these
     # hash entries are intentionally commented out and included here solely
     # as an example of where properties would be defined.
+    # Input:  bar => 'default'
+    # Output: bar => true
+    default_values: {
+      # 'bar' => true,
+    }
+  }
 
-    # bar                            => 'default',
-  ",
-  resource_props: {
-    # 'bar'                          => 'default',
-  },
-}
+  tests['non_default_properties'] = {
+    # Input:  bar => true
+    # Output: bar => true
+    non_default_values: {
+      # 'bar' => true,
+    }
+  }
 
-tests['non_default_properties'] = {
-  manifest_props: "
-    # bar                            => true,
-  ",
-  resource_props: {
-    # 'bar'                          => 'true',
-  },
-}
+  tests['non_matching_input_output'] = {
+    manifest_props: "
+      # bar => 'test',
+    ",
+    resource_props: {
+      # 'bar' => 'different_value',
+    },
+  }
+
+  tests
+end
 
 #################################################################
 # HELPER FUNCTIONS
@@ -130,19 +140,44 @@ tests['non_default_properties'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = UtilityLib::PUPPET_BINPATH + 'resource cisco_X__RESOURCE_NAME__X'
-  UtilityLib.get_namespace_cmd(agent, cmd, options)
+  UtilityLib::PUPPET_BINPATH + 'resource cisco_X__RESOURCE_NAME__X'
+end
+
+def build_default_values(testcase)
+  return if testcase[:default_values].nil?
+  testcase[:default_values].each do |key, value|
+    testcase[:manifest_props] += "\n#{key} => 'default',"
+    value_s = value.is_a?(String) ? "'#{value}'" : value.to_s
+    testcase[:default_values][key] = value_s
+    # remove key if no corresponding resource_prop
+    testcase[:default_values].delete(key) if value.nil?
+  end
+  testcase[:resource].merge!(testcase[:default_values])
+end
+
+def build_non_default_values(testcase)
+  return if testcase[:non_default_values].nil?
+  testcase[:non_default_values].each do |key, value|
+    value_s = value.is_a?(String) ? "'#{value}'" : value.to_s
+    testcase[:non_default_values][key] = value_s
+    testcase[:manifest_props] += "\n#{key} => #{value_s},"
+  end
+  testcase[:resource].merge!(testcase[:non_default_values])
 end
 
 def build_manifest_X__RESOURCE_NAME__X(tests, id)
+  tests[id][:manifest_props] = '' if tests[id][:manifest_props].nil?
+  tests[id][:resource] = {}
   if tests[id][:ensure] == :absent
     state = 'ensure => absent,'
-    manifest = ''
+    tests[id][:manifest_props] = ''
     tests[id][:resource] = { 'ensure' => 'absent' }
   else
     state = 'ensure => present,'
-    manifest = tests[id][:manifest_props]
-    tests[id][:resource] = tests[id][:resource_props]
+    res_props = tests[id][:resource_props]
+    tests[id][:resource] = res_props unless res_props.nil?
+    build_default_values(tests[id])
+    build_non_default_values(tests[id])
   end
 
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
@@ -152,7 +187,7 @@ def build_manifest_X__RESOURCE_NAME__X(tests, id)
   node 'default' {
     cisco_X__RESOURCE_NAME__X { '#{tests[id][:title_pattern]}':
       #{state}
-      #{manifest}
+      #{tests[id][:manifest_props]}
     }
   }
 EOF"
@@ -181,7 +216,10 @@ end
 test_name "TestCase :: #{testheader}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  node_feature_cleanup(agent, 'X__RESOURCE_NAME__X', 'disable feature', false)
+  tests = generate_tests_hash(agent)
+  id = 'preclean'
+  tests[id][:desc] = 'Preclean'
+  test_harness_X__RESOURCE_NAME__X(tests, id)
 
   # -----------------------------------
   id = 'default_properties'

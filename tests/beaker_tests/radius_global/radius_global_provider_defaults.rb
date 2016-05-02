@@ -71,8 +71,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, RadiusGlobalLib.create_radius_global_manifest)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource present manifest from master :: #{result}")
@@ -82,8 +81,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check radius_global resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource radius_global default', options)
+    cmd_str = PUPPET_BINPATH + 'resource radius_global default'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'key' => '44444444' },
                                false, self, logger)
@@ -104,8 +102,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, RadiusGlobalLib.create_radius_global_manifest_change)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource present manifest from master :: #{result}")
@@ -115,8 +112,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check radius_global resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource radius_global default', options)
+    cmd_str = PUPPET_BINPATH + 'resource radius_global default'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'key' => '44444444' },
                                false, self, logger)
@@ -137,8 +133,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, RadiusGlobalLib.create_radius_global_manifest_change_removed)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource present manifest from master :: #{result}")
@@ -148,8 +143,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check radius_global resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource radius_global default', options)
+    cmd_str = PUPPET_BINPATH + 'resource radius_global default'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'key' => 'unset' },
                                false, self, logger)
@@ -158,20 +152,6 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Check radius_global resource presence on agent :: #{result}")
-  end
-
-  # @step [Step] Checks radius_server on agent using switch show cli
-  # cmds.
-  step 'TestStep :: Check radius_server instance on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config radius all')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, [/radius-server key.*$/],
-                               true, self, logger)
-    end
-
-    logger.info("Check radius_global instance on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.

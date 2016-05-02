@@ -71,7 +71,6 @@ test_name "TestCase :: #{testheader}" do
   vals = [:true, :false, :false, :false]
   ['ascii-authentication', 'chap', 'mschap', 'mschapv2'].each do |prop|
     ascii, chap, mschap, mschapv2 = vals
-    vals.rotate! # vals => [:false, :true, :false, :false]
 
     tests[id] = {
       :manifest_props => {
@@ -92,17 +91,16 @@ test_name "TestCase :: #{testheader}" do
     resource_cmd_str =
       PUPPET_BINPATH +
       "resource cisco_aaa_authentication_login 'default'"
-    tests[id][:resource_cmd] =
-      get_namespace_cmd(agent, resource_cmd_str, options)
+    tests[id][:resource_cmd] = resource_cmd_str
 
-    tests[id][:code] = [0, 2]
+    tests[id][:code] = [2]
     tests[id][:desc] =
-      '1.1 Apply manifest with non-default attributes, and test harness'
+      "1.1 Apply manifest with non-default #{prop}, and test harness"
     create_aaaauthelogin_manifest(tests, id)
     test_harness_common(tests, id)
 
     tests[id][:desc] =
-      '1.2 Apply manifest with string format non-default attributes'
+      "1.2 Apply manifest with string format non-default #{prop}"
     tests[id][:manifest_props] = {
       :ascii_authentication => ascii.to_s,
       :chap                 => chap.to_s,
@@ -111,13 +109,12 @@ test_name "TestCase :: #{testheader}" do
       :mschapv2             => mschapv2.to_s,
     }
     create_aaaauthelogin_manifest(tests, id)
-    tests[id][:show_cmd] = 'show run aaa all | section login'
-    # this will check existence of each prop enablement in turn
-    tests[id][:show_pattern] = [/^aaa authentication login #{prop} enable/]
-    tests[id][:state] = true
     # In this case, nothing changed, we would expect the puppet run return 0,
     tests[id][:code] = [0]
     test_harness_common(tests, id)
+
+    # rotate values to the right to set the next prop to :true
+    vals.rotate!(-1)
   end
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   raise_passfail_exception(result, testheader, self, logger)

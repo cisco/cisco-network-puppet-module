@@ -1,4 +1,4 @@
-# How To Create Beaker Test Cases
+# How To Create and Run Beaker Test Cases
 
 #### Table of Contents
 
@@ -18,55 +18,13 @@
 
 ## <a name="overview">Overview</a>
 
-This document describes the process for writing [Beaker](https://github.com/puppetlabs/beaker/blob/master/README.md) Test Cases for cisco puppet providers.
+This document describes the process for writing and executing [Beaker](https://github.com/puppetlabs/beaker/blob/master/README.md) Test Cases for cisco puppet providers.
 
 ## <a name="pre-install">Pre-Install Tasks</a>
 
-### Platform and Software Support
+Refer to [README-beaker-prerequisites](README-beaker-prerequisites.md) for required setup steps for Beaker and the node(s) to be tested.
 
-Beaker Release 2.14.1 and later.
-
-### Disk space
-
-400MB of free disk space on bootflash is recommended before installing the
-puppet agent software on the target agent node.
-
-### Environment
-NX-OS supports two possible environments for running 3rd party software:
-`bash-shell` and `guestshell`. Choose one environment for running the
-puppet agent software. You may run puppet from either environment but not both
-at the same time.
-
-* `bash-shell`
-  * This is the native WRL linux environment underlying NX-OS. It is disabled by default.
-* `guestshell`
-  * This is a secure linux container environment running CentOS. It is enabled by default.
-* `open agent container`
-  * This is a 32-bit CentOS-based container created specifically for running Puppet Agent software.
-  * OAC containers are created for specific platforms and must be downloaded from Cisco.
-  * The OAC must be installed before the Puppet Agent can be installed.
-
-Access the following [link](README-agent-install.md) for more information on enabling these environments.
-
-### Install Beaker
-
-[Install Beaker](https://github.com/puppetlabs/beaker/wiki/Beaker-Installation) on your designated beaker server.
-
-### Configure NX-OS
-
-You must enable the ssh feature and give sudo access to the 'devops' user for the Beaker workstation to access the Puppet agent during testing.
-
-**Example:**
-
-~~~bash
-configure terminal
-  feature ssh
-  username devops password devopspassword role network-admin
-  username devops shelltype bash
-end
-~~~
-
-*Note: To enable sshd inside the `open agent container (OAC)` reference `OAC` documentation.
+Install and set up the Puppet agent and `cisco_node_utils` gem as described in [README-agent-install.md](README-agent-install.md).
 
 ## <a name="beaker-config">Beaker Server Configuration</a>
 
@@ -81,14 +39,28 @@ $ cd cisco-network-puppet-module/tests/beaker_tests/
 
 Under the `beaker_tests` directory, create file named `host.cfg` and add the following content.
 
+Note: If running puppet on IOS XR, specify the gRPC port number configured on the switch.
+
 Replace the `< >` markers with specific information.
 
 ```bash
 HOSTS:
-    <agent1>:
+    <IOS XR agent>:
         roles:
             - agent
-        platform: cisco-7-x86_64
+        platform: cisco_ios_xr-6-x86_64
+        ip: <fully qualified domain name>
+        ssh:
+          auth_methods: ["password"]
+          # SSHd for third-party network namespace (TPNNS) uses port 57722
+          port: 57722
+          user: <configured admin username>
+          password: <configured admin password>
+
+    <Nexus bash-shell or guestshell agent>:
+        roles:
+            - agent
+        platform: cisco_nexus-7-x86_64
         ip: <fully qualified domain name>
         vrf: <vrf used for beaker workstation and puppet master ip reachability>
         ssh:
@@ -98,11 +70,23 @@ HOSTS:
         #Uncomment the following line to install into the guestshell
         #target: guestshell
 
-
-    #<agent2>:
-    #  <...>
+    <Nexus open agent container (OAC) agent>:
+        roles:
+            - agent
+        platform: cisco_nexus-oac-i386
+        ip: <fully qualified domain name>
+        vrf: <vrf used for beaker workstation and puppet master ip reachability>
+        ssh:
+          auth_methods: ["password"]
+          user: <configured bash-shell username>
+          password: <configured bash-shell password>
+          # SSHd for OAC uses port 2222
+          port: 2222
 
     #<agent3>:
+    #  <...>
+
+    #<agent4>:
     #  <...>
 
     <master>:
@@ -122,17 +106,28 @@ Here is a sample `host.cfg` file where `< >` markers have been replaced with act
 
 ```bash
 HOSTS:
-    agent1:
+    nx-agent:
         roles:
             - agent
-        platform: cisco-7-x86_64
-        ip: agent1.domain.com
+        platform: cisco_nexus-5-x86_64
+        ip: nx-agent.domain.com
         vrf: management
         #target: guestshell
         ssh:
           auth_methods: ["password"]
           user: devops
           password: devopspassword
+
+    xr-agent:
+        roles:
+            - agent
+        platform: cisco_ios_xr-6-x86_64
+        ip: xr-agent.domain.com
+        ssh:
+          auth_methods: ["password"]
+          port: 57722
+          user: admin
+          password: adminpassword
 
     puppetmaster1:
         roles:
@@ -324,8 +319,7 @@ tests['non_default_properties'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = UtilityLib::PUPPET_BINPATH + 'resource cisco_tunnel'
-  UtilityLib.get_namespace_cmd(agent, cmd, options)
+  UtilityLib::PUPPET_BINPATH + 'resource cisco_tunnel'
 end
 
 def build_manifest_tunnel(tests, id)
@@ -662,8 +656,7 @@ tests['non_default_properties_S'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = UtilityLib::PUPPET_BINPATH + 'resource cisco_router_eigrp'
-  UtilityLib.get_namespace_cmd(agent, cmd, options)
+  UtilityLib::PUPPET_BINPATH + 'resource cisco_router_eigrp'
 end
 
 def build_manifest_eigrp(tests, id)
@@ -960,6 +953,7 @@ Custom keys may be added for various unique test requirements but they should be
 |:-----------------|:---------------
 | `:asn`           | An Autonomous-System number. Used in some routing protocol tests.
 | `:encap_prof_global` | The global encapsulation profile configuration. This configuration is a dependency for testing with `cisco_interface_service_vni`.
+| `:ensurable`     | True/False. Defines whether a provider supports ensurable; typically only used to specify false, which prevents the test_harness from inserting an ensure value into the manifest. Also see Test Case key `:ensure`.
 | `:intf_type`     | The interface type string, e.g. `ethernet`. Used in tests that require an interface, in which case the test will discover the first interface of that type to use for the tests.
 | `:platform`      | A regexp pattern to match against the agent's product-id value. This is used to skip tests that don't support a feature or parameter. This key can be specified as a common top-level key or on a test-by-test basis.
 | `:preclean`      | The resource name used to remove a configuration as part of testbed pre-cleanup. The resource does not have to be the same as the one being tested; for example, the `'cisco_bgp_af'` test might use `'cisco_bgp'` for `:preclean` if a full bgp cleanup is needed instead of just removing the `'cisco_bgp_af'` configuration. This key can be specified as a common top-level key or on a test-by-test basis.
@@ -988,7 +982,7 @@ The keys are all optional. Most test cases will typically only use `:desc` and `
 | `:platform`       | A regexp pattern to match against the agent's product-id value. This is used to skip tests that don't support a feature or parameter. This key can be specified as a common top-level key or on a test-by-test basis.
 | `:preclean`       | The resource name used to remove a configuration as part of testbed pre-cleanup. The resource does not have to be the same as the one being tested; for example, the `'cisco_bgp_af'` test might use `'cisco_bgp'` for `:preclean` if a full bgp cleanup is needed instead of just removing the `'cisco_bgp_af'` configuration. This key can be specified as a common top-level key or on a test-by-test basis.
 | `:resource`       | A hash of expected values from the `puppet resource` command. This is only needed when the expected values differ from the values defined by `:manifest_props`; for example: default testing may specify a value of `'default'` in the manifest but an expected value of `'true'` for the `puppet resource` command.
-| `:ensure`         | The ensure value: `'present'` or `'absent'`. If not specified the test case will default to `'present'`.
+| `:ensure`         | The ensure value: `'present'` or `'absent'`. If not specified the test case will default to `'present'`. Also see Top-level key `:ensurable`.
 | `:code`           | An array of acceptable return codes; e.g. `[0, 2]`. This is used to override the default return codes expected by the common test harness. It is rarely needed but some platforms / properties require this override.
 | `:title_pattern`  | The title string to use in the manifest. Most providers use simple title patterns, in which case this is a simple string value. Providers like bgp_neighbor_af use complex title patterns, in which case they will use this key by itself for general property testing, then use it in combination with the `:title_params` key to perform complex title pattern testing.
 | `:remote_as`      | An Autonomous-System number. Used in BGP tests to set up an eBGP configuraton to test eBGP-only properties.

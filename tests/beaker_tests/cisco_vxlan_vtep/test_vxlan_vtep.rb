@@ -70,9 +70,10 @@ testheader = 'Resource cisco_vxlan_vtep'
 # tests[:agent] - the agent object
 #
 tests = {
-  master:   master,
-  agent:    agent,
-  platform: 'n9k',
+  master:        master,
+  agent:         agent,
+  platform:      'n(5|6|7|8|9)k',
+  resource_name: 'cisco_vxlan_vtep',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -104,10 +105,10 @@ tests = {
 tests['default_properties'] = {
   title_pattern:  'nve1',
   manifest_props: "
-    description        => 'default',
-    host_reachability  => 'default',
-    shutdown           => 'default',
-    source_interface   => 'default',
+    description                     => 'default',
+    host_reachability               => 'default',
+    shutdown                        => 'default',
+    source_interface                => 'default',
   ",
   resource_props: {
     'host_reachability' => 'flood',
@@ -118,10 +119,10 @@ tests['default_properties'] = {
 tests['non_default_properties'] = {
   title_pattern:  'nve1',
   manifest_props: "
-    description        => 'Configured by Puppet',
-    host_reachability  => 'evpn',
-    shutdown           => 'false',
-    source_interface   => 'loopback55',
+    description                     => 'Configured by Puppet',
+    host_reachability               => 'evpn',
+    shutdown                        => 'false',
+    source_interface                => 'loopback55',
   ",
   resource_props: {
     'description'       => 'Configured by Puppet',
@@ -131,12 +132,19 @@ tests['non_default_properties'] = {
   },
 }
 
+# Source Interface Hold-down Time
+if platform[/n(8|9)k/]
+  tests['default_properties'][:manifest_props][:source_interface_hold_down_time] = 'default'
+  tests['non_default_properties'][:manifest_props][:source_interface_hold_down_time] = '100'
+  tests['non_default_properties'][:resource_props][:source_interface_hold_down_time] = '100'
+end
+
 tests['change_parameters'] = {
   title_pattern:  'nve1',
   manifest_props: "
-    host_reachability  => 'flood',
-    shutdown           => 'true',
-    source_interface   => 'loopback1',
+    host_reachability               => 'flood',
+    shutdown                        => 'true',
+    source_interface                => 'loopback1',
   ",
   resource_props: {
     'description'       => 'Configured by Puppet',
@@ -165,8 +173,7 @@ tests['change_source_int_when_shutdown'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = PUPPET_BINPATH + 'resource cisco_vxlan_vtep'
-  get_namespace_cmd(agent, cmd, options)
+  PUPPET_BINPATH + 'resource cisco_vxlan_vtep'
 end
 
 def build_manifest_cisco_vxlan_vtep(tests, id)
@@ -213,6 +220,8 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
+  skip_unless_supported(tests)
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   resource_absent_cleanup(agent, 'cisco_vxlan_vtep',

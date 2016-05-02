@@ -30,6 +30,7 @@ class ciscopuppet::demo_all_netdev {
   include ciscopuppet::netdev::demo_interface
   include ciscopuppet::netdev::demo_port_channel
   include ciscopuppet::netdev::demo_network_trunk
+  include ciscopuppet::netdev::demo_network_vlan
   include ciscopuppet::netdev::demo_ntp
   include ciscopuppet::netdev::demo_radius
   include ciscopuppet::netdev::demo_snmp

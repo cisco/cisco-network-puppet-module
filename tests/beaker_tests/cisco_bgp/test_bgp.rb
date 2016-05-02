@@ -22,6 +22,7 @@
 #
 ###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
+require File.expand_path('../bgplib.rb', __FILE__)
 
 # Test hash top-level keys
 asn = '1'
@@ -60,6 +61,9 @@ tests[:default] = {
     isolate:                                'default',
     log_neighbor_changes:                   'default',
     maxas_limit:                            'default',
+    neighbor_down_fib_accelerate:           'default',
+    nsr:                                    'default',
+    reconnect_interval:                     'default',
     shutdown:                               'default',
     suppress_fib_pending:                   'default',
     timer_bestpath_limit:                   'default',
@@ -90,6 +94,9 @@ tests[:default] = {
     'isolate'                                => 'false',
     'log_neighbor_changes'                   => 'false',
     'maxas_limit'                            => 'false',
+    'neighbor_down_fib_accelerate'           => 'false',
+    'nsr'                                    => 'false',
+    'reconnect_interval'                     => '60',
     'shutdown'                               => 'false',
     'suppress_fib_pending'                   => 'false',
     'timer_bestpath_limit'                   => '300',
@@ -99,95 +106,47 @@ tests[:default] = {
   },
 }
 
-tests[:default_plat_1] = {
-  desc:           '1.2 Default Properties Platform-specific Part 1',
-  platform:       'n(3|9)k',
-  title_pattern:  "#{asn} red",
-  manifest_props: {
-    neighbor_down_fib_accelerate: 'default'
-  },
-  resource:       {
-    neighbor_down_fib_accelerate: 'false'
-  },
-}
-
 # Non-default Tests. NOTE: [:resource] = [:manifest_props] for all non-default
-
-tests[:non_def_1] = {
-  desc:           '2.1 Non Defaults Part 1',
+tests[:non_default] = {
+  desc:           '2.1 Non Defaults',
   title_pattern:  "#{asn} default",
   manifest_props: {
-    # These properties are only configurable in default vrf
-    disable_policy_batching: 'true',
-    event_history_cli:       'size_medium',
-    event_history_detail:    'size_large',
-    event_history_events:    'size_disable',
-    event_history_periodic:  'false',
-  },
-}
-
-tests[:non_def_2] = {
-  desc:           '2.2 Non Defaults Part 2',
-  title_pattern:  "#{asn} default",
-  manifest_props: {
-    bestpath_always_compare_med:     'true',
-    bestpath_aspath_multipath_relax: 'true',
-    bestpath_compare_routerid:       'true',
-    bestpath_cost_community_ignore:  'true',
-    bestpath_med_confed:             'true',
-    bestpath_med_missing_as_worst:   'true',
-    bestpath_med_non_deterministic:  'true',
-  },
-}
-
-tests[:non_def_3] = {
-  desc:           '2.3 Non Defaults Part 3',
-  title_pattern:  "#{asn} default",
-  manifest_props: {
+    bestpath_always_compare_med:            'true',
+    bestpath_aspath_multipath_relax:        'true',
+    bestpath_compare_routerid:              'true',
+    bestpath_cost_community_ignore:         'true',
+    bestpath_med_confed:                    'true',
+    bestpath_med_missing_as_worst:          'true',
+    bestpath_med_non_deterministic:         'true',
     cluster_id:                             '10.0.0.1',
     confederation_id:                       '99',
-    confederation_peers:                    '55 23.4 88 200.1',
-    enforce_first_as:                       'true',
-    fast_external_fallover:                 'true',
-    flush_routes:                           'false',
-    graceful_restart:                       'true',
+    confederation_peers:                    ['200.1', '23.4', '55', '88'],
+    disable_policy_batching:                'true',
+    enforce_first_as:                       'false',
+    event_history_cli:                      'size_medium',
+    event_history_detail:                   'size_large',
+    event_history_events:                   'size_disable',
+    event_history_periodic:                 'false',
+    fast_external_fallover:                 'false',
+    flush_routes:                           'true',
+    graceful_restart:                       'false',
     graceful_restart_helper:                'true',
     graceful_restart_timers_restart:        '130',
     graceful_restart_timers_stalepath_time: '310',
+    isolate:                                'false',
+    log_neighbor_changes:                   'true',
+    maxas_limit:                            '50',
+    neighbor_down_fib_accelerate:           'true',
+    nsr:                                    'true',
+    reconnect_interval:                     '55',
+    router_id:                              '192.168.0.66',
+    shutdown:                               'true',
+    suppress_fib_pending:                   'true',
+    timer_bestpath_limit:                   '255',
+    timer_bestpath_limit_always:            'true',
+    timer_bgp_holdtime:                     '110',
+    timer_bgp_keepalive:                    '45',
   },
-}
-
-tests[:non_def_4] = {
-  desc:           '2.4 Non Defaults Part 4',
-  title_pattern:  "#{asn} default",
-  manifest_props: {
-    isolate:                     'false',
-    log_neighbor_changes:        'true',
-    maxas_limit:                 '50',
-    router_id:                   '192.168.0.66',
-    shutdown:                    'true',
-    suppress_fib_pending:        'true',
-    timer_bestpath_limit:        '255',
-    timer_bestpath_limit_always: 'true',
-    timer_bgp_holdtime:          '110',
-    timer_bgp_keepalive:         '45',
-  },
-}
-
-# Platform-specific tests
-tests[:non_def_plat_1] = {
-  desc:           '3.1 Default Properties Platform-specific Part 1',
-  platform:       'n(3|9)k',
-  title_pattern:  "#{asn} default",
-  manifest_props: {
-    neighbor_down_fib_accelerate: 'true'
-  },
-}
-
-tests[:title_patterns] = {
-  preclean:       'cisco_bgp',
-  manifest_props: {},
-  resource:       { 'ensure' => 'present' },
 }
 
 tests[:title_patterns_1] = {
@@ -205,15 +164,71 @@ tests[:title_patterns_2] = {
   resource:      { 'ensure' => 'present' },
 }
 
-# This helper tests a test case in vrf context. This allows for testing a vrf
-# while an existing config is present in vrf default.
-def test_harness_bgp_vrf(tests, id, vrf)
-  orig_desc = tests[id][:desc]
-  tests[id][:desc] += " (vrf #{vrf})"
-  tests[id][:title_pattern] = "#{tests[:asn]} #{vrf}"
+# Overridden to properly handle unsupported properties for this test file.
+def unsupported_properties(tests, id)
+  unprops = []
 
-  test_harness_run(tests, id)
-  tests[id][:desc] = orig_desc
+  vrf = vrf(tests[id])
+
+  if operating_system == 'ios_xr'
+    # IOS-XR does not support these properties
+    unprops <<
+      :bestpath_med_non_deterministic <<
+      :disable_policy_batching <<
+      :event_history_cli <<
+      :event_history_detail <<
+      :event_history_events <<
+      :event_history_periodic <<
+      :flush_routes <<
+      :graceful_restart_helper <<
+      :isolate <<
+      :log_neighbor_changes <<
+      :maxas_limit <<
+      :neighbor_down_fib_accelerate <<
+      :shutdown <<
+      :suppress_fib_pending <<
+      :timer_bestpath_limit <<
+      :timer_bestpath_limit_always
+
+    if vrf != 'default'
+      # IOS-XR does not support these properties under a non-default vrf
+      unprops <<
+        :bestpath_med_confed <<
+        :cluster_id <<
+        :confederation_id <<
+        :confederation_peers <<
+        :graceful_restart <<
+        :graceful_restart_timers_restart <<
+        :graceful_restart_timers_stalepath_time <<
+        :nsr
+    end
+  else
+    # NX-OS does not support these properties
+    unprops << :nsr
+
+    if vrf != 'default'
+      # NX-OS does not support these properties under a non-default vrf
+      unprops <<
+        :disable_policy_batching <<
+        :enforce_first_as <<
+        :event_history_cli <<
+        :event_history_detail <<
+        :event_history_events <<
+        :event_history_periodic <<
+        :fast_external_fallover <<
+        :flush_routes <<
+        :neighbor_down_fib_accelerate
+    end
+
+    if platform[/n(5|6|7)k/]
+      unprops <<
+        :disable_policy_batching_ipv4 <<
+        :disable_policy_batching_ipv6 <<
+        :neighbor_down_fib_accelerate <<
+        :reconnect_interval
+    end
+  end
+  unprops
 end
 
 #################################################################
@@ -224,44 +239,33 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
   # -----------------------------------
-  test_harness_run(tests, :default)
-  test_harness_run(tests, :default_plat_1)
-
   id = :default
+  test_harness_run(tests, id)
+
+  # test removal of bgp instance
   tests[id][:ensure] = :absent
   tests[id].delete(:preclean)
   test_harness_run(tests, id)
 
+  # now test the defaults under a non-default vrf
+  tests[id][:ensure] = :present
+  tests[id][:preclean] = 'cisco_bgp'
+  test_harness_bgp_vrf(tests, id, 'blue')
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
-  test_harness_run(tests, :non_def_1)
-
-  id = :non_def_2
-  test_harness_run(tests, id)
-  test_harness_bgp_vrf(tests, id, 'blue')
-
-  id = :non_def_3
-  test_harness_run(tests, id)
-  test_harness_bgp_vrf(tests, id, 'blue')
-
-  id = :non_def_4
+  id = :non_default
   test_harness_run(tests, id)
   test_harness_bgp_vrf(tests, id, 'blue')
 
   # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 3. Non Default, Platform Specific")
-
-  test_harness_run(tests, :non_def_plat_1)
-
-  # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 4. Title Pattern Testing")
+  logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
   test_harness_run(tests, :title_patterns_1)
   test_harness_run(tests, :title_patterns_2)
 
   # -------------------------------------------------------------------
   resource_absent_cleanup(agent, 'cisco_bgp')
-  skipped_tests_summary(tests)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

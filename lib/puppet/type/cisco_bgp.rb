@@ -42,11 +42,11 @@ Puppet::Type.newtype(:cisco_bgp) do
       ensure                                 => present,
       asn                                    => '39317'
       vrf                                    => 'green',
-      route_distinguisher                    => 'auto'
+      route_distinguisher                    => 'auto',
       router_id                              => '10.0.0.1',
       cluster_id                             => '55',
       confederation_id                       => '77.6',
-      confederation_peers                    => '77.6 88 99.4 200'
+      confederation_peers                    => '77.6 88 99.4 200',
       disable_policy_batching                => true,
       disable_policy_batching_ipv4           => 'xx',
       disable_policy_batching_ipv6           => 'yy',
@@ -59,6 +59,7 @@ Puppet::Type.newtype(:cisco_bgp) do
       flush_routes                           => false,
       isolate                                => false,
       maxas_limit                            => '50',
+      reconnect_interval                     => '55',
       shutdown                               => false,
 
       supress_fib_pending                    => true,
@@ -81,6 +82,9 @@ Puppet::Type.newtype(:cisco_bgp) do
       graceful_restart_timers_stalepath_time => 310,
       graceful_restart_helper                => true,
 
+      # Nonstop Routing (NSR)
+      nsr                                    => false,
+
       # Timer Properties
       timer_bgp_keepalive                    => 30,
       timer_bgp_holdtime                     => 90,
@@ -92,7 +96,7 @@ Puppet::Type.newtype(:cisco_bgp) do
   ~~~puppet
     cisco_bgp { 'new_york':
       ensure                                 => present,
-      asn                                    => '39317'
+      asn                                    => '39317',
       vrf                                    => 'green',
   ~~~
 
@@ -258,25 +262,38 @@ Puppet::Type.newtype(:cisco_bgp) do
     end
   end # property confederation_id
 
-  newproperty(:confederation_peers) do
-    desc "AS confederation parameters. Valid values are String,
-          keyword 'default'."
+  newproperty(:confederation_peers, array_matching: :all) do
+    desc "AS confederation parameters. Valid values are Array, String,
+          keyword 'default'"
 
     match_error = 'must be specified in ASPLAIN or ASDOT notation'
+
     validate do |peers|
-      list = peers.split(' ')
-      list.each do |value|
+      peers.split.each do |value|
         fail "Confederation peer value '#{value}' #{match_error}" unless
           /^(\d+|\d+\.\d+)$/.match(value) ||
-          peers == 'default' || peers == :default
+          value == 'default' || value == :default
       end
     end
 
     munge do |peers|
-      peers = :default if peers == 'default'
-      peers
+      peers == 'default' ? :default : peers.split
     end
-  end # property confederation_peers
+
+    def insync?(is)
+      (is.size == should.flatten.size && is.sort == should.flatten.sort)
+    end
+  end # confederation_peers
+
+  newproperty(:reconnect_interval) do
+    desc 'The BGP reconnection interval for dropped sessions. '\
+         "Valid values are Integer or keyword 'default'."
+
+    munge do |value|
+      value = (value == 'default') ? :default : Integer(value)
+      value
+    end
+  end
 
   newproperty(:shutdown) do
     desc 'Administratively shutdown the BGP protocol'
@@ -480,6 +497,12 @@ Puppet::Type.newtype(:cisco_bgp) do
 
     newvalues(:true, :false, :default)
   end # property bestpath_med_non_deterministic
+
+  newproperty(:nsr) do
+    desc 'Enable/Disable Non-Stop Routing (NSR)'
+
+    newvalues(:true, :false, :default)
+  end # property Non-Stop Routing (NSR)
 
   newproperty(:timer_bestpath_limit) do
     desc "Specify timeout for the first best path after a restart, in seconds.

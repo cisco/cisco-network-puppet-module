@@ -125,9 +125,9 @@ Puppet::Type.newtype(:cisco_acl) do
   newproperty(:fragments) do
     desc 'fragments permit-all/deny-all state for the acl.'
 
+    newvalues(:permit, :deny, :default)
     munge do |value|
-      value = :default if value == 'default'
-      value
+      "#{value}-all" unless /default/.match(value)
     end
   end
 end

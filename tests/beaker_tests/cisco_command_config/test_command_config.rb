@@ -65,7 +65,6 @@ testheader = 'Resource cisco_command_config'
 # Top-level keys set by caller:
 # tests[:master] - the master object
 # tests[:agent] - the agent object
-# tests[:show_cmd] - the common show command to use for test_show_run
 #
 tests = {
   master: master,
@@ -94,7 +93,7 @@ tests = {
 #
 tests['configure_bgp'] = {
   puppet_resource: 'cisco_bgp',
-  platform:        'n(3|5|6|7|9)k',
+  platform:        'n(3|5|6|7|8|9)k',
   # Command indentation is very important!
   # Make sure config appears exactly how it nvgens on the node.
   manifest_props:  "
@@ -130,7 +129,7 @@ tests['configure_bgp'] = {
     'bestpath_med_non_deterministic'         => 'true',
     'cluster_id'                             => '172.5.5.5',
     'confederation_id'                       => '50',
-    'confederation_peers'                    => '327686 327685 200608 5000 6000 32 43',
+    'confederation_peers'                    => %w(200608 32 327685 327686 43 5000 6000),
     'log_neighbor_changes'                   => 'true',
     'router_id'                              => '192.55.55.55',
     'graceful_restart_timers_restart'        => '55',
@@ -147,7 +146,7 @@ tests['configure_bgp'] = {
 
 tests['configure_bgp_af'] = {
   puppet_resource: 'cisco_bgp_af',
-  platform:        'n(3|5|6|7|9)k',
+  platform:        'n(3|5|6|7|8|9)k',
   # Command indentation is very important!
   # Make sure config appears exactly how it nvgens on the node.
   manifest_props:  "
@@ -169,7 +168,7 @@ tests['configure_bgp_af'] = {
 
 tests['configure_bgp_neighbor'] = {
   puppet_resource: 'cisco_bgp_neighbor',
-  platform:        'n(3|5|6|7|9)k',
+  platform:        'n(3|5|6|7|8|9)k',
   # Command indentation is very important!
   # Make sure config appears exactly how it nvgens on the node.
   manifest_props:  "
@@ -188,7 +187,7 @@ tests['configure_bgp_neighbor'] = {
 
 tests['configure_bgp_neighbor_af'] = {
   puppet_resource: 'cisco_bgp_neighbor_af',
-  platform:        'n(3|5|6|7|9)k',
+  platform:        'n(3|5|6|7|8|9)k',
   # Command indentation is very important!
   # Make sure config appears exactly how it nvgens on the node.
   manifest_props:  "
@@ -226,8 +225,7 @@ tests['configure_loopback_interface'] = {
 # Full command string for puppet resource command used to verify
 # the configuration applied by the cisco_command_config resource.
 def puppet_resource_cmd(tests, id)
-  cmd = PUPPET_BINPATH + "resource #{tests[id][:puppet_resource]}"
-  get_namespace_cmd(agent, cmd, options)
+  PUPPET_BINPATH + "resource #{tests[id][:puppet_resource]}"
 end
 
 def build_manifest_cisco_command_config(tests, id)

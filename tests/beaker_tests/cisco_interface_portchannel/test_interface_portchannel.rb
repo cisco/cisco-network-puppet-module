@@ -70,7 +70,6 @@ testheader = 'Resource cisco_interface_portchannel'
 # Top-level keys set by caller:
 # tests[:master] - the master object
 # tests[:agent] - the agent object
-# tests[:show_cmd] - the common show command to use for test_show_run
 #
 tests = {
   master: master,
@@ -84,7 +83,6 @@ tests = {
 # tests[id][:manifest] - the complete manifest, as used by test_harness_common
 # tests[id][:resource] - a hash of expected states, used by test_resource
 # tests[id][:resource_cmd] - 'puppet resource' command to use with test_resource
-# tests[id][:show_pattern] - array of regexp patterns to use with test_show_cmd
 # tests[id][:ensure] - (Optional) set to :present or :absent before calling
 # tests[id][:code] - (Optional) override the default exit code in some tests.
 #
@@ -223,9 +221,7 @@ tests['non_default_properties_eth'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = PUPPET_BINPATH +
-        'resource cisco_interface_portchannel port-channel100'
-  get_namespace_cmd(agent, cmd, options)
+  PUPPET_BINPATH + 'resource cisco_interface_portchannel port-channel100'
 end
 
 def build_manifest_interface_portchannel(tests, id)
@@ -284,7 +280,7 @@ test_name "TestCase :: #{testheader}" do
     id = 'default_properties_asym'
   when /n5k|n6k/
     id = 'default_properties_eth'
-  when /n3k|n9k/
+  when /n3k|n8k|n9k/
     id = 'default_properties_sym'
   end
 
@@ -302,7 +298,7 @@ test_name "TestCase :: #{testheader}" do
     id = 'non_default_properties_asym'
   when /n5k|n6k/
     id = 'non_default_properties_eth'
-  when /n3k|n9k/
+  when /n3k|n8k|n9k/
     id = 'non_default_properties_sym'
   end
   tests[id][:desc] = '2.1 Non Default Properties'
