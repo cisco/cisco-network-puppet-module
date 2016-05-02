@@ -17,7 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 *
 
 ### Added
-- Extended the following providers to support `Nexus 56xx`, `Nexus 60xx`, and `Nexus 7xxx`
+- Extended the following providers to support `Nexus N5k`, `Nexus N6k`, and `Nexus N7k`
   - `cisco_aaa_authentication_login`, `cisco_aaa_authorization_login_cfg_svc`, `cisco_aaa_authorization_login_exec_svc`, `cisco_aaa_group_tacacs`
   - `cisco_fabricpath_global`, `cisco_fabricpath_topology`
   - `cisco_interface_channel_group`, `cisco_interface_portchannel`, `cisco_portchannel_global`
