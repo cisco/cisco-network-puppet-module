@@ -148,7 +148,6 @@ Puppet::Type.type(:cisco_vxlan_vtep).provide(:cisco) do
     VXLAN_VTEP_ALL_PROPS.each do |prop|
       current.concat(sprintf("\n%30s: %s", prop, @vtep_interface.send(prop)))
     end
-    # debug current
-    puts current
+    debug current
   end # puts_config
 end

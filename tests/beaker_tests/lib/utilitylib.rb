@@ -810,6 +810,18 @@ def prereq_skip(testheader, testcase, message)
   raise_skip_exception(testheader, testcase)
 end
 
+# Some specific platform models do not support nv_overlay
+def skip_if_nv_overlay_rejected(agent)
+  logger.info('Check for nv overlay support')
+  cmd = get_vshell_cmd('config t ; feature nv overlay')
+  on(agent, cmd, pty: true)
+  # Failure message taken from 6001
+  msg = 'NVE Feature NOT supported on this Platform'
+  banner = '#' * msg.length
+  raise_skip_exception("\n#{banner}\n#{msg}\n#{banner}\n", self) if
+    stdout.match(msg)
+end
+
 # Return an interface name from the first MT-full compatible line module found
 def mt_full_interface
   # Search for F3 card on device, create an interface name if found
