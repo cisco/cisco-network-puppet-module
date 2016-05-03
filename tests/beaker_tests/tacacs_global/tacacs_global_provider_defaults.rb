@@ -91,7 +91,7 @@ test_name "TestCase :: #{testheader}" do
       search_pattern_in_output(stdout, { 'key_format' => '7' },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'enable' => 'true' },
-                               false, self, logger)
+                               false, self, logger) if platform == :nexus
       search_pattern_in_output(stdout, { 'timeout' => '2' },
                                false, self, logger)
     end
@@ -122,7 +122,7 @@ test_name "TestCase :: #{testheader}" do
       search_pattern_in_output(stdout, { 'key_format' => '7' },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'enable' => 'true' },
-                               false, self, logger)
+                               false, self, logger) if platform == :nexus
       search_pattern_in_output(stdout, { 'timeout' => '3' },
                                false, self, logger)
     end
@@ -144,15 +144,18 @@ test_name "TestCase :: #{testheader}" do
 
   # @step [Step] Checks tacacs_global resource on agent using resource cmd.
   step 'TestStep :: Check tacacs_global resource presence on agent' do
-    # Expected exit_code is 0 since this is a puppet resource cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = PUPPET_BINPATH + 'resource tacacs_global default'
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, { 'enable' => 'false' },
-                               false, self, logger)
-    end
+    if platform != :ios_xr
+      # Expected exit_code is 0 since this is a puppet resource cmd.
+      # Flag is set to false to check for presence of RegExp pattern in stdout.
+      cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
+        'resource tacacs_global default', options)
+      on(agent, cmd_str) do
+        search_pattern_in_output(stdout, { 'enable' => 'false' },
+                                 false, self, logger)
+      end
 
-    logger.info("Check tacacs_global resource presence on agent :: #{result}")
+      logger.info("Check tacacs_global resource presence on agent :: #{result}")
+    end
   end
 
   step 'TestStep :: Cleanup' do
