@@ -62,7 +62,7 @@ tests[:non_default] = {
 
 def unsupported_properties(*)
   unprops = []
-  unprops << :source_interface_hold_down_time unless platform[/n(8|9)k/]
+  unprops << :source_interface_hold_down_time unless platform[/n(9)k/]
   unprops
 end
 
