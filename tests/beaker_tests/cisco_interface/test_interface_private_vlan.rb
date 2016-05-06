@@ -36,6 +36,9 @@ tests = {
   resource_name:    'cisco_interface',
 }
 
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
+
 # Assign a test interface.
 intf = find_interface(tests)
 
@@ -183,6 +186,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   interface_cleanup(agent, intf)
   remove_interface(agent, svi)
+  skipped_tests_summary(tests)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

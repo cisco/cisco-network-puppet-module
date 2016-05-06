@@ -38,6 +38,9 @@ tests = {
   resource_name:    'cisco_interface',
 }
 
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
+
 # Find a usable interface for this test
 intf = find_interface(tests)
 

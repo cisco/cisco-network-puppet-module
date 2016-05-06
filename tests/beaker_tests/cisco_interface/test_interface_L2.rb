@@ -37,6 +37,9 @@ tests = {
   resource_name:    'cisco_interface',
 }
 
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
+
 # Find a usable interface for this test
 intf = find_interface(tests)
 
@@ -123,7 +126,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :non_default_trunk)
 
   # -------------------------------------------------------------------
-  interface_cleanup(agent, tests[:ethernet]) if tests[:ethernet]
+  interface_cleanup(agent, intf)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

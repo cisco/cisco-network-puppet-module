@@ -44,6 +44,7 @@ tests = {
   agent:            agent,
   master:           master,
   operating_system: 'nexus',
+  platform:         'n7k',
   resource_name:    'cisco_interface',
   intf_type:        'ethernet',
   bridge_domain:    '100',
@@ -51,6 +52,9 @@ tests = {
   # On N7k, feature vni requires solely F3 cards in the vdc
   vdc_limit_module: 'f3',
 }
+
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
 
 # Assign a test interface.
 if platform[/n7k/]
@@ -103,6 +107,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   test_harness_run(tests, :non_default)
 
+  # -------------------------------------------------------------------
   interface_cleanup(agent, intf)
 end
 

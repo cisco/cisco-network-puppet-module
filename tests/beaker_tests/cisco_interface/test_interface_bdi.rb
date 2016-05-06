@@ -37,6 +37,9 @@ tests = {
   bridge_domain:    '100',
 }
 
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
+
 # Assign a test interface.
 intf = 'bdi100'
 

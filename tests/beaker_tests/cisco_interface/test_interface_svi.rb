@@ -36,6 +36,9 @@ tests = {
   anycast_gateway_mac: true,
 }
 
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
+
 # Assign a test interface.
 intf = 'vlan13'
 
@@ -103,6 +106,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   remove_interface(agent, intf)
+  skipped_tests_summary(tests)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

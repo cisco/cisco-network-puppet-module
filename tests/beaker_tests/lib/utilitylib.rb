@@ -434,7 +434,7 @@ end
 
 # Helper to nuke a single interface. This is needed to remove all
 # configurations from the interface.
-def interface_cleanup(agent, intf, stepinfo='Pre Clean:')
+def interface_cleanup(agent, intf, stepinfo='Interface Clean:')
   step "TestStep :: #{stepinfo}" do
     cmd = "resource cisco_command_config 'interface_cleanup' "\
           "command='default interface #{intf}'"
@@ -1057,7 +1057,7 @@ end
 #   [:intf_type]
 #   [:resource_name]
 def find_interface(tests, id=nil, skipcheck=true)
-  logger.info("\n#{'-' * 60}\n  Find a usable interface\n#{'-' * 60}")
+  logger.info("\n#{'-' * 60}\n  Find a suitable interface\n#{'-' * 60}")
   # Prefer specific test key over the all tests key
   if id
     type = tests[id][:intf_type] || tests[:intf_type]
