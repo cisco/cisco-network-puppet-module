@@ -392,7 +392,8 @@ The recommended Puppet RPM varies by environment:
   * `bash-shell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm)
   * `guestshell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm)
     * **NOTE:** Due to issue https://tickets.puppetlabs.com/browse/FACT-1409, please install a `1.3.x` version of the puppet agent RPM inside the `guestshell`.
-    * Latest `1.3.x` version: [http://yum.puppetlabs.com/el/7/PC1/x86_64/puppet-agent-1.3.6-1.el7.x86_64.rpm](http://yum.puppetlabs.com/el/7/PC1/x86_64/puppet-agent-1.3.6-1.el7.x86_64.rpm)
+    * Latest `1.3.x` version at the time of publishing this module:
+    * [http://yum.puppetlabs.com/el/7/PC1/x86_64/puppet-agent-1.3.6-1.el7.x86_64.rpm](http://yum.puppetlabs.com/el/7/PC1/x86_64/puppet-agent-1.3.6-1.el7.x86_64.rpm)
   * `open agent container (OAC)`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm)
 
 Using the appropriate RPM for your environment as described above, do:
