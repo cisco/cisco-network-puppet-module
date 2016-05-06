@@ -49,40 +49,6 @@ IGNORE_VALUE = :ignore_value
 # These methods are defined outside of a module so that
 # they can access the Beaker DSL API's.
 
-# cisco_interface uses the interface name as the title.
-# Find an available interface and create an appropriate title.
-def create_interface_title(tests, id)
-  return tests[id][:title_pattern] if tests[id][:title_pattern]
-
-  # Prefer specific test key over the all tests key
-  type = tests[id][:intf_type] || tests[:intf_type]
-  case type
-  when /ethernet/i
-    if tests[:ethernet]
-      intf = tests[:ethernet]
-    else
-      intf = find_interface(tests, id)
-      # cache for later tests
-      tests[:ethernet] = intf
-    end
-  when /dot1q/
-    if tests[:ethernet]
-      intf = "#{tests[:ethernet]}.1"
-    else
-      intf = find_interface(tests, id)
-      # cache for later tests
-      tests[:ethernet] = intf
-      intf = "#{intf}.1" unless intf.nil?
-    end
-  when /vlan/
-    intf = tests[:svi_name]
-  when /bdi/
-    intf = tests[:bdi_name]
-  end
-  logger.info("\nUsing interface: #{intf}")
-  tests[id][:title_pattern] = intf
-end
-
 # Method to return the Vegas shell command string for a NXOS CLI command.
 # @param nxosclistr [String] The NXOS CLI command string to execute on host.
 # @result vshellcmd [String] Returns 'vsh -c <cmd>' command string.
@@ -340,9 +306,9 @@ def resource_titles(agent, res_name, action=:find)
 end
 
 # Helper to configure switchport mode
-def config_switchport_mode(agent, mode, stepinfo='switchport mode: ')
+def config_switchport_mode(agent, intf, mode, stepinfo='switchport mode: ')
   step "TestStep :: #{stepinfo}" do
-    cmd = "switchport ; switchport mode #{mode}"
+    cmd = "interface #{intf} ; switchport ; switchport mode #{mode}"
     command_config(agent, cmd, cmd)
   end
 end
@@ -357,6 +323,19 @@ def system_default_switchport(agent, state=false,
   end
 end
 
+# Helper for checking/setting 'system default switchport'
+def config_system_default_switchport?(tests, id)
+  return unless tests[id].key?(:sys_def_switchport)
+
+  state = tests[id][:sys_def_switchport]
+  # cached state
+  return if tests[:sys_def_switchport] == state
+
+  system_default_switchport(agent, state)
+  # cache for later tests
+  tests[:sys_def_switchport] = state
+end
+
 # Helper to toggle 'system default switchport shutdown'
 def system_default_switchport_shutdown(agent, state=false,
                                        stepinfo='system default switchport shutdown')
@@ -365,6 +344,19 @@ def system_default_switchport_shutdown(agent, state=false,
     cmd = "#{state}system default switchport shutdown"
     command_config(agent, cmd, cmd)
   end
+end
+
+# Helper for checking/setting 'system default switchport shutdown'
+def config_system_default_switchport_shutdown?(tests, id)
+  return unless tests[id].key?(:sys_def_sw_shut)
+
+  state = tests[id][:sys_def_sw_shut]
+  # cached state
+  return if tests[:sys_def_sw_shut] == state
+
+  system_default_switchport_shutdown(agent, state)
+  # cache for later tests
+  tests[:sys_def_sw_shut] = state
 end
 
 # Helper for creating / removing an ACL
@@ -376,6 +368,12 @@ def config_acl(agent, afi, acl, state, stepinfo='ACL:')
     cmd = PUPPET_BINPATH + cmd
     on(agent, cmd, acceptable_exit_codes: [0, 2])
   end
+end
+
+# Helper for checking/setting ACLs
+def config_acl?(tests, id)
+  tests[id][:acl].each { |acl, afi| config_acl(agent, afi, acl, true) } if
+    tests[id][:acl]
 end
 
 # Helper for creating / removing bridge-domain configs
@@ -410,6 +408,20 @@ def config_bridge_domain(agent, test_bd, stepinfo='bridge-domain config:')
     cmd = "system bridge-domain #{test_bd} ; bridge-domain #{test_bd}"
     command_config(agent, cmd, cmd)
   end
+end
+
+def config_bridge_domain?(tests, _id)
+  return unless platform[/n7k/] && tests.key?(:bridge_domain)
+
+  bd = tests[:bridge_domain]
+  agent = tests[:agent]
+  on(agent, get_vshell_cmd('show runn bridge-domain'), pty: true)
+
+  config_bridge_domain(agent, bd) unless
+    stdout.match(Regexp.new("^bridge-domain #{bd}"))
+
+  # Delete the key to prevent having to set this for every test case
+  tests.delete(:bridge_domain)
 end
 
 # Helper for creating / removing encap profile vni (global) configs
@@ -661,7 +673,7 @@ end
 # - Cleans resource
 def test_harness_run(tests, id)
   return unless platform_supports_test(tests, id)
-
+  logger.info("\n  * Process test_harness_run")
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
 
   # Build the manifest for this test
@@ -693,6 +705,7 @@ def setup_mt_full_env(tests, testcase)
   # MT-full tests require a specific linecard. Search for a compatible
   # module and enable it.
 
+  logger.info('Process setup_mt_full_env')
   testheader = tests[:resource_name]
   mod = tests[:vdc_limit_module]
   mod = 'f3' if mod.nil?
@@ -730,9 +743,9 @@ def setup_mt_full_env(tests, testcase)
                 "Unable to allocate interface '#{intf}' to VDC")
   end
 
-  interface_cleanup(tests[:agent], intf)
+  interface_cleanup(agent, intf)
 
-  config_switchport_mode(agent, tests[:switchport_mode]) if
+  config_switchport_mode(agent, intf, tests[:switchport_mode]) if
     tests[:switchport_mode]
 
   config_bridge_domain(agent, tests[:bridge_domain]) if
@@ -1036,6 +1049,7 @@ end
 
 # TBD: This needs to be more selective when used with modular platforms,
 # particularly to ignore L2-only F2 cards on N7k.
+# TBD: Remove the :intf_type requirement & change this to find_ethernet()
 #
 # Find a test interface on the agent.
 # Callers should include the following hash keys:
@@ -1043,6 +1057,7 @@ end
 #   [:intf_type]
 #   [:resource_name]
 def find_interface(tests, id=nil, skipcheck=true)
+  logger.info("\n#{'-' * 60}\n  Find a usable interface\n#{'-' * 60}")
   # Prefer specific test key over the all tests key
   if id
     type = tests[id][:intf_type] || tests[:intf_type]
@@ -1062,6 +1077,7 @@ def find_interface(tests, id=nil, skipcheck=true)
     msg = 'Unable to find suitable interface module for this test.'
     prereq_skip(tests[:resource_name], self, msg)
   end
+  logger.info("\n  * Found #{intf}")
   intf
 end
 
@@ -1209,6 +1225,12 @@ def debug_probe(probe, msg)
   dbg = ''
   probe[:probe_props].each { |p| dbg += "'#{p}' => #{probe[:caps][p]}, " }
   logger.info("\n      #{msg}: #{dbg}")
+end
+
+# Remove a single dynamic interface (Vlan, Loopback, Port-channel, etc).
+def remove_interface(agent, intf)
+  cmd = "    no interface #{intf.capitalize}"
+  command_config(agent, cmd, cmd)
 end
 
 def remove_all_vlans(agent, stepinfo='Remove all vlans & bridge-domains')
