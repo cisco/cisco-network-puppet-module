@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.3.0] - 2016-05-02
+## [1.3.1] - 2016-05-06
 
 ### New feature support
 #### Cisco Resources
@@ -62,6 +62,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Renamed all providers from `:nxapi` to `:cisco` as they may include support for multiple Cisco platforms, not all of which use NXAPI.
+
+## 1.3.0
+This version was never released.
 
 ## [1.2.3] - 2016-02-24
 ### Added
@@ -228,7 +231,7 @@ This version was never released.
 - Initial release of puppetlabs-ciscopuppet module, supporting Cisco NX-OS software release 7.0(3)I2(1) on Cisco Nexus switch platforms: N95xx, N93xx, N30xx and N31xx.
 - Please note: 0.9.0 is an EFT pre-release for a limited audience with access to NX-OS 7.0(3)I2(1). Additional code changes may occur in 0.9.x prior to the final 1.0.0 release.
 
-[1.3.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.2.3...v1.3.0
+[1.3.1]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.2.3...v1.3.1
 [1.2.3]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.2.0...v1.2.2
 [1.2.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.1.0...v1.2.0
