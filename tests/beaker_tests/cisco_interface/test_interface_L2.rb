@@ -40,6 +40,8 @@ tests = {
 # Find a usable interface for this test
 intf = find_interface(tests)
 
+# TBD: Consider adding switchport_mode => 'default' tests.
+
 # Test hash test cases
 tests[:default_access] = {
   desc:               "1.1 Default 'access' Properties",

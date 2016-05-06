@@ -411,7 +411,7 @@ def config_bridge_domain(agent, test_bd, stepinfo='bridge-domain config:')
 end
 
 def config_bridge_domain?(tests, _id)
-  return unless tests.key?(:bridge_domain)
+  return unless platform[/n7k/] && tests.key?(:bridge_domain)
 
   bd = tests[:bridge_domain]
   agent = tests[:agent]
@@ -673,7 +673,7 @@ end
 # - Cleans resource
 def test_harness_run(tests, id)
   return unless platform_supports_test(tests, id)
-  logger.info('\n  * Process test_harness_run')
+  logger.info("\n  * Process test_harness_run")
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
 
   # Build the manifest for this test
@@ -705,6 +705,7 @@ def setup_mt_full_env(tests, testcase)
   # MT-full tests require a specific linecard. Search for a compatible
   # module and enable it.
 
+  logger.info('Process setup_mt_full_env')
   testheader = tests[:resource_name]
   mod = tests[:vdc_limit_module]
   mod = 'f3' if mod.nil?

@@ -48,6 +48,8 @@ end
 def config_anycast_gateway_mac?(tests, _id)
   return unless tests.key?(:anycast_gateway_mac)
   agent = tests[:agent]
+
+  # TBD: Consider creating a resource_get to avoid vsh calls
   on(agent, get_vshell_cmd('show runn fabric forwarding'), pty: true)
 
   unless stdout[/anycast-gateway-mac/]

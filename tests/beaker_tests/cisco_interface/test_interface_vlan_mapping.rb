@@ -52,11 +52,14 @@ tests = {
   vdc_limit_module: 'f3',
 }
 
-# Linecard setup
-setup_mt_full_env(tests, self) if platform[/n7k/]
-
-# Use test interface discovered by setup_mt_full_env().
-intf = tests[:intf]
+# Assign a test interface.
+if platform[/n7k/]
+  setup_mt_full_env(tests, self)
+  # Use test interface discovered by setup_mt_full_env().
+  intf = tests[:intf]
+else
+  intf = find_interface(tests)
+end
 
 # Test hash test cases
 tests[:default] = {
