@@ -33,6 +33,7 @@ tests = {
   master:           master,
   intf_type:        'ethernet',
   operating_system: 'nexus',
+  platform:         'n(3|5|6|7|9)k',
   resource_name:    'cisco_interface',
 }
 
@@ -161,10 +162,23 @@ tests[:svi_mapping] = {
   },
 }
 
+# CSCuz58517 workaround: 'private-vlan association trunk' doesn't get
+# removed by 'default interface' on some platforms.
+def pvlan_assoc_cleanup(agent, intf)
+  resource_set(agent,
+               { name:     'cisco_interface',
+                 title:    intf,
+                 property: 'switchport_mode',
+                 value:    'disabled',
+               },
+               "  * Remove stale private-vlan configs from #{intf}")
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  pvlan_assoc_cleanup(agent, intf)
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Defaults")
   test_harness_run(tests, :default)
@@ -177,6 +191,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Trunk Mode")
   test_harness_run(tests, :trunk_secondary)
+  pvlan_assoc_cleanup(agent, intf)
   test_harness_run(tests, :trunk_promiscuous)
 
   # -------------------------------------------------------------------
@@ -184,6 +199,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :svi_mapping)
 
   # -------------------------------------------------------------------
+  pvlan_assoc_cleanup(agent, intf)
   interface_cleanup(agent, intf)
   remove_interface(agent, svi)
   skipped_tests_summary(tests)
