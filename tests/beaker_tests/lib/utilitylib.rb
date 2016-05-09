@@ -1033,7 +1033,7 @@ def skip_unless_supported(tests)
   pattern = tests[:platform]
   return false if pattern.nil? || platform.match(tests[:platform])
   msg = "Skipping all tests; '#{tests[:resource_name]}' "\
-        'is unsupported on this node'
+        '(or test file) is not supported on this node'
   banner = '#' * msg.length
   raise_skip_exception("\n#{banner}\n#{msg}\n#{banner}\n", self)
 end
