@@ -54,12 +54,14 @@ tests[:default_access] = {
   sys_def_switchport: true,
   sys_def_sw_shut:    true,
   manifest_props:     {
-    shutdown:        'default',
-    switchport_mode: 'access',
+    shutdown:                     'default',
+    switchport_autostate_exclude: 'default',
+    switchport_mode:              'access',
   },
   resource:           {
-    shutdown:        'true',
-    switchport_mode: 'access',
+    shutdown:                     'true',
+    switchport_autostate_exclude: 'false',
+    switchport_mode:              'access',
   },
 }
 
@@ -69,9 +71,10 @@ tests[:non_default_access] = {
   sys_def_switchport: true,
   sys_def_sw_shut:    true,
   manifest_props:     {
-    access_vlan:     '128',
-    shutdown:        'false',
-    switchport_mode: 'access',
+    access_vlan:                  '128',
+    shutdown:                     'false',
+    switchport_autostate_exclude: 'true',
+    switchport_mode:              'access',
   },
 }
 
@@ -83,6 +86,7 @@ tests[:default_trunk] = {
   sys_def_sw_shut:    true,
   manifest_props:     {
     shutdown:                      'default',
+    switchport_autostate_exclude:  'default',
     switchport_mode:               'trunk',
     switchport_trunk_allowed_vlan: 'default',
     switchport_trunk_native_vlan:  'default',
@@ -90,6 +94,7 @@ tests[:default_trunk] = {
   },
   resource:           {
     shutdown:                      'true',
+    switchport_autostate_exclude:  'false',
     switchport_mode:               'trunk',
     switchport_trunk_allowed_vlan: '1-4094',
     switchport_trunk_native_vlan:  '1',
@@ -104,6 +109,7 @@ tests[:non_default_trunk] = {
   sys_def_sw_shut:    true,
   manifest_props:     {
     shutdown:                      'false',
+    switchport_autostate_exclude:  'true',
     switchport_mode:               'trunk',
     switchport_trunk_allowed_vlan: '30-33,40,100',
     switchport_trunk_native_vlan:  '20',
