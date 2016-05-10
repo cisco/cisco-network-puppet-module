@@ -70,6 +70,7 @@ Puppet::Type.type(:cisco_snmp_community).provide(:cisco) do
   end
 
   def group
+    return if @snmp_community.nil?
     value = @snmp_community.group
     value = :default if
       @resource[:group] == :default &&

@@ -59,6 +59,7 @@ Puppet::Type.newtype(:cisco_bgp) do
       flush_routes                           => false,
       isolate                                => false,
       maxas_limit                            => '50',
+      reconnect_interval                     => '55',
       shutdown                               => false,
 
       supress_fib_pending                    => true,
@@ -283,6 +284,16 @@ Puppet::Type.newtype(:cisco_bgp) do
       (is.size == should.flatten.size && is.sort == should.flatten.sort)
     end
   end # confederation_peers
+
+  newproperty(:reconnect_interval) do
+    desc 'The BGP reconnection interval for dropped sessions. '\
+         "Valid values are Integer or keyword 'default'."
+
+    munge do |value|
+      value = (value == 'default') ? :default : Integer(value)
+      value
+    end
+  end
 
   newproperty(:shutdown) do
     desc 'Administratively shutdown the BGP protocol'

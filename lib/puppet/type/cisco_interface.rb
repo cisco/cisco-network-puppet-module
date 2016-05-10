@@ -90,6 +90,32 @@ Puppet::Type.newtype(:cisco_interface) do
      ipv4_arp_timeout             => 300,
      svi_autostate                => true,
      svi_management               => true,
+    }
+    #Private vlan config example
+    cisco_interface { \"Ethernet8/1\" :
+     switchport_mode_private_vlan_host  => 'host',
+     switchport_mode_private_vlan_host_association => ['10', '11'],
+    }
+    cisco_interface { \"Ethernet8/1\" :
+     switchport_mode_private_vlan_host  => 'promiscuous',
+     switchport_mode_private_vlan_host_promisc=> ['10', '11'],
+    }
+    cisco_interface { \"Ethernet8/1\" :
+     switchport_mode_private_vlan_trunk_promiscuous => true,
+     switchport_private_vlan_mapping_trunk => ['10', '11'],
+    }
+    cisco_interface { \"Ethernet8/1\" :
+     switchport_mode_private_vlan_trunk_secondary => true,
+     switchport_private_vlan_association_trunk => ['10', '11'],
+    }
+    cisco_interface { \"Ethernet8/1\" :
+     switchport_private_vlan_trunk_allowed_vlan => ['10-11'],
+    }
+    cisco_interface { \"Ethernet8/1\" :
+     switchport_private_vlan_trunk_native_vlan => 10,
+    }
+    cisco_interface {\"Vlan98\":
+     private_vlan_mapping => ['10-11'],
     }"
 
   ###################
@@ -211,8 +237,15 @@ Puppet::Type.newtype(:cisco_interface) do
     desc "The allowed VLANs for the specified Ethernet interface. Valid values
           are string, keyword 'default'."
 
-    # Strip whitespace if manifest specified as '20, 30' vs '20,30'
-    munge { |value| value == 'default' ? :default : value.sub(/\s/, '') }
+    # Use the range summarize utility to normalize the vlan ranges
+    munge do |value|
+      if value == 'default'
+        value = :default
+      else
+        value = PuppetX::Cisco::Utils.range_summarize(value)
+      end
+      value
+    end
   end # property switchport_trunk_allowed_vlan
 
   newproperty(:switchport_trunk_native_vlan) do
@@ -690,6 +723,208 @@ Puppet::Type.newtype(:cisco_interface) do
       end
     end
   end # property stp_vlan_port_priority
+
+  ###########################
+  # private vlan attributes #
+  ###########################
+
+  newproperty(:switchport_mode_private_vlan_host) do
+    desc 'Switchport private host mode of the interface.'
+
+    newvalues(
+      :host,
+      :promiscuous,
+      :disabled)
+  end # property switchport_mode_private_vlan_host
+
+  newproperty(:switchport_mode_private_vlan_host_association, array_matching: :all) do
+    format = '["primary_vlan", "secondary_vlan"]'
+    desc "An array of #{format} pairs. "\
+         "Valid values match format #{format}. "\
+         'primary_vlan and secondary_vlan are integers.'
+    match_error = "must be of format #{format}. "\
+                  'primary_vlan and secondary_vlan must be specified as integers.'
+
+    validate do |value|
+      fail "Vlan '#{value}' #{match_error}" unless
+            /^(\d+)$/.match(value.to_s).to_s == value.to_s ||
+            value == 'default' || value == :default
+    end
+
+    munge do |value|
+      value == 'default' ? :default : value.to_s.gsub(/\s+/, '')
+    end
+
+    def insync?(is)
+      (is.size == should.flatten.size && is.sort == should.flatten.sort)
+    end
+  end # property switchport_mode_private_vlan_host_association
+
+  newproperty(:switchport_mode_private_vlan_host_promisc, array_matching: :all) do
+    format = '["primary_vlan", "secondary_vlan"]'
+    desc "An array of #{format} pairs. "\
+         "Valid values match format #{format}. "\
+         'primary_vlan and secondary_vlan are integers.'
+    match_error = "must be of format #{format}. "\
+                  'primary_vlan and secondary_vlan must be specified as integers.'
+
+    validate do |value|
+      fail "Vlan '#{value}' #{match_error}" unless
+            value.kind_of? String
+      fail "Vlan '#{value}' #{match_error}" unless
+           /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value ||
+           value == 'default' || value == :default
+    end
+
+    munge do |value|
+      value == 'default' ? :default : value.to_s.gsub(/\s+/, '')
+    end
+
+    def insync?(is)
+      (is.size == should.flatten.size && is.sort == should.flatten.sort)
+    end
+  end # switchport_mode_private_vlan_host_promisc
+
+  newproperty(:switchport_mode_private_vlan_trunk_promiscuous) do
+    desc 'Switchport private trunk promisc mode for the interface.'
+
+    newvalues(
+      :true,
+      :false,
+      :default)
+  end # property switchport_mode_private_vlan_trunk_promiscuous
+
+  newproperty(:switchport_mode_private_vlan_trunk_secondary) do
+    desc 'Switchport private trunk secondary mode for the interface.'
+
+    newvalues(
+      :true,
+      :false,
+      :default)
+  end # property switchport_mode_private_vlan_trunk_secondary
+
+  newproperty(:switchport_private_vlan_association_trunk, array_matching: :all) do
+    format = '["primary_vlan", "secondary_vlan"]'
+    desc "An array of #{format} pairs. "\
+         "Valid values match format #{format}. "\
+         'primary_vlan and secondary_vlan are integers.'
+    match_error = "Input must be of #{format}. "\
+                  'primary_vlan and secondary_vlan must be specified as integers. '\
+                  "Ex ['10', '20']"
+
+    validate do |value|
+      fail "Vlan '#{value}' #{match_error}" unless
+             /^(\s*\d+\s*)$/.match(value).to_s == value ||
+             value == 'default' || value == :default
+    end
+
+    munge do |value|
+      value == 'default' ? :default : value.to_s.gsub(/\s+/, '')
+    end
+
+    def insync?(is)
+      return true if should == [:default] && is == [:default]
+      pair = should.join(' ')
+      is.include? pair
+    end
+  end # switchport_private_vlan_association_trunk
+
+  newproperty(:switchport_private_vlan_mapping_trunk, array_matching: :all) do
+    format = '["primary_vlan", "secondary_vlan"]'
+    desc "An array of #{format} pairs. "\
+         "Valid values match format #{format}. "\
+         'primary_vlan and secondary_vlan are integers.'
+
+    match_error = "Input must be of format #{format}. "\
+                  'primary_vlan and secondary_vlan must be specified as integers.'\
+                  " Ex ['10', '20'], ['10', '20-30']"\
+                  " or ['10', '20,24']"
+
+    validate do |value|
+      fail "Vlan '#{value}' #{match_error}" unless
+           /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value ||
+           value == 'default' || value == :default
+    end
+
+    munge do |value|
+      value == 'default' ? :default : value.to_s.gsub(/\s+/, '')
+    end
+
+    def insync?(is)
+      return true if should == [:default] && is == [:default]
+      pair = should.join(' ')
+      is.include? pair
+    end
+  end # switchport_private_vlan_mapping_trunk
+
+  newproperty(:switchport_private_vlan_trunk_allowed_vlan, array_matching: :all) do
+    format = '["vlans"]'
+    desc "An array of #{format}. "\
+         "Valid values match format #{format} with vlans as integers."
+    match_error = "must be of format #{format}. "\
+                  'vlans must be specified as integers.'\
+                  " Ex ['10'], ['20-30'] or ['20,24']"
+
+    validate do |value|
+      fail "Vlan '#{value}' #{match_error}" unless
+            value.kind_of? String
+      fail "Vlan '#{value}' #{match_error}" unless
+           /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value ||
+           value == 'default' || value == :default
+    end
+
+    munge do |value|
+      value == 'default' ? :default : value.to_s.gsub(/\s+/, '')
+    end
+
+    def insync?(is)
+      return true if should == [:default] && is == [:default]
+      return false if should == [:default]
+      list = should[0].split(',')
+      (is.size == list.size && is.sort == list.sort)
+    end
+  end # switchport_private_vlan_trunk_allowed_vlan
+
+  newproperty(:switchport_private_vlan_trunk_native_vlan) do
+    format = '<vlan>'
+    desc 'The  private native vlan. '\
+         "Valid values match format #{format} with vlan as integer"
+    match_error = "must be of format #{format}. "\
+                  'vlan must be specified as integer. Ex 10 or 20'
+
+    validate do |value|
+      fail "Vlan '#{value}' #{match_error}" unless
+            /^(\d+)$/.match(value.to_s).to_s == value.to_s ||
+            value == 'default' || value == :default
+    end
+
+    munge do |value|
+      value == 'default' ? :default : Integer(value)
+    end
+  end # switchport_private_vlan_trunk_native_vlan
+
+  newproperty(:private_vlan_mapping, array_matching: :all) do
+    format = '["vlans"]'
+    desc "An array of #{format}. "\
+         "Valid values match format #{format} with vlans as integer"
+    match_error = "must be of format #{format}. "\
+                  'vlans must be specified as integers. '\
+                  "Ex ['10'], ['20-30'] or ['20,24']"
+
+    validate do |value|
+      fail "Vlan '#{value}' #{match_error}" unless
+            /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value ||
+            value == 'default' || value == :default
+    end
+
+    munge do |value|
+      value == 'default' ? :default : value.gsub(/\s+/, '')
+    end
+
+    def insync?(is)
+      (is.size == should.flatten.size && is.sort == should.flatten.sort)
+    end
+  end # private_vlan_mapping
 
   ################
   # Autorequires #

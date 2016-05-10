@@ -19,11 +19,27 @@ class ciscopuppet::cisco::demo_vlan {
     /(n3k|n9k)/ => 22000,
     default => undef
   }
+  $fabric_control = platform_get() ? {
+    /(n7k)/ => true,
+    default => undef
+  }
   cisco_vlan { '220':
-    ensure     => present,
-    mapped_vni => $mapped_vni,
-    vlan_name  => 'newtest',
-    shutdown   => true,
-    state      => 'active',
+    ensure          => present,
+    mapped_vni      => $mapped_vni,
+    vlan_name       => 'newtest',
+    shutdown        => true,
+    state           => 'active',
+    fabric_control  => $fabric_control
+  }
+  # For private vlan
+  if platform_get() =~ /n(3|5|6|7|9)k/ {
+    cisco_vlan { '333':
+      ensure     => present,
+      private_vlan_type => 'primary',
+      private_vlan_association => ['334,336-339'],
+    }
+  
+  } else {
+    warning('This platform does not support the private vlan feature')
   }
 }

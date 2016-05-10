@@ -1,6 +1,6 @@
-# Sample site.pp manifest used to demo ipv6 bgp 
+# Manifest to demo cisco_encapsulation provider
 #
-# Copyright (c) 2014-2016 Cisco and/or its affiliates.
+# Copyright (c) 2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,6 +14,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-node 'cisco_bgpv6_device_name' {
-  include ciscopuppet::cisco::demo_bgp_ipv6
+class ciscopuppet::cisco::demo_encapsulation {
+  if platform_get() =~ /n7k/ {
+    cisco_encapsulation {"test_encap" :
+      ensure          => present,
+      dot1q_map       => ['101-102,151, 201-202', '5101-5104,5202'],
+    }
+  } else {
+     notify{'SKIP: This platform does not support cisco_encapsulation': }
+  }
 }

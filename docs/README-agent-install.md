@@ -24,18 +24,16 @@ This document describes Puppet agent installation and setup on Cisco Nexus switc
 #### Platform and Software Minimum Requirements
 
 * The Cisco NX-OS Puppet implementation requires open source Puppet version 4.0 or Puppet Enterprise 2015.2
+* The Cisco IOS XR Puppet implementation requires open source Puppet version 4.3.2 or Puppet Enterprise 2015.3.2
 * The following table lists supported platforms and OS versions.
 
-Platform         | OS    | OS Version           |
------------------|-------|----------------------|
-Cisco Nexus 30xx | NX-OS | 7.0(3)I2(1) and later
-Cisco Nexus 31xx | NX-OS | 7.0(3)I2(1) and later
-Cisco Nexus 93xx | NX-OS | 7.0(3)I2(1) and later
-Cisco Nexus 95xx | NX-OS | 7.0(3)I2(1) and later
-Cisco N9kv       | NX-OS | 7.0(3)I2(1) and later
-Cisco Nexus 56xx | NX-OS | 7.3(0)N1(1) and later
-Cisco Nexus 60xx | NX-OS | 7.3(0)N1(1) and later
-Cisco Nexus 7xxx | NX-OS | 7.3(0)D1(1) and later
+Platform           | OS     | OS Version           |
+-------------------|--------|----------------------|
+Cisco Nexus N9k    | NX-OS  | 7.0(3)I2(1) and later
+Cisco Nexus N3k    | NX-OS  | 7.0(3)I2(1) and later
+Cisco Nexus N5k    | NX-OS  | 7.3(0)N1(1) and later
+Cisco Nexus N6k    | NX-OS  | 7.3(0)N1(1) and later
+Cisco Nexus N7k    | NX-OS  | 7.3(0)D1(1) and later
 
 Please note: A virtual Nexus N9000/N3000 may be helpful for development and testing. Users with a valid [cisco.com](http://cisco.com) user ID can obtain a copy of a virtual Nexus N9000/N3000 by sending their [cisco.com](http://cisco.com) user ID in an email to <get-n9kv@cisco.com>. If you do not have a [cisco.com](http://cisco.com) user ID please register for one at [https://tools.cisco.com/IDREG/guestRegistration](https://tools.cisco.com/IDREG/guestRegistration)
 
@@ -51,13 +49,14 @@ NX-OS supports three possible environments for running third party software:
 
 Environment                  | Supported Platforms                      |
 -----------------------------|------------------------------------------|
-`bash-shell` or `guestshell` | Cisco Nexus 30xx, 31xx, 93xx, 95xx, N9Kv |
-`open agent container (OAC)` | Cisco Nexus 56xx, 60xx, 7xxx             |
+`bash-shell`                 | Cisco Nexus N3k, N9k                     |
+`guestshell`                 | Cisco Nexus N3k, N9k                     |
+`open agent container (OAC)` | Cisco Nexus N5k, N6k, N7k                |
 
 You may run Puppet from either `bash-shell` or `guestshell` on supported platforms but not from both at the same time.
 
 * `bash-shell`
-  * This is the native WRL Linux environment underlying NX-OS. It is disabled by default.
+  * This is the native WRL Linux environment underlying NX-OS. It is disabled by default on NX-OS.
 * `guestshell`
   * This is a secure Linux container environment running CentOS. It is enabled by default in most platforms that support it.
 * `open agent container`
@@ -67,9 +66,9 @@ You may run Puppet from either `bash-shell` or `guestshell` on supported platfor
 
 #### Set Up the Network
 
-Ensure that you have network connectivity prior to Puppet installation. Some basic NX-OS cli configuration may be necessary.
+Ensure that you have network connectivity prior to Puppet installation. Some basic CLI configuration may be necessary.
 
-**Example:** Connectivity via management interface
+**Example:** Connectivity via management interface - Nexus
 
 _Note: The management interface exists in a separate VRF context and requires additional configuration as shown._
 
@@ -92,7 +91,7 @@ end
 
 This section is only necessary if Puppet will run from the `bash-shell`.
 
-#### Set Up NX-OS
+### (NX-OS only) Enable the bash-shell
 
 The `bash-shell` is disabled by default. Enable it with the feature configuration command.
 
@@ -102,9 +101,11 @@ config term
 end
 ~~~
 
-#### Install Puppet Agent in bash-shell
+### Set up the bash-shell environment
 
 Enter the `bash-shell` environment and become root:
+
+**Example:** Nexus
 
 ~~~bash
 n3k# run bash
@@ -118,13 +119,12 @@ If you're using the management interface, you must next switch to the management
 ip netns exec management bash
 ~~~
 
-Then set up DNS configuration:
+Regardless of OS, set up DNS configuration:
 
 ~~~
 cat >> /etc/resolv.conf << EOF
 nameserver 10.0.0.202
 domain mycompany.com
-search mycompany.com
 EOF
 ~~~
 
@@ -215,7 +215,6 @@ echo 'n3k' > /etc/hostname
 cat >> /etc/resolv.conf << EOF
 nameserver 10.0.0.202
 domain mycompany.com
-search mycompany.com
 EOF
 ~~~
 
@@ -225,12 +224,12 @@ This section is only necessary if Puppet will run from the `open agent container
 
 #### Set Up NX-OS
 
-Download the `OAC` `oac.1.1.0.ova` file.
+Download the `OAC` `oac.1.0.0.ova` file.
 
 | Platform | OAC Download Link |
 |----------|-------------------|
-| Nexus 7xxx | [Download Link](https://software.cisco.com/download/release.html?i=!y&mdfid=283748960&softwareid=282088129&release=7.3%280%29D1%281%29&os=)|
-| Nexus 56xx and 60xx | [Download Link](https://software.cisco.com/download/release.html?i=!y&mdfid=284360574&softwareid=282088130&release=7.3%280%29N1%281%29&os=)|
+| Nexus N7k | [Download Link](https://software.cisco.com/download/release.html?i=!y&mdfid=283748960&softwareid=282088129&release=7.3%280%29D1%281%29&os=)|
+| Nexus N5k and N6k | [Download Link](https://software.cisco.com/download/release.html?i=!y&mdfid=284360574&softwareid=282088130&release=7.3%280%29N1%281%29&os=)|
 
 Copy the `ova` file to the `bootflash:` device.
 
@@ -264,11 +263,11 @@ The recommended minimum values are currently:
 **NOTE:** If insufficent `bootflash:` resources are available, remove unneeded files from `bootflash:` to free up space.
 
 Install the `OAC` Virtual Service using the `virtual-service install` command:
-`virtual-service install name oac package bootflash:oac.1.1.0.ova`
+`virtual-service install name oac package bootflash:oac.1.0.0.ova`
 
 ~~~
-n7k# virtual-service install name oac package bootflash:oac.1.1.0.ova
-Note: Installing package 'bootflash:/oac.1.1.0.ova' for virtual service 'oac'. Once the install has finished, the VM may be activated. Use 'show virtual-service list' for progress.
+n7k# virtual-service install name oac package bootflash:oac.1.0.0.ova
+Note: Installing package 'bootflash:/oac.1.0.0.ova' for virtual service 'oac'. Once the install has finished, the VM may be activated. Use 'show virtual-service list' for progress.
 
 n7k# 2016 Feb 12 19:51:14 n7k %$ VDC-1 %$ %VMAN-2-INSTALL_STATE: Successfully installed virtual service 'oac'
 
@@ -278,7 +277,7 @@ Virtual Service List:
 
 Name                    Status             Package Name
 -----------------------------------------------------------------------
-oac                     Installed          oac.1.1.0.ova
+oac                     Installed          oac.1.0.0.ova
 
 n7k# 
 ~~~
@@ -306,7 +305,7 @@ Virtual Service List:
 
 Name                    Status             Package Name
 -----------------------------------------------------------------------
-oac                     Activated          oac.1.1.0.ova
+oac                     Activated          oac.1.0.0.ova
 
 n7k# 
 ~~~
@@ -362,7 +361,6 @@ echo 'n7k' > /etc/hostname
 cat >> /etc/resolv.conf << EOF
 nameserver 10.0.0.202
 domain mycompany.com
-search mycompany.com
 EOF
 ~~~
 
@@ -386,29 +384,21 @@ rpm --import http://yum.puppetlabs.com/RPM-GPG-KEY-puppetlabs
 rpm --import http://yum.puppetlabs.com/RPM-GPG-KEY-reductive
 ~~~
 
-The `bash-shell`, `guestshell` and `open agent container` environments use different puppet RPMs.
+The recommended Puppet RPM varies by environment:
+* NX-OS:
+  * `bash-shell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm)
+  * `guestshell`: Due to issue https://tickets.puppetlabs.com/browse/FACT-1409, please install a `1.3.x` version of the puppet agent RPM inside the `guestshell`.
+    * Latest `1.3.x` version at the time of publishing this module:
+      * [http://yum.puppetlabs.com/el/7/PC1/x86_64/puppet-agent-1.3.6-1.el7.x86_64.rpm](http://yum.puppetlabs.com/el/7/PC1/x86_64/puppet-agent-1.3.6-1.el7.x86_64.rpm)
+    * Once this issue is resolved use [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm)
+  * `open agent container (OAC)`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm)
 
-* For `bash-shell` use:
-
-~~~bash
-yum install http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm
-yum install puppet
-~~~
-
-* For `guestshell` use:
-
-~~~bash
-yum install http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm
-yum install puppet
-~~~
-
-* For `open agent container` use:
+Using the appropriate RPM for your environment as described above, do:
 
 ~~~bash
-yum install http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm
+yum install $PUPPET_RPM
 yum install puppet
 ~~~
-
 
 Update PATH var:
 
@@ -416,7 +406,11 @@ Update PATH var:
 export PATH=/opt/puppetlabs/puppet/bin:/opt/puppetlabs/puppet/lib:$PATH
 ~~~
 
-####Edit the Puppet config file:
+#### Install the cisco_node_utils gem
+
+If you wish to make use of the types and providers in this module, you will need to install (and perhaps configure) the [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) Ruby gem. Refer to [README-gem-install.md](README-gem-install.md) for detailed steps.
+
+#### Edit the Puppet config file:
 
 **/etc/puppetlabs/puppet/puppet.conf**
 
@@ -470,8 +464,9 @@ It may be desirable to set up automatic restart of the Puppet agent in the event
 
 The `bash-shell` environment uses **init.d** for service management.
 The Puppet agent provides a generic init.d script when installed, but a slight
-modification is needed to ensure that Puppet runs in the management namespace:
+modification is needed to ensure that Puppet runs in the correct namespace:
 
+**Nexus**
 ~~~diff
 --- /etc/init.d/puppet.old
 +++ /etc/init.d/puppet
@@ -486,7 +481,7 @@ modification is needed to ensure that Puppet runs in the management namespace:
          [ $RETVAL = 0 ] && touch ${lockfile}
 ~~~
 
-Next, enable the puppet service to be automatically started at boot time, and optionally start it now:
+Next, in any case, enable the puppet service to be automatically started at boot time, and optionally start it now:
 
 ~~~bash
 chkconfig --add puppet
@@ -537,7 +532,6 @@ systemctl start my_puppet
 [Cisco Nexus 5000 and 6000 Programmability Guide](http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus5000/sw/programmability/guide/b_Cisco_Nexus_5K6K_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_5K6K_Series_NX-OS_Programmability_Guide_chapter_01001.html) - Open Agent Container Documentation
 
 [Cisco Nexus 7000 Programmability Guide](http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus7000/sw/programmability/guide/b_Cisco_Nexus_7000_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_7000_Series_NX-OS_Programmability_Guide_chapter_01001.html) - Open Agent Container Documentation
-
 
 ----
 ~~~

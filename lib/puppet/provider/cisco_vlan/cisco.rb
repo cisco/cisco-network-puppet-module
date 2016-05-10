@@ -31,14 +31,18 @@ Puppet::Type.type(:cisco_vlan).provide(:cisco) do
 
   mk_resource_methods
 
-  VLAN_NON_BOOL_PROPS = [:mapped_vni, :mode, :state, :vlan_name]
-  VLAN_BOOL_PROPS = [:shutdown]
-  VLAN_ALL_PROPS = VLAN_NON_BOOL_PROPS + VLAN_BOOL_PROPS
+  VLAN_ARRAY_FLAT_PROPS = [:private_vlan_association]
+  VLAN_NON_BOOL_PROPS = [:mapped_vni, :mode, :state,
+                         :private_vlan_type, :vlan_name]
+  VLAN_BOOL_PROPS = [:fabric_control, :shutdown]
+  VLAN_ALL_PROPS = VLAN_ARRAY_FLAT_PROPS + VLAN_NON_BOOL_PROPS + VLAN_BOOL_PROPS
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@vlan',
                                             VLAN_NON_BOOL_PROPS)
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@vlan',
                                             VLAN_BOOL_PROPS)
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:array_flat, self, '@vlan',
+                                            VLAN_ARRAY_FLAT_PROPS)
 
   def initialize(value={})
     super(value)
@@ -56,6 +60,9 @@ Puppet::Type.type(:cisco_vlan).provide(:cisco) do
     }
 
     # Call node_utils getter for each property
+    VLAN_ARRAY_FLAT_PROPS.each do |prop|
+      current_state[prop] = v.send(prop)
+    end
     VLAN_NON_BOOL_PROPS.each do |prop|
       current_state[prop] = v.send(prop)
     end

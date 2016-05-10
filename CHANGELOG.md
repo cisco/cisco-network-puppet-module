@@ -5,21 +5,60 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 ### New feature support
+
+### Added
+
+### Removed
+
+### Changed
+
+## [1.3.1] - 2016-05-06
+
+### New feature support
 #### Cisco Resources
 - `cisco_fabricpath_global` type and provider.
 - `cisco_fabricpath_topology` type and provider.
+- `cisco_itd_device_group` type and provider.
+- `cisco_itd_device_group_node` type and provider.
+- `cisco_itd_service` type and provider.
 - `cisco_stp_global` type and provider.
 
-#### NetDev Resources
-*
-
 ### Added
+- Extended the following providers to support `Nexus N5k`, `Nexus N6k`, and `Nexus N7k`
+  - `cisco_aaa_authentication_login`, `cisco_aaa_authorization_login_cfg_svc`, `cisco_aaa_authorization_login_exec_svc`, `cisco_aaa_group_tacacs`
+  - `cisco_fabricpath_global`, `cisco_fabricpath_topology`
+  - `cisco_interface_channel_group`, `cisco_interface_portchannel`, `cisco_portchannel_global`
+  - `cisco_snmp_community`, `cisco_snmp_group`, `cisco_snmp_server`, `cisco_snmp_user`
+  - `cisco_vpc_domain`
+  - `cisco_vtp`
+  - `domain_name`, `name_server`, `network_dns`, `network_vlan`, `search_domain`
+  - `ntp_config`, `ntp_server`
+  - `port_channel`
+  - `radius`, `radius_global`, `radius_server`, `radius_server_group`
+  - `network_snmp`, `snmp_community`, `snmp_notification`, `snmp_notification_receiver`, `snmp_user`
+  - `tacacs`, `tacacs_global`, `tacacs_server`, `tacacs_server_group`
+- Extended `cisco_bgp` with the following attributes:
+  - `nsr`
+  - `reconnect_interval`
 - Extended `cisco_interface` with the following attributes:
   - `ipv4_forwarding`, `switchport_mode fabricpath`
   - `stp_bpdufilter`, `stp_bpduguard`, `stp_cost`, `stp_guard`, `stp_link_type`, `stp_mst_cost`
   - `stp_mst_port_priority`, `stp_port_priority`, `stp_port_type`, `stp_vlan_cost`, `stp_vlan_port_priority`
+  - `switchport_mode_private_vlan_host`, `switchport_mode_private_vlan_host_association`
+  - `switchport_mode_private_vlan_host_promisc`, `switchport_mode_private_vlan_trunk_promiscuous`
+  - `switchport_mode_private_vlan_trunk_secondary`, `switchport_private_vlan_association_trunk`
+  - `switchport_private_vlan_mapping_trunk`, `switchport_private_vlan_trunk_allowed_vlan`
+  - `switchport_private_vlan_trunk_native_vlan`, `private_vlan_mapping`
+  - `modify switchport_trunk_allowed_vlan to use range_summarize() which takes care of idempotency issues with vlan ranges`
+- Extended `cisco_portchannel_global` provider to support `Nexus N3k`
 - Extended `cisco_vlan` with the following attributes:
   - `mode`
+  - `private_vlan_type`
+  - `private_vlan_association`
+- Extended `cisco_vpc_domain` with the following attributes:
+  - `fabricpath_emulated_switch_id`
+  - `fabricpath_multicast_load_balance`
+  - `port_channel_limit`
 - Extended `cisco_vrf_af` with the following attributes:
   - `route_policy_export`
   - `route_policy_import`
@@ -36,6 +75,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Renamed all providers from `:nxapi` to `:cisco` as they may include support for multiple Cisco platforms, not all of which use NXAPI.
+
+## 1.3.0
+This version was never released.
 
 ## [1.2.3] - 2016-02-24
 ### Added
@@ -203,6 +245,7 @@ This version was never released.
 - Please note: 0.9.0 is an EFT pre-release for a limited audience with access to NX-OS 7.0(3)I2(1). Additional code changes may occur in 0.9.x prior to the final 1.0.0 release.
 
 [unreleased]: https://github.com/cisco/cisco-network-puppet-module/compare/master...develop
+[1.3.1]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.2.3...v1.3.1
 [1.2.3]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.2.0...v1.2.2
 [1.2.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.1.0...v1.2.0

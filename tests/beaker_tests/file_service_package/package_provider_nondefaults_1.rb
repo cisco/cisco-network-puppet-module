@@ -68,8 +68,7 @@ test_name "TestCase :: #{testheader}" do
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no change.
     # No change would imply that curl package is installed prior to test.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [0])
 
     logger.info("Setup switch for provider test :: #{result}")
@@ -81,8 +80,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, FileSvcPkgLib.create_package_curl_manifest_installed)
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [0])
 
     logger.info("Get resource installed manifest from master :: #{result}")
@@ -93,8 +91,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     # The Curl package state should not be purged.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource package 'curl'", options)
+    cmd_str = PUPPET_BINPATH + "resource package 'curl'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ensure' => 'purged' },

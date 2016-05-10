@@ -69,8 +69,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SnmpNotificationLib.create_absent)
 
     # Expected exit_code is 0,2 since server may or may not be configured.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
   end
 
@@ -80,22 +79,24 @@ test_name "TestCase :: #{testheader}" do
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no change.
     # Or expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
-    on(agent, cmd_str, acceptable_exit_codes: [2])
+    cmd_str = PUPPET_BINPATH + 'agent -t'
+    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd("sh run snmp all | include \"snmp-server enable traps\"")
+    logger.info("Setup switch for provider test :: #{result}")
+  end
+
+  # @step [Step] Checks snmp_notification resource on agent using resource cmd.
+  step 'TestStep :: Check snmp_notification resource absent on agent' do
+    # Expected exit_code is 0 since this is a puppet resource cmd.
+    # Flag is set to false to check for presence of RegExp pattern in stdout.
+    cmd_str = PUPPET_BINPATH + "resource snmp_notification 'aaa server-state-change'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
-                               [
-                                 /no snmp-server enable traps aaa server-state-change/
-                               ],
+                               { 'enable' => 'false' },
                                false, self, logger)
     end
 
-    logger.info("Setup switch for provider test :: #{result}")
+    logger.info("Check snmp_notification resource absent on agent :: #{result}")
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
@@ -104,8 +105,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SnmpNotificationLib.create_non_defaults)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource present manifest from master :: #{result}")
@@ -115,8 +115,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check snmp_notification resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      "resource snmp_notification 'aaa server-state-change'", options)
+    cmd_str = PUPPET_BINPATH + "resource snmp_notification 'aaa server-state-change'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'enable' => 'true' },
@@ -124,21 +123,6 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Check snmp_notification resource presence on agent :: #{result}")
-  end
-
-  step 'TestStep :: Check snmp_notification instance presence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd("sh run snmp all | include \"snmp-server enable traps\"")
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               [
-                                 /snmp-server enable traps aaa server-state-change/
-                               ],
-                               false, self, logger)
-    end
-
-    logger.info("Check snmp_notification instance presence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.

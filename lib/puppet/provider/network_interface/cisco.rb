@@ -14,10 +14,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Puppet::Type.type(:network_interface).provide(:cisco, parent: Puppet::Type.type(:cisco_interface).provider(:cisco)) do
+require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
+begin
+  require 'puppet_x/cisco/autogen'
+rescue LoadError # seen on master, not on agent
+  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..',
+                                     'puppet_x', 'cisco', 'autogen.rb'))
+end
+
+Puppet::Type.type(:network_interface).provide(:cisco) do
   @doc = 'network INTERFACE'
 
+  confine feature: :cisco_node_utils
+  defaultfor operatingsystem: [:nexus, :ios_xr]
+
   mk_resource_methods
+
+  UNSUPPORTED_PROPS_IOS_XR = [:speed, :duplex]
+
+  def initialize(value={})
+    super(value)
+    @interface = Cisco::Interface.interfaces[@property_hash[:name]]
+    @property_flush = {}
+  end
 
   def self.instances
     interfaces = []
@@ -37,14 +57,52 @@ Puppet::Type.type(:network_interface).provide(:cisco, parent: Puppet::Type.type(
     interfaces
   end
 
+  def self.prefetch(resources)
+    interfaces = instances
+
+    resources.keys.each do |id|
+      provider = interfaces.find { |instance| instance.name == id }
+      resources[id].provider = provider unless provider.nil?
+    end
+  end # self.prefetch
+
+  def exists?
+    (@property_hash[:ensure] == :present)
+  end
+
+  def create
+    @property_flush[:ensure] = :present
+  end
+
+  def destroy
+    @property_flush[:ensure] = :absent
+  end
+
+  def instance_name
+    interface
+  end
+
+  def validate
+    return unless Facter.value('operatingsystem').eql?('ios_xr')
+
+    invalid = []
+    UNSUPPORTED_PROPS_IOS_XR.each do |prop|
+      invalid << prop if @resource[prop]
+    end
+
+    fail ArgumentError, "This provider does not support the following properties on this platform: #{invalid}" unless invalid.empty?
+  end
+
   def flush
+    validate
+
     if @property_flush[:ensure] == :absent
       @interface.destroy
       @interface = nil
       @property_hash[:ensure] = :absent
     else
-      if @property_hash.empty?
-        @interface = Cisco::Interface.new(@resource[:interface])
+      if @property_hash.empty? || @interface.nil?
+        @interface = Cisco::Interface.new(@resource[:name])
       end
       @interface.mtu = @resource[:mtu] if @resource[:mtu]
       @interface.description = @resource[:description] if @resource[:description]

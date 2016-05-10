@@ -67,7 +67,6 @@ testheader = 'Resource cisco_fabricpath_topology'
 # Top-level keys set by caller:
 # tests[:master] - the master object
 # tests[:agent] - the agent object
-# tests[:show_cmd] - the common show command to use for test_show_run
 #
 tests = {
   master:   master,
@@ -120,8 +119,7 @@ tests['non_default_properties'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  cmd = PUPPET_BINPATH + 'resource cisco_fabricpath_topology'
-  get_namespace_cmd(agent, cmd, options)
+  PUPPET_BINPATH + 'resource cisco_fabricpath_topology'
 end
 
 def build_manifest_fabricpath_topology(tests, id)
@@ -160,14 +158,16 @@ def test_harness_fabricpath_topology(tests, id)
   tests[id][:ensure] = nil
 end
 
+def testbed_cleanup(agent)
+  remove_all_vlans(agent)
+  resource_absent_cleanup(agent, 'cisco_fabricpath_topology')
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
-  resource_absent_cleanup(agent, 'cisco_fabricpath_topology',
-                          'Setup for cisco_fabricpath_topology provider test')
-  device = platform
-  logger.info("#### This device is of type: #{device} #####")
+  testbed_cleanup(agent)
 
   logger.info("\n#{'-' * 60}\nSection 0. Testbed Initialization")
   setup_fabricpath_env(tests, self)
@@ -181,6 +181,8 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:desc] = '1.2 Non Default Properties (absent)'
   tests[id][:ensure] = :absent
   test_harness_fabricpath_topology(tests, id)
+
+  testbed_cleanup(agent)
 end
 
 logger.info('TestCase :: # {testheader} :: End')

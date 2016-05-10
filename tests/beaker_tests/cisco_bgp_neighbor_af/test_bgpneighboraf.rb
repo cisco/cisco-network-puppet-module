@@ -53,53 +53,55 @@ end
 def dependency_manifest(tests, id)
   af = puppet_resource_title_pattern_munge(tests, id)
   remote_as = tests[id][:remote_as]
+  remote_as = 1 if remote_as.nil? && operating_system == 'ios_xr'
 
   extra_config = ''
-  # XR requires the following before a vrf AF can be configured:
-  #   1. a global router_id
-  #   2. a global address family
-  #   3. route_distinguisher configured on the vrf
-  #   4. remote-as is required for neightbor
-  remote_as = 1 if remote_as.nil? && operating_system == 'ios_xr'
-  if af[:vrf] != 'default'
-    if af[:afi] == 'ipv6'
-      global_afi = 'vpnv6'
-    else
-      global_afi = 'vpnv4'
+  if operating_system[/ios_xr/]
+    extra_config += "
+      cisco_command_config { 'policy_config':
+        command => '
+          route-policy rm_in
+            end-policy
+          route-policy rm_out
+            end-policy
+        '
+      }
+    "
+    # XR requires the following before a vrf AF can be configured:
+    #   1. a global router_id
+    #   2. a global address family
+    #   3. route_distinguisher configured on the vrf
+    #   4. remote-as is required for neighbor
+    if af[:vrf] != 'default'
+      global_afi = (af[:afi] == 'ipv6') ? 'vpnv6' : 'vpnv4'
+      extra_config += "
+        cisco_bgp { '#{af[:asn]}':
+          ensure              => present,
+          router_id           => '1.2.3.4',
+        }
+        cisco_bgp_af { '#{af[:asn]} default #{global_afi} #{af[:safi]}':
+          ensure              => present,
+        }
+        cisco_bgp { '#{af[:asn]} #{af[:vrf]}':
+          ensure              => present,
+          route_distinguisher => auto,
+        }
+      "
     end
-    extra_config = "
-    cisco_bgp { '#{af[:asn]}':
-      ensure                                 => present,
-      router_id                              => '1.2.3.4',
-    }
-    cisco_bgp_af { '#{af[:asn]} default #{global_afi} #{af[:safi]}':
-      ensure                                 => present,
-    }
-    cisco_bgp { '#{af[:asn]} #{af[:vrf]}':
-      ensure                                 => present,
-      route_distinguisher                    => auto,
-    }"
-  end
-  extra_config += "
-    cisco_bgp_af { '#{af[:asn]} #{af[:vrf]} #{af[:afi]} #{af[:safi]}':
-        ensure                                 => present,
-    }"
+    extra_config += "
+      cisco_bgp_af { '#{af[:asn]} #{af[:vrf]} #{af[:afi]} #{af[:safi]}':
+        ensure                => present,
+      }
+    "
+  end # if ios_xr
+
   if remote_as
     extra_config += "
-    cisco_bgp_neighbor { '#{af[:asn]} #{af[:vrf]} #{af[:neighbor]}':
-      ensure                                 => present,
-      remote_as                              => #{remote_as},
-    }"
-  end
-  if operating_system == 'ios_xr'
-    extra_config += "
-    cisco_command_config { 'policy_config':
-      command => '
-        route-policy rm_in
-          end-policy
-        route-policy rm_out
-          end-policy'
-    }"
+      cisco_bgp_neighbor { '#{af[:asn]} #{af[:vrf]} #{af[:neighbor]}':
+        ensure               => present,
+        remote_as            => #{remote_as},
+      }
+    "
   end
   extra_config
 end
@@ -209,15 +211,8 @@ tests[:non_def_S1] = {
   },
 }
 
-tests[:non_def_S2] = {
-  desc:           'Non Default: (S2) soft-reconfig always',
-  platform:       'n(3|9)k',
-  manifest_props: { soft_reconfiguration_in: 'always' },
-}
-
 tests[:non_def_S3] = {
   desc:           'Non Default: (S3) soft-reconfig enable',
-  platform:       'n(3|9)k',
   manifest_props: { soft_reconfiguration_in: 'enable' },
 }
 
@@ -342,7 +337,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
     :non_def_M,
     :non_def_N,
     :non_def_S1,
-    :non_def_S2,
     :non_def_S3,
     :non_def_S4,
     :non_def_W,
@@ -359,19 +353,20 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :non_def_ibgp_only)
 
   # -------------------------------------------------------------------
-  if operating_system == 'ios_xr' || platform[/n(5|6|7|9)k/]
+  unless platform[/n3k/]
     logger.info("\n#{'-' * 60}\nSection 3. L2VPN Property Testing")
     resource_absent_cleanup(agent, 'cisco_bgp', 'BGP CLEAN :: ')
     title = '2 default 1.1.1.1 l2vpn evpn'
-    [
+    array = [
       :non_def_A1,
       :non_def_D2,
       :non_def_M,
       :non_def_S1,
-      :non_def_S2,
-      :non_def_S3,
       :non_def_misc_maps_1,
-    ].each do |id|
+    ]
+    array << :non_def_S3 if operating_system == 'ios_xr'
+
+    array.each do |id|
       tests[id][:title_pattern] = title
       test_harness_run(tests, id)
     end

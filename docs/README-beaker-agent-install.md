@@ -3,12 +3,11 @@
 #### Table of Contents
 
 1. [Overview](#overview)
-2. [Pre-Install Tasks](#pre-install)
-3. [Beaker Installer Configuration](#beaker-install-config)
-4. [Automated Puppet Agent Install: bash-shell](#install-bs)
-5. [Automated Puppet Agent Install: guestshell](#install-gs)
-6. [Limitations](#limitations)
-7. [License Information](#license-information)
+1. [Pre-Install Tasks](#pre-install)
+1. [Beaker Installer Configuration](#beaker-install-config)
+1. [Automated Puppet Agent Install: bash-shell](#install-bs)
+1. [Automated Puppet Agent Install: guestshell](#install-gs)
+1. [License Information](#license-information)
 
 ## <a name="overview">Overview</a>
 
@@ -16,9 +15,7 @@ This document describes automated Puppet agent installation and setup on Cisco N
 
 ## <a name="pre-install">Pre-Install Tasks</a>
 
-### Platform and Software Support
-
-Beaker Release 2.14.1 and later.
+Refer to [README-beaker-prerequisites](RADME-beaker-prerequisites.md) for required setup steps for Beaker and the target agent node.
 
 ### Disk space
 
@@ -26,6 +23,7 @@ Beaker Release 2.14.1 and later.
 puppet agent software on the target agent node.
 
 ### Environment
+
 NX-OS supports two possible environments for running 3rd party software:
 `bash-shell` and `guestshell`. Choose one environment for running the
 puppet agent software. You may run puppet from either environment but not both
@@ -37,24 +35,6 @@ at the same time.
   * This is a secure linux container environment running CentOS. It is enabled by default.
 
 Access the following [link](README-agent-install.md) for more information on enabling these environments.
-
-### Install Beaker
-
-[Install Beaker](https://github.com/puppetlabs/beaker/wiki/Beaker-Installation) on your designated server.
-
-### Configure NX-OS
-
-You must enable the ssh feature and give sudo access to the 'devops' user for the Beaker workstation to access and install the Puppet agent software into the `bash-shell` or `guestshell` environment.
-
-**Example:**
-
-~~~bash
-configure terminal
-  feature ssh
-  username devops password devopspassword role network-admin
-  username devops shelltype bash
-end
-~~~
 
 ## <a name="beaker-install-config">Beaker Installer Configuration</a>
 
@@ -139,20 +119,10 @@ beaker --host <path to host.cfg> --pre-suite <path to install_puppet.rb> --no-va
 
 For installs into the `guestshell`, uncomment the `target: guestshell` field in the host.cfg file and run the Beaker tool.
 
-## <a name="limitations">Limitations</a>
-
-Minimum Requirements:
-* Cisco NX-OS Puppet implementation requires open source Puppet version 4.0 or Puppet Enterprise 2015.2
-* Supported Platforms:
- * Cisco Nexus 95xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
- * Cisco Nexus 93xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
- * Cisco Nexus 31xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
- * Cisco Nexus 30xx, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
-
 ## <a name="license-information">License Information</a>
 
 ~~~
-Copyright (c) 2014-2015 Cisco and/or its affiliates.
+Copyright (c) 2014-2016 Cisco and/or its affiliates.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

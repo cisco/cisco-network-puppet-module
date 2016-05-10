@@ -35,11 +35,16 @@ tests[:default] = {
   desc:           '1.1 Default Properties',
   title_pattern:  'blue',
   manifest_props: {
-    description: 'default',
-    shutdown:    'default',
+    description:                  'default',
+    mhost_ipv4_default_interface: 'default',
+    mhost_ipv6_default_interface: 'default',
+    remote_route_filtering:       'default',
+    shutdown:                     'default',
+    vpn_id:                       'default',
   },
   resource:       {
-    'shutdown' => 'false'
+    'remote_route_filtering' => 'true',
+    'shutdown'               => 'false',
   },
 }
 
@@ -48,20 +53,48 @@ tests[:non_default] = {
   desc:           '2.1 Non Default Properties commands',
   title_pattern:  'blue',
   manifest_props: {
-    description:         'test desc',
-    route_distinguisher: '1:1',
-    shutdown:            'true',
-    vni:                 '4096',
+    description:                  'test desc',
+    mhost_ipv4_default_interface: 'Loopback100',
+    mhost_ipv6_default_interface: 'Loopback100',
+    remote_route_filtering:       false,
+    route_distinguisher:          '1:1',
+    shutdown:                     'true',
+    vni:                          '4096',
+    vpn_id:                       '1:1',
   },
 }
 
 def unsupported_properties(_tests, _id)
-  return [] if operating_system == 'nexus'
-  [
-    :route_distinguisher,
-    :shutdown,
-    :vni,
-  ]
+  unprops = []
+  if operating_system == 'nexus'
+    unprops <<
+      :mhost_ipv4_default_interface <<
+      :mhost_ipv6_default_interface <<
+      :remote_route_filtering <<
+      :vpn_id
+
+    unprops << :vni unless platform[/n9k/]
+    unprops << :route_distinguisher if nexus_i2_image
+
+  else
+    unprops <<
+      :route_distinguisher <<
+      :shutdown <<
+      :vni
+  end
+  unprops
+end
+
+# Overridden to properly handle dependencies for this test file.
+def dependency_manifest(_tests, _id)
+  if operating_system == 'nexus'
+    ''
+  else
+    "cisco_command_config { 'interface_config':
+      command => '
+        interface Loopback100'
+    }"
+  end
 end
 
 #################################################################

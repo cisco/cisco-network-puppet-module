@@ -13,6 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
+#
+# See README-develop-beaker-scripts.md (Section: Test Script Variable Reference)
+# for information regarding:
+#  - test script general prequisites
+#  - command return codes
+#  - A description of the 'tests' hash and its usage
+#
+###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 # Test hash top-level keys
@@ -45,7 +53,6 @@ tests[:seq_10_v4] = {
 tests[:seq_10_v6] = {
   desc:           'IPv6 Seq 10',
   title_pattern:  'ipv6 beaker6 10',
-  platform:       'n(3|7|9)k', # TBD: N5k addrs display as 0001:0001::0001/128
   manifest_props: {
     action:   'permit',
     proto:    'tcp',
@@ -65,9 +72,10 @@ tests[:seq_20_v4] = {
     dst_port:      'range 32 56',
 
     established:   'true',
+    log:           'true',
     packet_length: 'range 80 1000',
     precedence:    'flash',
-    redirect:      'Port-channel1,Port-channel2',
+    redirect:      'port-channel1,port-channel2',
     tcp_flags:     'ack syn fin',
     time_range:    'my_range',
 
@@ -81,7 +89,6 @@ tests[:seq_20_v6][:title_pattern] = 'ipv6 beaker6 20'
 tests[:seq_30_v4] = {
   desc:           'IPv4 Seq 30',
   title_pattern:  'ipv4 beaker 30',
-  platform:       'n(3|9)k',
   manifest_props: {
     action:            'deny',
     proto:             'tcp',
@@ -90,6 +97,7 @@ tests[:seq_30_v4] = {
 
     # These v4-only properties are not compatible with some of the props
     # in seq 20 so they are tested separately.
+    dscp:              'af12',
     http_method:       'post',
     tcp_option_length: '24',
   },

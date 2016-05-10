@@ -75,8 +75,7 @@ test_name "TestCase :: #{testheader}" do
       source = '/disk0:/xrv9k-ospf-1.0.0.0-r61107I.x86_64.rpm-XR-DEV-16.03.24C'
     end
 
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-        "resource file '#{source}'", options)
+    cmd_str = PUPPET_BINPATH + "resource file '#{source}'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ensure' => 'file' },
@@ -94,8 +93,7 @@ test_name "TestCase :: #{testheader}" do
     # No change would imply that Sample package is uninstalled prior to test.
     # Or expected exit_code is 2 since this is a puppet agent cmd with change.
     # Change would imply that Sample package is installed prior to test.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
     logger.info("Setup switch for provider test :: #{result}")
@@ -113,8 +111,7 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     # Change would imply that Sample package is uninstalled prior to test and
     # installed after test.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     # Idompotence test
@@ -133,8 +130,7 @@ test_name "TestCase :: #{testheader}" do
     else
       pkg = 'xrv9k-ospf-1.0.0.0-r61107I'
     end
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-        "resource package '#{pkg}'", options)
+    cmd_str = PUPPET_BINPATH + "resource package '#{pkg}'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ensure' => 'purged' },
@@ -153,8 +149,7 @@ test_name "TestCase :: #{testheader}" do
     end
 
     # expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     # Idompotence test
@@ -172,8 +167,7 @@ test_name "TestCase :: #{testheader}" do
     else
       pkg = 'xrv9k-ospf-1.0.0.0-r61107I'
     end
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-        "resource package '#{pkg}'", options)
+    cmd_str = PUPPET_BINPATH + "resource package '#{pkg}'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ensure' => 'purged' },

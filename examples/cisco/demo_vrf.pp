@@ -16,6 +16,16 @@
 
 class ciscopuppet::cisco::demo_vrf {
 
+  $mhost_intf = $operatingsystem ? {
+    'ios_xr' => 'Loopback100',
+    default  => undef
+  }
+
+  $remote_route_disable = $operatingsystem ? {
+    'ios_xr' => false,
+    default  => undef
+  }
+
   $rt_export_stitching = $operatingsystem ? {
     'ios_xr' => ['22:13', '24:15'],
     default  => undef
@@ -81,12 +91,21 @@ class ciscopuppet::cisco::demo_vrf {
     default => undef
   }
 
+  $vpn_id = $operatingsystem ? {
+    'ios_xr' => '1:1',
+    default  => undef
+  }
+
   cisco_vrf { 'test_vrf':
-    ensure              => present,
-    description         => 'test vrf for puppet',
-    route_distinguisher => $rd_auto,
-    shutdown            => $shutdown,
-    vni                 => $vni,
+    ensure                        => present,
+    description                   => 'test vrf for puppet',
+    mhost_ipv4_default_interface  => $mhost_intf,
+    mhost_ipv6_default_interface  => $mhost_intf,
+    remote_route_filtering        => $remote_route_disable,
+    route_distinguisher           => $rd_auto,
+    shutdown                      => $shutdown,
+    vni                           => $vni,
+    vpn_id                        => $vpn_id,
   }
 
   cisco_vrf { 'red':

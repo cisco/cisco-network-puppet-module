@@ -32,6 +32,19 @@ module PuppetX
         network
       end
 
+      # Convert boolean symbols to strings
+      def self.bool_sym_to_s(val)
+        return val unless val == :true || val == :false
+        (val == :true)
+      end
+
+      # Special handling for boolean properties.
+      # This helper method returns true if the property
+      # flush contains a TrueClass or FalseClass value.
+      def self.flush_boolean?(prop)
+        prop.is_a?(TrueClass) || prop.is_a?(FalseClass)
+      end
+
       # Helper utility for checking if arrays are overlapping in a
       # give list.
       # For ex: if the list has '2-10,32,42,44-89' and '11-33'
@@ -67,7 +80,7 @@ module PuppetX
       # Helper utility method for range summarization of VLAN and BD ranges
       # Input is a range string. For example: '10-20, 30, 14, 100-105, 21'
       # Output should be: '10-21,30,100-105'
-      def self.range_summarize(range_str)
+      def self.range_summarize(range_str, sort=true)
         ranges = []
         range_str.split(/,/).each do |elem|
           if elem =~ /\d+\s*\-\s*\d+/
@@ -87,7 +100,7 @@ module PuppetX
             nrange |= [item]
           end
         end
-        nrange.sort!
+        nrange.sort! if sort
         ranges = []
         left = nrange.first
         right = nil
@@ -111,6 +124,38 @@ module PuppetX
         ranges.join(',').gsub('..', '-')
       end
     end # class Utils
+
+    # PuppetX::Cisco::PvlanUtils - Common BGP methods used by BGP Types/Providers
+    class PvlanUtils
+      # This api is used by private vlan to prepare the massage the input.
+      # The input can be in the following formats for vlans:
+      # 10-12,14. Prepare_list api is transforming this input into a flat array.
+      # In the example above the returned array will be 10, 11, 12, 13. Prepare
+      # list is first splitting the input on ',' and the than expanding the vlan
+      # range element like 10-12 into a flat array. The final result will
+      # be a  flat array.
+
+      def self.prepare_list(input)
+        return [] if input.nil? || input.empty?
+        result = []
+        input.gsub!('-', '..')
+        input.gsub!(/\s+/, '')
+        new_list = input.split(',')
+        new_list.each do |member|
+          if member.include?('..')
+            elema = member.split('..').map { |d| Integer(d) }
+            elema.sort!
+            tr = elema[0]..elema[1]
+            tr.to_a.each do |item|
+              result.push(item.to_s)
+            end
+          else
+            result.push(member)
+          end
+        end
+        result
+      end
+    end
 
     # PuppetX::Cisco::BgpUtil - Common BGP methods used by BGP Types/Providers
     class BgpUtils

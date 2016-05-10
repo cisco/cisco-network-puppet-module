@@ -69,8 +69,7 @@ test_name "TestCase :: #{testheader}" do
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no change.
     # Or expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
     # Expected exit_code is 16 since this is a vegas shell cmd with exec error.
@@ -91,8 +90,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, TacacsServerHostLib.create_tacacsserverhost_timeout_negative)
 
     # Expected exit_code is 6 since this is a puppet agent cmd with failure.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [6])
 
     logger.info("Get negative test resource manifest from master :: #{result}")
@@ -102,8 +100,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_tacacs_server_host absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource cisco_tacacs_server_host', options)
+    cmd_str = PUPPET_BINPATH + 'resource cisco_tacacs_server_host'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'timeout' => TacacsServerHostLib::TIMEOUT_NEGATIVE },
@@ -133,8 +130,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, TacacsServerHostLib.create_tacacsserverhost_port_negative)
 
     # Expected exit_code is 6 since this is a puppet agent cmd with failure.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [6])
 
     logger.info("Get negative test resource manifest from master :: #{result}")
@@ -144,8 +140,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_tacacs_server_host absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource cisco_tacacs_server_host', options)
+    cmd_str = PUPPET_BINPATH + 'resource cisco_tacacs_server_host'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'port' => TacacsServerHostLib::PORT_NEGATIVE },
@@ -175,8 +170,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, TacacsServerHostLib.create_tacacsserverhost_type_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
     logger.info("Get negative test resource manifest from master :: #{result}")
@@ -186,8 +180,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_tacacs_server_host absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource cisco_tacacs_server_host', options)
+    cmd_str = PUPPET_BINPATH + 'resource cisco_tacacs_server_host'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'encryption_type' => TacacsServerHostLib::ENCRYPTYPE_NEGATIVE },
@@ -217,8 +210,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, TacacsServerHostLib.create_tacacsserverhost_passwd_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [1])
 
     logger.info("Get negative test resource manifest from master :: #{result}")
@@ -228,8 +220,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check cisco_tacacs_server_host absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource cisco_tacacs_server_host', options)
+    cmd_str = PUPPET_BINPATH + 'resource cisco_tacacs_server_host'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'encryption_password' => TacacsServerHostLib::ENCRYPPASSWD_NEGATIVE },

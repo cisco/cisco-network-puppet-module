@@ -69,11 +69,10 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource present manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, RadiusServerLib.create_radius_server_manifest_present)
+    on(master, RadiusServerLib.create_radius_server_manifest_present(operating_system))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource present manifest from master :: #{result}")
@@ -83,19 +82,18 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check radius_server resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource radius_server 8.8.8.8', options)
+    cmd_str = PUPPET_BINPATH + 'resource radius_server 8.8.8.8'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'accounting_only' => 'true' },
-                               false, self, logger)
+                               false, self, logger) unless operating_system == 'ios_xr'
       search_pattern_in_output(stdout, { 'acct_port' => '66' },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'auth_port' => '77' },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'authentication_only' => 'true' },
-                               false, self, logger)
+                               false, self, logger) unless operating_system == 'ios_xr'
       search_pattern_in_output(stdout, { 'key' => '44444444' },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'key_format' => '7' },
@@ -112,11 +110,10 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource present (with changes)manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, RadiusServerLib.create_radius_server_manifest_present_change)
+    on(master, RadiusServerLib.create_radius_server_manifest_present_change(operating_system))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource present manifest from master :: #{result}")
@@ -126,19 +123,18 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check radius_server resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource radius_server 8.8.8.8', options)
+    cmd_str = PUPPET_BINPATH + 'resource radius_server 8.8.8.8'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'accounting_only' => 'false' },
-                               false, self, logger)
+                               false, self, logger) unless operating_system == 'ios_xr'
       search_pattern_in_output(stdout, { 'acct_port' => '44' },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'auth_port' => '55' },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'authentication_only' => 'true' },
-                               false, self, logger)
+                               false, self, logger) unless operating_system == 'ios_xr'
       search_pattern_in_output(stdout, { 'key' => 'unset' },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'key_format' => '-1' },
@@ -152,32 +148,13 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check radius_server resource presence on agent :: #{result}")
   end
 
-  # @step [Step] Checks radius_server on agent using switch show cli
-  # cmds.
-  step 'TestStep :: Check radius_server instance on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config radius all')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, [/radius-server host 8\.8\.8\.8.* timeout.*$/],
-                               true, self, logger)
-      search_pattern_in_output(stdout, [/radius-server host 8\.8\.8\.8.* retransmit.*$/],
-                               true, self, logger)
-      search_pattern_in_output(stdout, [/radius-server host 8\.8\.8\.8.* key.*$/],
-                               true, self, logger)
-    end
-
-    logger.info("Check radius_server instance on agent :: #{result}")
-  end
-
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource absent manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
     on(master, RadiusServerLib.create_radius_server_manifest_absent)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource present manifest from master :: #{result}")
@@ -187,8 +164,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check radius_server resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource radius_server 8.8.8.8', options)
+    cmd_str = PUPPET_BINPATH + 'resource radius_server 8.8.8.8'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                true, self, logger)
@@ -200,11 +176,10 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource present manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, RadiusServerLib.create_radius_server_manifest_present_ipv6)
+    on(master, RadiusServerLib.create_radius_server_manifest_present_ipv6(operating_system))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource present manifest from master :: #{result}")
@@ -214,19 +189,18 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check radius_server resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource radius_server 2003::7', options)
+    cmd_str = PUPPET_BINPATH + 'resource radius_server 2003::7'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'accounting_only' => 'true' },
-                               false, self, logger)
+                               false, self, logger) unless operating_system == 'ios_xr'
       search_pattern_in_output(stdout, { 'acct_port' => '66' },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'auth_port' => '77' },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'authentication_only' => 'true' },
-                               false, self, logger)
+                               false, self, logger) unless operating_system == 'ios_xr'
       search_pattern_in_output(stdout, { 'key' => '44444444' },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'key_format' => '7' },
@@ -246,8 +220,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, RadiusServerLib.create_radius_server_manifest_absent_ipv6)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource present manifest from master :: #{result}")
@@ -257,8 +230,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check radius_server resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource radius_server 2003::7', options)
+    cmd_str = PUPPET_BINPATH + 'resource radius_server 2003::7'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                true, self, logger)

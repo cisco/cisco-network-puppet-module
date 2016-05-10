@@ -68,9 +68,19 @@ testheader = 'Resource cisco_interface'
 #                    This key can be overridden by a tests[id][:platform] key
 #
 tests = {
-  master:   master,
-  agent:    agent,
-  svi_name: 'vlan13',
+  master:        master,
+  agent:         agent,
+  svi_name:      'vlan13',
+  bdi_name:      'bdi100',
+  resource_name: 'cisco_interface',
+}
+
+tests_2 = {
+  master:           master,
+  agent:            agent,
+  resource_name:    'cisco_vlan',
+  operating_system: 'nexus',
+  platform:         'n(3|5|6|7|9)k',
 }
 
 # tests[id] keys set by caller and used by test_harness_common:
@@ -130,24 +140,14 @@ tests['L3_default_nexus'] = {
   preclean:           true,
   sys_def_switchport: false,
   manifest_props:     {
-    duplex:                        'default',
-    ipv4_forwarding:               'default',
-    ipv4_pim_sparse_mode:          'default',
-    switchport_autostate_exclude:  'default',
-    switchport_mode:               'default',
-    switchport_trunk_allowed_vlan: 'default',
-    switchport_trunk_native_vlan:  'default',
-    switchport_vtp:                'default',
+    duplex:               'default',
+    ipv4_forwarding:      'default',
+    ipv4_pim_sparse_mode: 'default',
   },
   resource:           {
-    'duplex'                        => 'auto',
-    'ipv4_forwarding'               => 'false',
-    'ipv4_pim_sparse_mode'          => 'false',
-    'switchport_autostate_exclude'  => 'false',
-    'switchport_mode'               => 'disabled',
-    'switchport_trunk_allowed_vlan' => '1-4094',
-    'switchport_trunk_native_vlan'  => '1',
-    'switchport_vtp'                => 'false',
+    'duplex'               => 'auto',
+    'ipv4_forwarding'      => 'false',
+    'ipv4_pim_sparse_mode' => 'false',
   },
 }
 
@@ -196,6 +196,7 @@ tests['L3_misc_nexus'] = {
   desc:               '1.5 (L3) Misc Properties - Nexus specific',
   operating_system:   'nexus',
   intf_type:          'ethernet',
+  preclean:           true,
   sys_def_switchport: false,
   manifest_props:     {
     switchport_mode:      'disabled',
@@ -302,7 +303,7 @@ tests['L2_trunk'] = {
   manifest_props:     {
     shutdown:                      'false',
     switchport_mode:               'trunk',
-    switchport_trunk_allowed_vlan: '30,40',
+    switchport_trunk_allowed_vlan: '30, 40, 31-33, 100',
     switchport_trunk_native_vlan:  '20',
     switchport_vtp:                'false',
 
@@ -310,7 +311,7 @@ tests['L2_trunk'] = {
   resource:           {
     'shutdown'                      => 'false',
     'switchport_mode'               => 'trunk',
-    'switchport_trunk_allowed_vlan' => '30,40',
+    'switchport_trunk_allowed_vlan' => '30-33,40,100',
     'switchport_trunk_native_vlan'  => '20',
   },
 }
@@ -372,37 +373,357 @@ tests['SVI_autostate'] = {
   },
 }
 
-tests['negotiate'] = {
-  desc:               '5.1 negotiate-auto',
+tests[:auto] = {
+  desc:               '5.1 Misc. Auto Value Properties',
   operating_system:   'nexus',
-  platform:           'n(5|6|7)k',
   intf_type:          'ethernet',
-  preclean:           true,
   sys_def_switchport: false,
+  code:               [0, 2],
   manifest_props:     {
     switchport_mode: 'disabled',
-    # negotiate_auto:  'false',, # TBD: Needs plat awareness
-  },
-  resource:           {
-    # 'negotiate_auto' => 'false'
+    # duplex and speed are defined by interface_pre_check
   },
 }
 
-tests['speed_dup_mtu'] = {
-  desc:               '5.2 Speed/Duplex/MTU',
+tests[:non_default] = {
+  desc:               '5.2 Misc. Non-default Value Properties',
+  operating_system:   'nexus',
   intf_type:          'ethernet',
-  preclean:           true,
   sys_def_switchport: false,
   manifest_props:     {
     switchport_mode: 'disabled',
-    mtu:             1556,
-    # speed:           100, # TBD: Needs plat awareness
-    duplex:          'full',
+    # duplex, speed, and mtu are defined by interface_pre_check
+  },
+}
+
+tests_2[:primary] = {
+  desc:           '6.1 configure pvlan primary type',
+  title_pattern:  '100',
+  manifest_props: {
+    private_vlan_type: 'primary'
+  },
+}
+
+tests_2[:community] = {
+  desc:           '6.2 configure pvlan primary type',
+  title_pattern:  '101',
+  manifest_props: {
+    private_vlan_type: 'community'
+  },
+}
+tests_2[:isolated] = {
+  desc:           '6.3 configure pvlan isolated type',
+  title_pattern:  '102',
+  manifest_props: {
+    private_vlan_type: 'isolated'
+  },
+}
+tests_2[:community_2] = {
+  desc:           '6.4 configure pvlan community type',
+  title_pattern:  '103',
+  manifest_props: {
+    private_vlan_type: 'community'
+  },
+}
+
+tests_2[:community_3] = {
+  desc:           '6.5 configure pvlan isolated type',
+  title_pattern:  '104',
+  manifest_props: {
+    private_vlan_type: 'community'
+  },
+}
+tests_2[:community_4] = {
+  desc:           '6.6 configure pvlan community type',
+  title_pattern:  '105',
+  manifest_props: {
+    private_vlan_type: 'community'
+  },
+}
+vlan_assoc = %w(101 102 103 104 105)
+tests_2[:association] = {
+  desc:           '6.7 configured private vlan association',
+  title_pattern:  '100',
+  manifest_props: {
+    private_vlan_association: ['101-105']
+  },
+  resource:       {
+    'private_vlan_association' => "#{vlan_assoc}"
+  },
+}
+
+switchport_modes = [
+  :host,
+  :promiscuous,
+]
+
+tests['pvlan_host_port'] = {
+  desc:               '6.9 Pvlan host port config',
+  operating_system:   'nexus',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_mode_private_vlan_host:             switchport_modes[0],
+    switchport_mode_private_vlan_host_association: %w(100 102),
   },
   resource:           {
-    'mtu'    => '1556',
-    # 'speed'  => '100',
-    'duplex' => 'full',
+    'switchport_mode_private_vlan_host'             => "#{switchport_modes[0]}",
+    'switchport_mode_private_vlan_host_association' => "['100', '102']",
+  },
+}
+
+tests['pvlan_promisc_port'] = {
+  desc:               '6.10 Pvlan promisc port config',
+  operating_system:   'nexus',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_mode_private_vlan_host:         switchport_modes[1],
+    switchport_mode_private_vlan_host_promisc: ['100', '101-103'],
+  },
+  resource:           {
+    'switchport_mode_private_vlan_host'         => "#{switchport_modes[1]}",
+    'switchport_mode_private_vlan_host_promisc' => "['100', '101-103']",
+  },
+}
+tests['pvlan_trunk_promisc_port'] = {
+  desc:               '6.11 Pvlan trunk promisc port config',
+  operating_system:   'nexus',
+  platform:           'n(5|6|7|9)k',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_mode_private_vlan_trunk_promiscuous: true,
+    switchport_private_vlan_mapping_trunk:          ['100', '101,104-105'],
+  },
+  resource:           {
+    'switchport_mode_private_vlan_trunk_promiscuous' => 'true',
+    'switchport_private_vlan_mapping_trunk'          => "['100 101,104-105']",
+  },
+}
+
+tests['pvlan_trunk_sec_port'] = {
+  desc:               '6.12 Pvlan trunk sec port config',
+  operating_system:   'nexus',
+  platform:           'n(5|6|7|9)k',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_mode_private_vlan_trunk_secondary: true,
+    switchport_private_vlan_association_trunk:    %w(100 102),
+  },
+  resource:           {
+    'switchport_mode_private_vlan_trunk_secondary' => 'true',
+    'switchport_private_vlan_association_trunk'    => "['100 102']",
+  },
+}
+
+vlan_assoc = %w(100,102-103,105)
+tests['pvlan_trunk_allow_vlan'] = {
+  desc:               '6.13 Pvlan trunk allow vlans config',
+  operating_system:   'nexus',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_private_vlan_trunk_allowed_vlan: vlan_assoc
+  },
+  resource:           {
+    'switchport_private_vlan_trunk_allowed_vlan' => "['100', '102-103', '105']"
+  },
+}
+
+tests['pvlan_trunk_native_vlan'] = {
+  desc:               '6.14 Pvlan trunk native vlan config',
+  operating_system:   'nexus',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_private_vlan_trunk_native_vlan: 100
+  },
+  resource:           {
+    'switchport_private_vlan_trunk_native_vlan' => '100'
+  },
+}
+
+vlan_assoc = %w(102-103)
+tests['pvlan_mapping_svi'] = {
+  desc:             '6.15 Pvlan vlan mapping for svi',
+  operating_system: 'nexus',
+  intf_type:        'vlan',
+  manifest_props:   {
+    private_vlan_mapping: vlan_assoc
+  },
+  resource:         {
+    'private_vlan_mapping' => "['102-103']"
+  },
+}
+
+tests['pvlan_host_port_association_default'] = {
+  desc:               '6.16 Pvlan host port association default config',
+  operating_system:   'nexus',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_mode_private_vlan_host_association: 'default'
+  },
+  resource:           {
+  },
+}
+
+tests['pvlan_promisc_port_association_default'] = {
+  desc:               '6.17 Pvlan promisc port association default config',
+  operating_system:   'nexus',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_mode_private_vlan_host_promisc: 'default'
+  },
+  resource:           {
+  },
+}
+
+tests['pvlan_trunk_promisc_port_default'] = {
+  desc:               '6.18 Pvlan trunk promisc port default config',
+  operating_system:   'nexus',
+  platform:           'n(5|6|7|9)k',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_mode_private_vlan_trunk_promiscuous: 'default'
+  },
+  resource:           {
+  },
+}
+
+tests['pvlan_trunk_sec_port_default'] = {
+  desc:               '6.19 Pvlan trunk sec port default config',
+  operating_system:   'nexus',
+  platform:           'n(5|6|7|9)k',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_mode_private_vlan_trunk_secondary: 'default'
+  },
+  resource:           {
+  },
+}
+
+tests['pvlan_trunk_allow_vlan_default'] = {
+  desc:               '6.20 Pvlan trunk vlan allow port default config',
+  operating_system:   'nexus',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_private_vlan_trunk_allowed_vlan: 'default'
+  },
+  resource:           {
+  },
+}
+
+tests['pvlan_host_port_default'] = {
+  desc:               '6.21 Pvlan host port default config',
+  operating_system:   'nexus',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_mode_private_vlan_host: 'disabled'
+  },
+  resource:           {
+  },
+}
+
+tests['pvlan_promisc_port_default'] = {
+  desc:               '6.22 Pvlan promisc port default config',
+  operating_system:   'nexus',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_mode_private_vlan_host: 'disabled'
+  },
+  resource:           {
+  },
+}
+
+tests['switchport_private_vlan_trunk_native_vlan_default'] = {
+  desc:               '6.23 Pvlan trunk native vlan default config',
+  operating_system:   'nexus',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_private_vlan_trunk_native_vlan: 'default'
+  },
+  resource:           {
+  },
+}
+
+tests['switchport_private_vlan_mapping_trunk_default'] = {
+  desc:               '6.24 Pvlan trunk promisc association default config',
+  operating_system:   'nexus',
+  platform:           'n(5|6|7|9)k',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_private_vlan_mapping_trunk: 'default'
+  },
+  resource:           {
+  },
+}
+tests['switchport_private_vlan_association_trunk_default'] = {
+  desc:               '6.25 Pvlan trunk secondary association default config',
+  operating_system:   'nexus',
+  platform:           'n(5|6|7|9)k',
+  intf_type:          'ethernet',
+  preclean:           true,
+  sys_def_switchport: true,
+  manifest_props:     {
+    switchport_private_vlan_association_trunk: 'default'
+  },
+  resource:           {
+  },
+}
+
+tests['private_vlan_mapping_svi_default'] = {
+  desc:             '6.26 Pvlan svi association default config',
+  operating_system: 'nexus',
+  intf_type:        'vlan',
+  manifest_props:   {
+    private_vlan_mapping: 'default'
+  },
+  resource:         {
+  },
+}
+
+tests['BDI_non_default'] = {
+  desc:             '7.1 (BDI) Non Default BDI Properties',
+  operating_system: 'nexus',
+  platform:         'n(7)k',
+  intf_type:        'bdi',
+  manifest_props:   {
+    ipv4_address:        '10.10.10.1',
+    ipv4_netmask_length: '24',
+    shutdown:            'false',
+    vrf:                 'test1',
+  },
+  resource:         {
+    'ipv4_address'        => '10.10.10.1',
+    'ipv4_netmask_length' => '24',
+    'shutdown'            => 'false',
+    'vrf'                 => 'test1',
   },
 }
 
@@ -412,38 +733,6 @@ resource_cisco_overlay_global = {
   property: 'anycast_gateway_mac',
   value:    '1.1.1',
 }
-
-# cisco_interface uses the interface name as the title.
-# Find an available interface and create an appropriate title.
-def create_interface_title(tests, id)
-  return tests[id][:title_pattern] if tests[id][:title_pattern]
-
-  # Prefer specific test key over the all tests key
-  type = tests[id][:intf_type] || tests[:intf_type]
-  case type
-  when /ethernet/i
-    if tests[:ethernet]
-      intf = tests[:ethernet]
-    else
-      intf = find_interface(tests, id)
-      # cache for later tests
-      tests[:ethernet] = intf
-    end
-  when /dot1q/
-    if tests[:ethernet]
-      intf = "#{tests[:ethernet]}.1"
-    else
-      intf = find_interface(tests, id)
-      # cache for later tests
-      tests[:ethernet] = intf
-      intf = "#{intf}.1" unless intf.nil?
-    end
-  when /vlan/
-    intf = tests[:svi_name]
-  end
-  logger.info("\nUsing interface: #{intf}")
-  tests[id][:title_pattern] = intf
-end
 
 # Create actual manifest for a given test scenario.
 def build_manifest_interface(tests, id)
@@ -464,7 +753,64 @@ def build_manifest_interface(tests, id)
 
   cmd = PUPPET_BINPATH +
         "resource cisco_interface '#{tests[id][:title_pattern]}'"
-  tests[id][:resource_cmd] = get_namespace_cmd(agent, cmd, options)
+  tests[id][:resource_cmd] = cmd
+end
+
+def interface_pre_check(tests) # rubocop:disable Metrics/AbcSize
+  # Discover a usable test interface
+  intf = find_interface(tests, :auto)
+  tests[:auto][:title_pattern] = intf
+  tests[:non_default][:title_pattern] = intf
+
+  # Clean the test interface
+  system_default_switchport(agent, false)
+  interface_cleanup(agent, intf, 'Initial Cleanup')
+
+  # Get the capabilities and update the caps list with any add'l test values
+  caps = interface_capabilities(agent, intf)
+
+  if caps.empty?
+    tests[:skipped] ||= []
+    tests[:skipped] << tests[:auto][:desc]
+    tests[:skipped] << tests[:non_default][:desc]
+    return false
+  end
+
+  caps['Speed'] += ',auto' unless caps['Speed']['auto']
+  caps['Duplex'] += ',auto' unless caps['Duplex']['auto']
+  caps['MTU'] = '1600'
+
+  # Create a probe hash to pre-test the properties
+  probe = {
+    cmd:         PUPPET_BINPATH + 'resource cisco_interface ',
+    intf:        intf,
+    caps:        caps,
+    probe_props: %w(Speed Duplex MTU),
+  }
+  caps = interface_probe(tests, probe)[:caps]
+
+  # Fixup the test manifests with usable values
+  spd = caps['Speed']
+  dup = caps['Duplex']
+  mtu = caps['MTU']
+
+  tests[:auto][:manifest_props][:negotiate_auto] = 'true' unless platform[/n7k/]
+  tests[:auto][:manifest_props][:duplex] = 'auto' if dup.delete('auto')
+  tests[:auto][:manifest_props][:speed] = 'auto' if spd.delete('auto')
+
+  tests[:non_default][:manifest_props][:duplex] = dup.shift unless dup.empty?
+  tests[:non_default][:manifest_props][:speed] = spd.shift unless spd.empty?
+  tests[:non_default][:manifest_props][:mtu] = mtu.shift unless mtu.empty?
+
+  # Cannot turn off auto-negotiate for speeds 10G+
+  non_default_speed = tests[:non_default][:manifest_props][:speed]
+  tests[:non_default][:manifest_props][:negotiate_auto] = 'false' unless
+    platform[/n7k/] || non_default_speed.to_i >= 10_000
+
+  logger.info "\n      Pre-Check :non_default hash: #{tests[:non_default]}"\
+              "\n      Pre-Check :auto hash: #{tests[:auto]}"
+  interface_cleanup(agent, intf, 'Post-Pre-Check Cleanup')
+  true
 end
 
 # Helper for 'system default switchport'
@@ -559,12 +905,58 @@ test_name "TestCase :: #{testheader}" do
   test_harness_interface(tests, 'SVI_autostate_default')
   test_harness_interface(tests, 'SVI_autostate')
 
+  ### -------------------------------------------------------------------
+  logger.info("\n#{'-' * 60}\nSection 5. Negotiate Auto, MTU, Speed, Duplex")
+  if interface_pre_check(tests)
+    test_harness_run(tests, :auto)
+    test_harness_run(tests, :non_default)
+  else
+    msg = 'Could not find interface capabilities'
+    logger.error("\n#{tests[:auto][:desc]} :: auto :: SKIP" \
+                 "\n#{msg}")
+    logger.error("\n#{tests[:non_default][:desc]} :: non_default :: SKIP" \
+                 "\n#{msg}")
+  end
   # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 5. MISC Property Testing")
-  test_harness_interface(tests, 'negotiate')
-  # TBD: test_harness_interface(tests, 'speed_dup_mtu')
+  logger.info("\n#{'-' * 60}\nSection 6. Private vlan Property Testing")
+  resource_absent_cleanup(agent, 'cisco_vlan', 'private-vlan CLEANUP :: ')
+  test_harness_run(tests_2, :primary)
+  test_harness_run(tests_2, :community)
+  test_harness_run(tests_2, :isolated)
+  test_harness_run(tests_2, :community_2)
+  test_harness_run(tests_2, :community_3)
+  test_harness_run(tests_2, :community_4)
+  test_harness_run(tests_2, :association)
+  test_harness_interface(tests, 'pvlan_host_port')
+  test_harness_interface(tests, 'pvlan_promisc_port')
+  test_harness_interface(tests, 'pvlan_trunk_promisc_port')
+  test_harness_interface(tests, 'pvlan_trunk_sec_port')
+  test_harness_interface(tests, 'pvlan_trunk_allow_vlan')
+  test_harness_interface(tests, 'pvlan_trunk_native_vlan')
+  test_harness_interface(tests, 'pvlan_host_port_association_default')
+  test_harness_interface(tests, 'pvlan_promisc_port_association_default')
+  test_harness_interface(tests, 'pvlan_trunk_promisc_port_default')
+  test_harness_interface(tests, 'pvlan_trunk_sec_port_default')
+  test_harness_interface(tests, 'pvlan_trunk_allow_vlan_default')
+  test_harness_interface(tests, 'pvlan_host_port_default')
+  test_harness_interface(tests, 'pvlan_promisc_port_default')
+  test_harness_interface(tests, 'switchport_private_vlan_trunk_native_vlan_default')
+  test_harness_interface(tests, 'switchport_private_vlan_mapping_trunk_default')
+  test_harness_interface(tests, 'switchport_private_vlan_association_trunk_default')
+  interface_cleanup(agent, tests[:svi_name])
+  test_harness_interface(tests, 'private_vlan_mapping_svi_default')
+  test_harness_interface(tests, 'pvlan_mapping_svi')
+  interface_cleanup(agent, tests[:svi_name])
 
   # -------------------------------------------------------------------
+  if platform_supports_test(tests, 'BDI_non_default')
+    logger.info("\n#{'-' * 60}\nSection 7. BDI Property Testing")
+    bd = tests[:bdi_name][/(\d+)/]
+    config_bridge_domain(agent, bd)
+    test_harness_interface(tests, 'BDI_non_default')
+  end
+  # -------------------------------------------------------------------
+  resource_absent_cleanup(agent, 'cisco_vlan', 'private-vlan CLEANUP :: ')
   interface_cleanup(agent, tests[:ethernet]) if tests[:ethernet]
   skipped_tests_summary(tests)
 end

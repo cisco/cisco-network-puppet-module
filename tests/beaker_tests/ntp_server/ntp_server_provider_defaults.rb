@@ -72,8 +72,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, NtpServerLib.create_ntp_server_manifest_present)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource present manifest from master :: #{result}")
@@ -83,8 +82,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check ntp_server resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource ntp_server 5.5.5.5', options)
+    cmd_str = PUPPET_BINPATH + 'resource ntp_server 5.5.5.5'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                false, self, logger)
@@ -95,28 +93,13 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check ntp_server resource presence on agent :: #{result}")
   end
 
-  # @step [Step] Checks ntp_server instance on agent using switch show cli
-  # cmds.
-  step 'TestStep :: Check ntp_server instance presence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config all | include "ntp server"')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, [/ntp server 5\.5\.5\.5/],
-                               false, self, logger)
-    end
-
-    logger.info("Check ntp_server instance presence on agent :: #{result}")
-  end
-
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource present and prefer true manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
     on(master, NtpServerLib.create_ntp_server_manifest_present_prefer)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource present and prefer true manifest from master :: #{result}")
@@ -126,8 +109,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check ntp_server resource presence with prefer true on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource ntp_server 5.5.5.5', options)
+    cmd_str = PUPPET_BINPATH + 'resource ntp_server 5.5.5.5'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                false, self, logger)
@@ -138,28 +120,13 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check ntp_server resource presence on agent :: #{result}")
   end
 
-  # @step [Step] Checks ntp_server instance on agent using switch show cli
-  # cmds.
-  step 'TestStep :: Check ntp_server instance presence with prefer on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config all | include "ntp server"')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, [/ntp server 5\.5\.5\.5 prefer/],
-                               false, self, logger)
-    end
-
-    logger.info("Check ntp_server instance presence on agent :: #{result}")
-  end
-
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource absent manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
     on(master, NtpServerLib.create_ntp_server_manifest_absent)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-                                           'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource absent manifest from master :: #{result}")
@@ -169,8 +136,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check ntp_server resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource ntp_server 5.5.5.5', options)
+    cmd_str = PUPPET_BINPATH + 'resource ntp_server 5.5.5.5'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                true, self, logger)
@@ -179,28 +145,13 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check ntp_server resource absence on agent :: #{result}")
   end
 
-  # @step [Step] Checks ntp_server instance on agent using switch show cli
-  # cmds.
-  step 'TestStep :: Check ntp_server instance absence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config all | include "ntp server"')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, [/ntp-server 5\.5\.5\.5/],
-                               true, self, logger)
-    end
-
-    logger.info("Check ntp_server instance absence on agent :: #{result}")
-  end
-
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource present manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
     on(master, NtpServerLib.create_ntp_server_manifest_present_ipv6)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource present manifest from master :: #{result}")
@@ -210,8 +161,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check ntp_server resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource ntp_server 2002::5', options)
+    cmd_str = PUPPET_BINPATH + 'resource ntp_server 2002::5'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                false, self, logger)
@@ -226,8 +176,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, NtpServerLib.create_ntp_server_manifest_absent_ipv6)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-                                           'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource absent manifest from master :: #{result}")
@@ -237,28 +186,13 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check ntp_server resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource ntp_server 2002::5', options)
+    cmd_str = PUPPET_BINPATH + 'resource ntp_server 2002::5'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                true, self, logger)
     end
 
     logger.info("Check ntp_server resource absence on agent :: #{result}")
-  end
-
-  # @step [Step] Checks ntp_server instance on agent using switch show cli
-  # cmds.
-  step 'TestStep :: Check ntp_server instance absence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config all | include "ntp server"')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, [/ntp-server 2002::5/],
-                               true, self, logger)
-    end
-
-    logger.info("Check ntp_server instance absence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.

@@ -44,8 +44,8 @@ module VlanLib
   # 'ensure' is set to present.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_stdvlan_manifest_present(test_mapped_vni)
-    if test_mapped_vni
+  def self.create_stdvlan_manifest_present(test_properties)
+    if test_properties[:mapped_vni]
       manifest = "
         cisco_vlan { '128':
           ensure         => present,
@@ -54,12 +54,22 @@ module VlanLib
           shutdown       => 'default',
         }"
     else
-      manifest = "
-        cisco_vlan { '128':
-          ensure         => present,
-          state          => 'default',
-          shutdown       => 'default',
-        }"
+      if test_properties[:fabric_control]
+        manifest = "
+          cisco_vlan { '128':
+            ensure         => present,
+            state          => 'default',
+            shutdown       => 'default',
+            fabric_control => 'default',
+          }"
+      else
+        manifest = "
+          cisco_vlan { '128':
+            ensure         => present,
+            state          => 'default',
+            shutdown       => 'default',
+          }"
+      end
     end
 
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
@@ -89,8 +99,8 @@ EOF"
   # vlan_name, state and shutdown.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_stdvlan_manifest_nondefaults(test_mapped_vni)
-    if test_mapped_vni
+  def self.create_stdvlan_manifest_nondefaults(test_properties)
+    if test_properties[:mapped_vni]
       manifest = "
         cisco_vlan { '128':
           ensure         => present,
@@ -100,13 +110,24 @@ EOF"
           shutdown       => 'true',
          }"
     else
-      manifest = "
-        cisco_vlan { '128':
-          ensure         => present,
-          vlan_name      => 'DESCR-VLAN0128',
-          state          => 'suspend',
-          shutdown       => 'true',
-        }"
+      if test_properties[:fabric_control]
+        manifest = "
+          cisco_vlan { '128':
+            ensure         => present,
+            vlan_name      => 'DESCR-VLAN0128',
+            state          => 'suspend',
+            shutdown       => 'true',
+            fabric_control => 'true',
+          }"
+      else
+        manifest = "
+          cisco_vlan { '128':
+            ensure         => present,
+            vlan_name      => 'DESCR-VLAN0128',
+            state          => 'suspend',
+            shutdown       => 'true',
+          }"
+      end
     end
 
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}

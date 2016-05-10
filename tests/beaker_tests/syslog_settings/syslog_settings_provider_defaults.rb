@@ -60,13 +60,14 @@ testheader = 'syslog_settings Resource :: All Attributes Defaults'
 
 # @test_name [TestCase] Executes defaults testcase for syslog_settings Resource.
 test_name "TestCase :: #{testheader}" do
+  raise_skip_exception('Not supported on IOS XR', self) if operating_system == 'ios_xr'
+
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider' do
     # For deterministic results, make sure syslog_settings is set to
     # seconds.
     on(master, SyslogSettingLib.create_syslog_settings_manifest_seconds)
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
     logger.info('Setup switch for provider')
@@ -78,8 +79,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SyslogSettingLib.create_syslog_settings_manifest_milliseconds)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource present manifest from master :: #{result}")
@@ -89,8 +89,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check syslog_settings resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource syslog_settings default', options)
+    cmd_str = PUPPET_BINPATH + 'resource syslog_settings default'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'time_stamp_units' => 'milliseconds' },
                                false, self, logger)
@@ -105,8 +104,7 @@ test_name "TestCase :: #{testheader}" do
     on(master, SyslogSettingLib.create_syslog_settings_manifest_seconds)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'agent -t', options)
+    cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [2])
 
     logger.info("Get resource present manifest from master :: #{result}")
@@ -116,8 +114,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check syslog_settings resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_namespace_cmd(agent, PUPPET_BINPATH +
-      'resource syslog_settings default', options)
+    cmd_str = PUPPET_BINPATH + 'resource syslog_settings default'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'time_stamp_units' => 'seconds' },
                                false, self, logger)
