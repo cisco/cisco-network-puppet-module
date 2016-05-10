@@ -116,7 +116,6 @@ class ciscopuppet::cisco::demo_bgp {
 
     confederation_id     => $confederation_id,
     confederation_peers  => $confederation_peers,
-    enforce_first_as     => true,
     log_neighbor_changes => true,
     timer_bgp_keepalive  => '60',
     timer_bgp_holdtime   => '120',
@@ -391,7 +390,7 @@ class ciscopuppet::cisco::demo_bgp {
     ensure                      => present,
 
     # Properties
-    allowas_in                  => 'default',
+    allowas_in                  => true,
     allowas_in_max              => 5,
     default_originate_route_map => $default_originate_route_map,
     max_prefix_limit            => 100,
@@ -424,7 +423,7 @@ class ciscopuppet::cisco::demo_bgp {
     ensure                      => present,
 
     # Properties
-    allowas_in                  => 'default',
+    allowas_in                  => true,
     allowas_in_max              => 5,
     default_originate_route_map => $default_originate_route_map,
     as_override                 => true,
