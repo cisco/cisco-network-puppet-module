@@ -129,8 +129,8 @@ class ciscopuppet::cisco::demo_bgp {
   $ipv4_redistribute = [['eigrp 1', 'e_rtmap_29'], ['ospf 3',  'o_rtmap']]
   $ipv4_injectmap = [['nyc', 'sfo'], ['sjc', 'sfo', 'copy-attributes']]
 
-  $additional_paths_install = $operatingsystem ? {
-    'nexus' => true,
+  $additional_paths_install = platform_get() ? {
+    /(n5k|n6k|n7k)/ => true,
     default => undef
   }
   $dampen_igp_metric = $operatingsystem ? {
