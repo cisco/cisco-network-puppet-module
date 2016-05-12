@@ -188,6 +188,7 @@ tests[:title_patterns_3] = {
 tests[:title_patterns_4] = {
   desc:             'T.4 Title Pattern',
   operating_system: 'nexus',
+  platform:         'n(5|6|7|8|9)k',
   title_pattern:    'san_jose',
   title_params:     { asn: '2', vrf: 'default', afi: 'l2vpn', safi: 'evpn' },
   resource:         { 'ensure' => 'present' },
@@ -196,6 +197,7 @@ tests[:title_patterns_4] = {
 tests[:title_patterns_5] = {
   desc:             'T.5 Title Pattern',
   operating_system: 'nexus',
+  platform:         'n(5|6|7|8|9)k',
   preclean:         'cisco_bgp',
   title_pattern:    '2',
   title_params:     { vrf: 'default', afi: 'l2vpn', safi: 'evpn' },
@@ -205,6 +207,7 @@ tests[:title_patterns_5] = {
 tests[:title_patterns_6] = {
   desc:             'T.6 Title Pattern',
   operating_system: 'nexus',
+  platform:         'n(5|6|7|8|9)k',
   preclean:         'cisco_bgp',
   title_pattern:    '2 default l2vpn',
   title_params:     { safi: 'evpn' },
