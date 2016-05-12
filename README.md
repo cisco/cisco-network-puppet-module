@@ -1052,7 +1052,7 @@ Manages configuration of a BGP Address-family instance.
 |----------|:------------------:|:----------------------:|
 | N9k      | 7.0(3)I2(1)        | 1.1.0                  |
 | N3k      | 7.0(3)I2(1)        | 1.1.0                  |
-| N5k      | 7.3(0)N1(1)        | 1.3.2                  |
+| N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 
@@ -1062,8 +1062,8 @@ Manages configuration of a BGP Address-family instance.
 |:--------|:-------------|
 | `additional_paths_install` | Not supported on N3k, N9k                                                                  |
 | `advertise_l2vpn_evpn`     | Not supported on N3k, N6k                                                                  |
-| `afi`                      | `l2vpn` support added in ciscopuppet 1.3.2. Needs 7.0(3)I3(1) on N9k. Not supported on N3k |
-| `safi`                     | `evpn` support added in ciscopuppet 1.3.2. Needs 7.0(3)I3(1) on N9k. Not supported on N3k  |
+| `afi` - `l2vpn`            | Module Minimum Version 1.3.2 <br> OS Minimum Version 7.0(3)I3(1) <br> Not supported on N3k |
+| `safi` - `evpn`            | Module Minimum Version 1.3.2 <br> OS Minimum Version 7.0(3)I3(1) <br> Not supported on N3k |
 
 #### Parameters
 
