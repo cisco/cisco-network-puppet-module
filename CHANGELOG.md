@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.3.2] - 2016-05-12
+
+### Added
+- Extended `cisco_bgp_af` to include l2vpn/evpn support 
+
 ## [1.3.0] - 2016-05-02
 
 ### New feature support

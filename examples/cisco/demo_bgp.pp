@@ -390,6 +390,7 @@ class ciscopuppet::cisco::demo_bgp {
     ensure                      => present,
 
     # Properties
+    # allowas_in should be true if allowas_in_max is specified
     allowas_in                  => true,
     allowas_in_max              => 5,
     default_originate_route_map => $default_originate_route_map,
@@ -423,6 +424,7 @@ class ciscopuppet::cisco::demo_bgp {
     ensure                      => present,
 
     # Properties
+    # allowas_in should be true if allowas_in_max is specified
     allowas_in                  => true,
     allowas_in_max              => 5,
     default_originate_route_map => $default_originate_route_map,
