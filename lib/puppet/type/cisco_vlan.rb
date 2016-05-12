@@ -172,14 +172,16 @@ Puppet::Type.newtype(:cisco_vlan) do
   end # property private_vlan_type
 
   newproperty(:private_vlan_association, array_matching: :all) do
-    desc 'The private association for the primary vlan.'\
-         "Valid values match format ['vlans']."
+    valid = %(
+      Valid values are an Array or String of vlan ranges, or keyword 'default'.
+      Examples: ['2-5, 9'] or '2-5, 9'
+    )
+    desc "The private-vlan association for the primary vlan. #{valid}"
 
-    match_error = "must be of format ['vlans'] with vlans as integer"
     validate do |value|
-      fail "Vlan '#{value}' #{match_error}" unless
-            /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value ||
-            value == 'default' || value == :default
+      fail "Invalid input: #{value}\n#{valid}" unless
+        value == 'default' ||
+        /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value
     end
 
     munge do |value|
@@ -187,13 +189,9 @@ Puppet::Type.newtype(:cisco_vlan) do
     end
 
     def insync?(is)
-      return true if should == [:default] && is == [:default]
-      return false if should == [:default]
-      # For pvlan association we need to massage the should value
-      # since the returned is value is a flat array of vlans.
-      result = PuppetX::Cisco::PvlanUtils.prepare_list(should[0])
-
-      (is.size == result.size && is.sort == result.sort)
+      # Summarize the manifest ranges before comparing.
+      normal = PuppetX::Cisco::Utils.normalize_range_array(should)
+      (is.size == normal.size && is.sort == normal.sort)
     end
   end # property private_vlan_association
 

@@ -41,20 +41,16 @@ tests = {
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
 skip_unless_supported(tests)
 
-# assoc = %w(99 101 102 105)
 tests[:primary] = {
   desc:           '1.1 Primary',
   title_pattern:  '100',
   manifest_props: {
-    private_vlan_type: 'primary',
-    # private_vlan_association: assoc,
+    private_vlan_type:        'primary',
+    private_vlan_association: '101, 102, 98-99, 105',
   },
   resource:       {
-    private_vlan_type: 'primary',
-    # TBD: BROKEN (idempotence). It inputs a multi-member list but normalizes to a
-    # single index: ['99 100 102 105']. This is wrong but we will keep this
-    # temporarily to show the broken behavior.
-    # private_vlan_association: "#{assoc}",
+    private_vlan_type:        'primary',
+    private_vlan_association: "['98-99', '101-102', '105']",
   },
 }
 
@@ -74,11 +70,17 @@ tests[:isolated] = {
   },
 }
 
+# This method overrides the method in utilitylib.rb to set up dependencies
+# for interface tests.
+def test_harness_dependencies(*)
+  logger.info('  * Process test_harness_dependencies (test_private_vlan)')
+  remove_all_vlans(agent)
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  remove_all_vlans(agent)
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Property Testing")
   test_harness_run(tests, :primary)
