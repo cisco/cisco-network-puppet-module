@@ -1060,10 +1060,10 @@ Manages configuration of a BGP Address-family instance.
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `additional_paths_install` | Not supported on N3k, N9k                                               |
-| `advertise_l2vpn_evpn`     | Not supported on N3k, N6k                                               |
-| `afi`                      | `l2vpn` support added in ciscopuppet 1.3.2. Needs 7.0(3)I3(1) on N9k    |
-| `safi`                     | `evpn` support added in ciscopuppet 1.3.2. Needs 7.0(3)I3(1) on N9k     |
+| `additional_paths_install` | Not supported on N3k, N9k                                                                  |
+| `advertise_l2vpn_evpn`     | Not supported on N3k, N6k                                                                  |
+| `afi`                      | `l2vpn` support added in ciscopuppet 1.3.2. Needs 7.0(3)I3(1) on N9k. Not supported on N3k |
+| `safi`                     | `evpn` support added in ciscopuppet 1.3.2. Needs 7.0(3)I3(1) on N9k. Not supported on N3k  |
 
 #### Parameters
 
