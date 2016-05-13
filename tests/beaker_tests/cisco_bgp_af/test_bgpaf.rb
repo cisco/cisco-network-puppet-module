@@ -185,32 +185,11 @@ tests[:title_patterns_3] = {
   resource:      { 'ensure' => 'present' },
 }
 
-tests[:title_patterns_4] = {
-  desc:             'T.4 Title Pattern',
+tests[:l2vpn_evpn] = {
+  desc:             '3.1 Address-family l2evpn/evpn',
   operating_system: 'nexus',
   platform:         'n(5|6|7|8|9)k',
-  title_pattern:    'san_jose',
-  title_params:     { asn: '2', vrf: 'default', afi: 'l2vpn', safi: 'evpn' },
-  resource:         { 'ensure' => 'present' },
-}
-
-tests[:title_patterns_5] = {
-  desc:             'T.5 Title Pattern',
-  operating_system: 'nexus',
-  platform:         'n(5|6|7|8|9)k',
-  preclean:         'cisco_bgp',
-  title_pattern:    '2',
-  title_params:     { vrf: 'default', afi: 'l2vpn', safi: 'evpn' },
-  resource:         { 'ensure' => 'present' },
-}
-
-tests[:title_patterns_6] = {
-  desc:             'T.6 Title Pattern',
-  operating_system: 'nexus',
-  platform:         'n(5|6|7|8|9)k',
-  preclean:         'cisco_bgp',
-  title_pattern:    '2 default l2vpn',
-  title_params:     { safi: 'evpn' },
+  title_pattern:    '2 default l2vpn evpn',
   resource:         { 'ensure' => 'present' },
 }
 
@@ -328,9 +307,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :title_patterns_1)
   test_harness_run(tests, :title_patterns_2)
   test_harness_run(tests, :title_patterns_3)
-  test_harness_run(tests, :title_patterns_4) unless nexus_i2_image
-  test_harness_run(tests, :title_patterns_5) unless nexus_i2_image
-  test_harness_run(tests, :title_patterns_6) unless nexus_i2_image
+  test_harness_run(tests, :l2vpn_evpn) unless nexus_i2_image
 
   # -----------------------------------
   resource_absent_cleanup(agent, 'cisco_bgp')

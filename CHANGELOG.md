@@ -5,7 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [1.3.2] - 2016-05-12
 
 ### Added
-- Extended `cisco_bgp_af` to include l2vpn/evpn support 
+- Extended `cisco_bgp_af` to include l2vpn/evpn address-family support
 
 ## [1.3.1] - 2016-05-06
 

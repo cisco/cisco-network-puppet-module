@@ -111,15 +111,17 @@ class ciscopuppet::cisco::demo_bgp {
     default => undef
   }
 
-  cisco_bgp { '55.77 blue':
-    ensure               => present,
+  if platform_get() != 'n3k' {
+    cisco_bgp { '55.77 blue':
+      ensure               => present,
 
-    confederation_id     => $confederation_id,
-    confederation_peers  => $confederation_peers,
-    log_neighbor_changes => true,
-    timer_bgp_keepalive  => '60',
-    timer_bgp_holdtime   => '120',
-    route_distinguisher  => auto,
+      confederation_id     => $confederation_id,
+      confederation_peers  => $confederation_peers,
+      log_neighbor_changes => true,
+      timer_bgp_keepalive  => '60',
+      timer_bgp_holdtime   => '120',
+      route_distinguisher  => auto,
+    }
   }
 
   # --------------------------------------------------------------------------#
@@ -187,25 +189,27 @@ class ciscopuppet::cisco::demo_bgp {
     redistribute                  => $ipv4_redistribute,
   }
 
-  cisco_bgp_af { '55.77 default l2vpn evpn':
-    ensure                      => present,
-    #asn                           => 55.77,
-    #vrf                           => 'default',
-    #afi                           => 'l2vpn',
-    #safi                          => 'evpn',
-    # Properties
+  if platform_get() != 'n3k' {
+    cisco_bgp_af { '55.77 default l2vpn evpn':
+      ensure                      => present,
+      #asn                           => 55.77,
+      #vrf                           => 'default',
+      #afi                           => 'l2vpn',
+      #safi                          => 'evpn',
+      # Properties
 
-    # dampening_routemap is mutually exclusive with
-    # dampening_half_time, reuse_time, suppress_time
-    # and max_suppress_time.
-    #
-    dampening_state             => true,
-    dampening_half_time         => 1,
-    dampening_reuse_time        => 2,
-    dampening_suppress_time     => 3,
-    dampening_max_suppress_time => 4,
-    #dampening_routemap            => default,
-    next_hop_route_map          => 'RouteMap',
+      # dampening_routemap is mutually exclusive with
+      # dampening_half_time, reuse_time, suppress_time
+      # and max_suppress_time.
+      #
+      dampening_state             => true,
+      dampening_half_time         => 1,
+      dampening_reuse_time        => 2,
+      dampening_suppress_time     => 3,
+      dampening_max_suppress_time => 4,
+      #dampening_routemap            => default,
+      next_hop_route_map          => 'RouteMap',
+    }
   }
 
   # --------------------------------------------------------------------------#
@@ -413,8 +417,11 @@ class ciscopuppet::cisco::demo_bgp {
   # Configure Neighbor-level Address Family IPv4 Unicast (non-default vrf)
   # --------------------------------------------------------------------------#
 
-  cisco_bgp_af { '55.77 default vpnv4 unicast':
-    ensure                                 => present,
+  # TBD: vpnv4 support will be added for I4 images
+  if platform_get() != 'n3k' {
+    cisco_bgp_af { '55.77 default vpnv4 unicast':
+      ensure                                 => present,
+    }
   }
   cisco_bgp_af { '55.77 blue ipv4 unicast':
     ensure                                 => present,
