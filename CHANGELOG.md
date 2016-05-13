@@ -2,7 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.3.0] - 2016-05-02
+## [1.3.2] - 2016-05-12
+
+### Added
+- Extended `cisco_bgp_af` to include l2vpn/evpn address-family support
+
+## [1.3.1] - 2016-05-06
 
 ### New feature support
 #### Cisco Resources
@@ -62,6 +67,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Renamed all providers from `:nxapi` to `:cisco` as they may include support for multiple Cisco platforms, not all of which use NXAPI.
+
+## 1.3.0
+This version was never released.
 
 ## [1.2.3] - 2016-02-24
 ### Added
