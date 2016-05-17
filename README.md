@@ -1692,9 +1692,20 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 
 | Property | Caveat Description |
 |:---------|:-------------|
-| `svi_autostate`       | Only supported on N3k,N7k,N9k |
-| `vlan_mapping`        | Only supported on N7k         |
-| `vlan_mapping_enable` | Only supported on N7k         |
+| `pvlan_mapping`                       | Not supported on N8k          |
+| `switchport_pvlan_host`               | Not supported on N8k          |
+| `switchport_pvlan_host_association    | Not supported on N8k          |
+| `switchport_pvlan_mapping`            | Not supported on N8k          |
+| `switchport_pvlan_mapping_trunk`      | Not supported on N3k,N8k      |
+| `switchport_pvlan_promiscuous`        | Not supported on N8k          |
+| `switchport_pvlan_trunk_allowed_vlan` | Not supported on N8k          |
+| `switchport_pvlan_trunk_association`  | Not supported on N3k,N8k      |
+| `switchport_pvlan_trunk_native_vlan`  | Not supported on N8k          |
+| `switchport_pvlan_trunk_promiscuous`  | Not supported on N3k,N8k      |
+| `switchport_pvlan_trunk_secondary`    | Not supported on N3k,N8k      |
+| `svi_autostate`                       | Only supported on N3k,N7k,N9k |
+| `vlan_mapping`                        | Only supported on N7k         |
+| `vlan_mapping_enable`                 | Only supported on N7k         |
 
 #### Parameters
 
@@ -1741,35 +1752,66 @@ interface. Valid value is an integer.
 ##### `switchport_autostate_exclude`
 Exclude this port for the SVI link calculation. Valid values are 'true', 'false', and 'default'.
 
-##### `private_vlan_mapping`
-Private vlan mapping for interface vlan. List of secondary vlans associated to the interface vlan primary.
+##### `pvlan_mapping`
+Maps secondary VLANs to the VLAN interface of a primary VLAN. Valid inputs are a String containing a range of secondary vlans or keyword 'default'.
 
-##### `switchport_mode_private_vlan_host`
-Switchport host mode for private vlan. This a L2 access port. There are two modes: host and promiscous.
+Example: `pvlan_mapping => '3-4,6'`
 
-##### `switchport_mode_private_vlan_host_association`
-This configuration specify which vlans are associated on this port. Host mode only support a pair of vlans: primary and secondary. Valid values are an array of ["primary_vlan", "secondary_vlan"] pairs.
+##### `switchport_pvlan_host`
+Configures a Layer 2 interface as a private VLAN host port. Valid values are 'true', 'false', and 'default'
 
-##### `switchport_mode_private_vlan_host_promisc`
-This configuration specify which vlans are associated on this port. Promiscous mode only support a pair of vlans: primary and secondaries. Valid values are an array of ["primary_vlan", "secondary_vlan"] pairs.
+##### `switchport_pvlan_host_association`
+Associates the Layer 2 host port with the primary and secondary VLANs of a private VLAN. Valid inputs are: An array containing the primary and secondary vlans, or keyword 'default'.
 
-##### `switchport_mode_private_vlan_trunk_promiscuous`
-Switchport trunk promisc mode for private vlan. This a L2 trunk port capable of carrying multiple primary vlans.
+Example: `switchport_pvlan_host_association => ['44', '144']`
 
-##### `switchport_mode_private_vlan_trunk_secondary`
-Switchport trunk secondary mode for private vlan. This a L2 trunk port capable of carrying multiple secondary vlans.
+##### `switchport_pvlan_mapping`
+Associates the specified port with a primary VLAN and a selected list of secondary VLANs. Valid inputs are an array containing both the primary vlan and a range of secondary vlans, or keyword 'default'.
 
-#### `switchport_private_vlan_association_trunk`
-This configuration specify which vlans are associated on this trunk secondary port. Pair of distinguish vlans in the form of primary and secondary are accepted per entry. Valid values are an array of ["primary_vlan", "secondary_vlan"] pairs.
+Example: `switchport_pvlan_mapping => ['44', '3-4,6']`
 
-#### `switchport_private_vlan_mapping_trunk`
-This configuration specify which vlans are associated on this trunk promisc port. Pair of distinguish vlans in the form of primary vlan and secondary vlans (single or range) are accepted per entry. Valid values are an array of ["primary_vlan", "secondary_vlan"] pairs.
+##### `switchport_pvlan_mapping_trunk`
+Maps the promiscuous trunk port with the primary VLAN and a selected list of associated secondary VLANs. Valid inputs are: An array containing both the primary vlan and a range of secondary vlans, a nested array if there are multiple mappings, or keyword 'default'.
 
-#### `switchport_private_vlan_trunk_allowed_vlan`
-This configuration specify which private vlans are associated on this trunk port. Valid values are an array of ["vlan"].
+Examples:
 
-#### `switchport_private_vlan_trunk_native_vlan`
-This configuration specify the native vlan as a private vlan. Valid values are integers.
+```
+ switchport_pvlan_mapping_trunk => [['44', '3-4,6'], ['99', '199']]
+
+   -or-
+
+ switchport_pvlan_mapping_trunk => ['44', '3-4,6']
+```
+
+##### `switchport_pvlan_trunk_allowed_vlan`
+Sets the allowed VLANs for the private VLAN isolated trunk interface. Valid values are a String range of vlans or keyword 'default'.
+
+Example: `switchport_pvlan_trunk_allowed_vlan => '3-4,6'`
+
+##### `switchport_pvlan_trunk_association`
+Associates the Layer 2 isolated trunk port with the primary and secondary VLANs of private VLANs. Valid inputs are: An array containing an association of primary and secondary vlans, a nested array if there are multiple associations, or the keyword 'default'.
+
+Examples:
+
+```
+switchport_pvlan_trunk_association => [['44', '244'], ['45', '245']]
+
+   -or-
+
+switchport_pvlan_trunk_association => ['44', '244']
+```
+
+##### `switchport_pvlan_trunk_native_vlan`
+Sets the native VLAN for the 802.1Q trunk. Valid values are Integer, String, or keyword 'default'.
+
+##### `switchport_pvlan_promiscuous`
+Configures a Layer 2 interface as a private VLAN promiscuous port. Valid values are 'true', 'false', and 'default'.
+
+##### `switchport_pvlan_trunk_promiscuous`
+Configures a Layer 2 interface as a private VLAN promiscuous trunk port. Valid values are 'true', 'false', and 'default'.
+
+##### `switchport_pvlan_trunk_secondary`
+Configures a Layer 2 interface as a private VLAN isolated trunk port. Valid values are 'true', 'false', and 'default'.
 
 ##### `switchport_trunk_allowed_vlan`
 The allowed VLANs for the specified Ethernet interface. Valid values are

@@ -22,7 +22,7 @@
 #
 ###############################################################################
 #
-# 'test_interface_private_vlan' tests private_vlan interface properties.
+# 'test_interface_private_vlan' tests private-vlan interface properties.
 #
 ###############################################################################
 require File.expand_path('../interfacelib.rb', __FILE__)
@@ -51,114 +51,91 @@ tests[:default] = {
   preclean_intf:      true,
   sys_def_switchport: true,
   manifest_props:     {
-    # switchport_mode_private_vlan_host:             no default
-    switchport_mode_private_vlan_host_association:  'default',
-    switchport_mode_private_vlan_trunk_promiscuous: 'default',
-    switchport_mode_private_vlan_trunk_secondary:   'default',
-    # TBD: BROKEN. Should support 'default' but sends literal 'default'
-    # instead of doing default behavior.
-    # switchport_private_vlan_trunk_allowed_vlan:     'default',
-    switchport_private_vlan_association_trunk:      'default',
-    switchport_private_vlan_mapping_trunk:          'default',
-    switchport_private_vlan_trunk_native_vlan:      'default',
+    switchport_pvlan_host:               'default',
+    switchport_pvlan_host_association:   'default',
+    switchport_pvlan_mapping:            'default',
+    switchport_pvlan_mapping_trunk:      'default',
+    switchport_pvlan_promiscuous:        'default',
+    switchport_pvlan_trunk_native_vlan:  'default',
+    switchport_pvlan_trunk_allowed_vlan: 'default',
+    switchport_pvlan_trunk_association:  'default',
+    switchport_pvlan_trunk_promiscuous:  'default',
+    switchport_pvlan_trunk_secondary:    'default',
   },
   resource:           {
-    switchport_mode_private_vlan_host:              'disabled',
-    # switchport_mode_private_vlan_host_association: nil,
-    switchport_mode_private_vlan_trunk_promiscuous: 'false',
-    switchport_mode_private_vlan_trunk_secondary:   'false',
-    # switchport_private_vlan_trunk_allowed_vlan:    nil,
-    # switchport_private_vlan_association_trunk:     nil,
-    # switchport_private_vlan_mapping_trunk:         nil,
-    switchport_private_vlan_trunk_native_vlan:      '1',
+    switchport_pvlan_host:               'false',
+    # switchport_pvlan_host_association:  nil,
+    # switchport_pvlan_mapping:           nil,
+    # switchport_pvlan_mapping_trunk:     nil,
+    switchport_pvlan_promiscuous:        'false',
+    switchport_pvlan_trunk_native_vlan:  '1',
+    switchport_pvlan_trunk_allowed_vlan: 'none',
+    # switchport_pvlan_trunk_association: nil,
+    switchport_pvlan_trunk_promiscuous:  'false',
+    switchport_pvlan_trunk_secondary:    'false',
   },
 }
 
-# allowed = ['100', '102-103', '105']
-assoc = %w(106 107)
-tests[:port_mode_host] = {
-  desc:               '2.1 Port Mode Host',
-  title_pattern:      intf,
-  preclean_intf:      true,
-  sys_def_switchport: true,
-  manifest_props:     {
-    switchport_mode_private_vlan_host:             :host,
-    switchport_mode_private_vlan_host_association: assoc,
-    switchport_private_vlan_trunk_native_vlan:     100,
-    # switchport_private_vlan_trunk_allowed_vlan:    allowed,
+tests[:host] = {
+  desc:           '2.1 Host',
+  title_pattern:  intf,
+  preclean_intf:  true,
+  manifest_props: {
+    switchport_pvlan_host:               true,
+    switchport_pvlan_host_association:   %w(98 99),
+    switchport_pvlan_trunk_allowed_vlan: '106, 105, 102,103',
+    switchport_pvlan_trunk_native_vlan:  42,
   },
-  resource:           {
-    switchport_mode_private_vlan_host:             'host',
-    switchport_mode_private_vlan_host_association: "#{assoc}",
-    switchport_private_vlan_trunk_native_vlan:     '100',
-    # TBD: BROKEN: Idempotence issues. This implementation is broken:
-    #   ['100', '102-103', '105'] vs '100 102-103 105'
-    # Why does it transform from multi-member list to string???
-    # switchport_private_vlan_trunk_allowed_vlan:    "#{allowed}",
+  resource:       {
+    switchport_pvlan_host:               'true',
+    switchport_pvlan_host_association:   %w(98 99),
+    switchport_pvlan_trunk_allowed_vlan: '102-103,105-106',
+    switchport_pvlan_trunk_native_vlan:  '42',
   },
 }
 
-# Clone the test hash above to retest using 'promiscuous' mode
-t = tests[:port_mode_promiscuous] = tests[:port_mode_host].clone
-t[:desc] = '2.2 Port Mode Promiscuous'
-t[:manifest_props][:switchport_mode_private_vlan_host] = :promiscuous
-t[:resource][:switchport_mode_private_vlan_host] = :promiscuous
+tests[:promiscuous] = {
+  desc:           '2.2 Promiscuous',
+  title_pattern:  intf,
+  manifest_props: {
+    switchport_pvlan_promiscuous: true
+  },
+}
 
 tests[:trunk_secondary] = {
-  desc:               '3.1 Trunk Secondary',
-  platform:           'n(5|6|7|9)k',
-  title_pattern:      intf,
-  preclean_intf:      true,
-  sys_def_switchport: true,
-  manifest_props:     {
-    switchport_mode_private_vlan_trunk_secondary: true,
-    switchport_private_vlan_association_trunk:    %w(100 102),
-    switchport_private_vlan_mapping_trunk:        ['100', '101,104-105'],
+  desc:           '3.1 Trunk Secondary',
+  platform:       'n(5|6|7|9)k',
+  title_pattern:  intf,
+  preclean_intf:  true,
+  manifest_props: {
+    switchport_pvlan_trunk_association: [%w(45 245), %w(44 244)],
+    switchport_pvlan_trunk_secondary:   true,
+    switchport_pvlan_mapping_trunk:     [%w(99 101,105,104), %w(92 192)],
   },
-  resource:           {
-    switchport_mode_private_vlan_trunk_secondary: 'true',
-    # TBD: BROKEN. It inputs a multi-member list but normalizes to a
-    # single index? ['100 102'] is wrong but we will keep this temporarily to
-    # show the broken behavior.
-    switchport_private_vlan_association_trunk:    "['100 102']",
-    # TBD: BROKEN. Same as above.
-    switchport_private_vlan_mapping_trunk:        "['100 101,104-105']",
+  resource:       {
+    switchport_pvlan_trunk_association: [%w(44 244), %w(45 245)],
+    switchport_pvlan_trunk_secondary:   'true',
+    switchport_pvlan_mapping_trunk:     [%w(99  101,104-105), %w(92 192)],
   },
 }
+
 tests[:trunk_promiscuous] = {
-  desc:               '3.2 Trunk Promiscuous',
-  platform:           'n(5|6|7|9)k',
-  title_pattern:      intf,
-  preclean_intf:      true,
-  sys_def_switchport: true,
-  manifest_props:     {
-    switchport_mode_private_vlan_trunk_promiscuous: true,
-    switchport_private_vlan_association_trunk:      %w(100 102),
-    switchport_private_vlan_mapping_trunk:          ['100', '101,104-105'],
-  },
-  resource:           {
-    switchport_mode_private_vlan_trunk_promiscuous: 'true',
-    # TBD: BROKEN. It inputs a multi-member list but normalizes to a
-    # single index? ['100 102'] is wrong but we will keep this temporarily to
-    # show the broken behavior.
-    switchport_private_vlan_association_trunk:      "['100 102']",
-    # TBD: BROKEN. Same as above.
-    switchport_private_vlan_mapping_trunk:          "['100 101,104-105']",
+  desc:           '3.2 Trunk Promiscuous',
+  platform:       'n(5|6|7|9)k',
+  title_pattern:  intf,
+  manifest_props: {
+    switchport_pvlan_trunk_promiscuous: true
   },
 }
 
 svi = 'vlan13'
-mapping = %w(108-109)
 tests[:svi_mapping] = {
   desc:           '4.1 SVI Private-Vlan Mapping',
   platform:       'n(5|6|7|9)k',
   title_pattern:  svi,
   preclean_intf:  true,
   manifest_props: {
-    private_vlan_mapping: mapping
-  },
-  resource:       {
-    private_vlan_mapping: "#{mapping}"
+    private_vlan_mapping: %w(108-109)
   },
 }
 
@@ -185,8 +162,8 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Port Mode")
-  test_harness_run(tests, :port_mode_host)
-  test_harness_run(tests, :port_mode_promiscuous)
+  test_harness_run(tests, :host)
+  test_harness_run(tests, :promiscuous)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Trunk Mode")

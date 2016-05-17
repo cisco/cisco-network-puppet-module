@@ -59,7 +59,7 @@ module PuppetX
       # Returns a merged and ordered range:
       #   ["2-6", "9"]
       #
-      def self.normalize_range_array(range)
+      def self.normalize_range_array(range, type=:array)
         return range if range.nil? || range.empty?
 
         # This step is puppet only
@@ -78,7 +78,13 @@ module PuppetX
         merged = merge_range(range)
 
         # Convert back to cli dash-syntax
-        ruby_range_to_dash_range(merged)
+        ruby_range_to_dash_range(merged, type)
+      end
+
+      def self.normalize_range_string(range)
+        range = range.to_s
+        return normalize_range_array(range, :string) if range[/[-,]/]
+        range
       end
 
       # Convert a cli-dash-syntax range to ruby-range. This is useful for
@@ -92,6 +98,7 @@ module PuppetX
       #
       def self.dash_range_to_ruby_range(range)
         range = range.split(',') if range.is_a?(String)
+        # [["45", "7-8"], ["46", "9,10"]]
         range.map! do |rng|
           if rng[/-/]
             # '2-5' -> 2..5
@@ -123,7 +130,7 @@ module PuppetX
             r.first.to_s + '-' + r.last.to_s
           end
         end
-        return range.join(', ') if type == :string
+        return range.join(',') if type == :string
         range
       end
 
