@@ -45,12 +45,12 @@ tests[:primary] = {
   desc:           '1.1 Primary',
   title_pattern:  '100',
   manifest_props: {
-    private_vlan_type:        'primary',
-    private_vlan_association: '101, 102, 98-99, 105',
+    pvlan_type:        'primary',
+    pvlan_association: '101, 102, 98-99, 105',
   },
   resource:       {
-    private_vlan_type:        'primary',
-    private_vlan_association: "['98-99', '101-102', '105']",
+    pvlan_type:        'primary',
+    pvlan_association: "['98-99', '101-102', '105']",
   },
 }
 
@@ -58,7 +58,7 @@ tests[:community] = {
   desc:           '1.2 Community',
   title_pattern:  '100',
   manifest_props: {
-    private_vlan_type: 'community'
+    pvlan_type: 'community'
   },
 }
 
@@ -66,7 +66,7 @@ tests[:isolated] = {
   desc:           '1.3 Isolated',
   title_pattern:  '100',
   manifest_props: {
-    private_vlan_type: 'isolated'
+    pvlan_type: 'isolated'
   },
 }
 
