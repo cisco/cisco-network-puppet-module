@@ -33,6 +33,48 @@ module PuppetX
         network
       end
 
+      # validate_array_range
+      #
+      # A helper for validating array ranges. Valid input examples:
+      #   'default'
+      #   [44, 144]
+      #   [['44', '144'], [99, 199]]
+=begin
+      def self.validate_array_range(value, msg, supports_default=true)
+	puts "validate: #{value}"
+        if value.is_a?(String)
+          value.delete!(' ')
+          return if supports_default
+            fail msg unless value.delete(' ')[/^(default|\d+)$/]
+          
+        end
+
+        if value.is_a?(Array)
+          value.flatten.each do |v|
+puts "v: #{v}"
+            fail msg unless v.to_s[/^[-,\d\s]+$/]
+          end
+        end
+      end
+=end
+      # munge_array_range
+      #
+      # A helper for munging array ranges. Examples:
+      #  'default'  -->  :default
+      #  [44, 144]  -->  [['44', '144']]
+      #  [['44', '144'], [99, '199-200']] --> [['44', '144'], ['99', '199-200']]
+      def self.munge_array_range(value, supports_default=true)
+	puts "munge: #{value}"
+        if supports_default
+          if value.is_a?(String) && value.delete!(' ') == 'default'
+            return :default
+          end
+        end
+
+        value = value.flatten.collect(&:to_s) if value.is_a?(Array)
+        value
+      end
+
       # Convert boolean symbols to strings
       def self.bool_sym_to_s(val)
         return val unless val == :true || val == :false
@@ -59,7 +101,8 @@ module PuppetX
       # Returns a merged and ordered range:
       #   ["2-6", "9"]
       #
-      def self.normalize_range_array(range)
+      def self.normalize_range_array(range, type=:array)
+#puts "range:0: #{range}"
         return range if range.nil? || range.empty?
 
         # This step is puppet only
@@ -71,14 +114,22 @@ module PuppetX
         # Handle string only: '2-5, 9, 4-6' to ["2-5", "9", "4-6"]
         range = range.split(',') if range.is_a?(String)
 
+#puts "range:1.a: #{range}"
         # Convert to ruby-syntax ranges
         range = dash_range_to_ruby_range(range)
 
+#puts "range:1.b: #{range}"
         # Sort & Merge
         merged = merge_range(range)
 
         # Convert back to cli dash-syntax
-        ruby_range_to_dash_range(merged)
+        ruby_range_to_dash_range(merged, type)
+      end
+
+      def self.normalize_range_string(range)
+        range = range.to_s
+        return normalize_range_array(range, :string) if range[/[-,]/]
+        range
       end
 
       # Convert a cli-dash-syntax range to ruby-range. This is useful for
@@ -92,6 +143,8 @@ module PuppetX
       #
       def self.dash_range_to_ruby_range(range)
         range = range.split(',') if range.is_a?(String)
+puts "range:2.a: #{range}"
+        # [["45", "7-8"], ["46", "9,10"]]
         range.map! do |rng|
           if rng[/-/]
             # '2-5' -> 2..5
