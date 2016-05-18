@@ -9,7 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - Deprecated `cisco_vlan` 'private-vlan' properties and replaced with new methods. The deprecated properties will be removed with release 2.0.0. The old -> new properties are:
 
-| Old Name | New Name(s) |
+| Old Name | New Name |
 |:---|:---:|
 | `private_vlan_association` | `pvlan_association`
 | `private_vlan_type`        | `pvlan_type`
