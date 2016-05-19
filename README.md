@@ -2920,8 +2920,10 @@ Manages a Cisco VLAN.
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `fabric_control` | Only supported on N7k (support added in ciscopuppet 1.3.0) |
-| `mode`           | Only supported on N5k,N6k,N7k |
+| `fabric_control`    | Only supported on N7k (support added in ciscopuppet 1.3.0) |
+| `mode`              | Only supported on N5k,N6k,N7k |
+| `pvlan_type`        | Not supported on N8k |
+| `pvlan_association` | Not supported on N8k |
 
 #### Parameters
 
@@ -2948,11 +2950,19 @@ State of the VLAN. Valid values are 'active', 'suspend', and keyword 'default'.
 Whether or not the vlan is shutdown. Valid values are 'true', 'false' and
 keyword 'default'.
 
-##### `private_vlan_type`
-The private vlan type. Valid values are 'primary', 'isolated' and 'community'.
+##### `pvlan_type`
+The private vlan type. Valid values are: 'primary', 'isolated', 'community' or 'default'.
 
-##### `private_vlan_association`
-Associate the secondary vlanis to the primary vlan. Valid values are integer like 5,10-12.
+##### `pvlan_association`
+Associates the secondary vlan(s) to the primary vlan. Valid values are an Array or String of vlan ranges, or keyword 'default'.
+
+Examples:
+
+```
+pvlan_associate => ['2-5, 9']
+  -or-
+pvlan_associate => '2-5, 9'
+```
 
 ##### `fabric_control`
 Specifies this vlan as the fabric control vlan. Only one bridge-domain or VLAN can be configured as fabric-control. Valid values are true, false.

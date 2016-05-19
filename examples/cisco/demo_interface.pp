@@ -112,15 +112,12 @@ class ciscopuppet::cisco::demo_interface {
     if platform_get() =~ /n(3|5|6|7|9)k/ {
       cisco_vlan { '445':
         ensure                              => present,
-        #pvlan_type                          => 'isolated',
-        private_vlan_type => 'isolated',     # DEPRECATED
+        pvlan_type                          => 'isolated',
       }
       cisco_vlan { '444':
         ensure                              => present,
-        #pvlan_type                          => 'primary',
-        #pvlan_association                   => ['445'],
-        private_vlan_type  => 'primary',     # DEPRECATED
-        private_vlan_association => ['445'], # DEPRECATED
+        pvlan_type                          => 'primary',
+        pvlan_association                   => ['445'],
       }
       cisco_interface { 'Ethernet1/6':
         description                         => 'Private-vlan Host Port',
