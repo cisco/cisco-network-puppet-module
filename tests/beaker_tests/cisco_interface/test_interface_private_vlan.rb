@@ -128,8 +128,11 @@ tests[:trunk_secondary] = {
     cisco_vlan {  '4': pvlan_type => 'primary', pvlan_association => '14' }
 
     cisco_vlan { '15': pvlan_type => 'community' }
-    cisco_vlan { '17': pvlan_type => 'community' }
     cisco_vlan {  '5': pvlan_type => 'primary', pvlan_association => '15' }
+
+    cisco_vlan { '17': pvlan_type => 'community' }
+    cisco_vlan { '27': pvlan_type => 'community' }
+    cisco_vlan { '37': pvlan_type => 'community' }
     cisco_vlan {  '7': pvlan_type => 'primary', pvlan_association => '17,27,37'}
   ),
 }
