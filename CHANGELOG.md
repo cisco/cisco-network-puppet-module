@@ -7,6 +7,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Extended `cisco_bgp_af` to include l2vpn/evpn address-family support
 
+- Deprecated `cisco_vlan` 'private-vlan' properties and replaced with new methods. The deprecated properties will be removed with release 2.0.0. The old -> new properties are:
+
+| Old Name | New Name |
+|:---|:---:|
+| `private_vlan_association` | `pvlan_association`
+| `private_vlan_type`        | `pvlan_type`
+
 ## [1.3.1] - 2016-05-06
 
 ### New feature support
