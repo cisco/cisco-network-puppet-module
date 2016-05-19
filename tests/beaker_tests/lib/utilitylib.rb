@@ -273,6 +273,7 @@ def resource_absent_cleanup(agent, res_name, stepinfo='absent clean')
       when /cisco_snmp_user/
         next if title[/devops/i]
       when /cisco_vlan/
+        # TBD: Per-vlan cleanup is too slow. Consider 'no vlan 1-4095'
         next if title == '1'
       when /cisco_vrf/
         next if title[/management/]
@@ -810,8 +811,13 @@ end
 # Helper to set properties using the puppet resource command.
 def resource_set(agent, resource, msg='')
   logger.info("\n#{msg}")
-  cmd = "resource #{resource[:name]} '#{resource[:title]}' " \
-                  "#{resource[:property]}='#{resource[:value]}'"
+  if resource.is_a?(Array)
+    cmd =
+      "resource %s '%s' %s='%s'" % resource # rubocop:disable Style/FormatString
+  else
+    cmd = "resource #{resource[:name]} '#{resource[:title]}' "\
+          "#{resource[:property]}='#{resource[:value]}'"
+  end
   cmd = PUPPET_BINPATH + cmd
   on(agent, cmd, acceptable_exit_codes: [0, 2])
 end

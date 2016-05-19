@@ -108,24 +108,36 @@ class ciscopuppet::cisco::demo_interface {
       warning('This platform does not support cisco_bridge_domain')
     }
 
-    # For private vlan
+    # Private-vlan
     if platform_get() =~ /n(3|5|6|7|9)k/ {
       cisco_vlan { '445':
-        ensure     => present,
-        private_vlan_type => 'isolated',
+        ensure                              => present,
+        pvlan_type                          => 'isolated',
       }
       cisco_vlan { '444':
-        ensure     => present,
-        private_vlan_type => 'primary',
-        private_vlan_association => ['445'],
+        ensure                              => present,
+        pvlan_type                          => 'primary',
+        pvlan_association                   => ['445'],
       }
       cisco_interface { 'Ethernet1/6':
-        description     => 'private_vlan_host_port',
-        switchport_mode_private_vlan_host => 'host',
-        switchport_mode_private_vlan_host_association  => ['444', '445'],
+        description                         => 'Private-vlan Host Port',
+        switchport_pvlan_host               => true,
+        switchport_pvlan_host_association   => [444, 445],
+      }
+      cisco_interface { 'Ethernet1/7':
+        description                         => 'Private-vlan Trunk Port',
+        switchport_pvlan_trunk_secondary    => true,
+        switchport_pvlan_trunk_allowed_vlan => '106,102-103,105',
+        switchport_pvlan_trunk_association  => [[44, 244], [45, 245]],
+        switchport_pvlan_trunk_native_vlan  => 42,
+        switchport_pvlan_mapping_trunk      => [['99', '101,104-105'], ['92', '192']],
+      }
+      cisco_interface { 'vlan29':
+        description                         => 'SVI Private-vlan Mapping',
+        pvlan_mapping                       => '108-109',
       }
     } else {
-      warning('This platform does not support the private vlan feature')
+      warning('This platform does not support the private-vlan feature')
     }
 
     #  Requires F3 or newer linecards
