@@ -2909,10 +2909,18 @@ Whether or not the vlan is shutdown. Valid values are 'true', 'false' and
 keyword 'default'.
 
 ##### `pvlan_type`
-The private vlan type. Valid values are 'primary', 'isolated' and 'community'.
+The private vlan type. Valid values are: 'primary', 'isolated', 'community' or 'default'.
 
 ##### `pvlan_association`
-Associate the secondary vlan to the primary vlan. Valid values are integer like 5,10-12.
+Associates the secondary vlan(s) to the primary vlan. Valid values are an Array or String of vlan ranges, or keyword 'default'.
+
+Examples:
+
+```
+pvlan_associate => ['2-5, 9']
+  -or-
+pvlan_associate => '2-5, 9'
+```
 
 ##### `fabric_control`
 Specifies this vlan as the fabric control vlan. Only one bridge-domain or VLAN can be configured as fabric-control. Valid values are true, false.
