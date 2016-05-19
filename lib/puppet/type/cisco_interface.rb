@@ -1055,9 +1055,11 @@ Puppet::Type.newtype(:cisco_interface) do
     reqs
   end # autorequire vlan
 
-  autorequire(:cisco_vtp) do |rel_catalog|
-    reqs = []
-    reqs << rel_catalog.catalog.resource('Cisco_vtp')
-    reqs # return
-  end # autorequire vtp
+  # TBD: Remove?
+  # autorequire(:cisco_vtp) do |rel_catalog|
+  #   reqs = []
+  #   reqs << rel_catalog.catalog.resource('Cisco_vtp')
+  #   reqs # return
+  #   rel_catalog.catalog.resource('Cisco_vtp', 'default')
+  # end # autorequire vtp
 end # Puppet::Type.newtype

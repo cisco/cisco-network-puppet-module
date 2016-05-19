@@ -82,16 +82,20 @@ tests[:host] = {
   preclean_intf:  true,
   manifest_props: {
     switchport_pvlan_host:               true,
-    switchport_pvlan_host_association:   %w(98 99),
-    switchport_pvlan_trunk_allowed_vlan: '106, 105, 102,103',
+    switchport_pvlan_host_association:   %w(2 12),
+    switchport_pvlan_trunk_allowed_vlan: '6, 5, 2, 12',
     switchport_pvlan_trunk_native_vlan:  42,
   },
   resource:       {
     switchport_pvlan_host:               'true',
-    switchport_pvlan_host_association:   %w(98 99),
-    switchport_pvlan_trunk_allowed_vlan: '102-103,105-106',
+    switchport_pvlan_host_association:   %w(2 12),
+    switchport_pvlan_trunk_allowed_vlan: '2,5-6,12',
     switchport_pvlan_trunk_native_vlan:  '42',
   },
+  dependency:     %(
+    cisco_vlan { '12': pvlan_type => 'community' }
+    cisco_vlan {  '2': pvlan_type => 'primary', pvlan_association => '12' }
+  ),
 }
 
 tests[:promiscuous] = {
@@ -108,15 +112,26 @@ tests[:trunk_secondary] = {
   title_pattern:  intf,
   preclean_intf:  true,
   manifest_props: {
-    switchport_pvlan_trunk_association: [%w(45 245), %w(44 244)],
+    switchport_pvlan_trunk_association: [%w(4 14), %w(3 13)],
     switchport_pvlan_trunk_secondary:   true,
-    switchport_pvlan_mapping_trunk:     [%w(99 101,105,104), %w(92 192)],
+    switchport_pvlan_mapping_trunk:     [%w(7 17,27,37), %w(5 15)],
   },
   resource:       {
-    switchport_pvlan_trunk_association: [%w(44 244), %w(45 245)],
+    switchport_pvlan_trunk_association: [%w(3 13), %w(4 14)],
     switchport_pvlan_trunk_secondary:   'true',
-    switchport_pvlan_mapping_trunk:     [%w(99  101,104-105), %w(92 192)],
+    switchport_pvlan_mapping_trunk:     [%w(5 15), %w(7 17,27,37)],
   },
+  dependency:     %(
+    cisco_vlan { '13': pvlan_type => 'isolated' }
+    cisco_vlan { '14': pvlan_type => 'isolated' }
+    cisco_vlan {  '3': pvlan_type => 'primary', pvlan_association => '13' }
+    cisco_vlan {  '4': pvlan_type => 'primary', pvlan_association => '14' }
+
+    cisco_vlan { '15': pvlan_type => 'community' }
+    cisco_vlan { '17': pvlan_type => 'community' }
+    cisco_vlan {  '5': pvlan_type => 'primary', pvlan_association => '15' }
+    cisco_vlan {  '7': pvlan_type => 'primary', pvlan_association => '17,27,37'}
+  ),
 }
 
 tests[:trunk_promiscuous] = {
@@ -142,13 +157,15 @@ tests[:svi_mapping] = {
 # CSCuz58517 workaround: 'private-vlan association trunk' doesn't get
 # removed by 'default interface' on some platforms.
 def pvlan_assoc_cleanup(agent, intf)
-  resource_set(agent,
-               { name:     'cisco_interface',
-                 title:    intf,
-                 property: 'switchport_mode',
-                 value:    'disabled',
-               },
-               "  * Remove stale private-vlan configs from #{intf}")
+  resource_set(agent, %w(cisco_vtp default ensure absent), '  * Disable VTP')
+
+  resource_set(agent, ['cisco_interface', intf, 'switchport_mode', 'disabled'],
+               "  * Remove private-vlan configs from #{intf}")
+end
+
+# This method overrides utilitylib.rb:dependency_manifest()
+def dependency_manifest(tests, id)
+  tests[id][:dependency] if tests[id][:dependency] && platform[/n(6)k/]
 end
 
 #################################################################
