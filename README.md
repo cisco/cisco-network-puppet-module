@@ -135,86 +135,86 @@ A note about support for specific platform models:
   * "**N7k**" support includes all N7xxx models.
   * "**N8k**" support includes all N8xxx models.
 
-| ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | Caveats |
-|:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| [cisco_aaa_<br>authentication_login](#type-cisco_aaa_authentication_login)                 | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_aaa_<br>authorization_login_cfg_svc](#type-cisco_aaa_authorization_login_cfg_svc)   | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_aaa_<br>authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs)     | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_acl](#type-cisco_acl)                               | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_ace](#type-cisco_ace)                               | ✅  | ✅  | ✅* | ✅* | ✅* | \*[caveats](#cisco_ace-caveats) |
-| [cisco_command_config](#type-cisco_command_config)         | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_bgp](#type-cisco_bgp)                               | ✅  | ✅  | ✅* | ✅* | ✅* | \*[caveats](#cisco_bgp-caveats) |
-| [cisco_bgp_af](#type-cisco_bgp_af)                         | ✅* | ✅* | ✅  | ✅* | ✅  | \*[caveats](#cisco_bgp_af-caveats) |
-| [cisco_bgp_neighbor](#type-cisco_bgp_neighbor)             | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af)       | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_bridge_domain](#type-cisco_bridge_domain)           | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
-| [cisco_bridge_domain_vni](#type-cisco_bridge_domain_vni)   | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
-| [cisco_encapsulation](#type-cisco_encapsulation)           | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
-| [cisco_evpn_vni](#type-cisco_evpn_vni)                     | ✅ | :heavy_minus_sign: | ✅ | ✅ | ✅ | \*[caveats](#cisco_evpn_vni-caveats) |
-| [cisco_fabricpath_global](#type-cisco_fabricpath_global)     | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅* | \*[caveats](#cisco_fabricpath_global-caveats) |
-| [cisco_fabricpath_topology](#type-cisco_fabricpath_topology) | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅  |
-| [cisco_interface](#type-cisco_interface)                             | ✅  | ✅  | ✅* | ✅* | ✅  | \*[caveats](#cisco_interface-caveats) |
-| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_interface_ospf](#type-cisco_interface_ospf)                   | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_interface_portchannel](#type-cisco_interface_portchannel)     | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_interface_portchannel-caveats) |
-| [cisco_interface_service_vni](#type-cisco_interface_service_vni) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
-| [cisco_itd_device_group](#type-cisco_itd_device_group)           | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
-| [cisco_itd_device_group_node](#type-cisco_itd_device_group_node) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
-| [cisco_itd_service](#type-cisco_itd_service)                     | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | \*[caveats](#cisco_itd_service-caveats) |
-| [cisco_ospf](#type-cisco_ospf)                             | ✅  | ✅  | ✅ | ✅  | ✅  |
-| [cisco_ospf_vrf](#type-cisco_ospf_vrf)                     | ✅  | ✅  | ✅ | ✅  | ✅  |
-| ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | Caveats |
-| [cisco_overlay_global](#type-cisco_overlay_global)         | ✅  | :heavy_minus_sign: | ✅ | ✅ | ✅ |
-| [cisco_pim](#type-cisco_pim)                               | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_pim_rp_address](#type-cisco_pim_rp_address)         | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_pim_grouplist](#type-cisco_pim_grouplist)           | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_portchannel_global](#type-cisco_portchannel_global) | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_portchannel_global-caveats) |
-| [cisco_stp_global](#type-cisco_stp_global)                 | ✅* | ✅* | ✅* | ✅* | ✅  | \*[caveats](#cisco_stp_global-caveats) |
-| [cisco_snmp_community](#type-cisco_snmp_community)         | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_snmp_group](#type-cisco_snmp_group)                 | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_snmp_server](#type-cisco_snmp_server)               | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_snmp_user](#type-cisco_snmp_user)                   | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_tacacs_server](#type-cisco_tacacs_server)           | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_tacacs_server_host](#type-cisco_tacacs_server_host) | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_vdc](#type-cisco_vdc)                               | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
-| [cisco_vlan](#type-cisco_vlan)                             | ✅* | ✅* | ✅  | ✅  | ✅  | \*[caveats](#cisco_vlan-caveats) |
-| [cisco_vpc_domain](#type-cisco_vpc_domain)                 | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_vpc_domain-caveats) |
-| [cisco_vrf](#type-cisco_vrf)                               | ✅  | ✅* | ✅  | ✅  | ✅  | \*[caveats](#cisco_vrf-caveats) |
-| [cisco_vrf_af](#type-cisco_vrf_af)                         | ✅  | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_vrf_af-caveats) |
-| [cisco_vtp](#type-cisco_vtp)                               | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep)                 | ✅  | :heavy_minus_sign: | ✅  | ✅  | ✅  |
-| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni)         | ✅  | :heavy_minus_sign: | ✅  | ✅  | ✅  |
+| ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | N8k | Caveats |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| [cisco_aaa_<br>authentication_login](#type-cisco_aaa_authentication_login)                 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_aaa_<br>authorization_login_cfg_svc](#type-cisco_aaa_authorization_login_cfg_svc)   | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_aaa_<br>authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs)     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_acl](#type-cisco_acl)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_ace](#type-cisco_ace)                               | ✅  | ✅  | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_ace-caveats) |
+| [cisco_command_config](#type-cisco_command_config)         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_bgp](#type-cisco_bgp)                               | ✅  | ✅  | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_bgp-caveats) |
+| [cisco_bgp_af](#type-cisco_bgp_af)                         | ✅* | ✅* | ✅  | ✅* | ✅  | ✅ | \*[caveats](#cisco_bgp_af-caveats) |
+| [cisco_bgp_neighbor](#type-cisco_bgp_neighbor)             | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af)       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_bridge_domain](#type-cisco_bridge_domain)           | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
+| [cisco_bridge_domain_vni](#type-cisco_bridge_domain_vni)   | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
+| [cisco_encapsulation](#type-cisco_encapsulation)           | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
+| [cisco_evpn_vni](#type-cisco_evpn_vni)                     | ✅ | :heavy_minus_sign: | ✅ | ✅ | ✅ | ✅ | \*[caveats](#cisco_evpn_vni-caveats) |
+| [cisco_fabricpath_global](#type-cisco_fabricpath_global)     | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅* | :heavy_minus_sign: | \*[caveats](#cisco_fabricpath_global-caveats) |
+| [cisco_fabricpath_topology](#type-cisco_fabricpath_topology) | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅  | :heavy_minus_sign: |
+| [cisco_interface](#type-cisco_interface)                             | ✅  | ✅  | ✅* | ✅* | ✅  | ✅ | \*[caveats](#cisco_interface-caveats) |
+| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_interface_ospf](#type-cisco_interface_ospf)                   | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_interface_portchannel](#type-cisco_interface_portchannel)     | ✅* | ✅* | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_interface_portchannel-caveats) |
+| [cisco_interface_service_vni](#type-cisco_interface_service_vni) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
+| [cisco_itd_device_group](#type-cisco_itd_device_group)           | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
+| [cisco_itd_device_group_node](#type-cisco_itd_device_group_node) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
+| [cisco_itd_service](#type-cisco_itd_service)                     | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: | \*[caveats](#cisco_itd_service-caveats) |
+| [cisco_ospf](#type-cisco_ospf)                             | ✅  | ✅  | ✅ | ✅  | ✅ | ✅ |
+| [cisco_ospf_vrf](#type-cisco_ospf_vrf)                     | ✅  | ✅  | ✅ | ✅  | ✅ | ✅ |
+| ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | N8k | Caveats |
+| [cisco_overlay_global](#type-cisco_overlay_global)         | ✅  | :heavy_minus_sign: | ✅ | ✅ | ✅ | ✅ |
+| [cisco_pim](#type-cisco_pim)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_pim_rp_address](#type-cisco_pim_rp_address)         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_pim_grouplist](#type-cisco_pim_grouplist)           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_portchannel_global](#type-cisco_portchannel_global) | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_portchannel_global-caveats) |
+| [cisco_stp_global](#type-cisco_stp_global)                 | ✅* | ✅* | ✅* | ✅* | ✅ | ✅ | \*[caveats](#cisco_stp_global-caveats) |
+| [cisco_snmp_community](#type-cisco_snmp_community)         | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_snmp_group](#type-cisco_snmp_group)                 | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_snmp_server](#type-cisco_snmp_server)               | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_snmp_user](#type-cisco_snmp_user)                   | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_tacacs_server](#type-cisco_tacacs_server)           | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_tacacs_server_host](#type-cisco_tacacs_server_host) | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_vdc](#type-cisco_vdc)                               | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
+| [cisco_vlan](#type-cisco_vlan)                             | ✅* | ✅* | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_vlan-caveats) |
+| [cisco_vpc_domain](#type-cisco_vpc_domain)                 | ✅* | ✅* | ✅* | ✅* | ✅* | ❌	| \*[caveats](#cisco_vpc_domain-caveats) |
+| [cisco_vrf](#type-cisco_vrf)                               | ✅  | ✅* | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_vrf-caveats) |
+| [cisco_vrf_af](#type-cisco_vrf_af)                         | ✅  | ✅* | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_vrf_af-caveats) |
+| [cisco_vtp](#type-cisco_vtp)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep)                 | ✅  | :heavy_minus_sign: | ✅  | ✅  | ✅  | ✅ |
+| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni)         | ✅  | :heavy_minus_sign: | ✅  | ✅  | ✅  | ✅ |
 
 ##### NetDev Providers
 
-| ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | Caveats |
-|:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| [domain_name](#type-domain_name)                           | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [name_server](#type-name_server)                           | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [network_dns](#type-network_dns)                           | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [network_interface](#type-network_interface)               | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [network_snmp](#type-network_snmp)                         | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [network_trunk](#type-network_trunk)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [network_vlan](#type-network_vlan)                         | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [ntp_config](#type-ntp_config)                             | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [ntp_server](#type-ntp_server)                             | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [port_channel](#type-port_channel)                         | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [radius](#type-radius)                                     | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [radius_global](#type-radius_global)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [radius_server_group](#type-tacacs_server_group)           | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [radius_server](#type-radius_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [search_domain](#type-search_domain)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [snmp_community](#type-snmp_community)                     | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [snmp_notification](#type-snmp_notification)               | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [snmp_notification_receiver](#type-snmp_notification_receiver) | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [snmp_user](#type-snmp_user)                               | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [syslog_server](#type-syslog_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [syslog_setting](#type-syslog_setting)                     | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [tacacs](#type-tacacs)                                     | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [tacacs_global](#type-tacacs_global)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [tacacs_server](#type-tacacs_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [tacacs_server_group](#type-tacacs_server_group)           | ✅  | ✅  | ✅  | ✅  | ✅  |
+| ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | N8k | Caveats |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| [domain_name](#type-domain_name)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [name_server](#type-name_server)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_dns](#type-network_dns)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_interface](#type-network_interface)               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_snmp](#type-network_snmp)                         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_trunk](#type-network_trunk)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_vlan](#type-network_vlan)                         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [ntp_config](#type-ntp_config)                             | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [ntp_server](#type-ntp_server)                             | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [port_channel](#type-port_channel)                         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [radius](#type-radius)                                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [radius_global](#type-radius_global)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [radius_server_group](#type-tacacs_server_group)           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [radius_server](#type-radius_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [search_domain](#type-search_domain)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [snmp_community](#type-snmp_community)                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [snmp_notification](#type-snmp_notification)               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [snmp_notification_receiver](#type-snmp_notification_receiver) | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [snmp_user](#type-snmp_user)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [syslog_server](#type-syslog_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [syslog_setting](#type-syslog_setting)                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [tacacs](#type-tacacs)                                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [tacacs_global](#type-tacacs_global)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [tacacs_server](#type-tacacs_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [tacacs_server_group](#type-tacacs_server_group)           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 
 --
 ## <a name ="resource-reference">Resource Reference<a>
