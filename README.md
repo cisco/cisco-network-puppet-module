@@ -133,6 +133,7 @@ A note about support for specific platform models:
   * "**N5k**" support includes N56xx models only. **_The N50xx and N55xx models are not supported at this time_.**
   * "**N6k**" support includes all N6xxx models.
   * "**N7k**" support includes all N7xxx models.
+  * "**N8k**" support includes all N8xxx models.
 
 | ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | Caveats |
 |:---|:---:|:---:|:---:|:---:|:---:|:---:|
@@ -1069,7 +1070,7 @@ Manages configuration of a BGP Address-family instance.
 | `additional_paths_install`  | Not supported on N3k, N9k                                                                  |
 | `advertise_l2vpn_evpn`      | Not supported on N3k, N6k                                                                  |
 | address-family `l2vpn/evpn` | Module Minimum Version 1.3.2 <br> OS Minimum Version 7.0(3)I3(1) <br> Not supported on N3k |
-| `additional_paths_install` | Not supported on N9k, N30xx, N31xx, N8k, IOS XR |
+| `additional_paths_install` | Not supported on N9k, N3k, N8k |
 
 #### Parameters
 
@@ -4061,7 +4062,7 @@ Minimum Requirements:
   * Cisco Nexus N5k, OS Version 7.3(0)N1(1), Environments: Open Agent Container (OAC)
   * Cisco Nexus N6k, OS Version 7.3(0)N1(1), Environments: Open Agent Container (OAC)
   * Cisco Nexus N7k, OS Version 7.3(0)D1(1), Environments: Open Agent Container (OAC)
-  * Cisco Nexus 85xx, OS Version 7.0(3)F1(1), Environments: Bash-shell, Guestshell
+  * Cisco Nexus N8k, OS Version 7.0(3)F1(1), Environments: Bash-shell, Guestshell
 
 ## Learning Resources
 
