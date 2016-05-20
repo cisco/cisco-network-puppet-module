@@ -40,8 +40,8 @@ Puppet::Type.newtype(:cisco_vlan) do
       mapped_vni => 20000,
       state      => 'active',
       shutdown   => 'true',
-      private_vlan_type => 'primary',
-      private_vlan_association => ['101-104']
+      pvlan_type => 'primary',
+      pvlan_association => ['101-104']
       fabric_control   => 'true',
     }"
 
@@ -142,7 +142,7 @@ Puppet::Type.newtype(:cisco_vlan) do
       :default)
   end # property shutdown
 
-  newproperty(:private_vlan_type) do
+  newproperty(:pvlan_type) do
     desc 'The private vlan type for VLAN. Valid values are string
           primary, isolated, community'
 
@@ -169,17 +169,19 @@ Puppet::Type.newtype(:cisco_vlan) do
       end # rescue
       value
     end
-  end # property private_vlan_type
+  end # property pvlan_type
 
-  newproperty(:private_vlan_association, array_matching: :all) do
-    desc 'The private association for the primary vlan.'\
-         "Valid values match format ['vlans']."
+  newproperty(:pvlan_association, array_matching: :all) do
+    valid = %(
+      Valid values are an Array or String of vlan ranges, or keyword 'default'.
+      Examples: ['2-5, 9'] or '2-5, 9'
+    )
+    desc "The private-vlan association for the primary vlan. #{valid}"
 
-    match_error = "must be of format ['vlans'] with vlans as integer"
     validate do |value|
-      fail "Vlan '#{value}' #{match_error}" unless
-            /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value ||
-            value == 'default' || value == :default
+      fail "Invalid input: #{value}\n#{valid}" unless
+        value == 'default' ||
+        /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value
     end
 
     munge do |value|
@@ -187,15 +189,11 @@ Puppet::Type.newtype(:cisco_vlan) do
     end
 
     def insync?(is)
-      return true if should == [:default] && is == [:default]
-      return false if should == [:default]
-      # For pvlan association we need to massage the should value
-      # since the returned is value is a flat array of vlans.
-      result = PuppetX::Cisco::PvlanUtils.prepare_list(should[0])
-
-      (is.size == result.size && is.sort == result.sort)
+      # Summarize the manifest ranges before comparing.
+      normal = PuppetX::Cisco::Utils.normalize_range_array(should)
+      (is.size == normal.size && is.sort == normal.sort)
     end
-  end # property private_vlan_association
+  end # property pvlan_association
 
   newproperty(:fabric_control) do
     desc %(Specifies this VLAN as the fabric control VLAN. Only one bridge-domain or VLAN can be configured as fabric-control.
@@ -206,4 +204,61 @@ Puppet::Type.newtype(:cisco_vlan) do
       :false,
       :default)
   end # property fabric_control
+
+  #############################################################################
+  #                                                                           #
+  #                         DEPRECATED PROPERTIES Start                       #
+  #                                                                           #
+  #############################################################################
+
+  newproperty(:private_vlan_type) do
+    dep = %(## -DEPRECATED- ## Property. Replace with: 'pvlan_type')
+    desc dep
+    valid_input = %w(primary isolated community)
+
+    validate do |value|
+      fail dep unless value.kind_of? String
+
+      unless valid_input.include?(value) ||
+             value == 'default' || value == :default
+        fail dep
+      end
+    end
+
+    munge do |value|
+      begin
+        value = :default if value == 'default'
+        value = String(value) unless value == :default
+      rescue
+        raise 'Type is not a valid string.'
+      end # rescue
+      value
+    end
+  end # property private_vlan_type
+
+  newproperty(:private_vlan_association, array_matching: :all) do
+    dep = %(## -DEPRECATED- ## Property. Replace with: 'pvlan_association')
+    desc dep
+    validate do |value|
+      fail dep unless
+        value == 'default' ||
+        /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value
+    end
+
+    munge do |value|
+      value == 'default' ? :default : value.to_s.gsub(/\s+/, '')
+    end
+
+    def insync?(is)
+      # Summarize the manifest ranges before comparing.
+      normal = PuppetX::Cisco::Utils.normalize_range_array(should)
+      (is.size == normal.size && is.sort == normal.sort)
+    end
+  end # property private_vlan_association
+
+  #############################################################################
+  #                                                                           #
+  #                         DEPRECATED PROPERTIES End                         #
+  #                                                                           #
+  #############################################################################
 end # Puppet::Type.newtype
