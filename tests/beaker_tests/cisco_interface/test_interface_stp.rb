@@ -117,7 +117,7 @@ tests[:non_default] = {
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  resource_absent_cleanup(agent, 'cisco_bridge_domain')
+  remove_all_vlans(agent)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
@@ -127,6 +127,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   test_harness_run(tests, :non_default)
 
+  remove_all_vlans(agent)
   interface_cleanup(agent, intf)
 end
 
