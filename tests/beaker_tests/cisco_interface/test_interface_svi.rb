@@ -29,11 +29,10 @@ require File.expand_path('../interfacelib.rb', __FILE__)
 
 # Test hash top-level keys
 tests = {
-  agent:               agent,
-  master:              master,
-  operating_system:    'nexus',
-  resource_name:       'cisco_interface',
-  anycast_gateway_mac: true,
+  agent:            agent,
+  master:           master,
+  operating_system: 'nexus',
+  resource_name:    'cisco_interface',
 }
 
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
@@ -59,8 +58,7 @@ tests[:non_default_mgmt] = {
   desc:           "1.2 Non Default 'mgmt'",
   title_pattern:  intf,
   manifest_props: {
-    svi_management:                    'true',
-    fabric_forwarding_anycast_gateway: 'true',
+    svi_management: 'true'
   },
 }
 
@@ -87,22 +85,29 @@ tests[:non_default_autostate] = {
   },
 }
 
-def unsupported_properties(*)
-  unprops = []
-  unprops << :fabric_forwarding_anycast_gateway unless platform[/n9k/]
-  unprops
-end
+tests[:anycast] = {
+  desc:                '3.1 Anycast Gateway',
+  title_pattern:       intf,
+  platform:            'n9k',
+  anycast_gateway_mac: true,
+  manifest_props:      {
+    fabric_forwarding_anycast_gateway: 'true'
+  },
+}
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
+  logger.info("\n#{'-' * 60}\nSection 1. Property Testing")
   test_harness_run(tests, :default_mgmt)
   test_harness_run(tests, :non_default_mgmt)
+
   test_harness_run(tests, :default_autostate)
   test_harness_run(tests, :non_default_autostate)
+
+  test_harness_run(tests, :anycast)
 
   # -------------------------------------------------------------------
   remove_interface(agent, intf)

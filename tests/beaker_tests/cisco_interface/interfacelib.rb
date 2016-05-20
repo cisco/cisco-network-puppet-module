@@ -44,25 +44,14 @@ def test_harness_dependencies(tests, id)
 end
 
 # A global 'anycast gateway mac' is required for some SVI properties
-# TBD: This may not be required for all platforms
-def config_anycast_gateway_mac?(tests, _id)
-  return unless tests.key?(:anycast_gateway_mac)
+def config_anycast_gateway_mac?(tests, id)
+  return unless tests[id].key?(:anycast_gateway_mac)
   agent = tests[:agent]
 
   # TBD: Consider creating a resource_get to avoid vsh calls
   on(agent, get_vshell_cmd('show runn fabric forwarding'), pty: true)
 
-  unless stdout[/anycast-gateway-mac/]
-    mac = {
-      name:     'cisco_overlay_global',
-      title:    'default',
-      property: 'anycast_gateway_mac',
-      value:    '1.1.1',
-    }
-    resource_set(agent, mac,
-                 "fabric forwarding anycast-gateway-mac #{mac[:value]}")
-  end
-
-  # Delete the key to prevent having to set this for every test case
-  tests.delete(:anycast_gateway_mac)
+  return unless stdout[/anycast-gateway-mac/]
+  cmd = ['cisco_overlay_global', 'default', 'anycast_gateway_mac', '1.1.1']
+  resource_set(agent, cmd, 'fabric forwarding anycast-gateway-mac 1.1.1')
 end
