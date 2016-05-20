@@ -2529,7 +2529,7 @@ Manages configuration of a portchannel global parameters
 | `concatenation`             | Supported only on N9k      |
 | `hash_poly`                 | Supported only on N5k, N6k |
 | `resilient` <br> `symmetry` | Supported only on N3k, N9k |
-| `rotate` | Supported only on N7k, N8k, N9k |
+| `rotate`                    | Supported only on N7k, N8k, N9k |
 
 #### Parameters
 
