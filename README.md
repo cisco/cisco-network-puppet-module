@@ -1067,10 +1067,9 @@ Manages configuration of a BGP Address-family instance.
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `additional_paths_install`  | Not supported on N3k, N9k                                                                  |
+| `additional_paths_install`  | Not supported on N3k, N8k, N9k                                                             |
 | `advertise_l2vpn_evpn`      | Not supported on N3k, N6k                                                                  |
 | address-family `l2vpn/evpn` | Module Minimum Version 1.3.2 <br> OS Minimum Version 7.0(3)I3(1) <br> Not supported on N3k |
-| `additional_paths_install` | Not supported on N9k, N3k, N8k |
 
 #### Parameters
 
