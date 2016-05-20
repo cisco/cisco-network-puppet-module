@@ -153,28 +153,46 @@ tests[:svi_mapping] = {
   title_pattern:  svi,
   preclean_intf:  true,
   manifest_props: {
-    private_vlan_mapping: %w(108-109)
+    pvlan_mapping: %w(108-109)
   },
 }
+
+# This method overrides utilitylib.rb:unsupported_properties()
+def unsupported_properties(_tests, _id)
+  unprops = []
+  if platform[/n3k/]
+    unprops <<
+      :switchport_pvlan_mapping_trunk <<
+      :switchport_pvlan_trunk_association <<
+      :switchport_pvlan_trunk_promiscuous <<
+      :switchport_pvlan_trunk_secondary
+  end
+  unprops
+end
+
+def vtp_cleanup(agent)
+  return unless platform[/n6k/]
+  logger.info("\n#{'-' * 60}\nVTP cleanup")
+  resource_set(agent, %w(cisco_vtp default ensure absent))
+end
 
 # CSCuz58517 workaround: 'private-vlan association trunk' doesn't get
 # removed by 'default interface' on some platforms.
 def pvlan_assoc_cleanup(agent, intf)
-  resource_set(agent, %w(cisco_vtp default ensure absent), '  * Disable VTP')
-
-  resource_set(agent, ['cisco_interface', intf, 'switchport_mode', 'disabled'],
-               "  * Remove private-vlan configs from #{intf}")
+  logger.info("\n#{'-' * 60}\nPrivate-vlan cleanup")
+  resource_set(agent, ['cisco_interface', intf, 'switchport_mode', 'disabled'])
 end
 
 # This method overrides utilitylib.rb:dependency_manifest()
 def dependency_manifest(tests, id)
-  tests[id][:dependency] if tests[id][:dependency] && platform[/n(6)k/]
+  tests[id][:dependency] if tests[id][:dependency]
 end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  vtp_cleanup(agent)
   pvlan_assoc_cleanup(agent, intf)
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Defaults")

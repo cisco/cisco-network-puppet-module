@@ -132,13 +132,26 @@ class ciscopuppet::cisco::demo_interface {
       cisco_vlan { '37': pvlan_type => 'community' }
       cisco_vlan {  '7': pvlan_type => 'primary', pvlan_association => '17,27,37' }
 
+      # Ethernet1/7 platform checks
+      $trunk_secondary = platform_get() ? {
+        /(n3k)/        => undef,
+        default        => true
+      }
+      $trunk_assoc     = platform_get() ? {
+        /(n3k)/        => undef,
+        default        => [[3, 13], [4, 14]]
+      }
+      $trunk_map       = platform_get() ? {
+        /(n3k)/        => undef,
+        default        => [['5', '15'], ['7', '17,27,37']]
+      }
       cisco_interface { 'Ethernet1/7':
         description                         => 'Private-vlan Trunk Port',
-        switchport_pvlan_trunk_secondary    => true,
+        switchport_pvlan_trunk_secondary    => $trunk_secondary,
         switchport_pvlan_trunk_allowed_vlan => '106,102-103,105',
-        switchport_pvlan_trunk_association  => [[3, 13], [4, 14]],
+        switchport_pvlan_trunk_association  => $trunk_assoc,
         switchport_pvlan_trunk_native_vlan  => 42,
-        switchport_pvlan_mapping_trunk      => [['99', '101,104-105'], ['92', '192']],
+        switchport_pvlan_mapping_trunk      => $trunk_map,
       }
       cisco_interface { 'vlan29':
         description                         => 'SVI Private-vlan Mapping',
