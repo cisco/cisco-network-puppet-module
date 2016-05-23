@@ -1,0 +1,234 @@
+# The Cisco provider for cisco_bfd_global
+#
+# May, 2016
+#
+# Copyright (c) 2016 Cisco and/or its affiliates.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
+begin
+  require 'puppet_x/cisco/autogen'
+rescue LoadError # seen on master, not on agent
+  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..',
+                                     'puppet_x', 'cisco', 'autogen.rb'))
+end
+
+Puppet::Type.type(:cisco_bfd_global).provide(:cisco) do
+  desc 'The Cisco bfd_global provider.'
+
+  confine feature: :cisco_node_utils
+  defaultfor operatingsystem: :nexus
+
+  mk_resource_methods
+
+  BFD_GLOBAL_NON_BOOL_PROPS = [
+    :echo_interface,
+    :echo_rx_interval,
+    :fabricpath_interval,
+    :fabricpath_min_rx,
+    :fabricpath_multiplier,
+    :fabricpath_slow_timer,
+    :fabricpath_vlan,
+    :interval,
+    :ipv4_echo_rx_interval,
+    :ipv4_interval,
+    :ipv4_min_rx,
+    :ipv4_multiplier,
+    :ipv4_slow_timer,
+    :ipv6_echo_rx_interval,
+    :ipv6_interval,
+    :ipv6_min_rx,
+    :ipv6_multiplier,
+    :ipv6_slow_timer,
+    :min_rx,
+    :multiplier,
+    :slow_timer,
+    :startup_timer,
+  ]
+
+  BFD_GLOBAL_ALL_PROPS = BFD_GLOBAL_NON_BOOL_PROPS
+
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@nu',
+                                            BFD_GLOBAL_NON_BOOL_PROPS)
+
+  def initialize(value={})
+    super(value)
+    @nu = Cisco::BfdGlobal.globals[@property_hash[:name]]
+    @property_flush = {}
+    debug 'Created provider instance of cisco_bfd_global'
+  end
+
+  def self.properties_get(global_id, nu_obj)
+    debug "Checking instance, global #{global_id}"
+    current_state = {
+      name:   global_id,
+      ensure: :present,
+    }
+
+    # Call node_utils getter for each property
+    BFD_GLOBAL_NON_BOOL_PROPS.each do |prop|
+      current_state[prop] = nu_obj.send(prop)
+    end
+    new(current_state)
+  end # self.properties_get
+
+  def self.instances
+    globals = []
+    Cisco::BfdGlobal.globals.each do |global_id, v|
+      globals << properties_get(global_id, v)
+    end
+    globals
+  end
+
+  def self.prefetch(resources)
+    globals = instances
+
+    resources.keys.each do |id|
+      provider = globals.find { |nu_obj| nu_obj.instance_name == id }
+      resources[id].provider = provider unless provider.nil?
+    end
+  end # self.prefetch
+
+  def exists?
+    (@property_hash[:ensure] == :present)
+  end
+
+  def create
+    @property_flush[:ensure] = :present
+  end
+
+  def destroy
+    @property_flush[:ensure] = :absent
+  end
+
+  def instance_name
+    name
+  end
+
+  def properties_set(new_global=false)
+    BFD_GLOBAL_ALL_PROPS.each do |prop|
+      next unless @resource[prop]
+      send("#{prop}=", @resource[prop]) if new_global
+      unless @property_flush[prop].nil?
+        @nu.send("#{prop}=", @property_flush[prop]) if
+          @nu.respond_to?("#{prop}=")
+      end
+    end
+    # custom setters which require one-shot multi-param setters
+    interval_set
+    ipv4_interval_set
+    ipv6_interval_set
+    fabricpath_interval_set
+  end
+
+  def interval_set
+    attrs = {}
+    vars = [
+      :interval,
+      :min_rx,
+      :multiplier,
+    ]
+    if vars.any? { |p| @property_flush.key?(p) }
+      # At least one var has changed, get all vals from manifest
+      vars.each do |p|
+        if @resource[p] == :default
+          attrs[p] = @nu.send("default_#{p}")
+        else
+          attrs[p] = @resource[p]
+        end
+      end
+    end
+    return if attrs.empty?
+    @nu.interval_set(attrs)
+  end
+
+  def ipv4_interval_set
+    attrs = {}
+    vars = [
+      :ipv4_interval,
+      :ipv4_min_rx,
+      :ipv4_multiplier,
+    ]
+    if vars.any? { |p| @property_flush.key?(p) }
+      # At least one var has changed, get all vals from manifest
+      vars.each do |p|
+        if @resource[p] == :default
+          attrs[p] = @nu.send("default_#{p}")
+        else
+          attrs[p] = @resource[p]
+        end
+      end
+    end
+    return if attrs.empty?
+    @nu.ipv4_interval_set(attrs)
+  end
+
+  def ipv6_interval_set
+    attrs = {}
+    vars = [
+      :ipv6_interval,
+      :ipv6_min_rx,
+      :ipv6_multiplier,
+    ]
+    if vars.any? { |p| @property_flush.key?(p) }
+      # At least one var has changed, get all vals from manifest
+      vars.each do |p|
+        if @resource[p] == :default
+          attrs[p] = @nu.send("default_#{p}")
+        else
+          attrs[p] = @resource[p]
+        end
+      end
+    end
+    return if attrs.empty?
+    @nu.ipv6_interval_set(attrs)
+  end
+
+  def fabricpath_interval_set
+    attrs = {}
+    vars = [
+      :fabricpath_interval,
+      :fabricpath_min_rx,
+      :fabricpath_multiplier,
+    ]
+    if vars.any? { |p| @property_flush.key?(p) }
+      # At least one var has changed, get all vals from manifest
+      vars.each do |p|
+        if @resource[p] == :default
+          attrs[p] = @nu.send("default_#{p}")
+        else
+          attrs[p] = @resource[p]
+        end
+      end
+    end
+    return if attrs.empty?
+    @nu.fabricpath_interval_set(attrs)
+  end
+
+  def flush
+    if @property_flush[:ensure] == :absent
+      @nu.destroy
+      @nu = nil
+    else
+      # Create/Update
+      new_global = false
+      if @nu.nil?
+        new_global = true
+        @nu = Cisco::BfdGlobal.new(@resource[:name])
+      end
+      properties_set(new_global)
+    end
+  end
+end # Puppet::Type
