@@ -76,6 +76,9 @@ tests = {
   resource_name: 'cisco_vxlan_vtep_vni',
 }
 
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
+
 # tests[id] keys set by caller and used by test_harness_common:
 #
 # tests[id] keys set by caller:
@@ -273,6 +276,20 @@ def puppet_resource_cmd
   PUPPET_BINPATH + 'resource cisco_vxlan_vtep_vni'
 end
 
+# Overridden to properly handle dependencies for this test file.
+def dependency_manifest(*)
+  dep = ''
+  if platform[/n7k/]
+    dep = %(
+      cisco_vdc { '#{default_vdc_name}':
+        # Must be f3-only
+        limit_resource_module_type => 'f3',
+      })
+  end
+  logger.info("\n  * dependency_manifest\n#{dep}")
+  dep
+end
+
 def build_manifest_cisco_vxlan_vtep_vni(tests, id)
   if tests[id][:ensure] == :absent
     state = 'ensure => absent,'
@@ -290,6 +307,7 @@ def build_manifest_cisco_vxlan_vtep_vni(tests, id)
   # cisco_vxlan_vtep_vni needs cisco_vxlan_vtep as a prerequisite.
   tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   node 'default' {
+    #{dependency_manifest}
     cisco_vxlan_vtep {'nve1':
       ensure => present,
       host_reachability  => 'evpn',
@@ -323,8 +341,6 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
-  skip_unless_supported(tests)
-
   #-------------------------------------------------------------------
   resource_absent_cleanup(agent, 'cisco_vxlan_vtep_vni',
                           'Setup switch for cisco_vxlan_vtep_vni provider test')
