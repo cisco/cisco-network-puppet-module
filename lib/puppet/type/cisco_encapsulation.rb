@@ -56,28 +56,21 @@ Puppet::Type.newtype(:cisco_encapsulation) do
   ensurable
 
   newproperty(:dot1q_map, array_matching: :all) do
-    format = '[dot1q vlans, vnis]'
-    desc %(The encapsulation profile dot1q vlan-to-vni mapping.
-         Valid values are a mapping Array of the format: #{format},
-         or keyword 'default'.
-         Example:
-            dot1q_map => ['100-110,150', '5000-5010,6000']
-         or
-            dot1q_map => ['101-110,151-160', '5000-5020']
-         )
+    inputs = %(
+      Valid values are the keyword 'default', or a mapping Array of the format:
+       [dot1q_vlans, vnis]. Example:
+          dot1q_map => ['100-110,150', '5000-5010,6000']
+    )
+    desc 'The encapsulation profile dot1q vlan-to-vni mapping.' + inputs
 
     validate do |value|
-      fail 'Values in dot1q list are not of integer type' unless
-       /^[\d\s,-]*$/.match(value) || value[/default/]
+      fail inputs unless value.delete(' ')[/^(default|[\d,-]+)$/]
     end
 
     munge do |value|
-      return :default if value == 'default'
-
-      value = value.gsub(/\s/, '')
-      value = PuppetX::Cisco::Utils.range_summarize(value.to_s, false)
-      value
-    end # munge
+      return :default if value[/default/]
+      PuppetX::Cisco::Utils.range_summarize(value.delete(' '), false)
+    end
 
     # Override puppet's insync method, which checks whether current value is
     # equal to value specified in manifest.  Make sure puppet considers
