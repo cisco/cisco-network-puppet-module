@@ -56,6 +56,7 @@ class ciscopuppet::cisco::demo_patching {
       $ciscoPackageName = 'nxos.sample-n9k_EOR'
     }
     '7.0(3)F1(1)': {
+      # TBD: Update with real fretta_camden release RPM when ready.
       $ciscoPatchName = 'nxos.sample-n8k_EOR-1.0.0-7.0.3.F1.1.lib32_nxos.rpm'
       $ciscoPackageName = 'nxos.sample-n8k_EOR'
     }
