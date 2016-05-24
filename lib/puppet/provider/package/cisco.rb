@@ -112,10 +112,8 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
     rel  = r_re.match(rpm_data) ? Regexp.last_match(1) : nil
     arch = a_re.match(rpm_data) ? Regexp.last_match(1) : nil
 
-    [name, ver, rel, arch].each do |val|
-      fail "Unable parse rpm data from #{resource[:source]}\n#{rpm_data}" \
-        if val.nil?
-    end
+    fail "Unable to parse rpm data from #{resource[:source]}\n#{rpm_data}" if
+      [name, ver, rel, arch].include?(nil)
 
     # [source] overrides [name]
     return unless @resource[:source]
