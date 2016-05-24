@@ -72,6 +72,7 @@ class ciscopuppet::cisco::demo_bfd {
   }
 
   cisco_bfd_global { 'default':
+    ensure                => 'present',
     echo_interface        => 10,
     echo_rx_interval      => $echo_rx_interval,
     fabricpath_interval   => $fabricpath_interval,

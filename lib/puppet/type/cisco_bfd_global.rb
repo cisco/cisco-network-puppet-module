@@ -25,6 +25,7 @@ Puppet::Type.newtype(:cisco_bfd_global) do
     'default' is only acceptable name for this global config object.
     Example:
     cisco_bfd_global { 'default':
+      ensure                => 'present',
       echo_interface        => 10,
       echo_rx_interval      => 300,
       fabricpath_interval   => ['750', '350', '45'],
@@ -41,6 +42,9 @@ Puppet::Type.newtype(:cisco_bfd_global) do
       startup_timer         => 25,
     }
   "
+
+  ensurable
+
   ###################
   # Resource Naming #
   ###################
