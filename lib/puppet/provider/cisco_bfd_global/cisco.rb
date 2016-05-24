@@ -36,32 +36,29 @@ Puppet::Type.type(:cisco_bfd_global).provide(:cisco) do
   BFD_GLOBAL_NON_BOOL_PROPS = [
     :echo_interface,
     :echo_rx_interval,
-    :fabricpath_interval,
-    :fabricpath_min_rx,
-    :fabricpath_multiplier,
     :fabricpath_slow_timer,
     :fabricpath_vlan,
-    :interval,
     :ipv4_echo_rx_interval,
-    :ipv4_interval,
-    :ipv4_min_rx,
-    :ipv4_multiplier,
     :ipv4_slow_timer,
     :ipv6_echo_rx_interval,
-    :ipv6_interval,
-    :ipv6_min_rx,
-    :ipv6_multiplier,
     :ipv6_slow_timer,
-    :min_rx,
-    :multiplier,
     :slow_timer,
     :startup_timer,
   ]
 
-  BFD_GLOBAL_ALL_PROPS = BFD_GLOBAL_NON_BOOL_PROPS
+  BFD_GLOBAL_ARRAY_FLAT_PROPS = [
+    :fabricpath_interval,
+    :interval,
+    :ipv4_interval,
+    :ipv6_interval,
+  ]
+
+  BFD_GLOBAL_ALL_PROPS = BFD_GLOBAL_ARRAY_FLAT_PROPS + BFD_GLOBAL_NON_BOOL_PROPS
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@nu',
                                             BFD_GLOBAL_NON_BOOL_PROPS)
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:array_flat, self, '@nu',
+                                            BFD_GLOBAL_ARRAY_FLAT_PROPS)
 
   def initialize(value={})
     super(value)
@@ -81,6 +78,14 @@ Puppet::Type.type(:cisco_bfd_global).provide(:cisco) do
     BFD_GLOBAL_NON_BOOL_PROPS.each do |prop|
       current_state[prop] = nu_obj.send(prop)
     end
+    BFD_GLOBAL_ARRAY_FLAT_PROPS.each do |prop|
+      current_state[prop] = nu_obj.send(prop)
+    end
+    # nested array properties
+    current_state[:fabricpath_interval] = nu_obj.fabricpath_interval
+    current_state[:interval] = nu_obj.interval
+    current_state[:ipv4_interval] = nu_obj.ipv4_interval
+    current_state[:ipv6_interval] = nu_obj.ipv6_interval
     new(current_state)
   end # self.properties_get
 
@@ -126,95 +131,26 @@ Puppet::Type.type(:cisco_bfd_global).provide(:cisco) do
           @nu.respond_to?("#{prop}=")
       end
     end
-    # custom setters which require one-shot multi-param setters
-    interval_set
-    ipv4_interval_set
-    ipv6_interval_set
-    fabricpath_interval_set
   end
 
-  def interval_set
-    attrs = {}
-    vars = [
-      :interval,
-      :min_rx,
-      :multiplier,
-    ]
-    if vars.any? { |p| @property_flush.key?(p) }
-      # At least one var has changed, get all vals from manifest
-      vars.each do |p|
-        if @resource[p] == :default
-          attrs[p] = @nu.send("default_#{p}")
-        else
-          attrs[p] = @resource[p]
-        end
-      end
-    end
-    return if attrs.empty?
-    @nu.interval_set(attrs)
+  def fabricpath_interval=(should_list)
+    should_list = @nu.default_fabricpath_interval if should_list[0] == :default
+    @property_flush[:fabricpath_interval] = should_list
   end
 
-  def ipv4_interval_set
-    attrs = {}
-    vars = [
-      :ipv4_interval,
-      :ipv4_min_rx,
-      :ipv4_multiplier,
-    ]
-    if vars.any? { |p| @property_flush.key?(p) }
-      # At least one var has changed, get all vals from manifest
-      vars.each do |p|
-        if @resource[p] == :default
-          attrs[p] = @nu.send("default_#{p}")
-        else
-          attrs[p] = @resource[p]
-        end
-      end
-    end
-    return if attrs.empty?
-    @nu.ipv4_interval_set(attrs)
+  def interval=(should_list)
+    should_list = @nu.default_interval if should_list[0] == :default
+    @property_flush[:interval] = should_list
   end
 
-  def ipv6_interval_set
-    attrs = {}
-    vars = [
-      :ipv6_interval,
-      :ipv6_min_rx,
-      :ipv6_multiplier,
-    ]
-    if vars.any? { |p| @property_flush.key?(p) }
-      # At least one var has changed, get all vals from manifest
-      vars.each do |p|
-        if @resource[p] == :default
-          attrs[p] = @nu.send("default_#{p}")
-        else
-          attrs[p] = @resource[p]
-        end
-      end
-    end
-    return if attrs.empty?
-    @nu.ipv6_interval_set(attrs)
+  def ipv4_interval=(should_list)
+    should_list = @nu.default_ipv4_interval if should_list[0] == :default
+    @property_flush[:ipv4_interval] = should_list
   end
 
-  def fabricpath_interval_set
-    attrs = {}
-    vars = [
-      :fabricpath_interval,
-      :fabricpath_min_rx,
-      :fabricpath_multiplier,
-    ]
-    if vars.any? { |p| @property_flush.key?(p) }
-      # At least one var has changed, get all vals from manifest
-      vars.each do |p|
-        if @resource[p] == :default
-          attrs[p] = @nu.send("default_#{p}")
-        else
-          attrs[p] = @resource[p]
-        end
-      end
-    end
-    return if attrs.empty?
-    @nu.fabricpath_interval_set(attrs)
+  def ipv6_interval=(should_list)
+    should_list = @nu.default_ipv6_interval if should_list[0] == :default
+    @property_flush[:ipv6_interval] = should_list
   end
 
   def flush

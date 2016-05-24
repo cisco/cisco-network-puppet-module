@@ -27,24 +27,16 @@ Puppet::Type.newtype(:cisco_bfd_global) do
     cisco_bfd_global { 'default':
       echo_interface        => 10,
       echo_rx_interval      => 300,
-      fabricpath_interval   => 750,
-      fabricpath_min_rx     => 350,
-      fabricpath_multiplier => 45,
+      fabricpath_interval   => ['750', '350', '45'],
       fabricpath_slow_timer => 15000,
       fabricpath_vlan       => 100,
-      interval              => 100,
+      interval              => ['100', '100', '25'],
       ipv4_echo_rx_interval => 100,
-      ipv4_interval         => 200,
-      ipv4_min_rx           => 200,
-      ipv4_multiplier       => 50,
+      ipv4_interval         => ['200', '200', '50'],
       ipv4_slow_timer       => 10000,
       ipv6_echo_rx_interval => 200,
-      ipv6_interval         => 500,
-      ipv6_min_rx           => 500,
-      ipv6_multiplier       => 30,
+      ipv6_interval         => ['500', '500', '30'],
       ipv6_slow_timer       => 25000,
-      min_rx                => 100,
-      multiplier            => 25,
       slow_timer            => 5000,
       startup_timer         => 25,
     }
@@ -95,50 +87,26 @@ Puppet::Type.newtype(:cisco_bfd_global) do
     end
   end # property echo_rx_interval
 
-  newproperty(:fabricpath_interval) do
-    desc "Fabricpath transmit interval in msec. Valid values are
-          integer, keyword 'default'."
+  newproperty(:fabricpath_interval, array_matching: :all) do
+    format = '[fabricpath_interval, fabricpath_min_rx, fabricpath_multiplier]'
+    desc 'An array of [fabricpath_interval, fabricpath_min_rx, fabricpath_multiplier]'\
+         "Valid values match format #{format}."
+
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
 
     munge do |value|
-      value = :default if value == 'default'
       begin
-        value = Integer(value) unless value == :default
-      rescue
-        raise 'fabricpath_interval must be a valid integer, or default.'
+        return value = :default if value == 'default'
+        value
       end
-      value
     end
   end # property fabricpath_interval
-
-  newproperty(:fabricpath_min_rx) do
-    desc "Fabricpath minimum receive interval in msec. Valid values are
-          integer, keyword 'default'."
-
-    munge do |value|
-      value = :default if value == 'default'
-      begin
-        value = Integer(value) unless value == :default
-      rescue
-        raise 'fabricpath_min_rx must be a valid integer, or default.'
-      end
-      value
-    end
-  end # property fabricpath_min_rx
-
-  newproperty(:fabricpath_multiplier) do
-    desc "Fabricpath detect multiplier. Valid values are
-          integer, keyword 'default'."
-
-    munge do |value|
-      value = :default if value == 'default'
-      begin
-        value = Integer(value) unless value == :default
-      rescue
-        raise 'fabricpath_multiplier must be a valid integer, or default.'
-      end
-      value
-    end
-  end # property fabricpath_multiplier
 
   newproperty(:fabricpath_slow_timer) do
     desc "Fabricpath slow rate timer in msec. Valid values are
@@ -170,18 +138,24 @@ Puppet::Type.newtype(:cisco_bfd_global) do
     end
   end # property fabricpath_vlan
 
-  newproperty(:interval) do
-    desc "Transmit interval in msec. Valid values are
-          integer, keyword 'default'."
+  newproperty(:interval, array_matching: :all) do
+    format = '[interval, min_rx, multiplier]'
+    desc 'An array of [interval, min_rx, multiplier]'\
+         "Valid values match format #{format}."
+
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
 
     munge do |value|
-      value = :default if value == 'default'
       begin
-        value = Integer(value) unless value == :default
-      rescue
-        raise 'interval must be a valid integer, or default.'
+        return value = :default if value == 'default'
+        value
       end
-      value
     end
   end # property interval
 
@@ -200,50 +174,26 @@ Puppet::Type.newtype(:cisco_bfd_global) do
     end
   end # property ipv4_echo_rx_interval
 
-  newproperty(:ipv4_interval) do
-    desc "Ipv4 session transmit interval in msec. Valid values are
-          integer, keyword 'default'."
+  newproperty(:ipv4_interval, array_matching: :all) do
+    format = '[ipv4_interval, ipv4_min_rx, ipv4_multiplier]'
+    desc 'An array of [ipv4_interval, ipv4_min_rx, ipv4_multiplier]'\
+         "Valid values match format #{format}."
+
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
 
     munge do |value|
-      value = :default if value == 'default'
       begin
-        value = Integer(value) unless value == :default
-      rescue
-        raise 'ipv4_interval must be a valid integer, or default.'
+        return value = :default if value == 'default'
+        value
       end
-      value
     end
   end # property ipv4_interval
-
-  newproperty(:ipv4_min_rx) do
-    desc "Ipv4 session minimum receive interval in msec. Valid values are
-          integer, keyword 'default'."
-
-    munge do |value|
-      value = :default if value == 'default'
-      begin
-        value = Integer(value) unless value == :default
-      rescue
-        raise 'ipv4_min_rx must be a valid integer, or default.'
-      end
-      value
-    end
-  end # property ipv4_min_rx
-
-  newproperty(:ipv4_multiplier) do
-    desc "Ipv4 session detect multiplier. Valid values are
-          integer, keyword 'default'."
-
-    munge do |value|
-      value = :default if value == 'default'
-      begin
-        value = Integer(value) unless value == :default
-      rescue
-        raise 'ipv4_multiplier must be a valid integer, or default.'
-      end
-      value
-    end
-  end # property ipv4_multiplier
 
   newproperty(:ipv4_slow_timer) do
     desc "Ipv4 session slow rate timer in msec. Valid values are
@@ -275,50 +225,26 @@ Puppet::Type.newtype(:cisco_bfd_global) do
     end
   end # property ipv6_echo_rx_interval
 
-  newproperty(:ipv6_interval) do
-    desc "Ipv6 session transmit interval in msec. Valid values are
-          integer, keyword 'default'."
+  newproperty(:ipv6_interval, array_matching: :all) do
+    format = '[ipv6_interval, ipv6_min_rx, ipv6_multiplier]'
+    desc 'An array of [ipv6_interval, ipv6_min_rx, ipv6_multiplier]'\
+         "Valid values match format #{format}."
+
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
 
     munge do |value|
-      value = :default if value == 'default'
       begin
-        value = Integer(value) unless value == :default
-      rescue
-        raise 'ipv6_interval must be a valid integer, or default.'
+        return value = :default if value == 'default'
+        value
       end
-      value
     end
   end # property ipv6_interval
-
-  newproperty(:ipv6_min_rx) do
-    desc "Ipv6 session minimum receive interval in msec. Valid values are
-          integer, keyword 'default'."
-
-    munge do |value|
-      value = :default if value == 'default'
-      begin
-        value = Integer(value) unless value == :default
-      rescue
-        raise 'ipv6_min_rx must be a valid integer, or default.'
-      end
-      value
-    end
-  end # property ipv6_min_rx
-
-  newproperty(:ipv6_multiplier) do
-    desc "Ipv6 session detect multiplier. Valid values are
-          integer, keyword 'default'."
-
-    munge do |value|
-      value = :default if value == 'default'
-      begin
-        value = Integer(value) unless value == :default
-      rescue
-        raise 'ipv6_multiplier must be a valid integer, or default.'
-      end
-      value
-    end
-  end # property ipv6_multiplier
 
   newproperty(:ipv6_slow_timer) do
     desc "Ipv6 session slow rate timer in msec. Valid values are
@@ -334,36 +260,6 @@ Puppet::Type.newtype(:cisco_bfd_global) do
       value
     end
   end # property ipv6_slow_timer
-
-  newproperty(:min_rx) do
-    desc "Minimum receive interval in msec. Valid values are
-          integer, keyword 'default'."
-
-    munge do |value|
-      value = :default if value == 'default'
-      begin
-        value = Integer(value) unless value == :default
-      rescue
-        raise 'min_rx must be a valid integer, or default.'
-      end
-      value
-    end
-  end # property min_rx
-
-  newproperty(:multiplier) do
-    desc "Detect multiplier. Valid values are
-          integer, keyword 'default'."
-
-    munge do |value|
-      value = :default if value == 'default'
-      begin
-        value = Integer(value) unless value == :default
-      rescue
-        raise 'multiplier must be a valid integer, or default.'
-      end
-      value
-    end
-  end # property multiplier
 
   newproperty(:slow_timer) do
     desc "Slow rate timer in msec. Valid values are

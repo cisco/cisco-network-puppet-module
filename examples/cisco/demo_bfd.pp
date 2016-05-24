@@ -22,17 +22,7 @@ class ciscopuppet::cisco::demo_bfd {
   }
 
   $fabricpath_interval = platform_get() ? {
-    /(n5k|n6k|n7k)/ => 750,
-    default => undef
-  }
-
-  $fabricpath_min_rx = platform_get() ? {
-    /(n5k|n6k|n7k)/ => 350,
-    default => undef
-  }
-
-  $fabricpath_multiplier = platform_get() ? {
-    /(n5k|n6k|n7k)/ => 45,
+    /(n5k|n6k|n7k)/ => ['750', '350', '35'],
     default => undef
   }
 
@@ -46,29 +36,13 @@ class ciscopuppet::cisco::demo_bfd {
     default => undef
   }
 
-  # To be removed later
-  $interval = platform_get() ? {
-    /(n3k|n5k|n6k|n7k)/ => 100,
-    default => undef
-  }
-
   $ipv4_echo_rx_interval = platform_get() ? {
     /(n3k|n7k|n8k|n9k)/ => 100,
     default => undef
   }
 
   $ipv4_interval = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => 200,
-    default => undef
-  }
-
-  $ipv4_min_rx = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => 200,
-    default => undef
-  }
-
-  $ipv4_multiplier = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => 50,
+    /(n3k|n7k|n8k|n9k)/ => ['200', '200', '50'],
     default => undef
   }
 
@@ -83,34 +57,12 @@ class ciscopuppet::cisco::demo_bfd {
   }
 
   $ipv6_interval = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => 500,
-    default => undef
-  }
-
-  $ipv6_min_rx = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => 500,
-    default => undef
-  }
-
-  $ipv6_multiplier = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => 30,
+    /(n3k|n7k|n8k|n9k)/ => ['500', '500', '30'],
     default => undef
   }
 
   $ipv6_slow_timer = platform_get() ? {
     /(n3k|n7k|n8k|n9k)/ => 25000,
-    default => undef
-  }
-
-  # To be removed later
-  $min_rx = platform_get() ? {
-    /(n3k|n5k|n6k|n7k)/ => 100,
-    default => undef
-  }
-
-  # To be removed later
-  $multiplier = platform_get() ? {
-    /(n3k|n5k|n6k|n7k)/ => 25,
     default => undef
   }
 
@@ -123,23 +75,15 @@ class ciscopuppet::cisco::demo_bfd {
     echo_interface        => 10,
     echo_rx_interval      => $echo_rx_interval,
     fabricpath_interval   => $fabricpath_interval,
-    fabricpath_min_rx     => $fabricpath_min_rx,
-    fabricpath_multiplier => $fabricpath_multiplier,
     fabricpath_slow_timer => $fabricpath_slow_timer,
     fabricpath_vlan       => $fabricpath_vlan,
-    interval              => $interval,
+    interval              => ['100', '100', '25'],
     ipv4_echo_rx_interval => $ipv4_echo_rx_interval,
     ipv4_interval         => $ipv4_interval,
-    ipv4_min_rx           => $ipv4_min_rx,
-    ipv4_multiplier       => $ipv4_multiplier,
     ipv4_slow_timer       => $ipv4_slow_timer,
     ipv6_echo_rx_interval => $ipv6_echo_rx_interval,
     ipv6_interval         => $ipv6_interval,
-    ipv6_min_rx           => $ipv6_min_rx,
-    ipv6_multiplier       => $ipv6_multiplier,
     ipv6_slow_timer       => $ipv6_slow_timer,
-    min_rx                => $min_rx,
-    multiplier            => $multiplier,
     slow_timer            => 5000,
     startup_timer         => $startup_timer,
   }
