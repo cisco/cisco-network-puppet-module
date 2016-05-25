@@ -75,7 +75,6 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
   end
 
   def decompose_metadata(pkg)
-    puts "calling decompose_metadata: #{pkg}"
     # Sample output from 'rpm -qip' command
     #
     # Name        : nxos.sample-n9k_EOR
@@ -116,7 +115,6 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
   end
 
   def decompose_package_name
-    puts "calling decompose_package_name: #{@resource[:name]}"
     # RPM filename patterns.
     # TBD: Pattern 1 and 2 are likely dead code but will only remove
     #      in Cisco Puppet release 1.4.0 when this fact is established.
