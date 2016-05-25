@@ -74,14 +74,8 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
     end
   end
 
-  # set resource properties in a consistent way:
-  # [name] should contain the simple package name
-  # [source] should use ios-style file path
-  # [platform] stores architecture
-  # package_settings[version] stores version-release
-  # if [source] isn't supplied, it's assumed [name] already exists in the
-  # local repository
-  def normalize_resource
+  def decompose_metadata(pkg)
+    puts "calling decompose_metadata: #{pkg}"
     # Sample output from 'rpm -qip' command
     #
     # Name        : nxos.sample-n9k_EOR
@@ -102,7 +96,8 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
     # Summary     : This is patch for sample-n9k_EOR
     # Description :
     # This is a patch for sample-n9k_EOR.The build type is final.
-    rpm_data = rpm('-qip', resource[:source])
+    pkg = pkg[/bootflash/] ? pkg : "/bootflash/#{pkg}"
+    rpm_data = rpm('-qip', pkg)
     n_re = /Name(?:\s+ )?:\s+(\S+)/
     v_re = /Version(?:\s+ )?:\s+(\S+)/
     r_re = /Release(?:\s+ )?:\s+(\S+)/
@@ -112,18 +107,67 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
     rel  = r_re.match(rpm_data) ? Regexp.last_match(1) : nil
     arch = a_re.match(rpm_data) ? Regexp.last_match(1) : nil
 
-    fail "Unable to parse rpm data from #{resource[:source]}\n#{rpm_data}" if
+    fail "Unable to parse rpm data from #{pkg}\n#{rpm_data}" if
       [name, ver, rel, arch].include?(nil)
-
-    # [source] overrides [name]
-    return unless @resource[:source]
 
     @resource[:name] = name
     @resource[:package_settings]['version'] = "#{ver}-#{rel}"
     @resource[:platform] = arch
+  end
+
+  def decompose_package_name
+    puts "calling decompose_package_name: #{@resource[:name]}"
+    # RPM filename patterns.
+    # TBD: Pattern 1 and 2 are likely dead code but will only remove
+    #      in Cisco Puppet release 1.4.0 when this fact is established.
+    # 1) chef-12.0.0alpha.2+20150319.git.1.b6f-1.el5.x86_64.rpm
+    name_ver_arch_regex = /^([\w\-\+]+)-(\d+\..*)\.(\w{4,})(?:\.rpm)?$/
+    # 2) n9000-dk9.LIBPROCMIBREST-1.0.0-7.0.3.x86_64.rpm
+    name_var_arch_regex_nx = /^(.*)-([\d\.]+-[\d\.]+)\.(\w{4,})\.rpm$/
+    # 3) b+z-ip2.x64_64
+    name_arch_regex = /^([\w\-\+]+)\.(\w+)$/
+
+    if @resource[:name] =~ name_arch_regex
+      @resource[:name] = Regexp.last_match(1)
+      @resource[:platform] = Regexp.last_match(2)
+      debug "parsed name:#{Regexp.last_match(1)}, arch:#{Regexp.last_match(2)}"
+    end
+    # [source] overrides [name]
+    return unless @resource[:source]
+
+    # convert to linux-style path before parsing filename
+    filename = @resource[:source].strip.tr(':', '/').split('/').last
+
+    if filename =~ name_ver_arch_regex ||
+       filename =~ name_var_arch_regex_nx
+      @resource[:name] = Regexp.last_match(1)
+      @resource[:package_settings]['version'] = Regexp.last_match(2)
+      @resource[:platform] = Regexp.last_match(3)
+      debug "parsed name:#{Regexp.last_match(1)}, version:#{Regexp.last_match(2)}, arch:#{Regexp.last_match(3)}"
+    else
+      @resource.fail 'Could not parse name|version|arch from source: ' \
+        "#{@resource[:source]}"
+    end
+  end
+
+  # set resource properties in a consistent way:
+  # [name] should contain the simple package name
+  # [source] should use ios-style file path
+  # [platform] stores architecture
+  # package_settings[version] stores version-release
+  # if [source] isn't supplied, it's assumed [name] already exists in the
+  # local repository
+  def normalize_resource
+    if @resource[:source]
+      decompose_metadata(@resource[:source])
+    elsif @resource[:name][/\.rpm/]
+      decompose_metadata(@resource[:name])
+    else
+      decompose_package_name
+    end
 
     # replace linux path with ios-style path
-    @resource[:source].gsub!(%r{^/([^/]+)/}, '\1:')
+    @resource[:source].gsub!(%r{^/([^/]+)/}, '\1:') if @resource[:source]
   end
 
   # helper to retrieve version info for installed package
