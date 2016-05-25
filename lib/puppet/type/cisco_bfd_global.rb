@@ -26,7 +26,7 @@ Puppet::Type.newtype(:cisco_bfd_global) do
     Example:
     cisco_bfd_global { 'default':
       ensure                => 'present',
-      echo_interface        => 10,
+      echo_interface        => 'loopback10',
       echo_rx_interval      => 300,
       fabricpath_interval   => ['750', '350', '45'],
       fabricpath_slow_timer => 15000,
@@ -50,10 +50,12 @@ Puppet::Type.newtype(:cisco_bfd_global) do
   ###################
 
   newparam(:name, namevar: :true) do
-    desc 'ID of the bfd global config. Valid values are default.'
+    desc "Instance of bfd global, only allow the value 'default'"
 
-    validate do |inst_name|
-      fail "only acceptable name is 'default'" if inst_name != 'default'
+    validate do |name|
+      if name != 'default'
+        error "only 'default' is accepted as a valid bfd_global name"
+      end
     end
   end # param id
 
@@ -63,15 +65,10 @@ Puppet::Type.newtype(:cisco_bfd_global) do
 
   newproperty(:echo_interface) do
     desc "Loopback interface used for echo frames. Valid values are
-          integer, keyword 'default'."
+          string, keyword 'default'."
 
     munge do |value|
       value = :default if value == 'default'
-      begin
-        value = Integer(value) unless value == :default
-      rescue
-        raise 'echo_interface must be a valid integer, or default.'
-      end
       value
     end
   end # property echo_interface

@@ -36,6 +36,11 @@ class ciscopuppet::cisco::demo_bfd {
     default => undef
   }
 
+  $interval = platform_get() ? {
+    /(n3k|n5k|n6k|n7k)/ => ['100', '100', '25'],
+    default => undef
+  }
+
   $ipv4_echo_rx_interval = platform_get() ? {
     /(n3k|n7k|n8k|n9k)/ => 100,
     default => undef
@@ -73,16 +78,16 @@ class ciscopuppet::cisco::demo_bfd {
 
   cisco_interface { 'loopback10':
       ensure => present,
-    }
+  }
 
   cisco_bfd_global { 'default':
     ensure                => 'present',
-    echo_interface        => 10,
+    echo_interface        => 'loopback10',
     echo_rx_interval      => $echo_rx_interval,
     fabricpath_interval   => $fabricpath_interval,
     fabricpath_slow_timer => $fabricpath_slow_timer,
     fabricpath_vlan       => $fabricpath_vlan,
-    interval              => ['100', '100', '25'],
+    interval              => $interval,
     ipv4_echo_rx_interval => $ipv4_echo_rx_interval,
     ipv4_interval         => $ipv4_interval,
     ipv4_slow_timer       => $ipv4_slow_timer,

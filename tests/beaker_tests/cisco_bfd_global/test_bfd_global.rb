@@ -83,7 +83,6 @@ tests[:default_plat_2] = {
   manifest_props: {
     echo_interface:        'default',
     echo_rx_interval:      'default',
-    interval:              'default',
     ipv4_echo_rx_interval: 'default',
     ipv4_interval:         'default',
     ipv4_slow_timer:       'default',
@@ -97,7 +96,6 @@ tests[:default_plat_2] = {
   resource:       {
     echo_interface:        'false',
     echo_rx_interval:      50,
-    interval:              default_interval_plat_2,
     ipv4_echo_rx_interval: 50,
     ipv4_interval:         default_interval_plat_2,
     ipv4_slow_timer:       2000,
@@ -174,12 +172,12 @@ tests[:default_plat_4] = {
 # Non-default Tests. NOTE: [:resource] = [:manifest_props] for all non-default
 
 tests[:non_default_plat_1] = {
-  desc:           '2.1 Non Defaults for n3k, n8k, n9k',
-  platform:       'n(3|8|9)k',
+  desc:           '2.1 Non Defaults for n3k',
+  platform:       'n3k',
   title_pattern:  'default',
   preclean:       'cisco_bfd_global',
   manifest_props: {
-    echo_interface:        10,
+    echo_interface:        'loopback10',
     echo_rx_interval:      300,
     interval:              non_default_interval,
     ipv4_echo_rx_interval: 100,
@@ -194,12 +192,31 @@ tests[:non_default_plat_1] = {
 }
 
 tests[:non_default_plat_2] = {
-  desc:           '2.2 Non Defaults for n5k, n6k',
+  desc:           '2.2 Non Defaults for n8k, n9k',
+  platform:       'n(8|9)k',
+  title_pattern:  'default',
+  preclean:       'cisco_bfd_global',
+  manifest_props: {
+    echo_interface:        'loopback10',
+    echo_rx_interval:      300,
+    ipv4_echo_rx_interval: 100,
+    ipv4_interval:         non_default_ipv4_interval,
+    ipv4_slow_timer:       10_000,
+    ipv6_echo_rx_interval: 200,
+    ipv6_interval:         non_default_ipv6_interval,
+    ipv6_slow_timer:       25_000,
+    slow_timer:            5000,
+    startup_timer:         25,
+  },
+}
+
+tests[:non_default_plat_3] = {
+  desc:           '2.3 Non Defaults for n5k, n6k',
   platform:       'n(5|6)k',
   title_pattern:  'default',
   preclean:       'cisco_bfd_global',
   manifest_props: {
-    echo_interface:        10,
+    echo_interface:        'loopback10',
     fabricpath_interval:   non_default_fabricpath_interval,
     fabricpath_slow_timer: 15_000,
     fabricpath_vlan:       100,
@@ -208,13 +225,13 @@ tests[:non_default_plat_2] = {
   },
 }
 
-tests[:non_default_plat_3] = {
-  desc:           '2.3 Non Defaults for n7k',
+tests[:non_default_plat_4] = {
+  desc:           '2.4 Non Defaults for n7k',
   platform:       'n7k',
   title_pattern:  'default',
   preclean:       'cisco_bfd_global',
   manifest_props: {
-    echo_interface:        10,
+    echo_interface:        'loopback10',
     echo_rx_interval:      300,
     fabricpath_interval:   non_default_fabricpath_interval,
     fabricpath_slow_timer: 15_000,
@@ -256,6 +273,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :non_default_plat_1)
   test_harness_run(tests, :non_default_plat_2)
   test_harness_run(tests, :non_default_plat_3)
+  test_harness_run(tests, :non_default_plat_4)
   resource_absent_cleanup(agent, 'cisco_bfd_global')
   skipped_tests_summary(tests)
 end

@@ -62,15 +62,13 @@ Puppet::Type.type(:cisco_bfd_global).provide(:cisco) do
 
   def initialize(value={})
     super(value)
-    @nu = Cisco::BfdGlobal.globals[@property_hash[:name]]
+    @nu = Cisco::BfdGlobal.new
     @property_flush = {}
-    debug 'Created provider instance of cisco_bfd_global'
   end
 
-  def self.properties_get(global_id, nu_obj)
-    debug "Checking instance, global #{global_id}"
+  def self.properties_get(nu_obj)
     current_state = {
-      name:   global_id,
+      name:   'default',
       ensure: :present,
     }
 
@@ -91,19 +89,14 @@ Puppet::Type.type(:cisco_bfd_global).provide(:cisco) do
 
   def self.instances
     globals = []
-    Cisco::BfdGlobal.globals.each do |global_id, v|
-      globals << properties_get(global_id, v)
-    end
+    return globals unless Cisco::Feature.bfd_enabled?
+    bfd = Cisco::BfdGlobal.new
+    globals << properties_get(bfd)
     globals
   end
 
   def self.prefetch(resources)
-    globals = instances
-
-    resources.keys.each do |id|
-      provider = globals.find { |nu_obj| nu_obj.instance_name == id }
-      resources[id].provider = provider unless provider.nil?
-    end
+    resources.values.first.provider = instances.first unless instances.first.nil?
   end # self.prefetch
 
   def exists?
@@ -162,7 +155,7 @@ Puppet::Type.type(:cisco_bfd_global).provide(:cisco) do
       new_global = false
       if @nu.nil?
         new_global = true
-        @nu = Cisco::BfdGlobal.new(@resource[:name])
+        @nu = Cisco::BfdGlobal.new
       end
       properties_set(new_global)
     end
