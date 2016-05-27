@@ -95,6 +95,13 @@ tests[:anycast] = {
   },
 }
 
+resource_cisco_overlay_global = {
+  name:     'cisco_overlay_global',
+  title:    'default',
+  property: 'anycast_gateway_mac',
+  value:    '1.1.1',
+}
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
@@ -107,6 +114,9 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :default_autostate)
   test_harness_run(tests, :non_default_autostate)
 
+  # :anycast test requires anycast_gateway_mac to be set.
+  resource_set(agent, resource_cisco_overlay_global,
+               'Overlay Global mac setup')
   test_harness_run(tests, :anycast)
 
   # -------------------------------------------------------------------
