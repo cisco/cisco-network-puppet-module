@@ -133,6 +133,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   interface_cleanup(agent, intf)
+  system_default_switchport(agent, false)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
