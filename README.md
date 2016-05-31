@@ -1,26 +1,5 @@
 # ciscopuppet
 
-##### Documentation Workflow Map
-
-This workflow map aids *users*, *developers* and *maintainers* of the ciscopuppet project in selecting the appropriate document(s) for their task.
-
-* User Guides
-  * [README-agent-install.md](https://github.com/cisco/cisco-network-puppet-module/blob/develop/docs/README-agent-install.md) : Agent Installation and Configuration Guide
-  * [README-beaker-agent-install.md](https://github.com/cisco/cisco-network-puppet-module/blob/develop/docs/README-beaker-agent-install.md) : Automated Agent Installation and Configuration
-  * [README-package-provider.md](https://github.com/cisco/cisco-network-puppet-module/blob/develop/docs/README-package-provider.md) : Cisco Nexus Package Management using the Package Provider
-  * [README-example-manifest.md](https://github.com/cisco/cisco-network-puppet-module/blob/develop/examples/README.md) : Example Demo Manifest User Guide
-  * The remainder of this document is aimed at end users
-* Developer Guides
-  * [CONTRIBUTING.md](https://github.com/cisco/cisco-network-puppet-module/blob/develop/CONTRIBUTING.md) : Contribution guidelines
-  * [README-develop-types-providers.md](https://github.com/cisco/cisco-network-puppet-module/blob/develop/docs/README-develop-types-providers.md) : Developing new ciscopuppet Types and Providers
-  * [README-develop-beaker-scripts.md](https://github.com/cisco/cisco-network-puppet-module/blob/develop/docs/README-develop-beaker-scripts.md) : Developing new beaker test scripts for ciscopuppet
-* Maintainers Guides
-  * [README-maintainers.md](https://github.com/cisco/cisco-network-puppet-module/blob/develop/docs/README-maintainers.md) : Guidelines for core maintainers of the ciscopuppet project
-  * All developer guides apply to maintainers as well
-
-Please see [Learning Resources](#learning-resources) for additional references.
-
---
 #### Table of Contents
 
 1. [Overview](#overview)
@@ -34,9 +13,7 @@ Please see [Learning Resources](#learning-resources) for additional references.
    * [Resource Type Catalog (by Name)](#resource-by-name)
 1. [Limitations - OS compatibility, etc.](#limitations)
 1. [Cisco OS Differences](#cisco-os-differences)
-1. [Learning Resources](#learning-resources)
-
-
+1. [Documentation Guide](#documentation-guide)
 
 ## Overview
 
@@ -4059,28 +4036,38 @@ Minimum Requirements:
   * Cisco Nexus N7k, OS Version 7.3(0)D1(1), Environments: Open Agent Container (OAC)
   * Cisco Nexus N8k, OS Version 7.0(3)F1(1), Environments: Bash-shell, Guestshell
 
-## Learning Resources
+## Documentation Guide
 
-* Puppet
-  * [https://learn.puppetlabs.com/](https://learn.puppetlabs.com/)
-  * [https://en.wikipedia.org/wiki/Puppet_(software)](https://en.wikipedia.org/wiki/Puppet_(software))
-* Markdown (for editing documentation)
-  * [https://help.github.com/articles/markdown-basics/](https://help.github.com/articles/markdown-basics/)
-* Ruby
-  * [https://en.wikipedia.org/wiki/Ruby_(programming_language)](https://en.wikipedia.org/wiki/Ruby_(programming_language))
-  * [https://www.codecademy.com/tracks/ruby](https://www.codecademy.com/tracks/ruby)
-  * [https://rubymonk.com/](https://rubymonk.com/)
-  * [https://www.codeschool.com/paths/ruby](https://www.codeschool.com/paths/ruby)
-* Ruby Gems
-  * [http://guides.rubygems.org/](http://guides.rubygems.org/)
-  * [https://en.wikipedia.org/wiki/RubyGems](https://en.wikipedia.org/wiki/RubyGems)
-* YAML
-  * [https://en.wikipedia.org/wiki/YAML](https://en.wikipedia.org/wiki/YAML)
-  * [http://www.yaml.org/start.html](http://www.yaml.org/start.html)
-* Yum
-  * [https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified](https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified)
-  * [https://www.centos.org/docs/5/html/yum/](https://www.centos.org/docs/5/html/yum/)
-  * [http://www.linuxcommand.org/man_pages](http://www.linuxcommand.org/man_pages/yum8.html)
+* The following table groups **ciscopuppet** documentation based on the intended audience.
+
+Audience | ciscopuppet Documentation |
+:--:|:--|
+User       | [README.md][USER-0] : (This document)<br>[README-agent-install.md][USER-1] : Agent Installation and Configuration Guide<br>[README-beaker-agent-install.md][USER-2] : Automated Agent Installation and Configuration<br>[README-package-provider.md][USER-3] : Cisco Nexus Package Management<br>[README-example-manifest.md][USER-4] : Example Demo Manifest User Guide
+Developer  | [CONTRIBUTING.md][DEV-1] : Contribution guidelines<br>[README-develop-types-providers.md][DEV-2] : Developing new ciscopuppet Types & Providers<br>[README-develop-beaker-scripts.md][DEV-3] : Developing new beaker test scripts for ciscopuppet
+Maintainer | [README-maintainers.md][MAINT-1] : Guidelines for core maintainers of the ciscopuppet project<br>*(Developer guides apply to Maintainers as well)*
+
+[USER-0]: https://github.com/cisco/cisco-network-puppet-module/blob/develop/README.md
+[USER-1]: https://github.com/cisco/cisco-network-puppet-module/blob/develop/docs/README-agent-install.md
+[USER-2]: https://github.com/cisco/cisco-network-puppet-module/blob/develop/docs/README-beaker-agent-install.md
+[USER-3]: https://github.com/cisco/cisco-network-puppet-module/blob/develop/docs/README-package-provider.md
+[USER-4]: https://github.com/cisco/cisco-network-puppet-module/blob/develop/examples/README.md
+
+[DEV-1]: https://github.com/cisco/cisco-network-puppet-module/blob/develop/CONTRIBUTING.md
+[DEV-2]: https://github.com/cisco/cisco-network-puppet-module/blob/develop/docs/README-develop-types-providers.md
+[DEV-3]: https://github.com/cisco/cisco-network-puppet-module/blob/develop/docs/README-develop-beaker-scripts.md
+
+[MAINT-1]: https://github.com/cisco/cisco-network-puppet-module/blob/develop/docs/README-maintainers.md
+
+* General Documentation
+
+Topic | Resources |
+:---------|:--|
+Puppet    | <https://learn.puppetlabs.com/><br><https://en.wikipedia.org/wiki/Puppet_(software)>
+Markdown<br>(*editor*) | <https://help.github.com/articles/markdown-basics/>
+Ruby      | <https://en.wikipedia.org/wiki/Ruby_(programming_language)><br><https://www.codecademy.com/tracks/ruby><br><https://rubymonk.com/><br><https://www.codeschool.com/paths/ruby>
+Ruby Gems | <http://guides.rubygems.org/><br><https://en.wikipedia.org/wiki/RubyGems>
+YAML      | <https://en.wikipedia.org/wiki/YAML><br><http://www.yaml.org/start.html>
+Yum       | <https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified><br><https://www.centos.org/docs/5/html/yum/><br><http://www.linuxcommand.org/man_pages>
 
 ## License
 
