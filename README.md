@@ -2,7 +2,6 @@
 
 #### Table of Contents
 
-1. [Overview](#overview)
 1. [Module Description](#module-description)
 1. [Setup](#setup)
 1. [Usage](#usage)
@@ -15,22 +14,15 @@
 1. [Cisco OS Differences](#cisco-os-differences)
 1. [Documentation Guide](#documentation-guide)
 
-## Overview
+## Module Description
 
 The ciscopuppet module allows a network administrator to manage Cisco Network Elements using Puppet. This module bundles a set of Puppet Types, providers, Beaker Tests, Sample Manifests and Installation Tools for effective network management.  The  resources and capabilities provided by this Puppet Module will grow with contributions from Cisco, Puppet Labs and the open source community.
 
-The Cisco Network Elements and Operating Systems managed by this Puppet Module are continuously expanding. Please refer to the [Limitations](#limitations) section for details on currently supported hardware and software.
-The Limitations section also provides details on compatible Puppet Agent and Puppet Master versions.
+The Cisco Network Elements and Operating Systems managed by this Puppet Module are continuously expanding. See [Platform Support](#platform-support) for a list of currently supported hardware and software.
 
 This GitHub repository contains the latest version of the ciscopuppet module source code. Supported versions of the ciscopuppet module are available at Puppet Forge. Please refer to [SUPPORT.md](SUPPORT.md) for additional details.
 
-Contributions to this Puppet Module are welcome. Guidelines on contributions to the module are captured in [CONTRIBUTING.md](CONTRIBUTING.md)
-
-## Module Description
-
-This module enables management of supported Cisco Network Elements using Puppet. This module enhances the Puppet DSL by introducing new Puppet Types and Providers capable of managing network elements.
-
-The set of supported network element platforms is continuously expanding. Please refer to the [Limitations](#limitations) section for a list of currently supported platforms.
+Contributions to this Puppet Module are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## Setup
 
@@ -93,20 +85,19 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 
 The Nexus family of switches support various hardware and software features depending on the model and version. The following table will guide you through the provider support matrix.
 
-✅ =  Supported
-  * The provider has been validated to work on the platform family. An asterisk '*' indicates that some provider properties may have software/hardware limitations, caveats, or noted behaviors. Click on the associated caveat link for more information.
+✅ | Supported      | The provider has been validated to work on the platform.<br>An asterisk '*' indicates that some provider properties may have software or hardware limitations, caveats, or other noted behaviors.<br>Click on the associated caveat link for more information.
+:heavy_minus_sign: | Not Applicable | The provider is not supported on the platform because of hardware or software limitations.
 
-:heavy_minus_sign: = Not Applicable
-  * The provider is not supported at all on the platform because of hardware or software limitations.
+**Platform Models**
 
-A note about support for specific platform models:
-
-  * "**N9k**" support includes all N9xxx models.
-  * "**N3k**" support includes N30xx and N31xx models only. **_The N35xx model is not supported_.**
-  * "**N5k**" support includes N56xx models only. **_The N50xx and N55xx models are not supported at this time_.**
-  * "**N6k**" support includes all N6xxx models.
-  * "**N7k**" support includes all N7xxx models.
-  * "**N8k**" support includes all N8xxx models.
+Platform | Description
+:--|:--
+**N9k** | Support includes all N9xxx models
+**N3k** | Support includes N30xx and N31xx models only.<br>The N35xx model is not supported.
+**N5k** | Support includes N56xx models only.<br>The N50xx and N55xx models are not supported at this time.
+**N6k** | Support includes all N6xxx models
+**N7k** | Support includes all N7xxx models
+**N8k** | Support includes all N8xxx models
 
 | ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | N8k | Caveats |
 |:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
@@ -4023,18 +4014,6 @@ Number of seconds before the timeout period ends
 
 ##### `servers`
 Array of servers associated with this group.
-
-## Limitations
-
-Minimum Requirements:
-* Cisco NX-OS:
-  * Open source Puppet version 4.0+ or Puppet Enterprise 2015.2+
-  * Cisco Nexus N9k, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
-  * Cisco Nexus N3k, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
-  * Cisco Nexus N5k, OS Version 7.3(0)N1(1), Environments: Open Agent Container (OAC)
-  * Cisco Nexus N6k, OS Version 7.3(0)N1(1), Environments: Open Agent Container (OAC)
-  * Cisco Nexus N7k, OS Version 7.3(0)D1(1), Environments: Open Agent Container (OAC)
-  * Cisco Nexus N8k, OS Version 7.0(3)F1(1), Environments: Bash-shell, Guestshell
 
 ## Documentation Guide
 
