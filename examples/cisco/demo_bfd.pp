@@ -36,6 +36,7 @@ class ciscopuppet::cisco::demo_bfd {
     default => undef
   }
 
+  # TBD: this is due to a bug on n8k and n9k
   $interval = platform_get() ? {
     /(n3k|n5k|n6k|n7k)/ => ['100', '100', '25'],
     default => undef
