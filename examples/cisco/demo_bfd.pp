@@ -76,8 +76,8 @@ class ciscopuppet::cisco::demo_bfd {
     default => undef
   }
 
-  cisco_interface { 'loopback10':
-      ensure => present,
+  cisco_command_config { 'loopback':
+    command => 'interface loopback10',
   }
 
   cisco_bfd_global { 'default':
