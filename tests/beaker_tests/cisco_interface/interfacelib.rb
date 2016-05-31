@@ -51,7 +51,7 @@ def config_anycast_gateway_mac?(tests, id)
   # TBD: Consider creating a resource_get to avoid vsh calls
   on(agent, get_vshell_cmd('show runn fabric forwarding'), pty: true)
 
-  return unless stdout[/anycast-gateway-mac/]
+  return if stdout[/anycast-gateway-mac/]
   cmd = ['cisco_overlay_global', 'default', 'anycast_gateway_mac', '1.1.1']
   resource_set(agent, cmd, 'fabric forwarding anycast-gateway-mac 1.1.1')
 end
