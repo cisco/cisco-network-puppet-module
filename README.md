@@ -139,6 +139,7 @@ A note about support for specific platform models:
 | [cisco_acl](#type-cisco_acl)                               | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [cisco_ace](#type-cisco_ace)                               | ✅  | ✅  | ✅* | ✅* | ✅* | \*[caveats](#cisco_ace-caveats) |
 | [cisco_command_config](#type-cisco_command_config)         | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_bfd_global](#type-cisco_bfd_global)                 | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_bfd_global-caveats) |
 | [cisco_bgp](#type-cisco_bgp)                               | ✅  | ✅  | ✅* | ✅* | ✅* | \*[caveats](#cisco_bgp-caveats) |
 | [cisco_bgp_af](#type-cisco_bgp_af)                         | ✅* | ✅* | ✅  | ✅* | ✅  | \*[caveats](#cisco_bgp_af-caveats) |
 | [cisco_bgp_neighbor](#type-cisco_bgp_neighbor)             | ✅  | ✅  | ✅  | ✅  | ✅  |
@@ -231,6 +232,9 @@ The following resources include cisco types and providers along with cisco provi
 * ACL Types
   * [`cisco_ace`](#type-cisco_ace)
   * [`cisco_acl`](#type-cisco_acl)
+
+* BFD Types
+  * [`cisco_bfd_global`](#type-cisco_bfd_global)
 
 * BGP Types
   * [`cisco_vrf`](#type-cisco_vrf)
@@ -354,6 +358,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_aaa_group_tacacs`](#type-cisco_aaa_group_tacacs)
 * [`cisco_acl`](#type-cisco_acl)
 * [`cisco_ace`](#type-cisco_ace)
+* [`cisco_bfd_global`](#type-cisco_bfd_global)
 * [`cisco_bgp`](#type-cisco_bgp)
 * [`cisco_bgp_af`](#type-cisco_bgp_af)
 * [`cisco_bgp_neighbor`](#type-cisco_bgp_neighbor)
@@ -881,6 +886,92 @@ Allows matching based on Time-To-Live (TTL) value. Valid values are type Integer
 | Example
 |:--
 | `ttl => '128'`
+
+--
+### Type: cisco_bfd_global
+
+Manages configuration of a BFD (Bidirectional Forwarding Detection) instance.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I3(1)        | 1.4.0                  |
+| N3k      | 7.0(3)I3(1)        | 1.4.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.4.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.4.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.4.0                  |
+| N8k      | 7.3(0)F1(1)        | 1.4.0                  |
+
+#### <a name="cisco_bfd_global-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `echo_rx_interval`      | Not supported on N5k, N6k      |
+| `fabricpath_interval`   | Not supported on N3k, N8k, N9k |
+| `fabricpath_slow_timer` | Not supported on N3k, N8k, N9k |
+| `fabricpath_vlan`       | Not supported on N3k, N8k, N9k |
+| `interval`              | Not supported on N8k, N9k      |
+| `ipv4_echo_rx_interval` | Not supported on N5k, N6k      |
+| `ipv4_interval`         | Not supported on N5k, N6k      |
+| `ipv4_slow_timer`       | Not supported on N5k, N6k      |
+| `ipv6_echo_rx_interval` | Not supported on N5k, N6k      |
+| `ipv6_interval`         | Not supported on N5k, N6k      |
+| `ipv6_slow_timer`       | Not supported on N5k, N6k      |
+| `startup_timer`         | Not supported on N5k, N6k, N7k |
+
+#### Parameters
+
+##### `ensure`
+Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
+
+##### `echo_interface`
+Loopback interface used for echo frames.  Valid values are String, and 'default'.
+
+##### `echo_rx_interval`
+Echo receive interval in milliseconds.  Valid values are integer, and 'default'.
+
+##### `fabricpath_interval`
+BFD fabricpath interval.  Valid values are an array of [fabricpath_interval, fabricpath_min_rx, fabricpath_multiplier] or 'default'.
+
+Example: `fabricpath_interval => [100, 120, 4]`
+
+##### `fabricpath_slow_timer`
+BFD fabricpath slow rate timer in milliseconds.  Valid values are integer, and 'default'.
+
+##### `fabricpath_vlan`
+BFD fabricpath control vlan.  Valid values are integer, and 'default'.
+
+##### `interval`
+BFD interval.  Valid values are an array of [interval, min_rx, multiplier] or 'default'.
+
+Example: `interval => [100, 120, 4]`
+
+##### `ipv4_echo_rx_interval`
+IPv4 session echo receive interval in milliseconds.  Valid values are integer, and 'default'.
+
+##### `ipv4_interval`
+BFD IPv4 session interval.  Valid values are an array of [ipv4_interval, ipv4_min_rx, ipv4_multiplier] or 'default'.
+
+Example: `ipv4_interval => [100, 120, 4]`
+
+##### `ipv4_slow_timer`
+BFD IPv4 session slow rate timer in milliseconds.  Valid values are integer, and 'default'.
+
+##### `ipv6_echo_rx_interval`
+IPv6 session echo receive interval in milliseconds.  Valid values are integer, and 'default'.
+
+##### `ipv6_interval`
+BFD IPv6 session interval.  Valid values are an array of [ipv6_interval, ipv6_min_rx, ipv6_multiplier] or 'default'.
+
+Example: `ipv6_interval => [100, 120, 4]`
+
+##### `ipv6_slow_timer`
+BFD IPv6 session slow rate timer in milliseconds.  Valid values are integer, and 'default'.
+
+##### `slow_timer`
+BFD slow rate timer in milliseconds.  Valid values are integer, and 'default'.
+
+##### `startup_timer`
+BFD delayed startup timer in seconds.  Valid values are integer, and 'default'.
 
 --
 ### Type: cisco_bgp
