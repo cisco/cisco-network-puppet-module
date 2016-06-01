@@ -132,8 +132,9 @@ tests['default_properties_multicast_group'] = {
 
 # Suppress Unknown Unicast
 if platform[/n(5|6)k/]
-  tests['default_properties_multicast_group'][:manifest_props][:suppress_uuc] = 'default'
-  tests['default_properties_multicast_group'][:resource_props][:suppress_uuc] = 'false'
+  tests['default_properties_multicast_group'][:manifest_props] +=
+    "  suppress_uuc => 'default',"
+  tests['default_properties_multicast_group'][:resource_props]['suppress_uuc'] = 'false'
 end
 
 tests['ingress_replication_static_peer_list_empty'] = {
@@ -276,6 +277,11 @@ def puppet_resource_cmd
   PUPPET_BINPATH + 'resource cisco_vxlan_vtep_vni'
 end
 
+def test_harness_dependencies(*)
+  return unless platform[/n(5|6)k/]
+  skip_if_nv_overlay_rejected(agent)
+end
+
 # Overridden to properly handle dependencies for this test file.
 def dependency_manifest(*)
   dep = ''
@@ -323,6 +329,8 @@ end
 
 def test_harness_cisco_vxlan_vtep_vni(tests, id)
   return unless platform_supports_test(tests, id)
+
+  test_harness_dependencies(tests, id)
 
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:resource_cmd] = puppet_resource_cmd
