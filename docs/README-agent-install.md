@@ -4,8 +4,8 @@
 #### Table of Contents
 
 1. [Overview](#overview)
-1. [Pre-Install Tasks](#pre-install)
-1. Agent Environment Setup:
+1. [Pre-Install Tasks](#pre-install-tasks)
+1. Agent Environments(#agent-environments)
   * [bash-shell](#env-bs)
   * [guestshell](#env-gs)
   * [open agent container (OAC)](#env-oac)
@@ -16,6 +16,8 @@
 
 [References](#references)
 
+[How to get a virtual Nexus N9k](#VIRT_9K)
+
 --
 ## <a name="overview">Overview</a>
 
@@ -25,7 +27,7 @@ This document describes Puppet agent installation and setup on Cisco Nexus switc
 
 See [References](#references) for alternative installation methods.
 
-## <a name="pre-install">Pre-Install Tasks</a>
+## <a name="pre-install-tasks">Pre-Install Tasks</a>
 
 #### *Step 1. Platform / Software Minimum Requirements*
 
@@ -88,6 +90,8 @@ config term
   ntp server 10.0.0.201 use-vrf management
 end
 ~~~
+
+## <a name="agent-environments">Agent Environments</a>
 
 ## <a name="env-bs">Agent Environment Setup: bash-shell</a>
 
@@ -490,37 +494,34 @@ systemctl enable my_puppet
 systemctl start my_puppet
 ~~~
 
-## <a name="VIRT_9K">How to get a virtual Nexus N9k</a>
-A virtual Nexus N9k may be helpful for development and testing. To obtain a virtual N9k, first register for a [cisco.com](http://cisco.com) userid at <https://tools.cisco.com/IDREG/guestRegistration>, then send the userid in an email to <get-n9kv@cisco.com>.
-
 ## <a name="references">References</a>
 
-* [Automated Puppet Agent Installation](README-beaker-agent-install.md) - Using Beaker tools to install & configure Puppet Agent
+Reference | Description
+:--|:--|
+[Automated Puppet Agent Installation](README-beaker-agent-install.md) | Using Beaker tools to install & configure Puppet Agent
+[Cisco Nexus Puppet Modules](../README.md) | Types, Providers, Utilities
+[Guestshell][GS_9K] | Guestshell Container Programmability Guide
+[N5k, N6k Open Agent Container (OAC)][OAC_5K_DOC] | N5k, N6k Programmability Guide
+[N7k Open Agent Container (OAC)][OAC_7K_DOC] | N7k Programmability Guide
+[Puppet Agent Configuration Reference][PUP_CR] | `puppet.conf` settings
 
-* [Cisco Nexus Puppet Modules](../README.md) - Types, Providers, Utilities
+[GS_9K]: http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/6-x/programmability/guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_chapter_01010.html
 
-* [Guestshell][GS_9K]
+[OAC_5K_DOC]: http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus5000/sw/programmability/guide/b_Cisco_Nexus_5K6K_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_5K6K_Series_NX-OS_Programmability_Guide_chapter_01001.html
 
-* [Open Agent Container (OAC)][OAC_5K_DOC] - N5k, N6k
+[OAC_5K_OVA]: https://software.cisco.com/download/release.html?i=!y&mdfid=284360574&softwareid=282088130&release=7.3%280%29N1%281%29&os=
 
-* [Open Agent Container (OAC)][OAC_7K_DOC] - N7k
+[OAC_7K_DOC]: http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus7000/sw/programmability/guide/b_Cisco_Nexus_7000_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_7000_Series_NX-OS_Programmability_Guide_chapter_01001.html
 
-* [Puppet Agent Configuration Reference][PUP_CR] - `puppet.conf` settings
-
-
-[GS_9K]: (http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/6-x/programmability/guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_chapter_01010.html)
-
-[OAC_5K_DOC]: (http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus5000/sw/programmability/guide/b_Cisco_Nexus_5K6K_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_5K6K_Series_NX-OS_Programmability_Guide_chapter_01001.html)
-
-[OAC_5K_OVA]: (https://software.cisco.com/download/release.html?i=!y&mdfid=284360574&softwareid=282088130&release=7.3%280%29N1%281%29&os=)
-
-[OAC_7K_DOC]: (http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus7000/sw/programmability/guide/b_Cisco_Nexus_7000_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_7000_Series_NX-OS_Programmability_Guide_chapter_01001.html)
-
-[OAC_7K_OVA]: (https://software.cisco.com/download/release.html?i=!y&mdfid=283748960&softwareid=282088129&release=7.3%280%29D1%281%29&os=)
+[OAC_7K_OVA]: https://software.cisco.com/download/release.html?i=!y&mdfid=283748960&softwareid=282088129&release=7.3%280%29D1%281%29&os=
 
 [PUP_CR]: https://docs.puppetlabs.com/references/latest/configuration.html
 
-----
+## <a name="VIRT_9K">How to get a virtual Nexus N9k</a>
+A virtual Nexus N9k may be helpful for development and testing. To obtain a virtual N9k, first register for a [cisco.com](http://cisco.com) userid at <https://tools.cisco.com/IDREG/guestRegistration>, then send the userid in an email to <get-n9kv@cisco.com>.
+
+## License
+
 ~~~
 Copyright (c) 2014-2016 Cisco and/or its affiliates.
 
