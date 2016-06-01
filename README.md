@@ -184,7 +184,7 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
   * [`network_interface (netdev_stdlib)`](#type-network_interface)
 
-* Itd Types
+* ITD (Intelligent Traffic Director) Types
   * [`cisco_itd_device_group`](#type-cisco_itd_device_group)
   * [`cisco_itd_device_group_node`](#type-cisco_itd_device_group_node)
   * [`cisco_itd_service`](#type-cisco_itd_service)
