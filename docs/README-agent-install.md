@@ -355,27 +355,51 @@ Add your Puppet Server name to the configuration file.
 
 #### *Step 3. The `cisco_node_utils` Gem*
 
-TBD: THIS SECTION NEEDS WORK
+The [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) ruby gem is a required component of the `ciscopuppet` module. This gem contains platform APIs for interfacing between Cisco CLI and Puppet agent resources. The gem can be automatically installed by Puppet agent by simply using the [`ciscopuppet::install`](https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/demo_all_cisco.pp#L19) helper class, or it can be installed manually.
 
-The `cisco_node_utils` gem is a required component when using the `ciscopuppet` module. This gem contains platform APIs for interfacing between Cisco CLI and the Puppet agent resources. The gem can be automatically installed by Puppet agent by simply using the `install.pp` catalog from the `ciscopuppet` module. This requires additional steps on the Puppet Server.
+##### Automatic Gem Install Using `ciscopuppet::install`
 
-* On the Puppet Server: Copy `install.pp` to the `manifests` directory
+* The `ciscopuppet::install` class is defined in the `install.pp` file in the `examples` subdirectory. Copy this file into the `manifests` directory as shown:
 
 ~~~bash
-cp
- /etc/puppetlabs/code/environments/production/modules/ciscopuppet/examples/install.pp
- /etc/puppetlabs/code/environments/production/modules/ciscopuppet/manifests/
+cd /etc/puppetlabs/code/environments/production/modules/ciscopuppet/
+cp examples/install.pp  manifests/
 ~~~
 
-* On the Puppet Server: Update `site.pp` to use `install.pp`
+* Next, update `site.pp` to use the install class
+
+**Example**
 
 ~~~
-node default {
- include ciscopuppet::install
-}
+node default
+  include ciscopuppet::install
+end
 ~~~
 
-* As an alternative to automatic installation, the gem can also be manually installed on the agent node
+The preceding configuration will cause the next `puppet agent` run to automatically download the current `cisco_node_utils` gem from <https://rubygems.org/gems/cisco_node_utils> and install it on the node.
+
+##### Optional Parameters for `ciscopuppet::install`
+
+  * Override the default rubygems repository to use a custom repository
+  * Provide a proxy server
+
+**Example**
+
+~~~
+node default
+  include ciscopuppet::install
+  class {'ciscopuppet::install':
+    repo  => 'http://gemserver.domain.com:8808',
+    proxy => 'http://proxy.domain.com:8080',
+  }
+end
+~~~
+
+##### Gem Persistence
+
+Once installed, the GEM will remain persistent across system reloads within the Guestshell or OAC environments; however, the bash-shell environment does not share this persistent behavior, in which case the `ciscopuppet::install` helper class automatically downloads and re-installs the gem after each system reload.
+
+* The gem can also be manually installed on the agent node
 
 ~~~
 gem install cisco_node_utils
