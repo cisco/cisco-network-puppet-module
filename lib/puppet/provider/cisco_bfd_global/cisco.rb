@@ -126,26 +126,6 @@ Puppet::Type.type(:cisco_bfd_global).provide(:cisco) do
     end
   end
 
-  def fabricpath_interval=(should_list)
-    should_list = @nu.default_fabricpath_interval if should_list[0] == :default
-    @property_flush[:fabricpath_interval] = should_list
-  end
-
-  def interval=(should_list)
-    should_list = @nu.default_interval if should_list[0] == :default
-    @property_flush[:interval] = should_list
-  end
-
-  def ipv4_interval=(should_list)
-    should_list = @nu.default_ipv4_interval if should_list[0] == :default
-    @property_flush[:ipv4_interval] = should_list
-  end
-
-  def ipv6_interval=(should_list)
-    should_list = @nu.default_ipv6_interval if should_list[0] == :default
-    @property_flush[:ipv6_interval] = should_list
-  end
-
   def flush
     if @property_flush[:ensure] == :absent
       @nu.destroy

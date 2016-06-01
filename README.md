@@ -899,6 +899,7 @@ Manages configuration of a BFD (Bidirectional Forwarding Detection) instance.
 | N5k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.4.0                  |
+| N8k      | 7.3(0)F1(1)        | 1.4.0                  |
 
 #### <a name="cisco_bfd_global-caveats">Caveats</a>
 
@@ -930,6 +931,9 @@ Echo receive interval in milliseconds.  Valid values are integer, and 'default'.
 
 ##### `fabricpath_interval`
 BFD fabricpath interval.  Valid values are an array of [fabricpath_interval, fabricpath_min_rx, fabricpath_multiplier] or 'default'.
+Example
+:--
+`fabricpath_interval => [100, 120, 4]`
 
 ##### `fabricpath_slow_timer`
 BFD fabricpath slow rate timer in milliseconds.  Valid values are integer, and 'default'.
@@ -939,12 +943,18 @@ BFD fabricpath control vlan.  Valid values are integer, and 'default'.
 
 ##### `interval`
 BFD interval.  Valid values are an array of [interval, min_rx, multiplier] or 'default'.
+Example
+:--
+`interval => [100, 120, 4]`
 
 ##### `ipv4_echo_rx_interval`
 IPv4 session echo receive interval in milliseconds.  Valid values are integer, and 'default'.
 
 ##### `ipv4_interval`
 BFD IPv4 session interval.  Valid values are an array of [ipv4_interval, ipv4_min_rx, ipv4_multiplier] or 'default'.
+Example
+:--
+`ipv4_interval => [100, 120, 4]`
 
 ##### `ipv4_slow_timer`
 BFD IPv4 session slow rate timer in milliseconds.  Valid values are integer, and 'default'.
@@ -954,6 +964,9 @@ IPv6 session echo receive interval in milliseconds.  Valid values are integer, a
 
 ##### `ipv6_interval`
 BFD IPv6 session interval.  Valid values are an array of [ipv6_interval, ipv6_min_rx, ipv6_multiplier] or 'default'.
+Example
+:--
+`ipv6_interval => [100, 120, 4]`
 
 ##### `ipv6_slow_timer`
 BFD IPv6 session slow rate timer in milliseconds.  Valid values are integer, and 'default'.
