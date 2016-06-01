@@ -31,26 +31,66 @@ Contributions to this Puppet Module are welcome. See [CONTRIBUTING.md](CONTRIBUT
 The `ciscopuppet` module must be installed on the Puppet Master server. Please see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html) for general information on Puppet module installation.
 
 ### Puppet Agent
+
 The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md](docs/README-agent-install.md) document for detailed instructions on agent installation and configuration on Cisco Nexus devices.
 
 ### `cisco_node_utils` Ruby gem
 
-This module has dependencies on the [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) ruby gem. After installing the Puppet Agent software, use Puppet's built-in [`Package`](https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/install.pp#L17) provider to install the gem.
+The [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) ruby gem is a required component of the `ciscopuppet` module. This gem contains platform APIs for interfacing between Cisco CLI and Puppet agent resources. The gem can be automatically installed by Puppet agent by simply using the [`ciscopuppet::install`](https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/demo_all_cisco.pp#L19) helper class, or it can be installed manually.
 
-A helper class [`ciscopuppet::install`](https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/demo_all_cisco.pp#L19) is provided in the examples subdirectory of this module.  Simply add an `include ciscopuppet::install` statement at the beginning of the manifest to install the latest `cisco_node_utils` gem from rubygems.org. Including the aforementioned class with [`additional parameters`](https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/demo_all_cisco.pp#L24) overrides the default rubygems.org repository with a custom repository.
+#### Automatic Gem Install Using `ciscopuppet::install`
 
-For Puppet Agents running within the GuestShell or OAC environment, the installed GEM remains persistent across system reloads, however, agents running in the NX-OS bash-shell environment will automatically download and reinstall the GEM after a system reload.
+* The `ciscopuppet::install` class is defined in the `install.pp` file in the `examples` subdirectory. Copy this file into the `manifests` directory as shown:
+
+~~~bash
+cd /etc/puppetlabs/code/environments/production/modules/ciscopuppet/
+cp examples/install.pp  manifests/
+~~~
+
+* Next, update `site.pp` to use the install class
+
+**Example**
+
+~~~
+node default
+  include ciscopuppet::install
+end
+~~~
+
+The preceding configuration will cause the next `puppet agent` run to automatically download the current `cisco_node_utils` gem from <https://rubygems.org/gems/cisco_node_utils> and install it on the node.
+
+#### Optional: Additional parameters
+
+  * Override the default rubygems repository to use a custom repository
+  * Provide a proxy server
+
+**Example**
+
+~~~
+node default
+  include ciscopuppet::install
+  class {'ciscopuppet::install':
+    repo  => 'http://gemserver.domain.com:8808',
+    proxy => 'http://proxy.domain.com:8080',
+  }
+end
+~~~
+
+#### Gem Persistence
+
+Once installed, the GEM will remain persistent across system reloads within the Guestshell or OAC environments; however, the bash-shell environment does not share this persistent behavior, in which case the `ciscopuppet::install` helper class automatically downloads and re-installs the gem after each system reload.
 
 ## Usage
 
-The following example shows how to use ciscopuppet to configure ospf on a
-Cisco Nexus switch.
+The following examples demonstrate how to define a manifest that uses `ciscopuppet` to configure OSPF on a Cisco Nexus switch.
 
-Three types are needed to add OSPF support on an interface: cisco_ospf,
-cisco_ospf_vrf, and cisco_interface_ospf.
+Three resource types are used to define an OSPF instance, basic OSPF router settings, and OSPF interface settings:
 
-First, to configure cisco_ospf to enable ospf on the device, add the
-following type in the manifest:
+* [`cisco_ospf`](https://github.com/cisco/cisco-network-puppet-module/tree/develop#type-cisco_ospf)
+* [`cisco_ospf_vrf`](https://github.com/cisco/cisco-network-puppet-module/tree/develop#type-cisco_ospf_vrf)
+* [`cisco_interface_ospf`](https://github.com/cisco/cisco-network-puppet-module/tree/develop#type-cisco_interface_ospf)
+
+The first manifest type should define the router instance using `cisco_ospf`. The title '`Sample`' becomes the router instance name.
 
 ~~~puppet
 cisco_ospf {"Sample":
@@ -58,8 +98,7 @@ cisco_ospf {"Sample":
 }
 ~~~
 
-Then put the ospf router under a VRF, and add the corresponding OSPF configuration.
-If the configuration is global, use 'default' as the VRF name.
+The next type to define is `cisco_ospf_vrf`. The title includes the OSPF router instance name and the VRF name. Note that a non-VRF configuration uses 'default' as the VRF name.
 
 ~~~puppet
 cisco_ospf_vrf {"Sample default":
@@ -69,7 +108,7 @@ cisco_ospf_vrf {"Sample default":
 }
 ~~~
 
-Finally apply the ospf into an interface:
+Finally, define the OSPF interface settings. The title here includes the Interface name and the OSPF router instance name.
 
 ~~~puppet
 cisco_interface_ospf {"Ethernet1/2 Sample":
