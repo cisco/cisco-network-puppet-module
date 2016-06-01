@@ -943,7 +943,7 @@ BFD fabricpath control vlan.  Valid values are integer, and 'default'.
 ##### `interval`
 BFD interval.  Valid values are an array of [interval, min_rx, multiplier] or 'default'.
 
-Example: `fabricpath_interval => [100, 120, 4]`
+Example: `interval => [100, 120, 4]`
 
 ##### `ipv4_echo_rx_interval`
 IPv4 session echo receive interval in milliseconds.  Valid values are integer, and 'default'.
@@ -951,7 +951,7 @@ IPv4 session echo receive interval in milliseconds.  Valid values are integer, a
 ##### `ipv4_interval`
 BFD IPv4 session interval.  Valid values are an array of [ipv4_interval, ipv4_min_rx, ipv4_multiplier] or 'default'.
 
-Example: `fabricpath_interval => [100, 120, 4]`
+Example: `ipv4_interval => [100, 120, 4]`
 
 ##### `ipv4_slow_timer`
 BFD IPv4 session slow rate timer in milliseconds.  Valid values are integer, and 'default'.
@@ -962,7 +962,7 @@ IPv6 session echo receive interval in milliseconds.  Valid values are integer, a
 ##### `ipv6_interval`
 BFD IPv6 session interval.  Valid values are an array of [ipv6_interval, ipv6_min_rx, ipv6_multiplier] or 'default'.
 
-Example: `fabricpath_interval => [100, 120, 4]`
+Example: `ipv6_interval => [100, 120, 4]`
 
 ##### `ipv6_slow_timer`
 BFD IPv6 session slow rate timer in milliseconds.  Valid values are integer, and 'default'.
