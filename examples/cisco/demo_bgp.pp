@@ -276,6 +276,10 @@ class ciscopuppet::cisco::demo_bgp {
   # Configure BGP IPv4 Neighbors
   #---------------------------------------------------------------------------#
 
+  $bfd = $operatingsystem ? {
+    'nexus' => true,
+    default => undef
+  }
   $capability_negotiation = $operatingsystem ? {
     'nexus' => true,
     default => undef
@@ -303,7 +307,7 @@ class ciscopuppet::cisco::demo_bgp {
 
     #Properties
     description            => 'my description',
-    bfd                    => true,
+    bfd                    => $bfd,
     connected_check        => true,
     capability_negotiation => $capability_negotiation,
     dynamic_capability     => $dynamic_capability,
@@ -326,7 +330,7 @@ class ciscopuppet::cisco::demo_bgp {
 
     #Properties
     description            => 'my description',
-    bfd                    => true,
+    bfd                    => $bfd,
     connected_check        => true,
     capability_negotiation => $capability_negotiation,
     dynamic_capability     => $dynamic_capability,
