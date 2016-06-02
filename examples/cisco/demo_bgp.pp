@@ -303,6 +303,7 @@ class ciscopuppet::cisco::demo_bgp {
 
     #Properties
     description            => 'my description',
+    bfd                    => true,
     connected_check        => true,
     capability_negotiation => $capability_negotiation,
     dynamic_capability     => $dynamic_capability,
@@ -325,6 +326,7 @@ class ciscopuppet::cisco::demo_bgp {
 
     #Properties
     description            => 'my description',
+    bfd                    => true,
     connected_check        => true,
     capability_negotiation => $capability_negotiation,
     dynamic_capability     => $dynamic_capability,

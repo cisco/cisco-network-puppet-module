@@ -37,6 +37,7 @@ tests[:default] = {
   title_pattern:  '2 default 1.1.1.1',
   preclean:       'cisco_bgp',
   manifest_props: {
+    bfd:                'default',
     ebgp_multihop:      'default',
     local_as:           'default',
     low_memory_exempt:  'default',
@@ -46,6 +47,7 @@ tests[:default] = {
     timers_holdtime:    'default',
   },
   resource:       {
+    'bfd'                    => 'false',
     'ebgp_multihop'          => 'false',
     'local_as'               => '0',
     'log_neighbor_changes'   => 'inherit',
@@ -65,6 +67,7 @@ tests[:non_default] = {
   title_pattern:  '2 default 1.1.1.1',
   manifest_props: {
     description:            'tested by beaker',
+    bfd:                    'true',
     connected_check:        'true',
     capability_negotiation: 'true',
     dynamic_capability:     'true',
@@ -120,6 +123,7 @@ def unsupported_properties(_tests, _id)
   if operating_system == 'ios_xr'
     # IOS-XR does not support these properties
     unprops <<
+      :bfd <<
       :capability_negotiation <<
       :dynamic_capability <<
       :log_neighbor_changes <<
