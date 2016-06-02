@@ -336,7 +336,7 @@ rpm --import http://yum.puppetlabs.com/RPM-GPG-KEY-reductive
 Environment | RPM |
 :--|:--|
 `bash-shell` | <http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm> |
-`guestshell` | [Puppet defect FACT-1409](https://tickets.puppetlabs.com/browse/FACT-1409): Puppet agent `v1.4.x` is not supported on `guestshell` <p>Use Puppet `v1.3.x` until FACT-1409 is resolved: <http://yum.puppetlabs.com/el/7/PC1/x86_64/puppet-agent-1.3.6-1.el7.x86_64.rpm> <p>Puppet `v1.5.x` will be available at this location after FACT-1409 is resolved: http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm |
+`guestshell` | <http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm> |
 `open agent`<br>`container (OAC)` | [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm) |
 
 <br>
