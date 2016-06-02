@@ -13,11 +13,11 @@
 
 ## <a href='module-description'>Module Description</a>
 
-The ciscopuppet module allows a network administrator to manage Cisco Network Elements using Puppet. This module bundles a set of Puppet Types, providers, Beaker Tests, Sample Manifests and Installation Tools for effective network management.  The  resources and capabilities provided by this Puppet Module will grow with contributions from Cisco, Puppet Labs and the open source community.
+The ciscopuppet module allows a network administrator to manage Cisco Network Elements using Puppet. This module bundles a set of Puppet Types, Providers, Beaker Tests, Sample Manifests and Installation Tools for effective network management.  The  resources and capabilities provided by this Puppet Module will grow with contributions from Cisco, Puppet Labs and the open source community.
 
-The Cisco Network Elements and Operating Systems managed by this Puppet Module are continuously expanding. See [Cisco Resource Platform Support](#cisco-resource-platform-support) for a list of currently supported hardware and software.
+The Cisco Network Elements and Operating Systems managed by this Puppet Module are continuously expanding. See [Resource Platform Support Matrix](#resource-platform-support-matrix) for a list of currently supported hardware and software.
 
-This GitHub repository contains the latest version of the ciscopuppet module source code. Supported versions of the ciscopuppet module are available at Puppet Forge. Please refer to [SUPPORT.md](SUPPORT.md) for additional details.
+This GitHub repository contains the latest version of the ciscopuppet module source code. Supported versions of the ciscopuppet module are available at Puppet Forge. Please refer to [SUPPORT.md](https://github.com/cisco/cisco-network-puppet-module/blob/master/SUPPORT.md) for additional details.
 
 ##### Dependencies
 
@@ -25,7 +25,7 @@ The `ciscopuppet` module has a dependency on the [`cisco_node_utils`](https://ru
 
 ##### Contributing
 
-Contributions to the `ciscopuppet` module are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+Contributions to the `ciscopuppet` module are welcome. See [CONTRIBUTING.md](https://github.com/cisco/cisco-network-puppet-module/blob/master/CONTRIBUTING.md) for guidelines.
 
 ## <a href='setup'>Setup</a>
 
@@ -95,15 +95,15 @@ Once installed, the GEM will remain persistent across system reloads within the 
 
 ## <a href='example-manifests'>Example Manifests</a>
 
-Example manifests for all `ciscopuppet` providers can be found in the demo files in the [examples/cisco](https://github.com/cisco/cisco-network-puppet-module/tree/develop/examples/cisco) directory.
+Example manifests for all `ciscopuppet` providers can be found in the demo files in the [examples/cisco](https://github.com/cisco/cisco-network-puppet-module/tree/master/examples/cisco) directory.
 
 ##### OSPF Example Manifest
 
 The following example demonstrates how to define a manifest that uses `ciscopuppet` to configure OSPF on a Cisco Nexus switch. Three resource types are used to define an OSPF instance, basic OSPF router settings, and OSPF interface settings:
 
-* [`cisco_ospf`](https://github.com/cisco/cisco-network-puppet-module/tree/develop#type-cisco_ospf)
-* [`cisco_ospf_vrf`](https://github.com/cisco/cisco-network-puppet-module/tree/develop#type-cisco_ospf_vrf)
-* [`cisco_interface_ospf`](https://github.com/cisco/cisco-network-puppet-module/tree/develop#type-cisco_interface_ospf)
+* [`cisco_ospf`](https://github.com/cisco/cisco-network-puppet-module/tree/master#type-cisco_ospf)
+* [`cisco_ospf_vrf`](https://github.com/cisco/cisco-network-puppet-module/tree/master#type-cisco_ospf_vrf)
+* [`cisco_interface_ospf`](https://github.com/cisco/cisco-network-puppet-module/tree/master#type-cisco_interface_ospf)
 
 The first manifest type should define the router instance using `cisco_ospf`. The title '`Sample`' becomes the router instance name.
 
@@ -4084,17 +4084,17 @@ User       | [README.md][USER-0] : (This document)<br>[README-agent-install.md][
 Developer  | [CONTRIBUTING.md][DEV-1] : Contribution guidelines<br>[README-develop-types-providers.md][DEV-2] : Developing new ciscopuppet Types & Providers<br>[README-develop-beaker-scripts.md][DEV-3] : Developing new beaker test scripts for ciscopuppet
 Maintainer | [README-maintainers.md][MAINT-1] : Guidelines for core maintainers of the ciscopuppet project<br>*(Developer guides apply to Maintainers as well)*
 
-[USER-0]: https://github.com/cisco/cisco-network-puppet-module/blob/develop/README.md
-[USER-1]: https://github.com/cisco/cisco-network-puppet-module/blob/develop/docs/README-agent-install.md
-[USER-2]: https://github.com/cisco/cisco-network-puppet-module/blob/develop/docs/README-beaker-agent-install.md
-[USER-3]: https://github.com/cisco/cisco-network-puppet-module/blob/develop/docs/README-package-provider.md
-[USER-4]: https://github.com/cisco/cisco-network-puppet-module/blob/develop/examples/README.md
+[USER-0]: https://github.com/cisco/cisco-network-puppet-module/blob/master/README.md
+[USER-1]: https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-agent-install.md
+[USER-2]: https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-beaker-agent-install.md
+[USER-3]: https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-package-provider.md
+[USER-4]: https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/README.md
 
-[DEV-1]: https://github.com/cisco/cisco-network-puppet-module/blob/develop/CONTRIBUTING.md
-[DEV-2]: https://github.com/cisco/cisco-network-puppet-module/blob/develop/docs/README-develop-types-providers.md
-[DEV-3]: https://github.com/cisco/cisco-network-puppet-module/blob/develop/docs/README-develop-beaker-scripts.md
+[DEV-1]: https://github.com/cisco/cisco-network-puppet-module/blob/master/CONTRIBUTING.md
+[DEV-2]: https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-develop-types-providers.md
+[DEV-3]: https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-develop-beaker-scripts.md
 
-[MAINT-1]: https://github.com/cisco/cisco-network-puppet-module/blob/develop/docs/README-maintainers.md
+[MAINT-1]: https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-maintainers.md
 
 ##### General Documentation
 
