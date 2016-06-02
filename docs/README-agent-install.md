@@ -384,7 +384,7 @@ cp examples/install.pp  manifests/
 
 **Example**
 
-~~~
+~~~puppet
 node 'default' {
   include ciscopuppet::install
 }
@@ -399,7 +399,7 @@ The preceding configuration will cause the next `puppet agent` run to automatica
 
 **Example**
 
-~~~
+~~~puppet
 node default
   class {'ciscopuppet::install':
     repo  => 'http://gemserver.domain.com:8808',
