@@ -17,7 +17,7 @@ The ciscopuppet module allows a network administrator to manage Cisco Network El
 
 The Cisco Network Elements and Operating Systems managed by this Puppet Module are continuously expanding. See [Resource Platform Support Matrix](#resource-platform-support-matrix) for a list of currently supported hardware and software.
 
-This GitHub repository contains the latest version of the ciscopuppet module source code. Supported versions of the ciscopuppet module are available at Puppet Forge. Please refer to [SUPPORT.md](https://github.com/cisco/cisco-network-puppet-module/blob/master/SUPPORT.md) for additional details.
+This GitHub repository contains the latest version of the ciscopuppet module source code. Supported versions of the ciscopuppet module are available at Puppet Forge. Please refer to [SUPPORT.md][MAINT-2] for additional details.
 
 ##### Dependencies
 
@@ -25,7 +25,7 @@ The `ciscopuppet` module has a dependency on the [`cisco_node_utils`](https://ru
 
 ##### Contributing
 
-Contributions to the `ciscopuppet` module are welcome. See [CONTRIBUTING.md](https://github.com/cisco/cisco-network-puppet-module/blob/master/CONTRIBUTING.md) for guidelines.
+Contributions to the `ciscopuppet` module are welcome. See [CONTRIBUTING.md][DEV-1] for guidelines.
 
 ## <a href='setup'>Setup</a>
 
@@ -45,7 +45,7 @@ PuppetLabs provides NetDev resource support for Cisco Nexus devices with their [
 
 #### Puppet Agent
 
-The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md](docs/README-agent-install.md) document for detailed instructions on agent installation and configuration on Cisco Nexus devices.
+The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md][USER-1] document for detailed instructions on agent installation and configuration on Cisco Nexus devices.
 
 ##### The `cisco_node_utils` Ruby Gem
 
@@ -416,7 +416,7 @@ Symbol | Meaning | Description
 | [cisco_tacacs_server_host](#type-cisco_tacacs_server_host) | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
 | [cisco_vdc](#type-cisco_vdc)                               | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
 | [cisco_vlan](#type-cisco_vlan)                             | ✅* | ✅* | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_vlan-caveats) |
-| [cisco_vpc_domain](#type-cisco_vpc_domain)                 | ✅* | ✅* | ✅* | ✅* | ✅* | ❌	| \*[caveats](#cisco_vpc_domain-caveats) |
+| [cisco_vpc_domain](#type-cisco_vpc_domain)                 | ✅* | ✅* | ✅* | ✅* | ✅* | :heavy_minus_sign: | \*[caveats](#cisco_vpc_domain-caveats) |
 | [cisco_vrf](#type-cisco_vrf)                               | ✅  | ✅* | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_vrf-caveats) |
 | [cisco_vrf_af](#type-cisco_vrf_af)                         | ✅  | ✅* | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_vrf_af-caveats) |
 | [cisco_vtp](#type-cisco_vtp)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
@@ -4096,6 +4096,7 @@ Maintainer | [README-maintainers.md][MAINT-1] : Guidelines for core maintainers 
 [DEV-3]: https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-develop-beaker-scripts.md
 
 [MAINT-1]: https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-maintainers.md
+[MAINT-2]: https://github.com/cisco/cisco-network-puppet-module/blob/master/SUPPORT.md
 
 ##### General Documentation
 
