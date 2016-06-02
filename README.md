@@ -41,7 +41,7 @@ For more information on Puppet module installation see [Puppet Labs: Installing 
 
 ##### The `puppetlabs-netdev_stdlib` module
 
-PuppetLabs provides basic configuration resources with their [`puppetlabs-netdev-stdlib`](https://forge.puppet.com/puppetlabs/netdev_stdlib) module. Installing the `ciscopuppet` module automatically installs both the `ciscopuppet` and `netdev_stdlib` modules.
+PuppetLabs provides NetDev resource support for Cisco Nexus devices with their [`puppetlabs-netdev-stdlib`](https://forge.puppet.com/puppetlabs/netdev_stdlib) module. Installing the `ciscopuppet` module automatically installs both the `ciscopuppet` and `netdev_stdlib` modules.
 
 #### Puppet Agent
 
@@ -64,10 +64,10 @@ cp examples/install.pp  manifests/
 
 **Example**
 
-~~~
-node default
+~~~puppet
+node 'default' {
   include ciscopuppet::install
-end
+}
 ~~~
 
 The preceding configuration will cause the next `puppet agent` run to automatically download the current `cisco_node_utils` gem from <https://rubygems.org/gems/cisco_node_utils> and install it on the node.
@@ -79,19 +79,20 @@ The preceding configuration will cause the next `puppet agent` run to automatica
 
 **Example**
 
-~~~
-node default
-  include ciscopuppet::install
+~~~puppet
+node 'default' {
   class {'ciscopuppet::install':
     repo  => 'http://gemserver.domain.com:8808',
     proxy => 'http://proxy.domain.com:8080',
   }
-end
+}
 ~~~
 
 ##### Gem Persistence
 
 Once installed, the GEM will remain persistent across system reloads within the Guestshell or OAC environments; however, the bash-shell environment does not share this persistent behavior, in which case the `ciscopuppet::install` helper class automatically downloads and re-installs the gem after each system reload.
+
+See [General Documentation](#general-documentation) for information on Guestshell and OAC.
 
 ## <a href='example-manifests'>Example Manifests</a>
 
@@ -4101,11 +4102,20 @@ Maintainer | [README-maintainers.md][MAINT-1] : Guidelines for core maintainers 
 Topic | Resources |
 :---------|:--|
 Puppet    | <https://learn.puppetlabs.com/><br><https://en.wikipedia.org/wiki/Puppet_(software)>
+Guestshell | [N9k Programmability Guide][GS_9K]
 Markdown<br>(*editor*) | <https://help.github.com/articles/markdown-basics/>
+N5k,N6k OAC<br>(open agent container) | [N5k,N6k Programmability Guide][OAC_5K_DOC]
+N7k OAC<br>(open agent container)     | [N7k Programmability Guide][OAC_7K_DOC]
 Ruby      | <https://en.wikipedia.org/wiki/Ruby_(programming_language)><br><https://www.codecademy.com/tracks/ruby><br><https://rubymonk.com/><br><https://www.codeschool.com/paths/ruby>
 Ruby Gems | <http://guides.rubygems.org/><br><https://en.wikipedia.org/wiki/RubyGems>
 YAML      | <https://en.wikipedia.org/wiki/YAML><br><http://www.yaml.org/start.html>
 Yum       | <https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified><br><https://www.centos.org/docs/5/html/yum/><br><http://www.linuxcommand.org/man_pages>
+
+[GS_9K]: http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/6-x/programmability/guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_chapter_01010.html
+
+[OAC_5K_DOC]: http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus5000/sw/programmability/guide/b_Cisco_Nexus_5K6K_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_5K6K_Series_NX-OS_Programmability_Guide_chapter_01001.html
+
+[OAC_7K_DOC]: http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus7000/sw/programmability/guide/b_Cisco_Nexus_7000_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_7000_Series_NX-OS_Programmability_Guide_chapter_01001.html
 
 ## License
 
