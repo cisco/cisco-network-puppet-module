@@ -5,7 +5,7 @@
 
 1. [Overview](#overview)
 1. [Pre-Install Tasks](#pre-install-tasks)
-1. Agent Environments(#agent-environments)
+1. [Agent Environments](#env-bs)
   * [bash-shell](#env-bs)
   * [guestshell](#env-gs)
   * [open agent container (OAC)](#env-oac)
@@ -62,14 +62,14 @@ NX-OS Environment | Supported Platforms | |
 `guestshell` | N3k, N8k, N9k | This is a secure Linux container environment running CentOS. It is enabled by default in most platforms that support it. |
 `open agent`<br>`container (OAC)` | N5k, N6k, N7k | This is a 32-bit CentOS-based container created specifically for running Puppet Agent software. |
 
-* *OAC containers are created for specific platforms and must be downloaded from [cisco.com](http://cisco.com). The OAC must be installed before the Puppet Agent can be installed.*
+* *OAC containers are created for specific platforms and must be downloaded from Cisco (see [OAC Download](#env-oac)). The OAC must be installed before the Puppet Agent can be installed.*
 
 * *Running Puppet Agent from multiple environments simultaneously is not supported*
 
 
 #### *Step 3. Network Connectivity*
 
-* Ensure that connectivity exists between the agent node and the Puppet Server. Note that connectivity via the management interface is in a separate VRF context which requires some additional configuration.
+* Ensure that IP reachability exists between the agent node and the Puppet Server. Note that connectivity via the management interface is in a separate VRF context which requires some additional configuration.
 * Configure NTP to ensure that the agent node time is in sync with the Puppet Server.
 
 _Note: The management interface exists in a separate VRF context and requires additional configuration as shown._
@@ -90,8 +90,6 @@ config term
   ntp server 10.0.0.201 use-vrf management
 end
 ~~~
-
-## <a name="agent-environments">Agent Environments</a>
 
 ## <a name="env-bs">Agent Environment Setup: bash-shell</a>
 
@@ -130,9 +128,9 @@ _A Note on Persistence_: The current NX-OS bash-shell implementation does not au
 
 This section is only required when running Puppet from the `guestshell`.
 
-#### *Step 1. Allocate Resources and Enable the guestshell*
+#### *Step 1. Enable the guestshell*
 
-The `guestshell` container environment is enabled by default on most platforms; however, the default disk and memory resources allotted to guestshell are typically too small to support Puppet agent requirements. The resource limits may be increased with the NX-OS CLI `guestshell resize` commands as shown.
+The `guestshell` container environment is enabled by default on most platforms; however, the default disk and memory resources allotted to guestshell are typically too small to support Puppet agent requirements. The resource limits may be increased with the NX-OS CLI `guestshell resize` commands as shown below.
 
 Resource| Recommended|
 :--|:--:|
@@ -154,41 +152,45 @@ Virtual service guestshell+ detail
 ~~~
 
 <p>
-`guestshell resize rootfs` will resize the guestshell filesystem, `guestshell resize memory` resizes memory limits. The resize commands do not take effect until after the guestshell container is (re)started by the `guestshell reboot` or `guestshell enable` commands.
+`guestshell resize rootfs` sets disk size limits while `guestshell resize memory` sets memory limits. The resize commands do not take effect until after the guestshell container is (re)started by `guestshell reboot` or `guestshell enable`.
 
-**Example.** Guestshell is currently enabled. Resize the limits to 400MB disk and 300MB memory.
+**Example.** Allocate resources for guestshell by setting new limits to 400MB disk and 300MB memory.
 
 ~~~
 n3k# guestshell resize rootfs 400
-
 n3k# guestshell resize memory 300
 
 n3k# guestshell reboot
 Are you sure you want to reboot the guest shell? (y/n) [n] y
 ~~~
 
-
 #### *Step 2. Set Up Guestshell Network*
 
-The `guestshell` is an independent CentOS container that does not inherit settings from NX-OS; thus it requires additional network configuration.
+The `guestshell` is an independent CentOS container that does not inherit settings from NX-OS.
 
-* Enter the guestshell environment using the `guestshell` command
-* Use `sudo` to become root. *Optional: Use `chvrf` to specify a vrf namespace; e.g. `sudo chvrf management`*
-* Set up the hostname
-* Add DNS config
-
-**Example:** Guestshell network setup
+* Use `guestshell` enter the guestshell environment, then become root.
+* *Optional:* Use `chvrf` to specify a vrf namespace; e.g. `sudo chvrf management`
 
 ~~~bash
 n3k#  guestshell
 
 [guestshell@guestshell ~]$ sudo su -          # Optional: sudo chvrf management
 [root@guestshell guestshell]#
+~~~
 
+#### *Optional: Set up hostname*
+
+This step is only needed if `certname` will not be specified in `puppet.conf`.
+
+~~~bash
 [root@guestshell guestshell]#  hostname n3k
 
 [root@guestshell guestshell]#  echo 'n3k' > /etc/hostname
+~~~
 
+#### *Optional: Add DNS configuration*
+
+~~~bash
 [root@guestshell guestshell]#  cat >> /etc/resolv.conf << EOF
 nameserver 10.0.0.202
 domain mycompany.com
@@ -217,8 +219,10 @@ n7k# dir bootflash:
 
 #### *Step 2. Install and Activate the OAC*
 
-* Display container resources with `show virtual-service global`.
-  * The OAC will require **400 MB** of disk space on bootflash. Remove unnecessary files if insufficient space is available.
+##### Check Resources
+
+Display container resources with `show virtual-service global`.<br>
+The OAC will require **400 MB** of disk space on bootflash. Remove unnecessary files if insufficient space is available.
 
 ~~~
 n7k#  show virtual-service global
@@ -230,9 +234,10 @@ system CPU (%)                  6            0            6
 memory (MB)                  2304            0         2304
 bootflash (MB)                600            0          600
 ~~~
-<br>
 
-* Install the OAC with `virtual-service install`
+##### Installation
+
+Install the OAC using the `virtual-service install` exec command.
 
 ~~~
 n7k#  virtual-service install name oac package bootflash:oac.1.0.0.ova
@@ -245,9 +250,10 @@ Use 'show virtual-service list' for progress.
 n7k# show virtual-service list
 oac                     Installed          oac.1.0.0.ova
 ~~~
-<br>
 
-* Activate the `virtual-service`
+##### Activation
+
+Activate the `virtual-service` using configuration mode.
 
 ~~~
 n7k#  config t
@@ -261,38 +267,40 @@ Use 'show virtual-service list' for progress.
 n7k# show virtual-service list
 oac                     Activated          oac.1.0.0.ova
 ~~~
-<br>
 
-#### *Step 3. Set Up OAC Network*
+#### *Step 3. Set Up the OAC Network*
 
-The OAC is an independent CentOS container that does not inherit settings from NX-OS; thus it requires additional network configuration.
+The OAC is an independent CentOS container that does not inherit settings from NX-OS.
 
-* Enter the OAC environment using `virtual-service connect`. *The OAC default userid / password is `root / oac`. You are required to change the password on initial login.*
-* *Optional: Use `chvrf` to specify a vrf namespace; e.g. `sudo chvrf management`*
-* Set up the hostname
-* Add DNS config
+* Use `virtual-service connect` to enter the OAC environment. *The OAC default userid / password is `root / oac`. You are required to change the password on initial login.*
 
-**Example:** OAC network setup
+* *Optional:* Use `chvrf` to specify a vrf namespace; e.g. `chvrf management`
 
 ~~~
 n7k#  virtual-service connect name oac console
 Connecting to virtual-service.  Exit using ^c^c^c
-
-CentOS release 6.7 (Final)
-Kernel 2.6.99.99 on an x86_64
 
 localhost login: root
 Password: oac
 You are required to change your password immediately (root enforced)
 Changing password for root.
 [root@localhost ~]#
-
 [root@localhost ~]#  chvrf management
+~~~
 
-[root@localhost ~]#  hostname n7k
+#### *Optional: Set up hostname*
 
-[root@n7k ~]#  echo 'n7k' > /etc/hostname
+This step is only needed if `certname` will not be specified in `puppet.conf`.
 
+~~~bash
+[root@guestshell guestshell]#  hostname n3k
+
+[root@guestshell guestshell]#  echo 'n3k' > /etc/hostname
+~~~
+
+#### *Optional: Add DNS configuration*
+
+~~~bash
 [root@n7k ~]#  cat >> /etc/resolv.conf << EOF
 nameserver 10.0.0.202
 domain mycompany.com
@@ -350,10 +358,12 @@ export PATH=/opt/puppetlabs/puppet/bin:/opt/puppetlabs/puppet/lib:$PATH
 #### *Step 2. Configure* `/etc/puppetlabs/puppet/puppet.conf`
 
 Add your Puppet Server name to the configuration file.
+*Optional:* Use `certname` to specify the agent node's ID. This is only needed if `hostname` has not been set.
 
 ~~~bash
 [main]
-  server = mypuppetmaster.mycompany.com
+  server   = mypuppetmaster.mycompany.com
+  certname = this_node.mycompany.com
 ~~~
 <br>
 
@@ -375,9 +385,9 @@ cp examples/install.pp  manifests/
 **Example**
 
 ~~~
-node default
+node 'default' {
   include ciscopuppet::install
-end
+}
 ~~~
 
 The preceding configuration will cause the next `puppet agent` run to automatically download the current `cisco_node_utils` gem from <https://rubygems.org/gems/cisco_node_utils> and install it on the node.
@@ -391,7 +401,6 @@ The preceding configuration will cause the next `puppet agent` run to automatica
 
 ~~~
 node default
-  include ciscopuppet::install
   class {'ciscopuppet::install':
     repo  => 'http://gemserver.domain.com:8808',
     proxy => 'http://proxy.domain.com:8080',
@@ -411,6 +420,8 @@ gem install cisco_node_utils
 <br>
 
 #### *Step 4. Run Puppet Agent*
+
+Executing the `puppet agent` command (with no arguments) will start the puppet agent process with the default runinterval of 30 minutes. Use the `-t` option to run puppet agent in test mode, which runs the agent a single time and stops.
 
 ~~~bash
 puppet agent -t
@@ -438,7 +449,7 @@ It may be desirable to set up automatic restart of the Puppet agent in the event
 
 * [Service Management in bash-shell using init.d](#svc-mgmt-bs)
 * [Service Management in guestshell using systemd](#svc-mgmt-gs)
-* The open agent container (OAC) does not support agent persistence
+* The open agent container (OAC) does not officially support agent persistence.
 <br>
 
 #### <a name="svc-mgmt-bs">Service Management in bash-shell using init.d</a>
