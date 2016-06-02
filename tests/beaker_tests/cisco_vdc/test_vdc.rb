@@ -27,7 +27,6 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 tests = {
   agent:            agent,
   master:           master,
-  mod_type:         'f3',
   operating_system: 'nexus',
   platform:         'n7k',
   resource_name:    'cisco_vdc',
@@ -41,17 +40,24 @@ tests[:non_default] = {
   # This property does not have a meaningful default state because the module
   # types depend on which linecards are installed. Simply set the list to
   # a single common mod type and ensure that is the only type shown.
-  manifest_props: { limit_resource_module_type: tests[:mod_type] },
+  manifest_props: { limit_resource_module_type: 'f3' },
 }
 
-def current_module_type
-  cmd = PUPPET_BINPATH + 'resource cisco_vdc'
-  # sample output:
-  #   limit_resource_module_type => 'f3'
-  out = on(agent, cmd, pty: true).stdout[/limit_resource_module_type => '(.*)'/]
-  type = out.nil? ? '' : Regexp.last_match[1]
-  logger.info("\nCurrent module type: '#{type}'\n")
-  type
+def test_harness_dependencies(_tests, id)
+  return unless id == :non_default
+
+  # Set module-type to default value
+  limit_resource_module_type_set(default_vdc_name, nil)
+end
+
+def teardown_vdc
+  logger.info("\n* Teardown VDC")
+
+  # Testbeds without F3 cards should be set back to their default state;
+  # failure to do so will leave the testbed without usable interfaces.
+  # Assume that F3 testbeds should be left with module-type set to F3.
+  limit_resource_module_type_set(default_vdc_name, nil) unless
+    mt_full_interface
 end
 
 #################################################################
@@ -60,19 +66,9 @@ end
 test_name "TestCase :: #{tests[:resource_name]}" do
   skip_unless_supported(tests)
 
-  # initial setup
-  orig_type = current_module_type
-  if orig_type == tests[:mod_type]
-    logger.info("\nReset module type to default\n")
-    limit_resource_module_type_set(default_vdc_name, nil, true)
-  end
-
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Non Default Property Testing")
   test_harness_run(tests, :non_default)
-
-  # Restore original testbed settings
-  logger.info("\nRestore module type to '#{orig_type}'\n")
-  limit_resource_module_type_set(default_vdc_name, orig_type)
+  teardown_vdc
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
