@@ -142,7 +142,7 @@ A note about support for specific platform models:
 | [cisco_bfd_global](#type-cisco_bfd_global)                 | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_bfd_global-caveats) |
 | [cisco_bgp](#type-cisco_bgp)                               | ✅  | ✅  | ✅* | ✅* | ✅* | \*[caveats](#cisco_bgp-caveats) |
 | [cisco_bgp_af](#type-cisco_bgp_af)                         | ✅* | ✅* | ✅  | ✅* | ✅  | \*[caveats](#cisco_bgp_af-caveats) |
-| [cisco_bgp_neighbor](#type-cisco_bgp_neighbor)             | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_bgp_neighbor](#type-cisco_bgp_neighbor)             | ✅  | ✅  | ✅* | ✅* | ✅  |\*[caveats](#cisco_bgp_neighbor-caveats) 
 | [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af)       | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [cisco_bridge_domain](#type-cisco_bridge_domain)           | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
 | [cisco_bridge_domain_vni](#type-cisco_bridge_domain_vni)   | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
@@ -1321,12 +1321,14 @@ Manages configuration of a BGP Neighbor.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| N8k      | 7.3(0)F1(1)        | 1.3.2                  |
 
 #### <a name="cisco_bgp_neighbor-caveats">Caveats</a>
 
 | Property | Caveat Description |
 |:--------|:-------------|
 | `log_neighbor_changes` | Not supported on N5k, N6k, N7k |
+| `bfd` | Not supported on N5k, N6k for IPv6 peers (support added in ciscopuppet 1.4.0) |
 
 #### Parameters
 
@@ -1346,6 +1348,9 @@ Neighbor Identifier. Required. Valid values are string. Neighbors may use IPv4 o
 
 ##### `description`
 Description of the neighbor. Valid value is string.
+
+##### `bfd`
+Configure whether or not to enable bidirectional forwarding detection. Valid values are true, false and keyword 'default'.
 
 ##### `connected_check`
 Configure whether or not to check for directly connected peer. Valid values are true and false.

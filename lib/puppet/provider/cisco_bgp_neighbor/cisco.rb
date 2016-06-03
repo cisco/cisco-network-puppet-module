@@ -50,6 +50,7 @@ Puppet::Type.type(:cisco_bgp_neighbor).provide(:cisco) do
     :update_source,
   ]
   BGP_NBR_BOOL_PROPS = [
+    :bfd,
     :connected_check,
     :capability_negotiation,
     :dynamic_capability,
