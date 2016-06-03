@@ -55,6 +55,9 @@ Puppet::Type.type(:snmp_notification).provide(:cisco) do
   end
 
   def flush
+    if @snmpnotification.nil?
+      @snmpnotification = Cisco::SnmpNotification.new(@resource[:name])
+    end
     enable = @resource[:enable] == :true ? true : false
     @snmpnotification.enable = enable if @resource[:enable]
   end

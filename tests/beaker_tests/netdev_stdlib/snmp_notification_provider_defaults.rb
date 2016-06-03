@@ -66,7 +66,7 @@ test_name "TestCase :: #{testheader}" do
     logger.info('Setup switch for provider')
 
     # Make sure radius server is not configured before test starts.
-    on(master, SnmpNotificationLib.create_absent)
+    on(master, SnmpNotificationLib.create_absent(operating_system))
 
     # Expected exit_code is 0,2 since server may or may not be configured.
     cmd_str = PUPPET_BINPATH + 'agent -t'
@@ -75,7 +75,7 @@ test_name "TestCase :: #{testheader}" do
 
   step 'TestStep :: Setup switch for provider test' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, SnmpNotificationLib.create_defaults)
+    on(master, SnmpNotificationLib.create_defaults(operating_system))
 
     # Expected exit_code is 0 since this is a puppet agent cmd with no change.
     # Or expected exit_code is 2 since this is a puppet agent cmd with change.
@@ -89,11 +89,16 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check snmp_notification resource absent on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = PUPPET_BINPATH + "resource snmp_notification 'aaa server-state-change'"
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               { 'enable' => 'false' },
-                               false, self, logger)
+    if operating_system == 'ios_xr'
+      cmd_str = PUPPET_BINPATH + "resource snmp_notification 'ntp'"
+      on(agent, cmd_str, acceptable_exit_codes: [0, 2])
+    else
+      cmd_str = PUPPET_BINPATH + "resource snmp_notification 'aaa server-state-change'"
+      on(agent, cmd_str) do
+        search_pattern_in_output(stdout,
+                                 { 'enable' => 'false' },
+                                 false, self, logger)
+      end
     end
 
     logger.info("Check snmp_notification resource absent on agent :: #{result}")
@@ -102,7 +107,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource present manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, SnmpNotificationLib.create_non_defaults)
+    on(master, SnmpNotificationLib.create_non_defaults(operating_system))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = PUPPET_BINPATH + 'agent -t'
@@ -115,7 +120,11 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check snmp_notification resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = PUPPET_BINPATH + "resource snmp_notification 'aaa server-state-change'"
+    if operating_system == 'ios_xr'
+      cmd_str = PUPPET_BINPATH + "resource snmp_notification 'ntp'"
+    else
+      cmd_str = PUPPET_BINPATH + "resource snmp_notification 'aaa server-state-change'"
+    end
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'enable' => 'true' },
