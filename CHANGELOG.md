@@ -9,7 +9,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `cisco_bfd_global` type and provider.
 
 ### Added
-- Extended `cisco_bgp_neighbor` to include bfd support
+- Extend cisco_bgp_neighbor with attributes:
+ - `bfd`
 
 ### Removed
 
