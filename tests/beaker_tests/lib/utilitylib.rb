@@ -921,6 +921,17 @@ def vdc_allocate_interface_set(vdc, intf)
   on(agent, cmd, pty: true)
 end
 
+# VDC post-test cleanup
+def teardown_vdc
+  logger.info("\n* Teardown VDC")
+
+  # Testbeds without F3 cards should be set back to their default state;
+  # failure to do so will leave the testbed without usable interfaces.
+  # Assume that F3 testbeds should be left with module-type set to F3.
+  limit_resource_module_type_set(default_vdc_name, nil) unless
+    mt_full_interface
+end
+
 # Facter command builder helper method
 def facter_cmd(cmd)
   FACTER_BINPATH + cmd

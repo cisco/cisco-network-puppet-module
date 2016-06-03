@@ -32,6 +32,9 @@ tests = {
   resource_name:    'cisco_vdc',
 }
 
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
+
 # Test hash test cases
 tests[:non_default] = {
   desc:           '1.1 non default properties',
@@ -50,22 +53,10 @@ def test_harness_dependencies(_tests, id)
   limit_resource_module_type_set(default_vdc_name, nil)
 end
 
-def teardown_vdc
-  logger.info("\n* Teardown VDC")
-
-  # Testbeds without F3 cards should be set back to their default state;
-  # failure to do so will leave the testbed without usable interfaces.
-  # Assume that F3 testbeds should be left with module-type set to F3.
-  limit_resource_module_type_set(default_vdc_name, nil) unless
-    mt_full_interface
-end
-
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  skip_unless_supported(tests)
-
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Non Default Property Testing")
   test_harness_run(tests, :non_default)
