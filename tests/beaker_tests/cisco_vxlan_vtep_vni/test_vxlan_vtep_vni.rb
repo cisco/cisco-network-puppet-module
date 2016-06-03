@@ -398,7 +398,7 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:desc] = '2.6 Multicast Group'
   test_harness_cisco_vxlan_vtep_vni(tests, id)
 
-  # TBD - The following tests will generate the following error.
+  # TBD - The suppress_arp tests will generate the following error.
   #  ERROR: Please configure TCAM region... Configuring the TCAM region
   # requires a switch reboot.  These tests will remain commented out
   # until we can design a solution.
@@ -411,13 +411,13 @@ test_name "TestCase :: #{testheader}" do
   # tests[id][:desc] = '2.8 Suppress ARP'
   # test_harness_cisco_vxlan_vtep_vni(tests, id)
 
-  # id = 'suppress_uuc_true'
-  # tests[id][:desc] = '2.9 Suppress Unknown Unicast'
-  # test_harness_cisco_vxlan_vtep_vni(tests, id)
-  #
-  # id = 'suppress_uuc_false'
-  # tests[id][:desc] = '2.10 Suppress Unknown Unicast'
-  # test_harness_cisco_vxlan_vtep_vni(tests, id)
+  id = 'suppress_uuc_true'
+  tests[id][:desc] = '2.9 Suppress Unknown Unicast'
+  test_harness_cisco_vxlan_vtep_vni(tests, id)
+
+  id = 'suppress_uuc_false'
+  tests[id][:desc] = '2.10 Suppress Unknown Unicast'
+  test_harness_cisco_vxlan_vtep_vni(tests, id)
 
   resource_absent_cleanup(agent, 'cisco_vxlan_vtep_vni',
                           'Setup switch for cisco_vxlan_vtep_vni provider test')
