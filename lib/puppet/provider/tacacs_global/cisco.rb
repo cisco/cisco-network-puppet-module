@@ -27,6 +27,8 @@ Puppet::Type.type(:tacacs_global).provide(:cisco) do
   # The following properties are only valid when 'enable' is set to true
   ENABLED_ONLY_PROPS = [:timeout, :key, :key_format]
 
+  UNSUPPORTED_PROPS = [:enable] if Facter.value('operatingsystem').eql?('ios_xr')
+
   def initialize(value={})
     super(value)
     @tacacs_global = Cisco::TacacsServer.new(false)
@@ -41,9 +43,12 @@ Puppet::Type.type(:tacacs_global).provide(:cisco) do
 
     current_state = {}
     current_state[:name] = name
-    current_state[:enable] = Cisco::TacacsServer.enabled ? :true : :false
 
-    if current_state[:enable].eql?(:true)
+    unless Facter.value('operatingsystem').eql?('ios_xr')
+      current_state[:enable] = Cisco::TacacsServer.enabled ? :true : :false
+    end
+
+    if current_state[:enable].eql?(:true) || Facter.value('operatingsystem').eql?('ios_xr')
       current_state[:timeout] = v.timeout
       current_state[:key] = v.encryption_password
       current_state[:key_format] = v.encryption_type
@@ -84,6 +89,12 @@ Puppet::Type.type(:tacacs_global).provide(:cisco) do
   def validate
     fail ArgumentError,
          "This provider only supports a namevar of 'default'" unless @resource[:name].to_s == 'default'
+
+    unsupported = []
+    UNSUPPORTED_PROPS.each do |prop|
+      unsupported << prop if @resource [prop]
+    end
+    fail ArgumentError, "This provider does not support the following properties: #{unsupported}" unless unsupported.empty?
 
     fail ArgumentError,
          "This provider does not support the 'retransmit_count' property." if @resource[:retransmit_count]
