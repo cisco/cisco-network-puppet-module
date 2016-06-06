@@ -29,14 +29,29 @@ class ciscopuppet::netdev::demo_snmp {
     acl    => 'testcomacl',
   }
 
+  $password = $operatingsystem ? {
+    'nexus' => '0x7e5030ffd26d7e1b366a9041e9c63c94',
+    default => '0307530A080824414B'
+  }
+
+  $private_key = $operatingsystem ? {
+    'nexus' => '0xcc012f26b3384d4b3da979bff48b4ffe',
+    default => '12491D42475E5A'
+  }
+
+  $localized_key = $operatingsystem ? {
+    'ios_xr' => undef,
+    default  => true
+  }
+
   snmp_user { 'test_snmp_user':
     ensure          => present,
     roles           => ['network-operator'],
     auth            => 'md5',
-    password        => '0x7e5030ffd26d7e1b366a9041e9c63c94',
+    password        => $password,
     privacy         => 'aes128',
-    private_key     => '0xcc012f26b3384d4b3da979bff48b4ffe',
-    localized_key   => true,
+    private_key     => $private_key,
+    localized_key   => $localized_key,
   }
 
   snmp_notification { 'vtp vlandelete':
