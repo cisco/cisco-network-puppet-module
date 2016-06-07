@@ -2265,8 +2265,7 @@ Manages configuration of ITD (Intelligent Traffic Director) service.
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| Entire <br> feature <br> | For this feature to work, CLI commands need to be executed <br> via command_config prior to invoking the manifest. They are <br> 'feature pbr' <br> 'feature sla sender' <br> 'feature sla responder' <br> 'ip sla responder' |
- 
+| `Entire` <br> `provider` <br> | For this provider to work, CLI commands need to be executed <br> via command_config prior to invoking the manifest. They are <br> 'feature pbr' <br> 'feature sla sender' <br> 'feature sla responder' <br> 'ip sla responder' |
 | `nat_destination` | Supported only on N7k |
 | `peer_local`      | Supported only on N9k |
 | `peer_vdc`        | Supported only on N7k |
