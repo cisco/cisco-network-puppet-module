@@ -2265,16 +2265,16 @@ Manages configuration of ITD (Intelligent Traffic Director) service.
 
 | Property | Caveat Description |
 |:--------|:-------------|
-|  | This provider requires the following commands to be applied as prerequisites using the cisco_command_config provider.
+|  | This provider requires the following commands to be applied as prerequisites <br> using the cisco_command_config provider.<br>
 
-  cisco_command_config { 'prerequisites':
-    command => "
-      feature pbr
-      feature sla sender
-      feature sla responder
-      ip sla responder
-    "
-  } |
+  cisco_command_config { 'prerequisites':<br>
+    command => "<br>
+      feature pbr<br>
+      feature sla sender<br>
+      feature sla responder<br>
+      ip sla responder<br>
+    "<br>
+  }<br> |
 | `nat_destination` | Supported only on N7k |
 | `peer_local`      | Supported only on N9k |
 | `peer_vdc`        | Supported only on N7k |
