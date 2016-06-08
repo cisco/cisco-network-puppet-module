@@ -65,9 +65,13 @@ def dns_clean(agent)
 
   # These resources currently do not support ensure=absent; they can use
   # resource_titles above if they're ever updated.
-  on(agent, get_vshell_cmd('show run | i domain-list|name-server'))
-  stdout.scan(/ip domain-list \S+|ip name-server .*/).each do |cli|
-    command_config(agent, "no #{cli}", "removing #{cli}")
+  if operating_system == 'ios_xr'
+    command_config(agent, 'no domain name', 'unsetting domain name')
+  else
+    on(agent, get_vshell_cmd('show run | i domain-list|name-server'))
+    stdout.scan(/ip domain-list \S+|ip name-server .*/).each do |cli|
+      command_config(agent, "no #{cli}", "removing #{cli}")
+    end
   end
 end
 
@@ -103,21 +107,6 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check search_domain resource presence on agent :: #{result}")
   end
 
-  # @step [Step] Checks search_domain instance on agent using switch show cli
-  # cmds.
-  step 'TestStep :: Check search_domain instance presence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config all')
-
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, [/domain-name test\.xyz/],
-                               false, self, logger)
-    end
-
-    logger.info("Check search_domain instance presence on agent :: #{result}")
-  end
-
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource absent manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
@@ -141,21 +130,6 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Check search_domain resource absence on agent :: #{result}")
-  end
-
-  # @step [Step] Checks search_domain instance on agent using switch show cli
-  # cmds.
-  step 'TestStep :: Check search_domain instance absence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config all')
-
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, [/domain-name test\.xyz/],
-                               true, self, logger)
-    end
-
-    logger.info("Check search_domain instance absence on agent :: #{result}")
   end
 
   step 'TestStep :: Testbed post-test cleanup' do
