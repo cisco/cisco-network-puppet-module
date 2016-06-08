@@ -64,4 +64,24 @@ class ciscopuppet::cisco::demo_ospf {
     timer_throttle_spf_max   => '5700',
     timer_throttle_spf_start => '277',
   }
+
+  cisco_ospf_area { 'dark_blue default 1.1.1.1':
+    ensure          => 'present',
+    authentication  => 'md5',
+    default_cost    => 1000,
+    filter_list_in  => 'fin',
+    filter_list_out => 'fout',
+    range           => [['10.3.0.0/16', true, '23'], ['10.3.3.0/24', false, '450']],
+    stub            => 'no_summary',
+  }
+
+  cisco_ospf_area { 'dark_blue vrf1 2.2.2.2':
+    ensure          => 'present',
+    authentication  => 'clear_text',
+    default_cost    => 5555,
+    filter_list_in  => 'fin',
+    filter_list_out => 'fout',
+    range           => [['10.3.0.0/16', false, '4989'], ['10.3.1.1/32', false, false]],
+    stub            => 'summary',
+  }
 }
