@@ -66,22 +66,26 @@ class ciscopuppet::cisco::demo_ospf {
   }
 
   cisco_ospf_area { 'dark_blue default 1.1.1.1':
+    require         => Cisco_ospf_vrf['dark_blue default'],
     ensure          => 'present',
     authentication  => 'md5',
     default_cost    => 1000,
     filter_list_in  => 'fin',
     filter_list_out => 'fout',
     range           => [['10.3.0.0/16', 'not_advertise', '23'], ['10.3.3.0/24', '450']],
-    stub            => 'no_summary',
+    stub            => true,
+    stub_no_summary => true,
   }
 
   cisco_ospf_area { 'dark_blue vrf1 2.2.2.2':
+    require         => Cisco_ospf_vrf['dark_blue vrf1'],
     ensure          => 'present',
     authentication  => 'clear_text',
     default_cost    => 5555,
     filter_list_in  => 'fin',
     filter_list_out => 'fout',
     range           => [['10.3.0.0/16', '4989'], ['10.3.1.1/32']],
-    stub            => 'summary',
+    stub            => true,
+    stub_no_summary => false,
   }
 }

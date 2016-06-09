@@ -36,7 +36,8 @@ Puppet::Type.newtype(:cisco_ospf_area) do
       filter_list_out => 'fout',
       range           => [['10.3.0.0/16', true, '23'],
                           ['10.3.3.0/24', false, '450']],
-      stub            => 'no_summary',
+      stub            => true,
+      stub_no_summary => true,
     }
   "
 
@@ -150,8 +151,22 @@ Puppet::Type.newtype(:cisco_ospf_area) do
   end # property range
 
   newproperty(:stub) do
-    desc 'Enable authentication for the area.'
+    desc 'Configure the area as a stub.'
 
-    newvalues(:summary, :no_summary, :default)
+    newvalues(:true, :false, :default)
   end # property stub
+
+  newproperty(:stub_no_summary) do
+    desc 'Prevent Area Border Router (ABR) from sending
+          summary LSAs into stub area'
+
+    newvalues(:true, :false, :default)
+  end # property stub_no_summary
+
+  validate do
+    # stub cannot be false when stub_no_summary is true
+    fail ArgumentError,
+         'stub MUST be true when stub_no_summary is true' if
+      self[:stub_no_summary] == :true && self[:stub] != :true
+  end
 end

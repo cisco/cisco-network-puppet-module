@@ -31,24 +31,29 @@ Puppet::Type.type(:cisco_ospf_area).provide(:cisco) do
 
   mk_resource_methods
 
-  OSPF_AREA_GLOBAL_NON_BOOL_PROPS = [
+  OSPF_AREA_NON_BOOL_PROPS = [
     :authentication,
     :default_cost,
     :filter_list_in,
     :filter_list_out,
-    :stub,
   ]
-  OSPF_AREA_GLOBAL_ARRAY_FLAT_PROPS = [
+  OSPF_AREA_BOOL_PROPS = [
+    :stub,
+    :stub_no_summary,
+  ]
+  OSPF_AREA_ARRAY_FLAT_PROPS = [
     :range
   ]
 
-  OSPF_AREA_GLOBAL_ALL_PROPS = OSPF_AREA_GLOBAL_NON_BOOL_PROPS +
-                               OSPF_AREA_GLOBAL_ARRAY_FLAT_PROPS
+  OSPF_AREA_ALL_PROPS = OSPF_AREA_NON_BOOL_PROPS + OSPF_AREA_BOOL_PROPS +
+                        OSPF_AREA_ARRAY_FLAT_PROPS
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@nu',
-                                            OSPF_AREA_GLOBAL_NON_BOOL_PROPS)
+                                            OSPF_AREA_NON_BOOL_PROPS)
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@nu',
+                                            OSPF_AREA_BOOL_PROPS)
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:array_flat, self, '@nu',
-                                            OSPF_AREA_GLOBAL_ARRAY_FLAT_PROPS)
+                                            OSPF_AREA_ARRAY_FLAT_PROPS)
 
   def initialize(value={})
     super(value)
@@ -70,10 +75,18 @@ Puppet::Type.type(:cisco_ospf_area).provide(:cisco) do
       ensure: :present,
     }
     # Call node_utils getter for each property
-    OSPF_AREA_GLOBAL_NON_BOOL_PROPS.each do |prop|
+    OSPF_AREA_NON_BOOL_PROPS.each do |prop|
       current_state[prop] = nu_obj.send(prop)
     end
-    OSPF_AREA_GLOBAL_ARRAY_FLAT_PROPS.each do |prop|
+    OSPF_AREA_BOOL_PROPS.each do |prop|
+      val = nu_obj.send(prop)
+      if val.nil?
+        current_state[prop] = nil
+      else
+        current_state[prop] = val ? :true : :false
+      end
+    end
+    OSPF_AREA_ARRAY_FLAT_PROPS.each do |prop|
       current_state[prop] = nu_obj.send(prop)
     end
     # nested array properties
@@ -122,7 +135,7 @@ Puppet::Type.type(:cisco_ospf_area).provide(:cisco) do
   end
 
   def properties_set(new_area=false)
-    OSPF_AREA_GLOBAL_ALL_PROPS.each do |prop|
+    OSPF_AREA_ALL_PROPS.each do |prop|
       next unless @resource[prop]
       send("#{prop}=", @resource[prop]) if new_area
       unless @property_flush[prop].nil?
