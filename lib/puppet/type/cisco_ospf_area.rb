@@ -69,7 +69,7 @@ Puppet::Type.newtype(:cisco_ospf_area) do
   # which is no longer valid or complete.
   # Would not have failed, but just return nothing useful.
   def name
-    "#{self[:ospf]} #{self[:vrf]}"
+    "#{self[:ospf]} #{self[:vrf]} #{self[:area]}"
   end
 
   newparam(:name) do
@@ -77,8 +77,12 @@ Puppet::Type.newtype(:cisco_ospf_area) do
   end
 
   newparam(:area, namevar: true) do
-    desc "Name of the resource instance. Valid values are ipv4 address
-          string."
+    desc 'Name of the resource instance. Valid values are string.'
+    munge do |value|
+      value = IPAddr.new(value.to_i, Socket::AF_INET) unless
+        value[/\./]
+      value
+    end
   end # param area
 
   newparam(:vrf, namevar: true) do

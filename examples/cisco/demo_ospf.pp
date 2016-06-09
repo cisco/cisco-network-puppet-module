@@ -77,7 +77,7 @@ class ciscopuppet::cisco::demo_ospf {
     stub_no_summary => true,
   }
 
-  cisco_ospf_area { 'dark_blue vrf1 2.2.2.2':
+  cisco_ospf_area { 'dark_blue vrf1 1450':
     require         => Cisco_ospf_vrf['dark_blue vrf1'],
     ensure          => 'present',
     authentication  => 'clear_text',
