@@ -81,7 +81,7 @@ Puppet::Type.type(:cisco_ospf_area).provide(:cisco) do
     new(current_state)
   end # self.properties_get
 
-  def self.instances # TODO, not sure if this is correct
+  def self.instances
     area_instances = []
     Cisco::RouterOspfArea.areas.each do |ospf, vrf|
       vrf.each do |name, areas|
