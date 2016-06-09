@@ -800,6 +800,48 @@ def setup_fabricpath_env(tests, testcase)
 end
 # rubocop:enable Metrics/AbcSize
 
+# Given a configuration command (or array of commands), search the device
+# and remove any configs that match. Optionally include a show command filter.
+#
+# Example:
+#  config_find_remove(agent, 'interface loopback42')
+#  config_find_remove(agent, ['interface loopback42', 'feature foo'])
+#  config_find_remove(agent, ['feature foo', 'feature bar'], 'incl ^feature')
+#
+def config_find_remove(agent, find=[], filter='incl .*')
+  find = [find] if find.is_a?(String)
+  remove = []
+  current = test_get(agent, filter)
+
+  find.each do |cfg|
+    remove << "no #{cfg}" if current.match(Regexp.new("^#{cfg}"))
+  end
+  return if remove.empty?
+
+  # Clean up all configs with one call
+  logger.info(' * Remove existing config')
+  test_set(agent, remove.join(' ; '))
+end
+
+# Get raw configuration from the device using command_config's test_get.
+# test_get does a 'show runn' but requires a filter.
+# Example:
+#  test_get(agent, 'incl ^vlan')
+def test_get(agent, filter)
+  cmd_prefix = PUPPET_BINPATH + "resource cisco_command_config 'cc' "
+  on(agent, cmd_prefix + "test_get='#{filter}'")
+  stdout
+end
+
+# Add arbitrary configurations using command_config's test_set property.
+# Example:
+#  test_set(agent, 'no feature foo ; no feature bar')
+def test_set(agent, cmd)
+  logger.info(cmd)
+  cmd_prefix = PUPPET_BINPATH + "resource cisco_command_config 'cc' "
+  on(agent, cmd_prefix + "test_set='#{cmd}'")
+end
+
 # Helper for command_config calls
 def command_config(agent, cmd, msg='')
   logger.info("\n#{msg}")
@@ -1240,6 +1282,9 @@ def remove_interface(agent, intf)
 end
 
 def remove_all_vlans(agent, stepinfo='Remove all vlans & bridge-domains')
+  # TBD: Modify this cleanup to use faster test_get / test_set:
+  #  test_get('i ^vlan|^bridge')
+  #  test_set('no vlan <range> ; no bridge <range> ; system bridge-domain none')
   step "\n--------\n * TestStep :: #{stepinfo}" do
     resource_absent_cleanup(agent, 'cisco_bridge_domain', 'bridge domains')
     cmd = 'system bridge-domain none'
