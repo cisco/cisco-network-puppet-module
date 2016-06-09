@@ -61,7 +61,7 @@ Puppet::Type.type(:cisco_ospf_area).provide(:cisco) do
     vrf = @property_hash[:vrf]
     area = @property_hash[:area]
     @nu = Cisco::RouterOspfArea.areas[ospf][vrf][area] unless
-      ospf.nil? || vrf.nil?
+      ospf.nil? || vrf.nil? || area.nil?
     @property_flush = {}
   end
 
