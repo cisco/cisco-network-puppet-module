@@ -21,67 +21,94 @@
 #  - A description of the 'tests' hash and its usage
 #
 ###############################################################################
-require File.expand_path('../../lib/utilitylib.rb', __FILE__)
+#
+# 'test_interface_vlan_mapping' tests vlan-mapping interface properties.
+#
+#        ****************************************
+#        ** IMPORTANT ADDITIONAL PREREQUISITES **
+#        ****************************************
+#
+# The vlan_mapping properties are "Multi-Tenancy Full" properties which
+# currently have limited platform and linecard support. This test script will
+# look for these requirements and fail if they are not present:
+#
+#  - VDC support
+#  - F3 linecard
+#
+# This test will need to be updated as the product matures.
+#
+###############################################################################
+require File.expand_path('../interfacelib.rb', __FILE__)
 
-# Test hash top-level keys
 tests = {
   agent:            agent,
   master:           master,
   operating_system: 'nexus',
   platform:         'n7k',
-  resource_name:    'cisco_encapsulation',
+  resource_name:    'cisco_interface',
+  intf_type:        'ethernet',
+  bridge_domain:    '100',
+  switchport_mode:  'trunk',
+  # On N7k, feature vni requires solely F3 cards in the vdc
+  vdc_limit_module: 'f3',
 }
 
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
 skip_unless_supported(tests)
 
+# Assign a test interface.
+if platform[/n7k/]
+  setup_mt_full_env(tests, self)
+  # Use test interface discovered by setup_mt_full_env().
+  intf = tests[:intf]
+else
+  intf = find_interface(tests)
+end
+
 # Test hash test cases
 tests[:default] = {
   desc:           '1.1 Default Properties',
+  title_pattern:  intf,
+  # :preclean_intf not needed since setup_mt_full_env will clean intf
+  code:           [0],
   manifest_props: {
-    dot1q_map: 'default'
+    vlan_mapping_enable: 'default',
+    vlan_mapping:        'default',
   },
-  resource:       {},
+  resource:       {
+    vlan_mapping_enable: 'true',
+    # 'vlan_mapping' is nil when default
+  },
 }
 
-mapping = Array['100-151,200-250', '5100-5150,6000,5151-5201']
+vlan_maps = Array[%w(20 21), %w(30 31)]
 tests[:non_default] = {
-  desc:           '2.1 Non Default Properties change dot1q mapping',
-  title_pattern:  'cisco',
+  desc:           '2.1 Non Default Properties',
+  title_pattern:  intf,
   manifest_props: {
-    dot1q_map: mapping
+    vlan_mapping_enable: 'false',
+    vlan_mapping:        vlan_maps,
+  },
+  resource:       {
+    vlan_mapping_enable: 'false',
+    vlan_mapping:        "#{vlan_maps}",
   },
 }
-
-# TEST PRE-REQUISITES
-#   - F3 linecard assigned to admin vdc
-def dependency_manifest(*)
-  "
-    cisco_vdc { '#{default_vdc_name}':
-      ensure                     => present,
-      limit_resource_module_type => 'f3',
-    }
-  "
-end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  # -------------------------------------------------------------------
+  # -----------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  id = :default
-  test_harness_run(tests, id)
-
-  tests[id][:ensure] = :absent
-  tests[id].delete(:preclean)
-  test_harness_run(tests, id)
+  test_harness_run(tests, :default)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   test_harness_run(tests, :non_default)
 
   # -------------------------------------------------------------------
-  resource_absent_cleanup(agent, 'cisco_encapsulation')
+  interface_cleanup(agent, intf)
 end
+
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

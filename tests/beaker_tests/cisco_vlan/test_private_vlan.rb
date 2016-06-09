@@ -21,47 +21,75 @@
 #  - A description of the 'tests' hash and its usage
 #
 ###############################################################################
+#
+# 'test_private_vlan' tests *VLAN* related private_vlan properties.
+#
+# (See 'test_interface_private_vlan' for interface-related private-vlan tests)
+#
+###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 # Test hash top-level keys
 tests = {
   agent:            agent,
   master:           master,
+  resource_name:    'cisco_vlan',
   operating_system: 'nexus',
-  platform:         'n7k',
-  resource_name:    'cisco_encapsulation',
+  platform:         'n(3|5|6|7|9)k',
 }
 
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
 skip_unless_supported(tests)
 
-# Test hash test cases
-tests[:default] = {
-  desc:           '1.1 Default Properties',
+tests[:primary] = {
+  desc:           '1.1 Primary',
+  title_pattern:  '100',
+  preclean:       'cisco_vlan',
   manifest_props: {
-    dot1q_map: 'default'
+    pvlan_type:        'primary',
+    pvlan_association: '101, 102, 98-99, 105',
   },
-  resource:       {},
-}
-
-mapping = Array['100-151,200-250', '5100-5150,6000,5151-5201']
-tests[:non_default] = {
-  desc:           '2.1 Non Default Properties change dot1q mapping',
-  title_pattern:  'cisco',
-  manifest_props: {
-    dot1q_map: mapping
+  resource:       {
+    pvlan_type:        'primary',
+    pvlan_association: "['98-99', '101-102', '105']",
   },
 }
 
-# TEST PRE-REQUISITES
-#   - F3 linecard assigned to admin vdc
-def dependency_manifest(*)
-  "
-    cisco_vdc { '#{default_vdc_name}':
-      ensure                     => present,
-      limit_resource_module_type => 'f3',
-    }
-  "
+tests[:community] = {
+  desc:           '1.2 Community',
+  title_pattern:  '100',
+  manifest_props: {
+    pvlan_type: 'community'
+  },
+}
+
+tests[:isolated] = {
+  desc:           '1.3 Isolated',
+  title_pattern:  '100',
+  manifest_props: {
+    pvlan_type: 'isolated'
+  },
+}
+
+# This method overrides the method in utilitylib.rb to set up dependencies
+# for interface tests.
+def test_harness_dependencies(*)
+  logger.info('  * Process test_harness_dependencies (test_private_vlan)')
+  remove_all_vlans(agent)
+end
+
+# Overridden to properly handle dependencies for this test file.
+def dependency_manifest(_tests, _id)
+  dep = ''
+  if platform[/n7k/]
+    dep = %(
+      cisco_vdc { '#{default_vdc_name}':
+        # Must be f3-only
+        limit_resource_module_type => 'f3',
+      })
+  end
+  logger.info("\n  * dependency_manifest\n#{dep}")
+  dep
 end
 
 #################################################################
@@ -69,19 +97,12 @@ end
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  id = :default
-  test_harness_run(tests, id)
+  logger.info("\n#{'-' * 60}\nSection 1. Property Testing")
+  test_harness_run(tests, :primary)
+  test_harness_run(tests, :community)
+  test_harness_run(tests, :isolated)
 
-  tests[id][:ensure] = :absent
-  tests[id].delete(:preclean)
-  test_harness_run(tests, id)
-
-  # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  test_harness_run(tests, :non_default)
-
-  # -------------------------------------------------------------------
-  resource_absent_cleanup(agent, 'cisco_encapsulation')
+  remove_all_vlans(agent)
 end
+
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

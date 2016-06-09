@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2016 Cisco and/or its affiliates.
+# Copyright (c) 2014-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,67 +21,97 @@
 #  - A description of the 'tests' hash and its usage
 #
 ###############################################################################
-require File.expand_path('../../lib/utilitylib.rb', __FILE__)
+#
+# 'test_interface_svi' primarily tests SVI interface properties.
+#
+###############################################################################
+require File.expand_path('../interfacelib.rb', __FILE__)
 
 # Test hash top-level keys
 tests = {
   agent:            agent,
   master:           master,
   operating_system: 'nexus',
-  platform:         'n7k',
-  resource_name:    'cisco_encapsulation',
+  resource_name:    'cisco_interface',
 }
 
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
 skip_unless_supported(tests)
 
+# Assign a test interface.
+intf = 'vlan13'
+
 # Test hash test cases
-tests[:default] = {
-  desc:           '1.1 Default Properties',
+tests[:default_mgmt] = {
+  desc:           "1.1 Default 'mgmt'",
+  title_pattern:  intf,
+  preclean_intf:  true,
   manifest_props: {
-    dot1q_map: 'default'
+    svi_management: 'default'
   },
-  resource:       {},
-}
-
-mapping = Array['100-151,200-250', '5100-5150,6000,5151-5201']
-tests[:non_default] = {
-  desc:           '2.1 Non Default Properties change dot1q mapping',
-  title_pattern:  'cisco',
-  manifest_props: {
-    dot1q_map: mapping
+  resource:       {
+    svi_management: 'false'
   },
 }
 
-# TEST PRE-REQUISITES
-#   - F3 linecard assigned to admin vdc
-def dependency_manifest(*)
-  "
-    cisco_vdc { '#{default_vdc_name}':
-      ensure                     => present,
-      limit_resource_module_type => 'f3',
-    }
-  "
-end
+tests[:non_default_mgmt] = {
+  desc:           "1.2 Non Default 'mgmt'",
+  title_pattern:  intf,
+  manifest_props: {
+    svi_management: 'true'
+  },
+}
+
+tests[:default_autostate] = {
+  platform:       'n(3|7|9)k',
+  desc:           "2.1 Default 'autostate'",
+  title_pattern:  intf,
+  preclean_intf:  true,
+  manifest_props: {
+    svi_autostate: 'default'
+  },
+  resource:       {
+    svi_autostate: 'true'
+  },
+}
+
+tests[:non_default_autostate] = {
+  platform:       'n(3|7|9)k',
+  desc:           "2.1 Non Default 'autostate'",
+  title_pattern:  intf,
+  preclean_intf:  true,
+  manifest_props: {
+    svi_autostate: 'false'
+  },
+}
+
+tests[:anycast] = {
+  desc:                '3.1 Anycast Gateway',
+  title_pattern:       intf,
+  platform:            'n9k',
+  anycast_gateway_mac: true,
+  manifest_props:      {
+    fabric_forwarding_anycast_gateway: 'true'
+  },
+}
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  id = :default
-  test_harness_run(tests, id)
+  logger.info("\n#{'-' * 60}\nSection 1. Property Testing")
+  test_harness_run(tests, :default_mgmt)
+  test_harness_run(tests, :non_default_mgmt)
 
-  tests[id][:ensure] = :absent
-  tests[id].delete(:preclean)
-  test_harness_run(tests, id)
+  test_harness_run(tests, :default_autostate)
+  test_harness_run(tests, :non_default_autostate)
 
-  # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  test_harness_run(tests, :non_default)
+  test_harness_run(tests, :anycast)
 
   # -------------------------------------------------------------------
-  resource_absent_cleanup(agent, 'cisco_encapsulation')
+  remove_interface(agent, intf)
+  skipped_tests_summary(tests)
 end
+
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

@@ -88,13 +88,19 @@ end
 # Overridden to properly handle dependencies for this test file.
 def dependency_manifest(_tests, _id)
   if operating_system == 'nexus'
-    ''
+    dep = ''
+    if platform[/n7k/]
+      dep = %(
+        cisco_vdc { '#{default_vdc_name}':
+          # Must be f3-only
+          limit_resource_module_type => 'f3',
+        })
+    end
   else
-    "cisco_command_config { 'interface_config':
-      command => '
-        interface Loopback100'
-    }"
+    dep = %( cisco_interface {'loopback100': ensure => 'present' } )
   end
+  logger.info("\n  * dependency_manifest\n#{dep}")
+  dep
 end
 
 #################################################################

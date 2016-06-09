@@ -19,6 +19,7 @@
 module PuppetX
   module Cisco
     # PuppetX::Cisco::AutoGen - automatically generate getter/setter methods
+    # rubocop:disable Metrics/ClassLength
     class AutoGen
       # "nu_name" refers to node_utils
       def self.mk_puppet_methods(mtype, klass, nu_name, props)
@@ -26,6 +27,10 @@ module PuppetX
         when :array_flat
           mk_puppet_getters_array_flat(klass, nu_name, props)
           mk_puppet_setters_array_flat(klass, nu_name, props)
+        when :array_nested
+          # The *nested* array getters are identical to flat array getters
+          mk_puppet_getters_array_flat(klass, nu_name, props)
+          mk_puppet_setters_array_nested(klass, nu_name, props)
         when :non_bool
           mk_puppet_getters_non_bool(klass, nu_name, props)
           mk_puppet_setters_non_bool(klass, nu_name, props)
@@ -87,6 +92,32 @@ module PuppetX
           end
         end
       end # mk_puppet_setters_array_flat
+
+      # Note: There is no mk_puppet_setters_array_nested() method
+
+      # Auto-generator for puppet nested array-based SETTER methods
+      # These properties expect a nested array but optionally support a string
+      # of space-separated values in the manifest.
+      def self.mk_puppet_setters_array_nested(klass, nu_name, props)
+        props.each do |prop|
+          klass.instance_eval do
+            # def foo_array_nested=(val)
+            #   fail '@property_flush not defined' if
+            #     @property_flush.nil?
+            #   val = @nu.default_foo_array_nested if
+            #     val[0] == :default                      (index 0)
+            #   @property_flush[:foo_array_nested] = val  (no flatten)
+            # end
+            define_method("#{prop}=") do |val|
+              fail '@property_flush not defined' if
+                instance_variable_get(:@property_flush).nil?
+              val = instance_variable_get(nu_name).send("default_#{prop}") if
+                val[0] == :default
+              @property_flush[prop] = val
+            end
+          end
+        end
+      end
 
       # Auto-generator for puppet non-boolean-based GETTER methods
       def self.mk_puppet_getters_non_bool(klass, nu_name, props)
