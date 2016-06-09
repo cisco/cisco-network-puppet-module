@@ -106,4 +106,37 @@ Puppet::Type.newtype(:cisco_command_config) do
       value.gsub!(/^(#{indent_level})/, '') # remove extra indentation
     end # validate
   end # property command
+
+  newproperty(:test_get) do
+    desc %(
+      This is a test-only property for beaker use. It allows beaker to retrieve
+      any configuration it needs from the device using puppet resource. Callers
+      must pass a filter string to test_get.
+      Example usage:
+        puppet resource cisco_command_config 'cc' test_get='incl feature'
+    )
+
+    def insync?(*)
+      # This is a "get-only" property so insync? is overridden to prevent
+      # puppet from displaying the following notice:
+      #   Notice: /Cisco_command_config[c]/test_get: test_get changed '' to ''
+      true
+    end
+  end
+
+  newproperty(:test_set) do
+    desc %(
+      This is a test-only property for beaker use. It allows beaker to set
+      simple raw configuration using puppet resource.
+      Example usage:
+       puppet resource cisco_command_config 'cc' test_set='no feature foo'
+    )
+
+    munge do |value|
+      value << "\n"
+      value.gsub!(/^\s*$\n/, '')
+      indent_level = value.match(/\A\s*/)
+      value.gsub!(/^(#{indent_level})/, '') # remove extra indentation
+    end
+  end
 end # Puppet::Type.newtype

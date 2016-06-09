@@ -222,6 +222,27 @@ tests['configure_loopback_interface'] = {
 # HELPER FUNCTIONS
 #################################################################
 
+def test_set_get
+  stepinfo = 'Test test_get/test_set properties'
+  logger.info("\n#{'-' * 60}\n#{stepinfo}")
+  cmd_prefix = PUPPET_BINPATH + "resource cisco_command_config 'cc' "
+
+  logger.info('* cleanup testbed')
+  on(agent, cmd_prefix + "test_set='no interface loopback42'")
+
+  logger.info('* create config')
+  on(agent, cmd_prefix + "test_set='interface loopback42'")
+
+  logger.info('* check config')
+  on(agent, cmd_prefix + "test_get='incl loopback42'")
+  fail_test("TestStep :: set/get :: FAIL\nstdout:\n#{stdout}") unless
+    stdout[/^interface loopback42/]
+
+  logger.info('* cleanup testbed')
+  on(agent, cmd_prefix + "test_set='no interface loopback42'")
+  logger.info("#{stepinfo} :: PASS\n#{'-' * 60}\n")
+end
+
 # Full command string for puppet resource command used to verify
 # the configuration applied by the cisco_command_config resource.
 def puppet_resource_cmd(tests, id)
@@ -290,6 +311,8 @@ test_name "TestCase :: #{testheader}" do
   id = 'configure_loopback_interface'
   tests[id][:desc] = '1.5 Apply INTERFACE Config'
   test_harness_cisco_command_config(tests, id)
+
+  test_set_get
 end
 
 logger.info('TestCase :: # {testheader} :: End')

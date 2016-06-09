@@ -85,4 +85,35 @@ Puppet::Type.type(:cisco_command_config).provide(:cisco) do
     info "Successfully updated:\n#{e.previous.join("\n")}" unless e.previous.empty?
     raise
   end # command=
+
+  def test_get
+    # This method is for beaker use only. It allows beaker to retrieve any
+    # configuration it needs from the device using puppet resource. Callers
+    # must pass a filter string to test_get.
+    # Example usage:
+    #  puppet resource cisco_command_config 'cc' test_get='incl feature'
+    cmd = 'show running-config all'
+    cmd << " | #{@resource[:test_get]}" if @resource[:test_get]
+
+    result = @node.get(command: cmd)
+    "\n" + result unless result.nil?
+  end
+
+  def test_get=(noop)
+    # This is a dummy setter to keep Puppet from raising an error.
+  end
+
+  def test_set
+    # This is a dummy getter to keep Puppet from raising an error.
+  end
+
+  def test_set=(cmds)
+    # This method is for beaker use only. It allows beaker to set simple raw
+    # configuration using puppet resource.
+    # Example usage:
+    #  puppet resource cisco_command_config 'cc' test_set='no feature foo'
+    return if cmds.empty?
+    output = @node.set(values: cmds)
+    debug "Output from node:\n#{output}" unless output.nil?
+  end
 end # Puppet::Type

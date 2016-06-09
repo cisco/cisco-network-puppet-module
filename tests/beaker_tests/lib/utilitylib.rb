@@ -810,7 +810,7 @@ end
 
 # Helper to set properties using the puppet resource command.
 def resource_set(agent, resource, msg='')
-  logger.info("\n#{msg}")
+  logger.info("\nresource_set: #{msg}")
   if resource.is_a?(Array)
     cmd =
       "resource %s '%s' %s='%s'" % resource # rubocop:disable Style/FormatString
