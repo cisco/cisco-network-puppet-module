@@ -2265,6 +2265,7 @@ Manages configuration of ITD (Intelligent Traffic Director) service.
 
 | Property | Caveat Description |
 |:--------|:-------------|
+|  | This provider requires the following commands to be applied as prerequisites using the [cisco_command_config](https://github.com/cisco/cisco-network-puppet-module/blob/master/README.md#type-cisco_command_config) provider.<br><br>&nbsp;&nbsp;cisco_command_config { 'prerequisites':<br>&nbsp;&nbsp;&nbsp;&nbsp;command => "<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;feature pbr<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;feature sla sender<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;feature sla responder<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ip sla responder<br>&nbsp;&nbsp;&nbsp;&nbsp;"<br>&nbsp;&nbsp;}|
 | `nat_destination` | Supported only on N7k |
 | `peer_local`      | Supported only on N9k |
 | `peer_vdc`        | Supported only on N7k |

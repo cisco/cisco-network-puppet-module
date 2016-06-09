@@ -5,6 +5,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [1.3.2] - 2016-05-12
 
 ### Added
+- Added support for `Nexus N8k`
+  - https://github.com/cisco/cisco-network-puppet-module/tree/release_1.3.2#resource-platform-support-matrix
+
 - Extended `cisco_bgp_af` to include l2vpn/evpn address-family support
 
 - Deprecated `cisco_interface` 'private-vlan' properties and replaced with new methods. The deprecated properties will be removed with release 2.0.0. The old -> new properties are:
