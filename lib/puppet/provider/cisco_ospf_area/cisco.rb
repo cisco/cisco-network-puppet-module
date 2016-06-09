@@ -55,13 +55,13 @@ Puppet::Type.type(:cisco_ospf_area).provide(:cisco) do
     ospf = @property_hash[:ospf]
     vrf = @property_hash[:vrf]
     area = @property_hash[:area]
-    @area = Cisco::RouterOspfArea.areas[ospf][vrf][area] unless
+    @nu = Cisco::RouterOspfArea.areas[ospf][vrf][area] unless
       ospf.nil? || vrf.nil?
     @property_flush = {}
   end
 
   def self.properties_get(ospf, vrf, area, nu_obj)
-    debug "Checking ospf instance, #{ospf} #{name} #{area}"
+    debug "Checking ospf instance, #{ospf} #{vrf} #{area}"
     current_state = {
       name:   "#{ospf} #{vrf} #{area}",
       ospf:   ospf,
@@ -83,9 +83,11 @@ Puppet::Type.type(:cisco_ospf_area).provide(:cisco) do
 
   def self.instances # TODO, not sure if this is correct
     area_instances = []
-    Cisco::RouterOspfArea.areas.each do |ospf, _vrf, areas|
-      areas.each do |name, vrf, area|
-        area_instances << properties_get(ospf, name, vrf, area)
+    Cisco::RouterOspfArea.areas.each do |ospf, vrf|
+      vrf.each do |name, areas|
+        areas.each do |area|
+          area_instances << properties_get(ospf, name, area[0], area[1])
+        end
       end
     end
     area_instances
@@ -119,7 +121,7 @@ Puppet::Type.type(:cisco_ospf_area).provide(:cisco) do
     name
   end
 
-  def properties_set
+  def properties_set(new_area=false)
     OSPF_AREA_GLOBAL_ALL_PROPS.each do |prop|
       next unless @resource[prop]
       send("#{prop}=", @resource[prop]) if new_area
@@ -130,17 +132,22 @@ Puppet::Type.type(:cisco_ospf_area).provide(:cisco) do
     end
   end
 
+  def range=(should_list)
+    should_list = @nu.default_range if should_list[0] == :default
+    @property_flush[:range] = should_list
+  end
+
   def flush
     if @property_flush[:ensure] == :absent
-      @area.destroy
-      @area = nil
+      @nu.destroy
+      @nu = nil
     else
       # Create/Update
       new_area = false
-      if @area.nil?
+      if @nu.nil?
         new_area = true
-        @area = Cisco::RouterOspfArea.new(@resource[:ospf], @resource[:vrf],
-                                          @resource[:area])
+        @nu = Cisco::RouterOspfArea.new(@resource[:ospf], @resource[:vrf],
+                                        @resource[:area])
       end
       properties_set(new_area)
     end

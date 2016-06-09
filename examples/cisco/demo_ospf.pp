@@ -71,7 +71,7 @@ class ciscopuppet::cisco::demo_ospf {
     default_cost    => 1000,
     filter_list_in  => 'fin',
     filter_list_out => 'fout',
-    range           => [['10.3.0.0/16', true, '23'], ['10.3.3.0/24', false, '450']],
+    range           => [['10.3.0.0/16', 'not_advertise', '23'], ['10.3.3.0/24', '450']],
     stub            => 'no_summary',
   }
 
@@ -81,7 +81,7 @@ class ciscopuppet::cisco::demo_ospf {
     default_cost    => 5555,
     filter_list_in  => 'fin',
     filter_list_out => 'fout',
-    range           => [['10.3.0.0/16', false, '4989'], ['10.3.1.1/32', false, false]],
+    range           => [['10.3.0.0/16', '4989'], ['10.3.1.1/32']],
     stub            => 'summary',
   }
 }
