@@ -1,4 +1,5 @@
 .bundle/
+coverage/
 junit/
 log/
 pkg/

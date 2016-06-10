@@ -111,16 +111,17 @@ class ciscopuppet::cisco::demo_bgp {
     default => undef
   }
 
-  cisco_bgp { '55.77 blue':
-    ensure                                 => present,
+  if platform_get() != 'n3k' {
+    cisco_bgp { '55.77 blue':
+      ensure               => present,
 
-    confederation_id                       => $confederation_id,
-    confederation_peers                    => $confederation_peers,
-    enforce_first_as                       => true,
-    log_neighbor_changes                   => true,
-    timer_bgp_keepalive                    => '60',
-    timer_bgp_holdtime                     => '120',
-    route_distinguisher                    => auto,
+      confederation_id     => $confederation_id,
+      confederation_peers  => $confederation_peers,
+      log_neighbor_changes => true,
+      timer_bgp_keepalive  => '60',
+      timer_bgp_holdtime   => '120',
+      route_distinguisher  => auto,
+    }
   }
 
   # --------------------------------------------------------------------------#
@@ -130,8 +131,8 @@ class ciscopuppet::cisco::demo_bgp {
   $ipv4_redistribute = [['eigrp 1', 'e_rtmap_29'], ['ospf 3',  'o_rtmap']]
   $ipv4_injectmap = [['nyc', 'sfo'], ['sjc', 'sfo', 'copy-attributes']]
 
-  $additional_paths_install = $operatingsystem ? {
-    'nexus' => true,
+  $additional_paths_install = platform_get() ? {
+    /(n5k|n6k|n7k)/ => true,
     default => undef
   }
   $dampen_igp_metric = $operatingsystem ? {
@@ -186,6 +187,29 @@ class ciscopuppet::cisco::demo_bgp {
 
     networks                      => $ipv4_networks,
     redistribute                  => $ipv4_redistribute,
+  }
+
+  if platform_get() != 'n3k' {
+    cisco_bgp_af { '55.77 default l2vpn evpn':
+      ensure                      => present,
+      #asn                           => 55.77,
+      #vrf                           => 'default',
+      #afi                           => 'l2vpn',
+      #safi                          => 'evpn',
+      # Properties
+
+      # dampening_routemap is mutually exclusive with
+      # dampening_half_time, reuse_time, suppress_time
+      # and max_suppress_time.
+      #
+      dampening_state             => true,
+      dampening_half_time         => 1,
+      dampening_reuse_time        => 2,
+      dampening_suppress_time     => 3,
+      dampening_max_suppress_time => 4,
+      #dampening_routemap            => default,
+      next_hop_route_map          => 'RouteMap',
+    }
   }
 
   # --------------------------------------------------------------------------#
@@ -361,8 +385,8 @@ class ciscopuppet::cisco::demo_bgp {
 
   if $operatingsystem == 'ios_xr' {
     cisco_bgp_neighbor { '55.77 default 1.1.1.1':
-      ensure                                 => present,
-      remote_as                              => 2,
+      ensure    => present,
+      remote_as => 2,
     }
   }
 
@@ -370,7 +394,8 @@ class ciscopuppet::cisco::demo_bgp {
     ensure                      => present,
 
     # Properties
-    allowas_in                  => 'default',
+    # allowas_in should be true if allowas_in_max is specified
+    allowas_in                  => true,
     allowas_in_max              => 5,
     default_originate_route_map => $default_originate_route_map,
     max_prefix_limit            => 100,
@@ -392,8 +417,11 @@ class ciscopuppet::cisco::demo_bgp {
   # Configure Neighbor-level Address Family IPv4 Unicast (non-default vrf)
   # --------------------------------------------------------------------------#
 
-  cisco_bgp_af { '55.77 default vpnv4 unicast':
-    ensure                                 => present,
+  # TBD: vpnv4 support will be added for I4 images
+  if platform_get() != 'n3k' {
+    cisco_bgp_af { '55.77 default vpnv4 unicast':
+      ensure                                 => present,
+    }
   }
   cisco_bgp_af { '55.77 blue ipv4 unicast':
     ensure                                 => present,
@@ -403,7 +431,8 @@ class ciscopuppet::cisco::demo_bgp {
     ensure                      => present,
 
     # Properties
-    allowas_in                  => 'default',
+    # allowas_in should be true if allowas_in_max is specified
+    allowas_in                  => true,
     allowas_in_max              => 5,
     default_originate_route_map => $default_originate_route_map,
     as_override                 => true,

@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2016 Cisco and/or its affiliates.
+# Copyright (c) 2014-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,48 +21,51 @@
 #  - A description of the 'tests' hash and its usage
 #
 ###############################################################################
-require File.expand_path('../../lib/utilitylib.rb', __FILE__)
+#
+# 'test_interface_bdi' primarily tests BDI interface properties.
+#
+###############################################################################
+require File.expand_path('../interfacelib.rb', __FILE__)
 
 # Test hash top-level keys
 tests = {
   agent:            agent,
   master:           master,
   operating_system: 'nexus',
-  platform:         'n7k',
-  resource_name:    'cisco_encapsulation',
+  platform:         'n(7)k',
+  resource_name:    'cisco_interface',
+  bridge_domain:    '100',
 }
 
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
 skip_unless_supported(tests)
 
+# Assign a test interface.
+intf = 'bdi100'
+
 # Test hash test cases
 tests[:default] = {
   desc:           '1.1 Default Properties',
+  title_pattern:  intf,
+  preclean_intf:  true,
   manifest_props: {
-    dot1q_map: 'default'
+    shutdown: 'default'
   },
-  resource:       {},
+  resource:       {
+    'shutdown' => 'true'
+  },
 }
 
-mapping = Array['100-151,200-250', '5100-5150,6000,5151-5201']
 tests[:non_default] = {
-  desc:           '2.1 Non Default Properties change dot1q mapping',
-  title_pattern:  'cisco',
+  desc:           '2.1 Non Default Properties',
+  title_pattern:  intf,
   manifest_props: {
-    dot1q_map: mapping
+    ipv4_address:        '10.10.10.1',
+    ipv4_netmask_length: '24',
+    shutdown:            'false',
+    vrf:                 'test1',
   },
 }
-
-# TEST PRE-REQUISITES
-#   - F3 linecard assigned to admin vdc
-def dependency_manifest(*)
-  "
-    cisco_vdc { '#{default_vdc_name}':
-      ensure                     => present,
-      limit_resource_module_type => 'f3',
-    }
-  "
-end
 
 #################################################################
 # TEST CASE EXECUTION
@@ -70,18 +73,15 @@ end
 test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  id = :default
-  test_harness_run(tests, id)
-
-  tests[id][:ensure] = :absent
-  tests[id].delete(:preclean)
-  test_harness_run(tests, id)
+  test_harness_run(tests, :default)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   test_harness_run(tests, :non_default)
 
   # -------------------------------------------------------------------
-  resource_absent_cleanup(agent, 'cisco_encapsulation')
+  remove_interface(agent, intf)
+  remove_all_vlans(agent)
 end
+
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

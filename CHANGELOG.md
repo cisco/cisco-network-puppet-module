@@ -2,6 +2,36 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.3.2] - 2016-05-12
+
+### Added
+- Added support for `Nexus N8k`
+  - https://github.com/cisco/cisco-network-puppet-module/tree/master#resource-platform-support-matrix
+
+- Extended `cisco_bgp_af` to include l2vpn/evpn address-family support
+
+- Deprecated `cisco_interface` 'private-vlan' properties and replaced with new methods. The deprecated properties will be removed with release 2.0.0. The old -> new properties are:
+
+| Old Name | New Name(s) |
+|:---|:---:|
+| `private_vlan_mapping`                          | `pvlan_mapping`
+| `switchport_mode_private_vlan_host`             | `switchport_pvlan_host`, `switchport_pvlan_promiscuous`,
+| `switchport_mode_private_vlan_host_association` | `switchport_pvlan_host_association`
+| `switchport_mode_private_vlan_host_promiscous`  | `switchport_pvlan_mapping`
+| `switchport_mode_private_vlan_trunk_promiscuous`| `switchport_pvlan_trunk_promiscuous`
+| `switchport_mode_private_vlan_trunk_secondary`  | `switchport_pvlan_trunk_secondary`
+| `switchport_private_vlan_association_trunk`     | `switchport_pvlan_trunk_association`
+| `switchport_private_vlan_mapping_trunk`         | `switchport_pvlan_mapping_trunk`
+| `switchport_private_vlan_trunk_allowed_vlan`    | `switchport_pvlan_trunk_allowed_vlan`
+| `switchport_private_vlan_trunk_native_vlan`     | `switchport_pvlan_trunk_native_vlan`
+
+- Deprecated `cisco_vlan` 'private-vlan' properties and replaced with new methods. The deprecated properties will be removed with release 2.0.0. The old -> new properties are:
+
+| Old Name | New Name |
+|:---|:---:|
+| `private_vlan_association` | `pvlan_association`
+| `private_vlan_type`        | `pvlan_type`
+
 ## [1.3.1] - 2016-05-06
 
 ### New feature support

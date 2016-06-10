@@ -32,6 +32,9 @@ tests = {
   resource_name:    'cisco_vxlan_vtep',
 }
 
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
+
 # Test hash test cases
 tests[:default] = {
   title_pattern:  'nve1',
@@ -76,12 +79,24 @@ def test_harness_dependencies(*)
   command_config(agent, cmd, cmd)
 end
 
+# Overridden to properly handle dependencies for this test file.
+def dependency_manifest(_tests, _id)
+  dep = ''
+  if platform[/n7k/]
+    dep = %(
+      cisco_vdc { '#{default_vdc_name}':
+        # Must be f3-only
+        limit_resource_module_type => 'f3',
+      })
+  end
+  logger.info("\n  * dependency_manifest\n#{dep}")
+  dep
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  skip_unless_supported(tests)
-
   # -----------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   id = :default
