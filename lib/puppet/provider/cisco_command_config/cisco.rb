@@ -95,16 +95,21 @@ Puppet::Type.type(:cisco_command_config).provide(:cisco) do
     cmd = 'show running-config all'
     cmd << " | #{@resource[:test_get]}" if @resource[:test_get]
 
-    result = @node.get(command: cmd)
-    "\n" + result unless result.nil?
+    output = @node.get(command: cmd)
+    debug "@node.get output:\n#{output}"
+    "\n" + output unless output.nil?
   end
 
   def test_get=(noop)
-    # This is a dummy setter to keep Puppet from raising an error.
+    # This is a dummy "setter" for test_get(), which is a get-only property.
+    # This dummy method is necessary to keep Puppet from raising an error or
+    # displaying noise.
   end
 
   def test_set
-    # This is a dummy getter to keep Puppet from raising an error.
+    # This is a dummy "getter" for test_set=(), which is a set-only property.
+    # This dummy method is necessary to keep Puppet from raising an error or
+    # displaying noise.
   end
 
   def test_set=(cmds)
@@ -114,6 +119,6 @@ Puppet::Type.type(:cisco_command_config).provide(:cisco) do
     #  puppet resource cisco_command_config 'cc' test_set='no feature foo'
     return if cmds.empty?
     output = @node.set(values: cmds)
-    debug "Output from node:\n#{output}" unless output.nil?
+    debug "@node.set output:\n#{output}" unless output.nil?
   end
 end # Puppet::Type
