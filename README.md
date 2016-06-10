@@ -1328,7 +1328,8 @@ Manages configuration of a BGP Neighbor.
 | Property | Caveat Description |
 |:--------|:-------------|
 | `log_neighbor_changes` | Not supported on N5k, N6k, N7k |
-| `bfd` | Not supported on N5k, N6k for IPv6 peers (support added in ciscopuppet 1.4.0) |
+| `bfd` | (ciscopuppet v1.4.0) BFD support added for all platforms |
+| `bfd` on IPv6 | Not supported on N5k, N6k |
 
 #### Parameters
 
@@ -1350,7 +1351,7 @@ Neighbor Identifier. Required. Valid values are string. Neighbors may use IPv4 o
 Description of the neighbor. Valid value is string.
 
 ##### `bfd`
-Configure whether or not to enable bidirectional forwarding detection. Valid values are true, false and keyword 'default'.
+Enable Bidirectional Forwarding Detection (BFD). Valid values are true, false and keyword 'default'.
 
 ##### `connected_check`
 Configure whether or not to check for directly connected peer. Valid values are true and false.

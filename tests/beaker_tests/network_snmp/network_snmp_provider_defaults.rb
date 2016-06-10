@@ -118,8 +118,13 @@ test_name "TestCase :: #{testheader}" do
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = PUPPET_BINPATH + 'resource network_snmp default'
     on(agent, cmd_str) do
-      search_pattern_in_output(stdout, { 'enable' => 'false' },
-                               false, self, logger)
+      if operating_system == 'ios_xr'
+        search_pattern_in_output(stdout, { 'enable' => 'true' },
+                                 false, self, logger)
+      else
+        search_pattern_in_output(stdout, { 'enable' => 'false' },
+                                 false, self, logger)
+      end
       search_pattern_in_output(stdout, { 'contact' => 'unset' },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'location' => 'unset' },
