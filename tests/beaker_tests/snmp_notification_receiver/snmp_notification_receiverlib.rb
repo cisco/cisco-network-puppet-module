@@ -44,8 +44,22 @@ module SnmpNotificationReceiverLib
   # where 'ensure' is set to present.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_snmp_notification_receiver_manifest_present_v3
-    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+  def self.create_snmp_notification_receiver_manifest_present_v3(type)
+    ios_xr_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+  snmp_notification_receiver { '2.3.4.5':
+    ensure           => 'present',
+    source_interface => 'gigabitethernet0/0/0/0',
+    port             => '47',
+    type             => 'traps',
+    username         => 'jj',
+    version          => 'v3',
+    vrf              => 'red',
+    security         => 'priv',
+  }
+}
+EOF"
+    nxos_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   snmp_notification_receiver { '2.3.4.5':
     ensure           => 'present',
@@ -59,19 +73,19 @@ node default {
   }
 }
 EOF"
-    manifest_str
+    type == 'ios_xr' ? ios_xr_str : nxos_str
   end
 
   # Method to create a manifest for snmp_notification_receiver resource attribute 'ensure'
   # where 'ensure' is set to present, and a few changes made from above.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_snmp_notification_receiver_manifest_present_change_v3
+  def self.create_snmp_notification_receiver_manifest_present_change_v3(interface)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   snmp_notification_receiver { '2.3.4.5':
     ensure           => 'present',
-    source_interface => 'ethernet1/4',
+    source_interface => '#{interface}',
     port             => '47',
     type             => 'traps',
     username         => 'ab',
@@ -88,12 +102,12 @@ EOF"
   # where 'ensure' is set to present, and a few changes made from above.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_snmp_notification_receiver_manifest_present_change_v3_2
+  def self.create_snmp_notification_receiver_manifest_present_change_v3_2(interface)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   snmp_notification_receiver { '2.3.4.5':
     ensure           => 'present',
-    source_interface => 'ethernet1/4',
+    source_interface => '#{interface}',
     port             => '47',
     type             => 'traps',
     username         => 'ab',
@@ -110,12 +124,12 @@ EOF"
   # where 'ensure' is set to present, and a few changes made from above.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_snmp_notification_receiver_manifest_present_change_v3_3
+  def self.create_snmp_notification_receiver_manifest_present_change_v3_3(interface)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   snmp_notification_receiver { '2.3.4.5':
     ensure           => 'present',
-    source_interface => 'ethernet1/4',
+    source_interface => '#{interface}',
     port             => '47',
     type             => 'informs',
     username         => 'ab',
@@ -132,12 +146,12 @@ EOF"
   # where 'ensure' is set to present, and a few changes made from above.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_snmp_notification_receiver_manifest_present_v2
+  def self.create_snmp_notification_receiver_manifest_present_v2(interface)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   snmp_notification_receiver { '2.3.4.5':
     ensure           => 'present',
-    source_interface => 'ethernet1/4',
+    source_interface => '#{interface}',
     port             => '47',
     type             => 'traps',
     username         => 'ab',
@@ -153,12 +167,12 @@ EOF"
   # where 'ensure' is set to present, and a few changes made from above.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_snmp_notification_receiver_manifest_present_change_v2
+  def self.create_snmp_notification_receiver_manifest_present_change_v2(interface)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   snmp_notification_receiver { '2.3.4.5':
     ensure           => 'present',
-    source_interface => 'ethernet1/4',
+    source_interface => '#{interface}',
     port             => '47',
     type             => 'informs',
     username         => 'ab',
@@ -174,12 +188,12 @@ EOF"
   # where 'ensure' is set to present, and a few changes made from above.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_snmp_notification_receiver_manifest_present_v1
+  def self.create_snmp_notification_receiver_manifest_present_v1(interface)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   snmp_notification_receiver { '2.3.4.5':
     ensure           => 'present',
-    source_interface => 'ethernet1/4',
+    source_interface => '#{interface}',
     port             => '47',
     type             => 'traps',
     username         => 'ab',
