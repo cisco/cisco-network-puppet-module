@@ -49,6 +49,9 @@ Puppet::Type.type(:tacacs).provide(:cisco) do
   end # self.get_properties
 
   def self.instances
+    fail ArgumentError,
+         'This provider is not supported on IOS XR' if Facter.value('operatingsystem').eql?('ios_xr')
+
     tacacs = []
     tacacs << get_properties('default')
     tacacs
@@ -64,6 +67,9 @@ Puppet::Type.type(:tacacs).provide(:cisco) do
   end # self.prefetch
 
   def validate
+    fail ArgumentError,
+         'This provider is not supported on IOS XR' if Facter.value('operatingsystem').eql?('ios_xr')
+
     fail ArgumentError,
          "This provider only supports a namevar of 'default'" unless @resource[:name].to_s == 'default'
   end

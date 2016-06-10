@@ -5,8 +5,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 ### New feature support
+#### Cisco Resources
+- `cisco_bfd_global` type and provider.
 
 ### Added
+- Extend cisco_bgp_neighbor with attributes:
+ - `bfd`
 
 ### Removed
 

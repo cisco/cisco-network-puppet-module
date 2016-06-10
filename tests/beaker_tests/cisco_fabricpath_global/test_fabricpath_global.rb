@@ -239,8 +239,11 @@ def test_harness_fabricpath_global(tests, id)
 end
 
 def testbed_cleanup(agent)
+  logger.info("\n* testbed cleanup")
+  cmds = ['feature nv overlay', 'feature-set fabricpath']
+  config_find_remove(agent, cmds, 'incl ^feature')
+
   remove_all_vlans(agent)
-  resource_absent_cleanup(agent, 'cisco_fabricpath_global')
 end
 
 #################################################################

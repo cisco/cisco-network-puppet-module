@@ -64,17 +64,13 @@ The `ciscopuppet` module must be installed on the Puppet Master server. Please s
 ### Puppet Agent
 The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md](docs/README-agent-install.md) document for detailed instructions on agent installation and configuration on Cisco Nexus devices.
 
-#### Artifacts
-
-As noted in the agent installation guide, these are the current RPM versions for use with ciscopuppet:
-* NX-OS:
-  * `bash-shell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm)
-  * `guestshell`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm)
-  * `open agent container (OAC)`: Use [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm)
-
 ### `cisco_node_utils` Ruby gem
 
-This module has dependencies on the [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) ruby gem. After installing the Puppet Agent software you will then need to install (and possibly configure) the gem on the agent device. See [README-gem-install.md](docs/README-gem-install.md) for detailed instructions.
+This module has dependencies on the [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) ruby gem. After installing the Puppet Agent software, use Puppet's built-in [`Package`](https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/install.pp#L17) provider to install the gem.
+
+A helper class [`ciscopuppet::install`](https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/demo_all_cisco.pp#L19) is provided in the examples subdirectory of this module.  Simply add an `include ciscopuppet::install` statement at the beginning of the manifest to install the latest `cisco_node_utils` gem from rubygems.org. Including the aforementioned class with [`additional parameters`](https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/demo_all_cisco.pp#L24) overrides the default rubygems.org repository with a custom repository.
+
+For Puppet Agents running within the GuestShell or OAC environment, the installed GEM remains persistent across system reloads, however, agents running in the NX-OS bash-shell environment will automatically download and reinstall the GEM after a system reload.
 
 ## Usage
 
@@ -143,9 +139,10 @@ A note about support for specific platform models:
 | [cisco_acl](#type-cisco_acl)                               | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [cisco_ace](#type-cisco_ace)                               | ✅  | ✅  | ✅* | ✅* | ✅* | \*[caveats](#cisco_ace-caveats) |
 | [cisco_command_config](#type-cisco_command_config)         | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_bfd_global](#type-cisco_bfd_global)                 | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_bfd_global-caveats) |
 | [cisco_bgp](#type-cisco_bgp)                               | ✅  | ✅  | ✅* | ✅* | ✅* | \*[caveats](#cisco_bgp-caveats) |
 | [cisco_bgp_af](#type-cisco_bgp_af)                         | ✅* | ✅* | ✅  | ✅* | ✅  | \*[caveats](#cisco_bgp_af-caveats) |
-| [cisco_bgp_neighbor](#type-cisco_bgp_neighbor)             | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_bgp_neighbor](#type-cisco_bgp_neighbor)             | ✅  | ✅  | ✅* | ✅* | ✅  |\*[caveats](#cisco_bgp_neighbor-caveats) 
 | [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af)       | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [cisco_bridge_domain](#type-cisco_bridge_domain)           | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
 | [cisco_bridge_domain_vni](#type-cisco_bridge_domain_vni)   | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
@@ -235,6 +232,9 @@ The following resources include cisco types and providers along with cisco provi
 * ACL Types
   * [`cisco_ace`](#type-cisco_ace)
   * [`cisco_acl`](#type-cisco_acl)
+
+* BFD Types
+  * [`cisco_bfd_global`](#type-cisco_bfd_global)
 
 * BGP Types
   * [`cisco_vrf`](#type-cisco_vrf)
@@ -358,6 +358,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_aaa_group_tacacs`](#type-cisco_aaa_group_tacacs)
 * [`cisco_acl`](#type-cisco_acl)
 * [`cisco_ace`](#type-cisco_ace)
+* [`cisco_bfd_global`](#type-cisco_bfd_global)
 * [`cisco_bgp`](#type-cisco_bgp)
 * [`cisco_bgp_af`](#type-cisco_bgp_af)
 * [`cisco_bgp_neighbor`](#type-cisco_bgp_neighbor)
@@ -887,6 +888,92 @@ Allows matching based on Time-To-Live (TTL) value. Valid values are type Integer
 | `ttl => '128'`
 
 --
+### Type: cisco_bfd_global
+
+Manages configuration of a BFD (Bidirectional Forwarding Detection) instance.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I3(1)        | 1.4.0                  |
+| N3k      | 7.0(3)I3(1)        | 1.4.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.4.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.4.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.4.0                  |
+| N8k      | 7.3(0)F1(1)        | 1.4.0                  |
+
+#### <a name="cisco_bfd_global-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `echo_rx_interval`      | Not supported on N5k, N6k      |
+| `fabricpath_interval`   | Not supported on N3k, N8k, N9k |
+| `fabricpath_slow_timer` | Not supported on N3k, N8k, N9k |
+| `fabricpath_vlan`       | Not supported on N3k, N8k, N9k |
+| `interval`              | Not supported on N8k, N9k      |
+| `ipv4_echo_rx_interval` | Not supported on N5k, N6k      |
+| `ipv4_interval`         | Not supported on N5k, N6k      |
+| `ipv4_slow_timer`       | Not supported on N5k, N6k      |
+| `ipv6_echo_rx_interval` | Not supported on N5k, N6k      |
+| `ipv6_interval`         | Not supported on N5k, N6k      |
+| `ipv6_slow_timer`       | Not supported on N5k, N6k      |
+| `startup_timer`         | Not supported on N5k, N6k, N7k |
+
+#### Parameters
+
+##### `ensure`
+Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
+
+##### `echo_interface`
+Loopback interface used for echo frames.  Valid values are String, and 'default'.
+
+##### `echo_rx_interval`
+Echo receive interval in milliseconds.  Valid values are integer, and 'default'.
+
+##### `fabricpath_interval`
+BFD fabricpath interval.  Valid values are an array of [fabricpath_interval, fabricpath_min_rx, fabricpath_multiplier] or 'default'.
+
+Example: `fabricpath_interval => [100, 120, 4]`
+
+##### `fabricpath_slow_timer`
+BFD fabricpath slow rate timer in milliseconds.  Valid values are integer, and 'default'.
+
+##### `fabricpath_vlan`
+BFD fabricpath control vlan.  Valid values are integer, and 'default'.
+
+##### `interval`
+BFD interval.  Valid values are an array of [interval, min_rx, multiplier] or 'default'.
+
+Example: `interval => [100, 120, 4]`
+
+##### `ipv4_echo_rx_interval`
+IPv4 session echo receive interval in milliseconds.  Valid values are integer, and 'default'.
+
+##### `ipv4_interval`
+BFD IPv4 session interval.  Valid values are an array of [ipv4_interval, ipv4_min_rx, ipv4_multiplier] or 'default'.
+
+Example: `ipv4_interval => [100, 120, 4]`
+
+##### `ipv4_slow_timer`
+BFD IPv4 session slow rate timer in milliseconds.  Valid values are integer, and 'default'.
+
+##### `ipv6_echo_rx_interval`
+IPv6 session echo receive interval in milliseconds.  Valid values are integer, and 'default'.
+
+##### `ipv6_interval`
+BFD IPv6 session interval.  Valid values are an array of [ipv6_interval, ipv6_min_rx, ipv6_multiplier] or 'default'.
+
+Example: `ipv6_interval => [100, 120, 4]`
+
+##### `ipv6_slow_timer`
+BFD IPv6 session slow rate timer in milliseconds.  Valid values are integer, and 'default'.
+
+##### `slow_timer`
+BFD slow rate timer in milliseconds.  Valid values are integer, and 'default'.
+
+##### `startup_timer`
+BFD delayed startup timer in seconds.  Valid values are integer, and 'default'.
+
+--
 ### Type: cisco_bgp
 
 Manages configuration of a BGP instance.
@@ -1234,12 +1321,15 @@ Manages configuration of a BGP Neighbor.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| N8k      | 7.3(0)F1(1)        | 1.3.2                  |
 
 #### <a name="cisco_bgp_neighbor-caveats">Caveats</a>
 
 | Property | Caveat Description |
 |:--------|:-------------|
 | `log_neighbor_changes` | Not supported on N5k, N6k, N7k |
+| `bfd` | (ciscopuppet v1.4.0) BFD support added for all platforms |
+| `bfd` on IPv6 | Not supported on N5k, N6k |
 
 #### Parameters
 
@@ -1259,6 +1349,9 @@ Neighbor Identifier. Required. Valid values are string. Neighbors may use IPv4 o
 
 ##### `description`
 Description of the neighbor. Valid value is string.
+
+##### `bfd`
+Enable Bidirectional Forwarding Detection (BFD). Valid values are true, false and keyword 'default'.
 
 ##### `connected_check`
 Configure whether or not to check for directly connected peer. Valid values are true and false.

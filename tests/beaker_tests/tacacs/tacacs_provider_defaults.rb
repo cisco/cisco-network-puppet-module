@@ -60,6 +60,8 @@ testheader = 'tacacs Resource :: All Attributes Defaults'
 
 # @test_name [TestCase] Executes defaults testcase for tacacs Resource.
 test_name "TestCase :: #{testheader}" do
+  raise_skip_exception('Not supported on IOS XR', self) if operating_system == 'ios_xr'
+
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider' do
     on(master, TacacsLib.create_tacacs_manifest_change_disabled)

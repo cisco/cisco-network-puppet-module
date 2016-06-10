@@ -53,6 +53,12 @@ require File.expand_path('../snmp_notification_receiverlib.rb', __FILE__)
 result = 'PASS'
 testheader = 'snmp_notification_receiver Resource :: All Attributes Defaults'
 
+if operating_system == 'ios_xr'
+  interface = 'gigabitethernet0/0/0/1'
+else
+  interface = 'ethernet1/4'
+end
+
 # @test_name [TestCase] Executes defaults testcase for snmp_notification_receiver Resource.
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
@@ -64,8 +70,10 @@ test_name "TestCase :: #{testheader}" do
     resource_absent_cleanup(agent, 'snmp_notification_receiver', \
                             'Remove snmp_notification_receiver')
 
-    add_vrf = get_vshell_cmd('conf t ; vrf context red')
-    on(agent, add_vrf, acceptable_exit_codes: [0, 2])
+    if operating_system == 'nexus'
+      add_vrf = get_vshell_cmd('conf t ; vrf context red')
+      on(agent, add_vrf, acceptable_exit_codes: [0, 2])
+    end
 
     logger.info('Setup switch for provider')
   end
@@ -73,7 +81,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource present manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, SnmpNotificationReceiverLib.create_snmp_notification_receiver_manifest_present_v3)
+    on(master, SnmpNotificationReceiverLib.create_snmp_notification_receiver_manifest_present_v3(operating_system))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = PUPPET_BINPATH + 'agent -t'
@@ -90,8 +98,13 @@ test_name "TestCase :: #{testheader}" do
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                false, self, logger)
-      search_pattern_in_output(stdout, { 'source_interface' => 'ethernet1/3' },
-                               false, self, logger)
+      if operating_system == 'ios_xr'
+        search_pattern_in_output(stdout, { 'source_interface' => 'gigabitethernet0/0/0/0' },
+                                 false, self, logger)
+      else
+        search_pattern_in_output(stdout, { 'source_interface' => 'ethernet1/3' },
+                                 false, self, logger)
+      end
       search_pattern_in_output(stdout, { 'port' => '47' },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'type' => 'traps' },
@@ -112,7 +125,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource present (with changes)manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, SnmpNotificationReceiverLib.create_snmp_notification_receiver_manifest_present_change_v3)
+    on(master, SnmpNotificationReceiverLib.create_snmp_notification_receiver_manifest_present_change_v3(interface))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = PUPPET_BINPATH + 'agent -t'
@@ -129,7 +142,7 @@ test_name "TestCase :: #{testheader}" do
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                false, self, logger)
-      search_pattern_in_output(stdout, { 'source_interface' => 'ethernet1/4' },
+      search_pattern_in_output(stdout, { 'source_interface' => interface },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'port' => '47' },
                                false, self, logger)
@@ -151,7 +164,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource present (with changes)manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, SnmpNotificationReceiverLib.create_snmp_notification_receiver_manifest_present_change_v3_2)
+    on(master, SnmpNotificationReceiverLib.create_snmp_notification_receiver_manifest_present_change_v3_2(interface))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = PUPPET_BINPATH + 'agent -t'
@@ -168,7 +181,7 @@ test_name "TestCase :: #{testheader}" do
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                false, self, logger)
-      search_pattern_in_output(stdout, { 'source_interface' => 'ethernet1/4' },
+      search_pattern_in_output(stdout, { 'source_interface' => interface },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'port' => '47' },
                                false, self, logger)
@@ -190,7 +203,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource present (with changes)manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, SnmpNotificationReceiverLib.create_snmp_notification_receiver_manifest_present_change_v3_3)
+    on(master, SnmpNotificationReceiverLib.create_snmp_notification_receiver_manifest_present_change_v3_3(interface))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = PUPPET_BINPATH + 'agent -t'
@@ -207,7 +220,7 @@ test_name "TestCase :: #{testheader}" do
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                false, self, logger)
-      search_pattern_in_output(stdout, { 'source_interface' => 'ethernet1/4' },
+      search_pattern_in_output(stdout, { 'source_interface' => interface },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'port' => '47' },
                                false, self, logger)
@@ -229,7 +242,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource present (with changes)manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, SnmpNotificationReceiverLib.create_snmp_notification_receiver_manifest_present_v2)
+    on(master, SnmpNotificationReceiverLib.create_snmp_notification_receiver_manifest_present_v2(interface))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = PUPPET_BINPATH + 'agent -t'
@@ -246,7 +259,7 @@ test_name "TestCase :: #{testheader}" do
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                false, self, logger)
-      search_pattern_in_output(stdout, { 'source_interface' => 'ethernet1/4' },
+      search_pattern_in_output(stdout, { 'source_interface' => interface },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'port' => '47' },
                                false, self, logger)
@@ -266,7 +279,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource present (with changes)manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, SnmpNotificationReceiverLib.create_snmp_notification_receiver_manifest_present_change_v2)
+    on(master, SnmpNotificationReceiverLib.create_snmp_notification_receiver_manifest_present_change_v2(interface))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = PUPPET_BINPATH + 'agent -t'
@@ -283,7 +296,7 @@ test_name "TestCase :: #{testheader}" do
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                false, self, logger)
-      search_pattern_in_output(stdout, { 'source_interface' => 'ethernet1/4' },
+      search_pattern_in_output(stdout, { 'source_interface' => interface },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'port' => '47' },
                                false, self, logger)
@@ -303,7 +316,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource present (with changes)manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, SnmpNotificationReceiverLib.create_snmp_notification_receiver_manifest_present_v1)
+    on(master, SnmpNotificationReceiverLib.create_snmp_notification_receiver_manifest_present_v1(interface))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = PUPPET_BINPATH + 'agent -t'
@@ -320,15 +333,17 @@ test_name "TestCase :: #{testheader}" do
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                false, self, logger)
-      search_pattern_in_output(stdout, { 'source_interface' => 'ethernet1/4' },
+      search_pattern_in_output(stdout, { 'source_interface' => interface },
                                false, self, logger)
+      if operating_system == 'nexus'
+        search_pattern_in_output(stdout, { 'version' => 'v1' },
+                                 false, self, logger)
+      end
       search_pattern_in_output(stdout, { 'port' => '47' },
-                               false, self, logger)
-      search_pattern_in_output(stdout, { 'type' => 'traps' },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'username' => 'ab' },
                                false, self, logger)
-      search_pattern_in_output(stdout, { 'version' => 'v1' },
+      search_pattern_in_output(stdout, { 'type' => 'traps' },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'vrf' => 'red' },
                                false, self, logger)

@@ -45,6 +45,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
       vrf                       => 'default',
       neighbor                  => '10.1.1.1',
       description               => 'my descritpion',
+      bfd                       => true,
       connected_check           => true,
       capability_negotiation    => true,
       dynamic_capability        => true,
@@ -184,6 +185,12 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
   ##############
   newproperty(:description) do
     desc 'Description of the neighbor. Valid value is string.'
+  end
+
+  newproperty(:bfd) do
+    desc "Enable bidirectional forwarding detection capability. Valid
+          values are true, false or default"
+    newvalues(:true, :false, :default)
   end
 
   newproperty(:connected_check) do
