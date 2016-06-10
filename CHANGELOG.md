@@ -6,7 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 - Added support for `Nexus N8k`
-  - https://github.com/cisco/cisco-network-puppet-module/tree/release_1.3.2#resource-platform-support-matrix
+  - https://github.com/cisco/cisco-network-puppet-module/tree/master#resource-platform-support-matrix
 
 - Extended `cisco_bgp_af` to include l2vpn/evpn address-family support
 
