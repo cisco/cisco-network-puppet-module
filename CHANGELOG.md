@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### New feature support
 #### Cisco Resources
 - `cisco_bfd_global` type and provider.
+- `cisco_ospf_area` type and provider.
 
 ### Added
 - Extend cisco_bgp_neighbor with attributes:
