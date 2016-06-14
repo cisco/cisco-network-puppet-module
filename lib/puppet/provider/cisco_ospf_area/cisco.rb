@@ -41,19 +41,19 @@ Puppet::Type.type(:cisco_ospf_area).provide(:cisco) do
     :stub,
     :stub_no_summary,
   ]
-  OSPF_AREA_ARRAY_FLAT_PROPS = [
+  OSPF_AREA_ARRAY_NESTED_PROPS = [
     :range
   ]
 
   OSPF_AREA_ALL_PROPS = OSPF_AREA_NON_BOOL_PROPS + OSPF_AREA_BOOL_PROPS +
-                        OSPF_AREA_ARRAY_FLAT_PROPS
+                        OSPF_AREA_ARRAY_NESTED_PROPS
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@nu',
                                             OSPF_AREA_NON_BOOL_PROPS)
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@nu',
                                             OSPF_AREA_BOOL_PROPS)
-  PuppetX::Cisco::AutoGen.mk_puppet_methods(:array_flat, self, '@nu',
-                                            OSPF_AREA_ARRAY_FLAT_PROPS)
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:array_nested, self, '@nu',
+                                            OSPF_AREA_ARRAY_NESTED_PROPS)
 
   def initialize(value={})
     super(value)
@@ -75,7 +75,7 @@ Puppet::Type.type(:cisco_ospf_area).provide(:cisco) do
       ensure: :present,
     }
     # Call node_utils getter for each property
-    OSPF_AREA_NON_BOOL_PROPS.each do |prop|
+    (OSPF_AREA_NON_BOOL_PROPS + OSPF_AREA_ARRAY_NESTED_PROPS).each do |prop|
       current_state[prop] = nu_obj.send(prop)
     end
     OSPF_AREA_BOOL_PROPS.each do |prop|
@@ -86,20 +86,15 @@ Puppet::Type.type(:cisco_ospf_area).provide(:cisco) do
         current_state[prop] = val ? :true : :false
       end
     end
-    OSPF_AREA_ARRAY_FLAT_PROPS.each do |prop|
-      current_state[prop] = nu_obj.send(prop)
-    end
-    # nested array properties
-    current_state[:range] = nu_obj.range
     new(current_state)
   end # self.properties_get
 
   def self.instances
     area_instances = []
-    Cisco::RouterOspfArea.areas.each do |ospf, vrf|
-      vrf.each do |name, areas|
-        areas.each do |area|
-          area_instances << properties_get(ospf, name, area[0], area[1])
+    Cisco::RouterOspfArea.areas.each do |ospf, vrfs|
+      vrfs.each do |vrf, areas|
+        areas.each do |area, nu_obj|
+          area_instances << properties_get(ospf, vrf, area, nu_obj)
         end
       end
     end
@@ -143,11 +138,6 @@ Puppet::Type.type(:cisco_ospf_area).provide(:cisco) do
           @nu.respond_to?("#{prop}=")
       end
     end
-  end
-
-  def range=(should_list)
-    should_list = @nu.default_range if should_list[0] == :default
-    @property_flush[:range] = should_list
   end
 
   def flush

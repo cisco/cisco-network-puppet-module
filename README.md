@@ -2419,7 +2419,32 @@ Manages an area for an OSPF router.
 | N7k      | 7.3(0)D1(1)        | 1.4.0                  |
 | N8k      | 7.3(0)F1(1)        | 1.4.0                  |
 
+#### Example Usage
+
+cisco_ospf_area { 'my_ospf_instance default 10':
+  ensure          => 'present',
+  range           => [['10.3.0.0/16', 'not_advertise', '23'],
+                      ['10.3.3.0/24', '450']
+                     ],
+}
+
+cisco_ospf_area { 'my_ospf_instance my_vrf 1.1.1.1':
+  ensure          => 'present',
+  authentication  => 'md5',
+  default_cost    => 1000,
+  filter_list_in  => 'fin',
+  filter_list_out => 'fout',
+  stub            => true,
+}
+
 #### Parameters
+
+
+| Example Parameter Usage |
+|:--|:--
+|`cisco_ospf_area { '<ospf_process_id> <vrf> <area_id>':`
+|`cisco_ospf_area { '1 my_vrf 10':`
+|`cisco_ospf_area { 'my_ospf default 10.1.1.1':`
 
 ##### `ensure`
 Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
@@ -2431,13 +2456,13 @@ Enables authentication for the area. Valid values are 'clear_text', 'md5' or 'de
 Default_cost for default summary Link-State Advertisement (LSA). Valid values are integer or keyword 'default'.
 
 ##### `filter_list_in`
-Filter networks sent to this area. Valid values are string or keyword 'default'.
+This is a route-map for filtering networks sent to this area. Valid values are string or keyword 'default'.
 
 ##### `filter_list_out`
-Filter networks sent from this area. Valid values are string or keyword 'default'.
+This is a route-map for filtering networks sent from this area. Valid values are string or keyword 'default'.
 
 ##### `range`
-Configures an address range for an area.  Valid values are an array of [ip, not_advertise, cost] pairs or keyword 'default'. `ip` is mandatory in the sub-arrays but `not_advertise` and `cost` are optional.
+Summarizes routes at an area boundary. Optionally sets the area range status to DoNotAdvertise as well as setting per-summary cost values. Valid values are a nested array of [summary_address, 'not_advertise', cost], or keyword 'default'. The summary-address is mandatory.
 
 Example: `range => [['10.3.0.0/16', 'not_advertise', '23'],
                     ['10.3.0.0/32', 'not_advertise'],
@@ -2445,11 +2470,11 @@ Example: `range => [['10.3.0.0/16', 'not_advertise', '23'],
                     ['10.3.3.0/24', '450']]`
 
 ##### `stub`
-Configures the area as a stub. Valid values are true, false or keyword 'default'.
+Defines the area as a stub area. Valid values are true, false or keyword 'default'.
 
 
 ##### `stub_no_summary`
-Prevents Area Border Router (ABR) from sending summary LSAs into stub area. Valid values are true, false or keyword 'default'.
+Stub areas flood summary LSAs. This property disables summary flooding into the area. This property can be used in conjunction with `stub`. Valid values are true, false or keyword 'default'.
 
 --
 ### Type: cisco_ospf_vrf

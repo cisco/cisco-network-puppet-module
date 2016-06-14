@@ -112,22 +112,22 @@ Puppet::Type.newtype(:cisco_ospf_area) do
   end # property default_cost
 
   newproperty(:filter_list_in) do
-    desc "Filter networks sent to this area. Valid values are string,
-         keyword 'default'. "
+    desc "This is a route-map for filtering networks sent to this area.
+          Valid values are string, keyword 'default'. "
 
     munge { |value| value == 'default' ? :default : value }
   end # property filter_list_in
 
   newproperty(:filter_list_out) do
-    desc "Filter networks sent from this area. Valid values are string,
-         keyword 'default'. "
+    desc "This is a route-map for filtering networks sent from this area.
+          Valid values are string, keyword 'default'. "
 
     munge { |value| value == 'default' ? :default : value }
   end # property filter_list_out
 
   newproperty(:range, array_matching: :all) do
-    format = '[[ip, not_advertise, cost], [ip, na, co]]'
-    desc 'An array of [ip, not_advertise, cost] pairs. '\
+    format = '[[summary_address, not_advertise, cost], [sa, na, co]]'
+    desc 'An array of [summary_address, not_advertise, cost] pairs. '\
          "Valid values match format #{format}."
 
     # Override puppet's insync method, which checks whether current value is
@@ -137,6 +137,12 @@ Puppet::Type.newtype(:cisco_ospf_area) do
       (is.size == should.size && is.sort == should.sort)
     end
 
+    # override should_to_s and is_to_s for nested arrays
+    # to get clean output in the puppet notice like
+    # range changed '[]' to '[["10.3.0.0/16", "not_advertise", "23"],
+    # ["10.3.3.0/24", "450"]]
+    # instead of
+    # range changed [] to '10.3.0.0/16 not_advertise 23 10.3.3.0/24 450'
     def should_to_s(value)
       value.inspect
     end
@@ -155,14 +161,14 @@ Puppet::Type.newtype(:cisco_ospf_area) do
   end # property range
 
   newproperty(:stub) do
-    desc 'Configure the area as a stub.'
+    desc 'Defines the area as a stub area'
 
     newvalues(:true, :false, :default)
   end # property stub
 
   newproperty(:stub_no_summary) do
-    desc 'Prevent Area Border Router (ABR) from sending
-          summary LSAs into stub area'
+    desc 'Stub areas flood summary LSAs. This property disables summary
+          flooding into the area'
 
     newvalues(:true, :false, :default)
   end # property stub_no_summary

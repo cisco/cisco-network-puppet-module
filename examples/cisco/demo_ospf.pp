@@ -66,7 +66,6 @@ class ciscopuppet::cisco::demo_ospf {
   }
 
   cisco_ospf_area { 'dark_blue default 1.1.1.1':
-    require         => Cisco_ospf_vrf['dark_blue default'],
     ensure          => 'present',
     authentication  => 'md5',
     default_cost    => 1000,
@@ -78,7 +77,6 @@ class ciscopuppet::cisco::demo_ospf {
   }
 
   cisco_ospf_area { 'dark_blue vrf1 1450':
-    require         => Cisco_ospf_vrf['dark_blue vrf1'],
     ensure          => 'present',
     authentication  => 'clear_text',
     default_cost    => 5555,

@@ -41,7 +41,7 @@ rarray2 = Array[['10.3.0.0/16', '4989'], ['10.3.1.1/32']]
 tests[:non_default_1] = {
   desc:           '1.1 Non_Defaults',
   title_pattern:  'dark_blue default 1.1.1.1',
-  preclean:       'cisco_ospf_area',
+  preclean:       'cisco_ospf',
   manifest_props: {
     authentication:  'md5',
     default_cost:    1000,
@@ -59,7 +59,6 @@ tests[:non_default_1] = {
 tests[:non_default_2] = {
   desc:           '1.2 Non_Defaults',
   title_pattern:  'dark_blue vrf1 2.2.2.2',
-  preclean:       'cisco_ospf_area',
   manifest_props: {
     authentication:  'clear_text',
     default_cost:    4444,
@@ -73,12 +72,6 @@ tests[:non_default_2] = {
     range: "#{rarray2}"
   },
 }
-
-# Overridden to properly handle dependencies for this test file.
-def test_harness_dependencies(_tests, _id)
-  cmd = 'feature ospf'
-  command_config(agent, cmd, cmd)
-end
 
 #################################################################
 # TEST CASE EXECUTION
@@ -94,7 +87,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   logger.info("\n#{'-' * 60}\nSection 1.2 Non Default Property Testing")
 
   test_harness_run(tests, :non_default_2)
-  resource_absent_cleanup(agent, 'cisco_ospf_area')
+  resource_absent_cleanup(agent, 'cisco_ospf')
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
