@@ -2421,6 +2421,7 @@ Manages an area for an OSPF router.
 
 #### Example Usage
 
+```puppet
 cisco_ospf_area { 'my_ospf_instance default 10':
   ensure          => 'present',
   range           => [['10.3.0.0/16', 'not_advertise', '23'],
@@ -2436,6 +2437,7 @@ cisco_ospf_area { 'my_ospf_instance my_vrf 1.1.1.1':
   filter_list_out => 'fout',
   stub            => true,
 }
+```
 
 #### Parameters
 
