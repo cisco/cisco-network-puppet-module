@@ -48,7 +48,6 @@ tests[:non_default_1] = {
     filter_list_in:  'filter_in',
     filter_list_out: 'filter_out',
     range:           rarray1,
-    stub:            'true',
     stub_no_summary: 'true',
   },
   resource:       {
@@ -73,6 +72,33 @@ tests[:non_default_2] = {
   },
 }
 
+tests[:non_default_3] = {
+  desc:           '1.3 Non_Defaults',
+  title_pattern:  'dark_blue vrf1 3.3.3.3',
+  manifest_props: {
+    stub: 'true'
+  },
+}
+
+tests[:non_default_4] = {
+  desc:           '1.4 Non_Defaults',
+  title_pattern:  'dark_blue vrf1 3.3.3.3',
+  manifest_props: {
+    stub_no_summary: 'true'
+  },
+}
+
+tests[:non_default_5] = {
+  desc:           '1.5 Non_Defaults',
+  title_pattern:  'dark_blue vrf1 3.3.3.3',
+  manifest_props: {
+    stub_no_summary: 'false'
+  },
+  resource:       {
+    stub: 'true'
+  },
+}
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
@@ -80,13 +106,13 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   device = platform
   logger.info("#### This device is of type: #{device} #####")
-  logger.info("\n#{'-' * 60}\nSection 1.1 Non Default Property Testing")
+  logger.info("\n#{'-' * 60}\nSection Non Default Property Testing")
 
   test_harness_run(tests, :non_default_1)
-  # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 1.2 Non Default Property Testing")
-
   test_harness_run(tests, :non_default_2)
+  test_harness_run(tests, :non_default_3)
+  test_harness_run(tests, :non_default_4)
+  test_harness_run(tests, :non_default_5)
   resource_absent_cleanup(agent, 'cisco_ospf')
 end
 

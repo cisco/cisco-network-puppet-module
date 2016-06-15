@@ -2472,11 +2472,11 @@ Example: `range => [['10.3.0.0/16', 'not_advertise', '23'],
                     ['10.3.3.0/24', '450']]`
 
 ##### `stub`
-Defines the area as a stub area. Valid values are true, false or keyword 'default'.
+Defines the area as a stub area. Valid values are true, false or keyword 'default'. This property is not necessary when the `stub_no_summary` property is set to true, which also defines the area as a stub area.
 
 
 ##### `stub_no_summary`
-Stub areas flood summary LSAs. This property disables summary flooding into the area. This property can be used in conjunction with `stub`. Valid values are true, false or keyword 'default'.
+Stub areas flood summary LSAs. This property disables summary flooding into the area. This property can be used in place of the `stub` property or in conjunction with it. Valid values are true, false or keyword 'default'.
 
 --
 ### Type: cisco_ospf_vrf

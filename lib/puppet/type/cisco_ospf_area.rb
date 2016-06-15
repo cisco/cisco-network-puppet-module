@@ -36,7 +36,6 @@ Puppet::Type.newtype(:cisco_ospf_area) do
       filter_list_out => 'fout',
       range           => [['10.3.0.0/16', true, '23'],
                           ['10.3.3.0/24', false, '450']],
-      stub            => true,
       stub_no_summary => true,
     }
   "
@@ -161,20 +160,27 @@ Puppet::Type.newtype(:cisco_ospf_area) do
   end # property range
 
   newproperty(:stub) do
-    desc 'Defines the area as a stub area'
+    desc 'Defines the area as a stub area. This property is not necessary
+          when the `stub_no_summary` property is set to true, which also
+          defines the area as a stub area.'
 
     newvalues(:true, :false, :default)
   end # property stub
 
   newproperty(:stub_no_summary) do
     desc 'Stub areas flood summary LSAs. This property disables summary
-          flooding into the area'
+          flooding into the area. This property can be used in place of
+          the `stub` property or in conjunction with it.'
 
     newvalues(:true, :false, :default)
   end # property stub_no_summary
 
   validate do
-    # stub cannot be false when stub_no_summary is true
+    # validate that stub cannot be false when
+    # stub_no_summary is true only if both
+    # properties are given in the manifest
+    return if
+      self[:stub_no_summary].nil? || self[:stub].nil?
     fail ArgumentError,
          'stub MUST be true when stub_no_summary is true' if
       self[:stub_no_summary] == :true && self[:stub] != :true
