@@ -68,7 +68,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource present manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, SnmpUserLib.create_snmp_user_manifest_present)
+    on(master, SnmpUserLib.create_snmp_user_manifest_present(operating_system))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = PUPPET_BINPATH + 'agent -t'
@@ -89,12 +89,25 @@ test_name "TestCase :: #{testheader}" do
                                false, self, logger)
       search_pattern_in_output(stdout, { 'auth' => 'md5' },
                                false, self, logger)
-      search_pattern_in_output(stdout, { 'password' => '0x7e5030ffd26d7e1b366a9041e9c63c94' },
-                               false, self, logger)
+
+      if operating_system == 'ios_xr'
+        search_pattern_in_output(stdout, { 'password' => '0307530A080824414B' },
+                                 false, self, logger)
+      else
+        search_pattern_in_output(stdout, { 'password' => '0x7e5030ffd26d7e1b366a9041e9c63c94' },
+                                 false, self, logger)
+      end
+
       search_pattern_in_output(stdout, { 'privacy' => 'aes128' },
                                false, self, logger)
-      search_pattern_in_output(stdout, { 'private_key' => '0xcc012f26b3384d4b3da979bff48b4ffe' },
-                               false, self, logger)
+
+      if operating_system == 'ios_xr'
+        search_pattern_in_output(stdout, { 'private_key' => '12491D42475E59' },
+                                 false, self, logger)
+      else
+        search_pattern_in_output(stdout, { 'private_key' => '0xcc012f26b3384d4b3da979bff48b4ffe' },
+                                 false, self, logger)
+      end
     end
 
     logger.info("Check snmp_user resource presence on agent :: #{result}")
@@ -103,7 +116,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource present (with changes)manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, SnmpUserLib.create_snmp_user_manifest_present_change)
+    on(master, SnmpUserLib.create_snmp_user_manifest_present_change(operating_system))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = PUPPET_BINPATH + 'agent -t'
@@ -121,15 +134,27 @@ test_name "TestCase :: #{testheader}" do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'engine_id' => '128:0:0:9:3:8:0:39:34:152:217' },
-                               false, self, logger)
+                               false, self, logger) unless operating_system == 'ios_xr'
       search_pattern_in_output(stdout, { 'auth' => 'sha' },
                                false, self, logger)
-      search_pattern_in_output(stdout, { 'password' => '0x7e5030ffd26d7e1b366a9041e9c63c94' },
-                               false, self, logger)
+
+      if operating_system == 'ios_xr'
+        search_pattern_in_output(stdout, { 'password' => '0307530A080824414B' },
+                                 false, self, logger)
+      else
+        search_pattern_in_output(stdout, { 'password' => '0x7e5030ffd26d7e1b366a9041e9c63c94' },
+                                 false, self, logger)
+      end
+
       search_pattern_in_output(stdout, { 'privacy' => 'des' },
                                false, self, logger)
-      search_pattern_in_output(stdout, { 'private_key' => '0xcc012f26b3384d4b3da979bff48b4ffe' },
-                               false, self, logger)
+      if operating_system == 'ios_xr'
+        search_pattern_in_output(stdout, { 'private_key' => '12491D42475E59' },
+                                 false, self, logger)
+      else
+        search_pattern_in_output(stdout, { 'private_key' => '0xcc012f26b3384d4b3da979bff48b4ffe' },
+                                 false, self, logger)
+      end
     end
 
     logger.info("Check snmp_user resource presence on agent :: #{result}")

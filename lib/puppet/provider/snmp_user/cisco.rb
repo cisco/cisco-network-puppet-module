@@ -20,7 +20,7 @@ Puppet::Type.type(:snmp_user).provide(:cisco) do
   desc 'The Cisco provider for snmp_user.'
 
   confine feature: :cisco_node_utils
-  defaultfor operatingsystem: :nexus
+  defaultfor operatingsystem: [:nexus, :ios_xr]
 
   mk_resource_methods
 
@@ -46,13 +46,19 @@ Puppet::Type.type(:snmp_user).provide(:cisco) do
     current_state = {
       ensure:      :present,
       name:        snmpuser_name,
-      engine_id:   v.engine_id,
-      roles:       v.groups,
       auth:        v.auth_protocol,
       password:    v.auth_password,
       privacy:     v.priv_protocol,
       private_key: v.priv_password,
+      roles:       v.groups,
     }
+
+    if Facter.value('operatingsystem').eql?('ios_xr')
+      current_state[:version] = v.version
+    else
+      current_state[:engine_id] = v.engine_id
+    end
+
     new(current_state)
   end # self.properties_get
 
@@ -86,7 +92,7 @@ Puppet::Type.type(:snmp_user).provide(:cisco) do
     @property_flush[:ensure] = :absent
   end
 
-  def validate
+  def validate # rubocop:disable Metrics/CyclomaticComplexity
     unless @resource[:auth]
       invalid = []
       REQUIRES_AUTH_PROPS.each do |prop|
@@ -106,20 +112,44 @@ Puppet::Type.type(:snmp_user).provide(:cisco) do
             if @resource[:private_key].nil? && @resource[:privacy]
 
     fail ArgumentError,
-         "The 'engine_id' and 'roles' properties are mutually exclusive" \
-            if @resource[:engine_id] && @resource[:roles]
-
-    fail ArgumentError,
          "The 'enforce_privacy' property is not supported by this provider" \
             if @resource[:enforce_privacy]
+
+    if Facter.value('operatingsystem').eql?('ios_xr')
+      fail ArgumentError,
+           "The 'engine_id' property is not supported on this platform" \
+            if @resource[:engine_id]
+
+      invalid = []
+      [:roles, :version].each do |prop|
+        invalid << prop unless @resource[prop]
+      end
+      fail ArgumentError,
+           "You must specify the following properties on this platform: #{invalid}" \
+             unless invalid.empty?
+
+      fail ArgumentError,
+           'This paltform only supports a single role per user' \
+             if @resource[:roles].length > 1
+
+      if @resource[:localized_key] && @resource[:localized_key] == :false
+        fail ArgumentError,
+             'This provider only supports providing encrypted passwords on this platform.'
+      end
+    else
+      fail ArgumentError,
+           "The 'engine_id' and 'roles' properties are mutually exclusive" \
+            if @resource[:engine_id] && @resource[:roles]
+    end
   end
 
   def flush
-    validate
     @snmpuser.destroy if @snmpuser
     @snmpuser = nil
 
     return if @property_flush[:ensure] == :absent
+
+    validate
 
     if @resource[:localized_key].eql?(:true)
       localized_key = true
@@ -137,6 +167,8 @@ Puppet::Type.type(:snmp_user).provide(:cisco) do
                                     @resource[:privacy] || @property_hash[:privacy] || :none,
                                     @resource[:private_key] || @property_hash[:private_key] || '',
                                     localized_key,
-                                    @resource[:engine_id] || '')
+                                    @resource[:engine_id] || '',
+                                    true,
+                                    @resource[:version] || nil)
   end
 end # Puppet::Type
