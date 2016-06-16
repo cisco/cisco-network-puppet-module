@@ -262,7 +262,8 @@ Puppet::Type.newtype(:cisco_ospf_area) do
               self[:nssa_route_map].nil?
     fail ArgumentError,
          'nssa_route_map MUST be default when nssa_def_info_originate is default' if
-      self[:nssa_def_info_originate] != :true && self[:nssa_route_map]
+      self[:nssa_route_map] != :default && self[:nssa_route_map] != '' &&
+      self[:nssa_def_info_originate] != :true
   end
 
   validate do
