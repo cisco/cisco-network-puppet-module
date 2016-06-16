@@ -159,6 +159,7 @@ A note about support for specific platform models:
 | [cisco_itd_device_group_node](#type-cisco_itd_device_group_node) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
 | [cisco_itd_service](#type-cisco_itd_service)                     | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | \*[caveats](#cisco_itd_service-caveats) |
 | [cisco_ospf](#type-cisco_ospf)                             | ✅  | ✅  | ✅ | ✅  | ✅  |
+| [cisco_ospf_area](#type-cisco_ospf_area)                   | ✅  | ✅  | ✅ | ✅  | ✅  |
 | [cisco_ospf_vrf](#type-cisco_ospf_vrf)                     | ✅  | ✅  | ✅ | ✅  | ✅  |
 | ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | Caveats |
 | [cisco_overlay_global](#type-cisco_overlay_global)         | ✅  | :heavy_minus_sign: | ✅ | ✅ | ✅ |
@@ -283,6 +284,7 @@ The following resources include cisco types and providers along with cisco provi
 * OSPF Types
   * [`cisco_vrf`](#type-cisco_vrf)
   * [`cisco_ospf`](#type-cisco_ospf)
+  * [`cisco_ospf_area`](#type-cisco_ospf_area)
   * [`cisco_ospf_vrf`](#type-cisco_ospf_vrf)
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 
@@ -378,6 +380,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_itd_device_group_node`](#type-cisco_itd_device_group_node)
 * [`cisco_itd_service`](#type-cisco_itd_service)
 * [`cisco_ospf`](#type-cisco_ospf)
+* [`cisco_ospf_area`](#type-cisco_ospf_area)
 * [`cisco_ospf_vrf`](#type-cisco_ospf_vrf)
 * [`cisco_overlay_global`](#type-cisco_overlay_global)
 * [`cisco_pim`](#type-cisco_pim)
@@ -2401,6 +2404,79 @@ and 'absent'.
 
 ##### `ospf`
 Name of the ospf router. Valid value is a string.
+
+--
+### Type: cisco_ospf_area
+
+Manages an area for an OSPF router.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I3(1)        | 1.4.0                  |
+| N3k      | 7.0(3)I3(1)        | 1.4.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.4.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.4.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.4.0                  |
+| N8k      | 7.3(0)F1(1)        | 1.4.0                  |
+
+#### Example Usage
+
+```puppet
+cisco_ospf_area { 'my_ospf_instance default 10':
+  ensure          => 'present',
+  range           => [['10.3.0.0/16', 'not_advertise', '23'],
+                      ['10.3.3.0/24', '450']
+                     ],
+}
+
+cisco_ospf_area { 'my_ospf_instance my_vrf 1.1.1.1':
+  ensure          => 'present',
+  authentication  => 'md5',
+  default_cost    => 1000,
+  filter_list_in  => 'fin',
+  filter_list_out => 'fout',
+  stub            => true,
+}
+```
+
+#### Parameters
+
+
+| Example Parameter Usage |
+|:--|:--
+|`cisco_ospf_area { '<ospf_process_id> <vrf> <area_id>':`
+|`cisco_ospf_area { '1 my_vrf 10':`
+|`cisco_ospf_area { 'my_ospf default 10.1.1.1':`
+
+##### `ensure`
+Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
+
+##### `authentication`
+Enables authentication for the area. Valid values are 'clear_text', 'md5' or 'default'.
+
+##### `default_cost`
+Default_cost for default summary Link-State Advertisement (LSA). Valid values are integer or keyword 'default'.
+
+##### `filter_list_in`
+This is a route-map for filtering networks sent to this area. Valid values are string or keyword 'default'.
+
+##### `filter_list_out`
+This is a route-map for filtering networks sent from this area. Valid values are string or keyword 'default'.
+
+##### `range`
+Summarizes routes at an area boundary. Optionally sets the area range status to DoNotAdvertise as well as setting per-summary cost values. Valid values are a nested array of [summary_address, 'not_advertise', cost], or keyword 'default'. The summary-address is mandatory.
+
+Example: `range => [['10.3.0.0/16', 'not_advertise', '23'],
+                    ['10.3.0.0/32', 'not_advertise'],
+                    ['10.3.0.1/32'],
+                    ['10.3.3.0/24', '450']]`
+
+##### `stub`
+Defines the area as a stub area. Valid values are true, false or keyword 'default'. This property is not necessary when the `stub_no_summary` property is set to true, which also defines the area as a stub area.
+
+
+##### `stub_no_summary`
+Stub areas flood summary LSAs. This property disables summary flooding into the area. This property can be used in place of the `stub` property or in conjunction with it. Valid values are true, false or keyword 'default'.
 
 --
 ### Type: cisco_ospf_vrf
