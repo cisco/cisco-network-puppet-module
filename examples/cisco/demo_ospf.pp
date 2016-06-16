@@ -66,14 +66,20 @@ class ciscopuppet::cisco::demo_ospf {
   }
 
   cisco_ospf_area { 'dark_blue default 1.1.1.1':
-    ensure          => 'present',
-    authentication  => 'md5',
-    default_cost    => 1000,
-    filter_list_in  => 'fin',
-    filter_list_out => 'fout',
-    range           => [['10.3.0.0/16', 'not_advertise', '23'], ['10.3.3.0/24', '450']],
-    stub            => true,
-    stub_no_summary => true,
+    ensure                  => 'present',
+    authentication          => 'md5',
+    default_cost            => 1000,
+    filter_list_in          => 'fin',
+    filter_list_out         => 'fout',
+    nssa_enable             => true,
+    nssa_def_info_originate => true,
+    nssa_no_redistribution  => false,
+    nssa_no_summary         => false,
+    nssa_route_map          => 'aaa',
+    nssa_translate_type7    => 'always_supress_fa',
+    range                   => [['10.3.0.0/16', 'not_advertise', '23'], ['10.3.3.0/24', '450']],
+    stub                    => true,
+    stub_no_summary         => true,
   }
 
   cisco_ospf_area { 'dark_blue vrf1 1450':

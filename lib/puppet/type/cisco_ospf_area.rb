@@ -29,14 +29,20 @@ Puppet::Type.newtype(:cisco_ospf_area) do
 
     Example:
     cisco_ospf_area {'myrouter vrf1 1.1.1.1':
-      ensure          => 'present',
-      authentication  => 'md5',
-      default_cost    => 1000,
-      filter_list_in  => 'fin',
-      filter_list_out => 'fout',
-      range           => [['10.3.0.0/16', true, '23'],
-                          ['10.3.3.0/24', false, '450']],
-      stub_no_summary => true,
+      ensure                  => 'present',
+      authentication          => 'md5',
+      default_cost            => 1000,
+      filter_list_in          => 'fin',
+      filter_list_out         => 'fout',
+      nssa_enable             => true,
+      nssa_def_info_originate => true,
+      nssa_no_redistribution  => false,
+      nssa_no_summary         => false,
+      nssa_route_map          => 'aaa',
+      nssa_translate_type7    => 'always_supress_fa',
+      range                   => [['10.3.0.0/16', true, '23'],
+                                  ['10.3.3.0/24', false, '450']],
+      stub_no_summary         => true,
     }
   "
 
@@ -124,6 +130,43 @@ Puppet::Type.newtype(:cisco_ospf_area) do
     munge { |value| value == 'default' ? :default : value }
   end # property filter_list_out
 
+  newproperty(:nssa_enable) do
+    desc 'Defines the area as NSSA (not so stubby area)'
+
+    newvalues(:true, :false, :default)
+  end # property nssa_enable
+
+  newproperty(:nssa_def_info_originate) do
+    desc 'COnfigure to Originate Type-7 default LSA into NSSA area'
+
+    newvalues(:true, :false, :default)
+  end # property nssa_def_info_originate
+
+  newproperty(:nssa_no_redistribution) do
+    desc 'Configure not to send redistributed LSAs into NSSA area'
+
+    newvalues(:true, :false, :default)
+  end # property nssa_no_redistribution
+
+  newproperty(:nssa_no_summary) do
+    desc 'Configure not to send summary LSAs into NSSA area'
+
+    newvalues(:true, :false, :default)
+  end # property nssa_no_summary
+
+  newproperty(:nssa_route_map) do
+    desc "Name of the Policy to control distribution of default route.
+          Valid values are string, keyword 'default'. "
+
+    munge { |value| value == 'default' ? :default : value }
+  end # property nssa_route_map
+
+  newproperty(:nssa_translate_type7) do
+    desc 'Translates LSA from type 7 to type 5.'
+
+    newvalues(:always, :always_supress_fa, :never, :supress_fa, :default)
+  end # property nssa_translate_type7
+
   newproperty(:range, array_matching: :all) do
     format = '[[summary_address, not_advertise, cost], [sa, na, co]]'
     desc 'An array of [summary_address, not_advertise, cost] pairs. '\
@@ -175,7 +218,7 @@ Puppet::Type.newtype(:cisco_ospf_area) do
     newvalues(:true, :false, :default)
   end # property stub_no_summary
 
-  validate do
+  def check_stub_params
     # validate that stub cannot be false when
     # stub_no_summary is true only if both
     # properties are given in the manifest
@@ -184,5 +227,48 @@ Puppet::Type.newtype(:cisco_ospf_area) do
     fail ArgumentError,
          'stub MUST be true when stub_no_summary is true' if
       self[:stub_no_summary] == :true && self[:stub] != :true
+  end
+
+  def check_stub_nssa
+    # validate that stub and nssa are not enabled at the
+    # same time
+    fail ArgumentError,
+         'stub and nssa cannot be enabled at the same time' if
+      (self[:stub_no_summary] == :true || self[:stub] == :true) &&
+      self[:nssa_enable] == :true
+  end
+
+  def check_nssa_defaults
+    # validate that all nssa properties are default when
+    # nssa_enable is default
+    return if self[:nssa_enable] == :true
+    # validate that route_map is not enabled when
+    # default_information_originate is false
+    vars = [
+      :nssa_def_info_originate,
+      :nssa_no_redistribution,
+      :nssa_no_summary,
+      :nssa_route_map,
+    ]
+    vars.each do |p|
+      fail ArgumentError,
+           'All nssa params should be default when nssa is disabled' unless
+        self[p].nil? || self[p] == :default || self[p] == :false || self[p] == ''
+    end
+  end
+
+  def check_nssa_route_map
+    return if self[:nssa_def_info_originate].nil? &&
+              self[:nssa_route_map].nil?
+    fail ArgumentError,
+         'nssa_route_map MUST be default when nssa_def_info_originate is default' if
+      self[:nssa_def_info_originate] != :true && self[:nssa_route_map]
+  end
+
+  validate do
+    check_stub_nssa
+    check_nssa_defaults
+    check_nssa_route_map
+    check_stub_params
   end
 end

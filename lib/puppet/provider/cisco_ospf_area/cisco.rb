@@ -36,8 +36,14 @@ Puppet::Type.type(:cisco_ospf_area).provide(:cisco) do
     :default_cost,
     :filter_list_in,
     :filter_list_out,
+    :nssa_route_map,
+    :nssa_translate_type7,
   ]
   OSPF_AREA_BOOL_PROPS = [
+    :nssa_enable,
+    :nssa_def_info_originate,
+    :nssa_no_redistribution,
+    :nssa_no_summary,
     :stub,
     :stub_no_summary,
   ]
@@ -45,7 +51,7 @@ Puppet::Type.type(:cisco_ospf_area).provide(:cisco) do
     :range
   ]
 
-  OSPF_AREA_ALL_PROPS = OSPF_AREA_NON_BOOL_PROPS + OSPF_AREA_BOOL_PROPS +
+  OSPF_AREA_ALL_PROPS = OSPF_AREA_BOOL_PROPS + OSPF_AREA_NON_BOOL_PROPS +
                         OSPF_AREA_ARRAY_NESTED_PROPS
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@nu',
@@ -138,6 +144,38 @@ Puppet::Type.type(:cisco_ospf_area).provide(:cisco) do
           @nu.respond_to?("#{prop}=")
       end
     end
+    # custom setters which require one-shot multi-param setters
+    nssa_set
+  end
+
+  def nssa_set
+    if @property_flush[:nssa_route_map]
+      route_map = @property_flush[:nssa_route_map]
+    else
+      route_map = @nu.nssa_route_map
+    end
+    if PuppetX::Cisco::Utils.flush_boolean?(@property_flush[:nssa_enable])
+      enable = @property_flush[:nssa_enable]
+    else
+      enable = @nu.nssa_enable
+    end
+    if PuppetX::Cisco::Utils.flush_boolean?(@property_flush[:nssa_def_info_originate])
+      def_info_originate = @property_flush[:nssa_def_info_originate]
+    else
+      def_info_originate = @nu.nssa_def_info_originate
+    end
+    if PuppetX::Cisco::Utils.flush_boolean?(@property_flush[:nssa_no_redistribution])
+      no_redistribution = @property_flush[:nssa_no_redistribution]
+    else
+      no_redistribution = @nu.nssa_no_redistribution
+    end
+    if PuppetX::Cisco::Utils.flush_boolean?(@property_flush[:nssa_no_summary])
+      no_summary = @property_flush[:nssa_no_summary]
+    else
+      no_summary = @nu.nssa_no_summary
+    end
+    @nu.nssa_set(enable, def_info_originate, no_redistribution,
+                 no_summary, route_map)
   end
 
   def flush
