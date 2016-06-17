@@ -40,8 +40,8 @@ Puppet::Type.type(:cisco_ospf_area).provide(:cisco) do
     :nssa_translate_type7,
   ]
   OSPF_AREA_BOOL_PROPS = [
-    :nssa_enable,
-    :nssa_def_info_originate,
+    :nssa,
+    :nssa_default_originate,
     :nssa_no_redistribution,
     :nssa_no_summary,
     :stub,
@@ -149,33 +149,37 @@ Puppet::Type.type(:cisco_ospf_area).provide(:cisco) do
   end
 
   def nssa_set
+    hash = {}
+    if PuppetX::Cisco::Utils.flush_boolean?(@property_flush[:nssa])
+      hash[:nssa] = @property_flush[:nssa]
+    else
+      hash = {}
+      @nu.nssa_set(hash)
+      return
+    end
     if @property_flush[:nssa_route_map]
-      route_map = @property_flush[:nssa_route_map]
+      hash[:route_map] = 'route-map'
+      hash[:rm] = @property_flush[:nssa_route_map]
     else
-      route_map = @nu.nssa_route_map
+      hash[:route_map] = ''
+      hash[:rm] = ''
     end
-    if PuppetX::Cisco::Utils.flush_boolean?(@property_flush[:nssa_enable])
-      enable = @property_flush[:nssa_enable]
+    if PuppetX::Cisco::Utils.flush_boolean?(@property_flush[:nssa_default_originate])
+      hash[:default_information_originate] = 'default-information-originate'
     else
-      enable = @nu.nssa_enable
-    end
-    if PuppetX::Cisco::Utils.flush_boolean?(@property_flush[:nssa_def_info_originate])
-      def_info_originate = @property_flush[:nssa_def_info_originate]
-    else
-      def_info_originate = @nu.nssa_def_info_originate
+      hash[:default_information_originate] = ''
     end
     if PuppetX::Cisco::Utils.flush_boolean?(@property_flush[:nssa_no_redistribution])
-      no_redistribution = @property_flush[:nssa_no_redistribution]
+      hash[:no_redistribution] = 'no-redistribution'
     else
-      no_redistribution = @nu.nssa_no_redistribution
+      hash[:no_redistribution] = ''
     end
     if PuppetX::Cisco::Utils.flush_boolean?(@property_flush[:nssa_no_summary])
-      no_summary = @property_flush[:nssa_no_summary]
+      hash[:no_summary] = 'no-summary'
     else
-      no_summary = @nu.nssa_no_summary
+      hash[:no_summary] = ''
     end
-    @nu.nssa_set(enable, def_info_originate, no_redistribution,
-                 no_summary, route_map)
+    @nu.nssa_set(hash)
   end
 
   def flush

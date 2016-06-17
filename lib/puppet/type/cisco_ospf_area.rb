@@ -34,8 +34,8 @@ Puppet::Type.newtype(:cisco_ospf_area) do
       default_cost            => 1000,
       filter_list_in          => 'fin',
       filter_list_out         => 'fout',
-      nssa_enable             => true,
-      nssa_def_info_originate => true,
+      nssa                    => true,
+      nssa_default_originate  => true,
       nssa_no_redistribution  => false,
       nssa_no_summary         => false,
       nssa_route_map          => 'aaa',
@@ -130,17 +130,17 @@ Puppet::Type.newtype(:cisco_ospf_area) do
     munge { |value| value == 'default' ? :default : value }
   end # property filter_list_out
 
-  newproperty(:nssa_enable) do
+  newproperty(:nssa) do
     desc 'Defines the area as NSSA (not so stubby area)'
 
     newvalues(:true, :false, :default)
-  end # property nssa_enable
+  end # property nssa
 
-  newproperty(:nssa_def_info_originate) do
+  newproperty(:nssa_default_originate) do
     desc 'COnfigure to Originate Type-7 default LSA into NSSA area'
 
     newvalues(:true, :false, :default)
-  end # property nssa_def_info_originate
+  end # property nssa_default_originate
 
   newproperty(:nssa_no_redistribution) do
     desc 'Configure not to send redistributed LSAs into NSSA area'
@@ -235,17 +235,17 @@ Puppet::Type.newtype(:cisco_ospf_area) do
     fail ArgumentError,
          'stub and nssa cannot be enabled at the same time' if
       (self[:stub_no_summary] == :true || self[:stub] == :true) &&
-      self[:nssa_enable] == :true
+      self[:nssa] == :true
   end
 
   def check_nssa_defaults
     # validate that all nssa properties are default when
-    # nssa_enable is default
-    return if self[:nssa_enable] == :true
+    # nssa is default
+    return if self[:nssa] == :true
     # validate that route_map is not enabled when
     # default_information_originate is false
     vars = [
-      :nssa_def_info_originate,
+      :nssa_default_originate,
       :nssa_no_redistribution,
       :nssa_no_summary,
       :nssa_route_map,
@@ -258,12 +258,12 @@ Puppet::Type.newtype(:cisco_ospf_area) do
   end
 
   def check_nssa_route_map
-    return if self[:nssa_def_info_originate].nil? &&
+    return if self[:nssa_default_originate].nil? &&
               self[:nssa_route_map].nil?
     fail ArgumentError,
-         'nssa_route_map MUST be default when nssa_def_info_originate is default' if
+         'nssa_route_map MUST be default when nssa_default_originate is default' if
       self[:nssa_route_map] != :default && self[:nssa_route_map] != '' &&
-      self[:nssa_def_info_originate] != :true
+      self[:nssa_default_originate] != :true
   end
 
   validate do
