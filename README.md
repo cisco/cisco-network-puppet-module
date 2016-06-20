@@ -2487,7 +2487,7 @@ This property configures not to send redistributed LSAs into NSSA area. Valid va
 This property configures not to send summary LSAs into NSSA area. Valid values are true, false or keyword 'default'.
 
 ##### `nssa_route_map`
-This is the name of the Policy to control distribution of default route. Valid values are string or keyword 'default'.
+This is the name of the Policy to control distribution of default route. Valid values are string or keyword 'default'. This MUST be set to 'default' when `nssa_default_originate` is 'default'.
 
 ##### `nssa_translate_type7`
 This property translates LSA from type 7 to type 5. Valid values are 'always', 'always_supress_fa', 'supress_fa', 'never' or keyword 'default'.
