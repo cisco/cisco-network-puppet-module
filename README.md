@@ -2437,6 +2437,16 @@ cisco_ospf_area { 'my_ospf_instance my_vrf 1.1.1.1':
   filter_list_out => 'fout',
   stub            => true,
 }
+
+cisco_ospf_area { 'my_ospf_instance my_vrf 1000':
+  ensure                 => 'present',
+  nssa                   => 'md5',
+  nssa_default_originate => true,
+  nssa_no_redistribution => true,
+  nssa_no_summary        => true,
+  nssa_route_map         => 'rmap',
+  nssa_translate_type7   => 'always',
+}
 ```
 
 #### Parameters
@@ -2463,6 +2473,25 @@ This is a route-map for filtering networks sent to this area. Valid values are s
 ##### `filter_list_out`
 This is a route-map for filtering networks sent from this area. Valid values are string or keyword 'default'.
 
+##### `nssa`
+This property defines the area as NSSA (not so stubby area). Valid values are true, false or keyword 'default'. This property is mutually exclusive with `stub` and `stub_no_summary`.
+
+##### `nssa_default_originate`
+This property configures to originate Type-7 default LSA into NSSA area. Valid values are true, false or keyword 'default'.
+
+
+##### `nssa_no_redistribution`
+This property configures not to send redistributed LSAs into NSSA area. Valid values are true, false or keyword 'default'.
+
+##### `nssa_no_summary`
+This property configures not to send summary LSAs into NSSA area. Valid values are true, false or keyword 'default'.
+
+##### `nssa_route_map`
+This is the name of the Policy to control distribution of default route. Valid values are string or keyword 'default'.
+
+##### `nssa_translate_type7`
+This property translates LSA from type 7 to type 5. Valid values are 'always', 'always_supress_fa', 'supress_fa', 'never' or keyword 'default'.
+
 ##### `range`
 Summarizes routes at an area boundary. Optionally sets the area range status to DoNotAdvertise as well as setting per-summary cost values. Valid values are a nested array of [summary_address, 'not_advertise', cost], or keyword 'default'. The summary-address is mandatory.
 
@@ -2472,11 +2501,11 @@ Example: `range => [['10.3.0.0/16', 'not_advertise', '23'],
                     ['10.3.3.0/24', '450']]`
 
 ##### `stub`
-Defines the area as a stub area. Valid values are true, false or keyword 'default'. This property is not necessary when the `stub_no_summary` property is set to true, which also defines the area as a stub area.
+Defines the area as a stub area. Valid values are true, false or keyword 'default'. This property is not necessary when the `stub_no_summary` property is set to true, which also defines the area as a stub area. This property is mutually exclusive with `nssa`.
 
 
 ##### `stub_no_summary`
-Stub areas flood summary LSAs. This property disables summary flooding into the area. This property can be used in place of the `stub` property or in conjunction with it. Valid values are true, false or keyword 'default'.
+Stub areas flood summary LSAs. This property disables summary flooding into the area. This property can be used in place of the `stub` property or in conjunction with it. Valid values are true, false or keyword 'default'. This property is mutually exclusive with `nssa`.
 
 --
 ### Type: cisco_ospf_vrf
