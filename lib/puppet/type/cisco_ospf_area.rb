@@ -27,22 +27,28 @@ Puppet::Type.newtype(:cisco_ospf_area) do
     <vrf> is the name of the ospf vrf.
     <area> is the name of the ospf area instance.
 
-    Example:
+    Examples:
     cisco_ospf_area {'myrouter vrf1 1.1.1.1':
       ensure                  => 'present',
       authentication          => 'md5',
       default_cost            => 1000,
       filter_list_in          => 'fin',
       filter_list_out         => 'fout',
-      nssa                    => true,
-      nssa_default_originate  => true,
-      nssa_no_redistribution  => false,
-      nssa_no_summary         => false,
-      nssa_route_map          => 'aaa',
-      nssa_translate_type7    => 'always_supress_fa',
       range                   => [['10.3.0.0/16', true, '23'],
                                   ['10.3.3.0/24', false, '450']],
       stub_no_summary         => true,
+    }
+
+    cisco_ospf_area {'myrouter vrf2 2002':
+      ensure                  => 'present',
+      nssa                    => true,
+      nssa_default_originate  => true,
+      nssa_no_redistribution  => true,
+      nssa_no_summary         => true,
+      nssa_route_map          => 'rmap',
+      nssa_translate_type7    => 'always_supress_fa',
+      range                   => [['10.3.0.0/16', true, '23'],
+                                  ['10.3.3.0/24', false, '450']],
     }
   "
 
@@ -131,7 +137,8 @@ Puppet::Type.newtype(:cisco_ospf_area) do
   end # property filter_list_out
 
   newproperty(:nssa) do
-    desc 'Defines the area as NSSA (not so stubby area)'
+    desc 'Defines the area as NSSA (not so stubby area). This is
+          mutually exclusive with stub and stub_no_summary.'
 
     newvalues(:true, :false, :default)
   end # property nssa
@@ -205,7 +212,8 @@ Puppet::Type.newtype(:cisco_ospf_area) do
   newproperty(:stub) do
     desc 'Defines the area as a stub area. This property is not necessary
           when the `stub_no_summary` property is set to true, which also
-          defines the area as a stub area.'
+          defines the area as a stub area. This is mutually exclusive with
+          nssa'
 
     newvalues(:true, :false, :default)
   end # property stub
@@ -213,7 +221,8 @@ Puppet::Type.newtype(:cisco_ospf_area) do
   newproperty(:stub_no_summary) do
     desc 'Stub areas flood summary LSAs. This property disables summary
           flooding into the area. This property can be used in place of
-          the `stub` property or in conjunction with it.'
+          the `stub` property or in conjunction with it. This is mutually
+          exclusive with nssa'
 
     newvalues(:true, :false, :default)
   end # property stub_no_summary
