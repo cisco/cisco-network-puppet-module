@@ -149,36 +149,42 @@ Puppet::Type.type(:cisco_ospf_area).provide(:cisco) do
   end
 
   def nssa_set
+    attrs = {}
+    vars = [
+      :nssa,
+      :nssa_route_map,
+      :nssa_default_originate,
+      :nssa_no_redistribution,
+      :nssa_no_summary,
+    ]
+    return unless vars.any? { |p| @property_flush.key?(p) }
+    # At least one var has changed, get all vals from manifest
+    attrs = {}
+    vars.each do |p|
+      if @resource[p] == :default
+        attrs[p] = @nu.send("default_#{p}")
+      else
+        attrs[p] = @resource[p]
+        attrs[p] = PuppetX::Cisco::Utils.bool_sym_to_s(attrs[p])
+      end
+    end
     hash = {}
-    if PuppetX::Cisco::Utils.flush_boolean?(@property_flush[:nssa])
-      hash[:nssa] = @property_flush[:nssa]
+    if attrs[:nssa]
+      hash[:nssa] = attrs[:nssa]
     else
-      hash = {}
       @nu.nssa_set(hash)
       return
     end
-    if @property_flush[:nssa_route_map]
-      hash[:route_map] = 'route-map'
-      hash[:rm] = @property_flush[:nssa_route_map]
-    else
+    if attrs[:nssa_route_map] == '' || attrs[:nssa_route_map].nil?
       hash[:route_map] = ''
       hash[:rm] = ''
-    end
-    if PuppetX::Cisco::Utils.flush_boolean?(@property_flush[:nssa_default_originate])
-      hash[:default_information_originate] = 'default-information-originate'
     else
-      hash[:default_information_originate] = ''
+      hash[:route_map] = 'route-map'
+      hash[:rm] = attrs[:nssa_route_map]
     end
-    if PuppetX::Cisco::Utils.flush_boolean?(@property_flush[:nssa_no_redistribution])
-      hash[:no_redistribution] = 'no-redistribution'
-    else
-      hash[:no_redistribution] = ''
-    end
-    if PuppetX::Cisco::Utils.flush_boolean?(@property_flush[:nssa_no_summary])
-      hash[:no_summary] = 'no-summary'
-    else
-      hash[:no_summary] = ''
-    end
+    hash[:default_information_originate] = attrs[:nssa_default_originate] ? 'default-information-originate' : ''
+    hash[:no_redistribution] = attrs[:nssa_no_redistribution] ? 'no-redistribution' : ''
+    hash[:no_summary] = attrs[:nssa_no_summary] ? 'no-summary' : ''
     @nu.nssa_set(hash)
   end
 
