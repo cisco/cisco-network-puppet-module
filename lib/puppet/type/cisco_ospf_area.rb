@@ -137,7 +137,7 @@ Puppet::Type.newtype(:cisco_ospf_area) do
   end # property nssa
 
   newproperty(:nssa_default_originate) do
-    desc 'COnfigure to Originate Type-7 default LSA into NSSA area'
+    desc 'Configure to Originate Type-7 default LSA into NSSA area'
 
     newvalues(:true, :false, :default)
   end # property nssa_default_originate
