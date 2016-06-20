@@ -66,18 +66,14 @@ class ciscopuppet::cisco::demo_ospf {
   }
 
   cisco_ospf_area { 'dark_blue default 1.1.1.1':
-    ensure                 => 'present',
-    authentication         => 'md5',
-    default_cost           => 1000,
-    filter_list_in         => 'fin',
-    filter_list_out        => 'fout',
-    nssa                   => true,
-    nssa_default_originate => true,
-    nssa_no_redistribution => true,
-    nssa_no_summary        => true,
-    nssa_route_map         => 'aaa',
-    nssa_translate_type7   => 'supress_fa',
-    range                  => [['10.3.0.0/16', 'not_advertise', '23'], ['10.3.3.0/24', '450']],
+    ensure          => 'present',
+    authentication  => 'md5',
+    default_cost    => 1000,
+    filter_list_in  => 'fin',
+    filter_list_out => 'fout',
+    range           => [['10.3.0.0/16', 'not_advertise', '23'], ['10.3.3.0/24', '450']],
+    stub            => true,
+    stub_no_summary => true,
   }
 
   cisco_ospf_area { 'dark_blue vrf1 1450':
@@ -88,6 +84,21 @@ class ciscopuppet::cisco::demo_ospf {
     filter_list_out => 'fout',
     range           => [['10.3.0.0/16', '4989'], ['10.3.1.1/32']],
     stub            => true,
-    stub_no_summary => true,
+    stub_no_summary => false,
+  }
+
+  cisco_ospf_area { 'dark_blue vrf2 5000':
+    ensure                 => 'present',
+    authentication         => 'clear_text',
+    default_cost           => 4444,
+    filter_list_in         => 'bbb',
+    filter_list_out        => 'ccc',
+    nssa                   => true,
+    nssa_default_originate => true,
+    nssa_no_redistribution => true,
+    nssa_no_summary        => true,
+    nssa_route_map         => 'aaa',
+    nssa_translate_type7   => 'supress_fa',
+    range                  => [['10.3.0.0/16', '234'], ['10.3.1.1/32', 'not_advertise']],
   }
 }
