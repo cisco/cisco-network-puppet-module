@@ -59,7 +59,7 @@ tests[:non_default_2] = {
   desc:           '1.2 Non_Defaults',
   title_pattern:  'dark_blue vrf1 2.2.2.2',
   manifest_props: {
-    authentication:  'clear_text',
+    authentication:  'cleartext',
     default_cost:    4444,
     filter_list_in:  'fin',
     filter_list_out: 'fout',

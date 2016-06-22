@@ -47,8 +47,6 @@ Puppet::Type.newtype(:cisco_ospf_area) do
       nssa_no_summary         => true,
       nssa_route_map          => 'rmap',
       nssa_translate_type7    => 'always_supress_fa',
-      range                   => [['10.3.0.0/16', true, '23'],
-                                  ['10.3.3.0/24', false, '450']],
     }
   "
 
@@ -112,7 +110,7 @@ Puppet::Type.newtype(:cisco_ospf_area) do
   newproperty(:authentication) do
     desc 'Enable authentication for the area.'
 
-    newvalues(:clear_text, :md5, :default)
+    newvalues(:cleartext, :md5, :default)
   end # property authentication
 
   newproperty(:default_cost) do
@@ -144,32 +142,36 @@ Puppet::Type.newtype(:cisco_ospf_area) do
   end # property nssa
 
   newproperty(:nssa_default_originate) do
-    desc 'Configure to Originate Type-7 default LSA into NSSA area'
+    desc 'Generates an NSSA External (type 7) LSA for use as
+          a default route to the external autonomous system.'
 
     newvalues(:true, :false, :default)
   end # property nssa_default_originate
 
   newproperty(:nssa_no_redistribution) do
-    desc 'Configure not to send redistributed LSAs into NSSA area'
+    desc 'Disable redistribution within the NSSA.'
 
     newvalues(:true, :false, :default)
   end # property nssa_no_redistribution
 
   newproperty(:nssa_no_summary) do
-    desc 'Configure not to send summary LSAs into NSSA area'
+    desc 'Disables summary LSA flooding within the NSSA.'
 
     newvalues(:true, :false, :default)
   end # property nssa_no_summary
 
   newproperty(:nssa_route_map) do
-    desc "Name of the Policy to control distribution of default route.
+    desc "Controls distribution of the default route. This
+          property can only be used when the
+          `nssa_default_originate` property is set to true.
           Valid values are string, keyword 'default'. "
 
     munge { |value| value == 'default' ? :default : value }
   end # property nssa_route_map
 
   newproperty(:nssa_translate_type7) do
-    desc 'Translates LSA from type 7 to type 5.'
+    desc 'Translates NSSA external (type 7) LSAs to standard
+          external (type 5) LSAs for use outside the NSSA.'
 
     newvalues(:always, :always_supress_fa, :never, :supress_fa, :default)
   end # property nssa_translate_type7

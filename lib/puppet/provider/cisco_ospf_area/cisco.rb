@@ -47,7 +47,7 @@ Puppet::Type.type(:cisco_ospf_area).provide(:cisco) do
     :nssa_translate_type7,
   ]
   OSPF_AREA_BOOL_PROPS = [
-    :nssa,
+    :nssa, # :nssa should process before other nssa properties
     :nssa_default_originate,
     :nssa_no_redistribution,
     :nssa_no_summary,
@@ -164,35 +164,20 @@ Puppet::Type.type(:cisco_ospf_area).provide(:cisco) do
       :nssa_no_redistribution,
       :nssa_no_summary,
     ]
-    return unless vars.any? { |p| @property_flush.key?(p) }
-    # At least one var has changed, get all vals from manifest
-    attrs = {}
-    vars.each do |p|
-      if @resource[p] == :default
-        attrs[p] = @nu.send("default_#{p}")
-      else
-        attrs[p] = @resource[p]
-        attrs[p] = PuppetX::Cisco::Utils.bool_sym_to_s(attrs[p])
+    if vars.any? { |p| @property_flush.key?(p) }
+      # At least one var has changed, get all vals from manifest
+      vars.each do |p|
+        val = @resource[p]
+        if val == :default
+          val = @nu.send("default_#{p}")
+        else
+          val = PuppetX::Cisco::Utils.bool_sym_to_s(val)
+        end
+        next if val == false || val.to_s.empty?
+        attrs[p] = val
       end
     end
-    hash = {}
-    if attrs[:nssa]
-      hash[:nssa] = attrs[:nssa]
-    else
-      @nu.nssa_set(hash)
-      return
-    end
-    if attrs[:nssa_route_map] == '' || attrs[:nssa_route_map].nil?
-      hash[:route_map] = ''
-      hash[:rm] = ''
-    else
-      hash[:route_map] = 'route-map'
-      hash[:rm] = attrs[:nssa_route_map]
-    end
-    hash[:default_information_originate] = attrs[:nssa_default_originate] ? 'default-information-originate' : ''
-    hash[:no_redistribution] = attrs[:nssa_no_redistribution] ? 'no-redistribution' : ''
-    hash[:no_summary] = attrs[:nssa_no_summary] ? 'no-summary' : ''
-    @nu.nssa_set(hash)
+    @nu.nssa_set(attrs)
   end
 
   def flush
