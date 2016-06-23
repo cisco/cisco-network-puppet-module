@@ -2437,6 +2437,16 @@ cisco_ospf_area { 'my_ospf_instance my_vrf 1.1.1.1':
   filter_list_out => 'fout',
   stub            => true,
 }
+
+cisco_ospf_area { 'my_ospf_instance my_vrf 1000':
+  ensure                 => 'present',
+  nssa                   => true,
+  nssa_default_originate => true,
+  nssa_no_redistribution => true,
+  nssa_no_summary        => true,
+  nssa_route_map         => 'rmap',
+  nssa_translate_type7   => 'always',
+}
 ```
 
 #### Parameters
@@ -2452,7 +2462,7 @@ cisco_ospf_area { 'my_ospf_instance my_vrf 1.1.1.1':
 Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
 
 ##### `authentication`
-Enables authentication for the area. Valid values are 'clear_text', 'md5' or 'default'.
+Enables authentication for the area. Valid values are 'cleartext', 'md5' or 'default'.
 
 ##### `default_cost`
 Default_cost for default summary Link-State Advertisement (LSA). Valid values are integer or keyword 'default'.
@@ -2463,6 +2473,33 @@ This is a route-map for filtering networks sent to this area. Valid values are s
 ##### `filter_list_out`
 This is a route-map for filtering networks sent from this area. Valid values are string or keyword 'default'.
 
+##### `nssa`
+This property defines the area as NSSA (not so stubby area). Valid values are true, false or keyword 'default'. This property is mutually exclusive with `stub` and `stub_no_summary`.
+
+##### `nssa_default_originate`
+Generates an NSSA External (type 7) LSA for use as a default route to the external autonomous system. Valid values are true, false or keyword 'default'.
+
+
+##### `nssa_no_redistribution`
+Disable redistribution within the NSSA. Valid values are true, false or keyword 'default'.
+
+##### `nssa_no_summary`
+Disables summary LSA flooding within the NSSA. Valid values are true, false or keyword 'default'.
+
+##### `nssa_route_map`
+Controls distribution of the default route. This property can only be used when the `nssa_default_originate` property is set to true. Valid values are String (the route-map name) or keyword 'default'.
+
+##### `nssa_translate_type7`
+Translates NSSA external (type 7) LSAs to standard external (type 5) LSAs for use outside the NSSA. Valid values are one of the following keyword strings:
+
+Keyword | Description
+|:--|:--
+|`always`             | Always translate
+|`suppress_fa`        | Forwarding Address Suppression
+|`always_suppress_fa` | Always translate & use Forwarding Address Suppression
+|`never`              | Never translate
+|`default`            | Translation is not configured
+
 ##### `range`
 Summarizes routes at an area boundary. Optionally sets the area range status to DoNotAdvertise as well as setting per-summary cost values. Valid values are a nested array of [summary_address, 'not_advertise', cost], or keyword 'default'. The summary-address is mandatory.
 
@@ -2472,11 +2509,11 @@ Example: `range => [['10.3.0.0/16', 'not_advertise', '23'],
                     ['10.3.3.0/24', '450']]`
 
 ##### `stub`
-Defines the area as a stub area. Valid values are true, false or keyword 'default'. This property is not necessary when the `stub_no_summary` property is set to true, which also defines the area as a stub area.
+Defines the area as a stub area. Valid values are true, false or keyword 'default'. This property is not necessary when the `stub_no_summary` property is set to true, which also defines the area as a stub area. This property is mutually exclusive with `nssa`.
 
 
 ##### `stub_no_summary`
-Stub areas flood summary LSAs. This property disables summary flooding into the area. This property can be used in place of the `stub` property or in conjunction with it. Valid values are true, false or keyword 'default'.
+Stub areas flood summary LSAs. This property disables summary flooding into the area. This property can be used in place of the `stub` property or in conjunction with it. Valid values are true, false or keyword 'default'. This property is mutually exclusive with `nssa`.
 
 --
 ### Type: cisco_ospf_vrf

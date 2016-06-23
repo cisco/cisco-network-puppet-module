@@ -78,12 +78,22 @@ class ciscopuppet::cisco::demo_ospf {
 
   cisco_ospf_area { 'dark_blue vrf1 1450':
     ensure          => 'present',
-    authentication  => 'clear_text',
+    authentication  => 'cleartext',
     default_cost    => 5555,
     filter_list_in  => 'fin',
     filter_list_out => 'fout',
     range           => [['10.3.0.0/16', '4989'], ['10.3.1.1/32']],
     stub            => true,
     stub_no_summary => false,
+  }
+
+  cisco_ospf_area { 'dark_blue vrf2 5000':
+    ensure                 => 'present',
+    nssa                   => true,
+    nssa_default_originate => true,
+    nssa_no_redistribution => true,
+    nssa_no_summary        => true,
+    nssa_route_map         => 'aaa',
+    nssa_translate_type7   => 'supress_fa',
   }
 }

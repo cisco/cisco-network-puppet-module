@@ -23,6 +23,13 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
+begin
+  require 'puppet_x/cisco/cmnutils'
+rescue LoadError # seen on master, not on agent
+  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..',
+                                     'puppet_x', 'cisco', 'cmnutils.rb'))
+end
 Puppet::Type.type(:cisco_ospf_area).provide(:cisco) do
   desc 'The Cisco OSPF area provider.'
 
@@ -36,8 +43,14 @@ Puppet::Type.type(:cisco_ospf_area).provide(:cisco) do
     :default_cost,
     :filter_list_in,
     :filter_list_out,
+    :nssa_route_map,
+    :nssa_translate_type7,
   ]
   OSPF_AREA_BOOL_PROPS = [
+    :nssa, # :nssa should process before other nssa properties
+    :nssa_default_originate,
+    :nssa_no_redistribution,
+    :nssa_no_summary,
     :stub,
     :stub_no_summary,
   ]
@@ -45,7 +58,7 @@ Puppet::Type.type(:cisco_ospf_area).provide(:cisco) do
     :range
   ]
 
-  OSPF_AREA_ALL_PROPS = OSPF_AREA_NON_BOOL_PROPS + OSPF_AREA_BOOL_PROPS +
+  OSPF_AREA_ALL_PROPS = OSPF_AREA_BOOL_PROPS + OSPF_AREA_NON_BOOL_PROPS +
                         OSPF_AREA_ARRAY_NESTED_PROPS
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@nu',
@@ -138,6 +151,33 @@ Puppet::Type.type(:cisco_ospf_area).provide(:cisco) do
           @nu.respond_to?("#{prop}=")
       end
     end
+    # custom setters which require one-shot multi-param setters
+    nssa_set
+  end
+
+  def nssa_set
+    attrs = {}
+    vars = [
+      :nssa,
+      :nssa_route_map,
+      :nssa_default_originate,
+      :nssa_no_redistribution,
+      :nssa_no_summary,
+    ]
+    if vars.any? { |p| @property_flush.key?(p) }
+      # At least one var has changed, get all vals from manifest
+      vars.each do |p|
+        val = @resource[p]
+        if val == :default
+          val = @nu.send("default_#{p}")
+        else
+          val = PuppetX::Cisco::Utils.bool_sym_to_s(val)
+        end
+        next if val == false || val.to_s.empty?
+        attrs[p] = val
+      end
+    end
+    @nu.nssa_set(attrs)
   end
 
   def flush

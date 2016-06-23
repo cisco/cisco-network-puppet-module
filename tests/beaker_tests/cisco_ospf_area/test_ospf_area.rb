@@ -59,7 +59,7 @@ tests[:non_default_2] = {
   desc:           '1.2 Non_Defaults',
   title_pattern:  'dark_blue vrf1 2.2.2.2',
   manifest_props: {
-    authentication:  'clear_text',
+    authentication:  'cleartext',
     default_cost:    4444,
     filter_list_in:  'fin',
     filter_list_out: 'fout',
@@ -99,6 +99,19 @@ tests[:non_default_5] = {
   },
 }
 
+tests[:non_default_6] = {
+  desc:           '1.6 Non_Defaults',
+  title_pattern:  'dark_blue vrf2 4.4.4.4',
+  manifest_props: {
+    nssa:                   'true',
+    nssa_default_originate: 'true',
+    nssa_no_redistribution: 'true',
+    nssa_no_summary:        'true',
+    nssa_route_map:         'rmap',
+    nssa_translate_type7:   'always_supress_fa',
+  },
+}
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
@@ -113,6 +126,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :non_default_3)
   test_harness_run(tests, :non_default_4)
   test_harness_run(tests, :non_default_5)
+  test_harness_run(tests, :non_default_6)
   resource_absent_cleanup(agent, 'cisco_ospf')
 end
 
