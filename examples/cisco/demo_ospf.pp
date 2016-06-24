@@ -96,4 +96,21 @@ class ciscopuppet::cisco::demo_ospf {
     nssa_route_map         => 'aaa',
     nssa_translate_type7   => 'supress_fa',
   }
+
+  $auth_password = '3109a60f51374a0d'
+  cisco_ospf_area_vl { 'dark_blue vrf2 12345 1.1.1.1':
+    ensure                             => 'present',
+    auth_key_chain                     => 'myKeyChain',
+    authentication                     => md5,
+    authentication_key_encryption_type => '3des',
+    authentication_key_password        => $auth_password,
+    dead_interval                      => 500,
+    hello_interval                     => 2000,
+    message_digest_algorithm_type      => md5,
+    message_digest_encryption_type     => cisco_type_7,
+    message_digest_key_id              => 39,
+    message_digest_password            => $md_password,
+    retransmit_interval                => 10000,
+    transmit_delay                     => 400,
+  }
 }

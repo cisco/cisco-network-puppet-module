@@ -1,0 +1,214 @@
+# Manages the Cisco OSPF area virtual-link configuration resource.
+#
+# June 2016
+#
+# Copyright (c) 2016 Cisco and/or its affiliates.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+Puppet::Type.newtype(:cisco_ospf_area_vl) do
+  @doc = "Manages an area virtual_link for an OSPF router.
+
+    cisco_ospf_area_vl {\"<ospf> <vrf> <area> <vl>\":
+      ..attributes..
+    }
+
+    <ospf> is the name of the ospf router instance.
+    <vrf> is the name of the ospf vrf.
+    <area> is the name of the ospf area instance.
+    <vl> is the name of the virtual_link instance.
+
+    Examples:
+    cisco_ospf_area {'myrouter vrf1 1.1.1.1 8.8.8.8':
+      ensure                             => 'present',
+      auth_key_chain                     => 'keyChain',
+      authentication                     => 'md5',
+      authentication_key_encryption_type => cisco_type_7,
+      authentication_key_password        => '98765432109876543210',
+      dead_interval                      => 500,
+      hello_interval                     => 2000,
+      message_digest_algorithm_type      => 'md5',
+      message_digest_encryption_type     => cisco_type_7,
+      message_digest_key_id              => 123,
+      message_digest_password            => '12345678901234567890',
+      retransmit_interval                => 777,
+      transmit_delay                     => 333,
+    }
+  "
+
+  ensurable
+
+  ###################
+  # Resource Naming #
+  ###################
+
+  # Parse out the title to fill in the attributes in these
+  # patterns. These attributes can be overwritten later.
+  def self.title_patterns
+    identity = ->(x) { x }
+    patterns = []
+
+    # Below pattern matches both parts of the full composite name.
+    patterns << [
+      /^(\S+) (\S+) (\S+) (\S+)$/,
+      [
+        [:ospf, identity],
+        [:vrf, identity],
+        [:area, identity],
+        [:vl, identity],
+      ],
+    ]
+    patterns
+  end
+
+  # Overwrites name method. Original method simply returns self[:name],
+  # which is no longer valid or complete.
+  # Would not have failed, but just return nothing useful.
+  def name
+    "#{self[:ospf]} #{self[:vrf]} #{self[:area]} #{self[:vl]}"
+  end
+
+  newparam(:name) do
+    desc 'Name of cisco_ospf_area_vl, not used, but needed for puppet'
+  end
+
+  newparam(:vl, namevar: true) do
+    desc 'Name of the virtual_link instance. Valid values are string.'
+  end # param vl
+
+  newparam(:area, namevar: true) do
+    desc 'Name of the resource instance. Valid values are string.'
+    munge do |value|
+      value = IPAddr.new(value.to_i, Socket::AF_INET) unless
+        value[/\./]
+      value
+    end
+  end # param area
+
+  newparam(:vrf, namevar: true) do
+    desc "Name of the vrf instance. Valid values are string. The
+          name 'default' is a valid VRF."
+  end # param vrf
+
+  newparam(:ospf, namevar: true) do
+    desc 'Name of the ospf instance. Valid values are string.'
+  end # param ospf
+
+  ##############
+  # Attributes #
+  ##############
+
+  newproperty(:auth_key_chain) do
+    desc "Authentication password key chain name. Valid
+          values are string, keyword 'default'. "
+
+    munge { |value| value == 'default' ? :default : value }
+  end # property auth_key_chain
+
+  newproperty(:authentication) do
+    desc 'Enable authentication for the virtual_link.'
+
+    newvalues(:cleartext, :md5, :null, :default)
+  end # property authentication
+
+  newproperty(:authentication_key_encryption_type) do
+    desc "Specifies the scheme used for encrypting
+          authentication key password. Valid values are
+          'cleartext', '3des' or 'cisco_type_7' encryption,
+          and 'default', which defaults to 'cleartext'."
+
+    newvalues(:cleartext,
+              :'3des',
+              :cisco_type_7,
+              :default)
+
+    munge do |value|
+      value = :cleartext if value.to_sym == :default
+      value.to_sym
+    end
+  end # property authentication_key_encryption_type
+
+  newproperty(:authentication_key_password) do
+    desc "Specifies the authentication key password. Valid values are
+          string, keyword 'default'"
+
+    munge { |value| value == 'default' ? :default : value }
+  end # property authentication_key_password
+
+  newproperty(:dead_interval) do
+    desc "Sets the time in seconds that a neighbor waits for a Hello packet
+          before declaring the local router as dead and tearing down
+          adjacencies. Valid values are integer, keyword 'default'."
+
+    munge { |value| value == 'default' ? :default : Integer(value) }
+  end # property dead_interval
+
+  newproperty(:hello_interval) do
+    desc "Sets the time in seconds between successive Hello packets.
+          Valid values are integer, keyword 'default'."
+
+    munge { |value| value == 'default' ? :default : Integer(value) }
+  end # property hello_interval
+
+  newproperty(:message_digest_algorithm_type) do
+    desc "Algorithm used for authentication among neighboring routers
+          within an area virtual link. Valid values are 'md5',
+          keyword 'default'."
+
+    newvalues(:md5, :default)
+  end # property message_digest_algorithm_type
+
+  newproperty(:message_digest_encryption_type) do
+    desc "Specifies the scheme used for encrypting
+          message digest password. Valid values are
+          'cleartext', '3des' or 'cisco_type_7' encryption,
+          and 'default', which defaults to 'cleartext'."
+
+    newvalues(:cleartext,
+              :'3des',
+              :cisco_type_7,
+              :default)
+
+    munge do |value|
+      value = :cleartext if value.to_sym == :default
+      value.to_sym
+    end
+  end # property message_digest_encryption_type
+
+  newproperty(:message_digest_key_id) do
+    desc 'md5 authentication key id. Valid values are integer.'
+
+    munge { |value| value == 'default' ? :default : Integer(value) }
+  end # property message_digest_key_id
+
+  newproperty(:message_digest_password) do
+    desc 'Specifies the message digest password. Valid values are
+          string.'
+
+    munge { |value| value == 'default' ? :default : value }
+  end # property message_digest_password
+
+  newproperty(:retransmit_interval) do
+    desc "Sets the estimated time in seconds between successive LSAs.
+          Valid values are integer, keyword 'default'."
+
+    munge { |value| value == 'default' ? :default : Integer(value) }
+  end # property retransmit_interval
+
+  newproperty(:transmit_delay) do
+    desc "Sets the estimated time in seconds to transmit an LSA to
+          a neighbor. Valid values are integer, keyword 'default'."
+
+    munge { |value| value == 'default' ? :default : Integer(value) }
+  end # property transmit_delay
+end
