@@ -221,6 +221,7 @@ Puppet::Type.newtype(:cisco_ospf_area_vl) do
   end
 
   def check_message_digest
+    return if self[:message_digest_password].nil?
     if self[:message_digest_password] == :default ||
        self[:message_digest_password] == ''
       vars = [
