@@ -211,4 +211,37 @@ Puppet::Type.newtype(:cisco_ospf_area_vl) do
 
     munge { |value| value == 'default' ? :default : Integer(value) }
   end # property transmit_delay
+
+  def check_authentication
+    return unless self[:authentication_key_password] == :default ||
+                  self[:authentication_key_password] == ''
+    fail ArgumentError,
+         'authentication_key_encryption_type MUST be default when authentication_key_password is default' unless
+      self[:authentication_key_encryption_type] == :cleartext
+  end
+
+  def check_message_digest
+    if self[:message_digest_password] == :default ||
+       self[:message_digest_password] == ''
+      vars = [
+        :message_digest_algorithm_type,
+        :message_digest_encryption_type,
+        :message_digest_key_id,
+      ]
+      vars.each do |p|
+        fail ArgumentError,
+             'All message_digest params should be default when message_digest_password is default' unless
+          self[p].nil? || self[p] == :default || self[p] == :cleartext
+      end
+    else
+      fail ArgumentError,
+           'message_digest_key_id cannot be default when message_digest_password is not default' if
+          self[:message_digest_key_id].nil? || self[:message_digest_key_id] == :default
+    end
+  end
+
+  validate do
+    check_authentication
+    check_message_digest
+  end
 end
