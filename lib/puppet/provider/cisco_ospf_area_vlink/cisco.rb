@@ -56,7 +56,8 @@ Puppet::Type.type(:cisco_ospf_area_vlink).provide(:cisco) do
     vrf = @property_hash[:vrf]
     area = @property_hash[:area]
     vlink = @property_hash[:vlink]
-    @nu = Cisco::RouterOspfAreaVirtualLink.virtual_links[ospf][vrf][area + '_' + vl] unless ospf.nil? || vrf.nil? || area.nil? || vlink.nil?
+    @nu = Cisco::RouterOspfAreaVirtualLink.virtual_links[ospf][vrf][area][vlink] unless
+      ospf.nil? || vrf.nil? || area.nil? || vlink.nil?
     @property_flush = {}
   end
 
@@ -81,10 +82,11 @@ Puppet::Type.type(:cisco_ospf_area_vlink).provide(:cisco) do
   def self.instances
     vlink_instances = []
     Cisco::RouterOspfAreaVirtualLink.virtual_links.each do |ospf, vrfs|
-      vrfs.each do |vrf, avls|
-        avls.each do |avl, nu_obj|
-          area, vlink = avl.split('_')
-          vlink_instances << properties_get(ospf, vrf, area, vlink, nu_obj)
+      vrfs.each do |vrf, areas|
+        areas.each do |area, vlinks|
+          vlinks.each do |vlink, nu_obj|
+            vlink_instances << properties_get(ospf, vrf, area, vlink, nu_obj)
+          end
         end
       end
     end
@@ -98,7 +100,7 @@ Puppet::Type.type(:cisco_ospf_area_vlink).provide(:cisco) do
         vli.ospf.to_s == resources[id][:ospf].to_s &&
         vli.vrf.to_s == resources[id][:vrf].to_s &&
         vli.area.to_s == resources[id][:area].to_s &&
-        vli.vl.to_s == resources[id][:vlink].to_s
+        vli.vlink.to_s == resources[id][:vlink].to_s
       end
       resources[id].provider = provider unless provider.nil?
     end
