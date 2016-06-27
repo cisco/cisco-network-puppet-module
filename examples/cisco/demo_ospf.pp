@@ -98,7 +98,7 @@ class ciscopuppet::cisco::demo_ospf {
   }
 
   $auth_password = '3109a60f51374a0d'
-  cisco_ospf_area_vl { 'dark_blue vrf2 12345 1.1.1.1':
+  cisco_ospf_area_vlink { 'dark_blue vrf2 12345 1.1.1.1':
     ensure                             => 'present',
     auth_key_chain                     => 'myKeyChain',
     authentication                     => md5,
