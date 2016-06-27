@@ -16,20 +16,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-Puppet::Type.newtype(:cisco_ospf_area_vl) do
+Puppet::Type.newtype(:cisco_ospf_area_vlink) do
   @doc = "Manages an area virtual_link for an OSPF router.
 
-    cisco_ospf_area_vl {\"<ospf> <vrf> <area> <vl>\":
+    cisco_ospf_area_vlink {\"<ospf> <vrf> <area> <vlink>\":
       ..attributes..
     }
 
     <ospf> is the name of the ospf router instance.
     <vrf> is the name of the ospf vrf.
     <area> is the name of the ospf area instance.
-    <vl> is the name of the virtual_link instance.
+    <vlink> is the name of the virtual_link instance.
 
     Examples:
-    cisco_ospf_area {'myrouter vrf1 1.1.1.1 8.8.8.8':
+    cisco_ospf_area_vlink {'myrouter vrf1 1.1.1.1 8.8.8.8':
       ensure                             => 'present',
       auth_key_chain                     => 'keyChain',
       authentication                     => 'md5',
@@ -65,7 +65,7 @@ Puppet::Type.newtype(:cisco_ospf_area_vl) do
         [:ospf, identity],
         [:vrf, identity],
         [:area, identity],
-        [:vl, identity],
+        [:vlink, identity],
       ],
     ]
     patterns
@@ -75,16 +75,16 @@ Puppet::Type.newtype(:cisco_ospf_area_vl) do
   # which is no longer valid or complete.
   # Would not have failed, but just return nothing useful.
   def name
-    "#{self[:ospf]} #{self[:vrf]} #{self[:area]} #{self[:vl]}"
+    "#{self[:ospf]} #{self[:vrf]} #{self[:area]} #{self[:vlink]}"
   end
 
   newparam(:name) do
-    desc 'Name of cisco_ospf_area_vl, not used, but needed for puppet'
+    desc 'Name of cisco_ospf_area_vlink, not used, but needed for puppet'
   end
 
-  newparam(:vl, namevar: true) do
+  newparam(:vlink, namevar: true) do
     desc 'Name of the virtual_link instance. Valid values are string.'
-  end # param vl
+  end # param vlink
 
   newparam(:area, namevar: true) do
     desc 'Name of the resource instance. Valid values are string.'
