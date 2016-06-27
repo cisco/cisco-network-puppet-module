@@ -29,7 +29,7 @@ tests = {
   master:           master,
   agent:            agent,
   operating_system: 'nexus',
-  resource_name:    'cisco_ospf_area_vl',
+  resource_name:    'cisco_ospf_area_vlink',
 }
 
 # Test hash test cases
