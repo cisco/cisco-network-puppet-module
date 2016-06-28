@@ -18,13 +18,13 @@
 # tacacs_globallib.rb
 #
 # This is the utility library for the Tacacs Global provider Beaker test cases
-# that contains the common methods used across the Radius Server testsuite's
+# that contains the common methods used across the Tacacs Server testsuite's
 # cases. The library is implemented as a module with related methods and
 # constants defined inside it for use as a namespace. All of the methods are
 # defined as module methods.
 #
-# Every Beaker Radius Server test case that runs an instance of Beaker::TestCase
-# requires RadiusSettingLib module.
+# Every Beaker Tacacs Server test case that runs an instance of Beaker::TestCase
+# requires TacacsSettingLib module.
 #
 # The module has a single set of methods:
 # A. Methods to create manifests for tacacs_global Puppet provider test cases.
@@ -35,6 +35,9 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 # A library to assist testing tacacs_global resource
 module TacacsGlobalLib
+  # Group of Constants used in negative tests for tacacs_global provider.
+  ENSURE_NEGATIVE = 'unknown'
+
   # A. Methods to create manifests for tacacs_global Puppet provider test cases.
 
   # Method to create a manifest for tacacs_global
@@ -44,7 +47,6 @@ module TacacsGlobalLib
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   tacacs_global { 'default':
-    enable              => true,
     key                 => '44444444',
     key_format          => '7',
     timeout             => '2',
@@ -62,25 +64,9 @@ EOF"
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   tacacs_global { 'default':
-    enable              => true,
     key                 => '44444444',
     key_format          => '7',
-    timeout             => '3',
-  }
-}
-EOF"
-    manifest_str
-  end
-
-  # Method to create a manifest for tacacs_global resource
-  # with a few properties removed made from above.
-  # @param none [None] No input parameters exist.
-  # @result none [None] Returns no object.
-  def self.create_tacacs_global_manifest_change_disabled
-    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
-node default {
-  tacacs_global { 'default':
-    enable  => false,
+    timeout             => '1',
   }
 }
 EOF"
