@@ -98,6 +98,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `route_target_import_stitching`
 - Extended `cisco_vxlan_vtep` with the following attributes:
   - `source_interface_hold_down_time`
+- Extended `cisco_bgp` with the following attributes:
+  - `nsr`
+- `package` install IOS XR RPMs to host via sdr_instcmd.
 
 ### Removed
 - Removed 'cisco_nxapi' fact as this gem is no longer a dependency.
