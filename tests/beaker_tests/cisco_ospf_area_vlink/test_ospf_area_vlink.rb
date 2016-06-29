@@ -102,7 +102,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, id)
 
   # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection Non Default Property Testing")
+  logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
   test_harness_run(tests, :non_default)
   resource_absent_cleanup(agent, 'cisco_ospf')
