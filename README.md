@@ -2579,7 +2579,7 @@ Specifies the authentication_key password. Valid value is a string, or 'default'
 Time in seconds that a neighbor waits for a Hello packet before declaring the local router as dead and tearing down adjacencies. Valid values are integer, keyword 'default'.
 
 ##### `hello_interval`
-The time in seconds between successive Hello packets. Valid values are integer, keyword 'default'.
+Time in seconds between successive Hello packets. Valid values are integer, keyword 'default'.
 
 ##### `message_digest_algorithm_type`
 Algorithm used for authentication among neighboring routers within an area virtual link. Valid values are 'md5' and keyword 'default'.
