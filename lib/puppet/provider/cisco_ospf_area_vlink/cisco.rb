@@ -48,7 +48,7 @@ Puppet::Type.type(:cisco_ospf_area_vlink).provide(:cisco) do
   OSPF_AREA_VLINK_ALL_PROPS = OSPF_AREA_VLINK_NON_BOOL_PROPS
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@nu',
-                                            OSPF_AREA_VLINK_ALL_PROPS)
+                                            OSPF_AREA_VLINK_NON_BOOL_PROPS)
 
   def initialize(value={})
     super(value)
