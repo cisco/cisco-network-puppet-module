@@ -2454,7 +2454,6 @@ cisco_ospf_area { 'my_ospf_instance my_vrf 1000':
 
 #### Parameters
 
-
 | Example Parameter Usage |
 |:--|:--
 |`cisco_ospf_area { '<ospf_process_id> <vrf> <area_id>':`
@@ -2552,7 +2551,6 @@ cisco_ospf_area_vlink { 'my_ospf_instance default 10 1.1.1.1':
 ```
 
 #### Parameters
-
 
 | Example Parameter Usage |
 |:--|:--
