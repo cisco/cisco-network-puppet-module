@@ -160,6 +160,7 @@ A note about support for specific platform models:
 | [cisco_itd_service](#type-cisco_itd_service)                     | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | \*[caveats](#cisco_itd_service-caveats) |
 | [cisco_ospf](#type-cisco_ospf)                             | ✅  | ✅  | ✅ | ✅  | ✅  |
 | [cisco_ospf_area](#type-cisco_ospf_area)                   | ✅  | ✅  | ✅ | ✅  | ✅  |
+| [cisco_ospf_area_vlink](#type-cisco_ospf_area_vlink)       | ✅  | ✅  | ✅ | ✅  | ✅  |
 | [cisco_ospf_vrf](#type-cisco_ospf_vrf)                     | ✅  | ✅  | ✅ | ✅  | ✅  |
 | ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | Caveats |
 | [cisco_overlay_global](#type-cisco_overlay_global)         | ✅  | :heavy_minus_sign: | ✅ | ✅ | ✅ |
@@ -285,6 +286,7 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_vrf`](#type-cisco_vrf)
   * [`cisco_ospf`](#type-cisco_ospf)
   * [`cisco_ospf_area`](#type-cisco_ospf_area)
+  * [`cisco_ospf_area_vlink`](#type-cisco_ospf_area_vlink)
   * [`cisco_ospf_vrf`](#type-cisco_ospf_vrf)
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 
@@ -381,6 +383,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_itd_service`](#type-cisco_itd_service)
 * [`cisco_ospf`](#type-cisco_ospf)
 * [`cisco_ospf_area`](#type-cisco_ospf_area)
+* [`cisco_ospf_area_vlink`](#type-cisco_ospf_area_vlink)
 * [`cisco_ospf_vrf`](#type-cisco_ospf_vrf)
 * [`cisco_overlay_global`](#type-cisco_overlay_global)
 * [`cisco_pim`](#type-cisco_pim)
@@ -2451,7 +2454,6 @@ cisco_ospf_area { 'my_ospf_instance my_vrf 1000':
 
 #### Parameters
 
-
 | Example Parameter Usage |
 |:--|:--
 |`cisco_ospf_area { '<ospf_process_id> <vrf> <area_id>':`
@@ -2478,7 +2480,6 @@ This property defines the area as NSSA (not so stubby area). Valid values are tr
 
 ##### `nssa_default_originate`
 Generates an NSSA External (type 7) LSA for use as a default route to the external autonomous system. Valid values are true, false or keyword 'default'.
-
 
 ##### `nssa_no_redistribution`
 Disable redistribution within the NSSA. Valid values are true, false or keyword 'default'.
@@ -2514,6 +2515,87 @@ Defines the area as a stub area. Valid values are true, false or keyword 'defaul
 
 ##### `stub_no_summary`
 Stub areas flood summary LSAs. This property disables summary flooding into the area. This property can be used in place of the `stub` property or in conjunction with it. Valid values are true, false or keyword 'default'. This property is mutually exclusive with `nssa`.
+
+--
+### Type: cisco_ospf_area_vlink
+
+Manages an area virtual link for an OSPF router.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I3(1)        | 1.4.0                  |
+| N3k      | 7.0(3)I3(1)        | 1.4.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.4.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.4.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.4.0                  |
+| N8k      | 7.3(0)F1(1)        | 1.4.0                  |
+
+#### Example Usage
+
+```puppet
+cisco_ospf_area_vlink { 'my_ospf_instance default 10 1.1.1.1':
+  ensure                             => 'present',
+  auth_key_chain                     => 'keyChain',
+  authentication                     => 'md5',
+  authentication_key_encryption_type => cisco_type_7,
+  authentication_key_password        => '98765432109876543210',
+  dead_interval                      => 500,
+  hello_interval                     => 2000,
+  message_digest_algorithm_type      => 'md5',
+  message_digest_encryption_type     => cisco_type_7,
+  message_digest_key_id              => 123,
+  message_digest_password            => '12345678901234567890',
+  retransmit_interval                => 777,
+  transmit_delay                     => 333,
+}
+```
+
+#### Parameters
+
+| Example Parameter Usage |
+|:--|:--
+|`cisco_ospf_area_vlink { '<ospf_process_id> <vrf> <area_id> <vlink_id>':`
+|`cisco_ospf_area_vlink { '1 my_vrf 10 1.1.1.1':`
+|`cisco_ospf_area_vlink { 'my_ospf default 10.1.1.1 2.2.2.2':`
+
+##### `ensure`
+Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
+
+##### `auth_key_chain`
+Authentication password key chain name. Valid values are string, or 'default'.
+
+##### `authentication`
+Enables authentication for the virtual link. Valid values are 'cleartext', 'md5', 'null', or 'default'.
+
+##### `authentication_key_encryption_type`
+Specifies the scheme used for encrypting authentication_key_password. Valid values are 'cleartext', '3des' or 'cisco_type_7' encryption, and 'default', which defaults to 'cleartext'.
+
+##### `authentication_key_password`
+Specifies the authentication_key password. Valid value is a string, or 'default'.
+
+##### `dead_interval`
+Time in seconds that a neighbor waits for a Hello packet before declaring the local router as dead and tearing down adjacencies. Valid values are integer, keyword 'default'.
+
+##### `hello_interval`
+Time in seconds between successive Hello packets. Valid values are integer, keyword 'default'.
+
+##### `message_digest_algorithm_type`
+Algorithm used for authentication among neighboring routers within an area virtual link. Valid values are 'md5' and keyword 'default'.
+
+##### `message_digest_encryption_type`
+Specifies the scheme used for encrypting message_digest_password. Valid values are 'cleartext', '3des' or 'cisco_type_7' encryption, and 'default', which defaults to 'cleartext'.
+
+##### `message_digest_key_id`
+md5 authentication key id. Valid values are integer.
+
+##### `message_digest_password`
+Specifies the message_digest password. Valid value is a string.
+
+##### `retransmit_interval`
+Estimated time in seconds between successive LSAs. Valid values are integer, keyword 'default'.
+
+##### `transmit_delay`
+Estimated time in seconds to transmit an LSA to a neighbor. Valid values are integer, keyword 'default'.
 
 --
 ### Type: cisco_ospf_vrf

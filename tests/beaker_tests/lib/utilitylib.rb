@@ -1066,6 +1066,7 @@ def platform_supports_test(tests, id)
     logger.error("\n#{tests[id][:desc]} :: #{id} :: SKIP")
     logger.error("Platform type does not match testcase platform regexp: /#{plat}/")
   else
+    platform
     return true
   end
   tests[:skipped] ||= []
