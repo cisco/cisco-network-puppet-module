@@ -91,8 +91,7 @@ tests[:non_default] = {
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
-  device = platform
-  logger.info("#### This device is of type: #{device} #####")
+  platform
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   test_harness_run(tests, :default)
 

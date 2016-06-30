@@ -127,15 +127,8 @@ Puppet::Type.newtype(:cisco_ospf_area_vlink) do
           'cleartext', '3des' or 'cisco_type_7' encryption,
           and 'default', which defaults to 'cleartext'."
 
-    newvalues(:cleartext,
-              :'3des',
-              :cisco_type_7,
-              :default)
-
-    munge do |value|
-      value = :cleartext if value.to_sym == :default
-      value.to_sym
-    end
+    munge(&:to_sym)
+    newvalues(:cleartext, :'3des', :cisco_type_7, :default)
   end # property authentication_key_encryption_type
 
   newproperty(:authentication_key_password) do
@@ -174,15 +167,8 @@ Puppet::Type.newtype(:cisco_ospf_area_vlink) do
           'cleartext', '3des' or 'cisco_type_7' encryption,
           and 'default', which defaults to 'cleartext'."
 
-    newvalues(:cleartext,
-              :'3des',
-              :cisco_type_7,
-              :default)
-
-    munge do |value|
-      value = :cleartext if value.to_sym == :default
-      value.to_sym
-    end
+    munge(&:to_sym)
+    newvalues(:cleartext, :'3des', :cisco_type_7, :default)
   end # property message_digest_encryption_type
 
   newproperty(:message_digest_key_id) do
@@ -215,9 +201,10 @@ Puppet::Type.newtype(:cisco_ospf_area_vlink) do
   def check_authentication
     return unless self[:authentication_key_password] == :default ||
                   self[:authentication_key_password] == ''
+    var = :authentication_key_encryption_type
     fail ArgumentError,
          'authentication_key_encryption_type MUST be default when authentication_key_password is default' unless
-      self[:authentication_key_encryption_type] == :cleartext
+      self[var].nil? || self[var] == :default || self[var] == :cleartext
   end
 
   def check_message_digest
