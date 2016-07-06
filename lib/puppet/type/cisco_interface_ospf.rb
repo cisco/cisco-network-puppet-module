@@ -85,16 +85,9 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
 
   newproperty(:cost) do
     desc "The cost associated with this cisco_interface_ospf
-          instance. Valid values are integer."
+          instance. Valid values are integer, keyword 'default'"
 
-    munge do |value|
-      begin
-        value = Integer(value)
-      rescue
-        raise 'cost property must be an integer.'
-      end
-      value
-    end
+    munge { |value| value == 'default' ? :default : Integer(value) }
   end
 
   newproperty(:hello_interval) do
@@ -102,15 +95,7 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
           instance. Time between sending successive hello packets. Valid
           values are integer, keyword 'default'."
 
-    munge do |value|
-      begin
-        value = :default if value == 'default'
-        value = Integer(value) unless value == :default
-      rescue
-        raise 'hello_interval property must be an integer.'
-      end
-      value
-    end
+    munge { |value| value == 'default' ? :default : Integer(value) }
   end
 
   newproperty(:dead_interval) do
@@ -119,15 +104,7 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
           packet before tearing down adjacencies. Valid values are
           integer, keyword 'default'."
 
-    munge do |value|
-      begin
-        value = :default if value == 'default'
-        value = Integer(value) unless value == :default
-      rescue
-        raise 'dead_interval property must be an integer.'
-      end
-      value
-    end
+    munge { |value| value == 'default' ? :default : Integer(value) }
   end
 
   newproperty(:passive_interface) do
@@ -135,14 +112,14 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
           instance. Setting to true will prevent this interface from
           receiving HELLO packets."
 
-    newvalues(:true, :false)
+    newvalues(:true, :false, :default)
   end
 
   newproperty(:message_digest) do
     desc "Enables or disables the usage of message digest
           authentication. "
 
-    newvalues(:true, :false)
+    newvalues(:true, :false, :default)
   end
 
   newproperty(:message_digest_key_id) do
@@ -152,36 +129,26 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
           message_digest_algorithm_type and message_digest_password are
           mandatory. Valid values are integer."
 
-    munge do |value|
-      begin
-        value = Integer(value)
-      rescue
-        raise "message_digest_key_id provided in the manifest - #{value} is not a valid integer."
-      end
-      value
-    end
+    munge { |value| value == 'default' ? :default : Integer(value) }
   end
 
-  newparam(:message_digest_algorithm_type) do
+  newproperty(:message_digest_algorithm_type) do
     desc "Algorithm used for authentication among neighboring routers
           within an area. Keyword: 'default'"
 
-    munge do |value|
-      value = :md5 if value == 'default'
-      value.to_sym
-    end
     newvalues(:md5, :default)
   end
 
-  newparam(:message_digest_encryption_type) do
+  newproperty(:message_digest_encryption_type) do
     desc "Specifies the scheme used for encrypting
           message_digest_password. Valid values are 'cleartext',
           '3des' or 'cisco_type_7' encryption, and
           'default', which defaults to 'cleartext'."
 
+    munge(&:to_sym)
     newvalues(:clear,
               :cleartext,
-              :"3des",
+              :'3des',
               :cisco_type_7,
               :encrypted,
               :default)
@@ -203,10 +170,7 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
   newproperty(:message_digest_password) do
     desc 'Specifies the message_digest password. Valid values are string.'
 
-    validate do |message_digest_password|
-      fail("message_digest_password - #{message_digest_password} should be a string")  \
-        unless message_digest_password.nil? || message_digest_password.kind_of?(String)
-    end
+    munge { |value| value == 'default' ? :default : value }
   end
 
   newproperty(:area) do
@@ -273,37 +237,5 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
        !/^lo\S+$/.match(self[:interface].downcase).nil?
       fail 'passive_interface value cannot be set on loopback interfaces'
     end
-  end
-
-  ################
-  # Autorequires #
-  ################
-
-  # Autorequire cisco_interface; do not fail if it is not present in the manifest
-  autorequire(:cisco_interface) do |rel_catalog|
-    reqs = []
-
-    interface_title = self[:interface]
-
-    dep = rel_catalog.catalog.resource('cisco_interface', interface_title)
-
-    info "Cisco_interface[#{interface_title}] was not found in catalog. " \
-         'Will obtain from device.' if dep.nil?
-    reqs << dep
-    reqs
-  end
-
-  # Autorequire cisco_ospf; do not fail if it is not present in the manifest
-  autorequire(:cisco_ospf) do |rel_catalog|
-    reqs = []
-
-    ospf_title = self[:ospf]
-
-    dep = rel_catalog.catalog.resource('cisco_ospf', ospf_title)
-
-    info "Cisco_ospf[#{ospf_title}] was not found in catalog. " \
-         'Will obtain from device.' if dep.nil?
-    reqs << dep
-    reqs
   end
 end

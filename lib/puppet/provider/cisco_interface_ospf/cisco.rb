@@ -31,29 +31,28 @@ Puppet::Type.type(:cisco_interface_ospf).provide(:cisco) do
 
   mk_resource_methods
 
-  # Getter properties that need to generate the getter functions
-  GETTER_PROPS = [
-    :hello_interval, :dead_interval
+  INTF_OSPF_NON_BOOL_PROPS = [
+    :cost,
+    :hello_interval,
+    :dead_interval,
+    :message_digest_key_id,
+    :message_digest_algorithm_type,
+    :message_digest_encryption_type,
+    :message_digest_password,
+    :area,
   ]
 
-  # Setter properties
-  SETTER_NON_BOOL_PROPS = [
-    :cost, :hello_interval, :dead_interval, :message_digest_key_id,
-    :message_digest_password, :area
+  INTF_OSPF_BOOL_PROPS = [
+    :passive_interface,
+    :message_digest,
   ]
 
-  SETTER_BOOL_PROPS = [
-    :passive_interface, :message_digest
-  ]
+  INTF_OSPF_ALL_PROPS = INTF_OSPF_NON_BOOL_PROPS + INTF_OSPF_BOOL_PROPS
 
-  ALL_SETTER_PROPS = SETTER_NON_BOOL_PROPS + SETTER_BOOL_PROPS
-
-  PuppetX::Cisco::AutoGen.mk_puppet_getters_non_bool(self, '@interface_ospf',
-                                                     GETTER_PROPS)
-  PuppetX::Cisco::AutoGen.mk_puppet_setters_non_bool(self, '@interface_ospf',
-                                                     SETTER_NON_BOOL_PROPS)
-  PuppetX::Cisco::AutoGen.mk_puppet_setters_bool(self, '@interface_ospf',
-                                                 SETTER_BOOL_PROPS)
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@interface_ospf',
+                                            INTF_OSPF_NON_BOOL_PROPS)
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@interface_ospf',
+                                            INTF_OSPF_BOOL_PROPS)
 
   def initialize(value={})
     super(value)
@@ -70,15 +69,17 @@ Puppet::Type.type(:cisco_interface_ospf).provide(:cisco) do
     }
 
     # Call node_utils getter for each property
-    ALL_SETTER_PROPS.each do |prop|
+    INTF_OSPF_NON_BOOL_PROPS.each do |prop|
       current_state[prop] = interface_ospf.send(prop)
     end
-
-    current_state[:passive_interface] =
-      current_state[:passive_interface].to_s.to_sym
-    current_state[:message_digest] =
-      current_state[:message_digest].to_s.to_sym
-
+    INTF_OSPF_BOOL_PROPS.each do |prop|
+      val = interface_ospf.send(prop)
+      if val.nil?
+        current_state[prop] = nil
+      else
+        current_state[prop] = val ? :true : :false
+      end
+    end
     new(current_state)
   end # self.properties_get
 
@@ -117,65 +118,39 @@ Puppet::Type.type(:cisco_interface_ospf).provide(:cisco) do
   end
 
   def properties_set(new_instance=false)
-    ALL_SETTER_PROPS.each do |prop|
-      send("#{prop}=", @resource[prop]) if new_instance && @resource[prop]
+    INTF_OSPF_ALL_PROPS.each do |prop|
+      next unless @resource[prop]
+      send("#{prop}=", @resource[prop]) if new_instance
       unless @property_flush[prop].nil?
         @interface_ospf.send("#{prop}=", @property_flush[prop]) if
           @interface_ospf.respond_to?("#{prop}=")
       end
     end
+    # custom setters which require one-shot multi-param setters
+    message_digest_key_set
+  end
 
-    if @property_flush[:message_digest_key_id].nil?
-      should_message_digest_key_id = @interface_ospf.message_digest_key_id
-    else
-      should_message_digest_key_id = @property_flush[:message_digest_key_id]
-    end
-
-    if @property_flush[:message_digest_password].nil?
-      should_message_digest_password = @interface_ospf.message_digest_password
-    else
-      should_message_digest_password = @property_flush[:message_digest_password]
-    end
-
-    # should_message_digest_password could still be nil if not configured on box
-    should_message_digest_password = '' if should_message_digest_password.nil?
-
-    if @resource[:message_digest_algorithm_type].nil?
-      should_message_digest_algorithm_type = @interface_ospf.message_digest_algorithm_type
-    else
-      should_message_digest_algorithm_type = @resource[:message_digest_algorithm_type]
-    end
-
-    if @resource[:message_digest_encryption_type].nil?
-      should_message_digest_encryption_type = @interface_ospf.message_digest_encryption_type
-    else
-      should_message_digest_encryption_type = @resource[:message_digest_encryption_type]
-    end
-
-    return unless (new_instance &&
-                   (should_message_digest_key_id !=
-                    @interface_ospf.default_message_digest_key_id)) ||
-                  (@property_flush[:message_digest_key_id] && !new_instance) ||
-                  (@property_flush[:message_digest_password] && !new_instance)
-
-    @interface_ospf.message_digest_key_set(
-      should_message_digest_key_id,
-      should_message_digest_algorithm_type.to_s,
-      should_message_digest_encryption_type,
-      should_message_digest_password)
+  def message_digest_key_set
+    key = @property_flush[:message_digest_key_id] ? @property_flush[:message_digest_key_id] : @interface_ospf.message_digest_key_id
+    pw = @property_flush[:message_digest_password] ? @property_flush[:message_digest_password] : @interface_ospf.message_digest_password
+    algtype = @property_flush[:message_digest_algorithm_type] ? @property_flush[:message_digest_algorithm_type] : @interface_ospf.message_digest_algorithm_type
+    enctype = @property_flush[:message_digest_encryption_type] ? @property_flush[:message_digest_encryption_type] : @interface_ospf.message_digest_encryption_type
+    @interface_ospf.message_digest_key_set(key, algtype.to_s, enctype, pw)
   end
 
   def flush
     if @property_flush[:ensure] == :absent
       @interface_ospf.destroy
       @interface_ospf = nil
-    elsif @property_flush[:ensure] == :present
-      @interface_ospf = Cisco::InterfaceOspf.new(@resource[:interface],
-                                                 @resource[:ospf],
-                                                 @resource[:area])
-      properties_set(true)
     else
-      properties_set
+      new_instance = false
+      if @interface_ospf.nil?
+        new_instance = true
+        @interface_ospf = Cisco::InterfaceOspf.new(@resource[:interface],
+                                                   @resource[:ospf],
+                                                   @resource[:area])
+      end
+      properties_set(new_instance)
     end
   end
 end
