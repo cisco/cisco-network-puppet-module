@@ -32,6 +32,7 @@ Puppet::Type.type(:cisco_interface_ospf).provide(:cisco) do
   mk_resource_methods
 
   INTF_OSPF_NON_BOOL_PROPS = [
+    :area,
     :cost,
     :hello_interval,
     :dead_interval,
@@ -39,7 +40,6 @@ Puppet::Type.type(:cisco_interface_ospf).provide(:cisco) do
     :message_digest_algorithm_type,
     :message_digest_encryption_type,
     :message_digest_password,
-    :area,
   ]
 
   INTF_OSPF_BOOL_PROPS = [

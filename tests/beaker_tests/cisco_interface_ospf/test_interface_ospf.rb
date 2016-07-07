@@ -95,7 +95,8 @@ tests[:non_default] = {
 }
 
 # Overridden to properly handle dependencies for this test file.
-def test_harness_dependencies(_tests, _id)
+def test_harness_dependencies(_tests, id)
+  return unless id == :default
   cmd = [
     'feature ospf ; router ospf Sample',
     "interface #{@intf} ; no switchport",
