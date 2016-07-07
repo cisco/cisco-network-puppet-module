@@ -2115,6 +2115,15 @@ Shutdown state of the interface service vni. Valid values are 'true', 'false', o
 ### Type: cisco_interface_ospf
 Manages configuration of an OSPF interface instance.
 
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| N8k      | 7.3(0)F1(1)        | 1.2.0                  |
+
 #### Parameters
 
 ##### `ensure`
@@ -2128,7 +2137,7 @@ Name of this cisco_interface resource. Valid value is a string.
 Name of the cisco_ospf resource. Valid value is a string.
 
 ##### `cost`
-The cost associated with this cisco_interface_ospf instance. Valid value is an integer.
+The cost associated with this cisco_interface_ospf instance. Valid value is an integer or the keyword 'default'.
 
 ##### `hello_interval`
 The hello_interval associated with this cisco_interface_ospf instance. Time
@@ -2143,17 +2152,17 @@ adjacencies. Valid values are an integer or the keyword 'default'.
 ##### `passive_interface`
 Passive interface associated with the cisco_interface_ospf instance. Setting
 to true will prevent this interface from receiving HELLO packets.
-Valid values are 'true' and 'false'.
+Valid values are 'true' and 'false' or the keyword 'default'.
 
 ##### `message_digest`
 Enables or disables the usage of message digest authentication.
-Valid values are 'true' and 'false'.
+Valid values are 'true' and 'false' or the keyword 'default'.
 
 ##### `message_digest_key_id`
 md5 authentication key-id associated with the cisco_interface_ospf instance.
 If this is present in the manifest, message_digest_encryption_type,
 message_digest_algorithm_type and message_digest_password are mandatory.
-Valid value is an integer.
+Valid value is an integer or the keyword 'default'.
 
 ##### `message_digest_algorithm_type`
 Algorithm used for authentication among neighboring routers within an area.
@@ -2165,7 +2174,7 @@ Valid values are 'cleartext', '3des' or 'cisco_type_7' encryption, and
 'default', which defaults to 'cleartext'.
 
 ##### `message_digest_password`
-Specifies the message_digest password. Valid value is a string.
+Specifies the message_digest password. Valid value is a string or the keyword 'default'.
 
 ##### `area`
 *Required*. Ospf area associated with this cisco_interface_ospf instance. Valid values are a string, formatted as an IP address (i.e. "0.0.0.0") or as an integer.

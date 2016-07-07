@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Changed
+- `cisco_interface_ospf` type and provider so that the properties accept 'default' keyword.
 
 ## [1.3.2] - 2016-05-20
 
