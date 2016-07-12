@@ -56,7 +56,7 @@ tests[:title_patterns_3] = {
 
 tests[:title_patterns_4] = {
   desc:          'T.4 Title Pattern',
-  title_pattern: 'ipv4 magenta 1.1.1.1',
+  title_pattern: 'ipv4 orange 1.1.1.1',
   title_params:  { group: '224.0.0.0/8' },
   resource:      { 'ensure' => 'present' },
 }
