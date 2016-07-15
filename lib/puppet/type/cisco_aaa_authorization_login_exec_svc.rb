@@ -95,25 +95,4 @@ Puppet::Type.newtype(:cisco_aaa_authorization_login_exec_svc) do
 
     newvalues(:local, :unselected, :default)
   end
-
-  ################
-  # Autorequires #
-  ################
-
-  # At a minimum, tacacs_server must be enabled to use these features
-  autorequire(:cisco_tacacs_server) do |rel_catalog|
-    rel_catalog.catalog.resource('Cisco_tacacs_server', 'default')
-  end
-
-  # Autorequire all cisco_aaa_group_tacacs associated with this service
-  autorequire(:cisco_aaa_group_tacacs) do |rel_catalog|
-    groups = []
-    if self[:groups]
-      self[:groups].flatten.each do |group|
-        groups << rel_catalog.catalog.resource('Cisco_aaa_group_tacacs',
-                                               "#{group}")
-      end
-    end
-    groups
-  end
 end

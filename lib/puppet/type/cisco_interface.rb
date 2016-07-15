@@ -925,22 +925,4 @@ Puppet::Type.newtype(:cisco_interface) do
       (is.size == should.flatten.size && is.sort == should.flatten.sort)
     end
   end # private_vlan_mapping
-
-  ################
-  # Autorequires #
-  ################
-
-  autorequire(:cisco_vlan) do |rel_catalog|
-    reqs = []
-    unless self[:access_vlan].nil? || self[:access_vlan] == :default
-      reqs << rel_catalog.catalog.resource('Cisco_vlan', "#{self[:access_vlan]}")
-    end # if
-    reqs
-  end # autorequire vlan
-
-  autorequire(:cisco_vtp) do |rel_catalog|
-    reqs = []
-    reqs << rel_catalog.catalog.resource('Cisco_vtp')
-    reqs # return
-  end # autorequire vtp
 end # Puppet::Type.newtype
