@@ -20,7 +20,6 @@ require 'ipaddr'
 
 Puppet::Type.newtype(:cisco_interface_ospf) do
   @doc = "Manages configuration of an OSPF interface instance
-  **Autorequires:** cisco_interface, cisco_ospf
 
   cisco_interface_ospf {\"<interface> <ospf>\":
     ..attributes..
@@ -273,37 +272,5 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
        !/^lo\S+$/.match(self[:interface].downcase).nil?
       fail 'passive_interface value cannot be set on loopback interfaces'
     end
-  end
-
-  ################
-  # Autorequires #
-  ################
-
-  # Autorequire cisco_interface; do not fail if it is not present in the manifest
-  autorequire(:cisco_interface) do |rel_catalog|
-    reqs = []
-
-    interface_title = self[:interface]
-
-    dep = rel_catalog.catalog.resource('cisco_interface', interface_title)
-
-    info "Cisco_interface[#{interface_title}] was not found in catalog. " \
-         'Will obtain from device.' if dep.nil?
-    reqs << dep
-    reqs
-  end
-
-  # Autorequire cisco_ospf; do not fail if it is not present in the manifest
-  autorequire(:cisco_ospf) do |rel_catalog|
-    reqs = []
-
-    ospf_title = self[:ospf]
-
-    dep = rel_catalog.catalog.resource('cisco_ospf', ospf_title)
-
-    info "Cisco_ospf[#{ospf_title}] was not found in catalog. " \
-         'Will obtain from device.' if dep.nil?
-    reqs << dep
-    reqs
   end
 end

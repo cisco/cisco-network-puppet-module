@@ -93,16 +93,4 @@ Puppet::Type.newtype(:cisco_snmp_community) do
       value
     end
   end
-
-  ################
-  # Autorequires #
-  ################
-
-  # Autorequire all cisco_snmp_groups associated with this community
-  autorequire(:cisco_snmp_group) do |rel_catalog|
-    groups = []
-    groups << rel_catalog.catalog.resource('Cisco_snmp_group',
-                                           "#{self[:group]}")
-    groups
-  end
 end

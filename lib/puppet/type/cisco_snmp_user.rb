@@ -18,7 +18,6 @@
 
 Puppet::Type.newtype(:cisco_snmp_user) do
   @doc = "Manages an SNMP user on an cisco SNMP server.
-  **Autorequires:** cisco_snmp_group
 
   cisco_snmp_user {\"<user> <engine_id>\":
     ..attributes..
@@ -163,23 +162,5 @@ Puppet::Type.newtype(:cisco_snmp_user) do
           false)."
     defaultto(:false)
     newvalues(:true, :false)
-  end
-
-  ################
-  # Autorequires #
-  ################
-
-  # Autorequire all cisco_snmp_groups associated with this user
-  autorequire(:cisco_snmp_group) do |rel_catalog|
-    groups = []
-
-    unless self[:groups].nil?
-      (self[:groups]).select do |group|
-        group_name = "#{group}"
-        groups << rel_catalog.catalog.resource('cisco_snmp_group', group_name)
-      end
-    end
-
-    groups
   end
 end
