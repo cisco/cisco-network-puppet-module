@@ -2,11 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.3.2] - TBD
+## [1.3.2] - 2016-07-26
 ### Fixed:
 - Remove `autorequire` references in cisco types.
   - Fixes incompatibility between cisco resources and latest puppet agent rpm.
-- Fix `undefined method 'previous'` bug in `cisco_command_config` provider. 
+- Fix `undefined method 'previous'` bug in `cisco_command_config` provider.
 
 ## [1.3.1] - 2016-05-06
 
