@@ -25,5 +25,5 @@ def create_aaaauthelogin_manifest(tests, name)
   node default {
     cisco_aaa_authentication_login { '#{name}':\n
     #{prop_hash_to_manifest(tests[name][:manifest_props])}
-  }\n      }\n EOF"
+  }\n      }\nEOF"
 end
