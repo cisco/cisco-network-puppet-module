@@ -2,12 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.3.2] - 2016-05-12
+## [Unreleased]
 
 ### Added
-- Added support for `Nexus N8k`
-  - https://github.com/cisco/cisco-network-puppet-module/tree/release_1.3.2#resource-platform-support-matrix
-
 - Extended `cisco_bgp_af` to include l2vpn/evpn address-family support
 
 - Deprecated `cisco_interface` 'private-vlan' properties and replaced with new methods. The deprecated properties will be removed with release 2.0.0. The old -> new properties are:
@@ -31,6 +28,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 |:---|:---:|
 | `private_vlan_association` | `pvlan_association`
 | `private_vlan_type`        | `pvlan_type`
+
+## [1.3.2] - 2016-07-26
+### Fixed:
+- Remove `autorequire` references in cisco types.
+  - Fixes incompatibility between cisco resources and latest puppet agent rpm.
+- Fix `undefined method 'previous'` bug in `cisco_command_config` provider.
 
 ## [1.3.1] - 2016-05-06
 
@@ -261,7 +264,9 @@ This version was never released.
 - Initial release of puppetlabs-ciscopuppet module, supporting Cisco NX-OS software release 7.0(3)I2(1) on Cisco Nexus switch platforms: N95xx, N93xx, N30xx and N31xx.
 - Please note: 0.9.0 is an EFT pre-release for a limited audience with access to NX-OS 7.0(3)I2(1). Additional code changes may occur in 0.9.x prior to the final 1.0.0 release.
 
-[1.3.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.2.3...v1.3.0
+[unreleased]: https://github.com/cisco/cisco-network-puppet-module/compare/master...develop
+[1.3.2]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.3.1...v1.3.2
+[1.3.1]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.2.3...v1.3.1
 [1.2.3]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.2.0...v1.2.2
 [1.2.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.1.0...v1.2.0
