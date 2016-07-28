@@ -76,6 +76,9 @@ tests = {
   platform: 'n(5|6|7|8|9)k',
 }
 
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
+
 # tests[id] keys set by caller and used by test_harness_common:
 #
 # tests[id] keys set by caller:
@@ -99,17 +102,9 @@ tests = {
 #   :title_pattern will be set to 'id'.
 #
 
-tests['preclean'] = {
-  manifest_props: '',
-  code:           [0],
-  resource_props: {
-    # These properties always exist
-    'dup_host_mac_detection_host_moves' => '5',
-    'dup_host_mac_detection_timeout'    => '180',
-  },
-}
-
 tests['default_properties'] = {
+  # Feature disablement does not reset the detection properties on some images
+  code:           [0, 2],
   manifest_props: "
     dup_host_ip_addr_detection_host_moves     => 'default',
     dup_host_ip_addr_detection_timeout        => 'default',
@@ -182,19 +177,17 @@ def test_harness_overlay_global(tests, id)
   test_idempotence(tests, id)
 end
 
+def testbed_clean(agent)
+  # TBD: config_find_remove(agent, 'nv overlay evpn', 'incl ^nv')
+  command_config(agent, 'no nv overlay evpn', 'no nv overlay evpn')
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
   # -------------
-  id = 'preclean'
-  tests[id][:desc] = 'Preclean'
-  if platform_supports_test(tests, id)
-    command_config(agent, 'no nv overlay evpn', 'no nv overlay evpn')
-    command_config(agent, 'l2rib dup-host-mac-detection default',
-                   'l2rib dup-host-mac-detection default')
-  end
-  test_harness_overlay_global(tests, id)
+  testbed_clean(agent)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
@@ -208,6 +201,8 @@ test_name "TestCase :: #{testheader}" do
   id = 'non_default_properties'
   tests[id][:desc] = '2.1 Non Default Properties'
   test_harness_overlay_global(tests, id)
+
+  testbed_clean(agent)
 end
 
 logger.info("TestCase :: #{testheader} :: End")
