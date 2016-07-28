@@ -64,26 +64,6 @@ testheader = 'SNMPSERVER Resource :: All Attributes NonDefaults'
 
 # @test_name [TestCase] Executes nondefaults testcase for SNMPSERVER Resource.
 test_name "TestCase :: #{testheader}" do
-  # @step [Step] Sets up switch for provider test.
-  step 'TestStep :: Setup switch for provider test' do
-    # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, SnmpServerLib.create_snmpserver_manifest_defaults)
-
-    # Expected exit_code is 0 since this is a puppet agent cmd with no change.
-    # Or expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = PUPPET_BINPATH + 'agent -t'
-    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
-
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config snmp all')
-    on(agent, cmd_str) do
-      SnmpServerLib.match_default_cli(stdout, self, logger)
-    end
-
-    logger.info("Setup switch for provider test :: #{result}")
-  end
-
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource nondefaults manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
@@ -116,23 +96,6 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check cisco_snmp_server resource presence on agent :: #{result}")
   end
 
-  # @step [Step] Checks snmpserver instance on agent using switch show cli cmds.
-  step 'TestStep :: Check snmpserver instance presence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config snmp')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               [/snmp-server aaa-user cache-timeout 1000/,
-                                /snmp-server packetsize 2500/,
-                                /snmp-server contact user1/,
-                                /snmp-server location rtp/],
-                               false, self, logger)
-    end
-
-    logger.info("Check snmpserver instance presence on agent :: #{result}")
-  end
-
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource defaults manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
@@ -161,20 +124,6 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Check cisco_snmp_server resource presence on agent :: #{result}")
-  end
-
-  # @step [Step] Checks snmpserver instance on agent using switch show cli cmds.
-  step 'TestStep :: Check snmpserver instance presence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config snmp')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               [/snmp-server packetsize 1500/],
-                               false, self, logger)
-    end
-
-    logger.info("Check snmpserver instance presence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
