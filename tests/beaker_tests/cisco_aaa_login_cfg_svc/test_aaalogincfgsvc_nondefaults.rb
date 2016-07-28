@@ -65,11 +65,12 @@ tests = {
 }
 
 test_name "TestCase :: #{testheader}" do
-  stepinfo = 'Setup switch for provider test'
-  resource_absent_cleanup(agent,
-                          'cisco_aaa_authorization_login_cfg_svc',
-                          stepinfo)
-  logger.info("TestStep :: #{stepinfo} :: #{result}")
+  si = 'Setup switch for provider test'
+  resource_absent_cleanup(agent, 'cisco_aaa_authorization_login_cfg_svc', si)
+  resource_absent_cleanup(agent, 'cisco_aaa_group_tacacs', si)
+  resource_absent_cleanup(agent, 'cisco_tacacs_server_host', si)
+  command_config(agent, 'no feature tacacs+')
+  logger.info("TestStep :: #{si} :: #{result}")
 
   tests[id] = {}
   %w(console default).each do |title|
@@ -117,9 +118,11 @@ test_name "TestCase :: #{testheader}" do
     test_resource(tests, id)
   end
 
-  resource_absent_cleanup(agent,
-                          'cisco_aaa_authorization_login_cfg_svc',
-                          stepinfo)
+  si = 'Cleanup'
+  resource_absent_cleanup(agent, 'cisco_aaa_authorization_login_cfg_svc', si)
+  resource_absent_cleanup(agent, 'cisco_aaa_group_tacacs', si)
+  resource_absent_cleanup(agent, 'cisco_tacacs_server_host', si)
+  command_config(agent, 'no feature tacacs+')
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   raise_passfail_exception(result, testheader, self, logger)

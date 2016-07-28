@@ -89,6 +89,7 @@ test_name "TestCase :: #{testheader}" do
   resource_absent_cleanup(agent,
                           'cisco_aaa_authorization_login_cfg_svc',
                           stepinfo)
+  command_config(agent, 'no feature tacacs+')
   logger.info("TestStep :: #{stepinfo} :: #{result}")
 
   tests[id] = {}
@@ -125,6 +126,13 @@ test_name "TestCase :: #{testheader}" do
 
     tests[id][:desc]  = '1.5 Verify resource absent on agent'
     test_resource(tests, id)
+
+    stepinfo = 'Cleanup'
+    resource_absent_cleanup(agent,
+                            'cisco_aaa_authorization_login_cfg_svc',
+                            stepinfo)
+    command_config(agent, 'no feature tacacs+')
+    logger.info("TestStep :: #{stepinfo} :: #{result}")
   end
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   raise_passfail_exception(result, testheader, self, logger)

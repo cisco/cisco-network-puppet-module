@@ -65,6 +65,7 @@ tests = {
 test_name "TestCase :: #{testheader}" do
   logger.info('Test Invalid Title Pattern')
   resource_absent_cleanup(agent, 'cisco_aaa_authorization_login_cfg_svc')
+  command_config(agent, 'no feature tacacs+')
 
   id = 'invalid_name'
   tests[id] = {
@@ -76,6 +77,10 @@ test_name "TestCase :: #{testheader}" do
   }
   create_aaalogincfgsvc_manifest_simple(tests, id)
   test_manifest(tests, id)
+
+  # Cleanup
+  resource_absent_cleanup(agent, 'cisco_aaa_authorization_login_cfg_svc')
+  command_config(agent, 'no feature tacacs+')
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   raise_passfail_exception(result, testheader, self, logger)

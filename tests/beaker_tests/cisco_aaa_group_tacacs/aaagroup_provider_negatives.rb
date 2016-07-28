@@ -65,13 +65,8 @@ testheader = 'AAAGROUP Resource :: All Attributes Negatives'
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
-    # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, TacacsServerLib.create_tacacsserver_absent)
-
-    # Expected exit_code is 0 since this is a puppet agent cmd with no change.
-    # Or expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = PUPPET_BINPATH + 'agent -t'
-    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
+    resource_absent_cleanup(agent, 'cisco_aaa_group_tacacs')
+    command_config(agent, 'no feature tacacs+')
 
     # Expected exit_code is 0 since this is a bash shell cmd.
     on(master, TacacsServerLib.create_tacacsserver_present)
@@ -191,6 +186,13 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Check cisco_aaa_group resource absence on agent :: #{result}")
+  end
+
+  step 'TestStep :: TestCase Cleanup' do
+    resource_absent_cleanup(agent, 'cisco_aaa_group_tacacs')
+    command_config(agent, 'no feature tacacs+')
+
+    logger.info("TestCase Cleanup :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
