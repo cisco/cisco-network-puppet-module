@@ -63,15 +63,16 @@ require File.expand_path('../../cisco_tacacs_server/tacacsserverlib.rb', __FILE_
 result = 'PASS'
 testheader = 'AAAGROUP Resource :: All Attributes NonDefaults'
 
+def cleanup
+  logger.info('Testcase Cleanup:')
+  resource_absent_cleanup(agent, 'cisco_aaa_group_tacacs')
+  command_config(agent, 'no feature tacacs+')
+end
+
 # @test_name [TestCase] Executes nondefaults testcase for AAAGROUP Resource.
 test_name "TestCase :: #{testheader}" do
-  # @step [Step] Sets up switch for provider test.
-  step 'TestStep :: TestCase Setup' do
-    resource_absent_cleanup(agent, 'cisco_aaa_group_tacacs')
-    command_config(agent, 'no feature tacacs+')
-
-    logger.info("TestCase Setup :: #{result}")
-  end
+  cleanup
+  teardown { cleanup }
 
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource nondefaults manifest from master' do
@@ -133,14 +134,6 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Check cisco_aaa_group resource absence on agent :: #{result}")
-  end
-
-  # @step [Step] Sets up switch for provider test.
-  step 'TestStep :: TestCase Cleanup' do
-    resource_absent_cleanup(agent, 'cisco_aaa_group_tacacs')
-    command_config(agent, 'no feature tacacs+')
-
-    logger.info("TestCase Cleanup :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.

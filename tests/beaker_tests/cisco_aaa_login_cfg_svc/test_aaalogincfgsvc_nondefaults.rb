@@ -64,13 +64,17 @@ tests = {
   :agent  => agent,
 }
 
-test_name "TestCase :: #{testheader}" do
-  si = 'Setup switch for provider test'
-  resource_absent_cleanup(agent, 'cisco_aaa_authorization_login_cfg_svc', si)
-  resource_absent_cleanup(agent, 'cisco_aaa_group_tacacs', si)
-  resource_absent_cleanup(agent, 'cisco_tacacs_server_host', si)
+def cleanup
+  logger.info('Testcase Cleanup:')
+  resource_absent_cleanup(agent, 'cisco_aaa_authorization_login_cfg_svc')
+  resource_absent_cleanup(agent, 'cisco_aaa_group_tacacs')
+  resource_absent_cleanup(agent, 'cisco_tacacs_server_host')
   command_config(agent, 'no feature tacacs+')
-  logger.info("TestStep :: #{si} :: #{result}")
+end
+
+test_name "TestCase :: #{testheader}" do
+  cleanup
+  teardown { cleanup }
 
   tests[id] = {}
   %w(console default).each do |title|
@@ -117,12 +121,6 @@ test_name "TestCase :: #{testheader}" do
     test_manifest(tests, id)
     test_resource(tests, id)
   end
-
-  si = 'Cleanup'
-  resource_absent_cleanup(agent, 'cisco_aaa_authorization_login_cfg_svc', si)
-  resource_absent_cleanup(agent, 'cisco_aaa_group_tacacs', si)
-  resource_absent_cleanup(agent, 'cisco_tacacs_server_host', si)
-  command_config(agent, 'no feature tacacs+')
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   raise_passfail_exception(result, testheader, self, logger)
