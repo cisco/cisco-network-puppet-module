@@ -63,20 +63,16 @@ require File.expand_path('../../cisco_tacacs_server/tacacsserverlib.rb', __FILE_
 result = 'PASS'
 testheader = 'AAAGROUP Resource :: All Attributes NonDefaults'
 
+def cleanup
+  logger.info('Testcase Cleanup:')
+  resource_absent_cleanup(agent, 'cisco_aaa_group_tacacs')
+  command_config(agent, 'no feature tacacs+')
+end
+
 # @test_name [TestCase] Executes nondefaults testcase for AAAGROUP Resource.
 test_name "TestCase :: #{testheader}" do
-  # @step [Step] Sets up switch for provider test.
-  step 'TestStep :: Setup switch for provider test' do
-    # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, TacacsServerLib.create_tacacsserver_absent)
-
-    # Expected exit_code is 0 since this is a puppet agent cmd with no change.
-    # Or expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = PUPPET_BINPATH + 'agent -t'
-    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
-
-    logger.info("Setup switch for provider test :: #{result}")
-  end
+  cleanup
+  teardown { cleanup }
 
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource nondefaults manifest from master' do
