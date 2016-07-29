@@ -142,7 +142,6 @@ Puppet::Type.type(:cisco_tacacs_server).provide(:cisco) do
   def deadtime
     if @resource[:deadtime] == :default &&
        @property_hash[:deadtime] == Cisco::TacacsServer.default_deadtime
-      debug "Default value is #{deadtime_value}."
       deadtime = :default
     else
       deadtime = @property_hash[:deadtime]
