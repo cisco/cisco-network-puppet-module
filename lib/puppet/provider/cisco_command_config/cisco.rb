@@ -82,7 +82,9 @@ Puppet::Type.type(:cisco_command_config).provide(:cisco) do
 
   rescue Cisco::CliError => e
     # Tell the user what succeeded, then fail with the actual failure.
-    info "Successfully updated:\n#{e.previous.join("\n")}" unless e.previous.empty?
+    unless e.successful_input.empty?
+      info "Successfully updated:\n#{e.successful_input.join("\n")}"
+    end
     raise
   end # command=
 

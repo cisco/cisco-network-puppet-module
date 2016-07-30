@@ -20,7 +20,6 @@ require 'ipaddr'
 
 Puppet::Type.newtype(:cisco_interface_ospf) do
   @doc = "Manages configuration of an OSPF interface instance
-  **Autorequires:** cisco_interface, cisco_ospf
 
   cisco_interface_ospf {\"<interface> <ospf>\":
     ..attributes..

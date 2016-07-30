@@ -307,7 +307,7 @@ tests[:title_patterns_3] = {
 
 tests[:title_patterns_4] = {
   desc:          'T.4 Title Pattern',
-  title_pattern: '11.4 magenta 1.1.1.1 ipv4',
+  title_pattern: '11.4 orange 1.1.1.1 ipv4',
   title_params:  { safi: 'unicast' },
   resource:      { 'ensure' => 'present' },
 }
