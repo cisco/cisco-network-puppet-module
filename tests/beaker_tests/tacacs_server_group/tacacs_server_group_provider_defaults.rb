@@ -58,13 +58,21 @@ require File.expand_path('../tacacs_server_grouplib.rb', __FILE__)
 result = 'PASS'
 testheader = 'tacacs_server_group Resource :: All Attributes Defaults'
 
+def cleanup
+  logger.info('Testcase Cleanup:')
+  resource_absent_cleanup(agent, 'tacacs_server')
+  resource_absent_cleanup(agent, 'tacacs_server_group')
+  resource_absent_cleanup(agent, 'tacacs_server_group')
+  command_config(agent, 'no feature tacacs+')
+end
+
 # @test_name [TestCase] Executes defaults testcase for tacacs_server_group Resource.
 test_name "TestCase :: #{testheader}" do
+  cleanup
+  teardown { cleanup }
+
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider' do
-    resource_absent_cleanup(agent, 'tacacs_server')
-    resource_absent_cleanup(agent, 'tacacs_server_group')
-
     # Expected exit_code is 0 since this is a bash shell cmd.
     on(master, TacacsServerGroupLib.create_tacacs_server_setup)
 
@@ -179,11 +187,6 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Check tacacs_server_group resource presence on agent :: #{result}")
-  end
-
-  step 'TestStep :: Cleanup' do
-    resource_absent_cleanup(agent, 'tacacs_server')
-    resource_absent_cleanup(agent, 'tacacs_server_group')
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
