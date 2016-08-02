@@ -29,6 +29,9 @@ tests = {
   platform:      'n7k',
 }
 
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
+
 tests[:non_default] = {
   desc:           "1.1 Non Default Properties 'change name, state and fabric_control",
   title_pattern:  '100',

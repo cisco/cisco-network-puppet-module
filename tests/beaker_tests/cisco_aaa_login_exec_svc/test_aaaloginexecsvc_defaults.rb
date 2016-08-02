@@ -84,12 +84,15 @@ def create_aaaloginexecsvc_defaults(tests, id, title, string=false)
   tests[id][:resource_cmd] = resource_cmd_str
 end
 
+def cleanup
+  logger.info('Testcase Cleanup:')
+  resource_absent_cleanup(agent, 'cisco_aaa_authorization_login_exec_svc')
+  command_config(agent, 'no feature tacacs+')
+end
+
 test_name "TestCase :: #{testheader}" do
-  stepinfo = 'Setup switch for provider test'
-  resource_absent_cleanup(agent,
-                          'cisco_aaa_authorization_login_exec_svc',
-                          stepinfo)
-  logger.info("TestStep :: #{stepinfo} :: #{result}")
+  cleanup
+  teardown { cleanup }
 
   tests[id] = {}
   %w(default console).each do |title|
@@ -126,6 +129,7 @@ test_name "TestCase :: #{testheader}" do
     tests[id][:desc]  = '1.5 Verify resource absent on agent'
     test_resource(tests, id)
   end
+
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
   raise_passfail_exception(result, testheader, self, logger)
 end

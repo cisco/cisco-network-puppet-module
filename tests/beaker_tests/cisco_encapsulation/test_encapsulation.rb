@@ -32,6 +32,9 @@ tests = {
   resource_name:    'cisco_encapsulation',
 }
 
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
+
 # Test hash test cases
 tests[:default] = {
   desc:           '1.1 Default Properties',
@@ -65,11 +68,8 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  skip_unless_supported(tests)
-
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-
   id = :default
   test_harness_run(tests, id)
 
@@ -78,7 +78,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, id)
 
   # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 1. Non Default Property Testing")
+  logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   test_harness_run(tests, :non_default)
 
   # -------------------------------------------------------------------

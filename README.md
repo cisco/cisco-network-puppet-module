@@ -1,70 +1,100 @@
 # ciscopuppet
 
-##### Documentation Workflow Map
-
-This workflow map aids *users*, *developers* and *maintainers* of the ciscopuppet project in selecting the appropriate document(s) for their task.
-
-* User Guides
-  * [README-agent-install.md](https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-agent-install.md) : Agent Installation and Configuration Guide
-  * [README-beaker-agent-install.md](https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-beaker-agent-install.md) : Automated Agent Installation and Configuration
-  * [README-package-provider.md](https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-package-provider.md) : Cisco Nexus Package Management using the Package Provider
-  * [README-example-manifest.md](https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/README.md) : Example Demo Manifest User Guide
-  * The remainder of this document is aimed at end users
-* Developer Guides
-  * [CONTRIBUTING.md](https://github.com/cisco/cisco-network-puppet-module/blob/master/CONTRIBUTING.md) : Contribution guidelines
-  * [README-develop-types-providers.md](https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-develop-types-providers.md) : Developing new ciscopuppet Types and Providers
-  * [README-develop-beaker-scripts.md](https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-develop-beaker-scripts.md) : Developing new beaker test scripts for ciscopuppet
-* Maintainers Guides
-  * [README-maintainers.md](https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-maintainers.md) : Guidelines for core maintainers of the ciscopuppet project
-  * All developer guides apply to maintainers as well
-
-Please see [Learning Resources](#learning-resources) for additional references.
-
---
 #### Table of Contents
 
-1. [Overview](#overview)
 1. [Module Description](#module-description)
 1. [Setup](#setup)
-1. [Usage](#usage)
-1. [Platform Support](#platform-support)
-   * [Provider Support Across Platforms](#provider-support-across-platforms)
+1. [Example Manifests](#example-manifests)
 1. [Resource Reference](#resource-reference)
    * [Resource Type Catalog (by Technology)](#resource-by-tech)
    * [Resource Type Catalog (by Name)](#resource-by-name)
-1. [Limitations - OS compatibility, etc.](#limitations)
-1. [Cisco OS Differences](#cisco-os-differences)
-1. [Learning Resources](#learning-resources)
+   * [Resource Platform Support Matrix](#resource-platform-support-matrix)
+1. [Documentation Guide](#documentation-guide)
 
+## <a href='module-description'>Module Description</a>
 
+The ciscopuppet module allows a network administrator to manage Cisco Network Elements using Puppet. This module bundles a set of Puppet Types, Providers, Beaker Tests, Sample Manifests and Installation Tools for effective network management.  The  resources and capabilities provided by this Puppet Module will grow with contributions from Cisco, Puppet Labs and the open source community.
 
-## Overview
+The Cisco Network Elements and Operating Systems managed by this Puppet Module are continuously expanding. See [Resource Platform Support Matrix](#resource-platform-support-matrix) for a list of currently supported hardware and software.
 
-The ciscopuppet module allows a network administrator to manage Cisco Network Elements using Puppet. This module bundles a set of Puppet Types, providers, Beaker Tests, Sample Manifests and Installation Tools for effective network management.  The  resources and capabilities provided by this Puppet Module will grow with contributions from Cisco, Puppet Labs and the open source community.
+This GitHub repository contains the latest version of the ciscopuppet module source code. Supported versions of the ciscopuppet module are available at Puppet Forge. Please refer to [SUPPORT.md][MAINT-2] for additional details.
 
-The Cisco Network Elements and Operating Systems managed by this Puppet Module are continuously expanding. Please refer to the [Limitations](#limitations) section for details on currently supported hardware and software.
-The Limitations section also provides details on compatible Puppet Agent and Puppet Master versions.
+##### Dependencies
 
-This GitHub repository contains the latest version of the ciscopuppet module source code. Supported versions of the ciscopuppet module are available at Puppet Forge. Please refer to [SUPPORT.md](SUPPORT.md) for additional details.
+The `ciscopuppet` module has a dependency on the [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) ruby gem. See the **Setup** section that follows for more information on `cisco_node_utils`.
 
-Contributions to this Puppet Module are welcome. Guidelines on contributions to the module are captured in [CONTRIBUTING.md](CONTRIBUTING.md)
+##### Contributing
 
-## Module Description
+Contributions to the `ciscopuppet` module are welcome. See [CONTRIBUTING.md][DEV-1] for guidelines.
 
-This module enables management of supported Cisco Network Elements using Puppet. This module enhances the Puppet DSL by introducing new Puppet Types and Providers capable of managing network elements.
+## <a href='setup'>Setup</a>
 
-The set of supported network element platforms is continuously expanding. Please refer to the [Limitations](#limitations) section for a list of currently supported platforms.
+#### Puppet Master
 
-## Setup
+The `ciscopuppet` module must be installed on the Puppet Master server.
 
-### Puppet Master
+```bash
+puppet module install puppetlabs-ciscopuppet
+```
 
-The `ciscopuppet` module must be installed on the Puppet Master server. Please see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html) for general information on Puppet module installation.
+For more information on Puppet module installation see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html)
 
-### Puppet Agent
-The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md](docs/README-agent-install.md) document for detailed instructions on agent installation and configuration on Cisco Nexus devices.
+##### The `puppetlabs-netdev_stdlib` module
 
-### `cisco_node_utils` Ruby gem
+PuppetLabs provides NetDev resource support for Cisco Nexus devices with their [`puppetlabs-netdev-stdlib`](https://forge.puppet.com/puppetlabs/netdev_stdlib) module. Installing the `ciscopuppet` module automatically installs both the `ciscopuppet` and `netdev_stdlib` modules.
+
+#### Puppet Agent
+
+The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md][USER-1] document for detailed instructions on agent installation and configuration on Cisco Nexus devices.
+
+##### The `cisco_node_utils` Ruby Gem
+
+The [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) ruby gem is a required component of the `ciscopuppet` module. This gem contains platform APIs for interfacing between Cisco CLI and Puppet agent resources. The gem can be automatically installed by Puppet agent by simply using the [`ciscopuppet::install`](https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/demo_all_cisco.pp#L19) helper class, or it can be installed manually.
+
+##### Automatic Gem Install Using `ciscopuppet::install`
+
+* The `ciscopuppet::install` class is defined in the `install.pp` file in the `examples` subdirectory. Copy this file into the `manifests` directory as shown:
+
+~~~bash
+cd /etc/puppetlabs/code/environments/production/modules/ciscopuppet/
+cp examples/install.pp  manifests/
+~~~
+
+* Next, update `site.pp` to use the install class
+
+**Example**
+
+~~~puppet
+node 'default' {
+  include ciscopuppet::install
+}
+~~~
+
+The preceding configuration will cause the next `puppet agent` run to automatically download the current `cisco_node_utils` gem from <https://rubygems.org/gems/cisco_node_utils> and install it on the node.
+
+##### Optional Parameters for `ciscopuppet::install`
+
+  * Override the default rubygems repository to use a custom repository
+  * Provide a proxy server
+
+**Example**
+
+~~~puppet
+node 'default' {
+  class {'ciscopuppet::install':
+    repo  => 'http://gemserver.domain.com:8808',
+    proxy => 'http://proxy.domain.com:8080',
+  }
+}
+~~~
+
+##### Gem Persistence
+
+Once installed, the GEM will remain persistent across system reloads within the Guestshell or OAC environments; however, the bash-shell environment does not share this persistent behavior, in which case the `ciscopuppet::install` helper class automatically downloads and re-installs the gem after each system reload.
+
+See [General Documentation](#general-documentation) for information on Guestshell and OAC.
+
+## <a href='example-manifests'>Example Manifests</a>
 
 This module has dependencies on the [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) ruby gem. After installing the Puppet Agent software, use Puppet's built-in [`Package`](https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/install.pp#L17) provider to install the gem.
 
@@ -72,16 +102,15 @@ A helper class [`ciscopuppet::install`](https://github.com/cisco/cisco-network-p
 
 For Puppet Agents running within the GuestShell or OAC environment, the installed GEM remains persistent across system reloads, however, agents running in the NX-OS bash-shell environment will automatically download and reinstall the GEM after a system reload.
 
-## Usage
+##### OSPF Example Manifest
 
-The following example shows how to use ciscopuppet to configure ospf on a
-Cisco Nexus switch.
+The following example demonstrates how to define a manifest that uses `ciscopuppet` to configure OSPF on a Cisco Nexus switch. Three resource types are used to define an OSPF instance, basic OSPF router settings, and OSPF interface settings:
 
-Three types are needed to add OSPF support on an interface: cisco_ospf,
-cisco_ospf_vrf, and cisco_interface_ospf.
+* [`cisco_ospf`](https://github.com/cisco/cisco-network-puppet-module/tree/master#type-cisco_ospf)
+* [`cisco_ospf_vrf`](https://github.com/cisco/cisco-network-puppet-module/tree/master#type-cisco_ospf_vrf)
+* [`cisco_interface_ospf`](https://github.com/cisco/cisco-network-puppet-module/tree/master#type-cisco_interface_ospf)
 
-First, to configure cisco_ospf to enable ospf on the device, add the
-following type in the manifest:
+The first manifest type should define the router instance using `cisco_ospf`. The title '`Sample`' becomes the router instance name.
 
 ~~~puppet
 cisco_ospf {"Sample":
@@ -89,8 +118,7 @@ cisco_ospf {"Sample":
 }
 ~~~
 
-Then put the ospf router under a VRF, and add the corresponding OSPF configuration.
-If the configuration is global, use 'default' as the VRF name.
+The next type to define is `cisco_ospf_vrf`. The title includes the OSPF router instance name and the VRF name. Note that a non-VRF configuration uses 'default' as the VRF name.
 
 ~~~puppet
 cisco_ospf_vrf {"Sample default":
@@ -100,7 +128,7 @@ cisco_ospf_vrf {"Sample default":
 }
 ~~~
 
-Finally apply the ospf into an interface:
+Finally, define the OSPF interface settings. The title here includes the Interface name and the OSPF router instance name.
 
 ~~~puppet
 cisco_interface_ospf {"Ethernet1/2 Sample":
@@ -110,111 +138,6 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 }
 ~~~
 
-## Platform Support
-
-### <a name="provider-platform-support">Provider Support Across Platforms</a>
-
-The Nexus family of switches support various hardware and software features depending on the model and version. The following table will guide you through the provider support matrix.
-
-✅ =  Supported
-  * The provider has been validated to work on the platform family. An asterisk '*' indicates that some provider properties may have software/hardware limitations, caveats, or noted behaviors. Click on the associated caveat link for more information.
-
-:heavy_minus_sign: = Not Applicable
-  * The provider is not supported at all on the platform because of hardware or software limitations.
-
-A note about support for specific platform models:
-
-  * "**N9k**" support includes all N9xxx models.
-  * "**N3k**" support includes N30xx and N31xx models only. **_The N35xx model is not supported_.**
-  * "**N5k**" support includes N56xx models only. **_The N50xx and N55xx models are not supported at this time_.**
-  * "**N6k**" support includes all N6xxx models.
-  * "**N7k**" support includes all N7xxx models.
-
-| ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | Caveats |
-|:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| [cisco_aaa_<br>authentication_login](#type-cisco_aaa_authentication_login)                 | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_aaa_<br>authorization_login_cfg_svc](#type-cisco_aaa_authorization_login_cfg_svc)   | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_aaa_<br>authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs)     | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_acl](#type-cisco_acl)                               | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_ace](#type-cisco_ace)                               | ✅  | ✅  | ✅* | ✅* | ✅* | \*[caveats](#cisco_ace-caveats) |
-| [cisco_command_config](#type-cisco_command_config)         | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_bfd_global](#type-cisco_bfd_global)                 | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_bfd_global-caveats) |
-| [cisco_bgp](#type-cisco_bgp)                               | ✅  | ✅  | ✅* | ✅* | ✅* | \*[caveats](#cisco_bgp-caveats) |
-| [cisco_bgp_af](#type-cisco_bgp_af)                         | ✅* | ✅* | ✅  | ✅* | ✅  | \*[caveats](#cisco_bgp_af-caveats) |
-| [cisco_bgp_neighbor](#type-cisco_bgp_neighbor)             | ✅  | ✅  | ✅* | ✅* | ✅  |\*[caveats](#cisco_bgp_neighbor-caveats) 
-| [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af)       | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_bridge_domain](#type-cisco_bridge_domain)           | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
-| [cisco_bridge_domain_vni](#type-cisco_bridge_domain_vni)   | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
-| [cisco_encapsulation](#type-cisco_encapsulation)           | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
-| [cisco_evpn_vni](#type-cisco_evpn_vni)                     | ✅ | :heavy_minus_sign: | ✅ | ✅ | ✅ | \*[caveats](#cisco_evpn_vni-caveats) |
-| [cisco_fabricpath_global](#type-cisco_fabricpath_global)     | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅* | \*[caveats](#cisco_fabricpath_global-caveats) |
-| [cisco_fabricpath_topology](#type-cisco_fabricpath_topology) | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅  |
-| [cisco_interface](#type-cisco_interface)                             | ✅  | ✅  | ✅* | ✅* | ✅  | \*[caveats](#cisco_interface-caveats) |
-| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_interface_ospf](#type-cisco_interface_ospf)                   | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_interface_portchannel](#type-cisco_interface_portchannel)     | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_interface_portchannel-caveats) |
-| [cisco_interface_service_vni](#type-cisco_interface_service_vni) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
-| [cisco_itd_device_group](#type-cisco_itd_device_group)           | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
-| [cisco_itd_device_group_node](#type-cisco_itd_device_group_node) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
-| [cisco_itd_service](#type-cisco_itd_service)                     | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | \*[caveats](#cisco_itd_service-caveats) |
-| [cisco_ospf](#type-cisco_ospf)                             | ✅  | ✅  | ✅ | ✅  | ✅  |
-| [cisco_ospf_area](#type-cisco_ospf_area)                   | ✅  | ✅  | ✅ | ✅  | ✅  |
-| [cisco_ospf_area_vlink](#type-cisco_ospf_area_vlink)       | ✅  | ✅  | ✅ | ✅  | ✅  |
-| [cisco_ospf_vrf](#type-cisco_ospf_vrf)                     | ✅  | ✅  | ✅ | ✅  | ✅  |
-| ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | Caveats |
-| [cisco_overlay_global](#type-cisco_overlay_global)         | ✅  | :heavy_minus_sign: | ✅ | ✅ | ✅ |
-| [cisco_pim](#type-cisco_pim)                               | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_pim_rp_address](#type-cisco_pim_rp_address)         | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_pim_grouplist](#type-cisco_pim_grouplist)           | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_portchannel_global](#type-cisco_portchannel_global) | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_portchannel_global-caveats) |
-| [cisco_stp_global](#type-cisco_stp_global)                 | ✅* | ✅* | ✅* | ✅* | ✅  | \*[caveats](#cisco_stp_global-caveats) |
-| [cisco_snmp_community](#type-cisco_snmp_community)         | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_snmp_group](#type-cisco_snmp_group)                 | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_snmp_server](#type-cisco_snmp_server)               | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_snmp_user](#type-cisco_snmp_user)                   | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_tacacs_server](#type-cisco_tacacs_server)           | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_tacacs_server_host](#type-cisco_tacacs_server_host) | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_vdc](#type-cisco_vdc)                               | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
-| [cisco_vlan](#type-cisco_vlan)                             | ✅* | ✅* | ✅  | ✅  | ✅  | \*[caveats](#cisco_vlan-caveats) |
-| [cisco_vpc_domain](#type-cisco_vpc_domain)                 | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_vpc_domain-caveats) |
-| [cisco_vrf](#type-cisco_vrf)                               | ✅  | ✅* | ✅  | ✅  | ✅  | \*[caveats](#cisco_vrf-caveats) |
-| [cisco_vrf_af](#type-cisco_vrf_af)                         | ✅  | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_vrf_af-caveats) |
-| [cisco_vtp](#type-cisco_vtp)                               | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep)                 | ✅  | :heavy_minus_sign: | ✅  | ✅  | ✅  |
-| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni)         | ✅  | :heavy_minus_sign: | ✅  | ✅  | ✅  |
-
-##### NetDev Providers
-
-| ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | Caveats |
-|:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| [domain_name](#type-domain_name)                           | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [name_server](#type-name_server)                           | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [network_dns](#type-network_dns)                           | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [network_interface](#type-network_interface)               | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [network_snmp](#type-network_snmp)                         | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [network_trunk](#type-network_trunk)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [network_vlan](#type-network_vlan)                         | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [ntp_config](#type-ntp_config)                             | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [ntp_server](#type-ntp_server)                             | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [port_channel](#type-port_channel)                         | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [radius](#type-radius)                                     | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [radius_global](#type-radius_global)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [radius_server_group](#type-tacacs_server_group)           | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [radius_server](#type-radius_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [search_domain](#type-search_domain)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [snmp_community](#type-snmp_community)                     | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [snmp_notification](#type-snmp_notification)               | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [snmp_notification_receiver](#type-snmp_notification_receiver) | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [snmp_user](#type-snmp_user)                               | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [syslog_server](#type-syslog_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [syslog_setting](#type-syslog_setting)                     | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [tacacs](#type-tacacs)                                     | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [tacacs_global](#type-tacacs_global)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [tacacs_server](#type-tacacs_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [tacacs_server_group](#type-tacacs_server_group)           | ✅  | ✅  | ✅  | ✅  | ✅  |
-
---
 ## <a name ="resource-reference">Resource Reference<a>
 
 The following resources include cisco types and providers along with cisco provider support for netdev stdlib types.  Installing the `ciscopuppet` module will install both the `ciscopuppet` and `netdev_stdlib` modules.
@@ -268,7 +191,7 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
   * [`network_interface (netdev_stdlib)`](#type-network_interface)
 
-* Itd Types
+* ITD (Intelligent Traffic Director) Types
   * [`cisco_itd_device_group`](#type-cisco_itd_device_group)
   * [`cisco_itd_device_group_node`](#type-cisco_itd_device_group_node)
   * [`cisco_itd_service`](#type-cisco_itd_service)
@@ -435,6 +358,112 @@ The following resources include cisco types and providers along with cisco provi
 * [`tacacs_server_group`](#type-tacacs_server_group)
 * [`tacacs_server`](#type-tacacs_server)
 
+### <a href='resource-platform-support-matrix'>Resource Platform Support Matrix</a>
+
+The Nexus family of switches support various hardware and software features depending on the model and version. The following table will guide you through the provider support matrix.
+
+**Platform Models**
+
+Platform | Description | Environments
+:--|:--|:--
+**N9k** | Support includes all N9xxx models  | bash-shell, guestshell
+**N3k** | Support includes N30xx and N31xx models only.<br>The N35xx model is not supported.   | bash-shell, guestshell
+**N5k** | Support includes N56xx models only.<br>The N50xx and N55xx models are not supported at this time. | Open Agent Container (OAC)
+**N6k** | Support includes all N6xxx models  | Open Agent Container (OAC)
+**N7k** | Support includes all N7xxx models  | Open Agent Container (OAC)
+**N8k** | Support includes all N8xxx models  | bash-shell, guestshell
+
+
+**Matrix Legend**
+
+Symbol | Meaning | Description
+:--|:--|:--
+✅ | Supported      | The provider has been validated to work on the platform.<br>An asterisk '*' indicates that some provider properties may have software or hardware limitations, caveats, or other noted behaviors.<br>Click on the associated caveat link for more information.
+:heavy_minus_sign: | Not Applicable | The provider is not supported on the platform because of hardware or software limitations.
+
+**Support Matrix**
+
+| ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | N8k | Caveats |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| [cisco_aaa_<br>authentication_login](#type-cisco_aaa_authentication_login)                 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_aaa_<br>authorization_login_cfg_svc](#type-cisco_aaa_authorization_login_cfg_svc)   | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_aaa_<br>authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs)     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_acl](#type-cisco_acl)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_ace](#type-cisco_ace)                               | ✅  | ✅  | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_ace-caveats) |
+| [cisco_command_config](#type-cisco_command_config)         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_bgp](#type-cisco_bgp)                               | ✅  | ✅  | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_bgp-caveats) |
+| [cisco_bgp_af](#type-cisco_bgp_af)                         | ✅* | ✅* | ✅  | ✅* | ✅  | ✅ | \*[caveats](#cisco_bgp_af-caveats) |
+| [cisco_bgp_neighbor](#type-cisco_bgp_neighbor)             | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af)       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_bridge_domain](#type-cisco_bridge_domain)           | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
+| [cisco_bridge_domain_vni](#type-cisco_bridge_domain_vni)   | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
+| [cisco_encapsulation](#type-cisco_encapsulation)           | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
+| [cisco_evpn_vni](#type-cisco_evpn_vni)                     | ✅ | :heavy_minus_sign: | ✅ | ✅ | ✅ | ✅ | \*[caveats](#cisco_evpn_vni-caveats) |
+| [cisco_fabricpath_global](#type-cisco_fabricpath_global)     | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅* | :heavy_minus_sign: | \*[caveats](#cisco_fabricpath_global-caveats) |
+| [cisco_fabricpath_topology](#type-cisco_fabricpath_topology) | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅  | :heavy_minus_sign: |
+| [cisco_interface](#type-cisco_interface)                             | ✅  | ✅  | ✅* | ✅* | ✅  | ✅ | \*[caveats](#cisco_interface-caveats) |
+| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_interface_ospf](#type-cisco_interface_ospf)                   | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_interface_portchannel](#type-cisco_interface_portchannel)     | ✅* | ✅* | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_interface_portchannel-caveats) |
+| [cisco_interface_service_vni](#type-cisco_interface_service_vni) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
+| [cisco_itd_device_group](#type-cisco_itd_device_group)           | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
+| [cisco_itd_device_group_node](#type-cisco_itd_device_group_node) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
+| [cisco_itd_service](#type-cisco_itd_service)                     | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: | \*[caveats](#cisco_itd_service-caveats) |
+| [cisco_ospf](#type-cisco_ospf)                             | ✅  | ✅  | ✅ | ✅  | ✅ | ✅ |
+| [cisco_ospf_vrf](#type-cisco_ospf_vrf)                     | ✅  | ✅  | ✅ | ✅  | ✅ | ✅ |
+| ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | N8k | Caveats |
+| [cisco_overlay_global](#type-cisco_overlay_global)         | ✅  | :heavy_minus_sign: | ✅ | ✅ | ✅ | ✅ |
+| [cisco_pim](#type-cisco_pim)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_pim_rp_address](#type-cisco_pim_rp_address)         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_pim_grouplist](#type-cisco_pim_grouplist)           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_portchannel_global](#type-cisco_portchannel_global) | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_portchannel_global-caveats) |
+| [cisco_stp_global](#type-cisco_stp_global)                 | ✅* | ✅* | ✅* | ✅* | ✅ | ✅ | \*[caveats](#cisco_stp_global-caveats) |
+| [cisco_snmp_community](#type-cisco_snmp_community)         | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_snmp_group](#type-cisco_snmp_group)                 | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_snmp_server](#type-cisco_snmp_server)               | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_snmp_user](#type-cisco_snmp_user)                   | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_tacacs_server](#type-cisco_tacacs_server)           | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_tacacs_server_host](#type-cisco_tacacs_server_host) | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_vdc](#type-cisco_vdc)                               | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
+| [cisco_vlan](#type-cisco_vlan)                             | ✅* | ✅* | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_vlan-caveats) |
+| [cisco_vpc_domain](#type-cisco_vpc_domain)                 | ✅* | ✅* | ✅* | ✅* | ✅* | :heavy_minus_sign: | \*[caveats](#cisco_vpc_domain-caveats) |
+| [cisco_vrf](#type-cisco_vrf)                               | ✅  | ✅* | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_vrf-caveats) |
+| [cisco_vrf_af](#type-cisco_vrf_af)                         | ✅  | ✅* | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_vrf_af-caveats) |
+| [cisco_vtp](#type-cisco_vtp)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep)                 | ✅  | :heavy_minus_sign: | ✅  | ✅  | ✅  | ✅ |
+| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni)         | ✅  | :heavy_minus_sign: | ✅  | ✅  | ✅  | ✅ |
+
+##### NetDev Providers
+
+| ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | N8k | Caveats |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| [domain_name](#type-domain_name)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [name_server](#type-name_server)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_dns](#type-network_dns)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_interface](#type-network_interface)               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_snmp](#type-network_snmp)                         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_trunk](#type-network_trunk)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_vlan](#type-network_vlan)                         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [ntp_config](#type-ntp_config)                             | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [ntp_server](#type-ntp_server)                             | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [port_channel](#type-port_channel)                         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [radius](#type-radius)                                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [radius_global](#type-radius_global)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [radius_server_group](#type-tacacs_server_group)           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [radius_server](#type-radius_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [search_domain](#type-search_domain)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [snmp_community](#type-snmp_community)                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [snmp_notification](#type-snmp_notification)               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [snmp_notification_receiver](#type-snmp_notification_receiver) | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [snmp_user](#type-snmp_user)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [syslog_server](#type-syslog_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [syslog_setting](#type-syslog_setting)                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [tacacs](#type-tacacs)                                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [tacacs_global](#type-tacacs_global)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [tacacs_server](#type-tacacs_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [tacacs_server_group](#type-tacacs_server_group)           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+
 --
 ### Cisco Resource Type Details
 
@@ -452,6 +481,7 @@ Allows execution of configuration commands.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -483,6 +513,7 @@ Manages AAA Authentication Login configuration.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -516,6 +547,7 @@ Manages configuration for Authorization Login Config Service.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -543,6 +575,7 @@ Manages configuration for Authorization Login Exec Service.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -570,6 +603,7 @@ Manages configuration for a TACACS+ server group.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -1148,12 +1182,13 @@ Manages configuration of a BGP Address-family instance.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### <a name="cisco_bgp_af-caveats">Caveats</a>
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `additional_paths_install`  | Not supported on N3k, N9k                                                                  |
+| `additional_paths_install`  | Not supported on N3k, N8k, N9k                                                             |
 | `advertise_l2vpn_evpn`      | Not supported on N3k, N6k                                                                  |
 | address-family `l2vpn/evpn` | Module Minimum Version 1.3.2 <br> OS Minimum Version 7.0(3)I3(1) <br> Not supported on N3k |
 
@@ -1429,6 +1464,7 @@ Manages configuration of a BGP Neighbor Address-family instance.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### <a name="cisco_bgp_neighbor_af-caveats">Caveats</a>
 
@@ -1554,6 +1590,7 @@ Manages a cisco Bridge-Domain
 | N5k      | not applicable     | not applicable         |
 | N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -1583,6 +1620,7 @@ Creates a Virtual Network Identifier member (VNI) mapping for cisco Bridge-Domai
 | N5k      | not applicable     | not applicable         |
 | N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -1606,6 +1644,7 @@ Manages a Global VNI Encapsulation profile
 | N5k      | not applicable     | not applicable         |
 | N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -1632,6 +1671,7 @@ Manages Cisco Ethernet Virtual Private Network (EVPN) VXLAN Network Identifier (
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### <a name="cisco_evpn_vni-caveats">Caveats</a>
 
@@ -1761,6 +1801,7 @@ Manages a Cisco fabricpath Topology
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -1786,6 +1827,7 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### <a name="cisco_interface-caveats">Caveats</a>
 
@@ -2055,6 +2097,7 @@ Manages a Cisco Network Interface Channel-group.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -2089,6 +2132,7 @@ Manages a Cisco Network Interface Service VNI.
 | N5k      | not applicable     | not applicable         |
 | N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| N8k      | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -2233,6 +2277,7 @@ Manages configuration of ITD (Intelligent Traffic Director) device group
 | N5k      | not applicable     | not applicable         |
 | N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -2275,6 +2320,7 @@ Manages configuration of ITD (Intelligent Traffic Director) device group node
 | N5k      | not applicable     | not applicable         |
 | N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -2331,6 +2377,7 @@ Manages configuration of ITD (Intelligent Traffic Director) service.
 
 | Property | Caveat Description |
 |:--------|:-------------|
+|  | This provider requires the following commands to be applied as prerequisites using the [cisco_command_config](https://github.com/cisco/cisco-network-puppet-module/blob/master/README.md#type-cisco_command_config) provider.<br><br>&nbsp;&nbsp;cisco_command_config { 'prerequisites':<br>&nbsp;&nbsp;&nbsp;&nbsp;command => "<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;feature pbr<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;feature sla sender<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;feature sla responder<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ip sla responder<br>&nbsp;&nbsp;&nbsp;&nbsp;"<br>&nbsp;&nbsp;}|
 | `nat_destination` | Supported only on N7k |
 | `peer_local`      | Supported only on N9k |
 | `peer_vdc`        | Supported only on N7k |
@@ -2407,6 +2454,7 @@ Manages configuration of an ospf instance.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -2618,6 +2666,7 @@ Manages a VRF for an OSPF router.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -2683,6 +2732,7 @@ Also configures anycast gateway MAC of the switch.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -2715,6 +2765,7 @@ Manages configuration of an Protocol Independent Multicast (PIM) instance.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -2740,6 +2791,7 @@ Manages configuration of an Protocol Independent Multicast (PIM) static route pr
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -2766,6 +2818,7 @@ Manages configuration of an Protocol Independent Multicast (PIM) static route pr
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -2789,6 +2842,7 @@ Manages configuration of a portchannel global parameters
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### <a name="cisco_portchannel_global-caveats">Caveats</a>
 
@@ -2801,7 +2855,7 @@ Manages configuration of a portchannel global parameters
 | `concatenation`             | Supported only on N9k      |
 | `hash_poly`                 | Supported only on N5k, N6k |
 | `resilient` <br> `symmetry` | Supported only on N3k, N9k |
-| `rotate`                    | Supported only on N7k, N9k |
+| `rotate`                    | Supported only on N7k, N8k, N9k |
 
 #### Parameters
 
@@ -2960,6 +3014,7 @@ Manages an SNMP community on a Cisco SNMP server.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -2993,6 +3048,7 @@ of group; thus this provider utility does not create snmp groups and only report
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -3015,6 +3071,7 @@ cisco_snmp_server.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -3059,6 +3116,7 @@ Manages an SNMP user on an cisco SNMP server.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -3107,6 +3165,7 @@ instance of the cisco_tacacs_server.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -3149,6 +3208,7 @@ Configures Cisco TACACS+ server hosts.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -3185,6 +3245,7 @@ Manages a Cisco VDC (Virtual Device Context).
 | N5k      | not applicable     | not applicable         |
 | N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| N8k      | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -3275,6 +3336,7 @@ Manages the virtual Port Channel (vPC) domain configuration of a Cisco device.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### <a name="cisco_vpc_domain-caveats">Caveats</a>
 
@@ -3387,6 +3449,7 @@ device.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### <a name="cisco_vrf-caveats">Caveats</a>
 
@@ -3456,6 +3519,7 @@ Manages Cisco Virtual Routing and Forwarding (VRF) Address-Family configuration.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### <a name="cisco_vrf_af-caveats">Caveats</a>
 
@@ -3538,6 +3602,7 @@ There can only be one instance of the cisco_vtp.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -3571,6 +3636,7 @@ Creates a VXLAN Network Virtualization Endpoint (NVE) overlay interface that ter
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -3603,6 +3669,7 @@ Creates a Virtual Network Identifier member (VNI) for an NVE overlay interface.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -3648,6 +3715,7 @@ Configure the domain name of the device
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -3667,6 +3735,7 @@ Domain name of the device. Valid value is a string.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -3686,6 +3755,7 @@ Hostname or address of the DNS server.  Valid value is a string.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -3716,6 +3786,7 @@ Manages a puppet netdev_stdlib Network Interface. Any resource dependency should
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -3747,6 +3818,7 @@ interface. Valid value is an integer.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -3774,6 +3846,7 @@ Manages a puppet netdev_stdlib Network Trunk. It should be noted that while the 
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -3809,6 +3882,7 @@ Manages a puppet netdev_stdlib Network Vlan.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -3834,6 +3908,7 @@ The name of the VLAN.  Valid value is a string.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -3853,6 +3928,7 @@ Source interface for the NTP server.  Valid value is a string.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -3872,6 +3948,7 @@ Hostname or IPv4/IPv6 address of the NTP server.  Valid value is a string.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -3900,6 +3977,7 @@ Name of the port channel. eg port-channel100. Valid value is a string.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -3919,6 +3997,7 @@ Enable or disable radius functionality.  Valid values are 'true' or 'false'.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -3995,6 +4074,7 @@ Encryption key format [0-7].  Valid value is an integer.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -4013,6 +4093,7 @@ Configure the search domain of the device. Note that this type is functionally e
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -4034,6 +4115,7 @@ Manages an SNMP community on a Cisco SNMP server.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -4061,6 +4143,7 @@ Manages an SNMP notification on a Cisco SNMP server.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -4080,6 +4163,7 @@ Manages an SNMP notification receiver on an cisco SNMP server.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -4123,6 +4207,7 @@ Manages an SNMP user on an cisco SNMP server.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -4166,6 +4251,7 @@ format (in case of true) or cleartext (in case of false). Valid values are 'true
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -4191,6 +4277,7 @@ Interface to send syslog data from, e.g. "management".  Valid value is a string.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -4210,6 +4297,7 @@ The unit of measurement for log time values.  Valid values are 'seconds' and 'mi
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -4226,6 +4314,7 @@ Enable or disable radius functionality [true|false]
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
@@ -4251,6 +4340,7 @@ Number of seconds before the timeout period ends
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 ##### `ensure`
 Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
@@ -4280,45 +4370,55 @@ Number of seconds before the timeout period ends
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.3.2                  |
 
 #### Parameters
 
 ##### `servers`
 Array of servers associated with this group.
 
-## Limitations
+## <a href='documentation-guide'>Documentation Guide</a>
 
-Minimum Requirements:
-* Cisco NX-OS:
-  * Open source Puppet version 4.0+ or Puppet Enterprise 2015.2+
-  * Cisco Nexus N9k, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
-  * Cisco Nexus N3k, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
-  * Cisco Nexus N5k, OS Version 7.3(0)N1(1), Environments: Open Agent Container (OAC)
-  * Cisco Nexus N6k, OS Version 7.3(0)N1(1), Environments: Open Agent Container (OAC)
-  * Cisco Nexus N7k, OS Version 7.3(0)D1(1), Environments: Open Agent Container (OAC)
+The following table groups **ciscopuppet** documentation based on the intended audience.
 
-## Learning Resources
+Audience | ciscopuppet Documentation |
+:--:|:--|
+User       | [README.md][USER-0] : (This document)<br>[README-agent-install.md][USER-1] : Agent Installation and Configuration Guide<br>[README-beaker-agent-install.md][USER-2] : Automated Agent Installation and Configuration<br>[README-package-provider.md][USER-3] : Cisco Nexus Package Management<br>[README-example-manifest.md][USER-4] : Example Demo Manifest User Guide
+Developer  | [CONTRIBUTING.md][DEV-1] : Contribution guidelines<br>[README-develop-types-providers.md][DEV-2] : Developing new ciscopuppet Types & Providers<br>[README-develop-beaker-scripts.md][DEV-3] : Developing new beaker test scripts for ciscopuppet
+Maintainer | [README-maintainers.md][MAINT-1] : Guidelines for core maintainers of the ciscopuppet project<br>*(Developer guides apply to Maintainers as well)*
 
-* Puppet
-  * [https://learn.puppetlabs.com/](https://learn.puppetlabs.com/)
-  * [https://en.wikipedia.org/wiki/Puppet_(software)](https://en.wikipedia.org/wiki/Puppet_(software))
-* Markdown (for editing documentation)
-  * [https://help.github.com/articles/markdown-basics/](https://help.github.com/articles/markdown-basics/)
-* Ruby
-  * [https://en.wikipedia.org/wiki/Ruby_(programming_language)](https://en.wikipedia.org/wiki/Ruby_(programming_language))
-  * [https://www.codecademy.com/tracks/ruby](https://www.codecademy.com/tracks/ruby)
-  * [https://rubymonk.com/](https://rubymonk.com/)
-  * [https://www.codeschool.com/paths/ruby](https://www.codeschool.com/paths/ruby)
-* Ruby Gems
-  * [http://guides.rubygems.org/](http://guides.rubygems.org/)
-  * [https://en.wikipedia.org/wiki/RubyGems](https://en.wikipedia.org/wiki/RubyGems)
-* YAML
-  * [https://en.wikipedia.org/wiki/YAML](https://en.wikipedia.org/wiki/YAML)
-  * [http://www.yaml.org/start.html](http://www.yaml.org/start.html)
-* Yum
-  * [https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified](https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified)
-  * [https://www.centos.org/docs/5/html/yum/](https://www.centos.org/docs/5/html/yum/)
-  * [http://www.linuxcommand.org/man_pages](http://www.linuxcommand.org/man_pages/yum8.html)
+[USER-0]: https://github.com/cisco/cisco-network-puppet-module/blob/master/README.md
+[USER-1]: https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-agent-install.md
+[USER-2]: https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-beaker-agent-install.md
+[USER-3]: https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-package-provider.md
+[USER-4]: https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/README.md
+
+[DEV-1]: https://github.com/cisco/cisco-network-puppet-module/blob/master/CONTRIBUTING.md
+[DEV-2]: https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-develop-types-providers.md
+[DEV-3]: https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-develop-beaker-scripts.md
+
+[MAINT-1]: https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-maintainers.md
+[MAINT-2]: https://github.com/cisco/cisco-network-puppet-module/blob/master/SUPPORT.md
+
+##### General Documentation
+
+Topic | Resources |
+:---------|:--|
+Puppet    | <https://learn.puppetlabs.com/><br><https://en.wikipedia.org/wiki/Puppet_(software)>
+Guestshell | [N9k Programmability Guide][GS_9K]
+Markdown<br>(*editor*) | <https://help.github.com/articles/markdown-basics/>
+N5k,N6k OAC<br>(open agent container) | [N5k,N6k Programmability Guide][OAC_5K_DOC]
+N7k OAC<br>(open agent container)     | [N7k Programmability Guide][OAC_7K_DOC]
+Ruby      | <https://en.wikipedia.org/wiki/Ruby_(programming_language)><br><https://www.codecademy.com/tracks/ruby><br><https://rubymonk.com/><br><https://www.codeschool.com/paths/ruby>
+Ruby Gems | <http://guides.rubygems.org/><br><https://en.wikipedia.org/wiki/RubyGems>
+YAML      | <https://en.wikipedia.org/wiki/YAML><br><http://www.yaml.org/start.html>
+Yum       | <https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified><br><https://www.centos.org/docs/5/html/yum/><br><http://www.linuxcommand.org/man_pages>
+
+[GS_9K]: http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/6-x/programmability/guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_chapter_01010.html
+
+[OAC_5K_DOC]: http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus5000/sw/programmability/guide/b_Cisco_Nexus_5K6K_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_5K6K_Series_NX-OS_Programmability_Guide_chapter_01001.html
+
+[OAC_7K_DOC]: http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus7000/sw/programmability/guide/b_Cisco_Nexus_7000_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_7000_Series_NX-OS_Programmability_Guide_chapter_01001.html
 
 ## License
 

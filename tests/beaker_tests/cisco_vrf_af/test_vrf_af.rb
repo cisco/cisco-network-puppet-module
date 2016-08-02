@@ -124,21 +124,29 @@ end
 # Overridden to properly handle dependencies for this test file.
 def dependency_manifest(tests, id)
   if operating_system == 'nexus'
-    "cisco_command_config { 'policy_config':
-      command => '
-        route-map abc permit 10'
-    }"
+    dep = %(
+      cisco_command_config { 'policy_config':
+        command => 'route-map abc permit 10'
+      } )
+    if platform[/n7k/]
+      dep += %(
+        cisco_vdc { '#{default_vdc_name}':
+          # Must be f3-only
+          limit_resource_module_type => 'f3',
+        })
+    end
   else
     t = puppet_resource_title_pattern_munge(tests, id)
-    "cisco_vrf { '#{t[:vrf]}':
-      ensure                               => present,
-    }
-    cisco_command_config { 'policy_config':
-      command => '
-        route-policy abc
-          end-policy'
-    }"
+    dep = %(
+      cisco_vrf { '#{t[:vrf]}': ensure => present }
+      cisco_command_config { 'policy_config':
+        command => '
+          route-policy abc
+            end-policy'
+      } )
   end
+  logger.info("\n  * dependency_manifest\n#{dep}")
+  dep
 end
 
 #################################################################

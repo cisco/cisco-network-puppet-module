@@ -62,9 +62,17 @@ tests = {
   :agent  => agent,
 }
 
+def cleanup
+  logger.info('Testcase Cleanup:')
+  resource_absent_cleanup(agent, 'cisco_aaa_authorization_login_exec_svc')
+  command_config(agent, 'no feature tacacs+')
+end
+
 test_name "TestCase :: #{testheader}" do
   logger.info('Test Invalid Title Pattern')
-  resource_absent_cleanup(agent, 'cisco_aaa_authorization_login_exec_svc')
+
+  cleanup
+  teardown { cleanup }
 
   id = 'invalid_name'
   tests[id] = {
