@@ -76,6 +76,9 @@ tests = {
   resource_name: 'cisco_vxlan_vtep_vni',
 }
 
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
+
 # tests[id] keys set by caller and used by test_harness_common:
 #
 # tests[id] keys set by caller:
@@ -129,8 +132,9 @@ tests['default_properties_multicast_group'] = {
 
 # Suppress Unknown Unicast
 if platform[/n(5|6)k/]
-  tests['default_properties_multicast_group'][:manifest_props][:suppress_uuc] = 'default'
-  tests['default_properties_multicast_group'][:resource_props][:suppress_uuc] = 'false'
+  tests['default_properties_multicast_group'][:manifest_props] +=
+    "  suppress_uuc => 'default',"
+  tests['default_properties_multicast_group'][:resource_props]['suppress_uuc'] = 'false'
 end
 
 tests['ingress_replication_static_peer_list_empty'] = {
@@ -273,6 +277,25 @@ def puppet_resource_cmd
   PUPPET_BINPATH + 'resource cisco_vxlan_vtep_vni'
 end
 
+def test_harness_dependencies(*)
+  return unless platform[/n(5|6)k/]
+  skip_if_nv_overlay_rejected(agent)
+end
+
+# Overridden to properly handle dependencies for this test file.
+def dependency_manifest(*)
+  dep = ''
+  if platform[/n7k/]
+    dep = %(
+      cisco_vdc { '#{default_vdc_name}':
+        # Must be f3-only
+        limit_resource_module_type => 'f3',
+      })
+  end
+  logger.info("\n  * dependency_manifest\n#{dep}")
+  dep
+end
+
 def build_manifest_cisco_vxlan_vtep_vni(tests, id)
   if tests[id][:ensure] == :absent
     state = 'ensure => absent,'
@@ -290,6 +313,7 @@ def build_manifest_cisco_vxlan_vtep_vni(tests, id)
   # cisco_vxlan_vtep_vni needs cisco_vxlan_vtep as a prerequisite.
   tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   node 'default' {
+    #{dependency_manifest}
     cisco_vxlan_vtep {'nve1':
       ensure => present,
       host_reachability  => 'evpn',
@@ -305,6 +329,8 @@ end
 
 def test_harness_cisco_vxlan_vtep_vni(tests, id)
   return unless platform_supports_test(tests, id)
+
+  test_harness_dependencies(tests, id)
 
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:resource_cmd] = puppet_resource_cmd
@@ -323,8 +349,6 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
-  skip_unless_supported(tests)
-
   #-------------------------------------------------------------------
   resource_absent_cleanup(agent, 'cisco_vxlan_vtep_vni',
                           'Setup switch for cisco_vxlan_vtep_vni provider test')
@@ -374,7 +398,7 @@ test_name "TestCase :: #{testheader}" do
   tests[id][:desc] = '2.6 Multicast Group'
   test_harness_cisco_vxlan_vtep_vni(tests, id)
 
-  # TBD - The following tests will generate the following error.
+  # TBD - The suppress_arp tests will generate the following error.
   #  ERROR: Please configure TCAM region... Configuring the TCAM region
   # requires a switch reboot.  These tests will remain commented out
   # until we can design a solution.
@@ -387,13 +411,13 @@ test_name "TestCase :: #{testheader}" do
   # tests[id][:desc] = '2.8 Suppress ARP'
   # test_harness_cisco_vxlan_vtep_vni(tests, id)
 
-  # id = 'suppress_uuc_true'
-  # tests[id][:desc] = '2.9 Suppress Unknown Unicast'
-  # test_harness_cisco_vxlan_vtep_vni(tests, id)
-  #
-  # id = 'suppress_uuc_false'
-  # tests[id][:desc] = '2.10 Suppress Unknown Unicast'
-  # test_harness_cisco_vxlan_vtep_vni(tests, id)
+  id = 'suppress_uuc_true'
+  tests[id][:desc] = '2.9 Suppress Unknown Unicast'
+  test_harness_cisco_vxlan_vtep_vni(tests, id)
+
+  id = 'suppress_uuc_false'
+  tests[id][:desc] = '2.10 Suppress Unknown Unicast'
+  test_harness_cisco_vxlan_vtep_vni(tests, id)
 
   resource_absent_cleanup(agent, 'cisco_vxlan_vtep_vni',
                           'Setup switch for cisco_vxlan_vtep_vni provider test')

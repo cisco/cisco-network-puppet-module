@@ -58,16 +58,31 @@ require File.expand_path('../tacacs_server_grouplib.rb', __FILE__)
 result = 'PASS'
 testheader = 'tacacs_server_group Resource :: All Attributes Defaults'
 
+def cleanup
+  logger.info('Testcase Cleanup:')
+  resource_absent_cleanup(agent, 'tacacs_server')
+  resource_absent_cleanup(agent, 'tacacs_server_group')
+  resource_absent_cleanup(agent, 'tacacs_server_group')
+  command_config(agent, 'no feature tacacs+')
+end
+
 # @test_name [TestCase] Executes defaults testcase for tacacs_server_group Resource.
 test_name "TestCase :: #{testheader}" do
+  cleanup
+  teardown { cleanup }
+
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider' do
-    resource_absent_cleanup(agent, 'tacacs_server')
-    resource_absent_cleanup(agent, 'tacacs_server_group')
-
     command_config(agent, 'tacacs-server host 2.2.2.2')
     command_config(agent, 'tacacs-server host 3.3.3.3')
     command_config(agent, 'tacacs-server host 2004::44')
+
+    # Expected exit_code is 0 since this is a bash shell cmd.
+    on(master, TacacsServerGroupLib.create_tacacs_server_setup)
+
+    # Expected exit_code is 2 since this is a puppet agent cmd with change.
+    cmd_str = PUPPET_BINPATH + 'agent -t'
+    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
     logger.info('Setup switch for provider')
   end
@@ -176,11 +191,6 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Check tacacs_server_group resource presence on agent :: #{result}")
-  end
-
-  step 'TestStep :: Cleanup' do
-    resource_absent_cleanup(agent, 'tacacs_server')
-    resource_absent_cleanup(agent, 'tacacs_server_group')
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
