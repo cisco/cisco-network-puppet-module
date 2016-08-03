@@ -42,6 +42,7 @@ class ciscopuppet::cisco::demo_ospf {
   cisco_ospf_vrf { 'dark_blue default':
     ensure                   => 'present',
     auto_cost                => '45000',
+    bfd                      => true,
     default_metric           => '5',
     log_adjacency            => 'detail',
     timer_throttle_lsa_hold  => '5500',
@@ -55,6 +56,7 @@ class ciscopuppet::cisco::demo_ospf {
   cisco_ospf_vrf { 'dark_blue vrf1':
     ensure                   => 'present',
     auto_cost                => '46000',
+    bfd                      => true,
     default_metric           => '10',
     log_adjacency            => 'log',
     timer_throttle_lsa_hold  => '5600',
