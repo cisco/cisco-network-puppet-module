@@ -62,8 +62,16 @@ require File.expand_path('../../cisco_tacacs_server/tacacsserverlib.rb', __FILE_
 result = 'PASS'
 testheader = 'TACACSSERVERHOST Resource :: All Attributes Defaults'
 
+def cleanup
+  logger.info('Testcase Cleanup:')
+  command_config(agent, 'no feature tacacs+')
+end
+
 # @test_name [TestCase] Executes defaults testcase for TACACSSERVERHOST.
 test_name "TestCase :: #{testheader}" do
+  cleanup
+  teardown { cleanup }
+
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
     # Expected exit_code is 0 since this is a bash shell cmd.

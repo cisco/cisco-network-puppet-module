@@ -44,6 +44,7 @@ skip_unless_supported(tests)
 tests[:primary] = {
   desc:           '1.1 Primary',
   title_pattern:  '100',
+  preclean:       'cisco_vlan',
   manifest_props: {
     pvlan_type:        'primary',
     pvlan_association: '101, 102, 98-99, 105',
@@ -75,6 +76,20 @@ tests[:isolated] = {
 def test_harness_dependencies(*)
   logger.info('  * Process test_harness_dependencies (test_private_vlan)')
   remove_all_vlans(agent)
+end
+
+# Overridden to properly handle dependencies for this test file.
+def dependency_manifest(_tests, _id)
+  dep = ''
+  if platform[/n7k/]
+    dep = %(
+      cisco_vdc { '#{default_vdc_name}':
+        # Must be f3-only
+        limit_resource_module_type => 'f3',
+      })
+  end
+  logger.info("\n  * dependency_manifest\n#{dep}")
+  dep
 end
 
 #################################################################

@@ -13,7 +13,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Extend cisco_bgp_neighbor with attributes:
  - `bfd`
-
 - Extended `cisco_bgp_af` to include l2vpn/evpn address-family support
 
 - Deprecated `cisco_interface` 'private-vlan' properties and replaced with new methods. The deprecated properties will be removed with release 2.0.0. The old -> new properties are:
@@ -37,8 +36,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 |:---|:---:|
 | `private_vlan_association` | `pvlan_association`
 | `private_vlan_type`        | `pvlan_type`
-
-### Removed
 
 ### Changed
 - `cisco_interface_ospf` type and provider so that the properties accept 'default' keyword.
