@@ -103,6 +103,7 @@ tests = {
 tests['default_properties_asym'] = {
   title_pattern:  'port-channel100',
   manifest_props: "
+    bfd_per_link                  => 'default',
     lacp_graceful_convergence     => 'default',
     lacp_max_bundle               => 'default',
     lacp_min_links                => 'default',
@@ -112,6 +113,7 @@ tests['default_properties_asym'] = {
   ",
   code:           [0, 2],
   resource_props: {
+    'bfd_per_link'              => 'false',
     'lacp_graceful_convergence' => 'true',
     'lacp_max_bundle'           => '16',
     'lacp_min_links'            => '1',
@@ -124,6 +126,7 @@ tests['default_properties_asym'] = {
 tests['non_default_properties_asym'] = {
   title_pattern:  'port-channel100',
   manifest_props: "
+    bfd_per_link                  => 'true',
     lacp_graceful_convergence     => 'false',
     lacp_max_bundle               => '10',
     lacp_min_links                => '3',
@@ -132,6 +135,7 @@ tests['non_default_properties_asym'] = {
     port_load_defer               => 'true',
   ",
   resource_props: {
+    'bfd_per_link'              => 'true',
     'lacp_graceful_convergence' => 'false',
     'lacp_max_bundle'           => '10',
     'lacp_min_links'            => '3',
@@ -144,6 +148,7 @@ tests['non_default_properties_asym'] = {
 tests['default_properties_sym'] = {
   title_pattern:  'port-channel100',
   manifest_props: "
+    bfd_per_link                  => 'default',
     lacp_graceful_convergence     => 'default',
     lacp_max_bundle               => 'default',
     lacp_min_links                => 'default',
@@ -153,6 +158,7 @@ tests['default_properties_sym'] = {
   ",
   code:           [0, 2],
   resource_props: {
+    'bfd_per_link'              => 'false',
     'lacp_graceful_convergence' => 'true',
     'lacp_max_bundle'           => '32',
     'lacp_min_links'            => '1',
@@ -165,6 +171,7 @@ tests['default_properties_sym'] = {
 tests['non_default_properties_sym'] = {
   title_pattern:  'port-channel100',
   manifest_props: "
+    bfd_per_link                  => 'true',
     lacp_graceful_convergence     => 'false',
     lacp_max_bundle               => '10',
     lacp_min_links                => '3',
@@ -173,6 +180,7 @@ tests['non_default_properties_sym'] = {
     port_load_defer               => 'true',
   ",
   resource_props: {
+    'bfd_per_link'              => 'true',
     'lacp_graceful_convergence' => 'false',
     'lacp_max_bundle'           => '10',
     'lacp_min_links'            => '3',
@@ -185,6 +193,7 @@ tests['non_default_properties_sym'] = {
 tests['default_properties_eth'] = {
   title_pattern:  'port-channel100',
   manifest_props: "
+    bfd_per_link                  => 'default',
     lacp_graceful_convergence     => 'default',
     lacp_max_bundle               => 'default',
     lacp_min_links                => 'default',
@@ -192,6 +201,7 @@ tests['default_properties_eth'] = {
   ",
   code:           [0, 2],
   resource_props: {
+    'bfd_per_link'              => 'false',
     'lacp_graceful_convergence' => 'true',
     'lacp_max_bundle'           => '16',
     'lacp_min_links'            => '1',
@@ -202,12 +212,14 @@ tests['default_properties_eth'] = {
 tests['non_default_properties_eth'] = {
   title_pattern:  'port-channel100',
   manifest_props: "
+    bfd_per_link                  => 'true',
     lacp_graceful_convergence     => 'false',
     lacp_max_bundle               => '10',
     lacp_min_links                => '3',
     lacp_suspend_individual       => 'false',
   ",
   resource_props: {
+    'bfd_per_link'              => 'true',
     'lacp_graceful_convergence' => 'false',
     'lacp_max_bundle'           => '10',
     'lacp_min_links'            => '3',
