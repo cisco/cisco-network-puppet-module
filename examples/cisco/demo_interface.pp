@@ -39,6 +39,7 @@ class ciscopuppet::cisco::demo_interface {
     cisco_interface { 'Ethernet1/1' :
       shutdown                      => true,
       switchport_mode               => disabled,
+      bfd_echo                      => false,
       description                   => 'managed by puppet',
       ipv4_address                  => '192.168.55.5',
       ipv4_netmask_length           => 24,
@@ -84,6 +85,7 @@ class ciscopuppet::cisco::demo_interface {
     }
 
     cisco_interface { 'Vlan22':
+      bfd_echo         => false,
       svi_autostate    => $svi_autostate,
       svi_management   => true,
       ipv4_arp_timeout => 300,
