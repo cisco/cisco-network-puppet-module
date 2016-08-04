@@ -11,6 +11,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `cisco_ospf_area_vlink` type and provider.
 
 ### Added
+- Extend cisco_interface with attributes:
+ - `bfd_echo`
+- Extend cisco_interface_ospf with attributes:
+ - `bfd`
+ - `network_type`
+- Extend cisco_interface_portchannel with attributes:
+ - `bfd_per_link`
+- Extend cisco_ospf_vrf with attributes:
+ - `bfd`
 - Extend cisco_bgp_neighbor with attributes:
  - `bfd`
 - Extended `cisco_bgp_af` to include l2vpn/evpn address-family support
