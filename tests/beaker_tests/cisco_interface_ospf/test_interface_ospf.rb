@@ -47,6 +47,7 @@ tests[:default] = {
   preclean_intf:  true,
   manifest_props: {
     area:                           200,
+    bfd:                            'default',
     cost:                           'default',
     dead_interval:                  'default',
     hello_interval:                 'default',
@@ -55,6 +56,7 @@ tests[:default] = {
     message_digest_algorithm_type:  'default',
     message_digest_encryption_type: 'default',
     message_digest_password:        'default',
+    network_type:                   'default',
     passive_interface:              'default',
   },
   code:           [0, 2],
@@ -79,6 +81,7 @@ tests[:non_default] = {
   preclean_intf:  true,
   manifest_props: {
     area:                           200,
+    bfd:                            'true',
     cost:                           '200',
     dead_interval:                  '200',
     hello_interval:                 '200',
@@ -87,6 +90,7 @@ tests[:non_default] = {
     message_digest_algorithm_type:  'md5',
     message_digest_encryption_type: 'cisco_type_7',
     message_digest_password:        '046E1803362E595C260E0B240619050A2D',
+    network_type:                   'p2p',
     passive_interface:              'true',
   },
   resource:       {

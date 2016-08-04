@@ -28,6 +28,7 @@ class ciscopuppet::cisco::demo_ospf {
   cisco_interface_ospf { 'Ethernet1/4 Sample':
     ensure                         => present,
     area                           => 200,
+    bfd                            => true,
     cost                           => '200',
     hello_interval                 => 'default',
     dead_interval                  => '200',
@@ -36,6 +37,7 @@ class ciscopuppet::cisco::demo_ospf {
     message_digest_algorithm_type  => md5,
     message_digest_encryption_type => cisco_type_7,
     message_digest_password        => $md_password,
+    network_type                   => 'p2p',
     passive_interface              => true,
   }
 
