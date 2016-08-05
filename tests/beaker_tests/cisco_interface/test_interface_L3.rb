@@ -38,6 +38,7 @@ tests = {
 
 # Find a usable interface for this test
 intf = find_interface(tests)
+dot1q = intf + '.1'
 
 # Test hash test cases
 tests[:default] = {
@@ -67,6 +68,14 @@ tests[:default] = {
     mtu:                  operating_system == 'nexus' ? '1500' : '1514',
     shutdown:             'false',
   },
+}
+
+# Note: This test should follow the default test as it requires an
+# L3 parent interface and this makes it easy to set up.
+tests[:dot1q] = {
+  desc:           '1.2 dot1q Sub-interface',
+  title_pattern:  dot1q,
+  manifest_props: { encapsulation_dot1q: 30 },
 }
 
 tests[:non_default] = {
@@ -110,14 +119,6 @@ tests[:acl] = {
   },
 }
 
-# Note: This test should follow the default test as it requires an
-# L3 parent interface and this makes it easy to set up.
-tests[:dot1q] = {
-  desc:           '2.3 dot1q Sub-interface',
-  title_pattern:  "#{intf}.1",
-  manifest_props: { encapsulation_dot1q: 30 },
-}
-
 # This test should be run last since it will break ip addressing properties.
 # Note that any tests that follow need to preclean.
 tests[:ip_forwarding] = {
@@ -146,6 +147,17 @@ def unsupported_properties(_tests, id)
   unprops
 end
 
+# Overridden to properly handle dependencies for this test file.
+def dependency_manifest(_tests, id)
+  return unless id == :non_default
+  # Though not required on most platforms, the test vrf context should be
+  # instantiated prior to configuring settings on a vrf interface. The new
+  # DME-based cli's (PIM, etc) may fail otherwise.
+  dep = %( cisco_vrf { 'test1': description => 'Puppet test vrf' } )
+  logger.info("\n  * dependency_manifest\n#{dep}")
+  dep
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
@@ -153,6 +165,8 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   test_harness_run(tests, :default)
+
+  interface_cleanup(agent, dot1q)
   test_harness_run(tests, :dot1q)
 
   # -------------------------------------------------------------------
