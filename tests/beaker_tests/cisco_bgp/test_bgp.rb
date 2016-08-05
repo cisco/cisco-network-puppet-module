@@ -235,6 +235,10 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown do
+    resource_absent_cleanup(agent, 'cisco_bgp')
+  end
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
@@ -263,9 +267,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
   test_harness_run(tests, :title_patterns_1)
   test_harness_run(tests, :title_patterns_2)
-
-  # -------------------------------------------------------------------
-  resource_absent_cleanup(agent, 'cisco_bgp')
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
