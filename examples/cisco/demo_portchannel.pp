@@ -68,6 +68,7 @@ class ciscopuppet::cisco::demo_portchannel {
 
   cisco_interface_portchannel {'port-channel100':
     ensure                    => 'present',
+    bfd_per_link              => true,
     lacp_graceful_convergence => false,
     lacp_max_bundle           => 10,
     lacp_min_links            => 2,

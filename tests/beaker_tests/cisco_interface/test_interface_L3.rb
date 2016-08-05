@@ -47,6 +47,7 @@ tests[:default] = {
   preclean_intf:      true,
   sys_def_switchport: false,
   manifest_props:     {
+    bfd_echo:             'default',
     description:          'default',
     duplex:               'default',
     ipv4_forwarding:      'default',
@@ -73,6 +74,7 @@ tests[:non_default] = {
   title_pattern:      intf,
   sys_def_switchport: false,
   manifest_props:     {
+    bfd_echo:                      false,
     description:                   'Configured with Puppet',
     shutdown:                      true,
     ipv4_address:                  '1.1.1.1',
@@ -131,6 +133,7 @@ def unsupported_properties(_tests, id)
 
   if operating_system == 'ios_xr'
     unprops <<
+      :bfd_echo <<
       :duplex <<
       :ipv4_forwarding <<
       :ipv4_pim_sparse_mode <<

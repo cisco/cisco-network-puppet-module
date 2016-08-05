@@ -29,6 +29,7 @@ Puppet::Type.newtype(:cisco_interface_portchannel) do
      Example:
      cisco_interface_portchannel {"port-channel100":
        ensure                       => 'present',
+       bfd_per_link                 => true,
        lacp_graceful_convergence    => false,
        lacp_max_bundle              => 10,
        lacp_min_links               => 2,
@@ -69,6 +70,12 @@ Puppet::Type.newtype(:cisco_interface_portchannel) do
   #######################################
 
   ensurable
+
+  newproperty(:bfd_per_link) do
+    desc 'Enable BFD sessions on each port-channel link.'
+
+    newvalues(:true, :false, :default)
+  end # property bfd_per_link
 
   newproperty(:lacp_graceful_convergence) do
     desc "port-channel lacp graceful convergence. Disable this only with lacp

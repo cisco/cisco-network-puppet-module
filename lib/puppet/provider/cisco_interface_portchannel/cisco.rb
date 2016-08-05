@@ -37,6 +37,7 @@ Puppet::Type.type(:cisco_interface_portchannel).provide(:cisco) do
     :port_hash_distribution,
   ]
   INTF_PC_BOOL_PROPS = [
+    :bfd_per_link,
     :lacp_graceful_convergence,
     :lacp_suspend_individual,
     :port_load_defer,
