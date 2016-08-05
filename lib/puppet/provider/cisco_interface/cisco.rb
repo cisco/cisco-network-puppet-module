@@ -72,6 +72,7 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     :vpc_id,
   ]
   INTF_BOOL_PROPS = [
+    :bfd_echo,
     :fabric_forwarding_anycast_gateway,
     :ipv4_forwarding,
     :ipv4_pim_sparse_mode,

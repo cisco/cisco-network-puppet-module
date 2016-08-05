@@ -130,6 +130,12 @@ Puppet::Type.newtype(:cisco_interface) do
 
   ensurable
 
+  newproperty(:bfd_echo) do
+    desc 'Enables bfd echo function for all address families.'
+
+    newvalues(:true, :false, :default)
+  end # property bfd_echo
+
   newproperty(:description) do
     desc "Description of the interface. Valid values are string, keyword
          'default'."

@@ -1835,7 +1835,7 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 |:---------|:-------------|
 | `pvlan_mapping`                       | Not supported on N8k          |
 | `switchport_pvlan_host`               | Not supported on N8k          |
-| `switchport_pvlan_host_association    | Not supported on N8k          |
+| `switchport_pvlan_host_association`   | Not supported on N8k          |
 | `switchport_pvlan_mapping`            | Not supported on N8k          |
 | `switchport_pvlan_mapping_trunk`      | Not supported on N3k,N8k      |
 | `switchport_pvlan_promiscuous`        | Not supported on N8k          |
@@ -1860,6 +1860,10 @@ are 'present' and 'absent'.
 Name of the interface on the network element. Valid value is a string.
 
 #### Properties
+
+###### `bfd_echo`
+Enables bfd echo function for all address families. Valid values are 'true', 'false', and
+'default'. This property is not applicable for loopback interfaces.
 
 ###### `description`
 Description of the interface. Valid values are a string or the keyword 'default'.
@@ -2180,6 +2184,9 @@ Name of this cisco_interface resource. Valid value is a string.
 ##### `ospf`
 Name of the cisco_ospf resource. Valid value is a string.
 
+###### `bfd`
+Enables bfd at interface level. This overrides the bfd variable set at the ospf router level. Valid values are 'true', 'false', or 'default'.
+
 ##### `cost`
 The cost associated with this cisco_interface_ospf instance. Valid value is an integer or the keyword 'default'.
 
@@ -2220,6 +2227,9 @@ Valid values are 'cleartext', '3des' or 'cisco_type_7' encryption, and
 ##### `message_digest_password`
 Specifies the message_digest password. Valid value is a string or the keyword 'default'.
 
+##### `network_type`
+Specifies the network type of this interface. Valid values are 'broadcast', 'p2p' or the keyword 'default'. 'broadcast' type is not applicable on loopback interfaces.
+
 ##### `area`
 *Required*. Ospf area associated with this cisco_interface_ospf instance. Valid values are a string, formatted as an IP address (i.e. "0.0.0.0") or as an integer.
 
@@ -2246,6 +2256,9 @@ Manages configuration of a portchannel interface instance.
 
 ##### `ensure`
 Determine whether the config should be present or not. Valid values are 'present' and 'absent'.
+
+##### `bfd_per_link`
+Enables BFD sessions on each port-channel link. Valid values are true, false or 'default'.
 
 ##### `lacp_graceful_convergence`
 port-channel lacp graceful convergence. Valid values are true, false or 'default'.
@@ -2682,6 +2695,9 @@ Name of the ospf instance. Valid value is a string.
 
 ##### `router_id`
 Router Identifier (ID) of the OSPF router VRF instance. Valid values are a string or the keyword 'default'.
+
+##### `bfd`
+Enables bfd on all the OSPF interfaces on this router. The individual interfaces can override this. Valid values are true, false or keyword 'default'
 
 ##### `default_metric`
 Specify the default Metric value. Valid values are an  integer or the keyword

@@ -31,6 +31,7 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
     cisco_interface_ospf {\"Ethernet1/8 green\":
       ensure                         => present,
       area                           => \"0.0.0.0\",
+      bfd                            => true,
       cost                           => 10,
       hello_interval                 => 10,
       dead_interval                  => 40,
@@ -40,6 +41,7 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
       message_digest_algorithm_type  => md5,
       message_digest_encryption_type => \"clear\",
       message_digest_password        => \"xxxxx\",
+      network_type                   => 'p2p',
     }"
 
   ensurable
@@ -80,6 +82,12 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
 
   newparam(:name) do
     desc 'dummy paramenter to support puppet resource command'
+  end
+
+  newproperty(:bfd) do
+    desc 'Enable bfd on this interface.'
+
+    newvalues(:true, :false, :default)
   end
 
   newproperty(:cost) do
@@ -170,6 +178,12 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
     desc 'Specifies the message_digest password. Valid values are string.'
 
     munge { |value| value == 'default' ? :default : value }
+  end
+
+  newproperty(:network_type) do
+    desc 'Network type of this interface.'
+
+    newvalues(:broadcast, :p2p, :default)
   end
 
   newproperty(:area) do
