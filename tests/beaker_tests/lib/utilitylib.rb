@@ -1042,20 +1042,20 @@ def platform
 end
 
 # Check if this image is an I2 image
-@i2_image = nil # Cache the lookup result
-def nexus_i2_image
-  return @i2_image unless @i2_image.nil?
+@image = nil # Cache the lookup result
+def nexus_image
+  return @image unless @image.nil?
   on(agent, facter_cmd('-p cisco.images.system_image'))
-  @i2_image = stdout[/7.0.3.I2/] ? true : false
-  @i2_image
+  @image = stdout[/[A-Z]+\d/]
+  @image
 end
 
 # This is a skip-all-testcases-if-I2-image check.
 # Do not use this for skipping individual properties.
-def skip_nexus_i2_image(tests)
-  return unless nexus_i2_image
+def skip_nexus_image(image, tests)
+  return unless nexus_image["#{image}"]
   msg = "Skipping all tests; '#{tests[:resource_name]}' "\
-        'is not supported on 7.0.3(I2) images'
+        "is not supported on #{image} images"
   banner = '#' * msg.length
   raise_skip_exception("\n#{banner}\n#{msg}\n#{banner}\n", self)
 end

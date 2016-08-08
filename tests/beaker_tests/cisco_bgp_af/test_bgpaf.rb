@@ -307,7 +307,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :title_patterns_1)
   test_harness_run(tests, :title_patterns_2)
   test_harness_run(tests, :title_patterns_3)
-  test_harness_run(tests, :l2vpn_evpn) unless nexus_i2_image
+  test_harness_run(tests, :l2vpn_evpn) unless nexus_image['I2']
 
   # -----------------------------------
   resource_absent_cleanup(agent, 'cisco_bgp')
