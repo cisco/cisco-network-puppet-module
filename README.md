@@ -2227,8 +2227,20 @@ Valid values are 'cleartext', '3des' or 'cisco_type_7' encryption, and
 ##### `message_digest_password`
 Specifies the message_digest password. Valid value is a string or the keyword 'default'.
 
+###### `mtu_ignore`
+Disables OSPF MTU mismatch detection. Valid values are 'true', 'false', or 'default'.
+
 ##### `network_type`
 Specifies the network type of this interface. Valid values are 'broadcast', 'p2p' or the keyword 'default'. 'broadcast' type is not applicable on loopback interfaces.
+
+##### `priority`
+The router priority associated with this cisco_interface_ospf instance. Valid values are an integer or the keyword 'default'.
+
+###### `shutdown`
+Shuts down ospf on this interface. Valid values are 'true', 'false', or 'default'.
+
+##### `transmit_delay`
+Packet transmission delay in seconds. Valid values are an integer or the keyword 'default'.
 
 ##### `area`
 *Required*. Ospf area associated with this cisco_interface_ospf instance. Valid values are a string, formatted as an IP address (i.e. "0.0.0.0") or as an integer.

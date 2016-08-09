@@ -41,7 +41,11 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
       message_digest_algorithm_type  => md5,
       message_digest_encryption_type => \"clear\",
       message_digest_password        => \"xxxxx\",
+      mtu_ignore                     => true,
       network_type                   => 'p2p',
+      priority                       => 100,
+      shutdown                       => true,
+      transmit_delay                 => 300,
     }"
 
   ensurable

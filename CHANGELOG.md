@@ -15,7 +15,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
  - `bfd_echo`
 - Extend cisco_interface_ospf with attributes:
  - `bfd`
+ - `mtu_ignore`
  - `network_type`
+ - `priority`
+ - `shutdown`
+ - `transmit_delay`
 - Extend cisco_interface_portchannel with attributes:
  - `bfd_per_link`
 - Extend cisco_ospf_vrf with attributes:
