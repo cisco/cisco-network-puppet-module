@@ -41,12 +41,16 @@ Puppet::Type.type(:cisco_interface_ospf).provide(:cisco) do
     :message_digest_encryption_type,
     :message_digest_password,
     :network_type,
+    :priority,
+    :transmit_delay,
   ]
 
   INTF_OSPF_BOOL_PROPS = [
     :passive_interface,
     :bfd,
     :message_digest,
+    :mtu_ignore,
+    :shutdown,
   ]
 
   INTF_OSPF_ALL_PROPS = INTF_OSPF_NON_BOOL_PROPS + INTF_OSPF_BOOL_PROPS

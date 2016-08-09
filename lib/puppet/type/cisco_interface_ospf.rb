@@ -180,10 +180,36 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
     munge { |value| value == 'default' ? :default : value }
   end
 
+  newproperty(:mtu_ignore) do
+    desc 'Disables OSPF MTU mismatch detection.'
+
+    newvalues(:true, :false, :default)
+  end
+
   newproperty(:network_type) do
     desc 'Network type of this interface.'
 
     newvalues(:broadcast, :p2p, :default)
+  end
+
+  newproperty(:priority) do
+    desc "The router priority associated with this cisco_interface_ospf
+          instance. Valid values are integer, keyword 'default'."
+
+    munge { |value| value == 'default' ? :default : Integer(value) }
+  end
+
+  newproperty(:shutdown) do
+    desc 'Shuts down ospf on this interface.'
+
+    newvalues(:true, :false, :default)
+  end
+
+  newproperty(:transmit_delay) do
+    desc "Packet transmission delay in seconds. Valid values are
+          integer, keyword 'default'."
+
+    munge { |value| value == 'default' ? :default : Integer(value) }
   end
 
   newproperty(:area) do
