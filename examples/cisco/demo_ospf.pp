@@ -37,8 +37,12 @@ class ciscopuppet::cisco::demo_ospf {
     message_digest_algorithm_type  => md5,
     message_digest_encryption_type => cisco_type_7,
     message_digest_password        => $md_password,
+    mtu_ignore                     => true,
     network_type                   => 'p2p',
     passive_interface              => true,
+    priority                       => 100,
+    shutdown                       => true,
+    transmit_delay                 => 300,
   }
 
   cisco_ospf_vrf { 'dark_blue default':

@@ -56,8 +56,12 @@ tests[:default] = {
     message_digest_algorithm_type:  'default',
     message_digest_encryption_type: 'default',
     message_digest_password:        'default',
+    mtu_ignore:                     'default',
     network_type:                   'default',
     passive_interface:              'default',
+    priority:                       'default',
+    shutdown:                       'default',
+    transmit_delay:                 'default',
   },
   code:           [0, 2],
   resource:       {
@@ -69,7 +73,11 @@ tests[:default] = {
     message_digest_key_id:          0,
     message_digest_algorithm_type:  'md5',
     message_digest_encryption_type: 'cleartext',
+    mtu_ignore:                     'false',
     passive_interface:              'false',
+    priority:                       1,
+    shutdown:                       'false',
+    transmit_delay:                 1,
   },
 }
 
@@ -90,8 +98,12 @@ tests[:non_default] = {
     message_digest_algorithm_type:  'md5',
     message_digest_encryption_type: 'cisco_type_7',
     message_digest_password:        '046E1803362E595C260E0B240619050A2D',
+    mtu_ignore:                     'true',
     network_type:                   'p2p',
     passive_interface:              'true',
+    priority:                       '200',
+    shutdown:                       'true',
+    transmit_delay:                 '400',
   },
   resource:       {
     area: '0.0.0.200'
