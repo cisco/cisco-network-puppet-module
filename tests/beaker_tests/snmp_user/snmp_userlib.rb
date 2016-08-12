@@ -44,8 +44,8 @@ module SnmpUserLib
   # where 'ensure' is set to present.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_snmp_user_manifest_present(type)
-    nxos_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+  def self.create_snmp_user_manifest_present
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   snmp_user { 'test_snmp_user':
     ensure          => present,
@@ -58,34 +58,20 @@ node default {
   }
 }
 EOF"
-
-    ios_xr_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
-node default {
-  snmp_user { 'test_snmp_user':
-    ensure          => present,
-    roles           => ['network-operator'],
-    version         => 'v3',
-    auth            => 'md5',
-    password        => '0307530A080824414B',
-    privacy         => 'aes128',
-    private_key     => '12491D42475E59',
-  }
-}
-EOF"
-    type == 'ios_xr' ? ios_xr_str : nxos_str
+    manifest_str
   end
 
   # Method to create a manifest for snmp_user resource attribute 'ensure'
   # where 'ensure' is set to present, and a few changes made from above.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_snmp_user_manifest_present_change(type)
-    nxos_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+  def self.create_snmp_user_manifest_present_change
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   snmp_user { 'test_snmp_user':
     ensure          => present,
     auth            => 'sha',
-    password        => '0307530A080824414B',
+    password        => '0x7e5030ffd26d7e1b366a9041e9c63c94',
     privacy         => 'des',
     private_key     => '0xcc012f26b3384d4b3da979bff48b4ffe',
     localized_key   => true,
@@ -93,21 +79,7 @@ node default {
   }
 }
 EOF"
-
-    ios_xr_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
-node default {
-  snmp_user { 'test_snmp_user':
-    ensure          => present,
-    roles           => ['network-operator'],
-    version         => 'v3',
-    auth            => 'sha',
-    password        => '0307530A080824414B',
-    privacy         => 'des',
-    private_key     => '12491D42475E59',
-  }
-}
-EOF"
-    type == 'ios_xr' ? ios_xr_str : nxos_str
+    manifest_str
   end
 
   # Method to create a manifest for snmp_user resource attribute 'ensure'
