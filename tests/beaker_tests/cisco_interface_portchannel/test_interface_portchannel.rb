@@ -296,6 +296,7 @@ test_name "TestCase :: #{testheader}" do
     id = 'default_properties_sym'
   end
 
+  system_default_switchport(agent, false)
   tests[id][:desc] = '1.1 Default Properties'
   test_harness_interface_portchannel(tests, id)
 
