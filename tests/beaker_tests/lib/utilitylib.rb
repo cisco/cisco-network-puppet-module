@@ -987,6 +987,12 @@ def operating_system
   @cisco_os = on(agent, facter_cmd('os.name')).stdout.chomp
 end
 
+@os_family = nil
+def os_family
+  return @os_family unless @os_family.nil?
+  @os_family = on(agent, facter_cmd('os.family')).stdout.chomp
+end
+
 # Used to cache the cisco hardware type
 @cisco_hardware = nil
 # Use facter to return cisco hardware type

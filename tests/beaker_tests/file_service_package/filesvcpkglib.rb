@@ -33,8 +33,6 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 # The module has a single set of methods:
 # A. Methods to create manifests for file, service and pkg Puppet test cases.
 module FileSvcPkgLib
-  TEST_SERVICE = 'bootlogd'
-
   # A. Methods to create manifests for file, service and pkg Puppet test cases.
 
   # Method to create a manifest for FILE resource attributes:
@@ -78,11 +76,11 @@ EOF"
   # name, ensure and enable.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_service_manifest_nondefaults
+  def self.create_service_manifest_nondefaults(service)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
-    service { '#{TEST_SERVICE}':
-        name            => '#{TEST_SERVICE}',
+    service { '#{service}':
+        name            => '#{service}',
         ensure          => 'running',
         enable          => 'true',
     }
@@ -95,11 +93,11 @@ EOF"
   # 'ensure' is set to stopped.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_service_manifest_stopped
+  def self.create_service_manifest_stopped(service)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
-    service { '#{TEST_SERVICE}':
-        name            => '#{TEST_SERVICE}',
+    service { '#{service}':
+        name            => '#{service}',
         ensure          => 'stopped',
     }
 }
