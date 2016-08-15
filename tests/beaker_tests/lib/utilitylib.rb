@@ -1202,6 +1202,7 @@ def interface_capabilities(agent, intf)
     k.gsub!(/ \(.*\)/, '') # Remove any parenthetical text from key
     k.strip!
     v.strip!
+    v.gsub!(%r{half/full}, 'half,full') if k[/Duplex/]
     hash[k] = v
   end
   hash

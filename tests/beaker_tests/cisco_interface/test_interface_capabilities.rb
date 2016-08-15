@@ -122,8 +122,8 @@ def parse_capabilities(agent, cmd)
   on(agent, cmd)
   caps = {}
   caps['Speed'] = Regexp.last_match[1] if stdout[/Speed:\s+([\w,]+)/]
-  caps['Duplex'] = Regexp.last_match[1] if stdout[/Duplex:\s+([\w,-]+)/]
-  logger.debug("\ncapabilities hash: #{caps}")
+  caps['Duplex'] = Regexp.last_match[1] if stdout[%r{Duplex:\s+([\w/,-]+)}]
+  logger.info("\ncapabilities hash: #{caps}")
   caps
 end
 
@@ -131,6 +131,7 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown { interface_cleanup(agent, intf) }
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Platform/Linecard Variable Properties")
 
@@ -148,25 +149,27 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   logger.info("\n#{'-' * 60}\nSection 2. Test puppet resource vs vsh results")
 
   vsh_cmd = get_vshell_cmd("show interface #{intf} capabilities")
+  # Note: vsh output is 'raw' command output (as opposed to the processed hash)
   vsh_caps = parse_capabilities(agent, vsh_cmd)
 
   resource_cmd = PUPPET_BINPATH + "resource cisco_interface_capabilities '#{intf}'"
   resource_caps = parse_capabilities(agent, resource_cmd)
 
-  fail_test('puppet resource mismatch with vsh :: FAIL') unless
-    vsh_caps == resource_caps
+  unless vsh_caps == resource_caps
+    logger.error("vsh_caps: #{vsh_caps}, resource_caps: #{resource_caps}")
+    fail_test('puppet resource mismatch with vsh :: FAIL')
+  end
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Test with utilitylib helper results")
   util_caps = interface_capabilities(agent, intf)
 
   vsh_caps.keys.each do |k|
+    next if k[/Duplex/] && vsh_caps[k][%r{half/full}] # noise
     next if vsh_caps[k] == util_caps[k]
+    logger.error("vsh_caps[#{k}]=#{vsh_caps[k]}, util_caps[#{k}]=#{util_caps[k]}")
     fail_test('utilitylib helper results mismatch with vsh')
   end
-
-  # -------------------------------------------------------------------
-  interface_cleanup(agent, intf)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
