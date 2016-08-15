@@ -68,7 +68,7 @@ when 'cisco-wrlinux'
 when 'RedHat'
   os_service = 'systemd-tmpfiles-clean.timer'
 else
-  testcase.fail_test('Unable to identify os family')
+  fail_test("Unable to identify/set service for OS family: #{os_family}")
 end
 
 # @test_name [TestCase] Executes nondefaults testcase for SERVICE Resource.
