@@ -887,7 +887,7 @@ end
 def mt_full_interface
   # Search for F3 card on device, create an interface name if found
   cmd = get_vshell_cmd('sh mod')
-  out = on(agent, cmd, pty: true).stdout[/^(\d+)\s.*N7K-F3/]
+  out = on(agent, cmd, pty: true).stdout[/^(\d+)\s.*N7[K7]-F3/]
   slot = out.nil? ? nil : Regexp.last_match[1]
   "ethernet#{slot}/1" unless slot.nil?
 end
@@ -1299,6 +1299,33 @@ def resource_probe(agent, cmd, pattern)
   cmd = PUPPET_BINPATH + "resource #{cmd}"
   on(agent, cmd, acceptable_exit_codes: [0, 2, 1], pty: true)
   stdout.match(pattern) ? true : false
+end
+
+def vdc_limit_f3_no_intf_needed(action=:set)
+  # This is a special-use method for N7Ks that don't have a physical F3.
+  #  1) There are some features that refuse to load unless the VDC is
+  #     limited to F3 only, but they will actually load if the config is
+  #     present, despite the fact that there are no physical F3s.
+  #  2) We have some tests that need these features but don't need interfaces.
+  #
+  # action = :set (enable limit F3 config), :clear (default limit config)
+  #
+  # The limit config should be removed after testing if the device does not
+  # have an actual F3.
+  return unless platform[/n7k/]
+  case action
+  when :set
+    #  limit_resource_module_type => 'f3',
+    cmd = PUPPET_BINPATH + "resource cisco_vdc '#{default_vdc_name}' "
+    out = on(agent, cmd, pty: true).stdout[/limit_resource.*'(f3)'/]
+    mods = out.nil? ? nil : Regexp.last_match[1]
+    return if mods == 'f3'
+    cmd += "limit_resource_module_type='f3'"
+    on(agent, cmd, pty: true).stdout[/limit_resource.*'(f3)'/]
+
+  when :clear
+    teardown_vdc
+  end
 end
 
 def remove_all_vlans(agent, stepinfo='Remove all vlans & bridge-domains')

@@ -120,24 +120,11 @@ def unsupported_properties(tests, _id)
   unprops
 end
 
-# Overridden to properly handle dependencies for this test file.
-def dependency_manifest(_tests, _id)
-  dep = ''
-  if platform[/n7k/]
-    dep = %(
-      cisco_vdc { '#{default_vdc_name}':
-        # Must be f3-only
-        limit_resource_module_type => 'f3',
-      })
-  end
-  logger.info("\n  * dependency_manifest\n#{dep}")
-  dep
-end
-
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  vdc_limit_f3_no_intf_needed(:set)
   remove_all_vlans(agent)
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Property Testing")
@@ -150,6 +137,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :non_default_extended)
 
   remove_all_vlans(agent)
+  vdc_limit_f3_no_intf_needed(:clear)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

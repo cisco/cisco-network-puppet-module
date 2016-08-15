@@ -58,6 +58,9 @@ skip_unless_supported(tests)
 
 # Assign a test interface.
 if platform[/n7k/]
+  unless mt_full_interface
+    prereq_skip(nil, self, 'Test requires F3 or compatible line module')
+  end
   setup_mt_full_env(tests, self)
   # Use test interface discovered by setup_mt_full_env().
   intf = tests[:intf]
