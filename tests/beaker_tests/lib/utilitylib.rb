@@ -1293,6 +1293,14 @@ def remove_interface(agent, intf)
   command_config(agent, cmd, cmd)
 end
 
+# Issue a command on the agent and check stdout for a pattern.
+# Useful for checking if hardware supports properties, etc.
+def resource_probe(agent, cmd, pattern)
+  cmd = PUPPET_BINPATH + "resource #{cmd}"
+  on(agent, cmd, acceptable_exit_codes: [0, 2, 1], pty: true)
+  stdout.match(pattern) ? true : false
+end
+
 def remove_all_vlans(agent, stepinfo='Remove all vlans & bridge-domains')
   # TBD: Modify this cleanup to use faster test_get / test_set:
   #  test_get('i ^vlan|^bridge')
