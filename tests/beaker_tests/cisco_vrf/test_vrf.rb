@@ -117,9 +117,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   test_harness_run(tests, :non_default)
-
-  # -------------------------------------------------------------------
-  resource_absent_cleanup(agent, 'cisco_vrf', 'VRF CLEAN :: ')
   skipped_tests_summary(tests)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
