@@ -124,6 +124,10 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown do
+    remove_all_vlans(agent)
+    vdc_limit_f3_no_intf_needed(:clear)
+  end
   vdc_limit_f3_no_intf_needed(:set)
   remove_all_vlans(agent)
   # -------------------------------------------------------------------
@@ -135,9 +139,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   remove_all_vlans(agent)
   test_harness_run(tests, :default_extended)
   test_harness_run(tests, :non_default_extended)
-
-  remove_all_vlans(agent)
-  vdc_limit_f3_no_intf_needed(:clear)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
