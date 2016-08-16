@@ -75,6 +75,7 @@ def unsupported_properties(_tests, _id)
 
     unprops << :vni unless platform[/n9k/]
     unprops << :route_distinguisher if nexus_i2_image
+    unprops << :description if image?[/7.3.0.D1.1/] # CSCuy36637
 
   else
     unprops <<
@@ -82,23 +83,14 @@ def unsupported_properties(_tests, _id)
       :shutdown <<
       :vni
   end
+  logger.info("  unprops: #{unprops}") unless unprops.empty?
   unprops
 end
 
 # Overridden to properly handle dependencies for this test file.
-def dependency_manifest(_tests, _id)
-  if operating_system == 'nexus'
-    dep = ''
-    if platform[/n7k/]
-      dep = %(
-        cisco_vdc { '#{default_vdc_name}':
-          # Must be f3-only
-          limit_resource_module_type => 'f3',
-        })
-    end
-  else
-    dep = %( cisco_interface {'loopback100': ensure => 'present' } )
-  end
+def dependency_manifest(_tests, id)
+  return unless id[/non_default/]
+  dep = %( cisco_interface {'loopback100': ensure => 'present' } )
   logger.info("\n  * dependency_manifest\n#{dep}")
   dep
 end
@@ -107,7 +99,12 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  resource_absent_cleanup(agent, 'cisco_vrf', 'VRF CLEAN :: ')
+  teardown do
+    remove_all_vrfs(agent)
+    vdc_limit_f3_no_intf_needed(:clear)
+  end
+  remove_all_vrfs(agent)
+  vdc_limit_f3_no_intf_needed(:set)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")

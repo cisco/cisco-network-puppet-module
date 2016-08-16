@@ -829,7 +829,7 @@ end
 #  test_get(agent, 'incl ^vlan')
 def test_get(agent, filter)
   cmd_prefix = PUPPET_BINPATH + "resource cisco_command_config 'cc' "
-  on(agent, cmd_prefix + "test_get='#{filter}'")
+  on(agent, cmd_prefix + "test_get=\"#{filter}\"")
   stdout
 end
 
@@ -837,6 +837,7 @@ end
 # Example:
 #  test_set(agent, 'no feature foo ; no feature bar')
 def test_set(agent, cmd)
+  return if cmd.empty?
   logger.info(cmd)
   cmd_prefix = PUPPET_BINPATH + "resource cisco_command_config 'cc' "
   on(agent, cmd_prefix + "test_set='#{cmd}'")
@@ -1045,6 +1046,14 @@ def platform
   end
   logger.info "\nFound Platform string: '#{pi}', Alias to: '#{@cisco_hardware}'"
   @cisco_hardware
+end
+
+# Check if image matches pattern
+@cached_img = nil
+def image?(reset_cache=false)
+  return @cached_img unless @cached_img.nil? || reset_cache
+  on(agent, facter_cmd('-p cisco.images.system_image'))
+  @cached_img = stdout.nil? ? '' : stdout
 end
 
 # Check if this image is an I2 image
@@ -1345,4 +1354,10 @@ def remove_all_vlans(agent, stepinfo='Remove all vlans & bridge-domains')
     command_config(agent, cmd, cmd)
     resource_absent_cleanup(agent, 'cisco_vlan', 'vlans')
   end
+end
+
+def remove_all_vrfs(agent)
+  found = test_get(agent, "incl 'vrf context' | excl management").split("\n")
+  found.map! { |cmd| "no #{cmd}" if cmd[/^vrf context/] }
+  test_set(agent, found.compact.join(' ; '))
 end
