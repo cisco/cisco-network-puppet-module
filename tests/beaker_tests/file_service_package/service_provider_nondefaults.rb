@@ -61,6 +61,16 @@ require File.expand_path('../filesvcpkglib.rb', __FILE__)
 result = 'PASS'
 testheader = 'SERVICE Resource :: All Attributes NonDefaults'
 
+# Identify service for testing based on os family.
+case os_family
+when 'cisco-wrlinux'
+  os_service = 'bootlogd'
+when 'RedHat'
+  os_service = 'systemd-tmpfiles-clean.timer'
+else
+  fail_test("Unable to identify/set service for OS family: #{os_family}")
+end
+
 # @test_name [TestCase] Executes nondefaults testcase for SERVICE Resource.
 test_name "TestCase :: #{testheader}" do
   raise_skip_exception('Not supported for OAC platforms', self) if
@@ -68,7 +78,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, FileSvcPkgLib.create_service_manifest_stopped)
+    on(master, FileSvcPkgLib.create_service_manifest_stopped(os_service))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     # Or expected exit_code is 0 since this is a puppet agent cmd with no change.
@@ -81,7 +91,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource nondefaults manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, FileSvcPkgLib.create_service_manifest_nondefaults)
+    on(master, FileSvcPkgLib.create_service_manifest_nondefaults(os_service))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = PUPPET_BINPATH + 'agent -t'
@@ -94,7 +104,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check service resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = PUPPET_BINPATH + "resource service '#{FileSvcPkgLib::TEST_SERVICE}'"
+    cmd_str = PUPPET_BINPATH + "resource service '#{os_service}'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ensure' => 'running' },
@@ -107,7 +117,7 @@ test_name "TestCase :: #{testheader}" do
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource stopped manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, FileSvcPkgLib.create_service_manifest_stopped)
+    on(master, FileSvcPkgLib.create_service_manifest_stopped(os_service))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = PUPPET_BINPATH + 'agent -t'
@@ -122,7 +132,7 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check service resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = PUPPET_BINPATH + "resource service '#{FileSvcPkgLib::TEST_SERVICE}'"
+    cmd_str = PUPPET_BINPATH + "resource service '#{os_service}'"
     on(agent, cmd_str) do
       search_pattern_in_output(stdout,
                                { 'ensure' => 'running' },
