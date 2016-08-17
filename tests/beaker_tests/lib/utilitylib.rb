@@ -436,6 +436,7 @@ end
 # Helper to nuke a single interface. This is needed to remove all
 # configurations from the interface.
 def interface_cleanup(agent, intf, stepinfo='Interface Clean:')
+  return if intf.empty?
   step "TestStep :: #{stepinfo}" do
     cmd = "resource cisco_command_config 'interface_cleanup' "\
           "command='default interface #{intf}'"
@@ -966,7 +967,7 @@ end
 
 # VDC post-test cleanup
 def teardown_vdc
-  return unless mt_full_interface
+  return if mt_full_interface
 
   # Testbeds without F3 cards should be set back to their default state;
   # failure to do so will leave the testbed without usable interfaces.

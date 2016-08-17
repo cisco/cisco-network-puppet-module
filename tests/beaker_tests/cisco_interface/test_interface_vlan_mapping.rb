@@ -57,6 +57,7 @@ tests = {
 skip_unless_supported(tests)
 
 # Assign a test interface.
+intf = ''
 if platform[/n7k/]
   unless mt_full_interface
     prereq_skip(nil, self, 'Test requires F3 or compatible line module')
@@ -102,6 +103,8 @@ tests[:non_default] = {
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown { interface_cleanup(agent, intf) }
+
   # -----------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   test_harness_run(tests, :default)
@@ -111,7 +114,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :non_default)
 
   # -------------------------------------------------------------------
-  interface_cleanup(agent, intf)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
