@@ -57,9 +57,10 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown { vdc_limit_f3_no_intf_needed(:clear) }
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Non Default Property Testing")
   test_harness_run(tests, :non_default)
-  teardown_vdc
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

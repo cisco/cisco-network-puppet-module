@@ -44,7 +44,6 @@ skip_unless_supported(tests)
 tests[:primary] = {
   desc:           '1.1 Primary',
   title_pattern:  '100',
-  preclean:       'cisco_vlan',
   manifest_props: {
     pvlan_type:        'primary',
     pvlan_association: '101, 102, 98-99, 105',
@@ -71,38 +70,26 @@ tests[:isolated] = {
   },
 }
 
-# This method overrides the method in utilitylib.rb to set up dependencies
-# for interface tests.
-def test_harness_dependencies(*)
-  logger.info('  * Process test_harness_dependencies (test_private_vlan)')
-  remove_all_vlans(agent)
-end
-
-# Overridden to properly handle dependencies for this test file.
-def dependency_manifest(_tests, _id)
-  dep = ''
-  if platform[/n7k/]
-    dep = %(
-      cisco_vdc { '#{default_vdc_name}':
-        # Must be f3-only
-        limit_resource_module_type => 'f3',
-      })
-  end
-  logger.info("\n  * dependency_manifest\n#{dep}")
-  dep
-end
-
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown do
+    remove_all_vlans(agent)
+    vdc_limit_f3_no_intf_needed(:clear)
+  end
+  remove_all_vlans(agent)
+  vdc_limit_f3_no_intf_needed(:set)
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Property Testing")
   test_harness_run(tests, :primary)
-  test_harness_run(tests, :community)
-  test_harness_run(tests, :isolated)
 
   remove_all_vlans(agent)
+  test_harness_run(tests, :community)
+
+  remove_all_vlans(agent)
+  test_harness_run(tests, :isolated)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
