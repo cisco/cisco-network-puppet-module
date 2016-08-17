@@ -53,21 +53,15 @@ tests[:non_default] = {
   },
 }
 
-# TEST PRE-REQUISITES
-#   - F3 linecard assigned to admin vdc
-def dependency_manifest(*)
-  "
-    cisco_vdc { '#{default_vdc_name}':
-      ensure                     => present,
-      limit_resource_module_type => 'f3',
-    }
-  "
-end
-
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown do
+    vdc_limit_f3_no_intf_needed(:clear)
+  end
+  vdc_limit_f3_no_intf_needed(:set)
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   id = :default
@@ -80,8 +74,5 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   test_harness_run(tests, :non_default)
-
-  # -------------------------------------------------------------------
-  resource_absent_cleanup(agent, 'cisco_encapsulation')
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
