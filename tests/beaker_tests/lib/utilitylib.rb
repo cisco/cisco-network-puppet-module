@@ -1340,6 +1340,7 @@ def vdc_limit_f3_no_intf_needed(action=:set)
     on(agent, cmd, pty: true).stdout[/limit_resource.*'(f3)'/]
 
   when :clear
+    # Reset to default only if no physical F3 is present
     teardown_vdc
   end
 end

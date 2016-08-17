@@ -33,7 +33,6 @@ tests = {
 # Test hash test cases
 tests[:default] = {
   desc:           'Default Properties, vrf-af',
-  preclean:       'cisco_vrf',
   title_pattern:  'blue ipv4 unicast',
   manifest_props: {
     route_target_both_auto:      'default',
@@ -74,7 +73,6 @@ tests[:non_default] = {
 
 tests[:title_patterns_1] = {
   desc:           'T.1 Title Pattern',
-  preclean:       'cisco_vrf',
   title_pattern:  'new_york',
   title_params:   { vrf: 'red', afi: 'ipv4', safi: 'unicast' },
   manifest_props: {},
@@ -124,17 +122,11 @@ end
 # Overridden to properly handle dependencies for this test file.
 def dependency_manifest(tests, id)
   if operating_system == 'nexus'
+    return unless id[/non_default/]
     dep = %(
       cisco_command_config { 'policy_config':
         command => 'route-map abc permit 10'
       } )
-    if platform[/n7k/]
-      dep += %(
-        cisco_vdc { '#{default_vdc_name}':
-          # Must be f3-only
-          limit_resource_module_type => 'f3',
-        })
-    end
   else
     t = puppet_resource_title_pattern_munge(tests, id)
     dep = %(
@@ -153,6 +145,13 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown do
+    remove_all_vrfs(agent)
+    vdc_limit_f3_no_intf_needed(:clear)
+  end
+  remove_all_vrfs(agent)
+  vdc_limit_f3_no_intf_needed(:set)
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   id = :default
@@ -168,12 +167,12 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
+  remove_all_vrfs(agent)
   test_harness_run(tests, :title_patterns_1)
   test_harness_run(tests, :title_patterns_2)
   test_harness_run(tests, :title_patterns_3)
 
   # -----------------------------------
-  resource_absent_cleanup(agent, 'cisco_vrf')
   skipped_tests_summary(tests)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
