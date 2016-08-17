@@ -436,6 +436,7 @@ end
 # Helper to nuke a single interface. This is needed to remove all
 # configurations from the interface.
 def interface_cleanup(agent, intf, stepinfo='Interface Clean:')
+  return if intf.empty?
   step "TestStep :: #{stepinfo}" do
     cmd = "resource cisco_command_config 'interface_cleanup' "\
           "command='default interface #{intf}'"
@@ -966,13 +967,13 @@ end
 
 # VDC post-test cleanup
 def teardown_vdc
-  logger.info("\n* Teardown VDC")
+  return if mt_full_interface
 
   # Testbeds without F3 cards should be set back to their default state;
   # failure to do so will leave the testbed without usable interfaces.
   # Assume that F3 testbeds should be left with module-type set to F3.
-  limit_resource_module_type_set(default_vdc_name, nil) unless
-    mt_full_interface
+  logger.info("\n* Teardown VDC: Reset limit-resource module-type")
+  limit_resource_module_type_set(default_vdc_name, nil)
 end
 
 # Facter command builder helper method
@@ -1340,6 +1341,7 @@ def vdc_limit_f3_no_intf_needed(action=:set)
     on(agent, cmd, pty: true).stdout[/limit_resource.*'(f3)'/]
 
   when :clear
+    # Reset to default only if no physical F3 is present
     teardown_vdc
   end
 end

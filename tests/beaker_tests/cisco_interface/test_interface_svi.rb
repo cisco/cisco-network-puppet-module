@@ -45,7 +45,6 @@ intf = 'vlan13'
 tests[:default_mgmt] = {
   desc:           "1.1 Default 'mgmt'",
   title_pattern:  intf,
-  preclean_intf:  true,
   manifest_props: {
     svi_management: 'default'
   },
@@ -99,6 +98,12 @@ tests[:anycast] = {
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown do
+    vdc_limit_f3_no_intf_needed(:clear)
+    remove_interface(agent, intf)
+  end
+  remove_interface(agent, intf)
+  vdc_limit_f3_no_intf_needed(:set)
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Property Testing")
   test_harness_run(tests, :default_mgmt)
@@ -110,7 +115,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :anycast)
 
   # -------------------------------------------------------------------
-  remove_interface(agent, intf)
   skipped_tests_summary(tests)
 end
 

@@ -235,9 +235,7 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  teardown do
-    resource_absent_cleanup(agent, 'cisco_bgp')
-  end
+  teardown { resource_absent_cleanup(agent, 'cisco_bgp') }
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")

@@ -56,17 +56,16 @@ tests[:non_default_random] = {
   },
 }
 
-def test_harness_dependencies(_tests, id)
-  return unless id == :non_default
-
-  # feature vni requires F3 linecards
-  limit_resource_module_type_set(default_vdc_name, 'f3')
-end
-
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
+  teardown do
+    remove_all_vlans(agent)
+    vdc_limit_f3_no_intf_needed(:clear)
+  end
+  remove_all_vlans(agent)
+  vdc_limit_f3_no_intf_needed(:set)
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
@@ -74,9 +73,5 @@ test_name "TestCase :: #{testheader}" do
   resource_absent_cleanup(agent, 'cisco_bridge_domain_vni')
 
   test_harness_run(tests, :non_default_random)
-  resource_absent_cleanup(agent, 'cisco_bridge_domain_vni')
-
-  teardown_vdc
 end
-
 logger.info('TestCase :: # {testheader} :: End')

@@ -38,7 +38,6 @@ skip_unless_supported(tests)
 # Test hash test cases
 tests[:default] = {
   title_pattern:  'nve1',
-  preclean:       'cisco_vxlan_vtep',
   manifest_props: {
     description:                     'default',
     host_reachability:               'default',
@@ -79,37 +78,27 @@ def test_harness_dependencies(*)
   command_config(agent, cmd, cmd)
 end
 
-# Overridden to properly handle dependencies for this test file.
-def dependency_manifest(_tests, _id)
-  dep = ''
-  if platform[/n7k/]
-    dep = %(
-      cisco_vdc { '#{default_vdc_name}':
-        # Must be f3-only
-        limit_resource_module_type => 'f3',
-      })
-  end
-  logger.info("\n  * dependency_manifest\n#{dep}")
-  dep
-end
-
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown do
+    resource_absent_cleanup(agent, 'cisco_vxlan_vtep')
+    vdc_limit_f3_no_intf_needed(:clear)
+  end
+  resource_absent_cleanup(agent, 'cisco_vxlan_vtep')
+  vdc_limit_f3_no_intf_needed(:set)
+
   # -----------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   id = :default
   test_harness_run(tests, id)
 
   tests[id][:ensure] = :absent
-  tests[id].delete(:preclean)
   test_harness_run(tests, id)
 
   # -----------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   test_harness_run(tests, :non_default)
-
-  resource_absent_cleanup(agent, 'cisco_vxlan_vtep')
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
