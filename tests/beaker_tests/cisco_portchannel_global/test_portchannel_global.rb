@@ -273,6 +273,42 @@ tests['non_default_properties_no_rotate'] = {
   },
 }
 
+tests['default_properties_no_resilient'] = {
+  title_pattern:  'default',
+  manifest_props: "
+    bundle_hash                  => 'default',
+    bundle_select                => 'default',
+    symmetry                     => 'default',
+  ",
+  code:           [0, 2],
+  resource_props: {
+    'bundle_hash'   => 'ip',
+    'bundle_select' => 'src-dst',
+    'symmetry'      => 'false',
+  },
+}
+
+tests['non_default_properties_no_resilient'] = {
+  title_pattern:  'default',
+  manifest_props: "
+    bundle_hash                  => 'ip-only',
+    bundle_select                => 'src-dst',
+    symmetry                     => 'false',
+  ",
+  resource_props: {
+    'bundle_hash'   => 'ip-only',
+    'bundle_select' => 'src-dst',
+    'symmetry'      => 'false',
+  },
+}
+
+if platform[/n3k/]
+  tests[:resilient_unsupported] =
+    resource_probe(agent,
+                   'cisco_portchannel_global default resilient=true',
+                   'ERROR: This feature is not supported on this platform.')
+end
+
 #################################################################
 # HELPER FUNCTIONS
 #################################################################
@@ -332,7 +368,11 @@ test_name "TestCase :: #{testheader}" do
   when /n8k/
     id = 'default_properties_no_hash'
   when /n3k/
-    id = 'default_properties_no_rotate'
+    if tests[:resilient_unsupported]
+      id = 'default_properties_no_resilient'
+    else
+      id = 'default_properties_no_rotate'
+    end
   end
 
   tests[id][:desc] = '1.1 Default Properties'
@@ -469,49 +509,91 @@ test_name "TestCase :: #{testheader}" do
     tests['non_default_properties_no_hash'][:resource_props]['bundle_select'] = 'src'
     test_harness_portchannel_global(tests, id)
   elsif device == 'n3k'
-    id = 'non_default_properties_no_rotate'
-    tests[id][:desc] = '2.1 Non Default Properties'
-    test_harness_portchannel_global(tests, id)
+    if tests[:resilient_unsupported]
+      id = 'non_default_properties_no_resilient'
+      tests[id][:desc] = '2.1 Non Default Properties'
+      test_harness_portchannel_global(tests, id)
 
-    tests[id][:desc] = '2.2 Non Default Properties'
-    tests['non_default_properties_no_rotate'][:manifest_props]['true'] = 'false'
-    tests['non_default_properties_no_rotate'][:manifest_props]['false'] = 'true'
-    tests['non_default_properties_no_rotate'][:manifest_props]['ip-only'] = 'ip-gre'
-    tests['non_default_properties_no_rotate'][:resource_props]['bundle_hash'] = 'ip-gre'
-    tests['non_default_properties_no_rotate'][:manifest_props]['src-dst'] = 'src'
-    tests['non_default_properties_no_rotate'][:resource_props]['bundle_select'] = 'src'
-    tests['non_default_properties_no_rotate'][:resource_props]['resilient'] = 'true'
-    tests['non_default_properties_no_rotate'][:resource_props]['symmetry'] = 'false'
-    test_harness_portchannel_global(tests, id)
+      tests[id][:desc] = '2.2 Non Default Properties'
+      tests['non_default_properties_no_resilient'][:manifest_props]['ip-only'] = 'ip-gre'
+      tests['non_default_properties_no_resilient'][:resource_props]['bundle_hash'] = 'ip-gre'
+      tests['non_default_properties_no_resilient'][:manifest_props]['src-dst'] = 'src'
+      tests['non_default_properties_no_resilient'][:resource_props]['bundle_select'] = 'src'
+      test_harness_portchannel_global(tests, id)
 
-    tests[id][:desc] = '2.3 Non Default Properties'
-    tests['non_default_properties_no_rotate'][:manifest_props]['ip-gre'] = 'mac'
-    tests['non_default_properties_no_rotate'][:resource_props]['bundle_hash'] = 'mac'
-    tests['non_default_properties_no_rotate'][:manifest_props]['src'] = 'dst'
-    tests['non_default_properties_no_rotate'][:resource_props]['bundle_select'] = 'dst'
-    test_harness_portchannel_global(tests, id)
+      tests[id][:desc] = '2.3 Non Default Properties'
+      tests['non_default_properties_no_resilient'][:manifest_props]['ip-gre'] = 'mac'
+      tests['non_default_properties_no_resilient'][:resource_props]['bundle_hash'] = 'mac'
+      tests['non_default_properties_no_resilient'][:manifest_props]['src'] = 'dst'
+      tests['non_default_properties_no_resilient'][:resource_props]['bundle_select'] = 'dst'
+      test_harness_portchannel_global(tests, id)
 
-    tests[id][:desc] = '2.4 Non Default Properties'
-    tests['non_default_properties_no_rotate'][:manifest_props]['mac'] = 'port'
-    tests['non_default_properties_no_rotate'][:resource_props]['bundle_hash'] = 'port'
-    test_harness_portchannel_global(tests, id)
+      tests[id][:desc] = '2.4 Non Default Properties'
+      tests['non_default_properties_no_resilient'][:manifest_props]['mac'] = 'port'
+      tests['non_default_properties_no_resilient'][:resource_props]['bundle_hash'] = 'port'
+      test_harness_portchannel_global(tests, id)
 
-    tests[id][:desc] = '2.5 Non Default Properties'
-    tests['non_default_properties_no_rotate'][:manifest_props]['port'] = 'port-only'
-    tests['non_default_properties_no_rotate'][:resource_props]['bundle_hash'] = 'port-only'
-    tests['non_default_properties_no_rotate'][:manifest_props]['dst'] = 'src-dst'
-    tests['non_default_properties_no_rotate'][:resource_props]['bundle_select'] = 'src-dst'
-    test_harness_portchannel_global(tests, id)
+      tests[id][:desc] = '2.5 Non Default Properties'
+      tests['non_default_properties_no_resilient'][:manifest_props]['port'] = 'port-only'
+      tests['non_default_properties_no_resilient'][:resource_props]['bundle_hash'] = 'port-only'
+      tests['non_default_properties_no_resilient'][:manifest_props]['dst'] = 'src-dst'
+      tests['non_default_properties_no_resilient'][:resource_props]['bundle_select'] = 'src-dst'
+      test_harness_portchannel_global(tests, id)
 
-    tests[id][:desc] = '2.6 Non Default Properties'
-    tests['non_default_properties_no_rotate'][:manifest_props]['port-only'] = 'ip-gre'
-    tests['non_default_properties_no_rotate'][:resource_props]['bundle_hash'] = 'ip-gre'
-    test_harness_portchannel_global(tests, id)
+      tests[id][:desc] = '2.6 Non Default Properties'
+      tests['non_default_properties_no_resilient'][:manifest_props]['port-only'] = 'ip-gre'
+      tests['non_default_properties_no_resilient'][:resource_props]['bundle_hash'] = 'ip-gre'
+      test_harness_portchannel_global(tests, id)
 
-    tests[id][:desc] = '2.7 Non Default Properties'
-    tests['non_default_properties_no_rotate'][:manifest_props]['src-dst'] = 'dst'
-    tests['non_default_properties_no_rotate'][:resource_props]['bundle_select'] = 'dst'
-    test_harness_portchannel_global(tests, id)
+      tests[id][:desc] = '2.7 Non Default Properties'
+      tests['non_default_properties_no_resilient'][:manifest_props]['src-dst'] = 'dst'
+      tests['non_default_properties_no_resilient'][:resource_props]['bundle_select'] = 'dst'
+      test_harness_portchannel_global(tests, id)
+    else
+      id = 'non_default_properties_no_rotate'
+      tests[id][:desc] = '2.1 Non Default Properties'
+      test_harness_portchannel_global(tests, id)
+
+      tests[id][:desc] = '2.2 Non Default Properties'
+      tests['non_default_properties_no_rotate'][:manifest_props]['true'] = 'false'
+      tests['non_default_properties_no_rotate'][:manifest_props]['false'] = 'true'
+      tests['non_default_properties_no_rotate'][:manifest_props]['ip-only'] = 'ip-gre'
+      tests['non_default_properties_no_rotate'][:resource_props]['bundle_hash'] = 'ip-gre'
+      tests['non_default_properties_no_rotate'][:manifest_props]['src-dst'] = 'src'
+      tests['non_default_properties_no_rotate'][:resource_props]['bundle_select'] = 'src'
+      tests['non_default_properties_no_rotate'][:resource_props]['resilient'] = 'true'
+      tests['non_default_properties_no_rotate'][:resource_props]['symmetry'] = 'false'
+      test_harness_portchannel_global(tests, id)
+
+      tests[id][:desc] = '2.3 Non Default Properties'
+      tests['non_default_properties_no_rotate'][:manifest_props]['ip-gre'] = 'mac'
+      tests['non_default_properties_no_rotate'][:resource_props]['bundle_hash'] = 'mac'
+      tests['non_default_properties_no_rotate'][:manifest_props]['src'] = 'dst'
+      tests['non_default_properties_no_rotate'][:resource_props]['bundle_select'] = 'dst'
+      test_harness_portchannel_global(tests, id)
+
+      tests[id][:desc] = '2.4 Non Default Properties'
+      tests['non_default_properties_no_rotate'][:manifest_props]['mac'] = 'port'
+      tests['non_default_properties_no_rotate'][:resource_props]['bundle_hash'] = 'port'
+      test_harness_portchannel_global(tests, id)
+
+      tests[id][:desc] = '2.5 Non Default Properties'
+      tests['non_default_properties_no_rotate'][:manifest_props]['port'] = 'port-only'
+      tests['non_default_properties_no_rotate'][:resource_props]['bundle_hash'] = 'port-only'
+      tests['non_default_properties_no_rotate'][:manifest_props]['dst'] = 'src-dst'
+      tests['non_default_properties_no_rotate'][:resource_props]['bundle_select'] = 'src-dst'
+      test_harness_portchannel_global(tests, id)
+
+      tests[id][:desc] = '2.6 Non Default Properties'
+      tests['non_default_properties_no_rotate'][:manifest_props]['port-only'] = 'ip-gre'
+      tests['non_default_properties_no_rotate'][:resource_props]['bundle_hash'] = 'ip-gre'
+      test_harness_portchannel_global(tests, id)
+
+      tests[id][:desc] = '2.7 Non Default Properties'
+      tests['non_default_properties_no_rotate'][:manifest_props]['src-dst'] = 'dst'
+      tests['non_default_properties_no_rotate'][:resource_props]['bundle_select'] = 'dst'
+      test_harness_portchannel_global(tests, id)
+    end
   end
 
   # no absent test for portchannel_global
