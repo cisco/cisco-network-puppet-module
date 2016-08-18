@@ -158,7 +158,7 @@ def unsupported_properties(tests, _id)
       :load_defer
   end
   unprops << :resilient << :symmetry if
-    platform[/n3k/] && tests[:resilient_unsupported]
+    tests[:resilient_unsupported]
   unprops
 end
 
@@ -175,6 +175,9 @@ end
 test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   device = platform
+  teardown do
+    test_manifest(tests, :default)
+  end
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
   test_harness_run(tests, :default)
