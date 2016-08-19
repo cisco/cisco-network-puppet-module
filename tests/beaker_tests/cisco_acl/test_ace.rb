@@ -32,7 +32,6 @@ tests = {
 
 # Test hash test cases
 tests[:seq_5_remark] = {
-  preclean:       'cisco_acl',
   title_pattern:  'ipv4 beaker 5',
   manifest_props: {
     # 'remark' is a standalone property
@@ -139,6 +138,10 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown { resource_absent_cleanup(agent, 'cisco_acl') }
+  resource_absent_cleanup(agent, 'cisco_acl')
+
+  # ---------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. ACE Testing")
 
   test_harness_run(tests, :seq_5_remark)
@@ -149,8 +152,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :seq_30_v4)
 
   # ---------------------------------------------------------
-  resource_absent_cleanup(agent, 'cisco_acl', 'ACL CLEANUP :: ')
   skipped_tests_summary(tests)
 end
-
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
