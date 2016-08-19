@@ -43,7 +43,6 @@ non_default_fabricpath_interval = %w(750 350 35)
 tests[:default] = {
   desc:           '1.1 Defaults',
   title_pattern:  'default',
-  preclean:       'cisco_bfd_global',
   manifest_props: {
     echo_interface:        'default',
     echo_rx_interval:      'default',
@@ -158,17 +157,17 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  # -------------------------------------------------------------------
+  teardown { resource_absent_cleanup(agent, 'cisco_bfd_global') }
+  resource_absent_cleanup(agent, 'cisco_bfd_global')
+
   device = platform
   logger.info("#### This device is of type: #{device} #####")
+  # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-
   test_harness_run(tests, :default)
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-
   test_harness_run(tests, :non_default)
-  resource_absent_cleanup(agent, 'cisco_bfd_global')
 end
-
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
