@@ -13,113 +13,57 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-# TestCase Name:
-# -------------
-# test_command_config.rb
 #
-# TestCase Prerequisites:
-# -----------------------
-# This is a Puppet cisco_command_config resource testcase for Puppet Agent on
-# Nexus devices.
-# The test case assumes the following prerequisites are already satisfied:
-#   - Host configuration file contains agent and master information.
-#   - SSH is enabled on the N9K Agent.
-#   - Puppet master/server is started.
-#   - Puppet agent certificate has been signed on the Puppet master/server.
-#
-# TestCase:
-# ---------
-# The following exit_codes are validated for Puppet, Vegas shell and
-# Bash shell commands.
-#
-# Vegas and Bash Shell Commands:
-# 0   - successful command execution
-# > 0 - failed command execution.
-#
-# Puppet Commands:
-# 0 - no changes have occurred
-# 1 - errors have occurred,
-# 2 - changes have occurred
-# 4 - failures have occurred and
-# 6 - changes and failures have occurred.
-#
-# NOTE: 0 is the default exit_code checked in Beaker::DSL::Helpers::on() method.
-#
-# The test cases use RegExp pattern matching on stdout or output IO
-# instance attributes to verify resource properties.
+# See README-develop-beaker-scripts.md (Section: Test Script Variable Reference)
+# for information regarding:
+#  - test script general prequisites
+#  - command return codes
+#  - A description of the 'tests' hash and its usage
 #
 ###############################################################################
-
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
-# -----------------------------
-# Common settings and variables
-# -----------------------------
-testheader = 'Resource cisco_command_config'
-
-# The 'tests' hash is used to define all of the test data values and expected
-# results. It is also used to pass optional flags to the test methods when
-# necessary.
-
-# 'tests' hash
-# Top-level keys set by caller:
-# tests[:master] - the master object
-# tests[:agent] - the agent object
-#
+# Test hash top-level keys
 tests = {
-  master: master,
-  agent:  agent,
+  agent:            agent,
+  master:           master,
+  ensurable:        false,
+  operating_system: 'nexus',
+  resource_name:    'cisco_command_config',
 }
 
-# tests[id] keys set by caller and used by test_harness_common:
-#
-# tests[id] keys set by caller:
-# tests[id][:desc] - a string to use with logs & debugs
-# tests[id][:manifest] - the complete manifest, as used by test_harness_common
-# tests[id][:resource] - a hash of expected states, used by test_resource
-# tests[id][:resource_cmd] - 'puppet resource' command to use with test_resource
-# tests[id][:code] - (Optional) override the default exit code in some tests.
-#
-# These keys are local use only and not used by test_harness_common:
-#
-# tests[id][:manifest_props] - This is essentially a master list of properties
-#   that permits re-use of the properties for both :present and :absent testing
-#   without destroying the list
-# tests[id][:resource_props] - This is essentially a master hash of properties
-#   that permits re-use of the properties for both :present and :absent testing
-#   without destroying the hash
-# tests[id][:puppet_resource] - Puppet resource used to verify the configuration
-#   applied by the cisco_command_config resource.
-#
-tests['configure_bgp'] = {
-  puppet_resource: 'cisco_bgp',
-  platform:        'n(3|5|6|7|8|9)k',
-  # Command indentation is very important!
-  # Make sure config appears exactly how it nvgens on the node.
-  manifest_props:  "
-    command                  => '
-      feature bgp
-      router bgp 55
-        shutdown
-        router-id 192.55.55.55
-        cluster-id 172.5.5.5
-        timers bgp 33 190
-        timers bestpath-limit 44 always
-        graceful-restart-helper
-        graceful-restart restart-time 55
-        graceful-restart stalepath-time 55
-        confederation identifier 50
-        confederation peers 327686 327685 200608 5000 6000 32 43
-        bestpath as-path multipath-relax
-        bestpath cost-community ignore
-        bestpath compare-routerid
-        bestpath med confed
-        bestpath med non-deterministic
-        bestpath always-compare-med
-        suppress-fib-pending
-        log-neighbor-changes',
-  ",
-  resource_props:  {
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
+
+tests[:bgp] = {
+  desc:           '1.1 BGP',
+  manifest_props: {
+    # Command indentation is very important!
+    # Make sure config appears exactly how it nvgens on the node.
+    command: '
+feature bgp
+router bgp 55
+  shutdown
+  router-id 192.55.55.55
+  cluster-id 172.5.5.5
+  timers bgp 33 190
+  timers bestpath-limit 44 always
+  graceful-restart-helper
+  graceful-restart restart-time 55
+  graceful-restart stalepath-time 55
+  confederation identifier 50
+  confederation peers 327686 327685 200608 5000 6000 32 43
+  bestpath as-path multipath-relax
+  bestpath cost-community ignore
+  bestpath compare-routerid
+  bestpath med confed
+  bestpath med non-deterministic
+  bestpath always-compare-med
+  suppress-fib-pending
+  log-neighbor-changes
+    '
+  },
+  resource:       {
     'ensure'                                 => 'present',
     'bestpath_always_compare_med'            => 'true',
     'bestpath_aspath_multipath_relax'        => 'true',
@@ -144,19 +88,19 @@ tests['configure_bgp'] = {
   },
 }
 
-tests['configure_bgp_af'] = {
-  puppet_resource: 'cisco_bgp_af',
-  platform:        'n(3|5|6|7|8|9)k',
-  # Command indentation is very important!
-  # Make sure config appears exactly how it nvgens on the node.
-  manifest_props:  "
-    command                  => '
-      feature bgp
-      router bgp 55
-        address-family ipv4 unicast
-          dampening',
-  ",
-  resource_props:  {
+tests[:bgp_af] = {
+  desc:           '1.2 BGP_AF',
+  manifest_props: {
+    # Command indentation is very important!
+    # Make sure config appears exactly how it nvgens on the node.
+    command: '
+feature bgp
+router bgp 55
+  address-family ipv4 unicast
+    dampening
+    '
+  },
+  resource:       {
     'ensure'                      => 'present',
     'dampening_state'             => 'true',
     'dampening_half_time'         => '15',
@@ -166,153 +110,110 @@ tests['configure_bgp_af'] = {
   },
 }
 
-tests['configure_bgp_neighbor'] = {
-  puppet_resource: 'cisco_bgp_neighbor',
-  platform:        'n(3|5|6|7|8|9)k',
-  # Command indentation is very important!
-  # Make sure config appears exactly how it nvgens on the node.
-  manifest_props:  "
-    command                  => '
-      feature bgp
-      router bgp 55
-        neighbor 1.1.1.1
-          timers 90 270',
-  ",
-  resource_props:  {
+tests[:bgp_neighbor] = {
+  desc:           '1.3 BGP_NEIGHBOR',
+  manifest_props: {
+    # Command indentation is very important!
+    # Make sure config appears exactly how it nvgens on the node.
+    command: '
+feature bgp
+router bgp 55
+  neighbor 1.1.1.1
+    timers 90 270
+    '
+  },
+  resource:       {
     'ensure'           => 'present',
     'timers_keepalive' => '90',
     'timers_holdtime'  => '270',
   },
 }
 
-tests['configure_bgp_neighbor_af'] = {
-  puppet_resource: 'cisco_bgp_neighbor_af',
-  platform:        'n(3|5|6|7|8|9)k',
-  # Command indentation is very important!
-  # Make sure config appears exactly how it nvgens on the node.
-  manifest_props:  "
-    command                  => '
-      feature bgp
-      router bgp 55
-        neighbor 1.1.1.1
-          address-family ipv6 unicast
-            capability additional-paths send',
-  ",
-  resource_props:  {
+tests[:bgp_neighbor_af] = {
+  desc:           '1.4 BGP_NEIGHBOR_AF',
+  manifest_props: {
+    # Command indentation is very important!
+    # Make sure config appears exactly how it nvgens on the node.
+    command: '
+feature bgp
+router bgp 55
+  neighbor 1.1.1.1
+    address-family ipv6 unicast
+      capability additional-paths send
+    '
+  },
+  resource:       {
     'ensure'                => 'present',
     'additional_paths_send' => 'enable',
   },
 }
 
-tests['configure_loopback_interface'] = {
-  puppet_resource: 'cisco_interface',
+tests[:loopback] = {
+  desc:           '1.5 LOOPBACK',
   # Command indentation is very important!
   # Make sure config appears exactly how it nvgens on the switch.
-  manifest_props:  "
-    command                  => '
-      interface loopback1
-        description configured_by_puppet',
-  ",
-  resource_props:  {
+  manifest_props: {
+    command: '
+interface loopback1
+  description configured_by_puppet
+    '
+  },
+  resource:       {
     'description' => 'configured_by_puppet'
   },
 }
-
-#################################################################
-# HELPER FUNCTIONS
-#################################################################
 
 def test_set_get
   stepinfo = 'Test test_get/test_set properties'
   logger.info("\n#{'-' * 60}\n#{stepinfo}")
   cmd_prefix = PUPPET_BINPATH + "resource cisco_command_config 'cc' "
 
-  logger.info('* cleanup testbed')
-  on(agent, cmd_prefix + "test_set='no interface loopback42'")
-
   logger.info('* create config')
-  on(agent, cmd_prefix + "test_set='interface loopback42'")
+  on(agent, cmd_prefix + "test_set='interface loopback1'")
 
   logger.info('* check config')
-  on(agent, cmd_prefix + "test_get='incl loopback42'")
+  on(agent, cmd_prefix + "test_get='incl loopback1'")
   fail_test("TestStep :: set/get :: FAIL\nstdout:\n#{stdout}") unless
-    stdout[/^interface loopback42/]
+    stdout[/^interface loopback1/]
 
-  logger.info('* cleanup testbed')
-  on(agent, cmd_prefix + "test_set='no interface loopback42'")
   logger.info("#{stepinfo} :: PASS\n#{'-' * 60}\n")
 end
 
-# Full command string for puppet resource command used to verify
-# the configuration applied by the cisco_command_config resource.
-def puppet_resource_cmd(tests, id)
-  PUPPET_BINPATH + "resource #{tests[id][:puppet_resource]}"
+def cleanup(agent)
+  test_set(agent, 'no feature bgp ; no interface loopback1')
 end
 
-def build_manifest_cisco_command_config(tests, id)
-  manifest = tests[id][:manifest_props]
-  tests[id][:resource] = tests[id][:resource_props]
+def test_harness_run_cc(tests, id, res_cmd)
+  tests[:resource_name] = 'cisco_command_config'
+  create_manifest_and_resource(tests, id)
+  test_manifest(tests, id)
+  test_idempotence(tests, id)
 
-  tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
-  logger.debug("build_manifest_cisco_command_config :: title_pattern:\n" +
-               tests[id][:title_pattern])
-  tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
-  node 'default' {
-    cisco_command_config { '#{tests[id][:title_pattern]}':
-      #{manifest}
-    }
-  }
-EOF"
-end
-
-def test_harness_cisco_command_config(tests, id)
-  return unless platform_supports_test(tests, id)
-
-  tests[id][:resource_cmd] = puppet_resource_cmd(tests, id)
-
-  # Build the manifest for this test
-  build_manifest_cisco_command_config(tests, id)
-
-  test_harness_common(tests, id)
-
-  tests[id][:ensure] = nil
+  # Command_config can only "set" configs, it can't check them with
+  # puppet resource, so use res_cmd to do that part of the test
+  tests[id][:resource_cmd] = PUPPET_BINPATH + 'resource ' + res_cmd
+  test_resource(tests, id)
 end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name "TestCase :: #{testheader}" do
+test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown { cleanup(agent) }
+  cleanup(agent)
+
   # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nApply cisco_command_config test.")
+  logger.info("\n#{'-' * 60}\nSection 1. Basic multi-level configs")
 
-  # Cleanup any existing resources.
-  tests.keys.each do |id|
-    resource_absent_cleanup(agent, tests[id][:puppet_resource]) unless
-      tests[id][:puppet_resource].nil?
-  end
+  test_harness_run_cc(tests, :bgp, 'cisco_bgp')
+  test_harness_run_cc(tests, :bgp_af, 'cisco_bgp_af')
+  test_harness_run_cc(tests, :bgp_neighbor, 'cisco_bgp_neighbor')
+  test_harness_run_cc(tests, :bgp_neighbor_af, 'cisco_bgp_neighbor_af')
+  test_harness_run_cc(tests, :loopback, 'cisco_interface')
 
-  # -----------------------------------
-  id = 'configure_bgp'
-  tests[id][:desc] = '1.1 Apply BGP Config'
-  test_harness_cisco_command_config(tests, id)
-
-  id = 'configure_bgp_af'
-  tests[id][:desc] = '1.2 Apply BGP AF Config'
-  test_harness_cisco_command_config(tests, id)
-
-  id = 'configure_bgp_neighbor'
-  tests[id][:desc] = '1.3 Apply BGP Neighbor Config'
-  test_harness_cisco_command_config(tests, id)
-
-  id = 'configure_bgp_neighbor_af'
-  tests[id][:desc] = '1.4 Apply BGP Neighbor AF Config'
-  test_harness_cisco_command_config(tests, id)
-
-  id = 'configure_loopback_interface'
-  tests[id][:desc] = '1.5 Apply INTERFACE Config'
-  test_harness_cisco_command_config(tests, id)
-
+  # -------------------------------------------------------------------
+  logger.info("\n#{'-' * 60}\nSection 2. test_set / test_get")
+  cleanup(agent)
   test_set_get
 end
-
-logger.info('TestCase :: # {testheader} :: End')
+logger.info("TestCase :: #{tests[:resource_name]} :: End")
