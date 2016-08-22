@@ -1354,7 +1354,8 @@ def remove_all_vlans(agent, stepinfo='Remove all vlans & bridge-domains')
     resource_absent_cleanup(agent, 'cisco_bridge_domain', 'bridge domains')
     cmd = 'system bridge-domain none'
     command_config(agent, cmd, cmd)
-    resource_absent_cleanup(agent, 'cisco_vlan', 'vlans')
+    test_set(agent, 'no feature private-vlan')
+    test_set(agent, 'no vlan 2-3967')
   end
 end
 
