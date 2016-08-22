@@ -33,7 +33,6 @@ tests = {
 # Test hash test cases
 tests[:title_patterns_1] = {
   desc:          'T.1 Title Pattern',
-  preclean:      'cisco_pim_grouplist',
   title_pattern: 'new_york',
   title_params:  { afi: 'ipv4', vrf: 'red',
                    rp_addr: '1.1.1.1', group: '224.0.0.0/8' },
@@ -71,6 +70,9 @@ tests[:title_patterns_5] = {
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown { resource_absent_cleanup(agent, 'cisco_pim_grouplist') }
+  resource_absent_cleanup(agent, 'cisco_pim_grouplist')
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Title Pattern Testing")
   test_harness_run(tests, :title_patterns_1)
@@ -78,8 +80,5 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :title_patterns_3)
   test_harness_run(tests, :title_patterns_4)
   test_harness_run(tests, :title_patterns_5)
-
-  # -----------------------------------
-  resource_absent_cleanup(agent, 'cisco_pim_grouplist')
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

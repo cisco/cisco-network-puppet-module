@@ -33,20 +33,20 @@ tests = {
 skip_unless_supported(tests)
 
 tests[:non_default] = {
-  desc:           "1.1 Non Default Properties 'change name, state and fabric_control",
+  desc:           "1.1 Non Default 'change name, state and fabric_control",
   title_pattern:  '100',
   manifest_props: {
-    bd_name:        'PepsiCo',
+    bd_name:        'my_bd',
     fabric_control: true,
     shutdown:       true,
   },
 }
 
 tests[:non_default_change_state] = {
-  desc:           "1.2 Non Default Properties 'change state of previous bridge-domain'",
+  desc:           "1.2 Non Default 'change state of previous bridge-domain'",
   title_pattern:  '100',
   manifest_props: {
-    bd_name:        'PepsiCo',
+    bd_name:        'my_bd',
     fabric_control: true,
     shutdown:       false,
   },
@@ -56,11 +56,12 @@ tests[:non_default_change_state] = {
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
+  teardown { remove_all_vlans(agent) }
+  remove_all_vlans(agent)
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Non Default Property Testing")
   test_harness_run(tests, :non_default)
   test_harness_run(tests, :non_default_change_state)
-  resource_absent_cleanup(agent, 'cisco_bridge_domain', 'bridge-domain CLEANUP :: ')
 end
 
 logger.info('TestCase :: # {testheader} :: End')

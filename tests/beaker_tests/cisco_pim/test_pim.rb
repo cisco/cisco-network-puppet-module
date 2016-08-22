@@ -33,7 +33,6 @@ tests = {
 # Test hash test cases
 tests[:non_def_S1] = {
   desc:           ' 1.1 Non default properties',
-  preclean:       'cisco_pim',
   title_pattern:  'ipv4 red',
   manifest_props: {
     ssm_range: '224.0.0.0/8'
@@ -75,15 +74,17 @@ tests[:title_patterns_2] = {
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown { resource_absent_cleanup(agent, 'cisco_pim') }
+  resource_absent_cleanup(agent, 'cisco_pim')
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Non Default Property Testing")
   test_harness_run(tests, :non_def_S1)
   test_harness_run(tests, :non_def_S2)
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Title Pattern Testing")
   test_harness_run(tests, :title_patterns_1)
   test_harness_run(tests, :title_patterns_2)
-  # -----------------------------------
-  resource_absent_cleanup(agent, 'cisco_pim')
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
