@@ -116,7 +116,7 @@ def dependency_manifest(_tests, id)
 end
 
 def cleanup(agent, intf)
-  test_set(agent, 'no feature ospf')
+  test_set(agent, 'no feature ospf ; no feature bfd')
   interface_cleanup(agent, intf)
 end
 
