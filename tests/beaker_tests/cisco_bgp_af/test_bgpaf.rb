@@ -34,7 +34,6 @@ tests = {
 # Test hash test cases
 tests[:default] = {
   desc:           '1.1 Default Properties',
-  preclean:       'cisco_bgp',
   title_pattern:  '2 default ipv4 unicast',
   manifest_props: {
     additional_paths_install:      'default',
@@ -285,14 +284,15 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
+  teardown { resource_absent_cleanup(agent, 'cisco_bgp') }
+  resource_absent_cleanup(agent, 'cisco_bgp')
 
   # -----------------------------------
+  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   id = :default
   test_harness_run(tests, id)
 
   tests[id][:ensure] = :absent
-  tests[id].delete(:preclean)
   test_harness_run(tests, id)
   test_harness_run(tests, :default_dampening_routemap)
 
@@ -308,8 +308,5 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :title_patterns_2)
   test_harness_run(tests, :title_patterns_3)
   test_harness_run(tests, :l2vpn_evpn) unless nexus_i2_image
-
-  # -----------------------------------
-  resource_absent_cleanup(agent, 'cisco_bgp')
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
