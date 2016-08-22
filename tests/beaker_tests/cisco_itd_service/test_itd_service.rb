@@ -214,8 +214,7 @@ tests[:non_default_shut_4] = {
 }
 
 def cleanup(agent)
-  cmds = ['no feature itd',
-          'no ip access-list iap',
+  cmds = ['no ip access-list iap',
           'no ip access-list eap',
           'no vlan 2',
           'no interface port-channel 100',
