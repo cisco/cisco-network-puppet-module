@@ -26,8 +26,8 @@ require File.expand_path('../../cisco_bgp/bgplib.rb', __FILE__)
 
 # Test hash top-level keys
 tests = {
-  master:        master,
   agent:         agent,
+  master:        master,
   resource_name: 'cisco_bgp_af',
 }
 
@@ -108,7 +108,6 @@ tests[:default_dampening_routemap] = {
 #
 tests[:non_default] = {
   desc:           '2.1 Non Default Properties',
-  preclean:       'cisco_bgp',
   title_pattern:  '2 default ipv4 unicast',
   manifest_props: {
     additional_paths_install:      'true',
@@ -164,7 +163,6 @@ tests[:non_default_dampening_routemap] = {
 
 tests[:title_patterns_1] = {
   desc:          'T.1 Title Pattern',
-  preclean:      'cisco_bgp',
   title_pattern: 'new_york',
   title_params:  { asn: '2', vrf: 'red', afi: 'ipv4', safi: 'unicast' },
   resource:      { 'ensure' => 'present' },
@@ -280,12 +278,20 @@ def test_harness_bgp_af_run(tests, id)
   test_harness_bgp_vrf(tests, id, 'blue') # test in non-default vrf
 end
 
+def cleanup(agent)
+  if operating_system == 'nexus'
+    test_set(agent, 'no feature bgp')
+  else
+    resource_absent_cleanup(agent, 'cisco_bgp')
+  end
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  teardown { resource_absent_cleanup(agent, 'cisco_bgp') }
-  resource_absent_cleanup(agent, 'cisco_bgp')
+  teardown { cleanup(agent) }
+  cleanup(agent)
 
   # -----------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
@@ -298,12 +304,14 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
+  cleanup(agent)
   test_harness_bgp_af_run(tests, :non_default)
   test_harness_bgp_af_run(tests, :non_default_arrays)
   test_harness_bgp_af_run(tests, :non_default_dampening_routemap)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
+  cleanup(agent)
   test_harness_run(tests, :title_patterns_1)
   test_harness_run(tests, :title_patterns_2)
   test_harness_run(tests, :title_patterns_3)
