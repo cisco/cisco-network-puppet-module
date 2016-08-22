@@ -45,7 +45,6 @@ tests[:default] = {
   desc:               '1.1 Default Properties',
   title_pattern:      intf,
   code:               [0],
-  preclean_intf:      true,
   sys_def_switchport: false,
   manifest_props:     {
     bfd_echo:             'default',
@@ -162,6 +161,9 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown { interface_cleanup(agent, intf) }
+  interface_cleanup(agent, intf)
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   test_harness_run(tests, :default)
@@ -176,7 +178,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :ip_forwarding)
 
   # -------------------------------------------------------------------
-  interface_cleanup(agent, intf)
   skipped_tests_summary(tests)
 end
 
