@@ -48,7 +48,6 @@ tests[:default] = {
   desc:               '1.1 Default Properties',
   title_pattern:      intf,
   code:               [0],
-  preclean_intf:      true,
   sys_def_switchport: true,
   manifest_props:     {
     switchport_pvlan_host:               'default',
@@ -192,8 +191,17 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown do
+    vtp_cleanup(agent)
+    pvlan_assoc_cleanup(agent, intf)
+    interface_cleanup(agent, intf)
+    remove_interface(agent, svi)
+  end
   vtp_cleanup(agent)
   pvlan_assoc_cleanup(agent, intf)
+  interface_cleanup(agent, intf)
+  remove_interface(agent, svi)
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Defaults")
   test_harness_run(tests, :default)
@@ -214,9 +222,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :svi_mapping)
 
   # -------------------------------------------------------------------
-  pvlan_assoc_cleanup(agent, intf)
-  interface_cleanup(agent, intf)
-  remove_interface(agent, svi)
   skipped_tests_summary(tests)
 end
 
