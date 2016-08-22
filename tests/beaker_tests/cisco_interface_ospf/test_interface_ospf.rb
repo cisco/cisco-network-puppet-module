@@ -21,7 +21,6 @@
 #  - A description of the 'tests' hash and its usage
 #
 ###############################################################################
-
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 # Test hash top-level keys
@@ -37,13 +36,12 @@ tests = {
 skip_unless_supported(tests)
 
 # Find a usable interface for this test
-@intf = find_interface(tests)
-tp = @intf + ' Sample'
+intf = find_interface(tests)
 
 # Test hash test cases
 tests[:default] = {
   desc:           '1.1 Defaults',
-  title_pattern:  tp,
+  title_pattern:  "#{intf} Sample",
   preclean_intf:  true,
   manifest_props: {
     area:                           200,
@@ -81,11 +79,9 @@ tests[:default] = {
   },
 }
 
-# Non-default Tests. NOTE: [:resource] = [:manifest_props] for all non-default
-
 tests[:non_default] = {
   desc:           '2.1 Non Defaults',
-  title_pattern:  tp,
+  title_pattern:  "#{intf} Sample",
   preclean_intf:  true,
   manifest_props: {
     area:                           200,
@@ -110,34 +106,37 @@ tests[:non_default] = {
   },
 }
 
-# Overridden to properly handle dependencies for this test file.
-def test_harness_dependencies(_tests, id)
+def dependency_manifest(_tests, id)
   return unless id == :default
-  cmd = [
-    'feature ospf ; router ospf Sample',
-    "interface #{@intf} ; no switchport",
-  ].join(' ; ')
-  command_config(agent, cmd, cmd)
+  "
+    cisco_ospf { 'sample':
+      ensure => present
+    }
+  "
+end
+
+def cleanup(agent, intf)
+  test_set(agent, 'no feature ospf')
+  interface_cleanup(agent, intf)
 end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown { cleanup(agent, intf) }
+  cleanup(agent, intf)
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   test_harness_run(tests, :default)
 
   id = :default
   tests[id][:ensure] = :absent
-  tests[id].delete(:preclean)
   test_harness_run(tests, id)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-
   test_harness_run(tests, :non_default)
-  interface_cleanup(agent, @intf)
 end
-
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
