@@ -221,7 +221,7 @@ def cleanup(agent)
           'no interface port-channel 100',
           'no feature interface-vlan',
           'no feature itd',
-         ]
+         ].join(' ; ')
   test_set(agent, cmds)
   interface_cleanup(agent, @ingress_eth_int)
 end
