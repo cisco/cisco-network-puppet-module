@@ -153,15 +153,17 @@ def test_harness_dependencies(_tests, id)
   command_config(agent, cmd, cmd)
 end
 
+def cleanup(agent)
+  test_set(agent, 'no feature bfd')
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  teardown { resource_absent_cleanup(agent, 'cisco_bfd_global') }
-  resource_absent_cleanup(agent, 'cisco_bfd_global')
+  teardown { cleanup(agent) }
+  cleanup(agent)
 
-  device = platform
-  logger.info("#### This device is of type: #{device} #####")
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   test_harness_run(tests, :default)
