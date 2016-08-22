@@ -66,12 +66,16 @@ tests[:title_patterns_5] = {
   resource:      { 'ensure' => 'present' },
 }
 
+def cleanup(agent)
+  test_set(agent, 'no feature pim')
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  teardown { resource_absent_cleanup(agent, 'cisco_pim_grouplist') }
-  resource_absent_cleanup(agent, 'cisco_pim_grouplist')
+  teardown { cleanup(agent) }
+  cleanup(agent)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Title Pattern Testing")
