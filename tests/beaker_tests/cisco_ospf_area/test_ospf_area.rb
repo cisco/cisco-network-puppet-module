@@ -21,7 +21,6 @@
 #  - A description of the 'tests' hash and its usage
 #
 ###############################################################################
-
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 # Test hash top-level keys
@@ -41,7 +40,6 @@ rarray2 = Array[['10.3.0.0/16', '4989'], ['10.3.1.1/32']]
 tests[:non_default_1] = {
   desc:           '1.1 Non_Defaults',
   title_pattern:  'dark_blue default 1.1.1.1',
-  preclean:       'cisco_ospf',
   manifest_props: {
     authentication:  'md5',
     default_cost:    1000,
@@ -112,13 +110,18 @@ tests[:non_default_6] = {
   },
 }
 
+def cleanup(agent)
+  test_set(agent, 'no feature ospf')
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown { cleanup(agent) }
+  cleanup(agent)
+
   # -------------------------------------------------------------------
-  device = platform
-  logger.info("#### This device is of type: #{device} #####")
   logger.info("\n#{'-' * 60}\nSection Non Default Property Testing")
 
   test_harness_run(tests, :non_default_1)
@@ -127,7 +130,5 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :non_default_4)
   test_harness_run(tests, :non_default_5)
   test_harness_run(tests, :non_default_6)
-  resource_absent_cleanup(agent, 'cisco_ospf')
 end
-
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

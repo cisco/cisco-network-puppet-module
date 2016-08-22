@@ -21,7 +21,6 @@
 #  - A description of the 'tests' hash and its usage
 #
 ###############################################################################
-
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 # Test hash top-level keys
@@ -36,7 +35,6 @@ tests = {
 tests[:default] = {
   desc:           '1.1 Defaults',
   title_pattern:  'dark_blue default 1.1.1.1 2.2.2.2',
-  preclean:       'cisco_ospf',
   manifest_props: {
     auth_key_chain:                     'default',
     authentication:                     'default',
@@ -64,12 +62,9 @@ tests[:default] = {
   },
 }
 
-# Non-default Tests. NOTE: [:resource] = [:manifest_props] for all non-default
-
 tests[:non_default] = {
   desc:           '2.1 Non Defaults',
   title_pattern:  'dark_blue default 1.1.1.1 2.2.2.2',
-  preclean:       'cisco_ospf',
   manifest_props: {
     auth_key_chain:                     'testKeyChain',
     authentication:                     'md5',
@@ -86,24 +81,30 @@ tests[:non_default] = {
   },
 }
 
+def cleanup(agent)
+  test_set(agent, 'no feature ospf')
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown { cleanup(agent) }
+  cleanup(agent)
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   test_harness_run(tests, :default)
 
   id = :default
   tests[id][:ensure] = :absent
-  tests[id].delete(:preclean)
   test_harness_run(tests, id)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
+  cleanup(agent)
   test_harness_run(tests, :non_default)
-  resource_absent_cleanup(agent, 'cisco_ospf')
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
