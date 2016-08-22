@@ -157,12 +157,19 @@ def dependency_manifest(_tests, id)
   dep
 end
 
+def cleanup(agent, intf, dot1q)
+  test_set(agent, 'no feature bfd ; no feature pim')
+  test_set(agent, "no interface #{dot1q}")
+  remove_all_vrfs(agent)
+  interface_cleanup(agent, intf)
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  teardown { interface_cleanup(agent, intf) }
-  interface_cleanup(agent, intf)
+  teardown { cleanup(agent, intf, dot1q) }
+  cleanup(agent, intf, dot1q)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
