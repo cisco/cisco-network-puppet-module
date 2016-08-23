@@ -59,8 +59,9 @@ tests = {
 skip_unless_supported(tests)
 
 tests[:yum_patch] = {
-  desc:           "1.1 Apply sample patch to image #{image?}",
-  title_pattern:  name,
+  desc:                 "1.1 Apply sample patch to image #{image?}",
+  title_pattern:        name,
+  ensure_prop_override: true,
   manifest_props: {
     name:             filename,
     provider:         'cisco',
