@@ -1338,6 +1338,7 @@ def vdc_limit_f3_no_intf_needed(action=:set)
     mods = out.nil? ? nil : Regexp.last_match[1]
     return if mods == 'f3'
     cmd += "limit_resource_module_type='f3'"
+    logger.info("\n* Setup VDC: #{cmd}")
     on(agent, cmd, pty: true).stdout[/limit_resource.*'(f3)'/]
 
   when :clear
@@ -1354,7 +1355,9 @@ def remove_all_vlans(agent, stepinfo='Remove all vlans & bridge-domains')
     resource_absent_cleanup(agent, 'cisco_bridge_domain', 'bridge domains')
     cmd = 'system bridge-domain none'
     command_config(agent, cmd, cmd)
-    resource_absent_cleanup(agent, 'cisco_vlan', 'vlans')
+    test_set(agent, 'no feature interface-vlan')
+    test_set(agent, 'no feature private-vlan')
+    test_set(agent, 'no vlan 2-3967')
   end
 end
 

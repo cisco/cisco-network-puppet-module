@@ -70,15 +70,19 @@ tests[:isolated] = {
   },
 }
 
+def cleanup(agent)
+  remove_all_vlans(agent)
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
   teardown do
-    remove_all_vlans(agent)
+    cleanup(agent)
     vdc_limit_f3_no_intf_needed(:clear)
   end
-  remove_all_vlans(agent)
+  cleanup(agent)
   vdc_limit_f3_no_intf_needed(:set)
 
   # -------------------------------------------------------------------

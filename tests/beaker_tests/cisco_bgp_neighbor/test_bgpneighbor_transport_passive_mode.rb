@@ -59,8 +59,17 @@ tests = {
   resource_name: 'cisco_bgp_neighbor',
 }
 
+def cleanup(agent)
+  if operating_system == 'nexus'
+    test_set(agent, 'no feature bgp')
+  else
+    resource_absent_cleanup(agent, 'cisco_bgp')
+  end
+end
+
 test_name "TestCase :: #{tests[:resource_name]} - #{id}" do
-  resource_absent_cleanup(agent, 'cisco_bgp')
+  teardown { cleanup(agent) }
+  cleanup(agent)
 
   os = on(agent, facter_cmd('-p os.name')).stdout.chomp
   vrf = 'red'
@@ -96,9 +105,6 @@ test_name "TestCase :: #{tests[:resource_name]} - #{id}" do
   test_manifest(tests, id)
   test_resource(tests, id)
 
-  resource_absent_cleanup(agent, 'cisco_bgp')
-
   skipped_tests_summary(tests)
 end
-
 logger.info("TestCase :: #{tests[:resource_name]} - #{id} :: End")

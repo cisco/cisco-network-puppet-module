@@ -29,9 +29,11 @@ tests = {
   resource_name: 'cisco_interface_portchannel',
 }
 
+intf = 'port-channel100'
+
 tests[:default_asym] = {
   desc:           '1.1 Default Properties (asym)',
-  title_pattern:  'port-channel100',
+  title_pattern:  intf,
   platform:       'n7k',
   code:           [0, 2],
   manifest_props: {
@@ -57,7 +59,7 @@ tests[:default_asym] = {
 tests[:non_default_asym] = {
   desc:           '2.1 Non Default Properties (asym)',
   platform:       'n7k',
-  title_pattern:  'port-channel100',
+  title_pattern:  intf,
   manifest_props: {
     bfd_per_link:              'true',
     lacp_graceful_convergence: 'false',
@@ -71,7 +73,7 @@ tests[:non_default_asym] = {
 
 tests[:default_sym] = {
   desc:           '1.2 Default Properties (sym)',
-  title_pattern:  'port-channel100',
+  title_pattern:  intf,
   platform:       'n(3|8|9)k',
   code:           [0, 2],
   manifest_props: {
@@ -96,7 +98,7 @@ tests[:default_sym] = {
 
 tests[:non_default_sym] = {
   desc:           '2.2 Non Default Properties (sym)',
-  title_pattern:  'port-channel100',
+  title_pattern:  intf,
   platform:       'n(3|8|9)k',
   manifest_props: {
     bfd_per_link:              'true',
@@ -111,7 +113,7 @@ tests[:non_default_sym] = {
 
 tests[:default_eth] = {
   desc:           '1.3 Default Properties (eth)',
-  title_pattern:  'port-channel100',
+  title_pattern:  intf,
   platform:       'n(5|6)k',
   code:           [0, 2],
   manifest_props: {
@@ -133,7 +135,7 @@ tests[:default_eth] = {
 tests[:non_default_eth] = {
   desc:           '2.3 Non Default Properties (eth)',
   platform:       'n(5|6)k',
-  title_pattern:  'port-channel100',
+  title_pattern:  intf,
   manifest_props: {
     bfd_per_link:              'true',
     lacp_graceful_convergence: 'false',
@@ -143,12 +145,17 @@ tests[:non_default_eth] = {
   },
 }
 
+def cleanup(agent, intf)
+  test_set(agent, "no feature bfd ; no interface #{intf}")
+  resource_absent_cleanup(agent, 'cisco_interface_portchannel')
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  teardown { resource_absent_cleanup(agent, 'cisco_interface_portchannel') }
-  resource_absent_cleanup(agent, 'cisco_interface_portchannel')
+  teardown { cleanup(agent, intf) }
+  cleanup(agent, intf)
   system_default_switchport(agent, false)
 
   # -------------------------------------------------------------------

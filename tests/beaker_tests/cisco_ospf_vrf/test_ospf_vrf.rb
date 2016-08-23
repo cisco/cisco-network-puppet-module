@@ -131,7 +131,7 @@ tests[:non_default_2] = {
 }
 
 def cleanup(agent)
-  test_set(agent, 'no feature ospf')
+  test_set(agent, 'no feature ospf ; no feature bfd')
 end
 
 #################################################################

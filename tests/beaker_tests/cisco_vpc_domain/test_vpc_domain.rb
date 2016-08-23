@@ -13,64 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-# TestCase Name:
-# -------------
-# test_vpc_domain.rb
 #
-# TestCase Prerequisites:
-# -----------------------
-# This is a Puppet cisco_vpc_domain resource testset for Puppet Agent
-# on Nexus devices.
-# The test case assumes the following prerequisites are already satisfied:
-#   - Host configuration file contains agent and master information.
-#   - SSH is enabled on the Nexus Switch Agent.
-#   - Puppet master/server is started.
-#   - Puppet agent certificate has been signed on the Puppet master/server.
-#
-# TestCase:
-# ---------
-# This portchannel_global resource test verifies default values for all
-# properties.
-#
-# The following exit_codes are validated for Puppet, Vegas shell and
-# Bash shell commands.
-#
-# Vegas and Bash Shell Commands:
-# 0   - successful command execution
-# > 0 - failed command execution.
-#
-# Puppet Commands:
-# 0 - no changes have occurred
-# 1 - errors have occurred,
-# 2 - changes have occurred
-# 4 - failures have occurred and
-# 6 - changes and failures have occurred.
-#
-# NOTE: 0 is the default exit_code checked in Beaker::DSL::Helpers::on() method.
-#
-# The test cases use RegExp pattern matching on stdout or output IO
-# instance attributes to verify resource properties.
+# See README-develop-beaker-scripts.md (Section: Test Script Variable Reference)
+# for information regarding:
+#  - test script general prequisites
+#  - command return codes
+#  - A description of the 'tests' hash and its usage
 #
 ###############################################################################
-
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
-# -----------------------------
-# Common settings and variables
-# -----------------------------
-testheader = 'Resource cisco_vpc_domain'
-
-# Define PUPPETMASTER_MANIFESTPATH.
-
-# The 'tests' hash is used to define all of the test data values and expected
-# results. It is also used to pass optional flags to the test methods when
-# necessary.
-
-# 'tests' hash
-# Top-level keys set by caller:
-# tests[:master] - the master object
-# tests[:agent] - the agent object
-#
 tests = {
   master:           master,
   agent:            agent,
@@ -79,29 +31,8 @@ tests = {
   platform:         'n(3|6|7|9)k',
 }
 
-# tests[id] keys set by caller and used by test_harness_common:
-#
-# tests[id] keys set by caller:
-# tests[id][:desc] - a string to use with logs & debugs
-# tests[id][:manifest] - the complete manifest, as used by test_harness_common
-# tests[id][:resource] - a hash of expected states, used by test_resource
-# tests[id][:resource_cmd] - 'puppet resource' command to use with test_resource
-# tests[id][:ensure] - (Optional) set to :present or :absent before calling
-# tests[id][:code] - (Optional) override the default exit code in some tests.
-#
-# These keys are local use only and not used by test_harness_common:
-#
-# tests[id][:manifest_props] - This is essentially a master list of properties
-#   that permits re-use of the properties for both :present and :absent testing
-#   without destroying the list
-# tests[id][:resource_props] - This is essentially a master hash of properties
-#   that permits re-use of the properties for both :present and :absent testing
-#   without destroying the hash
-# tests[id][:title_pattern] - (Optional) defines the manifest title.
-#   Can be used with :af for mixed title/af testing. If mixing, :af values will
-#   be merged with title values and override any duplicates. If omitted,
-#   :title_pattern will be set to 'id'.
-#
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
 
 tests[:default_properties] = {
   title_pattern:  '200',
@@ -251,17 +182,22 @@ tests[:vpc_plus_non_default_properties_n7k] = {
   },
 }
 
+def cleanup(agent)
+  remove_all_vlans(agent)
+  resource_absent_cleanup(agent, 'cisco_vpc_domain')
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown do
+    cleanup(agent)
+    vdc_limit_f3_no_intf_needed(:clear)
+  end
+  cleanup(agent)
+
   # -------------------------------------------------------------------
-  resource_absent_cleanup(agent, 'cisco_bridge_domain',
-                          'bridge-domain CLEANUP :: ')
-  resource_absent_cleanup(agent, 'cisco_vpc_domain',
-                          'Setup for cisco_vpc_domain provider test')
-  device = platform
-  logger.info("#### This device is of type: #{device} #####")
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
   test_harness_run(tests, :default_properties)
@@ -285,7 +221,8 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # ------------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. vPC+ Non Default Property Testing")
   # Need to setup fabricapth env for vPC+
-  setup_fabricpath_env(tests, self)
+  # setup_fabricpath_env(tests, self)
+  vdc_limit_f3_no_intf_needed(:set)
   test_harness_run(tests, :vpc_plus_non_default_properties_n7k)
 
   # Resource absent test
@@ -294,5 +231,4 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   skipped_tests_summary(tests)
 end
-
-logger.info("TestCase :: #{testheader} :: End")
+logger.info("TestCase :: #{tests[:resource_name]} :: End")
