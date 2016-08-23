@@ -62,13 +62,13 @@ tests[:yum_patch] = {
   desc:                 "1.1 Apply sample patch to image #{image?}",
   title_pattern:        name,
   ensure_prop_override: true,
-  manifest_props: {
+  manifest_props:       {
     name:             filename,
     provider:         'cisco',
     source:           "/bootflash/#{filename}",
     package_settings: { 'target' => 'host' },
   },
-  resource:       {
+  resource:             {
     'ensure' => version
   },
 }
