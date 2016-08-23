@@ -312,7 +312,7 @@ def resource_present?(agent, name, title)
   result = on(agent, cmd).stdout
   result[/ensure => 'absent'/] ? false : true
 end
- 
+
 # Helper to configure switchport mode
 def config_switchport_mode(agent, intf, mode, stepinfo='switchport mode: ')
   step "TestStep :: #{stepinfo}" do
