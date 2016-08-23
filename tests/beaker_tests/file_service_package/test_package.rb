@@ -29,7 +29,7 @@ when /7.0.3.I2.1/
   name =     'n9000_sample'
   version =  '1.0.0-7.0.3'
 when /7.0.3.I3.1/
-  #filename = 'CSCuxdublin-1.0.0-7.0.3.I3.1.lib32_n9000.rpm'
+  # filename = 'CSCuxdublin-1.0.0-7.0.3.I3.1.lib32_n9000.rpm'
   filename = 'mike.rpm'
   name =     'CSCuxdublin'
   version =  '1.0.0-7.0.3.I3.1'
@@ -72,16 +72,6 @@ tests[:yum_patch] = {
     'ensure' => version
   },
 }
-
-# Overridden to properly handle dependencies for this test file.
-$rpmfile = "/bootflash/#{filename}"
-def dependency_manifest(_tests, id)
-  dep = %(
-    file      { "#{$rpmfile}": ensure => present }
-  )
-  logger.info("\n  * dependency_manifest\n#{dep}")
-  dep
-end
 
 #################################################################
 # TEST CASE EXECUTION
