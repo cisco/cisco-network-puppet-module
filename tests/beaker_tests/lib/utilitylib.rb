@@ -306,6 +306,13 @@ def resource_titles(agent, res_name, action=:find)
   titles
 end
 
+# Helper to determine if a resource is present
+def resource_present?(agent, name, title)
+  cmd = PUPPET_BINPATH + "resource #{name} #{title}"
+  result = on(agent, cmd).stdout
+  result[/ensure => 'absent'/] ? false : true
+end
+ 
 # Helper to configure switchport mode
 def config_switchport_mode(agent, intf, mode, stepinfo='switchport mode: ')
   step "TestStep :: #{stepinfo}" do
