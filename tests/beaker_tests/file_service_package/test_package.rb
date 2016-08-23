@@ -29,8 +29,7 @@ when /7.0.3.I2.1/
   name =     'n9000_sample'
   version =  '1.0.0-7.0.3'
 when /7.0.3.I3.1/
-  # filename = 'CSCuxdublin-1.0.0-7.0.3.I3.1.lib32_n9000.rpm'
-  filename = 'mike.rpm'
+  filename = 'CSCuxdublin-1.0.0-7.0.3.I3.1.lib32_n9000.rpm'
   name =     'CSCuxdublin'
   version =  '1.0.0-7.0.3.I3.1'
 when /7.0.3.I4.1/
