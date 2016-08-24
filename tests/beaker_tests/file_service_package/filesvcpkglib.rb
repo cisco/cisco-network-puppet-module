@@ -138,42 +138,4 @@ node default {
 EOF"
     manifest_str
   end
-
-  # Method to create a manifest for PKG resource attribute 'ensure' where
-  # 'ensure' is set to present.
-  # @param none [None] No input parameters exist.
-  # @result none [None] Returns no object.
-  def self.create_package_sample_manifest_present
-    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
-node default {
-    package { 'n9000_sample.x86_64':
-        name            => 'n9000_sample-1.0.0-7.0.3.x86_64.rpm',
-        ensure          => present,
-        provider        => 'cisco',
-        source          => '/bootflash/n9000_sample-1.0.0-7.0.3.x86_64.rpm',
-        package_settings => {'target' => 'host'},
-    }
-}
-EOF"
-    manifest_str
-  end
-
-  # Method to create a manifest for PKG resource attribute 'ensure' where
-  # 'ensure' is set to absent.
-  # @param none [None] No input parameters exist.
-  # @result none [None] Returns no object.
-  def self.create_package_sample_manifest_absent
-    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
-node default {
-    package { 'n9000_sample.x86_64':
-        name            => 'n9000_sample-1.0.0-7.0.3.x86_64.rpm',
-        ensure          => absent,
-        provider        => 'cisco',
-        source          => '/bootflash/n9000_sample-1.0.0-7.0.3.x86_64.rpm',
-        package_settings => {'target' => 'host'},
-    }
-}
-EOF"
-    manifest_str
-  end
 end

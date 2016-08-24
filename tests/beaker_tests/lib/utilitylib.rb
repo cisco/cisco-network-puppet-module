@@ -306,6 +306,13 @@ def resource_titles(agent, res_name, action=:find)
   titles
 end
 
+# Helper to determine if a resource is present
+def resource_present?(agent, name, title)
+  cmd = PUPPET_BINPATH + "resource #{name} #{title}"
+  result = on(agent, cmd).stdout
+  result[/ensure => 'absent'/] ? false : true
+end
+
 # Helper to configure switchport mode
 def config_switchport_mode(agent, intf, mode, stepinfo='switchport mode: ')
   step "TestStep :: #{stepinfo}" do
@@ -592,8 +599,11 @@ def create_manifest_and_resource(tests, id)
     tests[id][:resource] = { 'ensure' => 'absent' }
   else
     state = 'ensure => present,' unless tests[:ensurable] == false
-    tests[id][:resource]['ensure'] = nil unless
-      tests[id][:resource].nil? || tests[:ensurable] == false
+
+    unless tests[id][:ensure_prop_override]
+      tests[id][:resource]['ensure'] = nil unless
+        tests[id][:resource].nil? || tests[:ensurable] == false
+    end
 
     manifest_props = tests[id][:manifest_props]
     if manifest_props
