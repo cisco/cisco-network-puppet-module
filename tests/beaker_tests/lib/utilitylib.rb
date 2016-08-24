@@ -1130,7 +1130,10 @@ def skipped_tests_summary(tests)
   tests[:skipped].each do |desc|
     logger.error(sprintf('%-40s :: SKIP', desc))
   end
-  raise_skip_exception(tests[:resource_name], self)
+  # There are many tests now that skip a sub-test or two while the majority
+  # are still processed. We prefer to see the overall result as Pass instead
+  # of skip so skip the raise below.
+  # raise_skip_exception(tests[:resource_name], self)
 end
 
 # TBD: This needs to be more selective when used with modular platforms,
