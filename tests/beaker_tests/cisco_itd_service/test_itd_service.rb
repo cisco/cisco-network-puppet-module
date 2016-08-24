@@ -78,7 +78,6 @@ tests[:default_plat_1] = {
   desc:           '1.2 Defaults for n7k',
   platform:       'n7k',
   title_pattern:  'myService',
-  preclean:       'cisco_itd_service',
   manifest_props: {
     device_group:      'udpGroup',
     ingress_interface: 'default',
@@ -95,7 +94,6 @@ tests[:default_plat_2] = {
   desc:           '1.3 Defaults for n9k',
   platform:       'n9k',
   title_pattern:  'myService',
-  preclean:       'cisco_itd_service',
   manifest_props: {
     fail_action: 'default',
     peer_local:  'default',
@@ -110,12 +108,9 @@ ingress_intf = [['vlan 2', '4.4.4.4'], [@ingress_eth_int, '5.5.5.5'], ['port-cha
 vip = ['ip 3.3.3.3 255.0.0.0 tcp 500 advertise enable']
 pv = %w(myVdc1 pvservice)
 
-# Non-default Tests. NOTE: [:resource] = [:manifest_props] for all non-default
-
 tests[:non_default] = {
   desc:           '2.1 Common Non Defaults',
   title_pattern:  'myService',
-  preclean:       'cisco_itd_service',
   manifest_props: {
     access_list:                   'iap',
     device_group:                  'udpGroup',
@@ -138,7 +133,6 @@ tests[:non_default_plat_1] = {
   desc:           '2.2 Non Defaults for n7k',
   platform:       'n7k',
   title_pattern:  'myService',
-  preclean:       'cisco_itd_service',
   manifest_props: {
     device_group:                  'udpGroup',
     ingress_interface:             ingress_intf,
@@ -158,7 +152,6 @@ tests[:non_default_plat_2] = {
   desc:           '2.3 Non Defaults for n9k',
   platform:       'n9k',
   title_pattern:  'myService',
-  preclean:       'cisco_itd_service',
   manifest_props: {
     device_group:                  'udpGroup',
     ingress_interface:             ingress_intf,
@@ -175,7 +168,6 @@ tests[:non_default_plat_2] = {
 tests[:non_default_shut] = {
   desc:           '3.1 Common create service and turn it on',
   title_pattern:  'myService',
-  preclean:       'cisco_itd_service',
   manifest_props: {
     device_group:      'udpGroup',
     ingress_interface: [[@ingress_eth_int, '2.2.2.2']],
@@ -226,19 +218,19 @@ def cleanup(agent)
 end
 
 # Overridden to properly handle dependencies for this test file.
-def test_harness_dependencies(_tests, id)
-  return if id[/non_default_shut_/]
+def test_harness_dependencies(_tests, _id)
   cleanup(agent)
 
   cmd = [
+    'feature itd',
+    'feature interface-vlan',
     'ip access-list iap ; ip access-list eap',
     "interface #{@ingress_eth_int} ; no switchport",
-    'feature interface-vlan',
     'vlan 2 ; interface vlan 2',
     'interface port-channel 100 ; no switchport',
     'itd device-group udpGroup ; node ip 1.1.1.1',
   ].join(' ; ')
-  command_config(agent, cmd, cmd)
+  test_set(agent, cmd)
 end
 
 #################################################################
