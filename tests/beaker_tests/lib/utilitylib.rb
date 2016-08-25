@@ -838,10 +838,21 @@ end
 # test_get does a 'show runn' but requires a filter.
 # Example:
 #  test_get(agent, 'incl ^vlan')
-def test_get(agent, filter)
+#
+# opt = :raw, return raw output from puppet resource command
+# opt = :array, return array of test_get property data only
+def test_get(agent, filter, opt=:raw)
   cmd_prefix = PUPPET_BINPATH + "resource cisco_command_config 'cc' "
   on(agent, cmd_prefix + "test_get=\"#{filter}\"")
-  stdout
+  case opt
+  when :raw
+    return stdout
+  when :array
+    # clean up the output and return as array of commands
+    # stdout: " cisco_command_config { 'cc':\n  test_get => '\n foo\n bar\n',\n}"
+    # array:  [' foo', ' bar']
+    stdout.split("\n")[2..-3] if stdout
+  end
 end
 
 # Add arbitrary configurations using command_config's test_set property.
