@@ -58,64 +58,79 @@ require File.expand_path('../network_dnslib.rb', __FILE__)
 result = 'PASS'
 testheader = 'network_dns Resource :: All Attributes NonDefaults'
 
-# Helper for testbed cleanup
-def dns_clean(agent)
-  # remove any existing resources that we will be testing against
-  resource_titles(agent, :domain_name, :clean)
-
-  if operating_system == 'ios_xr'
-    clean_commands = ['no domain list test.com',
-                      'no domain list test.net',
-                      'no domain name switch1.test.com',
-                      'no domain name switch2.test.com',
-                      'no domain name-server 2001:4860:4860::8888',
-                      'no domain name-server 8.8.8.8']
-
-    clean_commands.each do |cmd|
-      command_config(agent, cmd, cmd)
-    end
-  else
-    # These resources currently do not support ensure=absent; they can use
-    # resource_titles above if they're ever updated.
-    on(agent, get_vshell_cmd('show run | i domain-list|name-server'))
-    stdout.scan(/ip domain-list \S+|ip name-server .*/).each do |cli|
-      command_config(agent, "no #{cli}", "removing #{cli}")
-    end
-  end
-end
-
-# @test_name [TestCase] Executes nondefaults testcase for network_dns Resource.
-test_name "TestCase :: #{testheader}" do
+def check_dns_warning
+  return unless operating_system == 'ios_xr'
   dns_warning = "
     *****************************************************************
-    *****************************************************************
     ***                    WARNING WARNING WARNING                ***
-    ***                                                           ***
-    ***                                                           ***
-    ***                                                           ***
     ***                                                           ***
     *** This test will remove all DNS settings from the testbed   ***
     *** running-config.                                           ***
     ***                                                           ***
     *** Please save the DNS settings before executing this test.  ***
     ***                                                           ***
-    ***                                                           ***
     *** Comment out the 'fail dns_warning' command below to       ***
     *** execute this test.                                        ***
     ***                                                           ***
-    ***                                                           ***
     ***                    WARNING WARNING WARNING                ***
-    *****************************************************************
     *****************************************************************"
   fail dns_warning if dns_warning
+end
 
-  ############
-  # Start Test
-  ############
-  step 'TestStep :: Testbed pre-test cleanup' do
-    dns_clean(agent)
+# Helper for XR testbed cleanup
+def xr_dns_clean(agent)
+  return unless operating_system == 'ios_xr'
+  # remove any existing resources that we will be testing against
+  resource_titles(agent, :domain_name, :clean)
+  ['no domain list test.com',
+   'no domain list test.net',
+   'no domain name switch1.test.com',
+   'no domain name switch2.test.com',
+   'no domain name-server 2001:4860:4860::8888',
+   'no domain name-server 8.8.8.8'].each { |cmd| command_config(agent, cmd) }
+end
+
+def dns_find_and_remove(agent)
+  return if operating_system == 'ios_xr'
+
+  # Find DNS commands affected by this test & remove them
+  cmds = test_get(agent, "i '^ip (domain-list|domain-name|name-server)'",
+                  :array)
+  return nil unless cmds
+
+  no_cmds = cmds.map { |cmd| "no #{cmd}" }.join(' ; ')
+  test_set(agent, no_cmds)
+  # return original commands as str
+  cmds.join(' ; ')
+end
+
+def dns_save(agent)
+  # Save any existing DNS commands from switch in case they're "real" configs.
+  if operating_system == 'ios_xr'
+    xr_dns_clean
+    return nil
   end
 
+  dns_find_and_remove(agent)
+end
+
+def dns_restore(agent, dns_orig)
+  return if dns_orig.nil? || operating_system == 'ios_xr'
+  test_set(agent, dns_orig)
+end
+
+# @test_name [TestCase] Executes nondefaults testcase for network_dns Resource.
+test_name "TestCase :: #{testheader}" do
+  check_dns_warning
+
+  # Keep track of the original dns cmds so that they can be restored at the end
+  dns_orig = dns_save(agent)
+  teardown do
+    dns_find_and_remove(agent)
+    dns_restore(agent, dns_orig)
+  end
+
+  #----------------------------------------------------------------------
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Set the properties in a manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
@@ -131,6 +146,7 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Set the domain property in a manifest from master :: #{result}")
   end
 
+  #----------------------------------------------------------------------
   # @step [Step] Checks network_dns resource on agent using resource cmd.
   step 'TestStep :: Check network_dns resource on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
@@ -148,6 +164,7 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check network_dns resource on agent :: #{result}")
   end
 
+  #----------------------------------------------------------------------
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Set the properties in a manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
@@ -163,6 +180,7 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Set the domain property in a manifest from master :: #{result}")
   end
 
+  #----------------------------------------------------------------------
   # @step [Step] Checks network_dns resource on agent using resource cmd.
   step 'TestStep :: Check network_dns resource on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
@@ -180,6 +198,7 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check network_dns resource on agent :: #{result}")
   end
 
+  #----------------------------------------------------------------------
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Set the properties in a manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
@@ -195,6 +214,7 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Set the domain property in a manifest from master :: #{result}")
   end
 
+  #----------------------------------------------------------------------
   # @step [Step] Checks network_dns resource on agent using resource cmd.
   step 'TestStep :: Check network_dns resource on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
@@ -211,11 +231,7 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check network_dns resource on agent :: #{result}")
   end
 
-  step 'TestStep :: Testbed post-test cleanup' do
-    dns_clean(agent)
-  end
-
-  # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.
+  #----------------------------------------------------------------------
   raise_passfail_exception(result, testheader, self, logger)
 end
 
