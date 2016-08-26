@@ -62,16 +62,15 @@ tests = {
 skip_unless_supported(tests)
 
 tests[:yum_patch_install] = {
-  desc:                 "1.1 Apply sample patch to image #{image?}",
-  title_pattern:        name,
-  ensure_prop_override: true,
-  manifest_props:       {
+  desc:           "1.1 Apply sample patch to image #{image?}",
+  title_pattern:  name,
+  manifest_props: {
     name:             filename,
     provider:         'cisco',
     source:           "/bootflash/#{filename}",
     package_settings: { 'target' => 'host' },
   },
-  resource:             {
+  resource:       {
     'ensure' => version
   },
 }
@@ -79,9 +78,9 @@ tests[:yum_patch_install] = {
 tests[:yum_patch_remove] = {
   desc:           '1.2 Remove sample patch',
   code:           [0, 2],
+  ensure:         :absent,
   title_pattern:  name,
   manifest_props: {
-    ensure:           'absent',
     name:             filename,
     provider:         'cisco',
     package_settings: { 'target' => 'host' },
@@ -112,6 +111,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
     teardown { resource_absent_by_title(agent, 'package', name) }
     resource_absent_by_title(agent, 'package', name)
 
+    tests[:yum_patch_install][:ensure_prop_override] = true
     test_harness_run(tests, :yum_patch_install)
   end
 end
