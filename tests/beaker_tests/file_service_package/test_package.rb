@@ -23,22 +23,19 @@
 ###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
+name = 'nxos.sample-n9k_EOR'
 case image?
-when /7.0.3.I2.1/
-  filename = 'n9000_sample-1.0.0-7.0.3.x86_64.rpm'
-  name =     'n9000_sample'
-  version =  '1.0.0-7.0.3'
-when /7.0.3.I3.1/
-  filename = 'CSCuxdublin-1.0.0-7.0.3.I3.1.lib32_n9000.rpm'
-  name =     'CSCuxdublin'
+when /7.0.3.I2/
+  filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I2.1.lib32_n9000.rpm'
+  version =  '1.0.0-7.0.3.I2.1'
+when /7.0.3.I3/
+  filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I3.1.lib32_n9000.rpm'
   version =  '1.0.0-7.0.3.I3.1'
-when /7.0.3.I4.1/
+when /7.0.3.I4/
   filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I4.1.lib32_n9000.rpm'
-  name =     'nxos.sample-n9k_EOR'
   version =  '1.0.0-7.0.3.I4.1'
 when /7.0.3.I5/
   filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I5.1.lib32_n9000.rpm'
-  name =     'nxos.sample-n9k_EOR'
   version =  '1.0.0-7.0.3.I5.1'
 else
   raise_skip_exception("No patch specified for image #{image?}", self)
@@ -59,15 +56,16 @@ tests = {
 skip_unless_supported(tests)
 
 tests[:yum_patch_install] = {
-  desc:           "1.1 Apply sample patch to image #{image?}",
-  title_pattern:  name,
-  manifest_props: {
+  desc:                 "1.1 Apply sample patch to image #{image?}",
+  title_pattern:        name,
+  ensure_prop_override: true,
+  manifest_props:       {
     name:             filename,
     provider:         'cisco',
     source:           "/bootflash/#{filename}",
     package_settings: { 'target' => 'host' },
   },
-  resource:       {
+  resource:             {
     'ensure' => version
   },
 }
@@ -99,17 +97,20 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
 
-  # The puppet resource command cannot be used in the guestshell
-  # to query patches that are applied to the host.  This test will
-  # call explicit api's to test the following:
-  # 1) Apply manifest.
-  # 2) Verify patch applied.
-  # 3) Idempotence Test.
-
-  test_manifest(tests, :yum_patch_install)
-  puts "MGW VERSION: #{get_patch_version(name)}"
-  test_patch_version(tests, :yum_patch_install, name, version)
-  test_idempotence(tests, :yum_patch_install)
-  test_manifest(tests, :yum_patch_remove)
+  if virtual == 'lxc'
+    # The puppet resource command cannot be used in the guestshell
+    # to query patches that are applied to the host.  This test will
+    # call explicit api's to test the following for guestshell:
+    # 1) Apply manifest.
+    # 2) Verify patch is applied on the host.
+    # 3) Idempotence Test.
+    test_manifest(tests, :yum_patch_install)
+    test_patch_version(tests, :yum_patch_install, name, version)
+    test_idempotence(tests, :yum_patch_install)
+    test_manifest(tests, :yum_patch_remove)
+  else
+    test_harness_run(tests, :yum_patch_install)
+    test_harness_run(tests, :yum_patch_remove)
+  end
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

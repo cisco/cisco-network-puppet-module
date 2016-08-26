@@ -1421,7 +1421,7 @@ end
 def test_patch_version(tests, id, name, ver)
   stepinfo = format_stepinfo(tests, id, 'YUM PACKAGE VERSION')
   step "TestStep :: #{stepinfo}" do
-    logger.debug("test_yum_version ::")
+    logger.debug("test_yum_version :: #{ver}")
     iv = get_patch_version(name)
     if iv == ver
       logger.info("#{stepinfo} :: PASS")
