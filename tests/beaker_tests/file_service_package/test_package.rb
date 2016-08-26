@@ -25,13 +25,15 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 name = 'nxos.sample-n9k_EOR'
 case image?
-when /7.0.3.I2/
-  filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I2.1.lib32_n9000.rpm'
-  version =  '1.0.0-7.0.3.I2.1'
 when /7.0.3.I2.1/
+  # Version 7.0.3.I2.1 needs this specific patch.  Attempts to build
+  # new patches for this version with the patch tool don't work.
   name =     'n9000_sample'
   filename = 'n9000_sample-1.0.0-7.0.3.x86_64.rpm'
   version =  '1.0.0-7.0.3'
+when /7.0.3.I2/
+  filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I2.1.lib32_n9000.rpm'
+  version =  '1.0.0-7.0.3.I2.1'
 when /7.0.3.I3/
   filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I3.1.lib32_n9000.rpm'
   version =  '1.0.0-7.0.3.I3.1'
