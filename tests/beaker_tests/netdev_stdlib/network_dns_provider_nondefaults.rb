@@ -77,46 +77,51 @@ def check_dns_warning
   fail dns_warning if dns_warning
 end
 
-# Helper for XR testbed cleanup
-def xr_dns_clean(agent)
-  return unless operating_system == 'ios_xr'
-  # remove any existing resources that we will be testing against
-  resource_titles(agent, :domain_name, :clean)
-  ['no domain list test.com',
-   'no domain list test.net',
-   'no domain name switch1.test.com',
-   'no domain name switch2.test.com',
-   'no domain name-server 2001:4860:4860::8888',
-   'no domain name-server 8.8.8.8'].each { |cmd| command_config(agent, cmd) }
-end
-
-def dns_find_and_remove(agent)
+def dns_find_cli(agent)
   return if operating_system == 'ios_xr'
-
-  # Find DNS commands affected by this test & remove them
-  cmds = test_get(agent, "i '^ip (domain-list|domain-name|name-server)'",
-                  :array)
-  return nil unless cmds
-
-  no_cmds = cmds.map { |cmd| "no #{cmd}" }.join(' ; ')
-  test_set(agent, no_cmds)
-  # return original commands as str
-  cmds.join(' ; ')
+  # Note: This only saves commands from default vrf
+  cmd = "i '^ip (domain-list|domain-name|name-server)'"
+  cli_cmds = test_get(agent, cmd, :array)
+  logger.info("Current cli commands:\n#{stdout}")
+  cli_cmds
 end
 
-def dns_save(agent)
-  # Save any existing DNS commands from switch in case they're "real" configs.
+def dns_find_resolv(agent)
+  return if operating_system == 'ios_xr'
+  on(agent, 'cat /etc/resolv.conf', pty: true)
+  logger.info("Current /etc/resolv.conf:\n#{stdout}")
+  stdout
+end
+
+def dns_clean(agent)
+  # Note: Save dns cli before calling this method!
   if operating_system == 'ios_xr'
-    xr_dns_clean
-    return nil
+    # remove any existing resources that we will be testing against
+    resource_titles(agent, :domain_name, :clean)
+    ['no domain list test.com',
+     'no domain list test.net',
+     'no domain name switch1.test.com',
+     'no domain name switch2.test.com',
+     'no domain name-server 2001:4860:4860::8888',
+     'no domain name-server 8.8.8.8'].each { |cmd| command_config(agent, cmd) }
+  else
+    cli_cmds = dns_find_cli(agent)
+    if cli_cmds
+      no_cmds = cli_cmds.map { |cmd| "no #{cmd}" }.join(' ; ')
+      logger.info("Remove cli cmds: #{no_cmds}")
+      test_set(agent, no_cmds)
+    end
   end
-
-  dns_find_and_remove(agent)
 end
 
-def dns_restore(agent, dns_orig)
-  return if dns_orig.nil? || operating_system == 'ios_xr'
-  test_set(agent, dns_orig)
+def dns_restore(agent, dns_cli, dns_resolv)
+  return if operating_system == 'ios_xr'
+  logger.info("Restore cli commands:\n#{dns_cli}")
+  test_set(agent, dns_cli.join(' ; ')) if dns_cli
+
+  logger.info("Restore /etc/resolv.conf config:\n#{dns_resolv}")
+  cmd = "echo '#{dns_resolv.strip}' >> /etc/resolv.conf"
+  on(agent, cmd, pty: true) if dns_resolv
 end
 
 # @test_name [TestCase] Executes nondefaults testcase for network_dns Resource.
@@ -124,10 +129,12 @@ test_name "TestCase :: #{testheader}" do
   check_dns_warning
 
   # Keep track of the original dns cmds so that they can be restored at the end
-  dns_orig = dns_save(agent)
+  dns_orig_cli = dns_find_cli(agent)
+  dns_orig_resolv = dns_find_resolv(agent)
+  dns_clean(agent)
   teardown do
-    dns_find_and_remove(agent)
-    dns_restore(agent, dns_orig)
+    dns_clean(agent)
+    dns_restore(agent, dns_orig_cli, dns_orig_resolv)
   end
 
   #----------------------------------------------------------------------
