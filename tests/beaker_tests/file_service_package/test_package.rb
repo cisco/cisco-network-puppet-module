@@ -78,31 +78,20 @@ tests[:yum_patch_install] = {
 
 tests[:yum_patch_remove] = {
   desc:           '1.2 Remove sample patch',
-  ensure:         :absent,
   code:           [0, 2],
   title_pattern:  name,
   manifest_props: {
+    ensure:           'absent',
     name:             filename,
     provider:         'cisco',
     package_settings: { 'target' => 'host' },
   },
-  resource:       {
-    'ensure' => 'purged'
-  },
 }
-
-create_package_manifest_resource(tests, :yum_patch_install)
-create_package_manifest_resource(tests, :yum_patch_remove)
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  teardown { test_manifest(tests, :yum_patch_remove) }
-  test_manifest(tests, :yum_patch_remove)
-
-  # -------------------------------------------------------------------
-
   if virtual == 'lxc'
     # The puppet resource command cannot be used in the guestshell
     # to query patches that are applied to the host.  This test will
@@ -110,13 +99,20 @@ test_name "TestCase :: #{tests[:resource_name]}" do
     # 1) Apply manifest.
     # 2) Verify patch is applied on the host.
     # 3) Idempotence Test.
+    create_package_manifest_resource(tests, :yum_patch_install)
+    create_package_manifest_resource(tests, :yum_patch_remove)
+
+    teardown { test_manifest(tests, :yum_patch_remove) }
+    test_manifest(tests, :yum_patch_remove)
+
     test_manifest(tests, :yum_patch_install)
     test_patch_version(tests, :yum_patch_install, name, version)
     test_idempotence(tests, :yum_patch_install)
-    test_manifest(tests, :yum_patch_remove)
   else
+    teardown { resource_absent_by_title(agent, 'package', name) }
+    resource_absent_by_title(agent, 'package', name)
+
     test_harness_run(tests, :yum_patch_install)
-    test_harness_run(tests, :yum_patch_remove)
   end
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
