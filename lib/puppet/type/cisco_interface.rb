@@ -56,6 +56,14 @@ Puppet::Type.newtype(:cisco_interface) do
      ipv4_proxy_arp                 => true,
      ipv4_pim_sparse_mode           => true,
      negotiate_auto                 => true,
+     ipv4_dhcp_relay_addr           => ['1.1.1.1', '2.2.2.2'],
+     ipv4_dhcp_relay_info_trust     => true,
+     ipv4_dhcp_relay_src_addr_hsrp  => true,
+     ipv4_dhcp_relay_src_intf       => 'port-channel 100',
+     ipv4_dhcp_relay_subnet_broadcast => true,
+     ipv4_dhcp_smart_relay          => true,
+     ipv6_dhcp_relay_addr           => ['2000::11', '2001::22'],
+     ipv6_dhcp_relay_src_intf       => 'ethernet 2/2',
     }
     cisco_interface { 'ethernet1/17' :
      stp_bpdufilter               => 'enable',
@@ -72,6 +80,9 @@ Puppet::Type.newtype(:cisco_interface) do
     }
     cisco_interface { 'ethernet9/1' :
      switchport_mode              => 'trunk',
+     storm_control_broadcast      => '77.77',
+     storm_control_multicast      => '22.22',
+     storm_control_unicast        => '33.33',
      vlan_mapping_enable          => 'false',
      vlan_mapping                 => [[20, 21], [30, 31]],
     }
@@ -1042,4 +1053,142 @@ Puppet::Type.newtype(:cisco_interface) do
       (is.size == should.flatten.size && is.sort == should.flatten.sort)
     end
   end # private_vlan_mapping
+
+  ############################
+  # dhcp relay attributes    #
+  ############################
+
+  newproperty(:ipv4_dhcp_relay_addr, array_matching: :all) do
+    format = '[addr1, addr2]'
+    desc 'An array of ipv4 addresses'\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        value
+      end
+    end
+  end # property ipv4_dhcp_relay_addr
+
+  newproperty(:ipv4_dhcp_relay_info_trust) do
+    desc 'Enables relay trust enables on this interface.'
+
+    newvalues(:true, :false, :default)
+  end # property ipv4_dhcp_relay_info_trust
+
+  newproperty(:ipv4_dhcp_relay_src_addr_hsrp) do
+    desc 'Enables VIP instead of SVI address'
+
+    newvalues(:true, :false, :default)
+  end # property ipv4_dhcp_relay_src_addr_hsrp
+
+  newproperty(:ipv4_dhcp_relay_src_intf) do
+    desc "Source interface for the DHCPV4 relay. Valid values
+          are string, keyword 'default'. "
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property ipv4_dhcp_relay_src_intf
+
+  newproperty(:ipv4_dhcp_relay_subnet_broadcast) do
+    desc 'Enables DHCP relay subnet-broadcast on this interface.'
+
+    newvalues(:true, :false, :default)
+  end # property ipv4_dhcp_relay_subnet_broadcast
+
+  newproperty(:ipv4_dhcp_smart_relay) do
+    desc 'Enables DHCP smart relay on this interface.'
+
+    newvalues(:true, :false, :default)
+  end # property ipv4_dhcp_smart_relay
+
+  newproperty(:ipv6_dhcp_relay_addr, array_matching: :all) do
+    format = '[addr1, addr2]'
+    desc 'An array of ipv6 addresses'\
+         "Valid values match format #{format}."
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    def should_to_s(value)
+      value.inspect
+    end
+
+    def is_to_s(value)
+      value.inspect
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        value
+      end
+    end
+  end # property ipv6_dhcp_relay_addr
+
+  newproperty(:ipv6_dhcp_relay_src_intf) do
+    desc "Source interface for the DHCPV6 relay. Valid values
+          are string, keyword 'default'. "
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property ipv6_dhcp_relay_src_intf
+
+  ############################
+  # storm control attributes #
+  ############################
+
+  newproperty(:storm_control_broadcast) do
+    desc "Allowed broadcast traffic level. Valid values
+          are string, keyword 'default'. "
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property storm_control_broadcast
+
+  newproperty(:storm_control_multicast) do
+    desc "Allowed multicast traffic level. Valid values
+          are string, keyword 'default'. "
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property storm_control_multicast
+
+  newproperty(:storm_control_unicast) do
+    desc "Allowed unicast traffic level. Valid values
+          are string, keyword 'default'. "
+
+    munge do |value|
+      value = :default if value == 'default'
+      value
+    end
+  end # property storm_control_unicast
 end # Puppet::Type.newtype

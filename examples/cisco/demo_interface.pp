@@ -36,6 +36,16 @@ class ciscopuppet::cisco::demo_interface {
       ensure => 'present',
     }
 
+    $ipv4_dhcp_relay_info_trust = platform_get() ? {
+      /(n3k|n7k|n8k|n9k)/ => true,
+      default => undef
+    }
+
+    $ipv4_dhcp_relay_src_addr_hsrp = platform_get() ? {
+      /(n5k|n6k|n7k)/ => true,
+      default => undef
+    }
+
     cisco_interface { 'Ethernet1/1' :
       shutdown                      => true,
       switchport_mode               => disabled,
@@ -56,6 +66,14 @@ class ciscopuppet::cisco::demo_interface {
       ipv4_acl_out                  => 'v4acl2',
       ipv6_acl_in                   => 'v6acl1',
       ipv6_acl_out                  => 'v6acl2',
+      ipv4_dhcp_relay_addr          => ['1.1.1.1', '2.2.2.2'],
+      ipv4_dhcp_relay_info_trust    => $ipv4_dhcp_relay_info_trust,
+      ipv4_dhcp_relay_src_addr_hsrp => $ipv4_dhcp_relay_src_addr_hsrp,
+      ipv4_dhcp_relay_src_intf      => 'port-channel 100',
+      ipv4_dhcp_relay_subnet_broadcast => true,
+      ipv4_dhcp_smart_relay         => true,
+      ipv6_dhcp_relay_addr          => ['2000::11', '2001::22'],
+      ipv6_dhcp_relay_src_intf      => 'ethernet 2/2',
     }
 
     cisco_interface { 'Ethernet1/1.1':
@@ -77,6 +95,9 @@ class ciscopuppet::cisco::demo_interface {
       switchport_mode               => trunk,
       switchport_trunk_allowed_vlan => '30, 29, 31-33, 100',
       switchport_trunk_native_vlan  => 40,
+      storm_control_broadcast       => '77.77',
+      storm_control_multicast       => '22.22',
+      storm_control_unicast         => '33.33',
     }
 
     $svi_autostate = platform_get() ? {
