@@ -31,20 +31,23 @@ when /7.0.3.I2.1/
   name =     'n9000_sample'
   filename = 'n9000_sample-1.0.0-7.0.3.x86_64.rpm'
   version =  '1.0.0-7.0.3'
-when /7.0.3.I2/
-  filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I2.1.lib32_n9000.rpm'
-  version =  '1.0.0-7.0.3.I2.1'
-when /7.0.3.I3/
+when /7.0.3.I2.2e/
+  filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I2.2e.lib32_n9000.rpm'
+  version =  '1.0.0-7.0.3.I2.2e'
+when /7.0.3.I3.1/
   filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I3.1.lib32_n9000.rpm'
   version =  '1.0.0-7.0.3.I3.1'
-when /7.0.3.I4/
+when /7.0.3.I4.1/
   filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I4.1.lib32_n9000.rpm'
   version =  '1.0.0-7.0.3.I4.1'
-when /7.0.3.I5/
+when /7.0.3.I4.2/
+  filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I4.2.lib32_n9000.rpm'
+  version =  '1.0.0-7.0.3.I4.2'
+when /7.0.3.I5.1/
   filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I5.1.lib32_n9000.rpm'
   version =  '1.0.0-7.0.3.I5.1'
 else
-  raise_skip_exception("No patch specified for image #{image?}", self)
+  raise_skip_exception("No patch available for image #{image?}", self)
 end
 
 unless resource_present?(agent, 'file', "/bootflash/#{filename}")
