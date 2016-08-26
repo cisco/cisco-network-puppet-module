@@ -106,13 +106,9 @@ tests[:non_default] = {
   },
 }
 
-def dependency_manifest(_tests, id)
+def test_harness_dependencies(_tests, id)
   return unless id == :default
-  "
-    cisco_ospf { 'sample':
-      ensure => present
-    }
-  "
+  test_set(agent, 'feature ospf')
 end
 
 def cleanup(agent, intf)
