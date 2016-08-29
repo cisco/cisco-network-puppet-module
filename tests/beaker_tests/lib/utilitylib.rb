@@ -633,6 +633,31 @@ def create_manifest_and_resource(tests, id)
   true
 end
 
+# Special create manifest/resource method for yum packages only.
+def create_package_manifest_resource(tests, id)
+  puppet_resource_cmd_from_params(tests, id)
+  state = ''
+  manifest = ''
+  if tests[id][:ensure] == :absent
+    state = 'ensure => absent,'
+  else
+    state = 'ensure => present,'
+  end
+
+  manifest_props = tests[id][:manifest_props]
+  manifest += prop_hash_to_manifest(manifest_props)
+  tests[id][:resource] = manifest_props
+
+  tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+  \nnode default {
+  #{dependency_manifest(tests, id)}
+  #{tests[:resource_name]} { '#{tests[id][:title_pattern]}':
+    #{state}\n#{manifest}
+  }\n}\nEOF"
+
+  true
+end
+
 # test_harness_dependencies
 #
 # This method is used for additional testbed setup beyond the basics
@@ -1016,6 +1041,12 @@ def os_family
   @os_family = on(agent, facter_cmd('os.family')).stdout.chomp
 end
 
+@virtual = nil
+def virtual
+  return @virtual unless @virtual.nil?
+  @virtual = on(agent, facter_cmd('virtual')).stdout.chomp
+end
+
 # Used to cache the cisco hardware type
 @cisco_hardware = nil
 # Use facter to return cisco hardware type
@@ -1389,4 +1420,28 @@ def remove_all_vrfs(agent)
   found = test_get(agent, "incl 'vrf context' | excl management").split("\n")
   found.map! { |cmd| "no #{cmd}" if cmd[/^vrf context/] }
   test_set(agent, found.compact.join(' ; '))
+end
+
+# Return yum patch version from host
+def get_patch_version(name)
+  cmd = get_vshell_cmd("show install packages | inc #{name}")
+  # Sample Output:
+  # nxos.sample-n9k_EOR.lib32_n9000   1.0.0-7.0.3.I5.1    @patching
+  out = on(agent, cmd, pty: true).stdout[/\S+\s+(\S+).*@patching/]
+  out.nil? ? nil : Regexp.last_match[1]
+end
+
+# Test yum version
+def test_patch_version(tests, id, name, ver)
+  stepinfo = format_stepinfo(tests, id, 'YUM PACKAGE VERSION')
+  step "TestStep :: #{stepinfo}" do
+    logger.debug("test_yum_version :: #{ver}")
+    iv = get_patch_version(name)
+    if iv == ver
+      logger.info("#{stepinfo} :: PASS")
+    else
+      msg = "Installed version: #{iv}, does not match expected ver: #{ver}"
+      fail_test("TestStep :: #{msg} :: FAIL")
+    end
+  end
 end
