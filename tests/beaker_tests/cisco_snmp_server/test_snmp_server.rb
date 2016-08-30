@@ -79,7 +79,7 @@ def cleanup(agent)
     'no snmp-server contact',
     'no snmp-server globalEnforcePriv',
     'no snmp-server location',
-    "no snmp-server packetsize #{@def_pkt_size}",
+    'no snmp-server packetsize 3600',
     'snmp-server protocol enable',
     'snmp-server tcp-session',
   ].join(' ; ')
