@@ -23,25 +23,31 @@
 ###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
+name = 'nxos.sample-n9k_EOR'
 case image?
 when /7.0.3.I2.1/
-  filename = 'n9000_sample-1.0.0-7.0.3.x86_64.rpm'
+  # Version 7.0.3.I2.1 needs this specific patch.  Attempts to build
+  # new patches for this version with the patch tool don't work.
   name =     'n9000_sample'
+  filename = 'n9000_sample-1.0.0-7.0.3.x86_64.rpm'
   version =  '1.0.0-7.0.3'
+when /7.0.3.I2.2e/
+  filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I2.2e.lib32_n9000.rpm'
+  version =  '1.0.0-7.0.3.I2.2e'
 when /7.0.3.I3.1/
-  filename = 'CSCuxdublin-1.0.0-7.0.3.I3.1.lib32_n9000.rpm'
-  name =     'CSCuxdublin'
+  filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I3.1.lib32_n9000.rpm'
   version =  '1.0.0-7.0.3.I3.1'
 when /7.0.3.I4.1/
   filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I4.1.lib32_n9000.rpm'
-  name =     'nxos.sample-n9k_EOR'
   version =  '1.0.0-7.0.3.I4.1'
+when /7.0.3.I4.2/
+  filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I4.2.lib32_n9000.rpm'
+  version =  '1.0.0-7.0.3.I4.2'
 when /7.0.3.I5/
   filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I5.1.lib32_n9000.rpm'
-  name =     'nxos.sample-n9k_EOR'
   version =  '1.0.0-7.0.3.I5.1'
 else
-  raise_skip_exception("No patch specified for image #{image?}", self)
+  raise_skip_exception("No patch available for image #{image?}", self)
 end
 
 unless resource_present?(agent, 'file', "/bootflash/#{filename}")
@@ -58,18 +64,29 @@ tests = {
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
 skip_unless_supported(tests)
 
-tests[:yum_patch] = {
-  desc:                 "1.1 Apply sample patch to image #{image?}",
-  title_pattern:        name,
-  ensure_prop_override: true,
-  manifest_props:       {
+tests[:yum_patch_install] = {
+  desc:           "1.1 Apply sample patch to image #{image?}",
+  title_pattern:  name,
+  manifest_props: {
     name:             filename,
     provider:         'cisco',
     source:           "/bootflash/#{filename}",
     package_settings: { 'target' => 'host' },
   },
-  resource:             {
+  resource:       {
     'ensure' => version
+  },
+}
+
+tests[:yum_patch_remove] = {
+  desc:           '1.2 Remove sample patch',
+  code:           [0, 2],
+  ensure:         :absent,
+  title_pattern:  name,
+  manifest_props: {
+    name:             filename,
+    provider:         'cisco',
+    package_settings: { 'target' => 'host' },
   },
 }
 
@@ -77,10 +94,21 @@ tests[:yum_patch] = {
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  teardown { resource_absent_by_title(agent, 'package', name) }
-  resource_absent_by_title(agent, 'package', name)
+  # The puppet resource command cannot be used in the guestshell
+  # to query patches that are applied to the host.  This test will
+  # call explicit api's to test the following for both the native
+  # and guestshell workflow:
+  # 1) Apply manifest.
+  # 2) Verify patch is applied on the host.
+  # 3) Idempotence Test.
+  create_package_manifest_resource(tests, :yum_patch_install)
+  create_package_manifest_resource(tests, :yum_patch_remove)
 
-  # -------------------------------------------------------------------
-  test_harness_run(tests, :yum_patch)
+  teardown { test_manifest(tests, :yum_patch_remove) }
+  test_manifest(tests, :yum_patch_remove)
+
+  test_manifest(tests, :yum_patch_install)
+  test_patch_version(tests, :yum_patch_install, name, version)
+  test_idempotence(tests, :yum_patch_install)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
