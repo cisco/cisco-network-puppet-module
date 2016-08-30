@@ -67,7 +67,7 @@ tests[:non_default] = {
   title_pattern:  intf,
   preclean_intf:  true,
   manifest_props: {
-    switchport_mode:         'disabled',
+    switchport_mode:         'trunk',
     storm_control_broadcast: '22.22',
     storm_control_multicast: '44.44',
     storm_control_unicast:   '66.66',
