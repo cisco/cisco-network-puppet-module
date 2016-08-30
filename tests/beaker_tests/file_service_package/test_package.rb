@@ -94,28 +94,21 @@ tests[:yum_patch_remove] = {
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  if virtual == 'lxc'
-    # The puppet resource command cannot be used in the guestshell
-    # to query patches that are applied to the host.  This test will
-    # call explicit api's to test the following for guestshell:
-    # 1) Apply manifest.
-    # 2) Verify patch is applied on the host.
-    # 3) Idempotence Test.
-    create_package_manifest_resource(tests, :yum_patch_install)
-    create_package_manifest_resource(tests, :yum_patch_remove)
+  # The puppet resource command cannot be used in the guestshell
+  # to query patches that are applied to the host.  This test will
+  # call explicit api's to test the following for both the native
+  # and guestshell workflow:
+  # 1) Apply manifest.
+  # 2) Verify patch is applied on the host.
+  # 3) Idempotence Test.
+  create_package_manifest_resource(tests, :yum_patch_install)
+  create_package_manifest_resource(tests, :yum_patch_remove)
 
-    teardown { test_manifest(tests, :yum_patch_remove) }
-    test_manifest(tests, :yum_patch_remove)
+  teardown { test_manifest(tests, :yum_patch_remove) }
+  test_manifest(tests, :yum_patch_remove)
 
-    test_manifest(tests, :yum_patch_install)
-    test_patch_version(tests, :yum_patch_install, name, version)
-    test_idempotence(tests, :yum_patch_install)
-  else
-    teardown { resource_absent_by_title(agent, 'package', name) }
-    resource_absent_by_title(agent, 'package', name)
-
-    tests[:yum_patch_install][:ensure_prop_override] = true
-    test_harness_run(tests, :yum_patch_install)
-  end
+  test_manifest(tests, :yum_patch_install)
+  test_patch_version(tests, :yum_patch_install, name, version)
+  test_idempotence(tests, :yum_patch_install)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
