@@ -47,7 +47,7 @@ tests[:default] = {
   desc:           '1.1 Default Properties',
   title_pattern:  intf,
   preclean_intf:  true,
-  code:           [0],
+  code:           [0, 2],
   manifest_props: {
     switchport_mode:         'trunk',
     storm_control_broadcast: 'default',
@@ -66,7 +66,6 @@ tests[:non_default] = {
   desc:           '2.1 Non Default Properties',
   title_pattern:  intf,
   preclean_intf:  true,
-  code:           [0],
   manifest_props: {
     switchport_mode:         'disabled',
     storm_control_broadcast: '22.22',
