@@ -74,6 +74,14 @@ tests[:non_default] = {
   },
 }
 
+def unsupported_properties(_tests, _id)
+  unprops = []
+  unprops <<
+    :storm_control_broadcast <<
+    :storm_control_multicast if platform == 'n7k'
+  unprops
+end
+
 def cleanup(agent, intf)
   interface_cleanup(agent, intf)
 end

@@ -91,12 +91,22 @@ class ciscopuppet::cisco::demo_interface {
       switchport_mode => access,
     }
 
+    $storm_control_broadcast = platform_get() ? {
+      /(n3k|n5k|n6k|n8k|n9k)/ => '77.77',
+      default => undef
+    }
+
+    $storm_control_multicast = platform_get() ? {
+      /(n3k|n5k|n6k|n8k|n9k)/ => '22.22',
+      default => undef
+    }
+
     cisco_interface { 'Ethernet1/5':
       switchport_mode               => trunk,
       switchport_trunk_allowed_vlan => '30, 29, 31-33, 100',
       switchport_trunk_native_vlan  => 40,
-      storm_control_broadcast       => '77.77',
-      storm_control_multicast       => '22.22',
+      storm_control_broadcast       => $storm_control_broadcast,
+      storm_control_multicast       => $storm_control_multicast,
       storm_control_unicast         => '33.33',
     }
 
