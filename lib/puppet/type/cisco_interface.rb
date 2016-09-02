@@ -1103,6 +1103,7 @@ Puppet::Type.newtype(:cisco_interface) do
           are string, keyword 'default'. "
 
     munge do |value|
+      value = value.downcase.delete(' ')
       value = :default if value == 'default'
       value
     end
@@ -1153,6 +1154,7 @@ Puppet::Type.newtype(:cisco_interface) do
           are string, keyword 'default'. "
 
     munge do |value|
+      value = value.downcase.delete(' ')
       value = :default if value == 'default'
       value
     end
