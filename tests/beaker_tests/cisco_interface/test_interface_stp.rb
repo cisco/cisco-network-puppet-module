@@ -46,7 +46,6 @@ intf = find_interface(tests)
 tests[:default] = {
   desc:           '1.1 Default Properties',
   title_pattern:  intf,
-  preclean_intf:  true,
   code:           [0],
   manifest_props: {
     stp_bpdufilter:         'default',
@@ -113,11 +112,17 @@ tests[:non_default] = {
   },
 }
 
+def cleanup(agent, intf)
+  remove_all_vlans(agent)
+  interface_cleanup(agent, intf)
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  remove_all_vlans(agent)
+  teardown { cleanup(agent, intf) }
+  cleanup(agent, intf)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
@@ -126,9 +131,5 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   test_harness_run(tests, :non_default)
-
-  remove_all_vlans(agent)
-  interface_cleanup(agent, intf)
 end
-
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

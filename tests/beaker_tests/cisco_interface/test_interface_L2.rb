@@ -121,6 +121,11 @@ tests[:non_default_trunk] = {
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown do
+    interface_cleanup(agent, intf)
+    system_default_switchport(agent, false)
+  end
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. 'access' Property Testing")
   test_harness_run(tests, :default_access)
@@ -130,10 +135,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   logger.info("\n#{'-' * 60}\nSection 1. 'trunk' Property Testing")
   test_harness_run(tests, :default_trunk)
   test_harness_run(tests, :non_default_trunk)
-
-  # -------------------------------------------------------------------
-  interface_cleanup(agent, intf)
-  system_default_switchport(agent, false)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

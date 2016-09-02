@@ -67,10 +67,18 @@ tests[:non_default] = {
   },
 }
 
+def cleanup(agent, intf)
+  remove_interface(agent, intf)
+  remove_all_vlans(agent)
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown { cleanup(agent, intf) }
+  cleanup(agent, intf)
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   test_harness_run(tests, :default)
@@ -78,10 +86,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   test_harness_run(tests, :non_default)
-
-  # -------------------------------------------------------------------
-  remove_interface(agent, intf)
-  remove_all_vlans(agent)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

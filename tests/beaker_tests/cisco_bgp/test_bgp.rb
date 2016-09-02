@@ -27,8 +27,8 @@ require File.expand_path('../bgplib.rb', __FILE__)
 # Test hash top-level keys
 asn = '1'
 tests = {
-  master:        master,
   agent:         agent,
+  master:        master,
   asn:           asn,
   resource_name: 'cisco_bgp',
 }
@@ -37,7 +37,6 @@ tests = {
 tests[:default] = {
   desc:           '1.1 Default Properties',
   title_pattern:  "#{asn} default",
-  preclean:       'cisco_bgp',
   manifest_props: {
     bestpath_always_compare_med:            'default',
     bestpath_aspath_multipath_relax:        'default',
@@ -149,7 +148,6 @@ tests[:non_default] = {
 
 tests[:title_patterns_1] = {
   desc:          'T.1 Title Pattern',
-  preclean:      'cisco_bgp',
   title_pattern: 'new_york',
   title_params:  { asn: '11.4', vrf: 'red' },
   resource:      { 'ensure' => 'present' },
@@ -230,13 +228,20 @@ def unsupported_properties(tests, id)
   unprops
 end
 
+def cleanup(agent)
+  if operating_system == 'nexus'
+    test_set(agent, 'no feature bgp')
+  else
+    resource_absent_cleanup(agent, 'cisco_bgp')
+  end
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  teardown do
-    resource_absent_cleanup(agent, 'cisco_bgp')
-  end
+  teardown { cleanup(agent) }
+  cleanup(agent)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
@@ -247,12 +252,11 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # test removal of bgp instance
   tests[id][:ensure] = :absent
-  tests[id].delete(:preclean)
   test_harness_run(tests, id)
 
   # now test the defaults under a non-default vrf
+  cleanup(agent)
   tests[id][:ensure] = :present
-  tests[id][:preclean] = 'cisco_bgp'
   test_harness_bgp_vrf(tests, id, 'blue')
 
   # -------------------------------------------------------------------
@@ -264,8 +268,8 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
+  cleanup(agent)
   test_harness_run(tests, :title_patterns_1)
   test_harness_run(tests, :title_patterns_2)
 end
-
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

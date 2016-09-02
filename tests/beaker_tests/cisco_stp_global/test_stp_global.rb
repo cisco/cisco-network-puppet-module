@@ -262,8 +262,9 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  # -------------------------------------------------------------------
+  teardown { remove_all_vlans(agent) }
   remove_all_vlans(agent)
+  # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
   test_harness_run(tests, :default)
@@ -271,6 +272,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :default_mst)
   test_harness_run(tests, :default_plat_1)
   test_harness_run(tests, :default_plat_2)
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
@@ -279,8 +281,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :non_default_plat_1)
   test_harness_run(tests, :non_default_plat_2)
 
-  remove_all_vlans(agent)
+  # -------------------------------------------------------------------
   skipped_tests_summary(tests)
 end
-
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

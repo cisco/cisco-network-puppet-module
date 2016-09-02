@@ -23,57 +23,53 @@
 ###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
-# Test hash top-level keys
 tests = {
-  master:        master,
   agent:         agent,
-  resource_name: 'cisco_pim_rp_address',
+  master:        master,
+  resource_name: 'file',
 }
 
-# Test hash test cases
-tests[:title_patterns_1] = {
-  desc:          'T.1 Title Pattern',
-  title_pattern: 'new_york',
-  title_params:  { afi: 'ipv4', vrf: 'red', rp_addr: '1.1.1.1' },
-  resource:      { 'ensure' => 'present' },
+testfile = '/tmp/testfile.txt'
+
+tests[:testfile] = {
+  title_pattern:  testfile,
+  manifest_props: {
+    path:     testfile,
+    content:  'This is a puppet/beaker test file',
+    checksum: 'sha256',
+    mode:     'ug+rw',
+    owner:    'root',
+    provider: 'posix',
+  },
+  resource:       {
+    'ensure'  => 'file',
+    'content' => '{md5}[0-9a-fA-F]*',
+    'group'   => '0',
+    'mode'    => '0664',
+    'owner'   => '0',
+    'type'    => 'file',
+  },
 }
 
-tests[:title_patterns_2] = {
-  desc:          'T.2 Title Pattern',
-  title_pattern: 'ipv4',
-  title_params:  { vrf: 'blue', rp_addr: '1.1.1.1' },
-  resource:      { 'ensure' => 'present' },
-}
-
-tests[:title_patterns_3] = {
-  desc:          'T.3 Title Pattern',
-  title_pattern: 'ipv4 cyan',
-  title_params:  { rp_addr: '1.1.1.1' },
-  resource:      { 'ensure' => 'present' },
-}
-
-tests[:title_patterns_4] = {
-  desc:          'T.4 Title Pattern',
-  title_pattern: 'ipv4 orange 1.1.1.1',
-  resource:      { 'ensure' => 'present' },
-}
-
-def cleanup(agent)
-  test_set(agent, 'no feature pim')
+def cleanup(agent, testfile)
+  on(agent, "rm -f #{testfile}", acceptable_error_codes: [0, 2])
 end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  teardown { cleanup(agent) }
-  cleanup(agent)
+  teardown { cleanup(agent, testfile) }
+  cleanup(agent, testfile)
 
-  # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 1. Title Pattern Testing")
-  test_harness_run(tests, :title_patterns_1)
-  test_harness_run(tests, :title_patterns_2)
-  test_harness_run(tests, :title_patterns_3)
-  test_harness_run(tests, :title_patterns_4)
+  # ----------------------------------------------------
+  logger.info("\n#{'-' * 60}\nSection 1. Create & Destroy")
+  id = :testfile
+  tests[id][:desc] = '1.1 Create test file'
+  test_harness_run(tests, id)
+
+  tests[id][:desc] = '1.2 Remove test file'
+  tests[id][:ensure] = :absent
+  test_harness_run(tests, id)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

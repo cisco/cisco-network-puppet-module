@@ -23,51 +23,75 @@
 ###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
+# Test hash top-level keys
 tests = {
   agent:         agent,
   master:        master,
-  intf_type:     'ethernet',
-  resource_name: 'cisco_interface_channel_group',
+  ensurable:     false,
+  resource_name: 'cisco_snmp_server',
 }
 
-intf = find_interface(tests)
+@def_pkt_size = platform[/n(3|8|9)k/] ? '1500' : '0'
 
+# Test hash test cases
 tests[:default] = {
   desc:           '1.1 Default Properties',
-  title_pattern:  intf,
-  code:           [0, 2],
+  code:           [0],
+  title_pattern:  'default',
   manifest_props: {
-    channel_group: 'default',
-    description:   'default',
-    shutdown:      'default',
+    aaa_user_cache_timeout: 'default',
+    contact:                'default',
+    global_enforce_priv:    'default',
+    location:               'default',
+    packet_size:            'default',
+    protocol:               'default',
+    tcp_session_auth:       'default',
   },
   resource:       {
-    'channel_group' => 'false',
-    'shutdown'      => 'true',
+    'aaa_user_cache_timeout' => '3600',
+    # 'contact'              => n/a,
+    'global_enforce_priv'    => 'false',
+    # 'location'             => n/a,
+    'packet_size'            => @def_pkt_size,
+    'protocol'               => 'true',
+    'tcp_session_auth'       => 'true',
   },
 }
 
 tests[:non_default] = {
-  desc:           '2.1 Non Default Properties commands',
-  title_pattern:  intf,
+  desc:           '2.1 Non Default Properties',
+  title_pattern:  'default',
   manifest_props: {
-    channel_group: 201,
-    description:   'chan group desc',
-    shutdown:      'false',
-  },
-  resource:       {
-    'channel_group' => '201',
-    'description'   => 'chan group desc',
-    'shutdown'      => 'false',
+    aaa_user_cache_timeout: 1000,
+    contact:                'beaker',
+    global_enforce_priv:    true,
+    location:               'beaker',
+    packet_size:            2500,
+    protocol:               false,
+    tcp_session_auth:       false,
   },
 }
+
+def cleanup(agent)
+  # Restore testbed to default state
+  cmds = [
+    'no snmp-server aaa-user cache-timeout 3600',
+    'no snmp-server contact',
+    'no snmp-server globalEnforcePriv',
+    'no snmp-server location',
+    'no snmp-server packetsize 3600',
+    'snmp-server protocol enable',
+    'snmp-server tcp-session',
+  ].join(' ; ')
+  test_set(agent, cmds)
+end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  teardown { interface_cleanup(agent, intf) }
-  interface_cleanup(agent, intf)
+  teardown { cleanup(agent) }
+  cleanup(agent)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")

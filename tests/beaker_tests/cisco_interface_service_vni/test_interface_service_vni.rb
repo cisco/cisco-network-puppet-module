@@ -37,6 +37,7 @@ skip_unless_supported(tests)
 
 if (intf = mt_full_interface)
   tests[:intf] = intf
+  setup_mt_full_env(tests, self)
 else
   prereq_skip(nil, self, 'MT-full tests require F3 or compatible line module')
 end
@@ -68,10 +69,6 @@ tests[:non_default] = {
 def dependency_manifest(tests, id)
   return unless id == :default
   dep = %(
-    cisco_vdc { '#{default_vdc_name}':
-      # Must be f3-only
-      limit_resource_module_type => 'f3',
-    }
     cisco_encapsulation {'vni_500_5000':
       dot1q_map => ['500', '5000'],
     }
@@ -87,7 +84,11 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  # Clean up any stale pre-req configs that might conflict with our test
+  teardown do
+    resource_absent_cleanup(agent, 'cisco_interface_service_vni')
+    resource_absent_cleanup(agent, 'cisco_encapsulation')
+    interface_cleanup(agent, intf)
+  end
   resource_absent_cleanup(agent, 'cisco_encapsulation')
   interface_cleanup(agent, intf)
 
@@ -95,10 +96,5 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   test_harness_run(tests, :default)
   test_harness_run(tests, :non_default)
-
-  # -----------------------------------
-  resource_absent_cleanup(agent, 'cisco_interface_service_vni')
-  resource_absent_cleanup(agent, 'cisco_encapsulation')
-  interface_cleanup(agent, intf, 'Post-test cleanup: ')
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

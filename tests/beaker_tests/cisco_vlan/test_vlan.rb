@@ -102,34 +102,33 @@ tests[:non_default_extended] = {
 # State cannot be modified for extended vlans on N5k and N6k platforms.
 tests[:non_default_extended][:manifest_props].delete(:state) if platform[/n(5|6)k/]
 
-def unsupported_properties(_tests, _id)
+if platform[/n3k/]
+  tests[:vn_segment_unsupported] =
+    resource_probe(agent,
+                   'cisco_vlan 128 mapped_vni=128000',
+                   'Hardware is not capable of supporting vn-segment-vlan-based feature')
+end
+
+def unsupported_properties(tests, _id)
   unprops = []
 
-  unprops << :mapped_vni if platform[/n7k/]
+  unprops << :mapped_vni if platform[/n7k/] || tests[:vn_segment_unsupported]
 
   unprops << :fabric_control unless platform[/n7k/]
 
+  logger.info("  unprops: #{unprops}") unless unprops.empty?
   unprops
-end
-
-# Overridden to properly handle dependencies for this test file.
-def dependency_manifest(_tests, _id)
-  dep = ''
-  if platform[/n7k/]
-    dep = %(
-      cisco_vdc { '#{default_vdc_name}':
-        # Must be f3-only
-        limit_resource_module_type => 'f3',
-      })
-  end
-  logger.info("\n  * dependency_manifest\n#{dep}")
-  dep
 end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown do
+    remove_all_vlans(agent)
+    vdc_limit_f3_no_intf_needed(:clear)
+  end
+  vdc_limit_f3_no_intf_needed(:set)
   remove_all_vlans(agent)
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Property Testing")
@@ -140,8 +139,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   remove_all_vlans(agent)
   test_harness_run(tests, :default_extended)
   test_harness_run(tests, :non_default_extended)
-
-  remove_all_vlans(agent)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

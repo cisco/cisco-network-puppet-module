@@ -36,7 +36,6 @@ tests = {
 tests[:default_1] = {
   desc:           '1.1 Defaults',
   title_pattern:  'test default',
-  preclean:       'cisco_ospf',
   manifest_props: {
     auto_cost:                'default',
     bfd:                      'default',
@@ -131,10 +130,17 @@ tests[:non_default_2] = {
   },
 }
 
+def cleanup(agent)
+  test_set(agent, 'no feature ospf ; no feature bfd')
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown { cleanup(agent) }
+  cleanup(agent)
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   test_harness_run(tests, :default_1)
@@ -142,7 +148,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   id = :default_2
   tests[id][:ensure] = :absent
-  tests[id].delete(:preclean)
   test_harness_run(tests, id)
 
   # -------------------------------------------------------------------
@@ -150,7 +155,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   test_harness_run(tests, :non_default_1)
   test_harness_run(tests, :non_default_2)
-  resource_absent_cleanup(agent, 'cisco_ospf')
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

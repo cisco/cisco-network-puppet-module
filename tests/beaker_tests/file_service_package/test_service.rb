@@ -23,57 +23,54 @@
 ###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
-# Test hash top-level keys
 tests = {
-  master:        master,
   agent:         agent,
-  resource_name: 'cisco_pim_rp_address',
+  master:        master,
+  ensurable:     false,
+  resource_name: 'service',
 }
 
-# Test hash test cases
-tests[:title_patterns_1] = {
-  desc:          'T.1 Title Pattern',
-  title_pattern: 'new_york',
-  title_params:  { afi: 'ipv4', vrf: 'red', rp_addr: '1.1.1.1' },
-  resource:      { 'ensure' => 'present' },
+os_service = 'mcollective'
+
+tests[:service_start] = {
+  desc:           "1.1 Start Service '#{os_service}'",
+  title_pattern:  os_service,
+  manifest_props: {
+    name:   os_service,
+    ensure: 'running',
+    enable: 'true',
+  },
+  resource:       { 'ensure' => 'running' },
 }
 
-tests[:title_patterns_2] = {
-  desc:          'T.2 Title Pattern',
-  title_pattern: 'ipv4',
-  title_params:  { vrf: 'blue', rp_addr: '1.1.1.1' },
-  resource:      { 'ensure' => 'present' },
+tests[:service_stop] = {
+  desc:           "1.2 Stop Service '#{os_service}'",
+  title_pattern:  os_service,
+  manifest_props: {
+    name:   os_service,
+    ensure: 'stopped',
+    enable: 'false',
+  },
+  resource:       { 'ensure' => 'stopped' },
 }
 
-tests[:title_patterns_3] = {
-  desc:          'T.3 Title Pattern',
-  title_pattern: 'ipv4 cyan',
-  title_params:  { rp_addr: '1.1.1.1' },
-  resource:      { 'ensure' => 'present' },
-}
-
-tests[:title_patterns_4] = {
-  desc:          'T.4 Title Pattern',
-  title_pattern: 'ipv4 orange 1.1.1.1',
-  resource:      { 'ensure' => 'present' },
-}
-
-def cleanup(agent)
-  test_set(agent, 'no feature pim')
+def cleanup(tests)
+  puppet_resource_cmd_from_params(tests, :service_stop)
+  cmd = tests[:service_stop][:resource_cmd] + ' ensure=stopped enable=false'
+  logger.info("Cleanup: #{cmd}")
+  on(tests[:agent], cmd, acceptable_error_codes: [0, 2])
 end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  teardown { cleanup(agent) }
-  cleanup(agent)
+  teardown { cleanup(tests) }
+  cleanup(tests)
 
-  # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 1. Title Pattern Testing")
-  test_harness_run(tests, :title_patterns_1)
-  test_harness_run(tests, :title_patterns_2)
-  test_harness_run(tests, :title_patterns_3)
-  test_harness_run(tests, :title_patterns_4)
+  # ----------------------------------------------------
+  logger.info("\n#{'-' * 60}\nSection 1. Service Tests")
+  test_harness_run(tests, :service_start)
+  test_harness_run(tests, :service_stop)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

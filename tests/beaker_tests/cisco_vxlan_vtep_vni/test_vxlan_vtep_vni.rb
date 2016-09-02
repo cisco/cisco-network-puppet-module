@@ -282,20 +282,6 @@ def test_harness_dependencies(*)
   skip_if_nv_overlay_rejected(agent)
 end
 
-# Overridden to properly handle dependencies for this test file.
-def dependency_manifest(*)
-  dep = ''
-  if platform[/n7k/]
-    dep = %(
-      cisco_vdc { '#{default_vdc_name}':
-        # Must be f3-only
-        limit_resource_module_type => 'f3',
-      })
-  end
-  logger.info("\n  * dependency_manifest\n#{dep}")
-  dep
-end
-
 def build_manifest_cisco_vxlan_vtep_vni(tests, id)
   if tests[id][:ensure] == :absent
     state = 'ensure => absent,'
@@ -313,7 +299,6 @@ def build_manifest_cisco_vxlan_vtep_vni(tests, id)
   # cisco_vxlan_vtep_vni needs cisco_vxlan_vtep as a prerequisite.
   tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   node 'default' {
-    #{dependency_manifest}
     cisco_vxlan_vtep {'nve1':
       ensure => present,
       host_reachability  => 'evpn',
@@ -349,12 +334,15 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
-  #-------------------------------------------------------------------
-  resource_absent_cleanup(agent, 'cisco_vxlan_vtep_vni',
-                          'Setup switch for cisco_vxlan_vtep_vni provider test')
-  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
+  teardown do
+    resource_absent_cleanup(agent, 'cisco_vxlan_vtep_vni')
+    vdc_limit_f3_no_intf_needed(:clear)
+  end
+  resource_absent_cleanup(agent, 'cisco_vxlan_vtep_vni')
+  vdc_limit_f3_no_intf_needed(:set)
 
   # -------------------------------------------------------------------
+  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   id = 'default_properties_ingress_replication'
   tests[id][:desc] = '1.1 Default Properties Ingress Replication'
   test_harness_cisco_vxlan_vtep_vni(tests, id)
@@ -418,9 +406,6 @@ test_name "TestCase :: #{testheader}" do
   id = 'suppress_uuc_false'
   tests[id][:desc] = '2.10 Suppress Unknown Unicast'
   test_harness_cisco_vxlan_vtep_vni(tests, id)
-
-  resource_absent_cleanup(agent, 'cisco_vxlan_vtep_vni',
-                          'Setup switch for cisco_vxlan_vtep_vni provider test')
 end
 
 logger.info('TestCase :: # {testheader} :: End')

@@ -57,12 +57,11 @@ tests = {
 skip_unless_supported(tests)
 
 # Assign a test interface.
-if platform[/n7k/]
+if (intf = mt_full_interface)
+  tests[:intf] = intf
   setup_mt_full_env(tests, self)
-  # Use test interface discovered by setup_mt_full_env().
-  intf = tests[:intf]
 else
-  intf = find_interface(tests)
+  prereq_skip(nil, self, 'Test requires F3 or compatible line module')
 end
 
 # Test hash test cases
@@ -99,6 +98,8 @@ tests[:non_default] = {
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown { interface_cleanup(agent, intf) }
+
   # -----------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   test_harness_run(tests, :default)
@@ -108,7 +109,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :non_default)
 
   # -------------------------------------------------------------------
-  interface_cleanup(agent, intf)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

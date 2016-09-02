@@ -21,7 +21,6 @@
 #  - A description of the 'tests' hash and its usage
 #
 ###############################################################################
-
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 # Test hash top-level keys
@@ -32,11 +31,14 @@ tests = {
   resource_name: 'cisco_itd_device_group',
 }
 
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
+skip_nexus_i2_image(tests)
+
 # Test hash test cases
 tests[:default] = {
   desc:           '1.1 Defaults',
   title_pattern:  'icmpGroup',
-  preclean:       'cisco_itd_device_group',
   manifest_props: {
     probe_type: 'default'
   },
@@ -125,33 +127,34 @@ tests[:non_default_udp] = {
   },
 }
 
+def cleanup(agent)
+  test_set(agent, 'no feature itd')
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  # -------------------------------------------------------------------
-  device = platform
-  logger.info("#### This device is of type: #{device} #####")
-  skip_nexus_image('I2', tests)
-  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
+  teardown { cleanup(agent) }
+  cleanup(agent)
 
+  # -------------------------------------------------------------------
+  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   test_harness_run(tests, :default)
   test_harness_run(tests, :default_icmp)
 
   id = :default
   tests[id][:ensure] = :absent
-  tests[id].delete(:preclean)
   test_harness_run(tests, id)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-
   test_harness_run(tests, :non_default_icmp)
   test_harness_run(tests, :non_default_dns)
   test_harness_run(tests, :non_default_tcp)
   test_harness_run(tests, :non_default_udp)
-  resource_absent_cleanup(agent, 'cisco_itd_device_group')
+
+  # -------------------------------------------------------------------
   skipped_tests_summary(tests)
 end
-
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

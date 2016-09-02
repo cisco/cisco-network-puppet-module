@@ -32,11 +32,14 @@ tests = {
   resource_name: 'cisco_itd_device_group_node',
 }
 
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
+skip_nexus_i2_image(tests)
+
 # Test hash test cases
 tests[:default] = {
   desc:           '1.1 Defaults',
   title_pattern:  'icmpGroup 1.1.1.1',
-  preclean:       'cisco_itd_device_group_node',
   manifest_props: {
     hot_standby:      'default',
     node_type:        'ip',
@@ -135,10 +138,14 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown do
+    resource_absent_cleanup(agent, 'cisco_itd_device_group_node')
+    resource_absent_cleanup(agent, 'cisco_itd_device_group')
+  end
+  resource_absent_cleanup(agent, 'cisco_itd_device_group_node')
+  resource_absent_cleanup(agent, 'cisco_itd_device_group')
+
   # -------------------------------------------------------------------
-  device = platform
-  logger.info("#### This device is of type: #{device} #####")
-  skip_nexus_image('I2', tests)
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
   test_harness_run(tests, :default)
@@ -155,9 +162,8 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :non_default_dns)
   test_harness_run(tests, :non_default_tcp)
   test_harness_run(tests, :non_default_udp)
-  resource_absent_cleanup(agent, 'cisco_itd_device_group_node')
-  resource_absent_cleanup(agent, 'cisco_itd_device_group')
+
+  # -------------------------------------------------------------------
   skipped_tests_summary(tests)
 end
-
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

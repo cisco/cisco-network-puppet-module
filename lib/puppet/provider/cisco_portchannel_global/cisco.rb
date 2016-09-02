@@ -187,11 +187,10 @@ Puppet::Type.type(:cisco_portchannel_global).provide(:cisco) do
   def check_port_channel_load_balance_no_rotate_all
     fail ArgumentError, 'Invalid arguments present in manifest' if
       @resource[:asymmetric] || @resource[:concatenation] ||
-      @resource[:rotate]
+      @resource[:rotate] || @resource[:hash_poly]
     fail ArgumentError, 'Required arguments not present in manifest' unless
       @resource[:bundle_hash] &&
-      @resource[:bundle_select] &&
-      @resource[:symmetry]
+      @resource[:bundle_select]
   end
 
   def port_channel_load_balance_no_rotate_set
