@@ -66,14 +66,6 @@ class ciscopuppet::cisco::demo_interface {
       ipv4_acl_out                  => 'v4acl2',
       ipv6_acl_in                   => 'v6acl1',
       ipv6_acl_out                  => 'v6acl2',
-      ipv4_dhcp_relay_addr          => ['1.1.1.1', '2.2.2.2'],
-      ipv4_dhcp_relay_info_trust    => $ipv4_dhcp_relay_info_trust,
-      ipv4_dhcp_relay_src_addr_hsrp => $ipv4_dhcp_relay_src_addr_hsrp,
-      ipv4_dhcp_relay_src_intf      => 'port-channel 100',
-      ipv4_dhcp_relay_subnet_broadcast => true,
-      ipv4_dhcp_smart_relay         => true,
-      ipv6_dhcp_relay_addr          => ['2000::11', '2001::22'],
-      ipv6_dhcp_relay_src_intf      => 'ethernet 2/2',
     }
 
     cisco_interface { 'Ethernet1/1.1':
@@ -91,6 +83,17 @@ class ciscopuppet::cisco::demo_interface {
       switchport_mode => access,
     }
 
+    cisco_interface { 'Ethernet1/4':
+      switchport_mode                  => disabled,
+      ipv4_dhcp_relay_addr             => ['1.1.1.1', '2.2.2.2'],
+      ipv4_dhcp_relay_info_trust       => $ipv4_dhcp_relay_info_trust,
+      ipv4_dhcp_relay_src_addr_hsrp    => $ipv4_dhcp_relay_src_addr_hsrp,
+      ipv4_dhcp_relay_src_intf         => 'port-channel 100',
+      ipv4_dhcp_relay_subnet_broadcast => true,
+      ipv4_dhcp_smart_relay            => true,
+      ipv6_dhcp_relay_addr             => ['2000::11', '2001::22'],
+      ipv6_dhcp_relay_src_intf         => 'ethernet 2/2',
+    }
     $storm_control_broadcast = platform_get() ? {
       /(n3k|n5k|n6k|n8k|n9k)/ => '77.77',
       default => undef
