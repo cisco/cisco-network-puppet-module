@@ -82,11 +82,11 @@ tests[:non_default] = {
     ipv4_dhcp_relay_addr:             v4_relay,
     ipv4_dhcp_relay_info_trust:       'true',
     ipv4_dhcp_relay_src_addr_hsrp:    'true',
-    ipv4_dhcp_relay_src_intf:         'loopback 1',
+    ipv4_dhcp_relay_src_intf:         'loopback1',
     ipv4_dhcp_relay_subnet_broadcast: 'true',
     ipv4_dhcp_smart_relay:            'true',
     ipv6_dhcp_relay_addr:             v6_relay,
-    ipv6_dhcp_relay_src_intf:         'ethernet 1/1',
+    ipv6_dhcp_relay_src_intf:         'ethernet1/1',
   },
 }
 
