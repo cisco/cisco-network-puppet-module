@@ -42,7 +42,6 @@ intf = find_interface(tests)
 tests[:default] = {
   desc:           '1.1 Defaults',
   title_pattern:  "#{intf} Sample",
-  preclean_intf:  true,
   manifest_props: {
     area:                           200,
     bfd:                            'default',
@@ -108,7 +107,7 @@ tests[:non_default] = {
 
 def test_harness_dependencies(_tests, id)
   return unless id == :default
-  test_set(agent, 'feature ospf')
+  test_set(agent, 'feature ospf ; router ospf Sample')
 end
 
 def cleanup(agent, intf)
