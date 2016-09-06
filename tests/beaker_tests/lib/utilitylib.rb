@@ -600,6 +600,9 @@ def create_manifest_and_resource(tests, id)
   else
     state = 'ensure => present,' unless tests[:ensurable] == false
 
+    tests[id][:resource]['ensure'] = nil unless
+        tests[id][:resource].nil? || tests[:ensurable] == false
+
     manifest_props = tests[id][:manifest_props]
     if manifest_props
       manifest_props = supported_property_hash(tests, id, manifest_props)
