@@ -258,6 +258,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # now test the defaults under a non-default vrf
   cleanup(agent)
   tests[id][:ensure] = :present
+  tests[id][:desc] = '1.1.a. Default Properties (vrf blue)'
   test_harness_bgp_vrf(tests, id, 'blue')
 
   # -------------------------------------------------------------------
@@ -265,6 +266,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   id = :non_default
   test_harness_run(tests, id)
+  tests[id][:desc] = '2.1.a. Default Properties (vrf blue)'
   test_harness_bgp_vrf(tests, id, 'blue')
 
   # -------------------------------------------------------------------
