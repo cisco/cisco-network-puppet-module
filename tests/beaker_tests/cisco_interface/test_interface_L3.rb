@@ -162,6 +162,14 @@ def unsupported_properties(_tests, id)
       :duplex <<
       :ipv4_forwarding <<
       :ipv4_pim_sparse_mode <<
+      :ipv4_dhcp_relay_addr <<
+      :ipv4_dhcp_relay_info_trust <<
+      :ipv4_dhcp_relay_src_addr_hsrp <<
+      :ipv4_dhcp_relay_src_intf <<
+      :ipv4_dhcp_relay_subnet_broadcast <<
+      :ipv4_dhcp_smart_relay <<
+      :ipv6_dhcp_relay_addr <<
+      :ipv6_dhcp_relay_src_intf <<
       :switchport_mode
   end
 
