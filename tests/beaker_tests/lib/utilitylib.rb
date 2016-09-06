@@ -98,6 +98,7 @@ def search_pattern_in_output(output, patarr, inverse, testcase,\
     if match
       logger.debug("TestStep :: #{match_kind}Match #{pattern} :: PASS")
     else
+      logger.error("stdout:\n--\n#{stdout}\n--")
       testcase.fail_test("TestStep :: #{match_kind}Match #{pattern} :: FAIL")
     end
   end
