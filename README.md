@@ -402,7 +402,7 @@ Symbol | Meaning | Description
 | [cisco_evpn_vni](#type-cisco_evpn_vni)                     | ✅ | :heavy_minus_sign: | ✅ | ✅ | ✅ | ✅ | \*[caveats](#cisco_evpn_vni-caveats) |
 | [cisco_fabricpath_global](#type-cisco_fabricpath_global)     | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅* | :heavy_minus_sign: | \*[caveats](#cisco_fabricpath_global-caveats) |
 | [cisco_fabricpath_topology](#type-cisco_fabricpath_topology) | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅  | :heavy_minus_sign: |
-| [cisco_interface](#type-cisco_interface)                             | ✅  | ✅  | ✅* | ✅* | ✅  | ✅ | \*[caveats](#cisco_interface-caveats) |
+| [cisco_interface](#type-cisco_interface)                             | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_interface-caveats) |
 | [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
 | [cisco_interface_ospf](#type-cisco_interface_ospf)                   | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
 | [cisco_interface_portchannel](#type-cisco_interface_portchannel)     | ✅* | ✅* | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_interface_portchannel-caveats) |
@@ -1833,6 +1833,10 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 
 | Property | Caveat Description |
 |:---------|:-------------|
+| `ipv4_dhcp_relay_info_trust`          | Not supported on N5k,N6k      |
+| `ipv4_dhcp_relay_src_addr_hsrp`       | Not supported on N3k,N8k,N9k  |
+| `storm_control_broadcast`             | Not supported on N7k          |
+| `storm_control_multicast`             | Not supported on N7k          |
 | `pvlan_mapping`                       | Not supported on N8k          |
 | `switchport_pvlan_host`               | Not supported on N8k          |
 | `switchport_pvlan_host_association`   | Not supported on N8k          |
@@ -1973,6 +1977,15 @@ and 'default'.
 Enable/Disable negotiate auto on the interface. Valid values are 'true',
 'false', and 'default'.
 
+##### `storm_control_broadcast`
+Allowed broadcast traffic level. Valid values are string, keyword 'default'.
+
+##### `storm_control_multicast`
+Allowed multicast traffic level. Valid values are string, keyword 'default'.
+
+##### `storm_control_unicast`
+Allowed unicast traffic level. Valid values are string, keyword 'default'.
+
 ##### L3 interface config attributes
 
 ###### `ipv4_acl_in`
@@ -2021,6 +2034,36 @@ Applies an ipv6 access list on the interface in the ingress direction. An access
 
 ###### `ipv6_acl_out`
 Applies an ipv6 access list on the interface in the egress direction. An access-list should be present on the network device prior to this configuration. Valid values are string, keyword 'default'.
+
+###### `ipv4_dhcp_relay_addr`
+This property is an array of dhcp relay addresses. Valid values are an array specifying the dhcp relay addresses or keyword 'default'; e.g.:
+
+```
+ipv4_dhcp_relay_addr => ['1.1.1.1', '2.2.2.2']
+```
+###### `ipv4_dhcp_relay_info_trust`
+Enable/Disable relay trust on the interface. Valid values are 'true', 'false', and 'default'.
+
+###### `ipv4_dhcp_relay_src_addr_hsrp`
+Enable/Disable virtual IP instead of SVI address on the interface. Valid values are 'true', 'false', and 'default'.
+
+###### `ipv4_dhcp_relay_src_intf`
+Source interface for the DHCPV4 relay. Valid values are string, keyword 'default'.
+
+###### `ipv4_dhcp_relay_info_trust`
+Enable/Disable DHCP relay subnet-broadcast on the interface. Valid values are 'true', 'false', and 'default'.
+
+###### `ipv4_dhcp_smart_relay`
+Enable/Disable DHCP smart relay on the interface. Valid values are 'true', 'false', and 'default'.
+
+###### `ipv6_dhcp_relay_addr`
+This property is an array of ipv6 dhcp relay addresses. Valid values are an array specifying the ipv6 dhcp relay addresses or keyword 'default'; e.g.:
+
+```
+ipv6_dhcp_relay_addr => ['2000::11', '2001::22']
+```
+###### `ipv6_dhcp_relay_src_intf`
+Source interface for the DHCPV6 relay. Valid values are string, keyword 'default'.
 
 ###### `vlan_mapping`
 This property is a nested array of [original_vlan, translated_vlan] pairs. Valid values are an array specifying the mapped vlans or keyword 'default'; e.g.:

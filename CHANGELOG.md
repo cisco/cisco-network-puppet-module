@@ -13,6 +13,17 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Extend cisco_interface with attributes:
  - `bfd_echo`
+ - `ipv4_dhcp_relay_addr`
+ - `ipv4_dhcp_relay_info_trust`
+ - `ipv4_dhcp_relay_src_addr_hsrp`
+ - `ipv4_dhcp_relay_src_intf`
+ - `ipv4_dhcp_relay_subnet_broadcast`
+ - `ipv4_dhcp_smart_relay`
+ - `ipv6_dhcp_relay_addr`
+ - `ipv6_dhcp_relay_src_intf`
+ - `storm_control_broadcast`
+ - `storm_control_multicast`
+ - `storm_control_unicast`
 - Extend cisco_interface_ospf with attributes:
  - `bfd`
  - `mtu_ignore`

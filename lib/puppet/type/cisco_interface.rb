@@ -1087,7 +1087,7 @@ Puppet::Type.newtype(:cisco_interface) do
   end # property ipv4_dhcp_relay_addr
 
   newproperty(:ipv4_dhcp_relay_info_trust) do
-    desc 'Enables relay trust enables on this interface.'
+    desc 'Enables relay trust on this interface.'
 
     newvalues(:true, :false, :default)
   end # property ipv4_dhcp_relay_info_trust
