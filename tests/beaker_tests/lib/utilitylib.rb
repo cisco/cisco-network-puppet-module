@@ -1107,19 +1107,17 @@ def image?(reset_cache=false)
   @cached_img = stdout.nil? ? '' : stdout
 end
 
-# Check if this image is an I2 image
 @image = nil # Cache the lookup result
 def nexus_image
-  return @image unless @image.nil?
-  on(agent, facter_cmd('-p cisco.images.system_image'))
-  @image = stdout[/[A-Z]+\d/]
-  @image
+  facter_opt = '-p cisco.images.system_image'
+  image_regexp = /[A-Z]+\d+\.\d+/
+  @image ||= on(agent, facter_cmd(facter_opt)).output[image_regexp]
 end
 
-# This is a skip-all-testcases-if-I2-image check.
+# On match will skip all testcases
 # Do not use this for skipping individual properties.
 def skip_nexus_image(image, tests)
-  return unless nexus_image["#{image}"]
+  return unless nexus_image[image]
   msg = "Skipping all tests; '#{tests[:resource_name]}' "\
         "is not supported on #{image} images"
   banner = '#' * msg.length
