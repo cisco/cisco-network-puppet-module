@@ -47,25 +47,39 @@ tests[:default] = {
   code:               [0],
   sys_def_switchport: false,
   manifest_props:     {
-    bfd_echo:             'default',
-    description:          'default',
-    duplex:               'default',
-    ipv4_forwarding:      'default',
-    ipv4_pim_sparse_mode: 'default',
-    ipv4_proxy_arp:       'default',
-    ipv4_redirects:       'default',
-    mtu:                  'default',
-    shutdown:             'default',
-    vrf:                  'default',
+    bfd_echo:                         'default',
+    description:                      'default',
+    duplex:                           'default',
+    ipv4_forwarding:                  'default',
+    ipv4_pim_sparse_mode:             'default',
+    ipv4_proxy_arp:                   'default',
+    ipv4_redirects:                   'default',
+    ipv4_dhcp_relay_addr:             'default',
+    ipv4_dhcp_relay_info_trust:       'default',
+    ipv4_dhcp_relay_src_addr_hsrp:    'default',
+    ipv4_dhcp_relay_src_intf:         'default',
+    ipv4_dhcp_relay_subnet_broadcast: 'default',
+    ipv4_dhcp_smart_relay:            'default',
+    ipv6_dhcp_relay_addr:             'default',
+    ipv6_dhcp_relay_src_intf:         'default',
+    mtu:                              'default',
+    shutdown:                         'default',
+    vrf:                              'default',
   },
   resource:           {
-    duplex:               'auto',
-    ipv4_forwarding:      'false',
-    ipv4_pim_sparse_mode: 'false',
-    ipv4_proxy_arp:       'false',
-    ipv4_redirects:       operating_system == 'nexus' ? 'true' : 'false',
-    mtu:                  operating_system == 'nexus' ? '1500' : '1514',
-    shutdown:             'false',
+    duplex:                           'auto',
+    ipv4_forwarding:                  'false',
+    ipv4_pim_sparse_mode:             'false',
+    ipv4_proxy_arp:                   'false',
+    ipv4_redirects:                   operating_system == 'nexus' ? 'true' : 'false',
+    ipv4_dhcp_relay_info_trust:       'false',
+    ipv4_dhcp_relay_src_addr_hsrp:    'false',
+    ipv4_dhcp_relay_src_intf:         'false',
+    ipv4_dhcp_relay_subnet_broadcast: 'false',
+    ipv4_dhcp_smart_relay:            'false',
+    ipv6_dhcp_relay_src_intf:         'false',
+    mtu:                              operating_system == 'nexus' ? '1500' : '1514',
+    shutdown:                         'false',
   },
 }
 
@@ -77,23 +91,34 @@ tests[:dot1q] = {
   manifest_props: { encapsulation_dot1q: 30 },
 }
 
+v4_relay = ['1.1.1.1', '2.2.2.2', '3.3.3.3']
+v6_relay = ['2000::11', '2001::22', '2001::12']
+
 tests[:non_default] = {
   desc:               '2.1 Non Default Properties',
   title_pattern:      intf,
   sys_def_switchport: false,
   manifest_props:     {
-    bfd_echo:                      false,
-    description:                   'Configured with Puppet',
-    shutdown:                      true,
-    ipv4_address:                  '1.1.1.1',
-    ipv4_netmask_length:           31,
-    ipv4_address_secondary:        '2.2.2.2',
-    ipv4_netmask_length_secondary: 31,
-    ipv4_pim_sparse_mode:          true,
-    ipv4_proxy_arp:                true,
-    ipv4_redirects:                operating_system == 'nexus' ? false : true,
-    switchport_mode:               'disabled',
-    vrf:                           'test1',
+    bfd_echo:                         false,
+    description:                      'Configured with Puppet',
+    shutdown:                         true,
+    ipv4_address:                     '1.1.1.1',
+    ipv4_netmask_length:              31,
+    ipv4_address_secondary:           '2.2.2.2',
+    ipv4_netmask_length_secondary:    31,
+    ipv4_pim_sparse_mode:             true,
+    ipv4_proxy_arp:                   true,
+    ipv4_redirects:                   operating_system == 'nexus' ? false : true,
+    ipv4_dhcp_relay_addr:             v4_relay,
+    ipv4_dhcp_relay_info_trust:       'true',
+    ipv4_dhcp_relay_src_addr_hsrp:    'true',
+    ipv4_dhcp_relay_src_intf:         'loopback1',
+    ipv4_dhcp_relay_subnet_broadcast: 'true',
+    ipv4_dhcp_smart_relay:            'true',
+    ipv6_dhcp_relay_addr:             v6_relay,
+    ipv6_dhcp_relay_src_intf:         'ethernet1/1',
+    switchport_mode:                  'disabled',
+    vrf:                              'test1',
   },
 }
 
@@ -138,6 +163,14 @@ def unsupported_properties(_tests, id)
       :ipv4_forwarding <<
       :ipv4_pim_sparse_mode <<
       :switchport_mode
+  end
+
+  if platform[/n(3|8|9)k/]
+    unprops <<
+      :ipv4_dhcp_relay_src_addr_hsrp
+  elsif platform[/n(5|6)k/]
+    unprops <<
+      :ipv4_dhcp_relay_info_trust
   end
 
   # TBD: shutdown has unpredictable behavior. Needs investigation.
