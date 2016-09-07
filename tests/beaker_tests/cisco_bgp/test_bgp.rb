@@ -64,7 +64,6 @@ tests[:default] = {
     nsr:                                    'default',
     reconnect_interval:                     'default',
     shutdown:                               'default',
-    suppress_fib_pending:                   'default',
     timer_bestpath_limit:                   'default',
     timer_bestpath_limit_always:            'default',
     timer_bgp_holdtime:                     'default',
@@ -97,7 +96,6 @@ tests[:default] = {
     'nsr'                                    => 'false',
     'reconnect_interval'                     => '60',
     'shutdown'                               => 'false',
-    'suppress_fib_pending'                   => 'false',
     'timer_bestpath_limit'                   => '300',
     'timer_bestpath_limit_always'            => 'false',
     'timer_bgp_holdtime'                     => '180',
@@ -215,7 +213,8 @@ def unsupported_properties(tests, id)
         :event_history_periodic <<
         :fast_external_fallover <<
         :flush_routes <<
-        :neighbor_down_fib_accelerate
+        :neighbor_down_fib_accelerate <<
+        :suppress_fib_pending
     end
 
     if platform[/n(5|6|7)k/]
