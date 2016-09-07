@@ -86,6 +86,9 @@ tests[:default_trunk] = {
   sys_def_sw_shut:    true,
   manifest_props:     {
     shutdown:                      'default',
+    storm_control_broadcast:       'default',
+    storm_control_multicast:       'default',
+    storm_control_unicast:         'default',
     switchport_autostate_exclude:  'default',
     switchport_mode:               'trunk',
     switchport_trunk_allowed_vlan: 'default',
@@ -94,6 +97,9 @@ tests[:default_trunk] = {
   },
   resource:           {
     shutdown:                      'true',
+    storm_control_broadcast:       '100.00',
+    storm_control_multicast:       '100.00',
+    storm_control_unicast:         '100.00',
     switchport_autostate_exclude:  'false',
     switchport_mode:               'trunk',
     switchport_trunk_allowed_vlan: '1-4094',
@@ -109,6 +115,9 @@ tests[:non_default_trunk] = {
   sys_def_sw_shut:    true,
   manifest_props:     {
     shutdown:                      'false',
+    storm_control_broadcast:       '22.22',
+    storm_control_multicast:       '44.44',
+    storm_control_unicast:         '66.66',
     switchport_autostate_exclude:  'true',
     switchport_mode:               'trunk',
     switchport_trunk_allowed_vlan: '30-33,40,100',
@@ -116,6 +125,14 @@ tests[:non_default_trunk] = {
     switchport_vtp:                'false',
   },
 }
+
+def unsupported_properties(_tests, _id)
+  unprops = []
+  unprops <<
+    :storm_control_broadcast <<
+    :storm_control_multicast if platform == 'n7k'
+  unprops
+end
 
 #################################################################
 # TEST CASE EXECUTION
