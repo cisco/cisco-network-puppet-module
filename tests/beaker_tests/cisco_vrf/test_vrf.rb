@@ -74,7 +74,7 @@ def unsupported_properties(_tests, _id)
       :vpn_id
 
     unprops << :vni unless platform[/n9k/]
-    unprops << :route_distinguisher if nexus_i2_image
+    unprops << :route_distinguisher if nexus_image['I2']
     # unprops << :description if image?[/7.3.0.D1.1/] # CSCuy36637
 
   else

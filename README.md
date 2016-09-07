@@ -1034,6 +1034,7 @@ Manages configuration of a BGP instance.
 | `disable_policy_batching_ipv6` | Not supported on N5k, N6k, N7k |
 | `neighbor_down_fib_accelerate` | Not supported on N5k, N6k, N7k |
 | `reconnect_interval`           | Not supported on N5k, N6k, N7k |
+| `suppress_fib_pending`         | Idempotence supported only on I5 images |
 
 #### Parameters
 

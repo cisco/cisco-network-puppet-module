@@ -72,7 +72,7 @@ tests[:non_default] = {
 # The harness will remove any "unprops" from the manifests.
 def unsupported_properties(*)
   unprops = []
-  unprops << :route_target_both if nexus_i2_image
+  unprops << :route_target_both if nexus_image['I2']
   unprops
 end
 
