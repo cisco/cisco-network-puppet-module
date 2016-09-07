@@ -1080,7 +1080,7 @@ Puppet::Type.newtype(:cisco_interface) do
 
     munge do |value|
       begin
-        return value = :default if value == 'default'
+        value = :default if value == 'default'
         value
       end
     end
@@ -1093,7 +1093,7 @@ Puppet::Type.newtype(:cisco_interface) do
   end # property ipv4_dhcp_relay_info_trust
 
   newproperty(:ipv4_dhcp_relay_src_addr_hsrp) do
-    desc 'Enables VIP instead of SVI address'
+    desc 'Enables Virtual IP instead of SVI address'
 
     newvalues(:true, :false, :default)
   end # property ipv4_dhcp_relay_src_addr_hsrp
@@ -1143,7 +1143,7 @@ Puppet::Type.newtype(:cisco_interface) do
 
     munge do |value|
       begin
-        return value = :default if value == 'default'
+        value = :default if value == 'default'
         value
       end
     end

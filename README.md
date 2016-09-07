@@ -1979,13 +1979,13 @@ Enable/Disable negotiate auto on the interface. Valid values are 'true',
 'false', and 'default'.
 
 ##### `storm_control_broadcast`
-Allowed broadcast traffic level. Valid values are string, keyword 'default'.
+Allowed broadcast traffic level. Valid values are a string representing the broadcast level or keyword 'default'.
 
 ##### `storm_control_multicast`
-Allowed multicast traffic level. Valid values are string, keyword 'default'.
+Allowed multicast traffic level. Valid values are a string representing the multicast level or keyword 'default'.
 
 ##### `storm_control_unicast`
-Allowed unicast traffic level. Valid values are string, keyword 'default'.
+Allowed unicast traffic level. Valid values are a string representing the unicast level or keyword 'default'.
 
 ##### L3 interface config attributes
 
