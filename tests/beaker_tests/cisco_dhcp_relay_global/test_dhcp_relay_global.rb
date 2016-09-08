@@ -99,7 +99,7 @@ tests[:non_default] = {
     ipv4_src_addr_hsrp:                'true',
     ipv4_src_intf:                     'port-channel200',
     ipv4_sub_option_circuit_id_custom: 'true',
-    ipv4_sub_option_circuit_id_string: '%p%p',
+    ipv4_sub_option_circuit_id_string: 'WORD',
     ipv4_sub_option_cisco:             'true',
     ipv6_option_cisco:                 'true',
     ipv6_option_vpn:                   'true',
@@ -143,7 +143,7 @@ def unsupported_properties(_tests, _id)
       :ipv4_src_addr_hsrp <<
       :ipv4_sub_option_circuit_id_string
   end
-  unprops << :ipv4_sub_option_circuit_id_string if nexus_image['I2']
+  unprops << :ipv4_sub_option_circuit_id_custom if nexus_image['I2']
   unprops
 end
 
