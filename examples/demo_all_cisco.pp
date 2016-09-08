@@ -31,6 +31,7 @@ class ciscopuppet::demo_all_cisco {
   include ciscopuppet::cisco::demo_bfd
   include ciscopuppet::cisco::demo_bgp
   include ciscopuppet::cisco::demo_command_config
+  include ciscopuppet::cisco::demo_dhcp_relay_global
   include ciscopuppet::cisco::demo_evpn
   include ciscopuppet::cisco::demo_fabricpath
   include ciscopuppet::cisco::demo_interface
