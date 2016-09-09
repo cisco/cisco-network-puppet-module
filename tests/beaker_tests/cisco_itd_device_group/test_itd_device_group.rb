@@ -33,7 +33,7 @@ tests = {
 
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
 skip_unless_supported(tests)
-skip_nexus_i2_image(tests)
+skip_nexus_image('I2', tests)
 
 # Test hash test cases
 tests[:default] = {
