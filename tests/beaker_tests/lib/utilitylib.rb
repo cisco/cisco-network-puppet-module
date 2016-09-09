@@ -325,7 +325,7 @@ end
 # Helper to toggle 'system default switchport'
 def system_default_switchport(agent, state=false,
                               stepinfo='system default switchport')
-  step "TestStep :: #{stepinfo}" do
+  step "TestStep :: #{stepinfo} (state: #{state})" do
     state = state ? ' ' : 'no '
     cmd = "#{state}system default switchport"
     command_config(agent, cmd, cmd)
