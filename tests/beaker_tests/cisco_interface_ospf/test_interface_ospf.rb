@@ -40,9 +40,10 @@ intf = find_interface(tests)
 
 # Test hash test cases
 tests[:default] = {
-  desc:           '1.1 Defaults',
-  title_pattern:  "#{intf} Sample",
-  manifest_props: {
+  desc:               '1.1 Defaults',
+  title_pattern:      "#{intf} Sample",
+  sys_def_switchport: false,
+  manifest_props:     {
     area:                           200,
     bfd:                            'default',
     cost:                           'default',
@@ -60,8 +61,8 @@ tests[:default] = {
     shutdown:                       'default',
     transmit_delay:                 'default',
   },
-  code:           [0, 2],
-  resource:       {
+  code:               [0, 2],
+  resource:           {
     area:                           '0.0.0.200',
     cost:                           0,
     dead_interval:                  40,
@@ -111,6 +112,7 @@ def test_harness_dependencies(_tests, id)
 end
 
 def cleanup(agent, intf)
+  logger.error(test_get(agent, 'incl .*')) # DEBUGGING ONLY - REMOVE
   test_set(agent, 'no feature ospf ; no feature bfd')
   interface_cleanup(agent, intf)
 end
