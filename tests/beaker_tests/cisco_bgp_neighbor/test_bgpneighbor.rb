@@ -160,7 +160,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :default)
 
   # now test the defaults under a non-default vrf
-  tests[id][:desc] = '1.1.a. Default Properties (vrf blue)'
+  tests[:default][:desc] = '1.1.a. Default Properties (vrf blue)'
   tests[:default][:ensure] = :present
   tests[:default][:preclean] = 'cisco_bgp_neighbor'
   test_harness_bgp_vrf(tests, :default, 'blue')
@@ -168,7 +168,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   test_harness_run(tests, :non_default)
-  tests[id][:desc] = '2.1.a. Non Default Properties (vrf blue)'
+  tests[:non_default][:desc] = '2.1.a. Non Default Properties (vrf blue)'
   test_harness_bgp_vrf(tests, :non_default, 'blue')
 
   test_harness_run(tests, :non_def_local_remote_as)
