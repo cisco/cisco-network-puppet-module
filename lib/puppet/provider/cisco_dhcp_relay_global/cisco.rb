@@ -62,7 +62,7 @@ Puppet::Type.type(:cisco_dhcp_relay_global).provide(:cisco) do
 
   def initialize(value={})
     super(value)
-    @nu = Cisco::DhcpRelayGlobal.globals[@property_hash[:name]]
+    @nu = Cisco::DhcpRelayGlobal.new
     @property_flush = {}
     debug 'Created provider instance of cisco_dhcp_relay_global'
   end
@@ -109,9 +109,10 @@ Puppet::Type.type(:cisco_dhcp_relay_global).provide(:cisco) do
     name
   end
 
-  def properties_set
+  def properties_set(new_drg=false)
     DHCP_RELAY_GLOBAL_ALL_PROPS.each do |prop|
       next unless @resource[prop]
+      send("#{prop}=", @resource[prop]) if new_drg
       unless @property_flush[prop].nil?
         @nu.send("#{prop}=", @property_flush[prop]) if
           @nu.respond_to?("#{prop}=")
@@ -120,6 +121,11 @@ Puppet::Type.type(:cisco_dhcp_relay_global).provide(:cisco) do
   end
 
   def flush
-    properties_set
+    new_drg = false
+    if @nu.nil?
+      new_drg = true
+      @nu = Cisco::DhcpRelayGlobal.new
+    end
+    properties_set(new_drg)
   end
 end # Puppet::Type
