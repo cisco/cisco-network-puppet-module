@@ -94,7 +94,7 @@ tests[:non_default] = {
     ipv4_information_option_trust:     'true',
     ipv4_information_option_vpn:       'true',
     ipv4_information_trust_all:        'true',
-    ipv4_relay:                        'true',
+    ipv4_relay:                        'false',
     ipv4_smart_relay:                  'true',
     ipv4_src_addr_hsrp:                'true',
     ipv4_src_intf:                     'port-channel200',
@@ -103,7 +103,7 @@ tests[:non_default] = {
     ipv4_sub_option_cisco:             'true',
     ipv6_option_cisco:                 'true',
     ipv6_option_vpn:                   'true',
-    ipv6_relay:                        'true',
+    ipv6_relay:                        'false',
     ipv6_src_intf:                     'loopback1',
   },
 }
