@@ -1647,8 +1647,8 @@ Manages configuration of a DHCP relay global configuration.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I3(1)        | 1.4.0                  |
-| N3k      | 7.0(3)I3(1)        | 1.4.0                  |
+| N9k      | 7.0(3)I2(1)        | 1.4.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.4.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.4.0                  |
@@ -1662,7 +1662,7 @@ Manages configuration of a DHCP relay global configuration.
 | `ipv4_information_trust_all`        | Not supported on N5k, N6k      |
 | `ipv4_src_addr_hsrp`                | Not supported on N3k, N8k, N9k |
 | `ipv4_sub_option_circuit_id_custom` | Not supported on N7k, N8k      |
-| `ipv4_sub_option_circuit_id_string` | Only supported on N3k          |
+| `ipv4_sub_option_circuit_id_string` | Only supported on N3k running images I3 and above |
 | `ipv6_option_cisco`                 | Not supported on N5k, N6k      |
 
 #### Parameters
