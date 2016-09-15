@@ -106,13 +106,15 @@ tests[:non_default] = {
   },
 }
 
-def test_harness_dependencies(_tests, id)
+def test_harness_dependencies(tests, id)
   return unless id == :default
   test_set(agent, 'feature ospf ; router ospf Sample')
+  # System-level switchport dependencies
+  config_system_default_switchport?(tests, id)
+  config_system_default_switchport_shutdown?(tests, id)
 end
 
 def cleanup(agent, intf)
-  logger.error(test_get(agent, 'incl .*')) # DEBUGGING ONLY - REMOVE
   test_set(agent, 'no feature ospf ; no feature bfd')
   interface_cleanup(agent, intf)
 end
