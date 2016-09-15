@@ -115,7 +115,6 @@ def test_harness_dependencies(tests, id)
 end
 
 def cleanup(agent, intf)
-  logger.error(test_get(agent, 'incl .*')) # DEBUGGING ONLY - REMOVE
   test_set(agent, 'no feature ospf ; no feature bfd')
   interface_cleanup(agent, intf)
 end
