@@ -1661,8 +1661,8 @@ Manages configuration of a DHCP relay global configuration.
 | `ipv4_information_option_trust`     | Not supported on N5k, N6k      |
 | `ipv4_information_trust_all`        | Not supported on N5k, N6k      |
 | `ipv4_src_addr_hsrp`                | Not supported on N3k, N8k, N9k |
-| `ipv4_sub_option_circuit_id_custom` | Not supported on N7k, N8k      |
-| `ipv4_sub_option_circuit_id_string` | Only supported on N3k running images I3 and above |
+| `ipv4_sub_option_circuit_id_custom` | Not supported on N7k, N8k and supported on N3k and N9k running images I3 and above |
+| `ipv4_sub_option_circuit_id_string` | Only supported on N3k          |
 | `ipv6_option_cisco`                 | Not supported on N5k, N6k      |
 
 #### Parameters
