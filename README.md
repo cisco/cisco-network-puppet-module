@@ -1647,8 +1647,8 @@ Manages configuration of a DHCP relay global configuration.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.4.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.4.0                  |
+| N9k      | 7.0(3)I2(2e)       | 1.4.0                  |
+| N3k      | 7.0(3)I2(2e)       | 1.4.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.4.0                  |
