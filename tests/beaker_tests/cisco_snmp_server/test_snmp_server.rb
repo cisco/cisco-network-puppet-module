@@ -86,6 +86,12 @@ def cleanup(agent)
   test_set(agent, cmds)
 end
 
+def unsupported_properties(*)
+  unprops = []
+  unprops << :packet_size if image?[/7.0.3.I2|I3/] # CSCuz14217
+  unprops
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
