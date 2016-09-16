@@ -107,7 +107,7 @@ test_name "TestCase :: #{testheader}" do
     ***                    WARNING WARNING WARNING                ***
     *****************************************************************
     *****************************************************************"
-  fail dns_warning if dns_warning
+  raise_skip_exception(dns_warning, self) if dns_warning
 
   ############
   # Start Test
