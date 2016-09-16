@@ -173,6 +173,9 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_bridge_domain`](#type-cisco_bridge_domain)
   * [`cisco_bridge_domain_vni`](#type-cisco_bridge_domain_vni)
 
+* DHCP Types
+  * [`cisco_dhcp_relay_global`](#type-cisco_dhcp_relay_global)
+
 * Domain Types
   * [`domain_name (netdev_stdlib)`](#type-domain_name)
   * [`name_server (netdev_stdlib)`](#type-name_server)
@@ -292,6 +295,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_bgp_neighbor_af`](#type-cisco_bgp_neighbor_af)
 * [`cisco_bridge_domain`](#type-cisco_bridge_domain)
 * [`cisco_bridge_domain_vni`](#type-cisco_bridge_domain_vni)
+* [`cisco_dhcp_relay_global`](#type-cisco_dhcp_relay_global)
 * [`cisco_encapsulation`](#type-cisco_encapsulation)
 * [`cisco_evpn_vni`](#type-cisco_evpn_vni)
 * [`cisco_fabricpath_global`](#type-cisco_fabricpath_global)
@@ -391,6 +395,7 @@ Symbol | Meaning | Description
 | [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs)     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
 | [cisco_acl](#type-cisco_acl)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
 | [cisco_ace](#type-cisco_ace)                               | ✅  | ✅  | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_ace-caveats) |
+| [cisco_bfd_global](#type-cisco_bfd_global)                 | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_bfd_global-caveats) |
 | [cisco_command_config](#type-cisco_command_config)         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
 | [cisco_bgp](#type-cisco_bgp)                               | ✅  | ✅  | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_bgp-caveats) |
 | [cisco_bgp_af](#type-cisco_bgp_af)                         | ✅* | ✅* | ✅  | ✅* | ✅  | ✅ | \*[caveats](#cisco_bgp_af-caveats) |
@@ -398,6 +403,7 @@ Symbol | Meaning | Description
 | [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af)       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
 | [cisco_bridge_domain](#type-cisco_bridge_domain)           | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
 | [cisco_bridge_domain_vni](#type-cisco_bridge_domain_vni)   | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
+| [cisco_dhcp_relay_global](#type-cisco_dhcp_relay_global)   | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_dhcp_relay_global-caveats) 
 | [cisco_encapsulation](#type-cisco_encapsulation)           | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
 | [cisco_evpn_vni](#type-cisco_evpn_vni)                     | ✅ | :heavy_minus_sign: | ✅ | ✅ | ✅ | ✅ | \*[caveats](#cisco_evpn_vni-caveats) |
 | [cisco_fabricpath_global](#type-cisco_fabricpath_global)     | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅* | :heavy_minus_sign: | \*[caveats](#cisco_fabricpath_global-caveats) |
@@ -1633,6 +1639,78 @@ The bridge-domain ID. Valid values are one or range of integers.
 
 ##### `member_vni`
 The Virtual Network Identifier (VNI) id that is mapped to the VLAN. Valid values are one or range of integers
+
+--
+### Type: cisco_dhcp_relay_global
+
+Manages configuration of a DHCP relay global configuration.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(2e)       | 1.4.0                  |
+| N3k      | 7.0(3)I2(2e)       | 1.4.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.4.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.4.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.4.0                  |
+| N8k      | 7.3(0)F1(1)        | 1.4.0                  |
+
+#### <a name="cisco_dhcp_relay_global-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `ipv4_information_option_trust`     | Not supported on N5k, N6k      |
+| `ipv4_information_trust_all`        | Not supported on N5k, N6k      |
+| `ipv4_src_addr_hsrp`                | Not supported on N3k, N8k, N9k |
+| `ipv4_sub_option_circuit_id_custom` | Not supported on N7k, N8k and supported on N3k and N9k running images I3 and above |
+| `ipv4_sub_option_circuit_id_string` | Only supported on N3k          |
+| `ipv6_option_cisco`                 | Not supported on N5k, N6k      |
+
+#### Parameters
+
+##### `ipv4_information_option`
+Enables inserting relay information in BOOTREQUEST. Valid values are true, false, 'default'.
+
+##### `ipv4_information_option_trust`
+Enables relay trust functionality on the system. Valid values are true, false, 'default'.
+
+##### `ipv4_information_option_vpn`
+Enables relay support across VRFs. Valid values are true, false, 'default'.
+
+##### `ipv4_information_trust_all`
+Enables relay trust on all the interfaces. Valid values are true, false, 'default'.
+
+##### `ipv4_relay`
+Enables DHCP relay agent. Valid values are true, false, 'default'.
+
+##### `ipv4_smart_relay`
+Enables DHCP smart relay. Valid values are true, false, 'default'.
+
+##### `ipv4_src_addr_hsrp`
+Enables Virtual IP instead of SVI address. Valid values are true, false, 'default'.
+
+##### `ipv4_src_intf`
+Source interface for the DHCPV4 relay. Valid values are string, keyword 'default'.
+
+##### `ipv4_sub_option_circuit_id_custom`
+Enables circuit id customized to include vlan id, slot and port info. Valid values are true, false, 'default'.
+
+##### `ipv4_sub_option_circuit_id_string`
+Specifies suboption format type string. Valid values are string, keyword 'default'.
+
+##### `ipv4_sub_option_cisco`
+Enables cisco propritery suboptions. Valid values are true, false, 'default'.
+
+##### `ipv6_option_cisco`
+Enables cisco propritery suboptions for DHCPV6. Valid values are true, false, 'default'.
+
+##### `ipv6_option_vpn`
+Enables DHCPv6 relay support across VRFs. Valid values are true, false, 'default'.
+
+##### `ipv6_relay`
+Enables DHCPv6 relay agent. Valid values are true, false, 'default'.
+
+##### `ipv6_src_intf`
+Source interface for the DHCPV6 relay. Valid values are string, keyword 'default'.
 
 --
 ### Type: cisco_encapsulation
