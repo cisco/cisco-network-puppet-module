@@ -49,7 +49,7 @@ intf = find_interface(tests)
 tests[:default_access] = {
   desc:               "1.1 Default 'access' Properties",
   title_pattern:      intf,
-  code:               [0],
+  code:               [0, 2],
   preclean_intf:      true,
   sys_def_switchport: true,
   sys_def_sw_shut:    true,
