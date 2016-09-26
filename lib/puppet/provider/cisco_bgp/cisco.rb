@@ -209,6 +209,28 @@ Puppet::Type.type(:cisco_bgp).provide(:cisco) do
     @bgp_vrf.timer_bestpath_limit_set(limit, always)
   end
 
+  def image_older_version
+    fd = Facter.value('cisco')
+    image = fd['images']['system_image']
+    pid = fd['inventory']['chassis']['pid']
+    image[/7.0.3.I2|I3|I4/] || pid[/N(5|6|7|8)/]
+  end
+
+  def event_history_periodic
+    return 'default' if @property_hash[:event_history_periodic] == @bgp_vrf.default_event_history_periodic &&
+                        resource[:event_history_periodic] == 'default'
+    return 'true' if @property_hash[:event_history_periodic] == 'size_small' &&
+                     resource[:event_history_periodic] == 'true' && image_older_version
+    @property_hash[:event_history_periodic]
+  end
+
+  def event_history_periodic=(should_value)
+    should_value = @bgp_vrf.default_event_history_periodic if should_value == 'default'
+    should_value = 'size_small' if should_value == 'true' && image_older_version
+    should_value = should_value.to_sym unless should_value =~ /\A\d+\z/
+    @property_flush[:event_history_periodic] = should_value
+  end
+
   # confederation_peers requires a custom getter and setter because we are
   # working with arrays.  When the manifest entry is set to default,
   # puppet creates an array with the symbol default. [:default].
