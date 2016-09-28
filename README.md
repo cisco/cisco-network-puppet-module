@@ -1038,6 +1038,7 @@ Manages configuration of a BGP instance.
 |:--------|:-------------|
 | `disable_policy_batching_ipv4` | Not supported on N5k, N6k, N7k |
 | `disable_policy_batching_ipv6` | Not supported on N5k, N6k, N7k |
+| `event_history_periodic      ` | default is 'false' on images I5 and above |
 | `neighbor_down_fib_accelerate` | Not supported on N5k, N6k, N7k |
 | `reconnect_interval`           | Not supported on N5k, N6k, N7k |
 | `suppress_fib_pending`         | Idempotence supported only on I5 images |
@@ -1098,16 +1099,16 @@ Enable/Disable the batching evaluation of prefix advertisements to all peers wit
 Enable/Disable enforces the neighbor autonomous system to be the first AS number listed in the AS path attribute for eBGP. Valid values are 'true', 'false', and 'default'. On NX-OS, this property is only supported in the global BGP context.
 
 ##### `event_history_cli`
-Enable/Disable cli event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
+Enable/Disable/specify size of cli event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
 
 ##### `event_history_detail`
-Enable/Disable detail event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
+Enable/Disable/specify size of detail event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
 
 ##### `event_history_events`
-Enable/Disable event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
+Enable/Disable/specify size of event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
 
 ##### `event_history_periodic`
-Enable/Disable periodic event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
+Enable/Disable/specify size of periodic event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
 
 ##### `fast_external_fallover`
 Enable/Disable immediately reset the session if the link to a directly connected BGP peer goes down. Valid values are 'true', 'false', and 'default'. On NX-OS, this property is only supported in the global BGP context.
