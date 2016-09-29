@@ -30,7 +30,7 @@ tests = {
   resource_name: 'service',
 }
 
-os_service = 'dhcp_server'
+os_service = 'dhcp-server'
 
 tests[:service_start] = {
   desc:           "1.1 Start Service '#{os_service}'",
