@@ -1041,7 +1041,7 @@ Manages configuration of a BGP instance.
 | `event_history_periodic      ` | default value is 'false' for N3|9k on 7.0(3)I5(1) and later images |
 | `neighbor_down_fib_accelerate` | Not supported on N5k, N6k, N7k |
 | `reconnect_interval`           | Not supported on N5k, N6k, N7k |
-| `suppress_fib_pending`         | Idempotence supported only on I5 images |
+| `suppress_fib_pending`         | Idempotence supported only on 7.0(3)I5(1) and later images N3|9k |
 
 #### Parameters
 
