@@ -105,12 +105,12 @@ tests[:default] = {
 
 # older_version default value
 resource = {
-  old: {
+  legacy: {
     'event_history_periodic' => 'size_small'
   }
 }
 
-tests[:default][:resource].merge!(resource[:old]) if
+tests[:default][:resource].merge!(resource[:legacy]) if
   nexus_image[/I2|I3|I4/] || platform[/n5|n6|n7|n8/]
 
 # Non-default Tests. NOTE: [:resource] = [:manifest_props] for all non-default

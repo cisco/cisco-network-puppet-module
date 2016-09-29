@@ -209,7 +209,7 @@ Puppet::Type.type(:cisco_bgp).provide(:cisco) do
     @bgp_vrf.timer_bestpath_limit_set(limit, always)
   end
 
-  def image_older_version
+  def legacy_image?
     fd = Facter.value('cisco')
     image = fd['images']['system_image']
     pid = fd['inventory']['chassis']['pid']
@@ -220,13 +220,13 @@ Puppet::Type.type(:cisco_bgp).provide(:cisco) do
     return 'default' if @property_hash[:event_history_periodic] == @bgp_vrf.default_event_history_periodic &&
                         resource[:event_history_periodic] == 'default'
     return 'true' if @property_hash[:event_history_periodic] == 'size_small' &&
-                     resource[:event_history_periodic] == 'true' && image_older_version
+                     resource[:event_history_periodic] == 'true' && legacy_image?
     @property_hash[:event_history_periodic]
   end
 
   def event_history_periodic=(should_value)
     should_value = @bgp_vrf.default_event_history_periodic if should_value == 'default'
-    should_value = 'size_small' if should_value == 'true' && image_older_version
+    should_value = 'size_small' if should_value == 'true' && legacy_image?
     should_value = should_value.to_sym unless should_value =~ /\A\d+\z/
     @property_flush[:event_history_periodic] = should_value
   end
