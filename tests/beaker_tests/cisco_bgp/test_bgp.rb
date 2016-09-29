@@ -82,7 +82,7 @@ tests[:default] = {
     'event_history_cli'                      => 'size_small',
     'event_history_detail'                   => 'size_disable',
     'event_history_events'                   => 'size_small',
-    'event_history_periodic'                 => 'size_small',
+    'event_history_periodic'                 => 'false',
     'fast_external_fallover'                 => 'true',
     'flush_routes'                           => 'false',
     'graceful_restart'                       => 'true',
@@ -102,6 +102,16 @@ tests[:default] = {
     'timer_bgp_keepalive'                    => '60',
   },
 }
+
+# older_version default value
+resource = {
+  legacy: {
+    'event_history_periodic' => 'size_small'
+  }
+}
+
+tests[:default][:resource].merge!(resource[:legacy]) if
+  nexus_image[/I2|I3|I4/] || platform[/n5|n6|n7|n8/]
 
 # Non-default Tests. NOTE: [:resource] = [:manifest_props] for all non-default
 tests[:non_default] = {
@@ -123,7 +133,7 @@ tests[:non_default] = {
     event_history_cli:                      'size_medium',
     event_history_detail:                   'size_large',
     event_history_events:                   'size_disable',
-    event_history_periodic:                 'false',
+    event_history_periodic:                 '100000',
     fast_external_fallover:                 'false',
     flush_routes:                           'true',
     graceful_restart:                       'false',
