@@ -44,7 +44,6 @@ Cisco Nexus N3k    | NX-OS  | 7.0(3)I2(1) and later
 Cisco Nexus N5k    | NX-OS  | 7.3(0)N1(1) and later
 Cisco Nexus N6k    | NX-OS  | 7.3(0)N1(1) and later
 Cisco Nexus N7k    | NX-OS  | 7.3(0)D1(1) and later
-Cisco Nexus N8k    | NX-OS  | 7.0(3)F1(1) and later
 <br>
 
 
@@ -58,8 +57,8 @@ Disk   | **400 MB** | Minimum free space before installing Puppet agent |
 
 NX-OS Environment | Supported Platforms | |
 :--|:--:|:--|
-`bash-shell` | N3k, N8k, N9k | This is the native WRL Linux environment underlying NX-OS. It is disabled by default on NX-OS. |
-`guestshell` | N3k, N8k, N9k | This is a secure Linux container environment running CentOS. It is enabled by default in most platforms that support it. |
+`bash-shell` | N3k, N9k | This is the native WRL Linux environment underlying NX-OS. It is disabled by default on NX-OS. |
+`guestshell` | N3k, N9k | This is a secure Linux container environment running CentOS. It is enabled by default in most platforms that support it. |
 `open agent`<br>`container (OAC)` | N5k, N6k, N7k | This is a 32-bit CentOS-based container created specifically for running Puppet Agent software. |
 
 * *OAC containers are created for specific platforms and must be downloaded from Cisco (see [OAC Download](#env-oac)). The OAC must be installed before the Puppet Agent can be installed.*
@@ -509,7 +508,7 @@ systemctl start my_puppet
 
 Reference | Description
 :--|:--|
-[Automated Puppet Agent Installation](README-beaker-agent-install.md) | Using Beaker tools to install & configure Puppet Agent
+[Automated Puppet Agent Installation](README-beaker-agent-install.md) | (**DEPRECATED**) Using Beaker tools to install & configure Puppet Agent
 [Cisco Nexus Puppet Modules](../README.md) | Types, Providers, Utilities
 [Guestshell][GS_9K] | Guestshell Container Programmability Guide
 [N5k, N6k Open Agent Container (OAC)][OAC_5K_DOC] | N5k, N6k Programmability Guide
