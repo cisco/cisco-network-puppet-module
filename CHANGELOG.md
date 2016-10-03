@@ -2,6 +2,69 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.4.0] - 2016-10-03
+
+### New feature support
+#### Cisco Resources
+- `cisco_bfd_global` type and provider.
+- `cisco_dhcp_relay_global` type and provider.
+- `cisco_ospf_area` type and provider.
+- `cisco_ospf_area_vlink` type and provider.
+
+### Added
+- Extend cisco_interface with attributes:
+ - `bfd_echo`
+ - `ipv4_dhcp_relay_addr`
+ - `ipv4_dhcp_relay_info_trust`
+ - `ipv4_dhcp_relay_src_addr_hsrp`
+ - `ipv4_dhcp_relay_src_intf`
+ - `ipv4_dhcp_relay_subnet_broadcast`
+ - `ipv4_dhcp_smart_relay`
+ - `ipv6_dhcp_relay_addr`
+ - `ipv6_dhcp_relay_src_intf`
+ - `storm_control_broadcast`
+ - `storm_control_multicast`
+ - `storm_control_unicast`
+- Extend cisco_interface_ospf with attributes:
+ - `bfd`
+ - `mtu_ignore`
+ - `network_type`
+ - `priority`
+ - `shutdown`
+ - `transmit_delay`
+- Extend cisco_interface_portchannel with attributes:
+ - `bfd_per_link`
+- Extend cisco_ospf_vrf with attributes:
+ - `bfd`
+- Extend cisco_bgp_neighbor with attributes:
+ - `bfd`
+- Extended `cisco_bgp_af` to include l2vpn/evpn address-family support
+
+- Deprecated `cisco_interface` 'private-vlan' properties and replaced with new methods. The deprecated properties will be removed with release 2.0.0. The old -> new properties are:
+
+| Old Name | New Name(s) |
+|:---|:---:|
+| `private_vlan_mapping`                          | `pvlan_mapping`
+| `switchport_mode_private_vlan_host`             | `switchport_pvlan_host`, `switchport_pvlan_promiscuous`,
+| `switchport_mode_private_vlan_host_association` | `switchport_pvlan_host_association`
+| `switchport_mode_private_vlan_host_promiscous`  | `switchport_pvlan_mapping`
+| `switchport_mode_private_vlan_trunk_promiscuous`| `switchport_pvlan_trunk_promiscuous`
+| `switchport_mode_private_vlan_trunk_secondary`  | `switchport_pvlan_trunk_secondary`
+| `switchport_private_vlan_association_trunk`     | `switchport_pvlan_trunk_association`
+| `switchport_private_vlan_mapping_trunk`         | `switchport_pvlan_mapping_trunk`
+| `switchport_private_vlan_trunk_allowed_vlan`    | `switchport_pvlan_trunk_allowed_vlan`
+| `switchport_private_vlan_trunk_native_vlan`     | `switchport_pvlan_trunk_native_vlan`
+
+- Deprecated `cisco_vlan` 'private-vlan' properties and replaced with new methods. The deprecated properties will be removed with release 2.0.0. The old -> new properties are:
+
+| Old Name | New Name |
+|:---|:---:|
+| `private_vlan_association` | `pvlan_association`
+| `private_vlan_type`        | `pvlan_type`
+
+### Changed
+- `cisco_interface_ospf` type and provider so that the properties accept 'default' keyword.
+
 ## [1.3.2] - 2016-07-26
 ### Fixed:
 - Remove `autorequire` references in cisco types.
@@ -237,6 +300,7 @@ This version was never released.
 - Initial release of puppetlabs-ciscopuppet module, supporting Cisco NX-OS software release 7.0(3)I2(1) on Cisco Nexus switch platforms: N95xx, N93xx, N30xx and N31xx.
 - Please note: 0.9.0 is an EFT pre-release for a limited audience with access to NX-OS 7.0(3)I2(1). Additional code changes may occur in 0.9.x prior to the final 1.0.0 release.
 
+[1.4.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.3.2...v1.4.0
 [1.3.2]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.2.3...v1.3.1
 [1.2.3]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.2.2...v1.2.3

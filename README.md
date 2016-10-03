@@ -1,70 +1,100 @@
 # ciscopuppet
 
-##### Documentation Workflow Map
-
-This workflow map aids *users*, *developers* and *maintainers* of the ciscopuppet project in selecting the appropriate document(s) for their task.
-
-* User Guides
-  * [README-agent-install.md](https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-agent-install.md) : Agent Installation and Configuration Guide
-  * [README-beaker-agent-install.md](https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-beaker-agent-install.md) : Automated Agent Installation and Configuration
-  * [README-package-provider.md](https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-package-provider.md) : Cisco Nexus Package Management using the Package Provider
-  * [README-example-manifest.md](https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/README.md) : Example Demo Manifest User Guide
-  * The remainder of this document is aimed at end users
-* Developer Guides
-  * [CONTRIBUTING.md](https://github.com/cisco/cisco-network-puppet-module/blob/master/CONTRIBUTING.md) : Contribution guidelines
-  * [README-develop-types-providers.md](https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-develop-types-providers.md) : Developing new ciscopuppet Types and Providers
-  * [README-develop-beaker-scripts.md](https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-develop-beaker-scripts.md) : Developing new beaker test scripts for ciscopuppet
-* Maintainers Guides
-  * [README-maintainers.md](https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-maintainers.md) : Guidelines for core maintainers of the ciscopuppet project
-  * All developer guides apply to maintainers as well
-
-Please see [Learning Resources](#learning-resources) for additional references.
-
---
 #### Table of Contents
 
-1. [Overview](#overview)
 1. [Module Description](#module-description)
 1. [Setup](#setup)
-1. [Usage](#usage)
-1. [Platform Support](#platform-support)
-   * [Provider Support Across Platforms](#provider-support-across-platforms)
+1. [Example Manifests](#example-manifests)
 1. [Resource Reference](#resource-reference)
    * [Resource Type Catalog (by Technology)](#resource-by-tech)
    * [Resource Type Catalog (by Name)](#resource-by-name)
-1. [Limitations - OS compatibility, etc.](#limitations)
-1. [Cisco OS Differences](#cisco-os-differences)
-1. [Learning Resources](#learning-resources)
+   * [Resource Platform Support Matrix](#resource-platform-support-matrix)
+1. [Documentation Guide](#documentation-guide)
 
+## <a href='module-description'>Module Description</a>
 
+The ciscopuppet module allows a network administrator to manage Cisco Network Elements using Puppet. This module bundles a set of Puppet Types, Providers, Beaker Tests, Sample Manifests and Installation Tools for effective network management.  The  resources and capabilities provided by this Puppet Module will grow with contributions from Cisco, Puppet Labs and the open source community.
 
-## Overview
+The Cisco Network Elements and Operating Systems managed by this Puppet Module are continuously expanding. See [Resource Platform Support Matrix](#resource-platform-support-matrix) for a list of currently supported hardware and software.
 
-The ciscopuppet module allows a network administrator to manage Cisco Network Elements using Puppet. This module bundles a set of Puppet Types, providers, Beaker Tests, Sample Manifests and Installation Tools for effective network management.  The  resources and capabilities provided by this Puppet Module will grow with contributions from Cisco, Puppet Labs and the open source community.
+This GitHub repository contains the latest version of the ciscopuppet module source code. Supported versions of the ciscopuppet module are available at Puppet Forge. Please refer to [SUPPORT.md][MAINT-2] for additional details.
 
-The Cisco Network Elements and Operating Systems managed by this Puppet Module are continuously expanding. Please refer to the [Limitations](#limitations) section for details on currently supported hardware and software.
-The Limitations section also provides details on compatible Puppet Agent and Puppet Master versions.
+##### Dependencies
 
-This GitHub repository contains the latest version of the ciscopuppet module source code. Supported versions of the ciscopuppet module are available at Puppet Forge. Please refer to [SUPPORT.md](SUPPORT.md) for additional details.
+The `ciscopuppet` module has a dependency on the [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) ruby gem. See the **Setup** section that follows for more information on `cisco_node_utils`.
 
-Contributions to this Puppet Module are welcome. Guidelines on contributions to the module are captured in [CONTRIBUTING.md](CONTRIBUTING.md)
+##### Contributing
 
-## Module Description
+Contributions to the `ciscopuppet` module are welcome. See [CONTRIBUTING.md][DEV-1] for guidelines.
 
-This module enables management of supported Cisco Network Elements using Puppet. This module enhances the Puppet DSL by introducing new Puppet Types and Providers capable of managing network elements.
+## <a href='setup'>Setup</a>
 
-The set of supported network element platforms is continuously expanding. Please refer to the [Limitations](#limitations) section for a list of currently supported platforms.
+#### Puppet Master
 
-## Setup
+The `ciscopuppet` module must be installed on the Puppet Master server.
 
-### Puppet Master
+```bash
+puppet module install puppetlabs-ciscopuppet
+```
 
-The `ciscopuppet` module must be installed on the Puppet Master server. Please see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html) for general information on Puppet module installation.
+For more information on Puppet module installation see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html)
 
-### Puppet Agent
-The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md](docs/README-agent-install.md) document for detailed instructions on agent installation and configuration on Cisco Nexus devices.
+##### The `puppetlabs-netdev_stdlib` module
 
-### `cisco_node_utils` Ruby gem
+PuppetLabs provides NetDev resource support for Cisco Nexus devices with their [`puppetlabs-netdev-stdlib`](https://forge.puppet.com/puppetlabs/netdev_stdlib) module. Installing the `ciscopuppet` module automatically installs both the `ciscopuppet` and `netdev_stdlib` modules.
+
+#### Puppet Agent
+
+The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md][USER-1] document for detailed instructions on agent installation and configuration on Cisco Nexus devices.
+
+##### The `cisco_node_utils` Ruby Gem
+
+The [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) ruby gem is a required component of the `ciscopuppet` module. This gem contains platform APIs for interfacing between Cisco CLI and Puppet agent resources. The gem can be automatically installed by Puppet agent by simply using the [`ciscopuppet::install`](https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/demo_all_cisco.pp#L19) helper class, or it can be installed manually.
+
+##### Automatic Gem Install Using `ciscopuppet::install`
+
+* The `ciscopuppet::install` class is defined in the `install.pp` file in the `examples` subdirectory. Copy this file into the `manifests` directory as shown:
+
+~~~bash
+cd /etc/puppetlabs/code/environments/production/modules/ciscopuppet/
+cp examples/install.pp  manifests/
+~~~
+
+* Next, update `site.pp` to use the install class
+
+**Example**
+
+~~~puppet
+node 'default' {
+  include ciscopuppet::install
+}
+~~~
+
+The preceding configuration will cause the next `puppet agent` run to automatically download the current `cisco_node_utils` gem from <https://rubygems.org/gems/cisco_node_utils> and install it on the node.
+
+##### Optional Parameters for `ciscopuppet::install`
+
+  * Override the default rubygems repository to use a custom repository
+  * Provide a proxy server
+
+**Example**
+
+~~~puppet
+node 'default' {
+  class {'ciscopuppet::install':
+    repo  => 'http://gemserver.domain.com:8808',
+    proxy => 'http://proxy.domain.com:8080',
+  }
+}
+~~~
+
+##### Gem Persistence
+
+Once installed, the GEM will remain persistent across system reloads within the Guestshell or OAC environments; however, the bash-shell environment does not share this persistent behavior, in which case the `ciscopuppet::install` helper class automatically downloads and re-installs the gem after each system reload.
+
+See [General Documentation](#general-documentation) for information on Guestshell and OAC.
+
+## <a href='example-manifests'>Example Manifests</a>
 
 This module has dependencies on the [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) ruby gem. After installing the Puppet Agent software, use Puppet's built-in [`Package`](https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/install.pp#L17) provider to install the gem.
 
@@ -72,16 +102,15 @@ A helper class [`ciscopuppet::install`](https://github.com/cisco/cisco-network-p
 
 For Puppet Agents running within the GuestShell or OAC environment, the installed GEM remains persistent across system reloads, however, agents running in the NX-OS bash-shell environment will automatically download and reinstall the GEM after a system reload.
 
-## Usage
+##### OSPF Example Manifest
 
-The following example shows how to use ciscopuppet to configure ospf on a
-Cisco Nexus switch.
+The following example demonstrates how to define a manifest that uses `ciscopuppet` to configure OSPF on a Cisco Nexus switch. Three resource types are used to define an OSPF instance, basic OSPF router settings, and OSPF interface settings:
 
-Three types are needed to add OSPF support on an interface: cisco_ospf,
-cisco_ospf_vrf, and cisco_interface_ospf.
+* [`cisco_ospf`](https://github.com/cisco/cisco-network-puppet-module/tree/master#type-cisco_ospf)
+* [`cisco_ospf_vrf`](https://github.com/cisco/cisco-network-puppet-module/tree/master#type-cisco_ospf_vrf)
+* [`cisco_interface_ospf`](https://github.com/cisco/cisco-network-puppet-module/tree/master#type-cisco_interface_ospf)
 
-First, to configure cisco_ospf to enable ospf on the device, add the
-following type in the manifest:
+The first manifest type should define the router instance using `cisco_ospf`. The title '`Sample`' becomes the router instance name.
 
 ~~~puppet
 cisco_ospf {"Sample":
@@ -89,8 +118,7 @@ cisco_ospf {"Sample":
 }
 ~~~
 
-Then put the ospf router under a VRF, and add the corresponding OSPF configuration.
-If the configuration is global, use 'default' as the VRF name.
+The next type to define is `cisco_ospf_vrf`. The title includes the OSPF router instance name and the VRF name. Note that a non-VRF configuration uses 'default' as the VRF name.
 
 ~~~puppet
 cisco_ospf_vrf {"Sample default":
@@ -100,7 +128,7 @@ cisco_ospf_vrf {"Sample default":
 }
 ~~~
 
-Finally apply the ospf into an interface:
+Finally, define the OSPF interface settings. The title here includes the Interface name and the OSPF router instance name.
 
 ~~~puppet
 cisco_interface_ospf {"Ethernet1/2 Sample":
@@ -110,108 +138,6 @@ cisco_interface_ospf {"Ethernet1/2 Sample":
 }
 ~~~
 
-## Platform Support
-
-### <a name="provider-platform-support">Provider Support Across Platforms</a>
-
-The Nexus family of switches support various hardware and software features depending on the model and version. The following table will guide you through the provider support matrix.
-
-✅ =  Supported
-  * The provider has been validated to work on the platform family. An asterisk '*' indicates that some provider properties may have software/hardware limitations, caveats, or noted behaviors. Click on the associated caveat link for more information.
-
-:heavy_minus_sign: = Not Applicable
-  * The provider is not supported at all on the platform because of hardware or software limitations.
-
-A note about support for specific platform models:
-
-  * "**N9k**" support includes all N9xxx models.
-  * "**N3k**" support includes N30xx and N31xx models only. **_The N35xx model is not supported_.**
-  * "**N5k**" support includes N56xx models only. **_The N50xx and N55xx models are not supported at this time_.**
-  * "**N6k**" support includes all N6xxx models.
-  * "**N7k**" support includes all N7xxx models.
-
-| ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | Caveats |
-|:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| [cisco_aaa_<br>authentication_login](#type-cisco_aaa_authentication_login)                 | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_aaa_<br>authorization_login_cfg_svc](#type-cisco_aaa_authorization_login_cfg_svc)   | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_aaa_<br>authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs)     | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_acl](#type-cisco_acl)                               | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_ace](#type-cisco_ace)                               | ✅  | ✅  | ✅* | ✅* | ✅* | \*[caveats](#cisco_ace-caveats) |
-| [cisco_command_config](#type-cisco_command_config)         | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_bgp](#type-cisco_bgp)                               | ✅  | ✅  | ✅* | ✅* | ✅* | \*[caveats](#cisco_bgp-caveats) |
-| [cisco_bgp_af](#type-cisco_bgp_af)                         | ✅* | ✅* | ✅  | ✅* | ✅  | \*[caveats](#cisco_bgp_af-caveats) |
-| [cisco_bgp_neighbor](#type-cisco_bgp_neighbor)             | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af)       | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_bridge_domain](#type-cisco_bridge_domain)           | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
-| [cisco_bridge_domain_vni](#type-cisco_bridge_domain_vni)   | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
-| [cisco_encapsulation](#type-cisco_encapsulation)           | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
-| [cisco_evpn_vni](#type-cisco_evpn_vni)                     | ✅ | :heavy_minus_sign: | ✅ | ✅ | ✅ | \*[caveats](#cisco_evpn_vni-caveats) |
-| [cisco_fabricpath_global](#type-cisco_fabricpath_global)     | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅* | \*[caveats](#cisco_fabricpath_global-caveats) |
-| [cisco_fabricpath_topology](#type-cisco_fabricpath_topology) | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅  |
-| [cisco_interface](#type-cisco_interface)                             | ✅  | ✅  | ✅* | ✅* | ✅  | \*[caveats](#cisco_interface-caveats) |
-| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_interface_ospf](#type-cisco_interface_ospf)                   | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_interface_portchannel](#type-cisco_interface_portchannel)     | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_interface_portchannel-caveats) |
-| [cisco_interface_service_vni](#type-cisco_interface_service_vni) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
-| [cisco_itd_device_group](#type-cisco_itd_device_group)           | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
-| [cisco_itd_device_group_node](#type-cisco_itd_device_group_node) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
-| [cisco_itd_service](#type-cisco_itd_service)                     | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | \*[caveats](#cisco_itd_service-caveats) |
-| [cisco_ospf](#type-cisco_ospf)                             | ✅  | ✅  | ✅ | ✅  | ✅  |
-| [cisco_ospf_vrf](#type-cisco_ospf_vrf)                     | ✅  | ✅  | ✅ | ✅  | ✅  |
-| ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | Caveats |
-| [cisco_overlay_global](#type-cisco_overlay_global)         | ✅  | :heavy_minus_sign: | ✅ | ✅ | ✅ |
-| [cisco_pim](#type-cisco_pim)                               | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_pim_rp_address](#type-cisco_pim_rp_address)         | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_pim_grouplist](#type-cisco_pim_grouplist)           | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_portchannel_global](#type-cisco_portchannel_global) | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_portchannel_global-caveats) |
-| [cisco_stp_global](#type-cisco_stp_global)                 | ✅* | ✅* | ✅* | ✅* | ✅  | \*[caveats](#cisco_stp_global-caveats) |
-| [cisco_snmp_community](#type-cisco_snmp_community)         | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_snmp_group](#type-cisco_snmp_group)                 | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_snmp_server](#type-cisco_snmp_server)               | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_snmp_user](#type-cisco_snmp_user)                   | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_tacacs_server](#type-cisco_tacacs_server)           | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_tacacs_server_host](#type-cisco_tacacs_server_host) | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_vdc](#type-cisco_vdc)                               | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
-| [cisco_vlan](#type-cisco_vlan)                             | ✅* | ✅* | ✅  | ✅  | ✅  | \*[caveats](#cisco_vlan-caveats) |
-| [cisco_vpc_domain](#type-cisco_vpc_domain)                 | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_vpc_domain-caveats) |
-| [cisco_vrf](#type-cisco_vrf)                               | ✅  | ✅* | ✅  | ✅  | ✅  | \*[caveats](#cisco_vrf-caveats) |
-| [cisco_vrf_af](#type-cisco_vrf_af)                         | ✅  | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_vrf_af-caveats) |
-| [cisco_vtp](#type-cisco_vtp)                               | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep)                 | ✅  | :heavy_minus_sign: | ✅  | ✅  | ✅  |
-| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni)         | ✅  | :heavy_minus_sign: | ✅  | ✅  | ✅  |
-
-##### NetDev Providers
-
-| ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | Caveats |
-|:---|:---:|:---:|:---:|:---:|:---:|:---:|
-| [domain_name](#type-domain_name)                           | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [name_server](#type-name_server)                           | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [network_dns](#type-network_dns)                           | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [network_interface](#type-network_interface)               | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [network_snmp](#type-network_snmp)                         | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [network_trunk](#type-network_trunk)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [network_vlan](#type-network_vlan)                         | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [ntp_config](#type-ntp_config)                             | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [ntp_server](#type-ntp_server)                             | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [port_channel](#type-port_channel)                         | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [radius](#type-radius)                                     | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [radius_global](#type-radius_global)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [radius_server_group](#type-tacacs_server_group)           | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [radius_server](#type-radius_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [search_domain](#type-search_domain)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [snmp_community](#type-snmp_community)                     | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [snmp_notification](#type-snmp_notification)               | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [snmp_notification_receiver](#type-snmp_notification_receiver) | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [snmp_user](#type-snmp_user)                               | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [syslog_server](#type-syslog_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [syslog_setting](#type-syslog_setting)                     | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [tacacs](#type-tacacs)                                     | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [tacacs_global](#type-tacacs_global)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [tacacs_server](#type-tacacs_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [tacacs_server_group](#type-tacacs_server_group)           | ✅  | ✅  | ✅  | ✅  | ✅  |
-
---
 ## <a name ="resource-reference">Resource Reference<a>
 
 The following resources include cisco types and providers along with cisco provider support for netdev stdlib types.  Installing the `ciscopuppet` module will install both the `ciscopuppet` and `netdev_stdlib` modules.
@@ -232,6 +158,9 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_ace`](#type-cisco_ace)
   * [`cisco_acl`](#type-cisco_acl)
 
+* BFD Types
+  * [`cisco_bfd_global`](#type-cisco_bfd_global)
+
 * BGP Types
   * [`cisco_vrf`](#type-cisco_vrf)
   * [`cisco_vrf_af`](#type-cisco_vrf_af)
@@ -243,6 +172,9 @@ The following resources include cisco types and providers along with cisco provi
 * Bridge_Domain Types
   * [`cisco_bridge_domain`](#type-cisco_bridge_domain)
   * [`cisco_bridge_domain_vni`](#type-cisco_bridge_domain_vni)
+
+* DHCP Types
+  * [`cisco_dhcp_relay_global`](#type-cisco_dhcp_relay_global)
 
 * Domain Types
   * [`domain_name (netdev_stdlib)`](#type-domain_name)
@@ -262,7 +194,7 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
   * [`network_interface (netdev_stdlib)`](#type-network_interface)
 
-* Itd Types
+* ITD (Intelligent Traffic Director) Types
   * [`cisco_itd_device_group`](#type-cisco_itd_device_group)
   * [`cisco_itd_device_group_node`](#type-cisco_itd_device_group_node)
   * [`cisco_itd_service`](#type-cisco_itd_service)
@@ -279,6 +211,8 @@ The following resources include cisco types and providers along with cisco provi
 * OSPF Types
   * [`cisco_vrf`](#type-cisco_vrf)
   * [`cisco_ospf`](#type-cisco_ospf)
+  * [`cisco_ospf_area`](#type-cisco_ospf_area)
+  * [`cisco_ospf_area_vlink`](#type-cisco_ospf_area_vlink)
   * [`cisco_ospf_vrf`](#type-cisco_ospf_vrf)
   * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 
@@ -354,12 +288,14 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_aaa_group_tacacs`](#type-cisco_aaa_group_tacacs)
 * [`cisco_acl`](#type-cisco_acl)
 * [`cisco_ace`](#type-cisco_ace)
+* [`cisco_bfd_global`](#type-cisco_bfd_global)
 * [`cisco_bgp`](#type-cisco_bgp)
 * [`cisco_bgp_af`](#type-cisco_bgp_af)
 * [`cisco_bgp_neighbor`](#type-cisco_bgp_neighbor)
 * [`cisco_bgp_neighbor_af`](#type-cisco_bgp_neighbor_af)
 * [`cisco_bridge_domain`](#type-cisco_bridge_domain)
 * [`cisco_bridge_domain_vni`](#type-cisco_bridge_domain_vni)
+* [`cisco_dhcp_relay_global`](#type-cisco_dhcp_relay_global)
 * [`cisco_encapsulation`](#type-cisco_encapsulation)
 * [`cisco_evpn_vni`](#type-cisco_evpn_vni)
 * [`cisco_fabricpath_global`](#type-cisco_fabricpath_global)
@@ -373,6 +309,8 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_itd_device_group_node`](#type-cisco_itd_device_group_node)
 * [`cisco_itd_service`](#type-cisco_itd_service)
 * [`cisco_ospf`](#type-cisco_ospf)
+* [`cisco_ospf_area`](#type-cisco_ospf_area)
+* [`cisco_ospf_area_vlink`](#type-cisco_ospf_area_vlink)
 * [`cisco_ospf_vrf`](#type-cisco_ospf_vrf)
 * [`cisco_overlay_global`](#type-cisco_overlay_global)
 * [`cisco_pim`](#type-cisco_pim)
@@ -423,6 +361,112 @@ The following resources include cisco types and providers along with cisco provi
 * [`tacacs_global`](#type-tacacs_global)
 * [`tacacs_server_group`](#type-tacacs_server_group)
 * [`tacacs_server`](#type-tacacs_server)
+
+### <a href='resource-platform-support-matrix'>Resource Platform Support Matrix</a>
+
+The Nexus family of switches support various hardware and software features depending on the model and version. The following table will guide you through the provider support matrix.
+
+**Platform Models**
+
+Platform | Description | Environments
+:--|:--|:--
+**N9k** | Support includes all N9xxx models  | bash-shell, guestshell
+**N3k** | Support includes N30xx and N31xx models only.<br>The N35xx model is not supported.   | bash-shell, guestshell
+**N5k** | Support includes N56xx models only.<br>The N50xx and N55xx models are not supported at this time. | Open Agent Container (OAC)
+**N6k** | Support includes all N6xxx models  | Open Agent Container (OAC)
+**N7k** | Support includes all N7xxx models  | Open Agent Container (OAC)
+
+**Matrix Legend**
+
+Symbol | Meaning | Description
+:--|:--|:--
+✅ | Supported      | The provider has been validated to work on the platform.<br>An asterisk '*' indicates that some provider properties may have software or hardware limitations, caveats, or other noted behaviors.<br>Click on the associated caveat link for more information.
+:heavy_minus_sign: | Not Applicable | The provider is not supported on the platform because of hardware or software limitations.
+
+**Support Matrix**
+
+| ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | Caveats |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|
+| [cisco_aaa_<br>authentication_login](#type-cisco_aaa_authentication_login)                 | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_aaa_<br>authorization_login_cfg_svc](#type-cisco_aaa_authorization_login_cfg_svc)   | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_aaa_<br>authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs)     | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_acl](#type-cisco_acl)                               | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_ace](#type-cisco_ace)                               | ✅  | ✅  | ✅* | ✅* | ✅* | \*[caveats](#cisco_ace-caveats) |
+| [cisco_bfd_global](#type-cisco_bfd_global)                 | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_bfd_global-caveats) |
+| [cisco_command_config](#type-cisco_command_config)         | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_bgp](#type-cisco_bgp)                               | ✅  | ✅  | ✅* | ✅* | ✅* | \*[caveats](#cisco_bgp-caveats) |
+| [cisco_bgp_af](#type-cisco_bgp_af)                         | ✅* | ✅* | ✅  | ✅* | ✅ | \*[caveats](#cisco_bgp_af-caveats) |
+| [cisco_bgp_neighbor](#type-cisco_bgp_neighbor)             | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af)       | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_bridge_domain](#type-cisco_bridge_domain)           | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
+| [cisco_bridge_domain_vni](#type-cisco_bridge_domain_vni)   | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
+| [cisco_dhcp_relay_global](#type-cisco_dhcp_relay_global)   | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_dhcp_relay_global-caveats) 
+| [cisco_encapsulation](#type-cisco_encapsulation)           | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
+| [cisco_evpn_vni](#type-cisco_evpn_vni)                     | ✅ | :heavy_minus_sign: | ✅ | ✅ | ✅ | \*[caveats](#cisco_evpn_vni-caveats) |
+| [cisco_fabricpath_global](#type-cisco_fabricpath_global)     | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅* | \*[caveats](#cisco_fabricpath_global-caveats) |
+| [cisco_fabricpath_topology](#type-cisco_fabricpath_topology) | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅  |
+| [cisco_interface](#type-cisco_interface)                             | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_interface-caveats) |
+| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_interface_ospf](#type-cisco_interface_ospf)                   | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_interface_portchannel](#type-cisco_interface_portchannel)     | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_interface_portchannel-caveats) |
+| [cisco_interface_service_vni](#type-cisco_interface_service_vni) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
+| [cisco_itd_device_group](#type-cisco_itd_device_group)           | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
+| [cisco_itd_device_group_node](#type-cisco_itd_device_group_node) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
+| [cisco_itd_service](#type-cisco_itd_service)                     | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | \*[caveats](#cisco_itd_service-caveats) |
+| [cisco_ospf](#type-cisco_ospf)                             | ✅  | ✅  | ✅ | ✅  | ✅ |
+| [cisco_ospf_vrf](#type-cisco_ospf_vrf)                     | ✅  | ✅  | ✅ | ✅  | ✅ |
+| ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | Caveats |
+| [cisco_overlay_global](#type-cisco_overlay_global)         | ✅  | :heavy_minus_sign: | ✅ | ✅ | ✅ |
+| [cisco_pim](#type-cisco_pim)                               | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_pim_rp_address](#type-cisco_pim_rp_address)         | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_pim_grouplist](#type-cisco_pim_grouplist)           | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_portchannel_global](#type-cisco_portchannel_global) | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_portchannel_global-caveats) |
+| [cisco_stp_global](#type-cisco_stp_global)                 | ✅* | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_stp_global-caveats) |
+| [cisco_snmp_community](#type-cisco_snmp_community)         | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_snmp_group](#type-cisco_snmp_group)                 | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_snmp_server](#type-cisco_snmp_server)               | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_snmp_user](#type-cisco_snmp_user)                   | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_tacacs_server](#type-cisco_tacacs_server)           | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_tacacs_server_host](#type-cisco_tacacs_server_host) | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_vdc](#type-cisco_vdc)                               | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
+| [cisco_vlan](#type-cisco_vlan)                             | ✅* | ✅* | ✅  | ✅  | ✅ | \*[caveats](#cisco_vlan-caveats) |
+| [cisco_vpc_domain](#type-cisco_vpc_domain)                 | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_vpc_domain-caveats) |
+| [cisco_vrf](#type-cisco_vrf)                               | ✅  | ✅* | ✅  | ✅  | ✅ | \*[caveats](#cisco_vrf-caveats) |
+| [cisco_vrf_af](#type-cisco_vrf_af)                         | ✅  | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_vrf_af-caveats) |
+| [cisco_vtp](#type-cisco_vtp)                               | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep)                 | ✅  | :heavy_minus_sign: | ✅  | ✅  | ✅  |
+| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni)         | ✅  | :heavy_minus_sign: | ✅  | ✅  | ✅  |
+
+##### NetDev Providers
+
+| ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | Caveats |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|
+| [domain_name](#type-domain_name)                           | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [name_server](#type-name_server)                           | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_dns](#type-network_dns)                           | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_interface](#type-network_interface)               | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_snmp](#type-network_snmp)                         | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_trunk](#type-network_trunk)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_vlan](#type-network_vlan)                         | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [ntp_config](#type-ntp_config)                             | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [ntp_server](#type-ntp_server)                             | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [port_channel](#type-port_channel)                         | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [radius](#type-radius)                                     | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [radius_global](#type-radius_global)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [radius_server_group](#type-tacacs_server_group)           | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [radius_server](#type-radius_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [search_domain](#type-search_domain)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [snmp_community](#type-snmp_community)                     | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [snmp_notification](#type-snmp_notification)               | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [snmp_notification_receiver](#type-snmp_notification_receiver) | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [snmp_user](#type-snmp_user)                               | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [syslog_server](#type-syslog_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [syslog_setting](#type-syslog_setting)                     | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [tacacs](#type-tacacs)                                     | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [tacacs_global](#type-tacacs_global)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [tacacs_server](#type-tacacs_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [tacacs_server_group](#type-tacacs_server_group)           | ✅  | ✅  | ✅  | ✅  | ✅  |
 
 --
 ### Cisco Resource Type Details
@@ -883,6 +927,91 @@ Allows matching based on Time-To-Live (TTL) value. Valid values are type Integer
 | `ttl => '128'`
 
 --
+### Type: cisco_bfd_global
+
+Manages configuration of a BFD (Bidirectional Forwarding Detection) instance.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I3(1)        | 1.4.0                  |
+| N3k      | 7.0(3)I3(1)        | 1.4.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.4.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.4.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.4.0                  |
+
+#### <a name="cisco_bfd_global-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `echo_rx_interval`      | Not supported on N5k, N6k      |
+| `fabricpath_interval`   | Not supported on N3k, N9k      |
+| `fabricpath_slow_timer` | Not supported on N3k, N9k      |
+| `fabricpath_vlan`       | Not supported on N3k, N9k      |
+| `interval`              | Not supported on N9k           |
+| `ipv4_echo_rx_interval` | Not supported on N5k, N6k      |
+| `ipv4_interval`         | Not supported on N5k, N6k      |
+| `ipv4_slow_timer`       | Not supported on N5k, N6k      |
+| `ipv6_echo_rx_interval` | Not supported on N5k, N6k      |
+| `ipv6_interval`         | Not supported on N5k, N6k      |
+| `ipv6_slow_timer`       | Not supported on N5k, N6k      |
+| `startup_timer`         | Not supported on N5k, N6k, N7k |
+
+#### Parameters
+
+##### `ensure`
+Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
+
+##### `echo_interface`
+Loopback interface used for echo frames.  Valid values are String, and 'default'.
+
+##### `echo_rx_interval`
+Echo receive interval in milliseconds.  Valid values are integer, and 'default'.
+
+##### `fabricpath_interval`
+BFD fabricpath interval.  Valid values are an array of [fabricpath_interval, fabricpath_min_rx, fabricpath_multiplier] or 'default'.
+
+Example: `fabricpath_interval => [100, 120, 4]`
+
+##### `fabricpath_slow_timer`
+BFD fabricpath slow rate timer in milliseconds.  Valid values are integer, and 'default'.
+
+##### `fabricpath_vlan`
+BFD fabricpath control vlan.  Valid values are integer, and 'default'.
+
+##### `interval`
+BFD interval.  Valid values are an array of [interval, min_rx, multiplier] or 'default'.
+
+Example: `interval => [100, 120, 4]`
+
+##### `ipv4_echo_rx_interval`
+IPv4 session echo receive interval in milliseconds.  Valid values are integer, and 'default'.
+
+##### `ipv4_interval`
+BFD IPv4 session interval.  Valid values are an array of [ipv4_interval, ipv4_min_rx, ipv4_multiplier] or 'default'.
+
+Example: `ipv4_interval => [100, 120, 4]`
+
+##### `ipv4_slow_timer`
+BFD IPv4 session slow rate timer in milliseconds.  Valid values are integer, and 'default'.
+
+##### `ipv6_echo_rx_interval`
+IPv6 session echo receive interval in milliseconds.  Valid values are integer, and 'default'.
+
+##### `ipv6_interval`
+BFD IPv6 session interval.  Valid values are an array of [ipv6_interval, ipv6_min_rx, ipv6_multiplier] or 'default'.
+
+Example: `ipv6_interval => [100, 120, 4]`
+
+##### `ipv6_slow_timer`
+BFD IPv6 session slow rate timer in milliseconds.  Valid values are integer, and 'default'.
+
+##### `slow_timer`
+BFD slow rate timer in milliseconds.  Valid values are integer, and 'default'.
+
+##### `startup_timer`
+BFD delayed startup timer in seconds.  Valid values are integer, and 'default'.
+
+--
 ### Type: cisco_bgp
 
 Manages configuration of a BGP instance.
@@ -903,6 +1032,7 @@ Manages configuration of a BGP instance.
 | `disable_policy_batching_ipv6` | Not supported on N5k, N6k, N7k |
 | `neighbor_down_fib_accelerate` | Not supported on N5k, N6k, N7k |
 | `reconnect_interval`           | Not supported on N5k, N6k, N7k |
+| `suppress_fib_pending`         | Idempotence supported only on I5 images |
 
 #### Parameters
 
@@ -1048,6 +1178,7 @@ Manages configuration of a BGP Address-family instance.
 |----------|:------------------:|:----------------------:|
 | N9k      | 7.0(3)I2(1)        | 1.1.0                  |
 | N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 
@@ -1055,8 +1186,9 @@ Manages configuration of a BGP Address-family instance.
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `additional_paths_install` | Not supported on N3k, N9k |
-| `advertise_l2vpn_evpn`     | Not supported on N3k, N6k |
+| `additional_paths_install`  | Not supported on N3k, N9k                                                                  |
+| `advertise_l2vpn_evpn`      | Not supported on N3k, N6k                                                                  |
+| address-family `l2vpn/evpn` | Module Minimum Version 1.3.2 <br> OS Minimum Version 7.0(3)I3(1) <br> Not supported on N3k |
 
 #### Parameters
 
@@ -1234,6 +1366,8 @@ Manages configuration of a BGP Neighbor.
 | Property | Caveat Description |
 |:--------|:-------------|
 | `log_neighbor_changes` | Not supported on N5k, N6k, N7k |
+| `bfd` | (ciscopuppet v1.4.0) BFD support added for all platforms |
+| `bfd` on IPv6 | Not supported on N5k, N6k |
 
 #### Parameters
 
@@ -1253,6 +1387,9 @@ Neighbor Identifier. Required. Valid values are string. Neighbors may use IPv4 o
 
 ##### `description`
 Description of the neighbor. Valid value is string.
+
+##### `bfd`
+Enable Bidirectional Forwarding Detection (BFD). Valid values are true, false and keyword 'default'.
 
 ##### `connected_check`
 Configure whether or not to check for directly connected peer. Valid values are true and false.
@@ -1491,6 +1628,77 @@ The bridge-domain ID. Valid values are one or range of integers.
 The Virtual Network Identifier (VNI) id that is mapped to the VLAN. Valid values are one or range of integers
 
 --
+### Type: cisco_dhcp_relay_global
+
+Manages configuration of a DHCP relay global configuration.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(2e)       | 1.4.0                  |
+| N3k      | 7.0(3)I2(2e)       | 1.4.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.4.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.4.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.4.0                  |
+
+#### <a name="cisco_dhcp_relay_global-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `ipv4_information_option_trust`     | Not supported on N5k, N6k      |
+| `ipv4_information_trust_all`        | Not supported on N5k, N6k      |
+| `ipv4_src_addr_hsrp`                | Not supported on N3k, N9k      |
+| `ipv4_sub_option_circuit_id_custom` | Not supported on N7k and supported on N3k and N9k running images I3 and above |
+| `ipv4_sub_option_circuit_id_string` | Only supported on N3k          |
+| `ipv6_option_cisco`                 | Not supported on N5k, N6k      |
+
+#### Parameters
+
+##### `ipv4_information_option`
+Enables inserting relay information in BOOTREQUEST. Valid values are true, false, 'default'.
+
+##### `ipv4_information_option_trust`
+Enables relay trust functionality on the system. Valid values are true, false, 'default'.
+
+##### `ipv4_information_option_vpn`
+Enables relay support across VRFs. Valid values are true, false, 'default'.
+
+##### `ipv4_information_trust_all`
+Enables relay trust on all the interfaces. Valid values are true, false, 'default'.
+
+##### `ipv4_relay`
+Enables DHCP relay agent. Valid values are true, false, 'default'.
+
+##### `ipv4_smart_relay`
+Enables DHCP smart relay. Valid values are true, false, 'default'.
+
+##### `ipv4_src_addr_hsrp`
+Enables Virtual IP instead of SVI address. Valid values are true, false, 'default'.
+
+##### `ipv4_src_intf`
+Source interface for the DHCPV4 relay. Valid values are string, keyword 'default'.
+
+##### `ipv4_sub_option_circuit_id_custom`
+Enables circuit id customized to include vlan id, slot and port info. Valid values are true, false, 'default'.
+
+##### `ipv4_sub_option_circuit_id_string`
+Specifies suboption format type string. Valid values are string, keyword 'default'.
+
+##### `ipv4_sub_option_cisco`
+Enables cisco propritery suboptions. Valid values are true, false, 'default'.
+
+##### `ipv6_option_cisco`
+Enables cisco propritery suboptions for DHCPV6. Valid values are true, false, 'default'.
+
+##### `ipv6_option_vpn`
+Enables DHCPv6 relay support across VRFs. Valid values are true, false, 'default'.
+
+##### `ipv6_relay`
+Enables DHCPv6 relay agent. Valid values are true, false, 'default'.
+
+##### `ipv6_src_intf`
+Source interface for the DHCPV6 relay. Valid values are string, keyword 'default'.
+
+--
 ### Type: cisco_encapsulation
 Manages a Global VNI Encapsulation profile
 
@@ -1686,9 +1894,17 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 
 | Property | Caveat Description |
 |:---------|:-------------|
-| `svi_autostate`       | Only supported on N3k,N7k,N9k |
-| `vlan_mapping`        | Only supported on N7k         |
-| `vlan_mapping_enable` | Only supported on N7k         |
+| `ipv4_dhcp_relay_info_trust`          | Not supported on N5k,N6k      |
+| `ipv4_dhcp_relay_src_addr_hsrp`       | Not supported on N3k,N9k      |
+| `storm_control_broadcast`             | Not supported on N7k          |
+| `storm_control_multicast`             | Not supported on N7k          |
+| `switchport_pvlan_mapping_trunk`      | Not supported on N3k          |
+| `switchport_pvlan_trunk_association`  | Not supported on N3k          |
+| `switchport_pvlan_trunk_promiscuous`  | Not supported on N3k          |
+| `switchport_pvlan_trunk_secondary`    | Not supported on N3k          |
+| `svi_autostate`                       | Only supported on N3k,N7k,N9k |
+| `vlan_mapping`                        | Only supported on N7k         |
+| `vlan_mapping_enable`                 | Only supported on N7k         |
 
 #### Parameters
 
@@ -1702,6 +1918,10 @@ are 'present' and 'absent'.
 Name of the interface on the network element. Valid value is a string.
 
 #### Properties
+
+###### `bfd_echo`
+Enables bfd echo function for all address families. Valid values are 'true', 'false', and
+'default'. This property is not applicable for loopback interfaces.
 
 ###### `description`
 Description of the interface. Valid values are a string or the keyword 'default'.
@@ -1735,35 +1955,66 @@ interface. Valid value is an integer.
 ##### `switchport_autostate_exclude`
 Exclude this port for the SVI link calculation. Valid values are 'true', 'false', and 'default'.
 
-##### `private_vlan_mapping`
-Private vlan mapping for interface vlan. List of secondary vlans associated to the interface vlan primary.
+##### `pvlan_mapping`
+Maps secondary VLANs to the VLAN interface of a primary VLAN. Valid inputs are a String containing a range of secondary vlans or keyword 'default'.
 
-##### `switchport_mode_private_vlan_host`
-Switchport host mode for private vlan. This a L2 access port. There are two modes: host and promiscous.
+Example: `pvlan_mapping => '3-4,6'`
 
-##### `switchport_mode_private_vlan_host_association`
-This configuration specify which vlans are associated on this port. Host mode only support a pair of vlans: primary and secondary. Valid values are an array of ["primary_vlan", "secondary_vlan"] pairs.
+##### `switchport_pvlan_host`
+Configures a Layer 2 interface as a private VLAN host port. Valid values are 'true', 'false', and 'default'
 
-##### `switchport_mode_private_vlan_host_promisc`
-This configuration specify which vlans are associated on this port. Promiscous mode only support a pair of vlans: primary and secondaries. Valid values are an array of ["primary_vlan", "secondary_vlan"] pairs.
+##### `switchport_pvlan_host_association`
+Associates the Layer 2 host port with the primary and secondary VLANs of a private VLAN. Valid inputs are: An array containing the primary and secondary vlans, or keyword 'default'.
 
-##### `switchport_mode_private_vlan_trunk_promiscuous`
-Switchport trunk promisc mode for private vlan. This a L2 trunk port capable of carrying multiple primary vlans.
+Example: `switchport_pvlan_host_association => ['44', '144']`
 
-##### `switchport_mode_private_vlan_trunk_secondary`
-Switchport trunk secondary mode for private vlan. This a L2 trunk port capable of carrying multiple secondary vlans.
+##### `switchport_pvlan_mapping`
+Associates the specified port with a primary VLAN and a selected list of secondary VLANs. Valid inputs are an array containing both the primary vlan and a range of secondary vlans, or keyword 'default'.
 
-#### `switchport_private_vlan_association_trunk`
-This configuration specify which vlans are associated on this trunk secondary port. Pair of distinguish vlans in the form of primary and secondary are accepted per entry. Valid values are an array of ["primary_vlan", "secondary_vlan"] pairs.
+Example: `switchport_pvlan_mapping => ['44', '3-4,6']`
 
-#### `switchport_private_vlan_mapping_trunk`
-This configuration specify which vlans are associated on this trunk promisc port. Pair of distinguish vlans in the form of primary vlan and secondary vlans (single or range) are accepted per entry. Valid values are an array of ["primary_vlan", "secondary_vlan"] pairs.
+##### `switchport_pvlan_mapping_trunk`
+Maps the promiscuous trunk port with the primary VLAN and a selected list of associated secondary VLANs. Valid inputs are: An array containing both the primary vlan and a range of secondary vlans, a nested array if there are multiple mappings, or keyword 'default'.
 
-#### `switchport_private_vlan_trunk_allowed_vlan`
-This configuration specify which private vlans are associated on this trunk port. Valid values are an array of ["vlan"].
+Examples:
 
-#### `switchport_private_vlan_trunk_native_vlan`
-This configuration specify the native vlan as a private vlan. Valid values are integers.
+```
+ switchport_pvlan_mapping_trunk => [['44', '3-4,6'], ['99', '199']]
+
+   -or-
+
+ switchport_pvlan_mapping_trunk => ['44', '3-4,6']
+```
+
+##### `switchport_pvlan_trunk_allowed_vlan`
+Sets the allowed VLANs for the private VLAN isolated trunk interface. Valid values are a String range of vlans or keyword 'default'.
+
+Example: `switchport_pvlan_trunk_allowed_vlan => '3-4,6'`
+
+##### `switchport_pvlan_trunk_association`
+Associates the Layer 2 isolated trunk port with the primary and secondary VLANs of private VLANs. Valid inputs are: An array containing an association of primary and secondary vlans, a nested array if there are multiple associations, or the keyword 'default'.
+
+Examples:
+
+```
+switchport_pvlan_trunk_association => [['44', '244'], ['45', '245']]
+
+   -or-
+
+switchport_pvlan_trunk_association => ['44', '244']
+```
+
+##### `switchport_pvlan_trunk_native_vlan`
+Sets the native VLAN for the 802.1Q trunk. Valid values are Integer, String, or keyword 'default'.
+
+##### `switchport_pvlan_promiscuous`
+Configures a Layer 2 interface as a private VLAN promiscuous port. Valid values are 'true', 'false', and 'default'.
+
+##### `switchport_pvlan_trunk_promiscuous`
+Configures a Layer 2 interface as a private VLAN promiscuous trunk port. Valid values are 'true', 'false', and 'default'.
+
+##### `switchport_pvlan_trunk_secondary`
+Configures a Layer 2 interface as a private VLAN isolated trunk port. Valid values are 'true', 'false', and 'default'.
 
 ##### `switchport_trunk_allowed_vlan`
 The allowed VLANs for the specified Ethernet interface. Valid values are
@@ -1779,6 +2030,15 @@ and 'default'.
 ###### `negotiate_auto`
 Enable/Disable negotiate auto on the interface. Valid values are 'true',
 'false', and 'default'.
+
+##### `storm_control_broadcast`
+Allowed broadcast traffic level. Valid values are a string representing the broadcast level or keyword 'default'.
+
+##### `storm_control_multicast`
+Allowed multicast traffic level. Valid values are a string representing the multicast level or keyword 'default'.
+
+##### `storm_control_unicast`
+Allowed unicast traffic level. Valid values are a string representing the unicast level or keyword 'default'.
 
 ##### L3 interface config attributes
 
@@ -1828,6 +2088,36 @@ Applies an ipv6 access list on the interface in the ingress direction. An access
 
 ###### `ipv6_acl_out`
 Applies an ipv6 access list on the interface in the egress direction. An access-list should be present on the network device prior to this configuration. Valid values are string, keyword 'default'.
+
+###### `ipv4_dhcp_relay_addr`
+This property is an array of dhcp relay addresses. Valid values are an array specifying the dhcp relay addresses or keyword 'default'; e.g.:
+
+```
+ipv4_dhcp_relay_addr => ['1.1.1.1', '2.2.2.2']
+```
+###### `ipv4_dhcp_relay_info_trust`
+Enable/Disable relay trust on the interface. Valid values are 'true', 'false', and 'default'.
+
+###### `ipv4_dhcp_relay_src_addr_hsrp`
+Enable/Disable virtual IP instead of SVI address on the interface. Valid values are 'true', 'false', and 'default'.
+
+###### `ipv4_dhcp_relay_src_intf`
+Source interface for the DHCPV4 relay. Valid values are string, keyword 'default'.
+
+###### `ipv4_dhcp_relay_info_trust`
+Enable/Disable DHCP relay subnet-broadcast on the interface. Valid values are 'true', 'false', and 'default'.
+
+###### `ipv4_dhcp_smart_relay`
+Enable/Disable DHCP smart relay on the interface. Valid values are 'true', 'false', and 'default'.
+
+###### `ipv6_dhcp_relay_addr`
+This property is an array of ipv6 dhcp relay addresses. Valid values are an array specifying the ipv6 dhcp relay addresses or keyword 'default'; e.g.:
+
+```
+ipv6_dhcp_relay_addr => ['2000::11', '2001::22']
+```
+###### `ipv6_dhcp_relay_src_intf`
+Source interface for the DHCPV6 relay. Valid values are string, keyword 'default'.
 
 ###### `vlan_mapping`
 This property is a nested array of [original_vlan, translated_vlan] pairs. Valid values are an array specifying the mapped vlans or keyword 'default'; e.g.:
@@ -1968,6 +2258,14 @@ Shutdown state of the interface service vni. Valid values are 'true', 'false', o
 ### Type: cisco_interface_ospf
 Manages configuration of an OSPF interface instance.
 
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.2.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+
 #### Parameters
 
 ##### `ensure`
@@ -1980,8 +2278,11 @@ Name of this cisco_interface resource. Valid value is a string.
 ##### `ospf`
 Name of the cisco_ospf resource. Valid value is a string.
 
+###### `bfd`
+Enables bfd at interface level. This overrides the bfd variable set at the ospf router level. Valid values are 'true', 'false', or 'default'.
+
 ##### `cost`
-The cost associated with this cisco_interface_ospf instance. Valid value is an integer.
+The cost associated with this cisco_interface_ospf instance. Valid value is an integer or the keyword 'default'.
 
 ##### `hello_interval`
 The hello_interval associated with this cisco_interface_ospf instance. Time
@@ -1996,17 +2297,17 @@ adjacencies. Valid values are an integer or the keyword 'default'.
 ##### `passive_interface`
 Passive interface associated with the cisco_interface_ospf instance. Setting
 to true will prevent this interface from receiving HELLO packets.
-Valid values are 'true' and 'false'.
+Valid values are 'true' and 'false' or the keyword 'default'.
 
 ##### `message_digest`
 Enables or disables the usage of message digest authentication.
-Valid values are 'true' and 'false'.
+Valid values are 'true' and 'false' or the keyword 'default'.
 
 ##### `message_digest_key_id`
 md5 authentication key-id associated with the cisco_interface_ospf instance.
 If this is present in the manifest, message_digest_encryption_type,
 message_digest_algorithm_type and message_digest_password are mandatory.
-Valid value is an integer.
+Valid value is an integer or the keyword 'default'.
 
 ##### `message_digest_algorithm_type`
 Algorithm used for authentication among neighboring routers within an area.
@@ -2018,7 +2319,22 @@ Valid values are 'cleartext', '3des' or 'cisco_type_7' encryption, and
 'default', which defaults to 'cleartext'.
 
 ##### `message_digest_password`
-Specifies the message_digest password. Valid value is a string.
+Specifies the message_digest password. Valid value is a string or the keyword 'default'.
+
+###### `mtu_ignore`
+Disables OSPF MTU mismatch detection. Valid values are 'true', 'false', or 'default'.
+
+##### `network_type`
+Specifies the network type of this interface. Valid values are 'broadcast', 'p2p' or the keyword 'default'. 'broadcast' type is not applicable on loopback interfaces.
+
+##### `priority`
+The router priority associated with this cisco_interface_ospf instance. Valid values are an integer or the keyword 'default'.
+
+###### `shutdown`
+Shuts down ospf on this interface. Valid values are 'true', 'false', or 'default'.
+
+##### `transmit_delay`
+Packet transmission delay in seconds. Valid values are an integer or the keyword 'default'.
 
 ##### `area`
 *Required*. Ospf area associated with this cisco_interface_ospf instance. Valid values are a string, formatted as an IP address (i.e. "0.0.0.0") or as an integer.
@@ -2046,6 +2362,9 @@ Manages configuration of a portchannel interface instance.
 
 ##### `ensure`
 Determine whether the config should be present or not. Valid values are 'present' and 'absent'.
+
+##### `bfd_per_link`
+Enables BFD sessions on each port-channel link. Valid values are true, false or 'default'.
 
 ##### `lacp_graceful_convergence`
 port-channel lacp graceful convergence. Valid values are true, false or 'default'.
@@ -2175,6 +2494,7 @@ Manages configuration of ITD (Intelligent Traffic Director) service.
 
 | Property | Caveat Description |
 |:--------|:-------------|
+|  | This provider requires the following commands to be applied as prerequisites using the [cisco_command_config](https://github.com/cisco/cisco-network-puppet-module/blob/master/README.md#type-cisco_command_config) provider.<br><br>&nbsp;&nbsp;cisco_command_config { 'prerequisites':<br>&nbsp;&nbsp;&nbsp;&nbsp;command => "<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;feature pbr<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;feature sla sender<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;feature sla responder<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ip sla responder<br>&nbsp;&nbsp;&nbsp;&nbsp;"<br>&nbsp;&nbsp;}|
 | `nat_destination` | Supported only on N7k |
 | `peer_local`      | Supported only on N9k |
 | `peer_vdc`        | Supported only on N7k |
@@ -2262,6 +2582,193 @@ and 'absent'.
 Name of the ospf router. Valid value is a string.
 
 --
+### Type: cisco_ospf_area
+
+Manages an area for an OSPF router.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I3(1)        | 1.4.0                  |
+| N3k      | 7.0(3)I3(1)        | 1.4.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.4.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.4.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.4.0                  |
+
+#### Example Usage
+
+```puppet
+cisco_ospf_area { 'my_ospf_instance default 10':
+  ensure          => 'present',
+  range           => [['10.3.0.0/16', 'not_advertise', '23'],
+                      ['10.3.3.0/24', '450']
+                     ],
+}
+
+cisco_ospf_area { 'my_ospf_instance my_vrf 1.1.1.1':
+  ensure          => 'present',
+  authentication  => 'md5',
+  default_cost    => 1000,
+  filter_list_in  => 'fin',
+  filter_list_out => 'fout',
+  stub            => true,
+}
+
+cisco_ospf_area { 'my_ospf_instance my_vrf 1000':
+  ensure                 => 'present',
+  nssa                   => true,
+  nssa_default_originate => true,
+  nssa_no_redistribution => true,
+  nssa_no_summary        => true,
+  nssa_route_map         => 'rmap',
+  nssa_translate_type7   => 'always',
+}
+```
+
+#### Parameters
+
+| Example Parameter Usage |
+|:--|:--
+|`cisco_ospf_area { '<ospf_process_id> <vrf> <area_id>':`
+|`cisco_ospf_area { '1 my_vrf 10':`
+|`cisco_ospf_area { 'my_ospf default 10.1.1.1':`
+
+##### `ensure`
+Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
+
+##### `authentication`
+Enables authentication for the area. Valid values are 'cleartext', 'md5' or 'default'.
+
+##### `default_cost`
+Default_cost for default summary Link-State Advertisement (LSA). Valid values are integer or keyword 'default'.
+
+##### `filter_list_in`
+This is a route-map for filtering networks sent to this area. Valid values are string or keyword 'default'.
+
+##### `filter_list_out`
+This is a route-map for filtering networks sent from this area. Valid values are string or keyword 'default'.
+
+##### `nssa`
+This property defines the area as NSSA (not so stubby area). Valid values are true, false or keyword 'default'. This property is mutually exclusive with `stub` and `stub_no_summary`.
+
+##### `nssa_default_originate`
+Generates an NSSA External (type 7) LSA for use as a default route to the external autonomous system. Valid values are true, false or keyword 'default'.
+
+##### `nssa_no_redistribution`
+Disable redistribution within the NSSA. Valid values are true, false or keyword 'default'.
+
+##### `nssa_no_summary`
+Disables summary LSA flooding within the NSSA. Valid values are true, false or keyword 'default'.
+
+##### `nssa_route_map`
+Controls distribution of the default route. This property can only be used when the `nssa_default_originate` property is set to true. Valid values are String (the route-map name) or keyword 'default'.
+
+##### `nssa_translate_type7`
+Translates NSSA external (type 7) LSAs to standard external (type 5) LSAs for use outside the NSSA. Valid values are one of the following keyword strings:
+
+Keyword | Description
+|:--|:--
+|`always`             | Always translate
+|`suppress_fa`        | Forwarding Address Suppression
+|`always_suppress_fa` | Always translate & use Forwarding Address Suppression
+|`never`              | Never translate
+|`default`            | Translation is not configured
+
+##### `range`
+Summarizes routes at an area boundary. Optionally sets the area range status to DoNotAdvertise as well as setting per-summary cost values. Valid values are a nested array of [summary_address, 'not_advertise', cost], or keyword 'default'. The summary-address is mandatory.
+
+Example: `range => [['10.3.0.0/16', 'not_advertise', '23'],
+                    ['10.3.0.0/32', 'not_advertise'],
+                    ['10.3.0.1/32'],
+                    ['10.3.3.0/24', '450']]`
+
+##### `stub`
+Defines the area as a stub area. Valid values are true, false or keyword 'default'. This property is not necessary when the `stub_no_summary` property is set to true, which also defines the area as a stub area. This property is mutually exclusive with `nssa`.
+
+
+##### `stub_no_summary`
+Stub areas flood summary LSAs. This property disables summary flooding into the area. This property can be used in place of the `stub` property or in conjunction with it. Valid values are true, false or keyword 'default'. This property is mutually exclusive with `nssa`.
+
+--
+### Type: cisco_ospf_area_vlink
+
+Manages an area virtual link for an OSPF router.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I3(1)        | 1.4.0                  |
+| N3k      | 7.0(3)I3(1)        | 1.4.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.4.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.4.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.4.0                  |
+
+#### Example Usage
+
+```puppet
+cisco_ospf_area_vlink { 'my_ospf_instance default 10 1.1.1.1':
+  ensure                             => 'present',
+  auth_key_chain                     => 'keyChain',
+  authentication                     => 'md5',
+  authentication_key_encryption_type => cisco_type_7,
+  authentication_key_password        => '98765432109876543210',
+  dead_interval                      => 500,
+  hello_interval                     => 2000,
+  message_digest_algorithm_type      => 'md5',
+  message_digest_encryption_type     => cisco_type_7,
+  message_digest_key_id              => 123,
+  message_digest_password            => '12345678901234567890',
+  retransmit_interval                => 777,
+  transmit_delay                     => 333,
+}
+```
+
+#### Parameters
+
+| Example Parameter Usage |
+|:--|:--
+|`cisco_ospf_area_vlink { '<ospf_process_id> <vrf> <area_id> <vlink_id>':`
+|`cisco_ospf_area_vlink { '1 my_vrf 10 1.1.1.1':`
+|`cisco_ospf_area_vlink { 'my_ospf default 10.1.1.1 2.2.2.2':`
+
+##### `ensure`
+Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
+
+##### `auth_key_chain`
+Authentication password key chain name. Valid values are string, or 'default'.
+
+##### `authentication`
+Enables authentication for the virtual link. Valid values are 'cleartext', 'md5', 'null', or 'default'.
+
+##### `authentication_key_encryption_type`
+Specifies the scheme used for encrypting authentication_key_password. Valid values are 'cleartext', '3des' or 'cisco_type_7' encryption, and 'default', which defaults to 'cleartext'.
+
+##### `authentication_key_password`
+Specifies the authentication_key password. Valid value is a string, or 'default'.
+
+##### `dead_interval`
+Time in seconds that a neighbor waits for a Hello packet before declaring the local router as dead and tearing down adjacencies. Valid values are integer, keyword 'default'.
+
+##### `hello_interval`
+Time in seconds between successive Hello packets. Valid values are integer, keyword 'default'.
+
+##### `message_digest_algorithm_type`
+Algorithm used for authentication among neighboring routers within an area virtual link. Valid values are 'md5' and keyword 'default'.
+
+##### `message_digest_encryption_type`
+Specifies the scheme used for encrypting message_digest_password. Valid values are 'cleartext', '3des' or 'cisco_type_7' encryption, and 'default', which defaults to 'cleartext'.
+
+##### `message_digest_key_id`
+md5 authentication key id. Valid values are integer.
+
+##### `message_digest_password`
+Specifies the message_digest password. Valid value is a string.
+
+##### `retransmit_interval`
+Estimated time in seconds between successive LSAs. Valid values are integer, keyword 'default'.
+
+##### `transmit_delay`
+Estimated time in seconds to transmit an LSA to a neighbor. Valid values are integer, keyword 'default'.
+
+--
 ### Type: cisco_ospf_vrf
 
 Manages a VRF for an OSPF router.
@@ -2288,6 +2795,9 @@ Name of the ospf instance. Valid value is a string.
 
 ##### `router_id`
 Router Identifier (ID) of the OSPF router VRF instance. Valid values are a string or the keyword 'default'.
+
+##### `bfd`
+Enables bfd on all the OSPF interfaces on this router. The individual interfaces can override this. Valid values are true, false or keyword 'default'
 
 ##### `default_metric`
 Specify the default Metric value. Valid values are an  integer or the keyword
@@ -2872,8 +3382,8 @@ Manages a Cisco VLAN.
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `fabric_control` | Only supported on N7k (support added in ciscopuppet 1.3.0) |
-| `mode`           | Only supported on N5k,N6k,N7k |
+| `fabric_control`    | Only supported on N7k (support added in ciscopuppet 1.3.0) |
+| `mode`              | Only supported on N5k,N6k,N7k |
 
 #### Parameters
 
@@ -2900,11 +3410,19 @@ State of the VLAN. Valid values are 'active', 'suspend', and keyword 'default'.
 Whether or not the vlan is shutdown. Valid values are 'true', 'false' and
 keyword 'default'.
 
-##### `private_vlan_type`
-The private vlan type. Valid values are 'primary', 'isolated' and 'community'.
+##### `pvlan_type`
+The private vlan type. Valid values are: 'primary', 'isolated', 'community' or 'default'.
 
-##### `private_vlan_association`
-Associate the secondary vlanis to the primary vlan. Valid values are integer like 5,10-12.
+##### `pvlan_association`
+Associates the secondary vlan(s) to the primary vlan. Valid values are an Array or String of vlan ranges, or keyword 'default'.
+
+Examples:
+
+```
+pvlan_associate => ['2-5, 9']
+  -or-
+pvlan_associate => '2-5, 9'
+```
 
 ##### `fabric_control`
 Specifies this vlan as the fabric control vlan. Only one bridge-domain or VLAN can be configured as fabric-control. Valid values are true, false.
@@ -3931,39 +4449,48 @@ Number of seconds before the timeout period ends
 ##### `servers`
 Array of servers associated with this group.
 
-## Limitations
+## <a href='documentation-guide'>Documentation Guide</a>
 
-Minimum Requirements:
-* Cisco NX-OS:
-  * Open source Puppet version 4.0+ or Puppet Enterprise 2015.2+
-  * Cisco Nexus N9k, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
-  * Cisco Nexus N3k, OS Version 7.0(3)I2(1), Environments: Bash-shell, Guestshell
-  * Cisco Nexus N5k, OS Version 7.3(0)N1(1), Environments: Open Agent Container (OAC)
-  * Cisco Nexus N6k, OS Version 7.3(0)N1(1), Environments: Open Agent Container (OAC)
-  * Cisco Nexus N7k, OS Version 7.3(0)D1(1), Environments: Open Agent Container (OAC)
+The following table groups **ciscopuppet** documentation based on the intended audience.
 
-## Learning Resources
+Audience | ciscopuppet Documentation |
+:--:|:--|
+User       | [README.md][USER-0] : (This document)<br>[README-agent-install.md][USER-1] : Agent Installation and Configuration Guide<br>[README-beaker-agent-install.md][USER-2] : Automated Agent Installation and Configuration<br>[README-package-provider.md][USER-3] : Cisco Nexus Package Management<br>[README-example-manifest.md][USER-4] : Example Demo Manifest User Guide
+Developer  | [CONTRIBUTING.md][DEV-1] : Contribution guidelines<br>[README-develop-types-providers.md][DEV-2] : Developing new ciscopuppet Types & Providers<br>[README-develop-beaker-scripts.md][DEV-3] : Developing new beaker test scripts for ciscopuppet
+Maintainer | [README-maintainers.md][MAINT-1] : Guidelines for core maintainers of the ciscopuppet project<br>*(Developer guides apply to Maintainers as well)*
 
-* Puppet
-  * [https://learn.puppetlabs.com/](https://learn.puppetlabs.com/)
-  * [https://en.wikipedia.org/wiki/Puppet_(software)](https://en.wikipedia.org/wiki/Puppet_(software))
-* Markdown (for editing documentation)
-  * [https://help.github.com/articles/markdown-basics/](https://help.github.com/articles/markdown-basics/)
-* Ruby
-  * [https://en.wikipedia.org/wiki/Ruby_(programming_language)](https://en.wikipedia.org/wiki/Ruby_(programming_language))
-  * [https://www.codecademy.com/tracks/ruby](https://www.codecademy.com/tracks/ruby)
-  * [https://rubymonk.com/](https://rubymonk.com/)
-  * [https://www.codeschool.com/paths/ruby](https://www.codeschool.com/paths/ruby)
-* Ruby Gems
-  * [http://guides.rubygems.org/](http://guides.rubygems.org/)
-  * [https://en.wikipedia.org/wiki/RubyGems](https://en.wikipedia.org/wiki/RubyGems)
-* YAML
-  * [https://en.wikipedia.org/wiki/YAML](https://en.wikipedia.org/wiki/YAML)
-  * [http://www.yaml.org/start.html](http://www.yaml.org/start.html)
-* Yum
-  * [https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified](https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified)
-  * [https://www.centos.org/docs/5/html/yum/](https://www.centos.org/docs/5/html/yum/)
-  * [http://www.linuxcommand.org/man_pages](http://www.linuxcommand.org/man_pages/yum8.html)
+[USER-0]: https://github.com/cisco/cisco-network-puppet-module/blob/master/README.md
+[USER-1]: https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-agent-install.md
+[USER-2]: https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-beaker-agent-install.md
+[USER-3]: https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-package-provider.md
+[USER-4]: https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/README.md
+
+[DEV-1]: https://github.com/cisco/cisco-network-puppet-module/blob/master/CONTRIBUTING.md
+[DEV-2]: https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-develop-types-providers.md
+[DEV-3]: https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-develop-beaker-scripts.md
+
+[MAINT-1]: https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-maintainers.md
+[MAINT-2]: https://github.com/cisco/cisco-network-puppet-module/blob/master/SUPPORT.md
+
+##### General Documentation
+
+Topic | Resources |
+:---------|:--|
+Puppet    | <https://learn.puppetlabs.com/><br><https://en.wikipedia.org/wiki/Puppet_(software)>
+Guestshell | [N9k Programmability Guide][GS_9K]
+Markdown<br>(*editor*) | <https://help.github.com/articles/markdown-basics/>
+N5k,N6k OAC<br>(open agent container) | [N5k,N6k Programmability Guide][OAC_5K_DOC]
+N7k OAC<br>(open agent container)     | [N7k Programmability Guide][OAC_7K_DOC]
+Ruby      | <https://en.wikipedia.org/wiki/Ruby_(programming_language)><br><https://www.codecademy.com/tracks/ruby><br><https://rubymonk.com/><br><https://www.codeschool.com/paths/ruby>
+Ruby Gems | <http://guides.rubygems.org/><br><https://en.wikipedia.org/wiki/RubyGems>
+YAML      | <https://en.wikipedia.org/wiki/YAML><br><http://www.yaml.org/start.html>
+Yum       | <https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified><br><https://www.centos.org/docs/5/html/yum/><br><http://www.linuxcommand.org/man_pages>
+
+[GS_9K]: http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/6-x/programmability/guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_chapter_01010.html
+
+[OAC_5K_DOC]: http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus5000/sw/programmability/guide/b_Cisco_Nexus_5K6K_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_5K6K_Series_NX-OS_Programmability_Guide_chapter_01001.html
+
+[OAC_7K_DOC]: http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus7000/sw/programmability/guide/b_Cisco_Nexus_7000_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_7000_Series_NX-OS_Programmability_Guide_chapter_01001.html
 
 ## License
 

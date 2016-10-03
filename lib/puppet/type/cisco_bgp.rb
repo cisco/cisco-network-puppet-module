@@ -377,6 +377,7 @@ Puppet::Type.newtype(:cisco_bgp) do
 
     munge do |value|
       value = 'size_small' if value == 'true'
+      value = 'size_disable' if value == 'false'
       value.to_sym
     end
 

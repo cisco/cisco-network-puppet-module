@@ -34,7 +34,6 @@ tests = {
 # Test hash test cases
 tests[:default] = {
   desc:           '1.1 Default tests',
-  preclean:       'cisco_acl',
   title_pattern:  'ipv4 beaker',
   manifest_props: {
     fragments: 'default'
@@ -94,6 +93,9 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown { resource_absent_cleanup(agent, 'cisco_acl') }
+  resource_absent_cleanup(agent, 'cisco_acl')
+
   # ------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. ACL Testing")
   id = :default
@@ -106,16 +108,14 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   tests[id][:title_pattern] = 'ipv6 beaker6'
   test_harness_run(tests, id)
 
+  resource_absent_cleanup(agent, 'cisco_acl')
   # ------------------------------------
-  resource_absent_cleanup(agent, 'cisco_acl', 'ACL CLEANUP :: ')
   logger.info("\n#{'-' * 60}\nSection 2. Title Pattern Testing")
   test_harness_run(tests, :title_patterns_1)
   test_harness_run(tests, :title_patterns_2)
   test_harness_run(tests, :title_patterns_3)
 
   # ---------------------------------------------------------
-  resource_absent_cleanup(agent, 'cisco_acl', 'ACL CLEANUP :: ')
   skipped_tests_summary(tests)
 end
-
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

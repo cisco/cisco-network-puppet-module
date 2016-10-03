@@ -116,10 +116,10 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Check network_snmp resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
+    enable_pat = operating_system == 'ios_xr' ? { 'enable' => 'true' } : { 'enable' => 'false' }
     cmd_str = PUPPET_BINPATH + 'resource network_snmp default'
     on(agent, cmd_str) do
-      search_pattern_in_output(stdout, { 'enable' => 'false' },
-                               false, self, logger)
+      search_pattern_in_output(stdout, enable_pat, false, self, logger)
       search_pattern_in_output(stdout, { 'contact' => 'unset' },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'location' => 'unset' },

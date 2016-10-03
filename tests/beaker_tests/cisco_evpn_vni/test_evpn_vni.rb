@@ -31,10 +31,12 @@ tests = {
   resource_name: 'cisco_evpn_vni',
 }
 
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
+
 # Test hash test cases
 tests[:default] = {
   desc:           '1.1 Default Properties',
-  preclean:       'cisco_evpn_vni',
   title_pattern:  '4096',
   manifest_props: {
     route_distinguisher: 'default',
@@ -70,30 +72,31 @@ tests[:non_default] = {
 # The harness will remove any "unprops" from the manifests.
 def unsupported_properties(*)
   unprops = []
-  unprops << :route_target_both if nexus_i2_image
+  unprops << :route_target_both if nexus_image['I2']
   unprops
+end
+
+def cleanup(agent)
+  resource_absent_cleanup(agent, 'cisco_evpn_vni')
 end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  skip_unless_supported(tests)
+  teardown { cleanup(agent) }
+  cleanup(agent)
 
-  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   # -----------------------------------
+  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   id = :default
   test_harness_run(tests, id)
 
   tests[id][:ensure] = :absent
-  tests[id].delete(:preclean)
   test_harness_run(tests, id)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   test_harness_run(tests, :non_default)
-
-  # -----------------------------------
-  resource_absent_cleanup(agent, 'cisco_evpn_vni')
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

@@ -61,8 +61,17 @@ tests = {
   resource_name: 'cisco_bgp_neighbor',
 }
 
+def cleanup(agent)
+  if operating_system == 'nexus'
+    test_set(agent, 'no feature bgp')
+  else
+    resource_absent_cleanup(agent, 'cisco_bgp')
+  end
+end
+
 test_name "TestCase :: #{tests[:resource_name]} - #{id}" do
-  resource_absent_cleanup(agent, 'cisco_bgp')
+  teardown { cleanup(agent) }
+  cleanup(agent)
 
   os = operating_system
   vrf = 'red'
@@ -121,8 +130,6 @@ test_name "TestCase :: #{tests[:resource_name]} - #{id}" do
     tests[id][:resource] = { 'password' => IGNORE_VALUE }
     test_resource(tests, id, true)
   end
-
-  resource_absent_cleanup(agent, 'cisco_bgp')
 
   skipped_tests_summary(tests)
 end

@@ -49,40 +49,6 @@ IGNORE_VALUE = :ignore_value
 # These methods are defined outside of a module so that
 # they can access the Beaker DSL API's.
 
-# cisco_interface uses the interface name as the title.
-# Find an available interface and create an appropriate title.
-def create_interface_title(tests, id)
-  return tests[id][:title_pattern] if tests[id][:title_pattern]
-
-  # Prefer specific test key over the all tests key
-  type = tests[id][:intf_type] || tests[:intf_type]
-  case type
-  when /ethernet/i
-    if tests[:ethernet]
-      intf = tests[:ethernet]
-    else
-      intf = find_interface(tests, id)
-      # cache for later tests
-      tests[:ethernet] = intf
-    end
-  when /dot1q/
-    if tests[:ethernet]
-      intf = "#{tests[:ethernet]}.1"
-    else
-      intf = find_interface(tests, id)
-      # cache for later tests
-      tests[:ethernet] = intf
-      intf = "#{intf}.1" unless intf.nil?
-    end
-  when /vlan/
-    intf = tests[:svi_name]
-  when /bdi/
-    intf = tests[:bdi_name]
-  end
-  logger.info("\nUsing interface: #{intf}")
-  tests[id][:title_pattern] = intf
-end
-
 # Method to return the Vegas shell command string for a NXOS CLI command.
 # @param nxosclistr [String] The NXOS CLI command string to execute on host.
 # @result vshellcmd [String] Returns 'vsh -c <cmd>' command string.
@@ -132,6 +98,7 @@ def search_pattern_in_output(output, patarr, inverse, testcase,\
     if match
       logger.debug("TestStep :: #{match_kind}Match #{pattern} :: PASS")
     else
+      logger.error("stdout:\n--\n#{stdout}\n--")
       testcase.fail_test("TestStep :: #{match_kind}Match #{pattern} :: FAIL")
     end
   end
@@ -307,6 +274,7 @@ def resource_absent_cleanup(agent, res_name, stepinfo='absent clean')
       when /cisco_snmp_user/
         next if title[/devops/i]
       when /cisco_vlan/
+        # TBD: Per-vlan cleanup is too slow. Consider 'no vlan 1-4095'
         next if title == '1'
       when /cisco_vrf/
         next if title[/management/]
@@ -339,10 +307,17 @@ def resource_titles(agent, res_name, action=:find)
   titles
 end
 
+# Helper to determine if a resource is present
+def resource_present?(agent, name, title)
+  cmd = PUPPET_BINPATH + "resource #{name} #{title}"
+  result = on(agent, cmd).stdout
+  result[/ensure => 'absent'/] ? false : true
+end
+
 # Helper to configure switchport mode
-def config_switchport_mode(agent, mode, stepinfo='switchport mode: ')
+def config_switchport_mode(agent, intf, mode, stepinfo='switchport mode: ')
   step "TestStep :: #{stepinfo}" do
-    cmd = "switchport ; switchport mode #{mode}"
+    cmd = "interface #{intf} ; switchport ; switchport mode #{mode}"
     command_config(agent, cmd, cmd)
   end
 end
@@ -350,11 +325,24 @@ end
 # Helper to toggle 'system default switchport'
 def system_default_switchport(agent, state=false,
                               stepinfo='system default switchport')
-  step "TestStep :: #{stepinfo}" do
+  step "TestStep :: #{stepinfo} (state: #{state})" do
     state = state ? ' ' : 'no '
     cmd = "#{state}system default switchport"
     command_config(agent, cmd, cmd)
   end
+end
+
+# Helper for checking/setting 'system default switchport'
+def config_system_default_switchport?(tests, id)
+  return unless tests[id].key?(:sys_def_switchport)
+
+  state = tests[id][:sys_def_switchport]
+  # cached state
+  return if tests[:sys_def_switchport] == state
+
+  system_default_switchport(agent, state)
+  # cache for later tests
+  tests[:sys_def_switchport] = state
 end
 
 # Helper to toggle 'system default switchport shutdown'
@@ -367,6 +355,19 @@ def system_default_switchport_shutdown(agent, state=false,
   end
 end
 
+# Helper for checking/setting 'system default switchport shutdown'
+def config_system_default_switchport_shutdown?(tests, id)
+  return unless tests[id].key?(:sys_def_sw_shut)
+
+  state = tests[id][:sys_def_sw_shut]
+  # cached state
+  return if tests[:sys_def_sw_shut] == state
+
+  system_default_switchport_shutdown(agent, state)
+  # cache for later tests
+  tests[:sys_def_sw_shut] = state
+end
+
 # Helper for creating / removing an ACL
 def config_acl(agent, afi, acl, state, stepinfo='ACL:')
   step "TestStep :: #{stepinfo}" do
@@ -376,6 +377,12 @@ def config_acl(agent, afi, acl, state, stepinfo='ACL:')
     cmd = PUPPET_BINPATH + cmd
     on(agent, cmd, acceptable_exit_codes: [0, 2])
   end
+end
+
+# Helper for checking/setting ACLs
+def config_acl?(tests, id)
+  tests[id][:acl].each { |acl, afi| config_acl(agent, afi, acl, true) } if
+    tests[id][:acl]
 end
 
 # Helper for creating / removing bridge-domain configs
@@ -412,6 +419,20 @@ def config_bridge_domain(agent, test_bd, stepinfo='bridge-domain config:')
   end
 end
 
+def config_bridge_domain?(tests, _id)
+  return unless platform[/n7k/] && tests.key?(:bridge_domain)
+
+  bd = tests[:bridge_domain]
+  agent = tests[:agent]
+  on(agent, get_vshell_cmd('show runn bridge-domain'), pty: true)
+
+  config_bridge_domain(agent, bd) unless
+    stdout.match(Regexp.new("^bridge-domain #{bd}"))
+
+  # Delete the key to prevent having to set this for every test case
+  tests.delete(:bridge_domain)
+end
+
 # Helper for creating / removing encap profile vni (global) configs
 def config_encap_profile_vni_global(agent, cmd,
                                     stepinfo='encap profile vni global:')
@@ -422,7 +443,8 @@ end
 
 # Helper to nuke a single interface. This is needed to remove all
 # configurations from the interface.
-def interface_cleanup(agent, intf, stepinfo='Pre Clean:')
+def interface_cleanup(agent, intf, stepinfo='Interface Clean:')
+  return if intf.empty?
   step "TestStep :: #{stepinfo}" do
     cmd = "resource cisco_command_config 'interface_cleanup' "\
           "command='default interface #{intf}'"
@@ -578,8 +600,9 @@ def create_manifest_and_resource(tests, id)
     tests[id][:resource] = { 'ensure' => 'absent' }
   else
     state = 'ensure => present,' unless tests[:ensurable] == false
+
     tests[id][:resource]['ensure'] = nil unless
-      tests[id][:resource].nil? || tests[:ensurable] == false
+        tests[id][:resource].nil? || tests[:ensurable] == false
 
     manifest_props = tests[id][:manifest_props]
     if manifest_props
@@ -598,6 +621,31 @@ def create_manifest_and_resource(tests, id)
     # TBD: Need a prop_hash_to_resource to handle array patterns
     tests[id][:resource] = manifest_props unless tests[id][:resource]
   end
+
+  tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+  \nnode default {
+  #{dependency_manifest(tests, id)}
+  #{tests[:resource_name]} { '#{tests[id][:title_pattern]}':
+    #{state}\n#{manifest}
+  }\n}\nEOF"
+
+  true
+end
+
+# Special create manifest/resource method for yum packages only.
+def create_package_manifest_resource(tests, id)
+  puppet_resource_cmd_from_params(tests, id)
+  state = ''
+  manifest = ''
+  if tests[id][:ensure] == :absent
+    state = 'ensure => absent,'
+  else
+    state = 'ensure => present,'
+  end
+
+  manifest_props = tests[id][:manifest_props]
+  manifest += prop_hash_to_manifest(manifest_props)
+  tests[id][:resource] = manifest_props
 
   tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   \nnode default {
@@ -661,7 +709,7 @@ end
 # - Cleans resource
 def test_harness_run(tests, id)
   return unless platform_supports_test(tests, id)
-
+  logger.info("\n  * Process test_harness_run")
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
 
   # Build the manifest for this test
@@ -693,6 +741,7 @@ def setup_mt_full_env(tests, testcase)
   # MT-full tests require a specific linecard. Search for a compatible
   # module and enable it.
 
+  logger.info('Process setup_mt_full_env')
   testheader = tests[:resource_name]
   mod = tests[:vdc_limit_module]
   mod = 'f3' if mod.nil?
@@ -730,9 +779,9 @@ def setup_mt_full_env(tests, testcase)
                 "Unable to allocate interface '#{intf}' to VDC")
   end
 
-  interface_cleanup(tests[:agent], intf)
+  interface_cleanup(agent, intf)
 
-  config_switchport_mode(agent, tests[:switchport_mode]) if
+  config_switchport_mode(agent, intf, tests[:switchport_mode]) if
     tests[:switchport_mode]
 
   config_bridge_domain(agent, tests[:bridge_domain]) if
@@ -786,6 +835,60 @@ def setup_fabricpath_env(tests, testcase)
 end
 # rubocop:enable Metrics/AbcSize
 
+# Given a configuration command (or array of commands), search the device
+# and remove any configs that match. Optionally include a show command filter.
+#
+# Example:
+#  config_find_remove(agent, 'interface loopback42')
+#  config_find_remove(agent, ['interface loopback42', 'feature foo'])
+#  config_find_remove(agent, ['feature foo', 'feature bar'], 'incl ^feature')
+#
+def config_find_remove(agent, find=[], filter='incl .*')
+  find = [find] if find.is_a?(String)
+  remove = []
+  current = test_get(agent, filter)
+
+  find.each do |cfg|
+    remove << "no #{cfg}" if current.match(Regexp.new("^#{cfg}"))
+  end
+  return if remove.empty?
+
+  # Clean up all configs with one call
+  logger.info(' * Remove existing config')
+  test_set(agent, remove.join(' ; '))
+end
+
+# Get raw configuration from the device using command_config's test_get.
+# test_get does a 'show runn' but requires a filter.
+# Example:
+#  test_get(agent, 'incl ^vlan')
+#
+# opt = :raw, return raw output from puppet resource command
+# opt = :array, return array of test_get property data only
+def test_get(agent, filter, opt=:raw)
+  cmd_prefix = PUPPET_BINPATH + "resource cisco_command_config 'cc' "
+  on(agent, cmd_prefix + "test_get=\"#{filter}\"")
+  case opt
+  when :raw
+    return stdout
+  when :array
+    # clean up the output and return as array of commands
+    # stdout: " cisco_command_config { 'cc':\n  test_get => '\n foo\n bar\n',\n}"
+    # array:  [' foo', ' bar']
+    stdout.split("\n")[2..-3] if stdout
+  end
+end
+
+# Add arbitrary configurations using command_config's test_set property.
+# Example:
+#  test_set(agent, 'no feature foo ; no feature bar')
+def test_set(agent, cmd)
+  return if cmd.empty?
+  logger.info(cmd)
+  cmd_prefix = PUPPET_BINPATH + "resource cisco_command_config 'cc' "
+  on(agent, cmd_prefix + "test_set='#{cmd}'")
+end
+
 # Helper for command_config calls
 def command_config(agent, cmd, msg='')
   logger.info("\n#{msg}")
@@ -796,9 +899,14 @@ end
 
 # Helper to set properties using the puppet resource command.
 def resource_set(agent, resource, msg='')
-  logger.info("\n#{msg}")
-  cmd = "resource #{resource[:name]} '#{resource[:title]}' " \
-                  "#{resource[:property]}='#{resource[:value]}'"
+  logger.info("\nresource_set: #{msg}")
+  if resource.is_a?(Array)
+    cmd =
+      "resource %s '%s' %s='%s'" % resource # rubocop:disable Style/FormatString
+  else
+    cmd = "resource #{resource[:name]} '#{resource[:title]}' "\
+          "#{resource[:property]}='#{resource[:value]}'"
+  end
   cmd = PUPPET_BINPATH + cmd
   on(agent, cmd, acceptable_exit_codes: [0, 2])
 end
@@ -826,7 +934,7 @@ end
 def mt_full_interface
   # Search for F3 card on device, create an interface name if found
   cmd = get_vshell_cmd('sh mod')
-  out = on(agent, cmd, pty: true).stdout[/^(\d+)\s.*N7K-F3/]
+  out = on(agent, cmd, pty: true).stdout[/^(\d+)\s.*N7[K7]-F3/]
   slot = out.nil? ? nil : Regexp.last_match[1]
   "ethernet#{slot}/1" unless slot.nil?
 end
@@ -902,6 +1010,17 @@ def vdc_allocate_interface_set(vdc, intf)
   on(agent, cmd, pty: true)
 end
 
+# VDC post-test cleanup
+def teardown_vdc
+  return if mt_full_interface
+
+  # Testbeds without F3 cards should be set back to their default state;
+  # failure to do so will leave the testbed without usable interfaces.
+  # Assume that F3 testbeds should be left with module-type set to F3.
+  logger.info("\n* Teardown VDC: Reset limit-resource module-type")
+  limit_resource_module_type_set(default_vdc_name, nil)
+end
+
 # Facter command builder helper method
 def facter_cmd(cmd)
   FACTER_BINPATH + cmd
@@ -913,6 +1032,18 @@ end
 def operating_system
   return @cisco_os unless @cisco_os.nil?
   @cisco_os = on(agent, facter_cmd('os.name')).stdout.chomp
+end
+
+@os_family = nil
+def os_family
+  return @os_family unless @os_family.nil?
+  @os_family = on(agent, facter_cmd('os.family')).stdout.chomp
+end
+
+@virtual = nil
+def virtual
+  return @virtual unless @virtual.nil?
+  @virtual = on(agent, facter_cmd('virtual')).stdout.chomp
 end
 
 # Used to cache the cisco hardware type
@@ -969,21 +1100,27 @@ def platform
   @cisco_hardware
 end
 
-# Check if this image is an I2 image
-@i2_image = nil # Cache the lookup result
-def nexus_i2_image
-  return @i2_image unless @i2_image.nil?
+# Check if image matches pattern
+@cached_img = nil
+def image?(reset_cache=false)
+  return @cached_img unless @cached_img.nil? || reset_cache
   on(agent, facter_cmd('-p cisco.images.system_image'))
-  @i2_image = stdout[/7.0.3.I2/] ? true : false
-  @i2_image
+  @cached_img = stdout.nil? ? '' : stdout
 end
 
-# This is a skip-all-testcases-if-I2-image check.
+@image = nil # Cache the lookup result
+def nexus_image
+  facter_opt = '-p cisco.images.system_image'
+  image_regexp = /[A-Z]+\d+\.\d+/
+  @image ||= on(agent, facter_cmd(facter_opt)).output[image_regexp]
+end
+
+# On match will skip all testcases
 # Do not use this for skipping individual properties.
-def skip_nexus_i2_image(tests)
-  return unless nexus_i2_image
+def skip_nexus_image(image, tests)
+  return unless nexus_image[image]
   msg = "Skipping all tests; '#{tests[:resource_name]}' "\
-        'is not supported on 7.0.3(I2) images'
+        "is not supported on #{image} images"
   banner = '#' * msg.length
   raise_skip_exception("\n#{banner}\n#{msg}\n#{banner}\n", self)
 end
@@ -1005,6 +1142,7 @@ def platform_supports_test(tests, id)
     logger.error("\n#{tests[id][:desc]} :: #{id} :: SKIP")
     logger.error("Platform type does not match testcase platform regexp: /#{plat}/")
   else
+    platform
     return true
   end
   tests[:skipped] ||= []
@@ -1020,7 +1158,7 @@ def skip_unless_supported(tests)
   pattern = tests[:platform]
   return false if pattern.nil? || platform.match(tests[:platform])
   msg = "Skipping all tests; '#{tests[:resource_name]}' "\
-        'is unsupported on this node'
+        '(or test file) is not supported on this node'
   banner = '#' * msg.length
   raise_skip_exception("\n#{banner}\n#{msg}\n#{banner}\n", self)
 end
@@ -1031,11 +1169,15 @@ def skipped_tests_summary(tests)
   tests[:skipped].each do |desc|
     logger.error(sprintf('%-40s :: SKIP', desc))
   end
-  raise_skip_exception(tests[:resource_name], self)
+  # There are many tests now that skip a sub-test or two while the majority
+  # are still processed. We prefer to see the overall result as Pass instead
+  # of skip so skip the raise below.
+  # raise_skip_exception(tests[:resource_name], self)
 end
 
 # TBD: This needs to be more selective when used with modular platforms,
 # particularly to ignore L2-only F2 cards on N7k.
+# TBD: Remove the :intf_type requirement & change this to find_ethernet()
 #
 # Find a test interface on the agent.
 # Callers should include the following hash keys:
@@ -1043,6 +1185,7 @@ end
 #   [:intf_type]
 #   [:resource_name]
 def find_interface(tests, id=nil, skipcheck=true)
+  logger.info("\n#{'-' * 60}\n  Find a suitable interface\n#{'-' * 60}")
   # Prefer specific test key over the all tests key
   if id
     type = tests[id][:intf_type] || tests[:intf_type]
@@ -1062,6 +1205,7 @@ def find_interface(tests, id=nil, skipcheck=true)
     msg = 'Unable to find suitable interface module for this test.'
     prereq_skip(tests[:resource_name], self, msg)
   end
+  logger.info("\n  * Found #{intf}")
   intf
 end
 
@@ -1126,6 +1270,7 @@ def interface_capabilities(agent, intf)
     k.gsub!(/ \(.*\)/, '') # Remove any parenthetical text from key
     k.strip!
     v.strip!
+    v.gsub!(%r{half/full}, 'half,full') if k[/Duplex/]
     hash[k] = v
   end
   hash
@@ -1211,11 +1356,89 @@ def debug_probe(probe, msg)
   logger.info("\n      #{msg}: #{dbg}")
 end
 
+# Remove a single dynamic interface (Vlan, Loopback, Port-channel, etc).
+def remove_interface(agent, intf)
+  cmd = "    no interface #{intf.capitalize}"
+  command_config(agent, cmd, cmd)
+end
+
+# Issue a command on the agent and check stdout for a pattern.
+# Useful for checking if hardware supports properties, etc.
+def resource_probe(agent, cmd, pattern)
+  cmd = PUPPET_BINPATH + "resource #{cmd}"
+  on(agent, cmd, acceptable_exit_codes: [0, 2, 1], pty: true)
+  stdout.match(pattern) ? true : false
+end
+
+def vdc_limit_f3_no_intf_needed(action=:set)
+  # This is a special-use method for N7Ks that don't have a physical F3.
+  #  1) There are some features that refuse to load unless the VDC is
+  #     limited to F3 only, but they will actually load if the config is
+  #     present, despite the fact that there are no physical F3s.
+  #  2) We have some tests that need these features but don't need interfaces.
+  #
+  # action = :set (enable limit F3 config), :clear (default limit config)
+  #
+  # The limit config should be removed after testing if the device does not
+  # have an actual F3.
+  return unless platform[/n7k/]
+  case action
+  when :set
+    #  limit_resource_module_type => 'f3',
+    cmd = PUPPET_BINPATH + "resource cisco_vdc '#{default_vdc_name}' "
+    out = on(agent, cmd, pty: true).stdout[/limit_resource.*'(f3)'/]
+    mods = out.nil? ? nil : Regexp.last_match[1]
+    return if mods == 'f3'
+    cmd += "limit_resource_module_type='f3'"
+    logger.info("\n* Setup VDC: #{cmd}")
+    on(agent, cmd, pty: true).stdout[/limit_resource.*'(f3)'/]
+
+  when :clear
+    # Reset to default only if no physical F3 is present
+    teardown_vdc
+  end
+end
+
 def remove_all_vlans(agent, stepinfo='Remove all vlans & bridge-domains')
+  # TBD: Modify this cleanup to use faster test_get / test_set:
+  #  test_get('i ^vlan|^bridge')
+  #  test_set('no vlan <range> ; no bridge <range> ; system bridge-domain none')
   step "\n--------\n * TestStep :: #{stepinfo}" do
     resource_absent_cleanup(agent, 'cisco_bridge_domain', 'bridge domains')
     cmd = 'system bridge-domain none'
     command_config(agent, cmd, cmd)
-    resource_absent_cleanup(agent, 'cisco_vlan', 'vlans')
+    test_set(agent, 'no feature interface-vlan')
+    test_set(agent, 'no feature private-vlan')
+    test_set(agent, 'no vlan 2-3967')
+  end
+end
+
+def remove_all_vrfs(agent)
+  found = test_get(agent, "incl 'vrf context' | excl management").split("\n")
+  found.map! { |cmd| "no #{cmd}" if cmd[/^vrf context/] }
+  test_set(agent, found.compact.join(' ; '))
+end
+
+# Return yum patch version from host
+def get_patch_version(name)
+  cmd = get_vshell_cmd("show install packages | inc #{name}")
+  # Sample Output:
+  # nxos.sample-n9k_EOR.lib32_n9000   1.0.0-7.0.3.I5.1    @patching
+  out = on(agent, cmd, pty: true).stdout[/\S+\s+(\S+).*@patching/]
+  out.nil? ? nil : Regexp.last_match[1]
+end
+
+# Test yum version
+def test_patch_version(tests, id, name, ver)
+  stepinfo = format_stepinfo(tests, id, 'YUM PACKAGE VERSION')
+  step "TestStep :: #{stepinfo}" do
+    logger.debug("test_yum_version :: #{ver}")
+    iv = get_patch_version(name)
+    if iv == ver
+      logger.info("#{stepinfo} :: PASS")
+    else
+      msg = "Installed version: #{iv}, does not match expected ver: #{ver}"
+      fail_test("TestStep :: #{msg} :: FAIL")
+    end
   end
 end

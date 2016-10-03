@@ -32,10 +32,12 @@ tests = {
   resource_name:    'cisco_vxlan_vtep',
 }
 
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
+
 # Test hash test cases
 tests[:default] = {
   title_pattern:  'nve1',
-  preclean:       'cisco_vxlan_vtep',
   manifest_props: {
     description:                     'default',
     host_reachability:               'default',
@@ -62,7 +64,7 @@ tests[:non_default] = {
 
 def unsupported_properties(*)
   unprops = []
-  unprops << :source_interface_hold_down_time unless platform[/n(8|9)k/]
+  unprops << :source_interface_hold_down_time unless platform[/n(9)k/]
   unprops
 end
 
@@ -80,7 +82,12 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  skip_unless_supported(tests)
+  teardown do
+    resource_absent_cleanup(agent, 'cisco_vxlan_vtep')
+    vdc_limit_f3_no_intf_needed(:clear)
+  end
+  resource_absent_cleanup(agent, 'cisco_vxlan_vtep')
+  vdc_limit_f3_no_intf_needed(:set)
 
   # -----------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
@@ -88,13 +95,10 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, id)
 
   tests[id][:ensure] = :absent
-  tests[id].delete(:preclean)
   test_harness_run(tests, id)
 
   # -----------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   test_harness_run(tests, :non_default)
-
-  resource_absent_cleanup(agent, 'cisco_vxlan_vtep')
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

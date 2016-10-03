@@ -36,9 +36,20 @@ class ciscopuppet::cisco::demo_interface {
       ensure => 'present',
     }
 
+    $ipv4_dhcp_relay_info_trust = platform_get() ? {
+      /(n3k|n7k|n9k)/ => true,
+      default         => undef
+    }
+
+    $ipv4_dhcp_relay_src_addr_hsrp = platform_get() ? {
+      /(n5k|n6k|n7k)/ => true,
+      default         => undef
+    }
+
     cisco_interface { 'Ethernet1/1' :
       shutdown                      => true,
       switchport_mode               => disabled,
+      bfd_echo                      => false,
       description                   => 'managed by puppet',
       ipv4_address                  => '192.168.55.5',
       ipv4_netmask_length           => 24,
@@ -72,10 +83,34 @@ class ciscopuppet::cisco::demo_interface {
       switchport_mode => access,
     }
 
+    cisco_interface { 'Ethernet1/4':
+      switchport_mode                  => disabled,
+      ipv4_dhcp_relay_addr             => ['1.1.1.1', '2.2.2.2'],
+      ipv4_dhcp_relay_info_trust       => $ipv4_dhcp_relay_info_trust,
+      ipv4_dhcp_relay_src_addr_hsrp    => $ipv4_dhcp_relay_src_addr_hsrp,
+      ipv4_dhcp_relay_src_intf         => 'port-channel 100',
+      ipv4_dhcp_relay_subnet_broadcast => true,
+      ipv4_dhcp_smart_relay            => true,
+      ipv6_dhcp_relay_addr             => ['2000::11', '2001::22'],
+      ipv6_dhcp_relay_src_intf         => 'ethernet 2/2',
+    }
+    $storm_control_broadcast = platform_get() ? {
+      /(n3k|n5k|n6k|n9k)/ => '77.77',
+      default             => undef
+    }
+
+    $storm_control_multicast = platform_get() ? {
+      /(n3k|n5k|n6k|n9k)/ => '22.22',
+      default             => undef
+    }
+
     cisco_interface { 'Ethernet1/5':
       switchport_mode               => trunk,
       switchport_trunk_allowed_vlan => '30, 29, 31-33, 100',
       switchport_trunk_native_vlan  => 40,
+      storm_control_broadcast       => $storm_control_broadcast,
+      storm_control_multicast       => $storm_control_multicast,
+      storm_control_unicast         => '33.33',
     }
 
     $svi_autostate = platform_get() ? {
@@ -84,6 +119,7 @@ class ciscopuppet::cisco::demo_interface {
     }
 
     cisco_interface { 'Vlan22':
+      bfd_echo         => false,
       svi_autostate    => $svi_autostate,
       svi_management   => true,
       ipv4_arp_timeout => 300,
@@ -108,24 +144,57 @@ class ciscopuppet::cisco::demo_interface {
       warning('This platform does not support cisco_bridge_domain')
     }
 
-    # For private vlan
+    # Private-vlan
     if platform_get() =~ /n(3|5|6|7|9)k/ {
-      cisco_vlan { '445':
-        ensure     => present,
-        private_vlan_type => 'isolated',
-      }
-      cisco_vlan { '444':
-        ensure     => present,
-        private_vlan_type => 'primary',
-        private_vlan_association => ['445'],
-      }
+      cisco_vlan { '12': pvlan_type => 'community' }
+      cisco_vlan {  '2': pvlan_type => 'primary', pvlan_association => '12' }
+
       cisco_interface { 'Ethernet1/6':
-        description     => 'private_vlan_host_port',
-        switchport_mode_private_vlan_host => 'host',
-        switchport_mode_private_vlan_host_association  => ['444', '445'],
+        description                         => 'Private-vlan Host Port',
+        switchport_pvlan_host               => true,
+        switchport_pvlan_host_association   => [2, 12],
+      }
+
+      cisco_vlan { '13': pvlan_type => 'isolated' }
+      cisco_vlan { '14': pvlan_type => 'isolated' }
+      cisco_vlan {  '3': pvlan_type => 'primary', pvlan_association => '13' }
+      cisco_vlan {  '4': pvlan_type => 'primary', pvlan_association => '14' }
+
+      cisco_vlan { '15': pvlan_type => 'community' }
+      cisco_vlan {  '5': pvlan_type => 'primary', pvlan_association => '15' }
+
+      cisco_vlan { '17': pvlan_type => 'community' }
+      cisco_vlan { '27': pvlan_type => 'community' }
+      cisco_vlan { '37': pvlan_type => 'community' }
+      cisco_vlan {  '7': pvlan_type => 'primary', pvlan_association => '17,27,37' }
+
+      # Ethernet1/7 platform checks
+      $trunk_secondary = platform_get() ? {
+        /(n3k)/        => undef,
+        default        => true
+      }
+      $trunk_assoc     = platform_get() ? {
+        /(n3k)/        => undef,
+        default        => [[3, 13], [4, 14]]
+      }
+      $trunk_map       = platform_get() ? {
+        /(n3k)/        => undef,
+        default        => [['5', '15'], ['7', '17,27,37']]
+      }
+      cisco_interface { 'Ethernet1/7':
+        description                         => 'Private-vlan Trunk Port',
+        switchport_pvlan_trunk_secondary    => $trunk_secondary,
+        switchport_pvlan_trunk_allowed_vlan => '106,102-103,105',
+        switchport_pvlan_trunk_association  => $trunk_assoc,
+        switchport_pvlan_trunk_native_vlan  => 42,
+        switchport_pvlan_mapping_trunk      => $trunk_map,
+      }
+      cisco_interface { 'vlan29':
+        description                         => 'SVI Private-vlan Mapping',
+        pvlan_mapping                       => '108-109',
       }
     } else {
-      warning('This platform does not support the private vlan feature')
+      warning('This platform does not support the private-vlan feature')
     }
 
     #  Requires F3 or newer linecards

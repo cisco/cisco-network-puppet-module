@@ -74,7 +74,8 @@ def unsupported_properties(_tests, _id)
       :vpn_id
 
     unprops << :vni unless platform[/n9k/]
-    unprops << :route_distinguisher if nexus_i2_image
+    unprops << :route_distinguisher if nexus_image['I2']
+    # unprops << :description if image?[/7.3.0.D1.1/] # CSCuy36637
 
   else
     unprops <<
@@ -82,26 +83,28 @@ def unsupported_properties(_tests, _id)
       :shutdown <<
       :vni
   end
+  logger.info("  unprops: #{unprops}") unless unprops.empty?
   unprops
 end
 
 # Overridden to properly handle dependencies for this test file.
-def dependency_manifest(_tests, _id)
-  if operating_system == 'nexus'
-    ''
-  else
-    "cisco_command_config { 'interface_config':
-      command => '
-        interface Loopback100'
-    }"
-  end
+def dependency_manifest(_tests, id)
+  return unless id[/non_default/]
+  dep = %( cisco_interface {'loopback100': ensure => 'present' } )
+  logger.info("\n  * dependency_manifest\n#{dep}")
+  dep
 end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  resource_absent_cleanup(agent, 'cisco_vrf', 'VRF CLEAN :: ')
+  teardown do
+    remove_all_vrfs(agent)
+    vdc_limit_f3_no_intf_needed(:clear)
+  end
+  remove_all_vrfs(agent)
+  vdc_limit_f3_no_intf_needed(:set)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
@@ -114,9 +117,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   test_harness_run(tests, :non_default)
-
-  # -------------------------------------------------------------------
-  resource_absent_cleanup(agent, 'cisco_vrf', 'VRF CLEAN :: ')
   skipped_tests_summary(tests)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

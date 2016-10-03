@@ -27,8 +27,8 @@ require File.expand_path('../bgplib.rb', __FILE__)
 # Test hash top-level keys
 asn = '1'
 tests = {
-  master:        master,
   agent:         agent,
+  master:        master,
   asn:           asn,
   resource_name: 'cisco_bgp',
 }
@@ -37,7 +37,6 @@ tests = {
 tests[:default] = {
   desc:           '1.1 Default Properties',
   title_pattern:  "#{asn} default",
-  preclean:       'cisco_bgp',
   manifest_props: {
     bestpath_always_compare_med:            'default',
     bestpath_aspath_multipath_relax:        'default',
@@ -65,7 +64,6 @@ tests[:default] = {
     nsr:                                    'default',
     reconnect_interval:                     'default',
     shutdown:                               'default',
-    suppress_fib_pending:                   'default',
     timer_bestpath_limit:                   'default',
     timer_bestpath_limit_always:            'default',
     timer_bgp_holdtime:                     'default',
@@ -98,7 +96,6 @@ tests[:default] = {
     'nsr'                                    => 'false',
     'reconnect_interval'                     => '60',
     'shutdown'                               => 'false',
-    'suppress_fib_pending'                   => 'false',
     'timer_bestpath_limit'                   => '300',
     'timer_bestpath_limit_always'            => 'false',
     'timer_bgp_holdtime'                     => '180',
@@ -151,7 +148,6 @@ tests[:non_default] = {
 
 tests[:title_patterns_1] = {
   desc:          'T.1 Title Pattern',
-  preclean:      'cisco_bgp',
   title_pattern: 'new_york',
   title_params:  { asn: '11.4', vrf: 'red' },
   resource:      { 'ensure' => 'present' },
@@ -217,7 +213,8 @@ def unsupported_properties(tests, id)
         :event_history_periodic <<
         :fast_external_fallover <<
         :flush_routes <<
-        :neighbor_down_fib_accelerate
+        :neighbor_down_fib_accelerate <<
+        :suppress_fib_pending
     end
 
     if platform[/n(5|6|7)k/]
@@ -231,10 +228,21 @@ def unsupported_properties(tests, id)
   unprops
 end
 
+def cleanup(agent)
+  if operating_system == 'nexus'
+    test_set(agent, 'no feature bgp')
+  else
+    resource_absent_cleanup(agent, 'cisco_bgp')
+  end
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown { cleanup(agent) }
+  cleanup(agent)
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
@@ -244,12 +252,12 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # test removal of bgp instance
   tests[id][:ensure] = :absent
-  tests[id].delete(:preclean)
   test_harness_run(tests, id)
 
   # now test the defaults under a non-default vrf
+  cleanup(agent)
   tests[id][:ensure] = :present
-  tests[id][:preclean] = 'cisco_bgp'
+  tests[id][:desc] = '1.1.a. Default Properties (vrf blue)'
   test_harness_bgp_vrf(tests, id, 'blue')
 
   # -------------------------------------------------------------------
@@ -257,15 +265,13 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   id = :non_default
   test_harness_run(tests, id)
+  tests[id][:desc] = '2.1.a. Default Properties (vrf blue)'
   test_harness_bgp_vrf(tests, id, 'blue')
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
+  cleanup(agent)
   test_harness_run(tests, :title_patterns_1)
   test_harness_run(tests, :title_patterns_2)
-
-  # -------------------------------------------------------------------
-  resource_absent_cleanup(agent, 'cisco_bgp')
 end
-
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

@@ -45,9 +45,15 @@ class ciscopuppet::cisco::demo_patching {
   case $image_ver {
     '7.0(3)I2(1)': {
       $ciscoPatchName = 'n9000_sample-1.0.0-7.0.3.x86_64.rpm'
+      $ciscoPackageName = 'n9000_sample'
     }
     '7.0(3)I3(1)': {
       $ciscoPatchName = 'CSCuxdublin-1.0.0-7.0.3.I3.1.lib32_n9000.rpm'
+      $ciscoPackageName = 'CSCuxdublin'
+    }
+    '7.0(3)I4(1)': {
+      $ciscoPatchName = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I4.1.lib32_n9000.rpm'
+      $ciscoPackageName = 'nxos.sample-n9k_EOR'
     }
     default:  { fail("\n## NO COMPATIBLE SAMPLE PATCH RPMs AVAILABLE FOR THIS IMAGE: ${image_ver}\n")
     }
@@ -64,7 +70,7 @@ class ciscopuppet::cisco::demo_patching {
   }
 
   $settings = {'target' => 'host'}
-  package { 'n9000_sample':
+  package { $ciscoPackageName :
     ensure           => present,
     provider         => 'cisco',
     source           => $ciscoPatchFile,

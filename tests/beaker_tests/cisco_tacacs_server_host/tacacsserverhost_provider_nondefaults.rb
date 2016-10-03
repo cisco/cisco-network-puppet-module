@@ -62,8 +62,16 @@ require File.expand_path('../../cisco_tacacs_server/tacacsserverlib.rb', __FILE_
 result = 'PASS'
 testheader = 'TACACSSERVERHOST Resource :: All Attributes NonDefaults'
 
+def cleanup
+  logger.info('Testcase Cleanup:')
+  command_config(agent, 'no feature tacacs+')
+end
+
 # @test_name [TestCase] Executes nondefaults testcase for TACACSSERVERHOST.
 test_name "TestCase :: #{testheader}" do
+  cleanup
+  teardown { cleanup }
+
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
     # Expected exit_code is 0 since this is a bash shell cmd.
@@ -73,15 +81,6 @@ test_name "TestCase :: #{testheader}" do
     # Or expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = PUPPET_BINPATH + 'agent -t'
     on(agent, cmd_str, acceptable_exit_codes: [0, 2])
-
-    # Expected exit_code is 16 since this is a vegas shell cmd with exec error.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config tacacs')
-    on(agent, cmd_str, acceptable_exit_codes: [16]) do
-      search_pattern_in_output(stdout,
-                               [/feature tacacs\+/],
-                               true, self, logger)
-    end
 
     logger.info("Setup switch for provider test :: #{result}")
   end
@@ -115,20 +114,6 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Check cisco_tacacs_server_host presence on agent :: #{result}")
   end
 
-  # @step [Step] Checks tacacsserverhost instance on agent using show cli cmds.
-  step 'TestStep :: Check tacacsserverhost instance presence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config tacacs')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               [/tacacs\-server host samplehost1 key 7 "test123" port 90 timeout 39/],
-                               false, self, logger)
-    end
-
-    logger.info("Check tacacsserverhost instance presence on agent :: #{result}")
-  end
-
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource absent manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
@@ -156,20 +141,6 @@ test_name "TestCase :: #{testheader}" do
     end
 
     logger.info("Check cisco_tacacs_server_host absence on agent :: #{result}")
-  end
-
-  # @step [Step] Checks tacacsserverhost instance on agent using show cli cmds.
-  step 'TestStep :: Check tacacsserverhost instance absence on agent' do
-    # Expected exit_code is 0 since this is a vegas shell cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = get_vshell_cmd('show running-config tacacs')
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               [/tacacs\-server host samplehost1 key 7 "test123" port 90 timeout 39/],
-                               true, self, logger)
-    end
-
-    logger.info("Check tacacsserverhost instance absence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.

@@ -31,6 +31,7 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
     cisco_interface_ospf {\"Ethernet1/8 green\":
       ensure                         => present,
       area                           => \"0.0.0.0\",
+      bfd                            => true,
       cost                           => 10,
       hello_interval                 => 10,
       dead_interval                  => 40,
@@ -40,6 +41,11 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
       message_digest_algorithm_type  => md5,
       message_digest_encryption_type => \"clear\",
       message_digest_password        => \"xxxxx\",
+      mtu_ignore                     => true,
+      network_type                   => 'p2p',
+      priority                       => 100,
+      shutdown                       => true,
+      transmit_delay                 => 300,
     }"
 
   ensurable
@@ -82,18 +88,17 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
     desc 'dummy paramenter to support puppet resource command'
   end
 
+  newproperty(:bfd) do
+    desc 'Enable bfd on this interface.'
+
+    newvalues(:true, :false, :default)
+  end
+
   newproperty(:cost) do
     desc "The cost associated with this cisco_interface_ospf
-          instance. Valid values are integer."
+          instance. Valid values are integer, keyword 'default'"
 
-    munge do |value|
-      begin
-        value = Integer(value)
-      rescue
-        raise 'cost property must be an integer.'
-      end
-      value
-    end
+    munge { |value| value == 'default' ? :default : Integer(value) }
   end
 
   newproperty(:hello_interval) do
@@ -101,15 +106,7 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
           instance. Time between sending successive hello packets. Valid
           values are integer, keyword 'default'."
 
-    munge do |value|
-      begin
-        value = :default if value == 'default'
-        value = Integer(value) unless value == :default
-      rescue
-        raise 'hello_interval property must be an integer.'
-      end
-      value
-    end
+    munge { |value| value == 'default' ? :default : Integer(value) }
   end
 
   newproperty(:dead_interval) do
@@ -118,15 +115,7 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
           packet before tearing down adjacencies. Valid values are
           integer, keyword 'default'."
 
-    munge do |value|
-      begin
-        value = :default if value == 'default'
-        value = Integer(value) unless value == :default
-      rescue
-        raise 'dead_interval property must be an integer.'
-      end
-      value
-    end
+    munge { |value| value == 'default' ? :default : Integer(value) }
   end
 
   newproperty(:passive_interface) do
@@ -134,14 +123,14 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
           instance. Setting to true will prevent this interface from
           receiving HELLO packets."
 
-    newvalues(:true, :false)
+    newvalues(:true, :false, :default)
   end
 
   newproperty(:message_digest) do
     desc "Enables or disables the usage of message digest
           authentication. "
 
-    newvalues(:true, :false)
+    newvalues(:true, :false, :default)
   end
 
   newproperty(:message_digest_key_id) do
@@ -151,36 +140,26 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
           message_digest_algorithm_type and message_digest_password are
           mandatory. Valid values are integer."
 
-    munge do |value|
-      begin
-        value = Integer(value)
-      rescue
-        raise "message_digest_key_id provided in the manifest - #{value} is not a valid integer."
-      end
-      value
-    end
+    munge { |value| value == 'default' ? :default : Integer(value) }
   end
 
-  newparam(:message_digest_algorithm_type) do
+  newproperty(:message_digest_algorithm_type) do
     desc "Algorithm used for authentication among neighboring routers
           within an area. Keyword: 'default'"
 
-    munge do |value|
-      value = :md5 if value == 'default'
-      value.to_sym
-    end
     newvalues(:md5, :default)
   end
 
-  newparam(:message_digest_encryption_type) do
+  newproperty(:message_digest_encryption_type) do
     desc "Specifies the scheme used for encrypting
           message_digest_password. Valid values are 'cleartext',
           '3des' or 'cisco_type_7' encryption, and
           'default', which defaults to 'cleartext'."
 
+    munge(&:to_sym)
     newvalues(:clear,
               :cleartext,
-              :"3des",
+              :'3des',
               :cisco_type_7,
               :encrypted,
               :default)
@@ -202,10 +181,39 @@ Puppet::Type.newtype(:cisco_interface_ospf) do
   newproperty(:message_digest_password) do
     desc 'Specifies the message_digest password. Valid values are string.'
 
-    validate do |message_digest_password|
-      fail("message_digest_password - #{message_digest_password} should be a string")  \
-        unless message_digest_password.nil? || message_digest_password.kind_of?(String)
-    end
+    munge { |value| value == 'default' ? :default : value }
+  end
+
+  newproperty(:mtu_ignore) do
+    desc 'Disables OSPF MTU mismatch detection.'
+
+    newvalues(:true, :false, :default)
+  end
+
+  newproperty(:network_type) do
+    desc 'Network type of this interface.'
+
+    newvalues(:broadcast, :p2p, :default)
+  end
+
+  newproperty(:priority) do
+    desc "The router priority associated with this cisco_interface_ospf
+          instance. Valid values are integer, keyword 'default'."
+
+    munge { |value| value == 'default' ? :default : Integer(value) }
+  end
+
+  newproperty(:shutdown) do
+    desc 'Shuts down ospf on this interface.'
+
+    newvalues(:true, :false, :default)
+  end
+
+  newproperty(:transmit_delay) do
+    desc "Packet transmission delay in seconds. Valid values are
+          integer, keyword 'default'."
+
+    munge { |value| value == 'default' ? :default : Integer(value) }
   end
 
   newproperty(:area) do

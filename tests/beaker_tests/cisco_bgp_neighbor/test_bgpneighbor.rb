@@ -35,8 +35,8 @@ tests = {
 tests[:default] = {
   desc:           '1.1 Default Properties',
   title_pattern:  '2 default 1.1.1.1',
-  preclean:       'cisco_bgp',
   manifest_props: {
+    bfd:                'default',
     ebgp_multihop:      'default',
     local_as:           'default',
     low_memory_exempt:  'default',
@@ -46,6 +46,7 @@ tests[:default] = {
     timers_holdtime:    'default',
   },
   resource:       {
+    'bfd'                    => 'false',
     'ebgp_multihop'          => 'false',
     'local_as'               => '0',
     'log_neighbor_changes'   => 'inherit',
@@ -65,6 +66,7 @@ tests[:non_default] = {
   title_pattern:  '2 default 1.1.1.1',
   manifest_props: {
     description:            'tested by beaker',
+    bfd:                    'true',
     connected_check:        'true',
     capability_negotiation: 'true',
     dynamic_capability:     'true',
@@ -93,7 +95,6 @@ tests[:non_def_local_remote_as] = {
 
 tests[:title_patterns_1] = {
   desc:          'T.1 Title Pattern',
-  preclean:      'cisco_bgp',
   title_pattern: 'new_york',
   title_params:  { asn: '11.4', vrf: 'red', neighbor: '1.1.1.1' },
   resource:      { 'ensure' => 'present' },
@@ -120,6 +121,7 @@ def unsupported_properties(_tests, _id)
   if operating_system == 'ios_xr'
     # IOS-XR does not support these properties
     unprops <<
+      :bfd <<
       :capability_negotiation <<
       :dynamic_capability <<
       :log_neighbor_changes <<
@@ -134,20 +136,31 @@ def unsupported_properties(_tests, _id)
   unprops
 end
 
+def cleanup(agent)
+  if operating_system == 'nexus'
+    test_set(agent, 'no feature bgp ; no feature bfd')
+  else
+    resource_absent_cleanup(agent, 'cisco_bgp')
+  end
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown { cleanup(agent) }
+  cleanup(agent)
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   test_harness_run(tests, :default)
 
   # test removal of bgp neighbor instance
   tests[:default][:ensure] = :absent
-  tests[:default].delete(:preclean)
   test_harness_run(tests, :default)
 
   # now test the defaults under a non-default vrf
+  tests[:default][:desc] = '1.1.a. Default Properties (vrf blue)'
   tests[:default][:ensure] = :present
   tests[:default][:preclean] = 'cisco_bgp_neighbor'
   test_harness_bgp_vrf(tests, :default, 'blue')
@@ -155,6 +168,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   test_harness_run(tests, :non_default)
+  tests[:non_default][:desc] = '2.1.a. Non Default Properties (vrf blue)'
   test_harness_bgp_vrf(tests, :non_default, 'blue')
 
   test_harness_run(tests, :non_def_local_remote_as)
@@ -162,12 +176,12 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
+  cleanup(agent)
   test_harness_run(tests, :title_patterns_1)
   test_harness_run(tests, :title_patterns_2)
   test_harness_run(tests, :title_patterns_3)
 
   # -----------------------------------
-  resource_absent_cleanup(agent, 'cisco_bgp')
   skipped_tests_summary(tests)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

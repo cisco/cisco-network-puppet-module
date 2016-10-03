@@ -31,6 +31,7 @@ Puppet::Type.newtype(:cisco_ospf_vrf) do
     cisco_ospf_vrf {\"green test\":
       ensure                   => present,
       router_id                => \"192.168.1.1\",
+      bfd                      => true,
       default_metric           => 2,
       log_adjancency           => log,
       timer_throttle_lsa_start => 0,
@@ -110,6 +111,12 @@ Puppet::Type.newtype(:cisco_ospf_vrf) do
       id
     end
   end # property router id
+
+  newproperty(:bfd) do
+    desc 'Enable bfd on all the OSPF interfaces on this router'
+
+    newvalues(:true, :false, :default)
+  end # property bfd
 
   newproperty(:default_metric) do
     desc "Specify the default Metric value. Valid values are integer,

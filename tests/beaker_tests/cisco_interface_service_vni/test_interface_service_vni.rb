@@ -30,75 +30,71 @@ tests = {
   operating_system: 'nexus',
   platform:         'n7k',
   resource_name:    'cisco_interface_service_vni',
-  sid:              22,
 }
+
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
+
+if (intf = mt_full_interface)
+  tests[:intf] = intf
+  setup_mt_full_env(tests, self)
+else
+  prereq_skip(nil, self, 'MT-full tests require F3 or compatible line module')
+end
 
 # Test hash test cases
 tests[:default] = {
-  desc:           '1.1 Default Properties',
-  manifest_props: {
+  desc:               '1.1 Default Properties',
+  title_pattern:      "#{intf} 22",
+  sys_def_switchport: false,
+  manifest_props:     {
     encapsulation_profile_vni: 'default',
     shutdown:                  'default',
   },
-  resource:       {
-    # 'encapsulation_profile_vni' is nil
-    'shutdown' => 'true'
+  resource:           {
+    # encapsulation_profile_vni: nil
+    shutdown: 'true'
   },
 }
 
 tests[:non_default] = {
   desc:           '2.1 Non Default Properties',
+  title_pattern:  "#{intf} 22",
   manifest_props: {
     encapsulation_profile_vni: 'vni_500_5000',
     shutdown:                  'false',
   },
 }
 
-# TEST PRE-REQUISITES
-#   - F3 linecard assigned to admin vdc
-#   - Global encap profile vni config
-def dependency_manifest(*)
-  "
-    cisco_vdc { '#{default_vdc_name}':
-      ensure                     => present,
-      limit_resource_module_type => 'f3',
+def dependency_manifest(tests, id)
+  return unless id == :default
+  dep = %(
+    cisco_encapsulation {'vni_500_5000':
+      dot1q_map => ['500', '5000'],
     }
-
-    cisco_encapsulation { 'vni_500_5000':
-      dot1q_map => #{Array['500', '5000']}
+    cisco_interface{ '#{tests[:intf]}':
+      switchport_mode => 'disabled',
     }
-  "
+  )
+  logger.info("\n  * dependency_manifest\n#{dep}")
+  dep
 end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  skip_unless_supported(tests)
-  if (intf = mt_full_interface).nil?
-    prereq_skip(nil, self,
-                'MT-full tests require F3 or compatible line module')
+  teardown do
+    resource_absent_cleanup(agent, 'cisco_interface_service_vni')
+    resource_absent_cleanup(agent, 'cisco_encapsulation')
+    interface_cleanup(agent, intf)
   end
-
-  # Clean up any stale pre-req configs that might conflict with our test
   resource_absent_cleanup(agent, 'cisco_encapsulation')
   interface_cleanup(agent, intf)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-
-  id = :default
-  tests[id][:title_pattern] = "#{intf} #{tests[:sid]}"
-  test_harness_run(tests, id)
-
-  tests[id][:ensure] = :absent
-  tests[id].delete(:preclean)
-  test_harness_run(tests, id)
-
-  # -----------------------------------
-  resource_absent_cleanup(agent, 'cisco_interface_service_vni')
-  resource_absent_cleanup(agent, 'cisco_encapsulation')
-
-  interface_cleanup(agent, intf, 'Post-test cleanup: ')
+  test_harness_run(tests, :default)
+  test_harness_run(tests, :non_default)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

@@ -54,6 +54,9 @@ Puppet::Type.type(:network_snmp).provide(:cisco) do
       location: network_snmp.location.empty? ? 'unset' : network_snmp.location,
     }
 
+    if Facter.value('operatingsystem').eql?('ios_xr')
+      current_state[:enable] = true
+    end
     new(current_state)
   end # self.properties_get
 
@@ -94,7 +97,9 @@ Puppet::Type.type(:network_snmp).provide(:cisco) do
 
   def flush
     validate
-
+    if Facter.value('operatingsystem').eql?('ios_xr')
+      NETWORK_SNMP_PROPS.delete(:enable)
+    end
     NETWORK_SNMP_PROPS.each do |puppet_prop, cisco_prop|
       if @resource[puppet_prop]
         @network_snmp.send("#{cisco_prop}=", munge_flush(@resource[puppet_prop])) \

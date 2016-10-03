@@ -44,6 +44,14 @@ Puppet::Type.type(:cisco_command_config).provide(:cisco) do
     # Compare full manifest config to running-config.
     existing_str = manifest_hash.compare_with(running_hash)
     debug "Existing:\n>#{existing_str}<"
+    # Note: 'existing_str' may sometimes include confusing (but normal) contents
+    # if the 'manifest_hash' contains a 'no' command that is not present in
+    # running-config. For example, manifest_hash contains 'no foo bar'; the
+    # compare_with() logic does not find 'no foo bar' so it will strip the 'no'
+    # and search for 'foo bar' (in the proper context); that will not be found
+    # so it will add 'no foo bar' to 'existing_str', which allows the logic
+    # below to exclude 'no foo bar' from 'min_config_hash'.
+
     manifest_config_str =
       Cisco::ConfigParser::Configuration.config_hash_to_str(
         manifest_hash.configuration)
@@ -79,4 +87,40 @@ Puppet::Type.type(:cisco_command_config).provide(:cisco) do
     end
     raise
   end # command=
+
+  def test_get
+    # This method is for beaker use only. It allows beaker to retrieve any
+    # configuration it needs from the device using puppet resource. Callers
+    # must pass a filter string to test_get.
+    # Example usage:
+    #  puppet resource cisco_command_config 'cc' test_get='incl feature'
+    cmd = 'show running-config all'
+    cmd << " | #{@resource[:test_get]}" if @resource[:test_get]
+
+    output = @node.get(command: cmd)
+    debug "@node.get output:\n#{output}"
+    "\n" + output unless output.nil?
+  end
+
+  def test_get=(noop)
+    # This is a dummy "setter" for test_get(), which is a get-only property.
+    # This dummy method is necessary to keep Puppet from raising an error or
+    # displaying noise.
+  end
+
+  def test_set
+    # This is a dummy "getter" for test_set=(), which is a set-only property.
+    # This dummy method is necessary to keep Puppet from raising an error or
+    # displaying noise.
+  end
+
+  def test_set=(cmds)
+    # This method is for beaker use only. It allows beaker to set simple raw
+    # configuration using puppet resource.
+    # Example usage:
+    #  puppet resource cisco_command_config 'cc' test_set='no feature foo'
+    return if cmds.empty?
+    output = @node.set(values: cmds)
+    debug "@node.set output:\n#{output}" unless output.nil?
+  end
 end # Puppet::Type

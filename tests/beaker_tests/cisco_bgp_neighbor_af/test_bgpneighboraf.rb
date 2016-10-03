@@ -109,7 +109,6 @@ end
 tests[:default] = {
   desc:           '1.1 Default Properties',
   title_pattern:  '2 default 1.1.1.1 ipv4 unicast',
-  preclean:       'cisco_bgp',
   manifest_props: {
     allowas_in:                  'default',
     allowas_in_max:              'default',
@@ -307,21 +306,31 @@ tests[:title_patterns_3] = {
 
 tests[:title_patterns_4] = {
   desc:          'T.4 Title Pattern',
-  title_pattern: '11.4 magenta 1.1.1.1 ipv4',
+  title_pattern: '11.4 orange 1.1.1.1 ipv4',
   title_params:  { safi: 'unicast' },
   resource:      { 'ensure' => 'present' },
 }
+
+def cleanup(agent)
+  if operating_system == 'nexus'
+    test_set(agent, 'no feature bgp')
+  else
+    resource_absent_cleanup(agent, 'cisco_bgp')
+  end
+end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown { cleanup(agent) }
+  cleanup(agent)
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   test_harness_run(tests, :default)
 
   tests[:default][:ensure] = :absent
-  tests[:default].delete(:preclean)
   test_harness_run(tests, :default)
 
   # -------------------------------------------------------------------
@@ -383,7 +392,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :title_patterns_4)
 
   # -----------------------------------
-  resource_absent_cleanup(agent, 'cisco_bgp')
   skipped_tests_summary(tests)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

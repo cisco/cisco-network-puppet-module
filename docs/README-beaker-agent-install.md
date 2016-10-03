@@ -1,5 +1,7 @@
 # Automated Puppet Agent Installation Using Beaker:
 
+## DEPRECATED - FOR REFERNCE ONLY
+
 #### Table of Contents
 
 1. [Overview](#overview)

@@ -33,7 +33,6 @@ tests = {
 # Test hash test cases
 tests[:title_patterns_1] = {
   desc:          'T.1 Title Pattern',
-  preclean:      'cisco_pim_rp_address',
   title_pattern: 'new_york',
   title_params:  { afi: 'ipv4', vrf: 'red', rp_addr: '1.1.1.1' },
   resource:      { 'ensure' => 'present' },
@@ -55,21 +54,26 @@ tests[:title_patterns_3] = {
 
 tests[:title_patterns_4] = {
   desc:          'T.4 Title Pattern',
-  title_pattern: 'ipv4 magenta 1.1.1.1',
+  title_pattern: 'ipv4 orange 1.1.1.1',
   resource:      { 'ensure' => 'present' },
 }
+
+def cleanup(agent)
+  test_set(agent, 'no feature pim')
+end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown { cleanup(agent) }
+  cleanup(agent)
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Title Pattern Testing")
   test_harness_run(tests, :title_patterns_1)
   test_harness_run(tests, :title_patterns_2)
   test_harness_run(tests, :title_patterns_3)
   test_harness_run(tests, :title_patterns_4)
-  # -------------------------------------------------------------------
-  resource_absent_cleanup(agent, 'cisco_pim_rp_address')
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

@@ -37,36 +37,60 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 module SnmpNotificationLib
   # A. Methods to create manifests for snmp_notification Puppet provider test cases.
 
-  def self.create_absent
-    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+  def self.create_absent(type)
+    nxos_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   snmp_notification { 'aaa server-state-change':
     enable => false,
   }
 }
 EOF"
-    manifest_str
+
+    ios_xr_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+  snmp_notification { 'ntp':
+    enable => false,
+  }
+}
+EOF"
+    type == 'ios_xr' ? ios_xr_str : nxos_str
   end
 
-  def self.create_defaults
-    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+  def self.create_defaults(type)
+    nxos_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   snmp_notification { 'aaa server-state-change':
     enable => false,
   }
 }
 EOF"
-    manifest_str
+
+    ios_xr_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+  snmp_notification { 'ntp':
+    enable => false,
+  }
+}
+EOF"
+    type == 'ios_xr' ? ios_xr_str : nxos_str
   end
 
-  def self.create_non_defaults
-    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+  def self.create_non_defaults(type)
+    nxos_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   snmp_notification { 'aaa server-state-change':
     enable => true,
   }
 }
 EOF"
-    manifest_str
+
+    ios_xr_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+  snmp_notification { 'ntp':
+    enable => true,
+  }
+}
+EOF"
+    type == 'ios_xr' ? ios_xr_str : nxos_str
   end
 end

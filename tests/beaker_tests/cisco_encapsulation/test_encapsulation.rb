@@ -32,6 +32,9 @@ tests = {
   resource_name:    'cisco_encapsulation',
 }
 
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
+
 # Test hash test cases
 tests[:default] = {
   desc:           '1.1 Default Properties',
@@ -50,26 +53,15 @@ tests[:non_default] = {
   },
 }
 
-# TEST PRE-REQUISITES
-#   - F3 linecard assigned to admin vdc
-def dependency_manifest(*)
-  "
-    cisco_vdc { '#{default_vdc_name}':
-      ensure                     => present,
-      limit_resource_module_type => 'f3',
-    }
-  "
-end
-
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  skip_unless_supported(tests)
+  teardown { vdc_limit_f3_no_intf_needed(:clear) }
+  vdc_limit_f3_no_intf_needed(:set)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-
   id = :default
   test_harness_run(tests, id)
 
@@ -78,10 +70,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, id)
 
   # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 1. Non Default Property Testing")
+  logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   test_harness_run(tests, :non_default)
-
-  # -------------------------------------------------------------------
-  resource_absent_cleanup(agent, 'cisco_encapsulation')
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

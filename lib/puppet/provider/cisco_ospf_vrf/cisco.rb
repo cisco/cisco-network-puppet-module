@@ -32,15 +32,23 @@ Puppet::Type.type(:cisco_ospf_vrf).provide(:cisco) do
   mk_resource_methods
 
   # Property symbol array for method auto-generation.
-  OSPF_VRF_PROPS = [
+  OSPF_VRF_NON_BOOL_PROPS = [
     :default_metric, :log_adjacency, :router_id,
     :timer_throttle_lsa_start, :timer_throttle_lsa_hold,
     :timer_throttle_lsa_max, :timer_throttle_spf_start,
     :timer_throttle_spf_hold, :timer_throttle_spf_max
   ]
 
+  OSPF_VRF_BOOL_PROPS = [
+    :bfd
+  ]
+
+  OSPF_VRF_ALL_PROPS = OSPF_VRF_NON_BOOL_PROPS + OSPF_VRF_BOOL_PROPS
+
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@vrf',
-                                            OSPF_VRF_PROPS)
+                                            OSPF_VRF_NON_BOOL_PROPS)
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@vrf',
+                                            OSPF_VRF_BOOL_PROPS)
 
   def initialize(value={})
     super(value)
@@ -59,8 +67,16 @@ Puppet::Type.type(:cisco_ospf_vrf).provide(:cisco) do
       ensure: :present,
     }
     # Call node_utils getter for each property
-    OSPF_VRF_PROPS.each do |prop|
+    OSPF_VRF_NON_BOOL_PROPS.each do |prop|
       current_state[prop] = vrf.send(prop)
+    end
+    OSPF_VRF_BOOL_PROPS.each do |prop|
+      val = vrf.send(prop)
+      if val.nil?
+        current_state[prop] = nil
+      else
+        current_state[prop] = val ? :true : :false
+      end
     end
     # Special Cases
     # Display cost_value in MBPS
@@ -106,7 +122,7 @@ Puppet::Type.type(:cisco_ospf_vrf).provide(:cisco) do
   end
 
   def properties_set(new_vrf=false)
-    OSPF_VRF_PROPS.each do |prop|
+    OSPF_VRF_ALL_PROPS.each do |prop|
       next unless @resource[prop]
       send("#{prop}=", @resource[prop]) if new_vrf
       unless @property_flush[prop].nil?
@@ -219,7 +235,7 @@ Puppet::Type.type(:cisco_ospf_vrf).provide(:cisco) do
 
     # Dump all current properties for this interface
     current = sprintf("\n%30s: %s", 'vrf', @vrf.name)
-    OSPF_VRF_PROPS.each do |prop|
+    OSPF_VRF_ALL_PROPS.each do |prop|
       current.concat(sprintf("\n%30s: %s", prop, @vrf.send(prop)))
     end
     debug current

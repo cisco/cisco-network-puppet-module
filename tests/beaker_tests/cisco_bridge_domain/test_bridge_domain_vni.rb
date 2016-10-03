@@ -23,12 +23,15 @@ testheader = 'Resource cisco_bridge_domain_vni'
 
 # Top-level keys set by caller:
 tests = {
-  master:           master,
   agent:            agent,
-  resource_name:    'cisco_bridge_domain_vni',
-  platform:         'n7k',
+  master:           master,
   operating_system: 'nexus',
+  platform:         'n7k',
+  resource_name:    'cisco_bridge_domain_vni',
 }
+
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
 
 tests[:default] = {
   title_pattern:  '100-110',
@@ -37,16 +40,16 @@ tests[:default] = {
   },
 }
 
-tests[:non_default_properties_change_member_vni] = {
-  desc:           '2.1 Non Default Properties for ordered member vni',
+tests[:non_default] = {
+  desc:           '2.1 Non Default',
   title_pattern:  '100-110',
   manifest_props: {
     member_vni: '5100-5105,6050,7000-7001,5050,8000'
   },
 }
 
-tests[:non_default_properties_random_member_vni] = {
-  desc:           '3.1 Non Default Properties for random member vni',
+tests[:non_default_random] = {
+  desc:           '2.2 Non Default Properties for random member vni',
   title_pattern:  '100-105,150,200-203',
   manifest_props: {
     member_vni: '5100-5105,6050,7000-7001,5050,8000'
@@ -57,16 +60,18 @@ tests[:non_default_properties_random_member_vni] = {
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{testheader}" do
+  teardown do
+    remove_all_vlans(agent)
+    vdc_limit_f3_no_intf_needed(:clear)
+  end
+  remove_all_vlans(agent)
+  vdc_limit_f3_no_intf_needed(:set)
   # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 1. Non Default Property Testing")
+  logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
-  id = :non_default_properties_change_member_vni
-  test_harness_run(tests, id)
-  resource_absent_cleanup(agent, 'cisco_bridge_domain_vni', 'bridge-domain CLEANUP :: ')
+  test_harness_run(tests, :non_default)
+  resource_absent_cleanup(agent, 'cisco_bridge_domain_vni')
 
-  id = :non_default_properties_random_member_vni
-  test_harness_run(tests, id)
-  resource_absent_cleanup(agent, 'cisco_bridge_domain_vni', 'bridge-domain CLEANUP :: ')
+  test_harness_run(tests, :non_default_random)
 end
-
 logger.info('TestCase :: # {testheader} :: End')
