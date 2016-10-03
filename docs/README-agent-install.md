@@ -133,8 +133,8 @@ The `guestshell` container environment is enabled by default on most platforms; 
 
 Resource| Recommended|
 :--|:--:|
-Disk   | **400 MB** |
-Memory | **300 MB** |
+Disk   | **450 MB** |
+Memory | **350 MB** |
 
 <p>
 `show guestshell detail` displays the current resource limits:
@@ -153,11 +153,11 @@ Virtual service guestshell+ detail
 <p>
 `guestshell resize rootfs` sets disk size limits while `guestshell resize memory` sets memory limits. The resize commands do not take effect until after the guestshell container is (re)started by `guestshell reboot` or `guestshell enable`.
 
-**Example.** Allocate resources for guestshell by setting new limits to 400MB disk and 300MB memory.
+**Example.** Allocate resources for guestshell by setting new limits to 450MB disk and 350MB memory.
 
 ~~~
-n3k# guestshell resize rootfs 400
-n3k# guestshell resize memory 300
+n3k# guestshell resize rootfs 450
+n3k# guestshell resize memory 350
 
 n3k# guestshell reboot
 Are you sure you want to reboot the guest shell? (y/n) [n] y
