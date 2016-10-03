@@ -327,6 +327,7 @@ export https_proxy=https://proxy.yourdomain.com:<port>
 ~~~
 rpm --import http://yum.puppetlabs.com/RPM-GPG-KEY-puppetlabs
 rpm --import http://yum.puppetlabs.com/RPM-GPG-KEY-reductive
+rpm --import http://yum.puppetlabs.com/RPM-GPG-KEY-puppet
 ~~~
 <br>
 
@@ -334,7 +335,7 @@ rpm --import http://yum.puppetlabs.com/RPM-GPG-KEY-reductive
 
 Environment | RPM |
 :--|:--|
-`bash-shell` | <http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm> |
+`bash-shell` | <http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm> <br> **NOTE:**  [*See Special N3K Platform Instructions Below*](#N3KAgentInstall)|
 `guestshell` | <http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm> |
 `open agent`<br>`container (OAC)` | [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm) |
 
@@ -353,6 +354,15 @@ yum install puppet
 export PATH=/opt/puppetlabs/puppet/bin:/opt/puppetlabs/puppet/lib:$PATH
 ~~~
 
+<a name="N3KAgentInstall">**N3K bash-shell installs**:</a>
+
+The smaller footprint (4 gig) N3K platform does not have enough space to download the puppet agent RPM repo.  Please select and install the versioned RPM directly from [puppet labs](http://yum.puppetlabs.com/cisco-wrlinux/5/PC1/x86_64/).  This is only an issue with puppet agent rpm version `1.7.0` and later.
+
+Example:
+
+```
+yum install http://http://yum.puppetlabs.com/cisco-wrlinux/5/PC1/x86_64/http://yum.puppetlabs.com/cisco-wrlinux/5/PC1/x86_64/uppet-agent-1.7.0-1.cisco_wrlinux5.x86_64.rpm
+```
 <br>
 #### *Step 2. Configure* `/etc/puppetlabs/puppet/puppet.conf`
 
