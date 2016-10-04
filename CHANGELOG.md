@@ -5,6 +5,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 ### New feature support
+
+### Added
+
+### Changed
+
+### Removed
+
+## [1.4.0] - 2016-10-04
+
+### New feature support
 #### Cisco Resources
 - `cisco_bfd_global` type and provider.
 - `cisco_dhcp_relay_global` type and provider.
@@ -301,6 +311,7 @@ This version was never released.
 - Please note: 0.9.0 is an EFT pre-release for a limited audience with access to NX-OS 7.0(3)I2(1). Additional code changes may occur in 0.9.x prior to the final 1.0.0 release.
 
 [unreleased]: https://github.com/cisco/cisco-network-puppet-module/compare/master...develop
+[1.4.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.3.2...v1.4.0
 [1.3.2]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.2.3...v1.3.1
 [1.2.3]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.2.2...v1.2.3
