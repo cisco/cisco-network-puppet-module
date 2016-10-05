@@ -41,7 +41,9 @@ Puppet::Type.type(:cisco_bgp).provide(:cisco) do
     :confederation_peers,
     :event_history_cli,
     :event_history_detail,
+    :event_history_errors,
     :event_history_events,
+    :event_history_objstore,
     :event_history_periodic,
     :disable_policy_batching_ipv4,
     :disable_policy_batching_ipv6,
@@ -216,17 +218,68 @@ Puppet::Type.type(:cisco_bgp).provide(:cisco) do
     image[/7.0.3.I2|I3|I4/] || pid[/N(5|6|7|8)/]
   end
 
+  def event_history_cli
+    return 'default' if @property_hash[:event_history_cli] == @bgp_vrf.default_event_history_cli &&
+                        resource[:event_history_cli] == 'default'
+    return 'true' if @property_hash[:event_history_cli] == @bgp_vrf.default_event_history_cli &&
+                     resource[:event_history_cli] == 'true'
+    return 'size_disable' if @property_hash[:event_history_cli] == 'false' &&
+                             resource[:event_history_cli] == 'size_disable' && !legacy_image?
+    @property_hash[:event_history_cli]
+  end
+
+  def event_history_cli=(should_value)
+    should_value = @bgp_vrf.default_event_history_cli if should_value == 'default' || should_value == 'true'
+    should_value = should_value.to_sym unless should_value =~ /\A\d+\z/
+    @property_flush[:event_history_cli] = should_value
+  end
+
+  def event_history_detail
+    return 'default' if @property_hash[:event_history_detail] == @bgp_vrf.default_event_history_detail &&
+                        resource[:event_history_detail] == 'default'
+    return 'size_disable' if @property_hash[:event_history_detail] == @bgp_vrf.default_event_history_detail &&
+                             resource[:event_history_detail] == 'size_disable' && !legacy_image?
+    @property_hash[:event_history_detail]
+  end
+
+  def event_history_detail=(should_value)
+    should_value = @bgp_vrf.default_event_history_detail if should_value == 'default'
+    should_value = @bgp_vrf.default_event_history_detail if should_value == 'size_disable' && !legacy_image?
+    should_value = should_value.to_sym unless should_value =~ /\A\d+\z/
+    @property_flush[:event_history_detail] = should_value
+  end
+
+  def event_history_events
+    return 'default' if @property_hash[:event_history_events] == @bgp_vrf.default_event_history_events &&
+                        resource[:event_history_events] == 'default'
+    return 'true' if @property_hash[:event_history_events] == @bgp_vrf.default_event_history_events &&
+                     resource[:event_history_events] == 'true'
+    return 'size_disable' if @property_hash[:event_history_events] == 'false' &&
+                             resource[:event_history_events] == 'size_disable'
+    @property_hash[:event_history_events]
+  end
+
+  def event_history_events=(should_value)
+    should_value = @bgp_vrf.default_event_history_events if should_value == 'default' || should_value == 'true'
+    should_value = 'false' if should_value == 'size_disable' && !legacy_image?
+    should_value = should_value.to_sym unless should_value =~ /\A\d+\z/
+    @property_flush[:event_history_events] = should_value
+  end
+
   def event_history_periodic
     return 'default' if @property_hash[:event_history_periodic] == @bgp_vrf.default_event_history_periodic &&
                         resource[:event_history_periodic] == 'default'
-    return 'true' if @property_hash[:event_history_periodic] == 'size_small' &&
+    return 'true' if @property_hash[:event_history_periodic] == @bgp_vrf.default_event_history_periodic &&
                      resource[:event_history_periodic] == 'true' && legacy_image?
+    return 'size_disable' if @property_hash[:event_history_periodic] == @bgp_vrf.default_event_history_periodic &&
+                             resource[:event_history_periodic] == 'size_disable' && !legacy_image?
     @property_hash[:event_history_periodic]
   end
 
   def event_history_periodic=(should_value)
     should_value = @bgp_vrf.default_event_history_periodic if should_value == 'default'
-    should_value = 'size_small' if should_value == 'true' && legacy_image?
+    should_value = @bgp_vrf.default_event_history_periodic if should_value == 'true' && legacy_image?
+    should_value = @bgp_vrf.default_event_history_periodic if should_value == 'size_disable' && !legacy_image?
     should_value = should_value.to_sym unless should_value =~ /\A\d+\z/
     @property_flush[:event_history_periodic] = should_value
   end
