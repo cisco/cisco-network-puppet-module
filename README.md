@@ -1038,6 +1038,9 @@ Manages configuration of a BGP instance.
 |:--------|:-------------|
 | `disable_policy_batching_ipv4` | Not supported on N5k, N6k, N7k |
 | `disable_policy_batching_ipv6` | Not supported on N5k, N6k, N7k |
+| `event_history_errors        ` | supported on N3|9k on 7.0(3)I5(1) and later images |
+| `event_history_events        ` | default value is 'large' for N3|9k on 7.0(3)I5(1) and later images |
+| `event_history_objstore      ` | supported on N3|9k on 7.0(3)I5(1) and later images |
 | `event_history_periodic      ` | default value is 'false' for N3|9k on 7.0(3)I5(1) and later images |
 | `neighbor_down_fib_accelerate` | Not supported on N5k, N6k, N7k |
 | `reconnect_interval`           | Not supported on N5k, N6k, N7k |
@@ -1104,8 +1107,14 @@ Enable/Disable/specify size of cli event history buffer. Valid values are 'true'
 ##### `event_history_detail`
 Enable/Disable/specify size of detail event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
 
+##### `event_history_errors`
+Enable/Disable/specify size of error history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
+
 ##### `event_history_events`
 Enable/Disable/specify size of event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
+
+##### `event_history_objstore`
+Enable/Disable/specify size of objstore history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
 
 ##### `event_history_periodic`
 Enable/Disable/specify size of periodic event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.

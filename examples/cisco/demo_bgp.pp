@@ -73,7 +73,11 @@ class ciscopuppet::cisco::demo_bgp {
     enforce_first_as                       => false,
     event_history_cli                      => 'size_small',
     event_history_detail                   => 'size_medium',
+    # event_history_errors is not supported on all platforms
+    # event_history_errors                   => 'size_small',
     event_history_events                   => 'size_large',
+    # event_history_objstore is not supported on all platforms
+    # event_history_objstore                 => 'size_large',
     event_history_periodic                 => 'size_disable',
     maxas_limit                            => $maxas_limit,
     suppress_fib_pending                   => $suppress_fib_pending,
