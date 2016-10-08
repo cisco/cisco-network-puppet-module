@@ -49,7 +49,9 @@ tests[:default] = {
     enforce_first_as:                       'default',
     event_history_cli:                      'default',
     event_history_detail:                   'default',
+    event_history_errors:                   'default',
     event_history_events:                   'default',
+    event_history_objstore:                 'default',
     event_history_periodic:                 'default',
     fast_external_fallover:                 'default',
     flush_routes:                           'default',
@@ -80,8 +82,10 @@ tests[:default] = {
     'disable_policy_batching'                => 'false',
     'enforce_first_as'                       => 'true',
     'event_history_cli'                      => 'size_small',
-    'event_history_detail'                   => 'size_disable',
-    'event_history_events'                   => 'size_small',
+    'event_history_detail'                   => 'false',
+    'event_history_errors'                   => 'size_medium',
+    'event_history_events'                   => 'size_large',
+    'event_history_objstore'                 => 'false',
     'event_history_periodic'                 => 'false',
     'fast_external_fallover'                 => 'true',
     'flush_routes'                           => 'false',
@@ -106,7 +110,8 @@ tests[:default] = {
 # older_version default value
 resource = {
   legacy: {
-    'event_history_periodic' => 'size_small'
+    'event_history_events'   => 'size_small',
+    'event_history_periodic' => 'size_small',
   }
 }
 
@@ -132,7 +137,9 @@ tests[:non_default] = {
     enforce_first_as:                       'false',
     event_history_cli:                      'size_medium',
     event_history_detail:                   'size_large',
-    event_history_events:                   'size_disable',
+    event_history_errors:                   'size_small',
+    event_history_events:                   'size_medium',
+    event_history_objstore:                 'size_large',
     event_history_periodic:                 '100000',
     fast_external_fallover:                 'false',
     flush_routes:                           'true',
@@ -170,6 +177,43 @@ tests[:title_patterns_2] = {
   resource:      { 'ensure' => 'present' },
 }
 
+def unsupp_prop_xr(tests, id)
+  unprops = []
+  vrf = vrf(tests[id])
+
+  unprops <<
+    :bestpath_med_non_deterministic <<
+    :disable_policy_batching <<
+    :event_history_cli <<
+    :event_history_detail <<
+    :event_history_events <<
+    :event_history_periodic <<
+    :flush_routes <<
+    :graceful_restart_helper <<
+    :isolate <<
+    :log_neighbor_changes <<
+    :maxas_limit <<
+    :neighbor_down_fib_accelerate <<
+    :shutdown <<
+    :suppress_fib_pending <<
+    :timer_bestpath_limit <<
+    :timer_bestpath_limit_always
+
+  if vrf != 'default'
+    # IOS-XR does not support these properties under a non-default vrf
+    unprops <<
+      :bestpath_med_confed <<
+      :cluster_id <<
+      :confederation_id <<
+      :confederation_peers <<
+      :graceful_restart <<
+      :graceful_restart_timers_restart <<
+      :graceful_restart_timers_stalepath_time <<
+      :nsr
+  end
+  unprops
+end
+
 # Overridden to properly handle unsupported properties for this test file.
 def unsupported_properties(tests, id)
   unprops = []
@@ -177,40 +221,14 @@ def unsupported_properties(tests, id)
   vrf = vrf(tests[id])
 
   if operating_system == 'ios_xr'
-    # IOS-XR does not support these properties
-    unprops <<
-      :bestpath_med_non_deterministic <<
-      :disable_policy_batching <<
-      :event_history_cli <<
-      :event_history_detail <<
-      :event_history_events <<
-      :event_history_periodic <<
-      :flush_routes <<
-      :graceful_restart_helper <<
-      :isolate <<
-      :log_neighbor_changes <<
-      :maxas_limit <<
-      :neighbor_down_fib_accelerate <<
-      :shutdown <<
-      :suppress_fib_pending <<
-      :timer_bestpath_limit <<
-      :timer_bestpath_limit_always
-
-    if vrf != 'default'
-      # IOS-XR does not support these properties under a non-default vrf
-      unprops <<
-        :bestpath_med_confed <<
-        :cluster_id <<
-        :confederation_id <<
-        :confederation_peers <<
-        :graceful_restart <<
-        :graceful_restart_timers_restart <<
-        :graceful_restart_timers_stalepath_time <<
-        :nsr
-    end
+    unprops << unsupp_prop_xr(tests, id)
   else
     # NX-OS does not support these properties
     unprops << :nsr
+
+    unprops <<
+      :event_history_errors <<
+      :event_history_objstore if nexus_image[/I2|I3|I4/] || platform[/n5|n6|n7|n8/]
 
     if vrf != 'default'
       # NX-OS does not support these properties under a non-default vrf
@@ -219,7 +237,9 @@ def unsupported_properties(tests, id)
         :enforce_first_as <<
         :event_history_cli <<
         :event_history_detail <<
+        :event_history_errors <<
         :event_history_events <<
+        :event_history_objstore <<
         :event_history_periodic <<
         :fast_external_fallover <<
         :flush_routes <<

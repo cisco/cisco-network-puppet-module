@@ -7,6 +7,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### New feature support
 
 ### Added
+- Extend cisco_bgp with attributes:
+ - `event_history_errors`
+ - `event_history_objstore`
 
 ### Changed
 
