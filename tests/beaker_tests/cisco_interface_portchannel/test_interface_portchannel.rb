@@ -171,12 +171,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   test_harness_run(tests, :non_default_asym)
-
-  # The port-channel interface must be in admin state down to set
-  # the lacp_suspend_individual property.
-  test_set(agent, "interface #{intf} ; shutdown")
   test_harness_run(tests, :non_default_sym)
-
   test_harness_run(tests, :non_default_eth)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
