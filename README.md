@@ -2395,6 +2395,7 @@ Manages configuration of a portchannel interface instance.
 | Property | Caveat Description |
 |:--------|:-------------|
 | `port_hash_distribution ` <br> `port_load_defer ` | Not supported on N5k, N6k |
+| `lacp_suspend_individual` | **WARNING:** On N9k, the portchannel interface must be shutdown before the property can be set.  This provider automatically shuts the interface down if needed.<br> The interface is automatically restored to the original state after the property is set. |
 
 #### Parameters
 
