@@ -90,7 +90,7 @@ tests[:default_sym] = {
     'lacp_graceful_convergence' => 'true',
     'lacp_max_bundle'           => '32',
     'lacp_min_links'            => '1',
-    'lacp_suspend_individual'   => 'true',
+    'lacp_suspend_individual'   => platform[/n3k/] ? 'false' : 'true',
     'port_hash_distribution'    => 'false',
     'port_load_defer'           => 'false',
   },
@@ -171,7 +171,12 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   test_harness_run(tests, :non_default_asym)
+
+  # The port-channel interface must be in admin state down to set
+  # the lacp_suspend_individual property.
+  test_set(agent, "interface #{intf} ; shutdown")
   test_harness_run(tests, :non_default_sym)
+
   test_harness_run(tests, :non_default_eth)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
