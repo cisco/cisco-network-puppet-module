@@ -105,7 +105,7 @@ tests[:non_default_sym] = {
     lacp_graceful_convergence: 'false',
     lacp_max_bundle:           '10',
     lacp_min_links:            '3',
-    lacp_suspend_individual:   'false',
+    lacp_suspend_individual:   platform[/n3k/] ? 'true' : 'false',
     port_hash_distribution:    'fixed',
     port_load_defer:           'true',
   },
