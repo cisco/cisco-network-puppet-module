@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet::cisco::demo_hsrp_global {
+class ciscopuppet::cisco::demo_hsrp {
 
   $bfd_all_intf = platform_get() ? {
     /(n5k|n6k|n7k|n8k|n9k)/ => true,
@@ -24,6 +24,16 @@ class ciscopuppet::cisco::demo_hsrp_global {
   cisco_hsrp_global { 'default':
     bfd_all_intf  => $bfd_all_intf,
     extended_hold => 200,
+  }
+
+  cisco_interface_hsrp { 'port-channel100':
+    ensure        => 'present',
+    bfd           => true,
+    delay_minimum => 200,
+    delay_reload  => 300,
+    mac_refresh   => 400,
+    use_bia       => 'use_bia_intf',
+    version       => 2,
   }
 }
 
