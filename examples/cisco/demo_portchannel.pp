@@ -17,53 +17,53 @@
 class ciscopuppet::cisco::demo_portchannel {
 
   $asymmetric = platform_get() ? {
-    'n7k'  => false,
+    'n7k'   => false,
     default => undef
   }
 
   $concatenation = platform_get() ? {
-    'n9k' => true,
+    'n9k'   => true,
     default => undef
   }
 
   $hash_distribution = platform_get() ? {
-    'n7k'  => 'adaptive',
+    'n7k'   => 'adaptive',
     default => undef
   }
 
   $hash_poly = platform_get() ? {
     /(n5k|n6k)/ => 'CRC10c',
-    default => undef
+    default     => undef
   }
 
   $load_defer = platform_get() ? {
-    'n7k'  => 100,
+    'n7k'   => 100,
     default => undef
   }
 
   $port_hash_distribution = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => 'adaptive',
-    default => undef
+    /(n3k|n7k|n9k)/ => 'adaptive',
+    default         => undef
   }
 
   $port_load_defer = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => true,
-    default => undef
+    /(n3k|n7k|n9k)/ => true,
+    default         => undef
   }
 
   $resilient = platform_get() ? {
     /(n3k|n9k)/ => false,
-    default => undef
+    default     => undef
   }
 
   $rotate = platform_get() ? {
-    /(n7k|n8k|n9k)/ => '4',
-    default => undef
+    /(n7k|n9k)/ => '4',
+    default     => undef
   }
 
   $symmetry = platform_get() ? {
     /(n3k|n9k)/ => false,
-    default => undef
+    default     => undef
   }
 
   cisco_interface_portchannel {'port-channel100':

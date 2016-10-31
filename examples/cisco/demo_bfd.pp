@@ -17,64 +17,64 @@
 class ciscopuppet::cisco::demo_bfd {
 
   $echo_rx_interval = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => 300,
-    default => undef
+    /(n3k|n7k|n9k)/ => 300,
+    default         => undef
   }
 
   $fabricpath_interval = platform_get() ? {
     /(n5k|n6k|n7k)/ => ['750', '350', '35'],
-    default => undef
+    default         => undef
   }
 
   $fabricpath_slow_timer = platform_get() ? {
     /(n5k|n6k|n7k)/ => 15000,
-    default => undef
+    default         => undef
   }
 
   $fabricpath_vlan = platform_get() ? {
     /(n5k|n6k|n7k)/ => 100,
-    default => undef
+    default         => undef
   }
 
-  # TBD: this is due to a bug on n8k and n9k
+  # TBD: this is due to a bug on n9k
   $interval = platform_get() ? {
     /(n3k|n5k|n6k|n7k)/ => ['100', '100', '25'],
-    default => undef
+    default             => undef
   }
 
   $ipv4_echo_rx_interval = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => 100,
-    default => undef
+    /(n3k|n7k|n9k)/ => 100,
+    default         => undef
   }
 
   $ipv4_interval = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => ['200', '200', '50'],
-    default => undef
+    /(n3k|n7k|n9k)/ => ['200', '200', '50'],
+    default         => undef
   }
 
   $ipv4_slow_timer = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => 10000,
-    default => undef
+    /(n3k|n7k|n9k)/ => 10000,
+    default         => undef
   }
 
   $ipv6_echo_rx_interval = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => 200,
-    default => undef
+    /(n3k|n7k|n9k)/ => 200,
+    default         => undef
   }
 
   $ipv6_interval = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => ['500', '500', '30'],
-    default => undef
+    /(n3k|n7k|n9k)/ => ['500', '500', '30'],
+    default         => undef
   }
 
   $ipv6_slow_timer = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => 25000,
-    default => undef
+    /(n3k|n7k|n9k)/ => 25000,
+    default         => undef
   }
 
   $startup_timer = platform_get() ? {
-    /(n3k|n8k|n9k)/ => 25,
-    default => undef
+    /(n3k|n9k)/ => 25,
+    default     => undef
   }
 
   cisco_command_config { 'loopback':
