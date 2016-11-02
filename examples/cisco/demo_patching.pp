@@ -55,6 +55,10 @@ class ciscopuppet::cisco::demo_patching {
       $ciscoPatchName = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I4.1.lib32_n9000.rpm'
       $ciscoPackageName = 'nxos.sample-n9k_EOR'
     }
+    '7.0(3)I5(1)': {
+      $ciscoPatchName = 'nxos.sample-n9k_ALL-1.0.0-7.0.3.I5.1.lib32_n9000.rpm'
+      $ciscoPackageName = 'nxos.sample-n9k_ALL'
+    }
     default:  { fail("\n## NO COMPATIBLE SAMPLE PATCH RPMs AVAILABLE FOR THIS IMAGE: ${image_ver}\n")
     }
   }

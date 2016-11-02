@@ -1,6 +1,6 @@
 {
   "name": "puppetlabs-ciscopuppet",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "author": "cisco",
   "summary": "Cisco Puppet providers and types for NX-OS devices",
   "license": "Apache-2.0",
@@ -31,6 +31,9 @@
       "operatingsystem": "NX-OS",
       "operatingsystemrelease": [
         "7.0(3)I2",
+        "7.0(3)I3",
+        "7.0(3)I4",
+        "7.0(3)I5",
         "7.3(0)N1(1)",
         "7.3(0)D1(1)"
       ]

@@ -41,7 +41,9 @@ Puppet::Type.type(:cisco_bgp).provide(:cisco) do
     :confederation_peers,
     :event_history_cli,
     :event_history_detail,
+    :event_history_errors,
     :event_history_events,
+    :event_history_objstore,
     :event_history_periodic,
     :disable_policy_batching_ipv4,
     :disable_policy_batching_ipv6,
@@ -207,6 +209,106 @@ Puppet::Type.type(:cisco_bgp).provide(:cisco) do
       always = @bgp_vrf.timer_bestpath_limit_always
     end
     @bgp_vrf.timer_bestpath_limit_set(limit, always)
+  end
+
+  def legacy_image?
+    fd = Facter.value('cisco')
+    image = fd['images']['system_image']
+    pid = fd['inventory']['chassis']['pid']
+    image[/7.0.3.I2|I3|I4/] || pid[/N(5|6|7|8)/]
+  end
+
+  def event_history_default?(prop)
+    @property_hash[prop.to_sym] == @bgp_vrf.send("default_#{prop}")
+  end
+
+  def event_history_false?(prop)
+    @property_hash[prop.to_sym] == 'false'
+  end
+
+  def event_history_cli
+    case resource[:event_history_cli]
+    when 'default'
+      return 'default' if event_history_default?('event_history_cli')
+    when 'true'
+      return 'true' if event_history_default?('event_history_cli')
+    when 'size_disable'
+      return 'size_disable' if
+        event_history_false?('event_history_cli') && !legacy_image?
+    end
+    @property_hash[:event_history_cli]
+  end
+
+  def event_history_cli=(should_value)
+    should_value = @bgp_vrf.default_event_history_cli if
+      should_value == 'default' || should_value == 'true'
+    should_value = should_value.to_sym unless should_value =~ /\A\d+\z/
+    @property_flush[:event_history_cli] = should_value
+  end
+
+  def event_history_detail
+    case resource[:event_history_detail]
+    when 'default'
+      return 'default' if event_history_default?('event_history_detail')
+    when 'size_disable'
+      return 'size_disable' if
+        event_history_default?('event_history_detail') && !legacy_image?
+    end
+    @property_hash[:event_history_detail]
+  end
+
+  def event_history_detail=(should_value)
+    should_value = @bgp_vrf.default_event_history_detail if
+      should_value == 'default'
+    should_value = @bgp_vrf.default_event_history_detail if
+      should_value == 'size_disable' && !legacy_image?
+    should_value = should_value.to_sym unless should_value =~ /\A\d+\z/
+    @property_flush[:event_history_detail] = should_value
+  end
+
+  def event_history_events
+    case resource[:event_history_events]
+    when 'default'
+      return 'default' if event_history_default?('event_history_events')
+    when 'true'
+      return 'true' if event_history_default?('event_history_events')
+    when 'size_disable'
+      return 'size_disable' if event_history_false?('event_history_events')
+    end
+    @property_hash[:event_history_events]
+  end
+
+  def event_history_events=(should_value)
+    should_value = @bgp_vrf.default_event_history_events if
+      should_value == 'default' || should_value == 'true'
+    should_value = 'false' if should_value == 'size_disable' && !legacy_image?
+    should_value = should_value.to_sym unless should_value =~ /\A\d+\z/
+    @property_flush[:event_history_events] = should_value
+  end
+
+  def event_history_periodic
+    case resource[:event_history_periodic]
+    when 'default'
+      return 'default' if event_history_default?('event_history_periodic')
+    when 'true'
+      return 'true' if event_history_default?('event_history_periodic') &&
+                       legacy_image?
+    when 'size_disable'
+      return 'size_disable' if
+        event_history_default?('event_history_periodic') && !legacy_image?
+    end
+    @property_hash[:event_history_periodic]
+  end
+
+  def event_history_periodic=(should_value)
+    should_value = @bgp_vrf.default_event_history_periodic if
+      should_value == 'default'
+    should_value = @bgp_vrf.default_event_history_periodic if
+      should_value == 'true' && legacy_image?
+    should_value = @bgp_vrf.default_event_history_periodic if
+      should_value == 'size_disable' && !legacy_image?
+    should_value = should_value.to_sym unless should_value =~ /\A\d+\z/
+    @property_flush[:event_history_periodic] = should_value
   end
 
   # confederation_peers requires a custom getter and setter because we are

@@ -58,6 +58,22 @@ class ciscopuppet::cisco::demo_bgp {
     default => undef
   }
 
+  $event_history_errors = platform_get() ? {
+    /(n3k|n9k)/ => $facts['cisco']['images']['system_image'] ? {
+      /(I2|I3|I4)/ => undef,
+      default => 'size_small'
+    },
+    default => undef
+  }
+
+  $event_history_objstore = platform_get() ? {
+    /(n3k|n9k)/ => $facts['cisco']['images']['system_image'] ? {
+      /(I2|I3|I4)/ => undef,
+      default => 'size_small'
+    },
+    default => undef
+  }
+
   cisco_bgp { '55.77 default':
     ensure                                 => present,
 
@@ -73,7 +89,9 @@ class ciscopuppet::cisco::demo_bgp {
     enforce_first_as                       => false,
     event_history_cli                      => 'size_small',
     event_history_detail                   => 'size_medium',
+    event_history_errors                   => $event_history_errors,
     event_history_events                   => 'size_large',
+    event_history_objstore                 => $event_history_objstore,
     event_history_periodic                 => 'size_disable',
     maxas_limit                            => $maxas_limit,
     suppress_fib_pending                   => $suppress_fib_pending,

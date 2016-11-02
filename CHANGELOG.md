@@ -2,6 +2,18 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.4.1] - 2016-11-02
+
+### Added
+- Extend cisco_bgp with attributes:
+ - `event_history_errors`
+ - `event_history_objstore`
+- Added support for Cisco NX-OS software release `7.3(0)I5(1)`
+
+### Changed
+
+### Removed
+
 ## [1.4.0] - 2016-10-04
 
 ### New feature support
@@ -300,6 +312,7 @@ This version was never released.
 - Initial release of puppetlabs-ciscopuppet module, supporting Cisco NX-OS software release 7.0(3)I2(1) on Cisco Nexus switch platforms: N95xx, N93xx, N30xx and N31xx.
 - Please note: 0.9.0 is an EFT pre-release for a limited audience with access to NX-OS 7.0(3)I2(1). Additional code changes may occur in 0.9.x prior to the final 1.0.0 release.
 
+[1.4.1]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.3.2...v1.4.0
 [1.3.2]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.2.3...v1.3.1

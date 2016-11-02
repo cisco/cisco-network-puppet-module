@@ -376,6 +376,7 @@ Platform | Description | Environments
 **N6k** | Support includes all N6xxx models  | Open Agent Container (OAC)
 **N7k** | Support includes all N7xxx models  | Open Agent Container (OAC)
 
+
 **Matrix Legend**
 
 Symbol | Meaning | Description
@@ -394,14 +395,14 @@ Symbol | Meaning | Description
 | [cisco_acl](#type-cisco_acl)                               | ✅  | ✅  | ✅  | ✅  | ✅ |
 | [cisco_ace](#type-cisco_ace)                               | ✅  | ✅  | ✅* | ✅* | ✅* | \*[caveats](#cisco_ace-caveats) |
 | [cisco_bfd_global](#type-cisco_bfd_global)                 | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_bfd_global-caveats) |
-| [cisco_command_config](#type-cisco_command_config)         | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_command_config](#type-cisco_command_config)         | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [cisco_bgp](#type-cisco_bgp)                               | ✅  | ✅  | ✅* | ✅* | ✅* | \*[caveats](#cisco_bgp-caveats) |
-| [cisco_bgp_af](#type-cisco_bgp_af)                         | ✅* | ✅* | ✅  | ✅* | ✅ | \*[caveats](#cisco_bgp_af-caveats) |
-| [cisco_bgp_neighbor](#type-cisco_bgp_neighbor)             | ✅  | ✅  | ✅  | ✅  | ✅ |
-| [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af)       | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_bgp_af](#type-cisco_bgp_af)                         | ✅* | ✅* | ✅  | ✅* | ✅  | \*[caveats](#cisco_bgp_af-caveats) |
+| [cisco_bgp_neighbor](#type-cisco_bgp_neighbor)             | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af)       | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [cisco_bridge_domain](#type-cisco_bridge_domain)           | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
 | [cisco_bridge_domain_vni](#type-cisco_bridge_domain_vni)   | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
-| [cisco_dhcp_relay_global](#type-cisco_dhcp_relay_global)   | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_dhcp_relay_global-caveats) 
+| [cisco_dhcp_relay_global](#type-cisco_dhcp_relay_global)   | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_dhcp_relay_global-caveats) |
 | [cisco_encapsulation](#type-cisco_encapsulation)           | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
 | [cisco_evpn_vni](#type-cisco_evpn_vni)                     | ✅ | :heavy_minus_sign: | ✅ | ✅ | ✅ | \*[caveats](#cisco_evpn_vni-caveats) |
 | [cisco_fabricpath_global](#type-cisco_fabricpath_global)     | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅* | \*[caveats](#cisco_fabricpath_global-caveats) |
@@ -459,7 +460,7 @@ Symbol | Meaning | Description
 | [search_domain](#type-search_domain)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [snmp_community](#type-snmp_community)                     | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [snmp_notification](#type-snmp_notification)               | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [snmp_notification_receiver](#type-snmp_notification_receiver) | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [snmp_notification_receiver](#type-snmp_notification_receiver) | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [snmp_user](#type-snmp_user)                               | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [syslog_server](#type-syslog_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [syslog_setting](#type-syslog_setting)                     | ✅  | ✅  | ✅  | ✅  | ✅  |
@@ -933,8 +934,8 @@ Manages configuration of a BFD (Bidirectional Forwarding Detection) instance.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I3(1)        | 1.4.0                  |
-| N3k      | 7.0(3)I3(1)        | 1.4.0                  |
+| N9k      | 7.0(3)I2(1)        | 1.4.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.4.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.4.0                  |
@@ -1030,9 +1031,13 @@ Manages configuration of a BGP instance.
 |:--------|:-------------|
 | `disable_policy_batching_ipv4` | Not supported on N5k, N6k, N7k |
 | `disable_policy_batching_ipv6` | Not supported on N5k, N6k, N7k |
+| `event_history_errors        ` | supported on N3|9k on 7.0(3)I5(1) and later images |
+| `event_history_events        ` | default value is 'large' for N3|9k on 7.0(3)I5(1) and later images |
+| `event_history_objstore      ` | supported on N3|9k on 7.0(3)I5(1) and later images |
+| `event_history_periodic      ` | default value is 'false' for N3|9k on 7.0(3)I5(1) and later images |
 | `neighbor_down_fib_accelerate` | Not supported on N5k, N6k, N7k |
 | `reconnect_interval`           | Not supported on N5k, N6k, N7k |
-| `suppress_fib_pending`         | Idempotence supported only on I5 images |
+| `suppress_fib_pending`         | Idempotence supported only on 7.0(3)I5(1) and later images N3|9k |
 
 #### Parameters
 
@@ -1090,16 +1095,22 @@ Enable/Disable the batching evaluation of prefix advertisements to all peers wit
 Enable/Disable enforces the neighbor autonomous system to be the first AS number listed in the AS path attribute for eBGP. Valid values are 'true', 'false', and 'default'. On NX-OS, this property is only supported in the global BGP context.
 
 ##### `event_history_cli`
-Enable/Disable cli event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
+Enable/Disable/specify size of cli event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
 
 ##### `event_history_detail`
-Enable/Disable detail event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
+Enable/Disable/specify size of detail event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
+
+##### `event_history_errors`
+Enable/Disable/specify size of error history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
 
 ##### `event_history_events`
-Enable/Disable event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
+Enable/Disable/specify size of event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
+
+##### `event_history_objstore`
+Enable/Disable/specify size of objstore history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
 
 ##### `event_history_periodic`
-Enable/Disable periodic event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'.
+Enable/Disable/specify size of periodic event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
 
 ##### `fast_external_fallover`
 Enable/Disable immediately reset the session if the link to a directly connected BGP peer goes down. Valid values are 'true', 'false', and 'default'. On NX-OS, this property is only supported in the global BGP context.
@@ -1647,7 +1658,7 @@ Manages configuration of a DHCP relay global configuration.
 | `ipv4_information_option_trust`     | Not supported on N5k, N6k      |
 | `ipv4_information_trust_all`        | Not supported on N5k, N6k      |
 | `ipv4_src_addr_hsrp`                | Not supported on N3k, N9k      |
-| `ipv4_sub_option_circuit_id_custom` | Not supported on N7k and supported on N3k and N9k running images I3 and above |
+| `ipv4_sub_option_circuit_id_custom` | Not supported on N7k. Supported on N3k and N9k running os version 7.0(3)I3.1 and later |
 | `ipv4_sub_option_circuit_id_string` | Only supported on N3k          |
 | `ipv6_option_cisco`                 | Not supported on N5k, N6k      |
 
@@ -1898,8 +1909,15 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | `ipv4_dhcp_relay_src_addr_hsrp`       | Not supported on N3k,N9k      |
 | `storm_control_broadcast`             | Not supported on N7k          |
 | `storm_control_multicast`             | Not supported on N7k          |
+| `pvlan_mapping`                       |                               |
+| `switchport_pvlan_host`               |                               |
+| `switchport_pvlan_host_association`   |                               |
+| `switchport_pvlan_mapping`            |                               |
 | `switchport_pvlan_mapping_trunk`      | Not supported on N3k          |
+| `switchport_pvlan_promiscuous`        |                               |
+| `switchport_pvlan_trunk_allowed_vlan` |                               |
 | `switchport_pvlan_trunk_association`  | Not supported on N3k          |
+| `switchport_pvlan_trunk_native_vlan`  |                               |
 | `switchport_pvlan_trunk_promiscuous`  | Not supported on N3k          |
 | `switchport_pvlan_trunk_secondary`    | Not supported on N3k          |
 | `svi_autostate`                       | Only supported on N3k,N7k,N9k |
@@ -2357,6 +2375,7 @@ Manages configuration of a portchannel interface instance.
 | Property | Caveat Description |
 |:--------|:-------------|
 | `port_hash_distribution ` <br> `port_load_defer ` | Not supported on N5k, N6k |
+| `lacp_suspend_individual` | **WARNING:** On N9k, the portchannel interface must be shutdown before the property can be set.  This provider automatically shuts the interface down if needed.<br> The interface is automatically restored to the original state after the property is set. |
 
 #### Parameters
 
@@ -2588,8 +2607,8 @@ Manages an area for an OSPF router.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I3(1)        | 1.4.0                  |
-| N3k      | 7.0(3)I3(1)        | 1.4.0                  |
+| N9k      | 7.0(3)I2(1)        | 1.4.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.4.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.4.0                  |
@@ -2695,8 +2714,8 @@ Manages an area virtual link for an OSPF router.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I3(1)        | 1.4.0                  |
-| N3k      | 7.0(3)I3(1)        | 1.4.0                  |
+| N9k      | 7.0(3)I2(1)        | 1.4.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.4.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.4.0                  |
@@ -3384,6 +3403,8 @@ Manages a Cisco VLAN.
 |:--------|:-------------|
 | `fabric_control`    | Only supported on N7k (support added in ciscopuppet 1.3.0) |
 | `mode`              | Only supported on N5k,N6k,N7k |
+| `pvlan_type`        |  |
+| `pvlan_association` |  |
 
 #### Parameters
 
