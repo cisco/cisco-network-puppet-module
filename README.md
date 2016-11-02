@@ -186,6 +186,9 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_fabricpath_global`](#type-cisco_fabricpath_global)
   * [`cisco_fabricpath_topology`](#type-cisco_fabricpath_topology)
 
+* HSRP Types
+  * [`cisco_hsrp_global`](#type-cisco_hsrp_global)
+
 * Interface Types
   * [`cisco_interface`](#type-cisco_interface)
   * [`cisco_interface_channel_group`](#type-cisco_interface_channel_group)
@@ -300,6 +303,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_evpn_vni`](#type-cisco_evpn_vni)
 * [`cisco_fabricpath_global`](#type-cisco_fabricpath_global)
 * [`cisco_fabricpath_topology`](#type-cisco_fabricpath_topology)
+* [`cisco_hsrp_global`](#type-cisco_hsrp_global)
 * [`cisco_interface`](#type-cisco_interface)
 * [`cisco_interface_channel_group`](#type-cisco_interface_channel_group)
 * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
@@ -408,6 +412,7 @@ Symbol | Meaning | Description
 | [cisco_evpn_vni](#type-cisco_evpn_vni)                     | ✅ | :heavy_minus_sign: | ✅ | ✅ | ✅ | ✅ | \*[caveats](#cisco_evpn_vni-caveats) |
 | [cisco_fabricpath_global](#type-cisco_fabricpath_global)     | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅* | :heavy_minus_sign: | \*[caveats](#cisco_fabricpath_global-caveats) |
 | [cisco_fabricpath_topology](#type-cisco_fabricpath_topology) | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅  | :heavy_minus_sign: |
+| [cisco_hsrp_global](#type-cisco_hsrp_global)                         | ✅  | ✅* | ✅  | ✅  | ✅  | ✅  | \*[caveats](#cisco_hsrp_global-caveats) |
 | [cisco_interface](#type-cisco_interface)                             | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_interface-caveats) |
 | [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
 | [cisco_interface_ospf](#type-cisco_interface_ospf)                   | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
@@ -1905,6 +1910,35 @@ ID of the VLAN(s) tha are members of this topology. Valid values are integer/int
 Descriptive name of the topology. Valid values are string
 
 --
+### Type: cisco_hsrp_global
+
+Manages a Cisco Hot Standby Router Protocol (HSRP) global parameters.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.5.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.5.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.5.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.5.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.5.0                  |
+| N8k      | 7.0(3)F1(1)        | 1.5.0                  |
+
+#### <a name="cisco_hsrp_global-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:---------|:-------------|
+| `bfd_all_intf`                        | Not supported on N3k          |
+
+#### Parameters
+
+##### `bfd_all_intf`
+Enables BFD for all HSRP sessions on all interfaces. Valid values are 'true', 'false', and
+'default'.
+
+##### `extended_hold`
+Configures extended hold on global timers. Valid values are integer, keyword 'default'.
+
+--
 ### Type: cisco_interface
 
 Manages a Cisco Network Interface. Any resource dependency should be run before the interface resource.
@@ -1940,6 +1974,12 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | `svi_autostate`                       | Only supported on N3k,N7k,N9k |
 | `vlan_mapping`                        | Only supported on N7k         |
 | `vlan_mapping_enable`                 | Only supported on N7k         |
+| `hsrp_bfd`                            | (ciscopuppet v1.5.0) Not supported on N5k,N6k,N7k |
+| `hsrp_delay_minimum`                  | (ciscopuppet v1.5.0) Not supported on N5k,N6k,N7k |
+| `hsrp_delay_reload`                   | (ciscopuppet v1.5.0) Not supported on N5k,N6k,N7k |
+| `hsrp_mac_refresh`                    | (ciscopuppet v1.5.0) Not supported on N5k,N6k,N7k |
+| `hsrp_use_bia`                        | (ciscopuppet v1.5.0) Not supported on N5k,N6k,N7k |
+| `hsrp_version`                        | (ciscopuppet v1.5.0) Not supported on N5k,N6k,N7k |
 
 #### Parameters
 
@@ -2220,6 +2260,26 @@ Enable/Disable autostate on the SVI interface. Valid values are 'true',
 
 ###### `svi_management`
 Enable/Disable management on the SVI interface. Valid values are 'true', 'false', and 'default'.
+
+##### HSRP config attributes
+
+##### `hsrp_bfd`
+Enable HSRP BFD on this interface. Valid values are true, false or 'default'.
+
+##### `hsrp_delay_minimum`
+Hsrp intialization minimim delay in seconds. Valid values are integer, keyword 'default'
+
+##### `hsrp_delay_reload`
+Hsrp intialization delay after reload in seconds. Valid values are integer, keyword 'default'
+
+##### `hsrp_mac_refresh`
+Hsrp mac refresh time in seconds. Valid values are integer, keyword 'default'
+
+##### `hsrp_use_bia`
+HSRP uses this interface's burned in address. Valid values are 'use_bia', 'use_bia_intf' or 'default'.
+
+##### `hsrp_version`
+Hsrp version for this interface. Valid values are integer, keyword 'default'.
 
 --
 ### Type: cisco_interface_channel_group

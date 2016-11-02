@@ -1234,7 +1234,7 @@ Puppet::Type.newtype(:cisco_interface) do
   end # property hsrp_mac_refresh
 
   newproperty(:hsrp_use_bia) do
-    desc 'Use interface burned in address'
+    desc 'Hsrp uses interface burned in address'
 
     newvalues(:use_bia, :use_bia_intf, :default)
   end # property hsrp_use_bia
