@@ -78,6 +78,14 @@ Puppet::Type.newtype(:cisco_interface) do
      stp_vlan_cost                => [[1-4,6,8-12, 1000], [1000, 2568]],
      stp_vlan_port_priority       => [[1-11,20-33, 64], [1111, 160],
     }
+    cisco_interface { 'ethernet1/18' :
+     hsrp_bfd                     => true,
+     hsrp_delay_minimum           => 222,
+     hsrp_delay_reload            => 10,
+     hsrp_mac_refresh             => 555,
+     hsrp_use_bia                 => 'use_bia',
+     hsrp_version                 => 2,
+    }
     cisco_interface { 'ethernet9/1' :
      switchport_mode              => 'trunk',
      storm_control_broadcast      => '77.77',
@@ -1193,4 +1201,47 @@ Puppet::Type.newtype(:cisco_interface) do
       value
     end
   end # property storm_control_unicast
+
+  ############################
+  # hsrp attributes          #
+  ############################
+
+  newproperty(:hsrp_bfd) do
+    desc 'Enable HSRP BFD on this interface.'
+
+    newvalues(:true, :false, :default)
+  end # property hsrp_bfd
+
+  newproperty(:hsrp_delay_minimum) do
+    desc "Hsrp intialization minimim delay in sec. Valid values are
+          integer, keyword 'default'."
+
+    munge { |value| value == 'default' ? :default : Integer(value) }
+  end # property hsrp_delay_minimum
+
+  newproperty(:hsrp_delay_reload) do
+    desc "Hsrp intialization delay after reload in sec. Valid values are
+          integer, keyword 'default'."
+
+    munge { |value| value == 'default' ? :default : Integer(value) }
+  end # property hsrp_delay_reload
+
+  newproperty(:hsrp_mac_refresh) do
+    desc "Hsrp mac refresh time in sec. Valid values are
+          integer, keyword 'default'."
+
+    munge { |value| value == 'default' ? :default : Integer(value) }
+  end # property hsrp_mac_refresh
+
+  newproperty(:hsrp_use_bia) do
+    desc 'Use interface burned in address'
+
+    newvalues(:use_bia, :use_bia_intf, :default)
+  end # property hsrp_use_bia
+
+  newproperty(:hsrp_version) do
+    desc "Hsrp version. Valid values are integer, keyword 'default'."
+
+    munge { |value| value == 'default' ? :default : Integer(value) }
+  end # property hsrp_version
 end # Puppet::Type.newtype

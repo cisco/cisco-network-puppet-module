@@ -30,7 +30,7 @@ tests = {
   agent:         agent,
   intf_type:     'port-channel',
   platform:      'n(3|9)k',
-  resource_name: 'cisco_interface_hsrp',
+  resource_name: 'cisco_interface',
 }
 
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
@@ -45,21 +45,22 @@ tests[:default] = {
   title_pattern:      @intf,
   sys_def_switchport: false,
   manifest_props:     {
-    bfd:           'default',
-    delay_minimum: 'default',
-    delay_reload:  'default',
-    mac_refresh:   'default',
-    use_bia:       'default',
-    version:       'default',
+    switchport_mode:    'disabled',
+    hsrp_bfd:           'default',
+    hsrp_delay_minimum: 'default',
+    hsrp_delay_reload:  'default',
+    hsrp_mac_refresh:   'default',
+    hsrp_use_bia:       'default',
+    hsrp_version:       'default',
   },
   code:               [0, 2],
   resource:           {
-    bfd:           'false',
-    delay_minimum: 0,
-    delay_reload:  0,
-    mac_refresh:   'false',
-    use_bia:       'false',
-    version:       1,
+    hsrp_bfd:           'false',
+    hsrp_delay_minimum: 0,
+    hsrp_delay_reload:  0,
+    hsrp_mac_refresh:   'false',
+    hsrp_use_bia:       'false',
+    hsrp_version:       1,
   },
 }
 
@@ -67,12 +68,13 @@ tests[:non_default] = {
   desc:           '2.1 Non Default properties',
   title_pattern:  @intf,
   manifest_props: {
-    bfd:           'true',
-    delay_minimum: 100,
-    delay_reload:  200,
-    mac_refresh:   350,
-    use_bia:       'use_bia_intf',
-    version:       2,
+    switchport_mode:    'disabled',
+    hsrp_bfd:           'true',
+    hsrp_delay_minimum: 100,
+    hsrp_delay_reload:  200,
+    hsrp_mac_refresh:   350,
+    hsrp_use_bia:       'use_bia_intf',
+    hsrp_version:       2,
   },
 }
 
@@ -80,16 +82,6 @@ def cleanup(agent)
   cmd = 'no feature hsrp'
   test_set(agent, cmd)
   interface_cleanup(agent, @intf)
-end
-
-# Overridden to properly handle dependencies for this test file.
-def test_harness_dependencies(_tests, _id)
-  cleanup(agent)
-
-  cmd = [
-    "feature hsrp ; interface #{@intf} ; no switchport"
-  ].join(' ; ')
-  test_set(agent, cmd)
 end
 
 #################################################################

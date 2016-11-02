@@ -26,14 +26,18 @@ class ciscopuppet::cisco::demo_hsrp {
     extended_hold => 200,
   }
 
-  cisco_interface_hsrp { 'port-channel100':
-    ensure        => 'present',
-    bfd           => true,
-    delay_minimum => 200,
-    delay_reload  => 300,
-    mac_refresh   => 400,
-    use_bia       => 'use_bia_intf',
-    version       => 2,
+  if platform_get() =~ /n(3|9)k/ {
+    cisco_interface { 'port-channel100':
+      ensure             => 'present',
+      hsrp_bfd           => true,
+      hsrp_delay_minimum => 200,
+      hsrp_delay_reload  => 300,
+      hsrp_mac_refresh   => 400,
+      hsrp_use_bia       => 'use_bia_intf',
+      hsrp_version       => 2,
+    }
+  } else {
+    warning('This platform does not support interface hsrp properties')
   }
 }
 
