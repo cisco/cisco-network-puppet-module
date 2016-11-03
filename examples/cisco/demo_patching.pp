@@ -55,10 +55,14 @@ class ciscopuppet::cisco::demo_patching {
       $ciscoPatchName = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I4.1.lib32_n9000.rpm'
       $ciscoPackageName = 'nxos.sample-n9k_EOR'
     }
+    '7.0(3)I5(1)': {
+      $ciscoPatchName = 'nxos.sample-n9k_ALL-1.0.0-7.0.3.I5.1.lib32_n9000.rpm'
+      $ciscoPackageName = 'nxos.sample-n9k_ALL'
+    }
     '7.0(3)F1(1)': {
       # TBD: Update with real fretta_camden release RPM when ready.
-      $ciscoPatchName = 'nxos.sample-n8k_EOR-1.0.0-7.0.3.F1.1.lib32_nxos.rpm'
-      $ciscoPackageName = 'nxos.sample-n8k_EOR'
+      $ciscoPatchName = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.F1.1.lib32_nxos.rpm'
+      $ciscoPackageName = 'nxos.sample-n9k_EOR'
     }
     default:  { fail("\n## NO COMPATIBLE SAMPLE PATCH RPMs AVAILABLE FOR THIS IMAGE: ${image_ver}\n")
     }
