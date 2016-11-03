@@ -97,7 +97,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :default)
 
   id = :default
-  tests[id][:desc] = '1.4 Common Defaults (absent)'
+  tests[id][:desc] = '1.2 Common Defaults (absent)'
   tests[id][:ensure] = :absent
   test_harness_run(tests, id)
 

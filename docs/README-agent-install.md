@@ -44,6 +44,7 @@ Cisco Nexus N3k    | NX-OS  | 7.0(3)I2(1) and later
 Cisco Nexus N5k    | NX-OS  | 7.3(0)N1(1) and later
 Cisco Nexus N6k    | NX-OS  | 7.3(0)N1(1) and later
 Cisco Nexus N7k    | NX-OS  | 7.3(0)D1(1) and later
+Cisco Nexus N9k-F  | NX-OS  | 7.0(3)F1(1) and later
 <br>
 
 
@@ -335,13 +336,12 @@ rpm --import http://yum.puppetlabs.com/RPM-GPG-KEY-puppet
 
 Environment | RPM |
 :--|:--|
-`bash-shell` | <http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm> <br> **NOTE:**  [*See Special N3K Platform Instructions Below*](#N3KAgentInstall)|
+`bash-shell` | <http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm> |
 `guestshell` | <http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm> |
 `open agent`<br>`container (OAC)` | [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm) |
 
 <br>
 
->>>>>>> master
 * Install the RPM (`$PUPPET_RPM` is the URL from the preceding table)
 
 ~~~bash
@@ -413,75 +413,6 @@ end
 
 Once installed, the GEM will remain persistent across system reloads within the Guestshell or OAC environments; however, the bash-shell environment does not share this persistent behavior, in which case the `ciscopuppet::install` helper class automatically downloads and re-installs the gem after each system reload.
 
-=======
-<a name="N3KAgentInstall">**N3K bash-shell installs**:</a>
-
-The smaller footprint (4 gig) N3K platform does not have enough space to download the puppet agent RPM repo.  Please select and install the versioned RPM directly from [puppet labs](http://yum.puppetlabs.com/cisco-wrlinux/5/PC1/x86_64/).  This is only an issue with puppet agent rpm version `1.7.0` and later.
-
-Example:
-
-```
-yum install http://http://yum.puppetlabs.com/cisco-wrlinux/5/PC1/x86_64/http://yum.puppetlabs.com/cisco-wrlinux/5/PC1/x86_64/uppet-agent-1.7.0-1.cisco_wrlinux5.x86_64.rpm
-```
-<br>
-#### *Step 2. Configure* `/etc/puppetlabs/puppet/puppet.conf`
-
-Add your Puppet Server name to the configuration file.
-*Optional:* Use `certname` to specify the agent node's ID. This is only needed if `hostname` has not been set.
-
-~~~bash
-[main]
-  server   = mypuppetmaster.mycompany.com
-  certname = this_node.mycompany.com
-~~~
-<br>
-
-#### *Step 3. The `cisco_node_utils` Gem*
-
-The [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) ruby gem is a required component of the `ciscopuppet` module. This gem contains platform APIs for interfacing between Cisco CLI and Puppet agent resources. The gem can be automatically installed by Puppet agent by simply using the [`ciscopuppet::install`](https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/demo_all_cisco.pp#L19) helper class, or it can be installed manually.
-
-##### Automatic Gem Install Using `ciscopuppet::install`
-
-* The `ciscopuppet::install` class is defined in the `install.pp` file in the `examples` subdirectory. Copy this file into the `manifests` directory as shown:
-
-~~~bash
-cd /etc/puppetlabs/code/environments/production/modules/ciscopuppet/
-cp examples/install.pp  manifests/
-~~~
-
-* Next, update `site.pp` to use the install class
-
-**Example**
-
-~~~puppet
-node 'default' {
-  include ciscopuppet::install
-}
-~~~
-
-The preceding configuration will cause the next `puppet agent` run to automatically download the current `cisco_node_utils` gem from <https://rubygems.org/gems/cisco_node_utils> and install it on the node.
-
-##### Optional Parameters for `ciscopuppet::install`
-
-  * Override the default rubygems repository to use a custom repository
-  * Provide a proxy server
-
-**Example**
-
-~~~puppet
-node default
-  class {'ciscopuppet::install':
-    repo  => 'http://gemserver.domain.com:8808',
-    proxy => 'http://proxy.domain.com:8080',
-  }
-end
-~~~
-
-##### Gem Persistence
-
-Once installed, the GEM will remain persistent across system reloads within the Guestshell or OAC environments; however, the bash-shell environment does not share this persistent behavior, in which case the `ciscopuppet::install` helper class automatically downloads and re-installs the gem after each system reload.
-
->>>>>>> master
 * The gem can also be manually installed on the agent node
 
 ~~~
