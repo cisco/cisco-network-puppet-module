@@ -5,8 +5,17 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 ### New feature support
+#### Cisco Resources
+- `cisco_hsrp_global` type and provider.
 
 ### Added
+- Extend cisco_interface with attributes:
+ - `hsrp_bfd`
+ - `hsrp_delay_minimum`
+ - `hsrp_delay_reload`
+ - `hsrp_mac_refresh`
+ - `hsrp_use_bia`
+ - `hsrp_version`
 
 ### Changed
 
