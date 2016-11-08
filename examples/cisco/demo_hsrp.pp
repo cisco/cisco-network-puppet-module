@@ -36,6 +36,21 @@ class ciscopuppet::cisco::demo_hsrp {
       hsrp_use_bia       => 'use_bia_intf',
       hsrp_version       => 2,
     }
+
+    cisco_interface_hsrp_group { 'port-channel100 2 ipv4':
+      ensure                   => 'present',
+      authentication_auth_type => 'cleartext',
+      authentication_string    => 'MyPassword',
+      ipv4_enable              => true,
+      ipv4_vip                 => '2.2.2.2',
+      name                     => 'MyNameHere',
+      preempt                  => true,
+      priority                 => 45,
+      timers_hello_msec        => 'default',
+      timers_hold_msec         => 'default',
+      timers_hello             => 50,
+      timers_hold              => 250,
+    }
   } else {
     warning('This platform does not support interface hsrp properties')
   }
