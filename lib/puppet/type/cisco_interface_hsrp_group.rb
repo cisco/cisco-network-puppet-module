@@ -186,7 +186,6 @@ Puppet::Type.newtype(:cisco_interface_hsrp_group) do
     munge do |value|
       begin
         return value = :default if value == 'default'
-        fail unless value.is_a?(Array)
         value
       end
     end
