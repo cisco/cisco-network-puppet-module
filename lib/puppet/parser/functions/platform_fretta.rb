@@ -1,5 +1,5 @@
 #
-# Cisco find_linecard puppet manifest function.
+# Cisco platform_fretta puppet manifest function.
 #
 # November 2016, Michael G Wiebe
 #
@@ -27,7 +27,7 @@ module Puppet
     # Output: True if fabric module found, else False.
     #
     module Functions
-      newfunction(:find_linecard, type: :rvalue) do |_args|
+      newfunction(:platform_fretta, type: :rvalue) do |_args|
         data = lookupvar('cisco')
         return '' if data.nil?
 
