@@ -20,11 +20,8 @@
 module Puppet
   module Parser
     # Function platform_fretta.
-    # Searches facter[cisco][inventory][Slot #][pid] n9k fretta PIDs
-    #
-    # Input : String that matches n9k fretta fabric module PIDs.
-    #  eg. 'N9K-C9508-FM-R' , match string: 'N9K.*-FM-R'
-    # Output: True if fabric module found, else False.
+    # Searches facter os.release.full and returns true if the
+    # version matches the fretta image version.
     #
     module Functions
       newfunction(:platform_fretta, type: :rvalue) do |_args|
