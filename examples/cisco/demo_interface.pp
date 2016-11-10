@@ -37,7 +37,7 @@ class ciscopuppet::cisco::demo_interface {
     }
 
     $ipv4_dhcp_relay_info_trust = platform_get() ? {
-      /(n3k|n7k|n8k|n9k)/ => true,
+      /(n3k|n7k|n9k-f|n9k)/ => true,
       default => undef
     }
 
@@ -95,12 +95,12 @@ class ciscopuppet::cisco::demo_interface {
       ipv6_dhcp_relay_src_intf         => 'ethernet 2/2',
     }
     $storm_control_broadcast = platform_get() ? {
-      /(n3k|n5k|n6k|n8k|n9k)/ => '77.77',
+      /(n3k|n5k|n6k|n9k-f|n9k)/ => '77.77',
       default => undef
     }
 
     $storm_control_multicast = platform_get() ? {
-      /(n3k|n5k|n6k|n8k|n9k)/ => '22.22',
+      /(n3k|n5k|n6k|n9k-f|n9k)/ => '22.22',
       default => undef
     }
 
