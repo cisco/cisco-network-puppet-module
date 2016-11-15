@@ -78,7 +78,7 @@ Puppet::Type.type(:cisco_interface_hsrp_group).provide(:cisco) do
     interface = @property_hash[:interface]
     group = @property_hash[:group]
     iptype = @property_hash[:iptype]
-    @nu = Cisco::InterfaceHsrpGroup.hsrp_groups[interface][group][iptype] unless
+    @nu = Cisco::InterfaceHsrpGroup.groups[interface][group][iptype] unless
       interface.nil? || group.nil? || iptype.nil?
     @property_flush = {}
   end
@@ -113,7 +113,7 @@ Puppet::Type.type(:cisco_interface_hsrp_group).provide(:cisco) do
 
   def self.instances
     hg_instances = []
-    Cisco::InterfaceHsrpGroup.hsrp_groups.each do |interface, groups|
+    Cisco::InterfaceHsrpGroup.groups.each do |interface, groups|
       groups.each do |group, iptypes|
         iptypes.each do |iptype, nu_obj|
           hg_instances << properties_get(interface, group, iptype, nu_obj)

@@ -280,5 +280,82 @@ Puppet::Type.newtype(:cisco_interface_hsrp_group) do
     munge { |value| value == 'default' ? :default : Integer(value) }
   end # property timers_hold
 
-  # TODO: validations
+  def my_atype
+    self[:authentication_auth_type].nil? ||
+      self[:authentication_auth_type] == :default ||
+      self[:authentication_auth_type] == :cleartext
+  end
+
+  def my_enc
+    self[:authentication_enc_type].nil? ||
+      self[:authentication_enc_type] == :default ||
+      self[:authentication_enc_type] == '0'
+  end
+
+  def my_key
+    self[:authentication_key_type].nil? ||
+      self[:authentication_key_type] == :default ||
+      self[:authentication_key_type] == :'key-chain'
+  end
+
+  def my_compat
+    self[:authentication_compatibility].nil? ||
+      self[:authentication_compatibility] == :default ||
+      self[:authentication_compatibility] == :false
+  end
+
+  def my_str
+    self[:authentication_string].nil? ||
+      self[:authentication_string] == :default ||
+      self[:authentication_string].empty?
+  end
+
+  def my_timeout
+    self[:authentication_timeout].nil? ||
+      self[:authentication_timeout] == :default ||
+      self[:authentication_timeout].zero?
+  end
+
+  def check_auth_str
+    return unless my_str
+    fail ArgumentError, 'All authentication parameters MUST be default when authentication_string is default' unless
+      my_atype || my_compat || my_enc || my_key || my_timeout
+  end
+
+  def check_auth_type
+    return unless my_atype
+    fail ArgumentError, 'Invalid authentication parameters' unless
+      my_compat || my_enc || my_key || my_timeout
+  end
+
+  def check_auth_key
+    return unless my_key
+    fail ArgumentError, 'Invalid authentication parameters' unless
+      my_compat || my_enc || my_timeout
+  end
+
+  def check_ipv4
+    ena = self[:ipv4_enable].nil? || self[:ipv4_enable] == :default || self[:ipv4_enable] == :false
+    return unless ena
+    vip = self[:ipv4_vip].nil? || self[:ipv4_vip] == :default || self[:ipv4_vip] == ''
+    fail ArgumentError, 'ipv4_enable MUST be default when ipv4_vip is default' unless vip
+  end
+
+  def check_preempt
+    pre = self[:preempt].nil? || self[:preempt] == :default || self[:preempt] == :false
+    return unless pre
+    min = self[:preempt_delay_minimum].nil? || self[:preempt_delay_minimum] == :default || self[:preempt_delay_minimum].zero?
+    rel = self[:preempt_delay_reload].nil? || self[:preempt_delay_reload] == :default || self[:preempt_delay_reload].zero?
+    sync = self[:preempt_delay_sync].nil? || self[:preempt_delay_sync] == :default || self[:preempt_delay_sync].zero?
+    fail ArgumentError, 'preempt delay parameters MUST be default when preempt is default' unless
+      min || rel || sync
+  end
+
+  validate do
+    check_auth_str
+    check_auth_type
+    check_auth_key
+    check_ipv4
+    check_preempt
+  end
 end
