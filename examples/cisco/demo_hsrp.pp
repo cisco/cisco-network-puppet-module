@@ -29,6 +29,7 @@ class ciscopuppet::cisco::demo_hsrp {
   if platform_get() =~ /n(3|9)k/ {
     cisco_interface { 'port-channel100':
       ensure             => 'present',
+      switchport_mode    => 'disabled',
       hsrp_bfd           => true,
       hsrp_delay_minimum => 200,
       hsrp_delay_reload  => 300,
@@ -37,19 +38,51 @@ class ciscopuppet::cisco::demo_hsrp {
       hsrp_version       => 2,
     }
 
+    cisco_interface { 'port-channel200':
+      ensure             => 'present',
+      switchport_mode    => 'disabled',
+      hsrp_delay_minimum => 50,
+      hsrp_delay_reload  => 100,
+      hsrp_mac_refresh   => 300,
+      hsrp_version       => 2,
+    }
+
+    cisco_interface_hsrp_group { 'port-channel100 2 ipv6':
+      ensure                        => 'present',
+      authentication_auth_type      => 'md5',
+      authentication_string         => '12345678901234567890',
+      authentication_key_type       => 'key-string',
+      authentication_enc_type       => '7',
+      authentication_compatibility  => true,
+      authentication_timeout        => 200,
+      ipv6_vip                      => ['2000::11', '2001::22'],
+      ipv6_autoconfig               => true,
+      group_name                    => 'MyHsrp',
+      preempt                       => true,
+      preempt_delay_minimum         => '100',
+      preempt_delay_reload          => '100',
+      preempt_delay_sync            => '100',
+      priority                      => '45',
+      priority_forward_thresh_lower => '10',
+      priority_forward_thresh_upper => '40',
+      timers_hello_msec             => true,
+      timers_hold_msec              => true,
+      timers_hello                  => 300,
+      timers_hold                   => 1000,
+    }
+
     cisco_interface_hsrp_group { 'port-channel100 2 ipv4':
       ensure                   => 'present',
       authentication_auth_type => 'cleartext',
-      authentication_string    => 'MyPassword',
+      authentication_string    => 'MyPass',
       ipv4_enable              => true,
       ipv4_vip                 => '2.2.2.2',
-      name                     => 'MyNameHere',
-      preempt                  => true,
-      priority                 => 45,
-      timers_hello_msec        => 'default',
-      timers_hold_msec         => 'default',
-      timers_hello             => 50,
-      timers_hold              => 250,
+    }
+
+    cisco_interface_hsrp_group { 'port-channel200 50 ipv4':
+      ensure      => 'present',
+      ipv4_enable => true,
+      mac_addr    => '00:00:11:11:22:22',
     }
   } else {
     warning('This platform does not support interface hsrp properties')
