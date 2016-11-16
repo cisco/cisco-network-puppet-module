@@ -198,8 +198,8 @@ Puppet::Type.newtype(:cisco_interface_hsrp_group) do
   end # property ipv6_autoconfig
 
   newproperty(:mac_addr) do
-    desc 'Virtual mac address.Valid values are in mac addresses format'
-    newvalues(/^([0-9a-f]{2}[:]){5}([0-9a-f]{2})$/)
+    desc "Virtual mac address. Valid values are string, keyword 'default'"
+    munge { |value| value == 'default' ? :default : value }
   end # property mac_addr
 
   newproperty(:group_name) do
@@ -336,9 +336,17 @@ Puppet::Type.newtype(:cisco_interface_hsrp_group) do
 
   def check_ipv4
     ena = self[:ipv4_enable].nil? || self[:ipv4_enable] == :default || self[:ipv4_enable] == :false
-    return unless ena
     vip = self[:ipv4_vip].nil? || self[:ipv4_vip] == :default || self[:ipv4_vip] == ''
+    fail ArgumentError, 'ipv4 parameters MUST be default for ipv6 type' if self[:iptype] == 'ipv6' && (!ena || !vip)
+    return unless ena
     fail ArgumentError, 'ipv4_enable MUST be default when ipv4_vip is default' unless vip
+  end
+
+  def check_ipv6
+    return if self[:iptype] == 'ipv6'
+    auto = self[:ipv6_autoconfig].nil? || self[:ipv6_autoconfig] == :default || self[:ipv6_autoconfig] == :false
+    vip = self[:ipv6_vip].nil? || self[:ipv6_vip] == :default || self[:ipv6_vip].empty?
+    fail ArgumentError, 'ipv6 parameters MUST be default for ipv4 type' if !auto || !vip
   end
 
   def check_preempt
@@ -356,6 +364,7 @@ Puppet::Type.newtype(:cisco_interface_hsrp_group) do
     check_auth_type
     check_auth_key
     check_ipv4
+    check_ipv6
     check_preempt
   end
 end

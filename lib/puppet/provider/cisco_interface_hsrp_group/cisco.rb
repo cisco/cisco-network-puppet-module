@@ -22,6 +22,14 @@ rescue LoadError # seen on master, not on agent
   require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..',
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
+
+begin
+  require 'puppet_x/cisco/cmnutils'
+rescue LoadError # seen on master, not on agent
+  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..',
+                                     'puppet_x', 'cisco', 'cmnutils.rb'))
+end
 Puppet::Type.type(:cisco_interface_hsrp_group).provide(:cisco) do
   desc 'The Cisco interface hsrp group provider.'
 
