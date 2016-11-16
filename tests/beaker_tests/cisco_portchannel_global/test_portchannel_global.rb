@@ -114,7 +114,7 @@ manifest_non = {
 tests[:non_default][:manifest_props].merge!(manifest_non[:n3k]) if platform[/n3k/]
 tests[:non_default][:manifest_props].merge!(manifest_non[:n56k]) if platform[/n(5|6)k/]
 tests[:non_default][:manifest_props].merge!(manifest_non[:n9kf]) if platform[/n9k-f/]
-tests[:non_default][:manifest_props].merge!(manifest_non[:n9k]) if platform[/n9k/]
+tests[:non_default][:manifest_props].merge!(manifest_non[:n9k]) if platform[/n9k$/]
 
 def unsupported_properties(tests, _id)
   unprops = []
