@@ -188,6 +188,7 @@ The following resources include cisco types and providers along with cisco provi
 
 * HSRP Types
   * [`cisco_hsrp_global`](#type-cisco_hsrp_global)
+  * [`cisco_interface_hsrp_group`](#type-cisco_interface_hsrp_group)
 
 * Interface Types
   * [`cisco_interface`](#type-cisco_interface)
@@ -306,6 +307,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_hsrp_global`](#type-cisco_hsrp_global)
 * [`cisco_interface`](#type-cisco_interface)
 * [`cisco_interface_channel_group`](#type-cisco_interface_channel_group)
+* [`cisco_interface_hsrp_group`](#type-cisco_interface_hsrp_group)
 * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 * [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
 * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
@@ -416,6 +418,7 @@ Symbol | Meaning | Description
 | [cisco_hsrp_global](#type-cisco_hsrp_global)                         | ✅  | ✅* | ✅  | ✅  | ✅  | ✅  | \*[caveats](#cisco_hsrp_global-caveats) |
 | [cisco_interface](#type-cisco_interface)                             | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_interface-caveats) |
 | [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_interface_hsrp_group](#type-cisco_interface_hsrp_group)       | ✅  | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
 | [cisco_interface_ospf](#type-cisco_interface_ospf)                   | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
 | [cisco_interface_portchannel](#type-cisco_interface_portchannel)     | ✅* | ✅* | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_interface_portchannel-caveats) |
 | [cisco_interface_service_vni](#type-cisco_interface_service_vni) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
@@ -2316,6 +2319,96 @@ Description of the interface. Valid values are a string or the keyword 'default'
 
 ###### `shutdown`
 Shutdown state of the interface. Valid values are 'true', 'false', and 'default'.
+
+--
+### Type: cisco_interface_hsrp_group
+
+Manages a Cisco Network Interface HSRP group.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.5.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.5.0                  |
+| N5k      | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
+| N7k      | not applicable     | not applicable         |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+
+#### Parameters
+
+##### Basic interface channel-group config attributes
+
+###### `ensure`
+Determine whether the interface hsrp group config should be present or not. Valid values are 'present' and 'absent'.
+
+###### `authentication_auth_type`
+Authentication type for the HSRP group. Valid values are 'cleartext', 'md5', keyword 'default'.
+
+###### `authentication_compatibility`
+Turn on compatibility mode for MD5 type-7 authentication. Valid values are 'true', 'false', keyword 'default'.
+
+###### `authentication_enc_type`
+Scheme used for encrypting authentication key string. Valid values are '0', '7', keyword 'default'.
+
+###### `authentication_key_type`
+Authentication key type. Valid values are 'key-chain', 'key-string', keyword 'default'.
+
+###### `authentication_string`
+Specifies password or key chain name or key string name. Valid values are string, keyword 'default'.
+
+###### `authentication_timeout`
+Specifies authentication timeout. Valid values are integer, keyword 'default'.
+
+###### `ipv4_enable`
+Enables HSRP ipv4. Valid values are 'true', 'false', keyword 'default'.
+
+###### `ipv4_vip`
+Sets HSRP IPv4 virtual IP addressing name. Valid values are string, keyword 'default'.
+
+###### `ipv6_autoconfig`
+Obtains ipv6 address using autoconfiguration. Valid values are 'true', 'false', keyword 'default'.
+
+###### `ipv6_vip`
+Enables HSRP IPv6 and sets an array of virtual IPv6 addresses. Valid values are array of ipv6 addresses, keyword 'default'.
+
+###### `mac_addr`
+Virtual mac address. Valid values are string specifying the mac address, keyword 'default'.
+
+###### `group_name`
+Redundancy name string. Valid values are string, keyword 'default'.
+
+###### `preempt`
+Overthrows lower priority Active routers. Valid values are 'true', 'false', keyword 'default'.
+
+###### `preempt_delay_minimum`
+Specifies time to wait at least this long before pre-empting. Valid values are integer, keyword 'default'.
+
+###### `preempt_delay_reload`
+Specifies time to wait after reload. Valid values are integer, keyword 'default'.
+
+###### `preempt_delay_sync`
+Specifies time to wait for IP redundancy clients. Valid values are integer, keyword 'default'.
+
+###### `priority`
+Sets Priority value for this interface hsrp group. Valid values are integer, keyword 'default'.
+
+###### `priority_forward_thresh_lower`
+Sets Priority forwarding lower threshold value. Valid values are integer, keyword 'default'.
+
+###### `priority_forward_thresh_upper`
+Sets Priority forwarding upper threshold value. Valid values are integer, keyword 'default'.
+
+###### `timers_hello_msec`
+Specify hello interval in milliseconds. Valid values are 'true', 'false', keyword 'default'.
+
+###### `timers_hold_msec`
+Specify hold interval in milliseconds. Valid values are 'true', 'false', keyword 'default'.
+
+###### `timers_hello`
+Sets hello interval. Valid values are integer, keyword 'default'.
+
+###### `timers_hold`
+Sets hold interval. Valid values are integer, keyword 'default'.
 
 --
 ### Type: cisco_interface_service_vni

@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### New feature support
 #### Cisco Resources
 - `cisco_hsrp_global` type and provider.
+- `cisco_interface_hsrp_group` type and provider.
 
 ### Added
 - Extend cisco_interface with attributes:
