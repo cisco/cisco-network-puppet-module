@@ -17,7 +17,7 @@
 class ciscopuppet::cisco::demo_hsrp {
 
   $bfd_all_intf = platform_get() ? {
-    /(n5k|n6k|n7k|n9k-f|n9k)/ => true,
+    /(n5k|n6k|n7k|n9k)/ => true,
     default => undef
   }
 
@@ -26,7 +26,7 @@ class ciscopuppet::cisco::demo_hsrp {
     extended_hold => 200,
   }
 
-  if platform_get() =~ /(n3k|n9k-f|n9k)/ {
+  if platform_get() =~ /(n3k|n9k)/ {
     cisco_interface { 'port-channel100':
       ensure             => 'present',
       switchport_mode    => 'disabled',

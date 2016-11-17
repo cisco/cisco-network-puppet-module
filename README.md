@@ -2381,7 +2381,7 @@ Redundancy name string. Valid values are string, keyword 'default'.
 Overthrows lower priority Active routers. Valid values are 'true', 'false', keyword 'default'.
 
 ###### `preempt_delay_minimum`
-Specifies time to wait at least this long before pre-empting. Valid values are integer, keyword 'default'.
+Specifies amount of time to wait before pre-empting. Valid values are integer, keyword 'default'.
 
 ###### `preempt_delay_reload`
 Specifies time to wait after reload. Valid values are integer, keyword 'default'.
@@ -2390,13 +2390,13 @@ Specifies time to wait after reload. Valid values are integer, keyword 'default'
 Specifies time to wait for IP redundancy clients. Valid values are integer, keyword 'default'.
 
 ###### `priority`
-Sets Priority value for this interface hsrp group. Valid values are integer, keyword 'default'.
+Sets priority value for this interface hsrp group. Valid values are integer, keyword 'default'.
 
 ###### `priority_forward_thresh_lower`
-Sets Priority forwarding lower threshold value. Valid values are integer, keyword 'default'.
+Sets priority forwarding lower threshold value. Valid values are integer, keyword 'default'.
 
 ###### `priority_forward_thresh_upper`
-Sets Priority forwarding upper threshold value. Valid values are integer, keyword 'default'.
+Sets priority forwarding upper threshold value. Valid values are integer, keyword 'default'.
 
 ###### `timers_hello_msec`
 Specify hello interval in milliseconds. Valid values are 'true', 'false', keyword 'default'.

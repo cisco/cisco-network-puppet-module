@@ -23,6 +23,13 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
+begin
+  require 'puppet_x/cisco/cmnutils'
+rescue LoadError # seen on master, not on agent
+  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..',
+                                     'puppet_x', 'cisco', 'cmnutils.rb'))
+end
 Puppet::Type.type(:cisco_bgp).provide(:cisco) do
   desc 'The cisco bgp provider.'
 
@@ -212,10 +219,10 @@ Puppet::Type.type(:cisco_bgp).provide(:cisco) do
   end
 
   def legacy_image?
+    utils = PuppetX::Cisco::Utils
     fd = Facter.value('cisco')
     image = fd['images']['system_image']
-    pid = fd['inventory']['chassis']['pid']
-    image[/7.0.3.I2|I3|I4/] || pid[/N(5|6|7|8)/]
+    image[/7.0.3.I2|I3|I4/] || utils.product_tag[/n(5k|6k|7k|9k-f)/]
   end
 
   def event_history_default?(prop)
