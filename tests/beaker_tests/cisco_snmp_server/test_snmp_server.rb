@@ -31,7 +31,9 @@ tests = {
   resource_name: 'cisco_snmp_server',
 }
 
-@def_pkt_size = platform[/n(3|8|9)k/] ? '1500' : '0'
+# Add an anchor to the platform regexp below so that
+# it only matches non-fretta n9k platforms.
+@def_pkt_size = platform[/n(3|9)k$/] ? '1500' : '0'
 
 # Test hash test cases
 tests[:default] = {

@@ -17,8 +17,8 @@
 class ciscopuppet::cisco::demo_acl {
 
   $fragments = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/  => 'permit',
-    default              => undef
+    /(n3k|n7k|n9k-f|n9k)/  => 'permit',
+    default                => undef
   }
 
   cisco_acl { 'ipv4 my_ipv4_acl':
@@ -38,33 +38,33 @@ class ciscopuppet::cisco::demo_acl {
   }
 
   $http_method = platform_get() ? {
-    /(n3k|n8k|n9k)/  => 'post',
-    default          => undef
+    /(n3k|n9k-f|n9k)/  => 'post',
+    default            => undef
   }
 
   $packet_length = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/  => 'range 80 1000',
-    default              => undef
+    /(n3k|n7k|n9k-f|n9k)/  => 'range 80 1000',
+    default                => undef
   }
 
   $redirect = platform_get() ? {
-    /(n3k|n8k|n9k)/  => 'Ethernet1/1,Ethernet1/2,port-channel1',
-    default          => undef
+    /(n3k|n9k-f|n9k)/  => 'Ethernet1/1,Ethernet1/2,port-channel1',
+    default            => undef
   }
 
   $tcp_option_length = platform_get() ? {
-    /(n3k|n8k|n9k)/  => '20',
-    default          => undef
+    /(n3k|n9k-f|n9k)/  => '20',
+    default            => undef
   }
 
   $time_range = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/  => 'my_range',
-    default              => undef
+    /(n3k|n7k|n9k-f|n9k)/  => 'my_range',
+    default                => undef
   }
 
   $ttl = platform_get() ? {
-    /(n3k|n8k|n9k)/  => '153', 
-    default          => undef
+    /(n3k|n9k-f|n9k)/  => '153', 
+    default            => undef
   }
 
   cisco_ace { 'ipv4 my_ipv4_acl 20':

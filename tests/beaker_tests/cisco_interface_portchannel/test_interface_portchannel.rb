@@ -74,7 +74,7 @@ tests[:non_default_asym] = {
 tests[:default_sym] = {
   desc:           '1.2 Default Properties (sym)',
   title_pattern:  intf,
-  platform:       'n(3|8|9)k',
+  platform:       'n(3|9)k',
   code:           [0, 2],
   manifest_props: {
     bfd_per_link:              'default',
@@ -99,7 +99,7 @@ tests[:default_sym] = {
 tests[:non_default_sym] = {
   desc:           '2.2 Non Default Properties (sym)',
   title_pattern:  intf,
-  platform:       'n(3|8|9)k',
+  platform:       'n(3|9)k',
   manifest_props: {
     bfd_per_link:              'true',
     lacp_graceful_convergence: 'false',

@@ -496,7 +496,7 @@ Allows execution of configuration commands.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -528,7 +528,7 @@ Manages AAA Authentication Login configuration.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -562,7 +562,7 @@ Manages configuration for Authorization Login Config Service.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -590,7 +590,7 @@ Manages configuration for Authorization Login Exec Service.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -618,7 +618,7 @@ Manages configuration for a TACACS+ server group.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -954,7 +954,7 @@ Manages configuration of a BFD (Bidirectional Forwarding Detection) instance.
 | N5k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.4.0                  |
-| N9k-F    | 7.3(0)F1(1)        | 1.4.0                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### <a name="cisco_bfd_global-caveats">Caveats</a>
 
@@ -1208,7 +1208,7 @@ Manages configuration of a BGP Address-family instance.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### <a name="cisco_bgp_af-caveats">Caveats</a>
 
@@ -1388,7 +1388,7 @@ Manages configuration of a BGP Neighbor.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| N9k-F    | 7.3(0)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### <a name="cisco_bgp_neighbor-caveats">Caveats</a>
 
@@ -1490,7 +1490,7 @@ Manages configuration of a BGP Neighbor Address-family instance.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### <a name="cisco_bgp_neighbor_af-caveats">Caveats</a>
 
@@ -1671,7 +1671,7 @@ Manages configuration of a DHCP relay global configuration.
 | N5k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.4.0                  |
-| N9k-F    | 7.3(0)F1(1)        | 1.4.0                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### <a name="cisco_dhcp_relay_global-caveats">Caveats</a>
 
@@ -1769,7 +1769,7 @@ Manages Cisco Ethernet Virtual Private Network (EVPN) VXLAN Network Identifier (
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### <a name="cisco_evpn_vni-caveats">Caveats</a>
 
@@ -1954,7 +1954,7 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### <a name="cisco_interface-caveats">Caveats</a>
 
@@ -2297,7 +2297,7 @@ Manages a Cisco Network Interface Channel-group.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -2456,7 +2456,7 @@ Manages configuration of an OSPF interface instance.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| N9k-F    | 7.3(0)F1(1)        | 1.2.0                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -2766,7 +2766,7 @@ Manages configuration of an ospf instance.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -2789,7 +2789,7 @@ Manages an area for an OSPF router.
 | N5k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.4.0                  |
-| N9k-F    | 7.3(0)F1(1)        | 1.4.0                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Example Usage
 
@@ -2897,7 +2897,7 @@ Manages an area virtual link for an OSPF router.
 | N5k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.4.0                  |
-| N9k-F    | 7.3(0)F1(1)        | 1.4.0                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Example Usage
 
@@ -2978,7 +2978,7 @@ Manages a VRF for an OSPF router.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -3047,7 +3047,7 @@ Also configures anycast gateway MAC of the switch.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -3080,7 +3080,7 @@ Manages configuration of an Protocol Independent Multicast (PIM) instance.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -3106,7 +3106,7 @@ Manages configuration of an Protocol Independent Multicast (PIM) static route pr
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -3133,7 +3133,7 @@ Manages configuration of an Protocol Independent Multicast (PIM) static route pr
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -3157,7 +3157,7 @@ Manages configuration of a portchannel global parameters
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### <a name="cisco_portchannel_global-caveats">Caveats</a>
 
@@ -3329,7 +3329,7 @@ Manages an SNMP community on a Cisco SNMP server.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -3363,7 +3363,7 @@ of group; thus this provider utility does not create snmp groups and only report
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -3386,7 +3386,7 @@ cisco_snmp_server.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -3431,7 +3431,7 @@ Manages an SNMP user on an cisco SNMP server.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -3480,7 +3480,7 @@ instance of the cisco_tacacs_server.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -3523,7 +3523,7 @@ Configures Cisco TACACS+ server hosts.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -3651,7 +3651,7 @@ Manages the virtual Port Channel (vPC) domain configuration of a Cisco device.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### <a name="cisco_vpc_domain-caveats">Caveats</a>
 
@@ -3764,7 +3764,7 @@ device.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### <a name="cisco_vrf-caveats">Caveats</a>
 
@@ -3834,7 +3834,7 @@ Manages Cisco Virtual Routing and Forwarding (VRF) Address-Family configuration.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### <a name="cisco_vrf_af-caveats">Caveats</a>
 
@@ -3917,7 +3917,7 @@ There can only be one instance of the cisco_vtp.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -3951,7 +3951,7 @@ Creates a VXLAN Network Virtualization Endpoint (NVE) overlay interface that ter
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -3984,7 +3984,7 @@ Creates a Virtual Network Identifier member (VNI) for an NVE overlay interface.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -4030,7 +4030,7 @@ Configure the domain name of the device
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -4050,7 +4050,7 @@ Domain name of the device. Valid value is a string.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -4070,7 +4070,7 @@ Hostname or address of the DNS server.  Valid value is a string.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -4101,7 +4101,7 @@ Manages a puppet netdev_stdlib Network Interface. Any resource dependency should
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -4133,7 +4133,7 @@ interface. Valid value is an integer.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -4161,7 +4161,7 @@ Manages a puppet netdev_stdlib Network Trunk. It should be noted that while the 
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -4197,7 +4197,7 @@ Manages a puppet netdev_stdlib Network Vlan.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -4223,7 +4223,7 @@ The name of the VLAN.  Valid value is a string.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -4243,7 +4243,7 @@ Source interface for the NTP server.  Valid value is a string.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -4263,7 +4263,7 @@ Hostname or IPv4/IPv6 address of the NTP server.  Valid value is a string.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -4292,7 +4292,7 @@ Name of the port channel. eg port-channel100. Valid value is a string.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -4312,7 +4312,7 @@ Enable or disable radius functionality.  Valid values are 'true' or 'false'.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -4389,7 +4389,7 @@ Encryption key format [0-7].  Valid value is an integer.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -4408,7 +4408,7 @@ Configure the search domain of the device. Note that this type is functionally e
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -4430,7 +4430,7 @@ Manages an SNMP community on a Cisco SNMP server.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -4458,7 +4458,7 @@ Manages an SNMP notification on a Cisco SNMP server.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -4478,7 +4478,7 @@ Manages an SNMP notification receiver on an cisco SNMP server.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -4522,7 +4522,7 @@ Manages an SNMP user on an cisco SNMP server.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -4566,7 +4566,7 @@ format (in case of true) or cleartext (in case of false). Valid values are 'true
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -4592,7 +4592,7 @@ Interface to send syslog data from, e.g. "management".  Valid value is a string.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -4612,7 +4612,7 @@ The unit of measurement for log time values.  Valid values are 'seconds' and 'mi
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -4629,7 +4629,7 @@ Enable or disable radius functionality [true|false]
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 
@@ -4655,7 +4655,7 @@ Number of seconds before the timeout period ends
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 ##### `ensure`
 Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
@@ -4685,7 +4685,7 @@ Number of seconds before the timeout period ends
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
-| N9k-F    | 7.0(3)F1(1)        | 1.3.2                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
 #### Parameters
 

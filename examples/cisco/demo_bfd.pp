@@ -17,7 +17,7 @@
 class ciscopuppet::cisco::demo_bfd {
 
   $echo_rx_interval = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => 300,
+    /(n3k|n7k|n9k-f|n9k)/ => 300,
     default => undef
   }
 
@@ -36,44 +36,44 @@ class ciscopuppet::cisco::demo_bfd {
     default => undef
   }
 
-  # TBD: this is due to a bug on n8k and n9k
+  # TBD: this is due to a bug on n9k-f and n9k
   $interval = platform_get() ? {
     /(n3k|n5k|n6k|n7k)/ => ['100', '100', '25'],
     default => undef
   }
 
   $ipv4_echo_rx_interval = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => 100,
+    /(n3k|n7k|n9k-f|n9k)/ => 100,
     default => undef
   }
 
   $ipv4_interval = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => ['200', '200', '50'],
+    /(n3k|n7k|n9k-f|n9k)/ => ['200', '200', '50'],
     default => undef
   }
 
   $ipv4_slow_timer = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => 10000,
+    /(n3k|n7k|n9k-f|n9k)/ => 10000,
     default => undef
   }
 
   $ipv6_echo_rx_interval = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => 200,
+    /(n3k|n7k|n9k-f|n9k)/ => 200,
     default => undef
   }
 
   $ipv6_interval = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => ['500', '500', '30'],
+    /(n3k|n7k|n9k-f|n9k)/ => ['500', '500', '30'],
     default => undef
   }
 
   $ipv6_slow_timer = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => 25000,
+    /(n3k|n7k|n9k-f|n9k)/ => 25000,
     default => undef
   }
 
   $startup_timer = platform_get() ? {
-    /(n3k|n8k|n9k)/ => 25,
+    /(n3k|n9k-f|n9k)/ => 25,
     default => undef
   }
 

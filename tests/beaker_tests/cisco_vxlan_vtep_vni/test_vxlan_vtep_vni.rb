@@ -72,7 +72,7 @@ testheader = 'Resource cisco_vxlan_vtep_vni'
 tests = {
   master:        master,
   agent:         agent,
-  platform:      'n(5|6|7|8|9)k',
+  platform:      'n(5|6|7|9)k',
   resource_name: 'cisco_vxlan_vtep_vni',
 }
 
@@ -107,7 +107,7 @@ skip_unless_supported(tests)
 #
 tests['default_properties_ingress_replication'] = {
   title_pattern:  'nve1 10000',
-  platform:       'n(8|9)k',
+  platform:       'n9k',
   manifest_props: "
     ingress_replication => 'default',
     suppress_arp        => 'default',
@@ -139,7 +139,7 @@ end
 
 tests['ingress_replication_static_peer_list_empty'] = {
   title_pattern:  'nve1 10000',
-  platform:       'n(8|9)k',
+  platform:       'n9k',
   manifest_props: "
     ingress_replication => 'static',
     peer_list           => [],
@@ -154,7 +154,7 @@ tests['ingress_replication_static_peer_list_empty'] = {
 
 tests['peer_list'] = {
   title_pattern:  'nve1 10000',
-  platform:       'n(8|9)k',
+  platform:       'n9k',
   manifest_props: "
     ingress_replication => 'static',
     peer_list           => ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
@@ -169,7 +169,7 @@ tests['peer_list'] = {
 
 tests['peer_list_change_add'] = {
   title_pattern:  'nve1 10000',
-  platform:       'n(8|9)k',
+  platform:       'n9k',
   manifest_props: "
     ingress_replication => 'static',
     peer_list           => ['1.1.1.1', '6.6.6.6', '3.3.3.3', '4.4.4.4'],
@@ -184,7 +184,7 @@ tests['peer_list_change_add'] = {
 
 tests['peer_list_default'] = {
   title_pattern:  'nve1 10000',
-  platform:       'n(8|9)k',
+  platform:       'n9k',
   manifest_props: "
     ingress_replication => 'static',
     peer_list           => 'default',
@@ -199,7 +199,7 @@ tests['peer_list_default'] = {
 
 tests['ingress_replication_bgp'] = {
   title_pattern:  'nve1 10000',
-  platform:       'n(8|9)k',
+  platform:       'n9k',
   manifest_props: "
     ingress_replication => 'bgp',
     suppress_arp        => 'default'

@@ -185,7 +185,7 @@ tests[:title_patterns_3] = {
 tests[:l2vpn_evpn] = {
   desc:             '3.1 Address-family l2evpn/evpn',
   operating_system: 'nexus',
-  platform:         'n(5|6|7|8|9)k',
+  platform:         'n(5|6|7|9)k',
   title_pattern:    '2 default l2vpn evpn',
   resource:         { 'ensure' => 'present' },
 }
@@ -268,7 +268,7 @@ def unsupported_properties(tests, id)
     unprops << :advertise_l2vpn_evpn if
       vrf == 'default' || platform[/n(3|6)k/]
 
-    unprops << :additional_paths_install if platform[/n(3|8|9)k/]
+    unprops << :additional_paths_install if platform[/n(3|9)k/]
   end
   unprops
 end
