@@ -17,12 +17,12 @@
 class ciscopuppet::cisco::demo_dhcp_relay_global {
 
   $ipv4_information_option_trust = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => true,
+    /(n3k|n7k|n9k-f|n9k)/ => true,
     default => undef
   }
 
   $ipv4_information_trust_all = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => true,
+    /(n3k|n7k|n9k-f|n9k)/ => true,
     default => undef
   }
 
@@ -42,7 +42,7 @@ class ciscopuppet::cisco::demo_dhcp_relay_global {
   }
 
   $ipv6_option_cisco = platform_get() ? {
-    /(n3k|n7k|n8k|n9k)/ => true,
+    /(n3k|n7k|n9k-f|n9k)/ => true,
     default => undef
   }
 

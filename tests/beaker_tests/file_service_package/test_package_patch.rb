@@ -44,8 +44,13 @@ when /7.0.3.I4.2/
   filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I4.2.lib32_n9000.rpm'
   version =  '1.0.0-7.0.3.I4.2'
 when /7.0.3.I5/
-  filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I5.1.lib32_n9000.rpm'
+  name = 'nxos.sample-n9k_ALL'
+  filename = 'nxos.sample-n9k_ALL-1.0.0-7.0.3.I5.1.lib32_n9000.rpm'
   version =  '1.0.0-7.0.3.I5.1'
+when /7.0.3.F1/
+  name = 'nxos.sample-n8k_EOR'
+  filename = 'nxos.sample-n8k_EOR-1.0.0-7.0.3.F1.1.lib32_nxos.rpm'
+  version =  '1.0.0-7.0.3.F1.1'
 else
   raise_skip_exception("No patch available for image #{image?}", self)
 end
@@ -57,7 +62,7 @@ end
 tests = {
   agent:         agent,
   master:        master,
-  platform:      'n(3|8|9)k',
+  platform:      'n(3|9)k',
   resource_name: 'package',
 }
 
@@ -65,7 +70,7 @@ tests = {
 skip_unless_supported(tests)
 
 tests[:yum_patch_install] = {
-  desc:           "1.1 Apply sample patch to image #{image?}",
+  desc:           "1.1 Apply sample patch #{name} to image #{image?}",
   title_pattern:  name,
   manifest_props: {
     name:             filename,
@@ -79,7 +84,7 @@ tests[:yum_patch_install] = {
 }
 
 tests[:yum_patch_remove] = {
-  desc:           '1.2 Remove sample patch',
+  desc:           "1.2 Remove sample patch #{name}",
   code:           [0, 2],
   ensure:         :absent,
   title_pattern:  name,

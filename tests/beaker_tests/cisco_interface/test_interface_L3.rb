@@ -173,7 +173,7 @@ def unsupported_properties(_tests, id)
       :switchport_mode
   end
 
-  if platform[/n(3|8|9)k/]
+  if platform[/n(3|9)k/]
     unprops <<
       :ipv4_dhcp_relay_src_addr_hsrp
   elsif platform[/n(5|6)k/]

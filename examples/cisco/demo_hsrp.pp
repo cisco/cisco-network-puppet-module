@@ -17,7 +17,7 @@
 class ciscopuppet::cisco::demo_hsrp {
 
   $bfd_all_intf = platform_get() ? {
-    /(n5k|n6k|n7k|n8k|n9k)/ => true,
+    /(n5k|n6k|n7k|n9k-f|n9k)/ => true,
     default => undef
   }
 

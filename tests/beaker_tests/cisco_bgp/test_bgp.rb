@@ -116,7 +116,7 @@ resource = {
 }
 
 tests[:default][:resource].merge!(resource[:legacy]) if
-  nexus_image[/I2|I3|I4/] || platform[/n5|n6|n7|n8/]
+  nexus_image[/I2|I3|I4/] || platform[/n5|n6|n7|n9k-f/]
 
 # Non-default Tests. NOTE: [:resource] = [:manifest_props] for all non-default
 tests[:non_default] = {
@@ -228,7 +228,7 @@ def unsupported_properties(tests, id)
 
     unprops <<
       :event_history_errors <<
-      :event_history_objstore if nexus_image[/I2|I3|I4/] || platform[/n5|n6|n7|n8/]
+      :event_history_objstore if nexus_image[/I2|I3|I4/] || platform[/n5|n6|n7|n9k-f/]
 
     if vrf != 'default'
       # NX-OS does not support these properties under a non-default vrf

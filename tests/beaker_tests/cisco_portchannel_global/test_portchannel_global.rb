@@ -64,16 +64,16 @@ tests[:default] = {
 
 # Per platform default values
 resource = {
-  n3k:  {
+  n3k: {
     resilient: 'true'
   },
-  n89k: {
+  n9k: {
     bundle_hash: 'ip-l4port'
   },
 }
 
 tests[:default][:resource].merge!(resource[:n3k]) if platform[/n3k/]
-tests[:default][:resource].merge!(resource[:n89k]) if platform[/n(8|9)k/]
+tests[:default][:resource].merge!(resource[:n9k]) if platform[/n9k/]
 
 tests[:non_default] = {
   desc:           '2.1 Non Defaults',
@@ -102,7 +102,7 @@ manifest_non = {
   n56k: {
     bundle_hash: 'mac'
   },
-  n8k:  {
+  n9kf: {
     bundle_hash: 'ip'
   },
   n9k:  {
@@ -113,8 +113,8 @@ manifest_non = {
 
 tests[:non_default][:manifest_props].merge!(manifest_non[:n3k]) if platform[/n3k/]
 tests[:non_default][:manifest_props].merge!(manifest_non[:n56k]) if platform[/n(5|6)k/]
-tests[:non_default][:manifest_props].merge!(manifest_non[:n8k]) if platform[/n8k/]
-tests[:non_default][:manifest_props].merge!(manifest_non[:n9k]) if platform[/n9k/]
+tests[:non_default][:manifest_props].merge!(manifest_non[:n9kf]) if platform[/n9k-f/]
+tests[:non_default][:manifest_props].merge!(manifest_non[:n9k]) if platform[/n9k$/]
 
 def unsupported_properties(tests, _id)
   unprops = []
@@ -141,7 +141,7 @@ def unsupported_properties(tests, _id)
       :hash_poly <<
       :load_defer <<
       :rotate
-  elsif platform[/n8k/]
+  elsif platform[/n9k-f/]
     unprops <<
       :asymmetric <<
       :concatenation <<
@@ -253,7 +253,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
     mhash[:bundle_hash] = rhash[:bundle_hash] = 'ip-gre'
     test_harness_run(tests, id)
 
-  elsif device == 'n8k'
+  elsif device == 'n9k-f'
     tests[id][:desc] = '2.2 Non Defaults'
     mhash[:bundle_hash] = rhash[:bundle_hash] = 'ip-l4port-vlan'
     test_harness_run(tests, id)

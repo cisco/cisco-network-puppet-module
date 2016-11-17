@@ -27,7 +27,7 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 tests = {
   agent:         agent,
   master:        master,
-  platform:      'n(5|6|7|8|9)k',
+  platform:      'n(5|6|7|9)k',
   resource_name: 'cisco_evpn_vni',
 }
 

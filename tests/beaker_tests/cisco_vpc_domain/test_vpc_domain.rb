@@ -23,12 +23,14 @@
 ###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
+# The platform: key below must use an end of string anchor '$' in order to
+# distinguish between 'n9k' and 'n9k-f' platform flavors.
 tests = {
   master:           master,
   agent:            agent,
   operating_system: 'nexus',
   resource_name:    'cisco_vpc_domain',
-  platform:         'n(3|6|7|9)k',
+  platform:         'n(3|6|7|9)k$',
 }
 
 # Skip -ALL- tests if a top-level platform/os key exludes this platform

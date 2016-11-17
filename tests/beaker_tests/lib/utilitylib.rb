@@ -1083,14 +1083,8 @@ def platform
     @cisco_hardware = 'n6k'
   when /Nexus\s?7\d\d\d/
     @cisco_hardware = 'n7k'
-  when /Nexus\s?8\d\d\d/
-    @cisco_hardware = 'n8k'
-  when /NX-OSv8K/
-    @cisco_hardware = 'n8k'
-  when /Nexus\s?9\d\d\d/
-    @cisco_hardware = 'n9k'
-  when /NX-OSv Chassis/
-    @cisco_hardware = 'n9k'
+  when /(Nexus\s?9\d\d\d|NX-OSv Chassis)/
+    @cisco_hardware = image?[/7.0.3.F/] ? 'n9k-f' : 'n9k'
   when /XRv9K/i
     @cisco_hardware = 'xrv9k'
   else
