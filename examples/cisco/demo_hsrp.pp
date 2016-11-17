@@ -26,7 +26,7 @@ class ciscopuppet::cisco::demo_hsrp {
     extended_hold => 200,
   }
 
-  if platform_get() =~ /n(3|9)k/ {
+  if platform_get() =~ /(n3k|n9k-f|n9k)/ {
     cisco_interface { 'port-channel100':
       ensure             => 'present',
       switchport_mode    => 'disabled',
