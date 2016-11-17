@@ -250,7 +250,7 @@ module PuppetX
         when /N7/
           tag = 'n7k'
         when /N9/
-          tag = fd['images']['system_image'][/7.0.3.F/] ? 'n9k-f' : 'n9k'
+          tag = data['images']['system_image'][/7.0.3.F/] ? 'n9k-f' : 'n9k'
         else
           fail "Unrecognized product_id: #{data['inventory']['chassis']['pid']}"
         end
