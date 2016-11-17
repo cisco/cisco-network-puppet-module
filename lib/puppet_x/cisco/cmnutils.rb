@@ -237,6 +237,25 @@ module PuppetX
         end
         ranges.join(',').gsub('..', '-')
       end
+
+      def self.product_tag
+        data = Facter.value('cisco')
+        case data['inventory']['chassis']['pid']
+        when /N3/
+          tag = 'n3k'
+        when /N5/
+          tag = 'n5k'
+        when /N6/
+          tag = 'n6k'
+        when /N7/
+          tag = 'n7k'
+        when /N9/
+          tag = data['images']['system_image'][/7.0.3.F/] ? 'n9k-f' : 'n9k'
+        else
+          fail "Unrecognized product_id: #{data['inventory']['chassis']['pid']}"
+        end
+        tag
+      end
     end # class Utils
     # rubocop:enable Metrics/ClassLength
 
