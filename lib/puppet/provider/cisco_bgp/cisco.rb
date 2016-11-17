@@ -281,6 +281,9 @@ Puppet::Type.type(:cisco_bgp).provide(:cisco) do
       return 'true' if event_history_default?('event_history_events')
     when 'size_disable'
       return 'size_disable' if event_history_false?('event_history_events')
+    when 'size_large'
+      return 'size_large' if event_history_default?('event_history_events') &&
+                             !legacy_image?
     end
     @property_hash[:event_history_events]
   end
@@ -289,6 +292,7 @@ Puppet::Type.type(:cisco_bgp).provide(:cisco) do
     should_value = @bgp_vrf.default_event_history_events if
       should_value == 'default' || should_value == 'true'
     should_value = 'false' if should_value == 'size_disable' && !legacy_image?
+    should_value = 'true' if should_value == 'size_large' && !legacy_image?
     should_value = should_value.to_sym unless should_value =~ /\A\d+\z/
     @property_flush[:event_history_events] = should_value
   end
