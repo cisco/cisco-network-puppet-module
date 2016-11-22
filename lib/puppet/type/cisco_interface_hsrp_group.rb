@@ -325,19 +325,19 @@ Puppet::Type.newtype(:cisco_interface_hsrp_group) do
 
   def check_auth_str
     return unless my_str
-    fail ArgumentError, 'auth_type, enc_type, key_type, compatibility, timeout MUST be default when authentication_string is default' unless
+    fail ArgumentError, 'Authentication properties auth_type, enc_type, key_type, compatibility, timeout MUST be default when authentication_string is default' unless
       my_atype && my_compat && my_enc && my_key && my_timeout
   end
 
   def check_auth_type
     return unless my_atype
-    fail ArgumentError, 'enc_type, key_type, compatibility, timeout MUST be default when authentication_auth_type is default' unless
+    fail ArgumentError, 'Authentication properties enc_type, key_type, compatibility, timeout MUST be default when authentication_auth_type is default' unless
       my_compat && my_enc && my_key && my_timeout
   end
 
   def check_auth_key
     return unless my_key
-    fail ArgumentError, 'enc_type, compatibility, timeout MUST be default when authentication_key_type is default' unless
+    fail ArgumentError, 'Authentication properties enc_type, compatibility, timeout MUST be default when authentication_key_type is default' unless
       my_compat && my_enc && my_timeout
   end
 
@@ -362,7 +362,7 @@ Puppet::Type.newtype(:cisco_interface_hsrp_group) do
     min = self[:preempt_delay_minimum].nil? || self[:preempt_delay_minimum] == :default || self[:preempt_delay_minimum].zero?
     rel = self[:preempt_delay_reload].nil? || self[:preempt_delay_reload] == :default || self[:preempt_delay_reload].zero?
     sync = self[:preempt_delay_sync].nil? || self[:preempt_delay_sync] == :default || self[:preempt_delay_sync].zero?
-    fail ArgumentError, 'delay_minimum, delay_reload, delay_sync MUST be default when preempt is default' unless
+    fail ArgumentError, 'Preempt properties delay_minimum, delay_reload, delay_sync MUST be default when preempt is default' unless
       min && rel && sync
   end
 
