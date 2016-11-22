@@ -70,7 +70,7 @@ Puppet::Type.newtype(:cisco_interface_hsrp_group) do
 
     # Below pattern matches both parts of the full composite name.
     patterns << [
-      /^(\S+) (\S+) (\S+)$/,
+      /^(\S+) (\d+) (\S+)$/,
       [
         [:interface, identity],
         [:group, identity],
@@ -93,11 +93,12 @@ Puppet::Type.newtype(:cisco_interface_hsrp_group) do
 
   newparam(:iptype, namevar: true) do
     desc 'Ip Type. Valid values are ipv4 or ipv6.'
+    munge(&:to_s)
+    newvalues(:ipv4, :ipv6)
   end # param iptype
 
   newparam(:group, namevar: true) do
     desc 'HSRP group ID. Valid values are integer.'
-    munge(&:to_i)
   end # param group
 
   newparam(:interface, namevar: true) do
@@ -124,7 +125,13 @@ Puppet::Type.newtype(:cisco_interface_hsrp_group) do
   newproperty(:authentication_enc_type) do
     desc 'Scheme used for encrypting authentication key string.'
 
-    newvalues(:'0', :'7', :default)
+    munge do |value|
+      value = '0' if value == 'clear'
+      value = '7' if value == 'encrypted'
+      value.to_sym
+    end
+
+    newvalues(:clear, :encrypted, :default)
   end # property authentication_enc_type
 
   newproperty(:authentication_key_type) do
@@ -289,7 +296,7 @@ Puppet::Type.newtype(:cisco_interface_hsrp_group) do
   def my_enc
     self[:authentication_enc_type].nil? ||
       self[:authentication_enc_type] == :default ||
-      self[:authentication_enc_type] == '0'
+      self[:authentication_enc_type] == :'0'
   end
 
   def my_key
@@ -318,20 +325,20 @@ Puppet::Type.newtype(:cisco_interface_hsrp_group) do
 
   def check_auth_str
     return unless my_str
-    fail ArgumentError, 'All authentication parameters MUST be default when authentication_string is default' unless
-      my_atype || my_compat || my_enc || my_key || my_timeout
+    fail ArgumentError, 'auth_type, enc_type, key_type, compatibility, timeout MUST be default when authentication_string is default' unless
+      my_atype && my_compat && my_enc && my_key && my_timeout
   end
 
   def check_auth_type
     return unless my_atype
-    fail ArgumentError, 'Invalid authentication parameters' unless
-      my_compat || my_enc || my_key || my_timeout
+    fail ArgumentError, 'enc_type, key_type, compatibility, timeout MUST be default when authentication_auth_type is default' unless
+      my_compat && my_enc && my_key && my_timeout
   end
 
   def check_auth_key
     return unless my_key
-    fail ArgumentError, 'Invalid authentication parameters' unless
-      my_compat || my_enc || my_timeout
+    fail ArgumentError, 'enc_type, compatibility, timeout MUST be default when authentication_key_type is default' unless
+      my_compat && my_enc && my_timeout
   end
 
   def check_ipv4
@@ -355,8 +362,8 @@ Puppet::Type.newtype(:cisco_interface_hsrp_group) do
     min = self[:preempt_delay_minimum].nil? || self[:preempt_delay_minimum] == :default || self[:preempt_delay_minimum].zero?
     rel = self[:preempt_delay_reload].nil? || self[:preempt_delay_reload] == :default || self[:preempt_delay_reload].zero?
     sync = self[:preempt_delay_sync].nil? || self[:preempt_delay_sync] == :default || self[:preempt_delay_sync].zero?
-    fail ArgumentError, 'preempt delay parameters MUST be default when preempt is default' unless
-      min || rel || sync
+    fail ArgumentError, 'delay_minimum, delay_reload, delay_sync MUST be default when preempt is default' unless
+      min && rel && sync
   end
 
   validate do

@@ -142,7 +142,7 @@ tests[:non_default_v4] = {
   manifest_props:     {
     authentication_auth_type:      'md5',
     authentication_compatibility:  'true',
-    authentication_enc_type:       '7',
+    authentication_enc_type:       'encrypted',
     authentication_key_type:       'key-string',
     authentication_string:         '12345678901234567890',
     authentication_timeout:        200,
@@ -162,6 +162,9 @@ tests[:non_default_v4] = {
     timers_hold:                   1000,
     timers_hold_msec:              'true',
   },
+  resource:           {
+    authentication_enc_type: '7'
+  },
 }
 
 tests[:non_default_v6] = {
@@ -171,7 +174,7 @@ tests[:non_default_v6] = {
   manifest_props:     {
     authentication_auth_type:      'md5',
     authentication_compatibility:  'true',
-    authentication_enc_type:       '7',
+    authentication_enc_type:       'encrypted',
     authentication_key_type:       'key-string',
     authentication_string:         '12345678901234567890',
     authentication_timeout:        200,
@@ -190,6 +193,9 @@ tests[:non_default_v6] = {
     timers_hello_msec:             'true',
     timers_hold:                   1000,
     timers_hold_msec:              'true',
+  },
+  resource:           {
+    authentication_enc_type: '7'
   },
 }
 

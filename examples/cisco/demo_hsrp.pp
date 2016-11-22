@@ -52,7 +52,7 @@ class ciscopuppet::cisco::demo_hsrp {
       authentication_auth_type      => 'md5',
       authentication_string         => '12345678901234567890',
       authentication_key_type       => 'key-string',
-      authentication_enc_type       => '7',
+      authentication_enc_type       => 'encrypted',
       authentication_compatibility  => true,
       authentication_timeout        => 200,
       ipv6_vip                      => ['2000::11', '2001::22'],
