@@ -2348,7 +2348,7 @@ Authentication type for the HSRP group. Valid values are 'cleartext', 'md5', key
 Turn on compatibility mode for MD5 type-7 authentication. Valid values are 'true', 'false', keyword 'default'.
 
 ###### `authentication_enc_type`
-Scheme used for encrypting authentication key string. Valid values are '0', '7', keyword 'default'.
+Scheme used for encrypting authentication key string. Valid values are 'clear', 'encrypted', keyword 'default'.
 
 ###### `authentication_key_type`
 Authentication key type. Valid values are 'key-chain', 'key-string', keyword 'default'.
