@@ -25,9 +25,10 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 # Test hash top-level keys
 tests = {
-  master:        master,
-  agent:         agent,
-  resource_name: 'cisco_pim',
+  master:           master,
+  agent:            agent,
+  operating_system: 'nexus',
+  resource_name:    'cisco_pim',
 }
 
 # Test hash test cases
@@ -35,7 +36,8 @@ tests[:non_def_S1] = {
   desc:           ' 1.1 Non default properties',
   title_pattern:  'ipv4 red',
   manifest_props: {
-    ssm_range: '224.0.0.0/8'
+    bfd:       true,
+    ssm_range: '224.0.0.0/8',
   },
 }
 
