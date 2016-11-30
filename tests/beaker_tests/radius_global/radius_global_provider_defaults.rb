@@ -82,16 +82,16 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = PUPPET_BINPATH + 'resource radius_global default'
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, { 'key' => '44444444' },
-                               false, self, logger)
-      search_pattern_in_output(stdout, { 'key_format' => '7' },
-                               false, self, logger)
-      search_pattern_in_output(stdout, { 'retransmit_count' => '4' },
-                               false, self, logger)
-      search_pattern_in_output(stdout, { 'timeout' => '2' },
-                               false, self, logger)
-    end
+    on(agent, cmd_str)
+    output = stdout
+    search_pattern_in_output(output, { 'key' => add_quotes('44444444') },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'key_format' => '7' },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'retransmit_count' => '4' },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'timeout' => '2' },
+                             false, self, logger)
 
     logger.info("Check radius_global resource presence on agent :: #{result}")
   end
@@ -113,16 +113,16 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = PUPPET_BINPATH + 'resource radius_global default'
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, { 'key' => '44444444' },
-                               false, self, logger)
-      search_pattern_in_output(stdout, { 'key_format' => '7' },
-                               false, self, logger)
-      search_pattern_in_output(stdout, { 'retransmit_count' => '3' },
-                               false, self, logger)
-      search_pattern_in_output(stdout, { 'timeout' => '1' },
-                               false, self, logger)
-    end
+    on(agent, cmd_str)
+    output = stdout
+    search_pattern_in_output(output, { 'key' => add_quotes('44444444') },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'key_format' => '7' },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'retransmit_count' => '3' },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'timeout' => '1' },
+                             false, self, logger)
 
     logger.info("Check radius_global resource presence on agent :: #{result}")
   end
