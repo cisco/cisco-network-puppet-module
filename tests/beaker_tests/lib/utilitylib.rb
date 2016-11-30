@@ -1436,3 +1436,19 @@ def test_patch_version(tests, id, name, ver)
     end
   end
 end
+
+# Add double quotes to string.
+#
+# Helper method to add a double quote to the beginning
+# and end of a string.
+#
+# Nxapi adds an escape character to config lines that
+# nvgen in this way in some but not all nxos releases.
+#
+# Input: String (Example 'foo')
+# Returns: String with double quotes: (Example: '"foo"'
+#
+def add_quotes(string)
+  string = "\"#{string}\"" if image?[/8.0/]
+  string
+end
