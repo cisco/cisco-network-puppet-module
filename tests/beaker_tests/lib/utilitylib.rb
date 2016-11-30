@@ -1105,8 +1105,9 @@ end
 @image = nil # Cache the lookup result
 def nexus_image
   facter_opt = '-p cisco.images.system_image'
-  image_regexp = /[A-Z]+\d+\.\d+/
-  @image ||= on(agent, facter_cmd(facter_opt)).output[image_regexp]
+  image_regexp = /.*\.(\S+\.\S+)\.bin/
+  data = on(agent, facter_cmd(facter_opt)).output
+  @image ||= image_regexp.match(data)[1]
 end
 
 # On match will skip all testcases
