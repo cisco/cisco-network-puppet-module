@@ -1105,8 +1105,9 @@ end
 @image = nil # Cache the lookup result
 def nexus_image
   facter_opt = '-p cisco.images.system_image'
-  image_regexp = /[A-Z]+\d+\.\d+/
-  @image ||= on(agent, facter_cmd(facter_opt)).output[image_regexp]
+  image_regexp = /.*\.(\S+\.\S+)\.bin/
+  data = on(agent, facter_cmd(facter_opt)).output
+  @image ||= image_regexp.match(data)[1]
 end
 
 # On match will skip all testcases
@@ -1435,4 +1436,20 @@ def test_patch_version(tests, id, name, ver)
       fail_test("TestStep :: #{msg} :: FAIL")
     end
   end
+end
+
+# Add double quotes to string.
+#
+# Helper method to add a double quote to the beginning
+# and end of a string.
+#
+# Nxapi adds an escape character to config lines that
+# nvgen in this way in some but not all nxos releases.
+#
+# Input: String (Example 'foo')
+# Returns: String with double quotes: (Example: '"foo"'
+#
+def add_quotes(string)
+  string = "\"#{string}\"" if image?[/8.0/]
+  string
 end
