@@ -102,14 +102,14 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = PUPPET_BINPATH + 'resource cisco_tacacs_server_host'
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               { 'ensure'              => 'present',
-                                 'port'                => '90',
-                                 'timeout'             => '39',
-                                 'encryption_password' => 'test123' },
-                               false, self, logger)
-    end
+    on(agent, cmd_str)
+    output = stdout
+    search_pattern_in_output(output,
+                             { 'ensure'              => 'present',
+                               'port'                => '90',
+                               'timeout'             => '39',
+                               'encryption_password' => add_quotes('test123') },
+                             false, self, logger)
 
     logger.info("Check cisco_tacacs_server_host presence on agent :: #{result}")
   end
@@ -131,14 +131,14 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = PUPPET_BINPATH + 'resource cisco_tacacs_server_host'
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout,
-                               { 'ensure'              => 'present',
-                                 'port'                => '90',
-                                 'timeout'             => '39',
-                                 'encryption_password' => 'test123' },
-                               true, self, logger)
-    end
+    on(agent, cmd_str)
+    output = stdout
+    search_pattern_in_output(output,
+                             { 'ensure'              => 'present',
+                               'port'                => '90',
+                               'timeout'             => '39',
+                               'encryption_password' => add_quotes('test123') },
+                             true, self, logger)
 
     logger.info("Check cisco_tacacs_server_host absence on agent :: #{result}")
   end
