@@ -66,6 +66,7 @@ class ciscopuppet::cisco::demo_interface {
       ipv4_acl_out                  => 'v4acl2',
       ipv6_acl_in                   => 'v6acl1',
       ipv6_acl_out                  => 'v6acl2',
+      pim_bfd                       => true,
     }
 
     cisco_interface { 'Ethernet1/1.1':

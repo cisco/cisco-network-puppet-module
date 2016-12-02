@@ -94,6 +94,7 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     :ipv4_dhcp_relay_subnet_broadcast,
     :ipv4_dhcp_smart_relay,
     :negotiate_auto,
+    :pim_bfd,
     :shutdown,
     :switchport_autostate_exclude,
     :switchport_pvlan_host,

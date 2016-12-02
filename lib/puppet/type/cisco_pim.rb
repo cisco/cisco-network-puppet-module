@@ -43,7 +43,8 @@ Puppet::Type.newtype(:cisco_pim) do
   ~~~puppet
     cisco_pim { 'ipv4 red' :
       ensure          => present,
-      ssm_range       => '224.0.0.0/8 225.0.0.0/8'
+      ssm_range       => '224.0.0.0/8 225.0.0.0/8',
+      bfd             => true
     }
   ~~~
 
@@ -54,7 +55,8 @@ Puppet::Type.newtype(:cisco_pim) do
       ensure          => present,
       afi             => 'ipv4',
       vrf             => 'default',
-      ssm_range       => default
+      ssm_range       => default,
+      bfd             => true
     }
   ~~~
 
@@ -62,14 +64,16 @@ Puppet::Type.newtype(:cisco_pim) do
     cisco_pim { 'ipv4' :
       ensure          => present,
       vrf             => 'default',
-      ssm_range       => '224.0.0.0/8 225.0.0.0/8'
+      ssm_range       => '224.0.0.0/8 225.0.0.0/8',
+      bfd             => true
     }
   ~~~
 
   ~~~puppet
     cisco_pim { 'ipv4 blue' :
       ensure          => present,
-      ssm_range       => '224.0.0.0/8 225.0.0.0/8'
+      ssm_range       => '224.0.0.0/8 225.0.0.0/8',
+      bfd             => true
     }
   ~~~
   "
@@ -133,6 +137,12 @@ Puppet::Type.newtype(:cisco_pim) do
   # ---------------------------------------------------------------
   # Definition of properties.
   # ---------------------------------------------------------------
+
+  newproperty(:bfd) do
+    desc 'Enables BFD for all PIM interfaces in the VRF.'
+
+    newvalues(:true, :false, :default)
+  end # property bfd
 
   newproperty(:ssm_range) do
     desc "Sets the ssm range for Pim. Valid

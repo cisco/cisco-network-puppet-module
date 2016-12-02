@@ -64,6 +64,7 @@ Puppet::Type.newtype(:cisco_interface) do
      ipv4_dhcp_smart_relay          => true,
      ipv6_dhcp_relay_addr           => ['2000::11', '2001::22'],
      ipv6_dhcp_relay_src_intf       => 'ethernet 2/2',
+     pim_bfd                        => true,
     }
     cisco_interface { 'ethernet1/17' :
      stp_bpdufilter               => 'enable',
@@ -287,6 +288,12 @@ Puppet::Type.newtype(:cisco_interface) do
   ########################################
   # Begin L3 interface config attributes #
   ########################################
+
+  newproperty(:pim_bfd) do
+    desc 'Enables pim BFD on this interface.'
+
+    newvalues(:true, :false, :default)
+  end # property pim_bfd
 
   newproperty(:ipv4_pim_sparse_mode) do
     desc '<L3 attribute> Enables or disables ipv4 pim sparse mode '\

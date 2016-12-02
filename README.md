@@ -429,7 +429,7 @@ Symbol | Meaning | Description
 | [cisco_ospf_vrf](#type-cisco_ospf_vrf)                     | ✅  | ✅  | ✅ | ✅  | ✅ | ✅ |
 | ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | N9k-F | Caveats |
 | [cisco_overlay_global](#type-cisco_overlay_global)         | ✅  | :heavy_minus_sign: | ✅ | ✅ | ✅ | ✅ |
-| [cisco_pim](#type-cisco_pim)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_pim](#type-cisco_pim)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | \*[caveats](#cisco_pim-caveats) |
 | [cisco_pim_rp_address](#type-cisco_pim_rp_address)         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
 | [cisco_pim_grouplist](#type-cisco_pim_grouplist)           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
 | [cisco_portchannel_global](#type-cisco_portchannel_global) | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_portchannel_global-caveats) |
@@ -1984,6 +1984,7 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | `hsrp_mac_refresh`                    | Not supported on N5k,N6k,N7k <br> Minimum puppet module version 1.5.0 |
 | `hsrp_use_bia`                        | Not supported on N5k,N6k,N7k <br> Minimum puppet module version 1.5.0 |
 | `hsrp_version`                        | Not supported on N5k,N6k,N7k <br> Minimum puppet module version 1.5.0 |
+| `pim_bfd`                             | Minimum puppet module version 1.5.0 |
 
 #### Parameters
 
@@ -2197,6 +2198,9 @@ ipv6_dhcp_relay_addr => ['2000::11', '2001::22']
 ```
 ###### `ipv6_dhcp_relay_src_intf`
 Source interface for the DHCPV6 relay. Valid values are string, keyword 'default'.
+
+###### `pim_bfd`
+Enables PIM BFD on the interface. Valid values are 'true', 'false', and 'default'.
 
 ###### `vlan_mapping`
 This property is a nested array of [original_vlan, translated_vlan] pairs. Valid values are an array specifying the mapped vlans or keyword 'default'; e.g.:
@@ -3082,6 +3086,12 @@ Manages configuration of an Protocol Independent Multicast (PIM) instance.
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
+#### <a name="cisco_pim-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:---------|:-------------|
+| `bfd`    | Minimum puppet module version 1.5.0 |
+
 #### Parameters
 
 ##### `afi`
@@ -3091,6 +3101,9 @@ Address Family Identifier (AFI). Required. Valid value is ipv4.
 Name of the resource instance. Required. Valid values are string. The name 'default' is a valid VRF representing the global vrf.
 
 #### Properties
+
+##### `bfd`
+Enables BFD for all PIM interfaces in the current VRF. Valid values are true, false or 'default'.
 
 ##### `ssm_range`
 Configure group ranges for Source Specific Multicast (SSM). Valid values are multicast addresses or the keyword ‘none’.
