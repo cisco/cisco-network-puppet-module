@@ -22,7 +22,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Extend cisco_pim with attributes:
  - `bfd`
 
-* Added support for Cisco NX-OS software release `7.3(0)F1(1)`
+* Added support for Cisco NX-OS software releases `7.3(0)F1(1)` and `8.0(1)`
 
 ### Changed
 
