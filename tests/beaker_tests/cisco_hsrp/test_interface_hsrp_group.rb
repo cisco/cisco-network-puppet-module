@@ -29,12 +29,13 @@ tests = {
   master:        master,
   agent:         agent,
   intf_type:     'port-channel',
-  platform:      'n(3|9)k',
+  platform:      'n(3|7|9)k',
   resource_name: 'cisco_interface_hsrp_group',
 }
 
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
 skip_unless_supported(tests)
+skip_nexus_image('D1', tests)
 
 # Test hash test cases
 tests[:default_v4] = {
@@ -180,7 +181,7 @@ tests[:non_default_v6] = {
     authentication_timeout:        200,
     group_name:                    'MyHsrpv6',
     ipv6_autoconfig:               'true',
-    ipv6_vip:                      ['2000::11', '2001::22'],
+    ipv6_vip:                      ['2000::11', '2000::22'],
     mac_addr:                      '00:00:11:11:22:22',
     preempt:                       'true',
     preempt_delay_minimum:         '100',
@@ -215,6 +216,7 @@ def test_harness_dependencies(_tests, _id)
     'feature hsrp',
     'interface port-channel100 ; no switchport ; hsrp version 2',
     'interface port-channel200 ; no switchport ; hsrp version 2',
+    'interface port-channel200 ; ipv6 address 2000::01/64',
   ].join(' ; ')
   test_set(agent, cmd)
 end

@@ -29,12 +29,13 @@ tests = {
   master:        master,
   agent:         agent,
   intf_type:     'port-channel',
-  platform:      'n(3|9)k',
+  platform:      'n(3|7|9)k',
   resource_name: 'cisco_interface',
 }
 
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
 skip_unless_supported(tests)
+skip_nexus_image('D1', tests)
 
 # Find a usable interface for this test
 @intf = 'port-channel100'
