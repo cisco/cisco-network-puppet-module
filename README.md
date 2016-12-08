@@ -418,7 +418,7 @@ Symbol | Meaning | Description
 | [cisco_hsrp_global](#type-cisco_hsrp_global)                         | ✅  | ✅* | ✅  | ✅  | ✅  | ✅  | \*[caveats](#cisco_hsrp_global-caveats) |
 | [cisco_interface](#type-cisco_interface)                             | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_interface-caveats) |
 | [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
-| [cisco_interface_hsrp_group](#type-cisco_interface_hsrp_group)       | ✅  | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ |
+| [cisco_interface_hsrp_group](#type-cisco_interface_hsrp_group)       | ✅  | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | ✅* | ✅ | \*[caveats](#cisco_interface_hsrp_group-caveats) |
 | [cisco_interface_ospf](#type-cisco_interface_ospf)                   | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
 | [cisco_interface_portchannel](#type-cisco_interface_portchannel)     | ✅* | ✅* | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_interface_portchannel-caveats) |
 | [cisco_interface_service_vni](#type-cisco_interface_service_vni) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
@@ -1978,12 +1978,12 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | `svi_autostate`                       | Only supported on N3k,N7k,N9k   |
 | `vlan_mapping`                        | Only supported on N7k           |
 | `vlan_mapping_enable`                 | Only supported on N7k           |
-| `hsrp_bfd`                            | Not supported on N5k,N6k,N7k <br> Minimum puppet module version 1.5.0 |
-| `hsrp_delay_minimum`                  | Not supported on N5k,N6k,N7k <br> Minimum puppet module version 1.5.0 |
-| `hsrp_delay_reload`                   | Not supported on N5k,N6k,N7k <br> Minimum puppet module version 1.5.0 |
-| `hsrp_mac_refresh`                    | Not supported on N5k,N6k,N7k <br> Minimum puppet module version 1.5.0 |
-| `hsrp_use_bia`                        | Not supported on N5k,N6k,N7k <br> Minimum puppet module version 1.5.0 |
-| `hsrp_version`                        | Not supported on N5k,N6k,N7k <br> Minimum puppet module version 1.5.0 |
+| `hsrp_bfd`                            | Not supported on N5k,N6k <br> Minimum puppet module version 1.5.0 <br> Supported in OS Version 8.0 and later on N7k |
+| `hsrp_delay_minimum`                  | Not supported on N5k,N6k <br> Minimum puppet module version 1.5.0 <br> Supported in OS Version 8.0 and later on N7k |
+| `hsrp_delay_reload`                   | Not supported on N5k,N6k <br> Minimum puppet module version 1.5.0 <br> Supported in OS Version 8.0 and later on N7k |
+| `hsrp_mac_refresh`                    | Not supported on N5k,N6k <br> Minimum puppet module version 1.5.0 <br> Supported in OS Version 8.0 and later on N7k |
+| `hsrp_use_bia`                        | Not supported on N5k,N6k <br> Minimum puppet module version 1.5.0 <br> Supported in OS Version 8.0 and later on N7k |
+| `hsrp_version`                        | Not supported on N5k,N6k <br> Minimum puppet module version 1.5.0 <br> Supported in OS Version 8.0 and later on N7k |
 | `pim_bfd`                             | Minimum puppet module version 1.5.0 |
 
 #### Parameters
@@ -2335,12 +2335,18 @@ Manages a Cisco Network Interface HSRP group.
 | N3k      | 7.0(3)I2(1)        | 1.5.0                  |
 | N5k      | not applicable     | not applicable         |
 | N6k      | not applicable     | not applicable         |
-| N7k      | not applicable     | not applicable         |
+| N7k      | 8.0                | 1.5.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+
+#### <a name="cisco_interface_hsrp_group-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:---------|:-------------|
+| `all properties`              | Supported in OS Version 8.0 and later on N7k |
 
 #### Parameters
 
-##### Basic interface channel-group config attributes
+##### Interface hsrp-group config attributes
 
 ###### `ensure`
 Determine whether the interface hsrp group config should be present or not. Valid values are 'present' and 'absent'.

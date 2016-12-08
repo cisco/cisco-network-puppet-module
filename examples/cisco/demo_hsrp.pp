@@ -26,7 +26,16 @@ class ciscopuppet::cisco::demo_hsrp {
     extended_hold => 200,
   }
 
-  if platform_get() =~ /(n3k|n9k)/ {
+  $n7k_ath = platform_get() ? {
+    'n7k' => $facts['cisco']['images']['system_image'] ? {
+      /(8.0)/ => true,
+      default => false
+    },
+    /(n3k|n9k)/ => true,
+    default => false
+  }
+
+  if $n7k_ath {
     cisco_interface { 'port-channel100':
       ensure             => 'present',
       switchport_mode    => 'disabled',
@@ -47,6 +56,12 @@ class ciscopuppet::cisco::demo_hsrp {
       hsrp_version       => 2,
     }
 
+    cisco_command_config { 'ipv6-addr':
+      command => "
+        interface Po100
+          ipv6 address 2000::01/64
+      "
+    }
     cisco_interface_hsrp_group { 'port-channel100 2 ipv6':
       ensure                        => 'present',
       authentication_auth_type      => 'md5',
@@ -55,7 +70,7 @@ class ciscopuppet::cisco::demo_hsrp {
       authentication_enc_type       => 'encrypted',
       authentication_compatibility  => true,
       authentication_timeout        => 200,
-      ipv6_vip                      => ['2000::11', '2001::22'],
+      ipv6_vip                      => ['2000::11', '2000::22'],
       ipv6_autoconfig               => true,
       group_name                    => 'MyHsrp',
       preempt                       => true,
