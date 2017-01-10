@@ -28,12 +28,14 @@
 require File.expand_path('../interfacelib.rb', __FILE__)
 
 # Test hash top-level keys
+# The platform: key below must use an end of string anchor '$' in order to
+# distinguish between 'n9k' and 'n9k-f' platform flavors.
 tests = {
   agent:            agent,
   master:           master,
   intf_type:        'ethernet',
   operating_system: 'nexus',
-  platform:         'n(3|5|6|7|9)k',
+  platform:         'n(3|5|6|7|9)k$',
   resource_name:    'cisco_interface',
 }
 

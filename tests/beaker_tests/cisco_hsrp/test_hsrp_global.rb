@@ -21,81 +21,71 @@
 #  - A description of the 'tests' hash and its usage
 #
 ###############################################################################
-#
-# 'test_private_vlan' tests *VLAN* related private_vlan properties.
-#
-# (See 'test_interface_private_vlan' for interface-related private-vlan tests)
-#
-###############################################################################
+
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 # Test hash top-level keys
-# The platform: key below must use an end of string anchor '$' in order to
-# distinguish between 'n9k' and 'n9k-f' platform flavors.
 tests = {
-  agent:            agent,
   master:           master,
-  resource_name:    'cisco_vlan',
+  agent:            agent,
   operating_system: 'nexus',
-  platform:         'n(3|5|6|7|9)k$',
+  resource_name:    'cisco_hsrp_global',
+  ensurable:        false,
 }
 
-# Skip -ALL- tests if a top-level platform/os key exludes this platform
 skip_unless_supported(tests)
 
-tests[:primary] = {
-  desc:           '1.1 Primary',
-  title_pattern:  '100',
+# Test hash test cases
+tests[:default] = {
+  desc:           '1.1 Default Properties',
+  title_pattern:  'default',
   manifest_props: {
-    pvlan_type:        'primary',
-    pvlan_association: '101, 102, 98-99, 105',
+    bfd_all_intf:  'default',
+    extended_hold: 'default',
   },
+  code:           [0, 2],
   resource:       {
-    pvlan_type:        'primary',
-    pvlan_association: "['98-99', '101-102', '105']",
+    bfd_all_intf:  'false',
+    extended_hold: 'false',
   },
 }
 
-tests[:community] = {
-  desc:           '1.2 Community',
-  title_pattern:  '100',
+tests[:non_default] = {
+  desc:           '2.1 Non Defaults',
+  title_pattern:  'default',
   manifest_props: {
-    pvlan_type: 'community'
+    bfd_all_intf:  true,
+    extended_hold: 222,
   },
 }
 
-tests[:isolated] = {
-  desc:           '1.3 Isolated',
-  title_pattern:  '100',
-  manifest_props: {
-    pvlan_type: 'isolated'
-  },
-}
+def unsupported_properties(_tests, _id)
+  unprops = []
+  unprops << :bfd_all_intf if platform[/n3k/]
+  unprops
+end
 
 def cleanup(agent)
-  remove_all_vlans(agent)
+  test_set(agent, 'no feature hsrp')
 end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  teardown do
-    cleanup(agent)
-    vdc_limit_f3_no_intf_needed(:clear)
-  end
+  teardown { cleanup(agent) }
   cleanup(agent)
-  vdc_limit_f3_no_intf_needed(:set)
 
   # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 1. Property Testing")
-  test_harness_run(tests, :primary)
+  logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
+  test_harness_run(tests, :default)
 
-  remove_all_vlans(agent)
-  test_harness_run(tests, :community)
+  # -------------------------------------------------------------------
+  logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
-  remove_all_vlans(agent)
-  test_harness_run(tests, :isolated)
+  cleanup(agent)
+  test_harness_run(tests, :non_default)
+  # -------------------------------------------------------------------
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

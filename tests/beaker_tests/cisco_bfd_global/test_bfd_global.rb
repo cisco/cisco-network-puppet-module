@@ -118,7 +118,7 @@ tests[:non_default] = {
 
 def unsupported_properties(_tests, _id)
   unprops = []
-  if platform[/n(3|8|9)k/]
+  if platform[/n(3|9)k/]
     unprops <<
       :fabricpath_interval <<
       :fabricpath_slow_timer <<
@@ -140,8 +140,8 @@ def unsupported_properties(_tests, _id)
       :startup_timer
   end
 
-  # TBD: this is due to nxos bug on n8k and n9k
-  unprops << :interval if platform[/n(8|9)k/]
+  # TBD: this is due to nxos bug on n9k-f and n9k
+  unprops << :interval if platform[/n9k/]
 
   unprops
 end

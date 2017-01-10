@@ -23,6 +23,13 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
+begin
+  require 'puppet_x/cisco/cmnutils'
+rescue LoadError # seen on master, not on agent
+  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..',
+                                     'puppet_x', 'cisco', 'cmnutils.rb'))
+end
 Puppet::Type.type(:cisco_bgp).provide(:cisco) do
   desc 'The cisco bgp provider.'
 
@@ -212,10 +219,10 @@ Puppet::Type.type(:cisco_bgp).provide(:cisco) do
   end
 
   def legacy_image?
+    utils = PuppetX::Cisco::Utils
     fd = Facter.value('cisco')
     image = fd['images']['system_image']
-    pid = fd['inventory']['chassis']['pid']
-    image[/7.0.3.I2|I3|I4/] || pid[/N(5|6|7|8)/]
+    image[/7.0.3.I2|I3|I4/] || utils.product_tag[/n(5k|6k|7k|9k-f)/]
   end
 
   def event_history_default?(prop)
@@ -274,6 +281,9 @@ Puppet::Type.type(:cisco_bgp).provide(:cisco) do
       return 'true' if event_history_default?('event_history_events')
     when 'size_disable'
       return 'size_disable' if event_history_false?('event_history_events')
+    when 'size_large'
+      return 'size_large' if event_history_default?('event_history_events') &&
+                             !legacy_image?
     end
     @property_hash[:event_history_events]
   end
@@ -282,6 +292,7 @@ Puppet::Type.type(:cisco_bgp).provide(:cisco) do
     should_value = @bgp_vrf.default_event_history_events if
       should_value == 'default' || should_value == 'true'
     should_value = 'false' if should_value == 'size_disable' && !legacy_image?
+    should_value = 'true' if should_value == 'size_large' && !legacy_image?
     should_value = should_value.to_sym unless should_value =~ /\A\d+\z/
     @property_flush[:event_history_events] = should_value
   end

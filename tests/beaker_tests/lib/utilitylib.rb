@@ -1083,14 +1083,8 @@ def platform
     @cisco_hardware = 'n6k'
   when /Nexus\s?7\d\d\d/
     @cisco_hardware = 'n7k'
-  when /Nexus\s?8\d\d\d/
-    @cisco_hardware = 'n8k'
-  when /NX-OSv8K/
-    @cisco_hardware = 'n8k'
-  when /Nexus\s?9\d\d\d/
-    @cisco_hardware = 'n9k'
-  when /NX-OSv Chassis/
-    @cisco_hardware = 'n9k'
+  when /(Nexus\s?9\d\d\d|NX-OSv Chassis)/
+    @cisco_hardware = image?[/7.0.3.F/] ? 'n9k-f' : 'n9k'
   when /XRv9K/i
     @cisco_hardware = 'xrv9k'
   else
@@ -1111,8 +1105,9 @@ end
 @image = nil # Cache the lookup result
 def nexus_image
   facter_opt = '-p cisco.images.system_image'
-  image_regexp = /[A-Z]+\d+\.\d+/
-  @image ||= on(agent, facter_cmd(facter_opt)).output[image_regexp]
+  image_regexp = /.*\.(\S+\.\S+)\.bin/
+  data = on(agent, facter_cmd(facter_opt)).output
+  @image ||= image_regexp.match(data)[1]
 end
 
 # On match will skip all testcases
@@ -1441,4 +1436,20 @@ def test_patch_version(tests, id, name, ver)
       fail_test("TestStep :: #{msg} :: FAIL")
     end
   end
+end
+
+# Add double quotes to string.
+#
+# Helper method to add a double quote to the beginning
+# and end of a string.
+#
+# Nxapi adds an escape character to config lines that
+# nvgen in this way in some but not all nxos releases.
+#
+# Input: String (Example 'foo')
+# Returns: String with double quotes: (Example: '"foo"'
+#
+def add_quotes(string)
+  string = "\"#{string}\"" if image?[/8.0/]
+  string
 end

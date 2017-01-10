@@ -44,13 +44,6 @@ Puppet::Type.type(:cisco_command_config).provide(:cisco) do
     # Compare full manifest config to running-config.
     existing_str = manifest_hash.compare_with(running_hash)
     debug "Existing:\n>#{existing_str}<"
-    # Note: 'existing_str' may sometimes include confusing (but normal) contents
-    # if the 'manifest_hash' contains a 'no' command that is not present in
-    # running-config. For example, manifest_hash contains 'no foo bar'; the
-    # compare_with() logic does not find 'no foo bar' so it will strip the 'no'
-    # and search for 'foo bar' (in the proper context); that will not be found
-    # so it will add 'no foo bar' to 'existing_str', which allows the logic
-    # below to exclude 'no foo bar' from 'min_config_hash'.
 
     manifest_config_str =
       Cisco::ConfigParser::Configuration.config_hash_to_str(

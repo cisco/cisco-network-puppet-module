@@ -133,7 +133,7 @@ def unsupported_properties(_tests, _id)
     unprops <<
       :ipv4_sub_option_circuit_id_custom <<
       :ipv4_sub_option_circuit_id_string
-  elsif platform[/n8k/]
+  elsif platform[/n9k-f/]
     unprops <<
       :ipv4_src_addr_hsrp <<
       :ipv4_sub_option_circuit_id_custom <<

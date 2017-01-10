@@ -62,6 +62,7 @@ tests[:default] = {
     ipv4_dhcp_smart_relay:            'default',
     ipv6_dhcp_relay_addr:             'default',
     ipv6_dhcp_relay_src_intf:         'default',
+    pim_bfd:                          'default',
     mtu:                              'default',
     shutdown:                         'default',
     vrf:                              'default',
@@ -78,6 +79,7 @@ tests[:default] = {
     ipv4_dhcp_relay_subnet_broadcast: 'false',
     ipv4_dhcp_smart_relay:            'false',
     ipv6_dhcp_relay_src_intf:         'false',
+    pim_bfd:                          'false',
     mtu:                              operating_system == 'nexus' ? '1500' : '1514',
     shutdown:                         'false',
   },
@@ -117,6 +119,7 @@ tests[:non_default] = {
     ipv4_dhcp_smart_relay:            'true',
     ipv6_dhcp_relay_addr:             v6_relay,
     ipv6_dhcp_relay_src_intf:         'ethernet1/1',
+    pim_bfd:                          true,
     switchport_mode:                  'disabled',
     vrf:                              'test1',
   },
@@ -170,10 +173,11 @@ def unsupported_properties(_tests, id)
       :ipv4_dhcp_smart_relay <<
       :ipv6_dhcp_relay_addr <<
       :ipv6_dhcp_relay_src_intf <<
+      :pim_bfd <<
       :switchport_mode
   end
 
-  if platform[/n(3|8|9)k/]
+  if platform[/n(3|9)k/]
     unprops <<
       :ipv4_dhcp_relay_src_addr_hsrp
   elsif platform[/n(5|6)k/]

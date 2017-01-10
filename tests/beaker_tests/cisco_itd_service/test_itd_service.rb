@@ -25,11 +25,13 @@
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 # Test hash top-level keys
+# The platform: key below must use an end of string anchor '$' in order to
+# distinguish between 'n9k' and 'n9k-f' platform flavors.
 tests = {
   master:        master,
   agent:         agent,
   intf_type:     'ethernet',
-  platform:      'n(7|9)k',
+  platform:      'n(7|9)k$',
   resource_name: 'cisco_itd_service',
 }
 

@@ -33,6 +33,7 @@ Puppet::Type.type(:cisco_pim).provide(:cisco) do
   ]
 
   PIM_BOOL_PROPS = [
+    :bfd
   ]
 
   PIM_ALL_PROPS = PIM_NON_BOOL_PROPS + PIM_BOOL_PROPS
@@ -61,6 +62,14 @@ Puppet::Type.type(:cisco_pim).provide(:cisco) do
     # Call node_utils getter for each property
     PIM_NON_BOOL_PROPS.each do |prop|
       current_state[prop] = nu_obj.send(prop)
+    end
+    PIM_BOOL_PROPS.each do |prop|
+      val = nu_obj.send(prop)
+      if val.nil?
+        current_state[prop] = nil
+      else
+        current_state[prop] = val ? :true : :false
+      end
     end
     new(current_state)
   end # self.properties_get

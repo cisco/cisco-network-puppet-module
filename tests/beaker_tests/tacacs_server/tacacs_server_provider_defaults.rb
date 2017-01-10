@@ -81,18 +81,18 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = PUPPET_BINPATH + 'resource tacacs_server 8.8.8.8'
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, { 'ensure' => 'present' },
-                               false, self, logger)
-      search_pattern_in_output(stdout, { 'key' => '44444444' },
-                               false, self, logger)
-      search_pattern_in_output(stdout, { 'key_format' => '7' },
-                               false, self, logger)
-      search_pattern_in_output(stdout, { 'port' => '48' },
-                               false, self, logger)
-      search_pattern_in_output(stdout, { 'timeout' => '2' },
-                               false, self, logger)
-    end
+    on(agent, cmd_str)
+    output = stdout
+    search_pattern_in_output(output, { 'ensure' => 'present' },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'key' => add_quotes('44444444') },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'key_format' => '7' },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'port' => '48' },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'timeout' => '2' },
+                             false, self, logger)
 
     logger.info("Check tacacs_server resource presence on agent :: #{result}")
   end
@@ -114,18 +114,18 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = PUPPET_BINPATH + 'resource tacacs_server 8.8.8.8'
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, { 'ensure' => 'present' },
-                               false, self, logger)
-      search_pattern_in_output(stdout, { 'key' => '44444444' },
-                               false, self, logger)
-      search_pattern_in_output(stdout, { 'key_format' => '7' },
-                               false, self, logger)
-      search_pattern_in_output(stdout, { 'port' => '47' },
-                               false, self, logger)
-      search_pattern_in_output(stdout, { 'timeout' => '3' },
-                               false, self, logger)
-    end
+    on(agent, cmd_str)
+    output = stdout
+    search_pattern_in_output(output, { 'ensure' => 'present' },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'key' => add_quotes('44444444') },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'key_format' => '7' },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'port' => '47' },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'timeout' => '3' },
+                             false, self, logger)
 
     logger.info("Check tacacs_server resource presence on agent :: #{result}")
   end
@@ -172,18 +172,18 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = PUPPET_BINPATH + 'resource tacacs_server 2020::20'
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, { 'ensure' => 'present' },
-                               false, self, logger)
-      search_pattern_in_output(stdout, { 'key' => '44444444' },
-                               false, self, logger)
-      search_pattern_in_output(stdout, { 'key_format' => '7' },
-                               false, self, logger)
-      search_pattern_in_output(stdout, { 'port' => '48' },
-                               false, self, logger)
-      search_pattern_in_output(stdout, { 'timeout' => '2' },
-                               false, self, logger)
-    end
+    on(agent, cmd_str)
+    output = stdout
+    search_pattern_in_output(output, { 'ensure' => 'present' },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'key' => add_quotes('44444444') },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'key_format' => '7' },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'port' => '48' },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'timeout' => '2' },
+                             false, self, logger)
 
     logger.info("Check tacacs_server resource presence on agent :: #{result}")
   end

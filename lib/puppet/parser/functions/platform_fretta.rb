@@ -1,4 +1,7 @@
-# Manifest to demo radius providers
+#
+# Cisco platform_fretta puppet manifest function.
+#
+# November 2016, Michael G Wiebe
 #
 # Copyright (c) 2016 Cisco and/or its affiliates.
 #
@@ -14,26 +17,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet::cisco::demo_pim {
+module Puppet
+  module Parser
+    # Function platform_fretta.
+    # Searches facter os.release.full and returns true if the
+    # version matches the fretta image version.
+    #
+    module Functions
+      newfunction(:platform_fretta, type: :rvalue) do |_args|
+        data = lookupvar('os')
+        return '' if data.nil?
 
-    cisco_pim { 'ipv4' :
-      ensure         => present,
-      vrf            => 'default',
-      ssm_range      => '224.0.0.0/8 225.0.0.0/8',
-      bfd            => true
-    }
-
-    cisco_pim_rp_address { 'ipv4' :
-      ensure          => present,
-      vrf             => 'default',
-      rp_addr         => '1.1.1.1'
-    }
-
-    cisco_pim_grouplist { 'ipv4' :
-      ensure          => present,
-      vrf             => 'default',
-      rp_addr         => '11.11.11.11',
-      group           => '224.0.0.0/8',
-    }
-
-}
+        pat = '7.0\(3\)F'
+        data['release']['full'].match(pat) ? true : false
+      end
+    end
+  end
+end
