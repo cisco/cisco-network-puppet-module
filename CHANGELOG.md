@@ -24,9 +24,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 * Added support for Cisco NX-OS software releases `7.3(0)F1(1)` and `8.0(1)`
 
-### Changed
-
-### Removed
+### Resolved Issues
+* https://github.com/cisco/cisco-network-puppet-module/issues/408
 
 ## [1.4.1] - 2016-11-02
 
