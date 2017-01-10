@@ -388,6 +388,106 @@ Puppet::Type.type(:cisco_route_map).provide(:cisco) do
     end
   end
 
+  def set_metric_set
+    pf = @property_flush[:set_metric_additive]
+    plus = PuppetX::Cisco::Utils.flush_boolean?(pf) ? pf : @nu.set_metric_additive
+    bw = @property_flush[:set_metric_bandwidth] ? @property_flush[:set_metric_bandwidth] : @nu.set_metric_bandwidth
+    del = @property_flush[:set_metric_delay] ? @property_flush[:set_metric_delay] : @nu.set_metric_delay
+    rel = @property_flush[:set_metric_reliability] ? @property_flush[:set_metric_reliability] : @nu.set_metric_reliability
+    pf = @property_flush[:set_metric_effective_bandwidth]
+    ebw = pf ? pf : @nu.set_metric_effective_bandwidth
+    mtu = @property_flush[:set_metric_mtu] ? @property_flush[:set_metric_mtu] : @nu.set_metric_mtu
+    @nu.set_metric_set(plus, bw, del, rel, ebw, mtu)
+  end
+
+  def set_dampening_set
+    hl = @property_flush[:set_dampening_half_life] ? @property_flush[:set_dampening_half_life] : @nu.set_dampening_half_life
+    md = @property_flush[:set_dampening_max_duation] ? @property_flush[:set_dampening_max_duation] : @nu.set_dampening_max_duation
+    re = @property_flush[:set_dampening_reuse] ? @property_flush[:set_dampening_reuse] : @nu.set_dampening_reuse
+    sup = @property_flush[:set_dampening_suppress] ? @property_flush[:set_dampening_suppress] : @nu.set_dampening_suppress
+    @nu.set_dampening_set(hl, re, sup, md)
+  end
+
+  def set_distance_set
+    igp = @property_flush[:set_distance_igp_ebgp] ? @property_flush[:set_distance_igp_ebgp] : @nu.set_distance_igp_ebgp
+    int = @property_flush[:set_distance_internal] ? @property_flush[:set_distance_internal] : @nu.set_distance_internal
+    loc = @property_flush[:set_distance_local] ? @property_flush[:set_distance_local] : @nu.set_distance_local
+    @nu.set_distance_set(igp, int, loc)
+  end
+
+  def set_ipv4_default_next_hop_set
+    nh = @property_flush[:set_ipv4_default_next_hop] ? @property_flush[:set_ipv4_default_next_hop] : @nu.set_ipv4_default_next_hop
+    pf = @property_flush[:set_ipv4_default_next_hop_load_share]
+    ls = PuppetX::Cisco::Utils.flush_boolean?(pf) ? pf : @nu.set_ipv4_default_next_hop_load_share
+    @nu.set_ipv4_default_next_hop_set(nh, ls)
+  end
+
+  def set_ipv4_next_hop_set
+    nh = @property_flush[:set_ipv4_next_hop] ? @property_flush[:set_ipv4_next_hop] : @nu.set_ipv4_next_hop
+    pf = @property_flush[:set_ipv4_next_hop_load_share]
+    ls = PuppetX::Cisco::Utils.flush_boolean?(pf) ? pf : @nu.set_ipv4_next_hop_load_share
+    @nu.set_ipv4_next_hop_set(nh, ls)
+  end
+
+  def set_ipv6_default_next_hop_set
+    nh = @property_flush[:set_ipv6_default_next_hop] ? @property_flush[:set_ipv6_default_next_hop] : @nu.set_ipv6_default_next_hop
+    pf = @property_flush[:set_ipv6_default_next_hop_load_share]
+    ls = PuppetX::Cisco::Utils.flush_boolean?(pf) ? pf : @nu.set_ipv6_default_next_hop_load_share
+    @nu.set_ipv6_default_next_hop_set(nh, ls)
+  end
+
+  def set_ipv6_next_hop_set
+    nh = @property_flush[:set_ipv6_next_hop] ? @property_flush[:set_ipv6_next_hop] : @nu.set_ipv6_next_hop
+    pf = @property_flush[:set_ipv6_next_hop_load_share]
+    ls = PuppetX::Cisco::Utils.flush_boolean?(pf) ? pf : @nu.set_ipv6_next_hop_load_share
+    @nu.set_ipv6_next_hop_set(nh, ls)
+  end
+
+  def set_community_set
+    pf = @property_flush[:set_community_none]
+    none = PuppetX::Cisco::Utils.flush_boolean?(pf) ? pf : @nu.set_community_none
+    pf = @property_flush[:set_community_no_advtertise]
+    noadv = PuppetX::Cisco::Utils.flush_boolean?(pf) ? pf : @nu.set_community_no_advtertise
+    pf = @property_flush[:set_community_no_export]
+    noexp = PuppetX::Cisco::Utils.flush_boolean?(pf) ? pf : @nu.set_community_no_export
+    pf = @property_flush[:set_community_additive]
+    add = PuppetX::Cisco::Utils.flush_boolean?(pf) ? pf : @nu.set_community_additive
+    pf = @property_flush[:set_community_local_as]
+    local = PuppetX::Cisco::Utils.flush_boolean?(pf) ? pf : @nu.set_community_local_as
+    pf = @property_flush[:set_community_internet]
+    inter = PuppetX::Cisco::Utils.flush_boolean?(pf) ? pf : @nu.set_community_internet
+    asn = @property_flush[:set_community_asn] ? @property_flush[:set_community_asn] : @nu.set_community_asn
+    @nu.set_community_set(none, noadv, noexp, add, local, inter, asn)
+  end
+
+  def set_extcommunity_4bytes_set
+    pf = @property_flush[:set_extcommunity_4bytes_none]
+    none = PuppetX::Cisco::Utils.flush_boolean?(pf) ? pf : @nu.set_extcommunity_4bytes_none
+    pf = @property_flush[:set_extcommunity_4bytes_transitive]
+    tr = pf ? pf : @nu.set_extcommunity_4bytes_transitive
+    pf = @property_flush[:set_extcommunity_4bytes_non_transitive]
+    ntr = pf ? pf : @nu.set_extcommunity_4bytes_non_transitive
+    pf = @property_flush[:set_extcommunity_4bytes_additive]
+    add = PuppetX::Cisco::Utils.flush_boolean?(pf) ? pf : @nu.set_extcommunity_4bytes_additive
+    @nu.set_extcommunity_4bytes_set(none, tr, ntr, add)
+  end
+
+  def set_extcommunity_rt_set
+    pf = @property_flush[:set_extcommunity_rt_asn]
+    asn = pf ? pf : @nu.set_extcommunity_rt_asn
+    pf = @property_flush[:set_extcommunity_rt_additive]
+    add = PuppetX::Cisco::Utils.flush_boolean?(pf) ? pf : @nu.set_extcommunity_rt_additive
+    @nu.set_extcommunity_rt_set(asn, add)
+  end
+
+  def set_extcommunity_cost_set
+    pf = @property_flush[:set_extcommunity_cost_igp]
+    igp = pf ? pf : @nu.set_extcommunity_cost_igp
+    pf = @property_flush[:set_extcommunity_cost_pre_bestpath]
+    pre = pf ? pf : @nu.set_extcommunity_cost_pre_bestpath
+    @nu.set_extcommunity_cost_set(igp, pre)
+  end
+
   def flush
     if @property_flush[:ensure] == :absent
       @nu.destroy
