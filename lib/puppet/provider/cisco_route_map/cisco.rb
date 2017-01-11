@@ -192,12 +192,12 @@ Puppet::Type.type(:cisco_route_map).provide(:cisco) do
   end
 
   def self.properties_get(rmname, sequence, action, nu_obj)
-    debug "Checking hsrp group instance, #{interface} #{sequence} #{action}"
+    debug "Checking route map instance, #{rmname} #{sequence} #{action}"
     current_state = {
       name:     "#{rmname} #{sequence} #{action}",
       rmname:   rmname,
       sequence: sequence,
-      iptype:   action,
+      action:   action,
       ensure:   :present,
     }
 
