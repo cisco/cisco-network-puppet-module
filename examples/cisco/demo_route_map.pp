@@ -62,7 +62,7 @@ class ciscopuppet::cisco::demo_route_map {
   }
 
   $match_length = platform_get() ? {
-    /(n5k|n6k|n7k)/ => [45, 345],
+    /(n5k|n6k|n7k)/ => ['45', '345'],
     default => undef
   }
 
@@ -92,8 +92,20 @@ class ciscopuppet::cisco::demo_route_map {
     default => true
   }
 
-  cisco_route_map {'MyRouteMap1 123 permit':
+  $set_ipv6_next_hop_redist = platform_get() ? {
+    /(n3k|n9k$)/ => $facts['cisco']['images']['system_image'] ? {
+      /(I2|I3|I4)/ => undef,
+      default => true
+    },
+    default => true
+  }
 
+  $set_vrf = platform_get() ? {
+    'n7k' => 'igp',
+    default => undef
+  }
+
+  cisco_route_map {'MyRouteMap1 123 permit':
     ensure                                 => 'present',
     description                            => 'Testing',
     match_as_number                        => ['3', '22-34', '38', '101-110'],
@@ -174,14 +186,11 @@ class ciscopuppet::cisco::demo_route_map {
     set_forwarding_addr                    => true,
     set_ipv4_next_hop                      => ['3.3.3.3', '4.4.4.4'],
     set_ipv4_next_hop_load_share           => true,
-#    set_ipv4_next_hop_redist               => $set_ipv4_next_hop_redist,
+    set_ipv4_next_hop_redist               => $set_ipv4_next_hop_redist,
     set_ipv4_precedence                    => 'critical',
     set_ipv4_prefix                        => 'abcdef',
     set_ipv6_next_hop                      => ['2000::1', '2000::11', '2000::22'],
     set_ipv6_next_hop_load_share           => true,
-#    set_ipv6_next_hop_peer_addr            => true,
-#    set_ipv6_next_hop_redist               => true,
-#    set_ipv6_next_hop_unchanged            => true,
     set_ipv6_prefix                        => 'wxyz',
     set_level                              => 'level-1',
     set_local_preference                   => 100,
@@ -196,7 +205,7 @@ class ciscopuppet::cisco::demo_route_map {
     set_origin                             => 'egp',
     set_path_selection                     => true,
     set_tag                                => 101,
-#    set_vrf                                => 'igp',
+    set_vrf                                => $set_vrf,
     set_weight                             => 222,
   }
 
@@ -217,18 +226,27 @@ class ciscopuppet::cisco::demo_route_map {
     match_ipv6_multicast_rp_type                => 'Bidir',
     set_community_none                          => true,
     set_extcommunity_4bytes_none                => true,
-#    set_interface                               => 'Null0',
     set_ipv4_default_next_hop                   => ['1.1.1.1', '2.2.2.2'],
     set_ipv4_default_next_hop_load_share        => true,
     set_ipv4_next_hop_peer_addr                 => true,
-#    set_ipv4_next_hop_unchanged                 => true,
-#    set_ipv6_default_next_hop                   => ['2000::1', '2000::11', '2000::22'],
-#    set_ipv6_default_next_hop_load_share        => true,
     set_ipv6_precedence                         => 'critical',
     set_level                                   => 'level-1-2',
     set_metric_additive                         => true,
     set_metric_bandwidth                        => 33,
     set_metric_type                             => 'type-2',
     set_origin                                  => 'incomplete',
+  }
+
+  cisco_route_map {'MyRouteMap3 159 deny':
+    set_ipv6_default_next_hop                   => ['2000::1', '2000::11', '2000::22'],
+    set_ipv6_default_next_hop_load_share        => true,
+    set_ipv6_next_hop_peer_addr                 => true,
+  }
+
+  cisco_route_map {'MyRouteMap4 200 permit':
+    set_interface                               => 'Null0',
+    set_ipv6_next_hop_redist                    => $set_ipv6_next_hop_redist,
+    set_ipv6_next_hop_unchanged                 => true,
+    set_ipv4_next_hop_unchanged                 => true,
   }
 }
