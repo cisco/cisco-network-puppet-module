@@ -274,18 +274,15 @@ Puppet::Type.type(:cisco_route_map).provide(:cisco) do
     match_ipv6_multicast_set
     match_ip_addr_access_list
     match_route_type_set
-    set_metric_set
     set_dampening_set
     set_distance_set
-    set_ipv4_default_next_hop_set
-    set_ipv4_next_hop_set
-    set_ipv6_default_next_hop_set
-    set_ipv6_next_hop_set
     set_community_set
     set_extcommunity_4bytes_set
     set_extcommunity_rt_set
     set_extcommunity_cost_set
+    set_ip_next_hop_set
     set_ip_precedence
+    set_metric_set
   end
 
   def match_ip_addr_access_list
@@ -504,6 +501,62 @@ Puppet::Type.type(:cisco_route_map).provide(:cisco) do
     pf = @property_flush[:set_extcommunity_cost_pre_bestpath]
     pre = pf ? pf : @nu.set_extcommunity_cost_pre_bestpath
     @nu.set_extcommunity_cost_set(igp, pre)
+  end
+
+  def legacy_image?
+    fd = Facter.value('cisco')
+    image = fd['images']['system_image']
+    image[/7.0.3.I2|I3|I4/]
+  end
+
+  def v4_ip_next_hop(attrs)
+    pf = @property_flush[:set_ipv4_default_next_hop]
+    attrs[:v4dnh] = pf ? pf : @nu.set_ipv4_default_next_hop
+    pf = @property_flush[:set_ipv4_default_next_hop_load_share]
+    attrs[:v4dls] = PuppetX::Cisco::Utils.flush_boolean?(pf) ? pf : @nu.set_ipv4_default_next_hop_load_share
+    pf = @property_flush[:set_ipv4_next_hop]
+    attrs[:v4nh] = pf ? pf : @nu.set_ipv4_next_hop
+    pf = @property_flush[:set_ipv4_next_hop_load_share]
+    attrs[:v4ls] = PuppetX::Cisco::Utils.flush_boolean?(pf) ? pf : @nu.set_ipv4_next_hop_load_share
+    pf = @property_flush[:set_ipv4_next_hop_peer_addr]
+    attrs[:v4peer] = PuppetX::Cisco::Utils.flush_boolean?(pf) ? pf : @nu.set_ipv4_next_hop_peer_addr
+    pf = @property_flush[:set_ipv4_next_hop_redist]
+    if legacy_image?
+      attrs[:v4red] = nil
+    else
+      attrs[:v4red] = PuppetX::Cisco::Utils.flush_boolean?(pf) ? pf : @nu.set_ipv4_next_hop_redist
+    end
+    pf = @property_flush[:set_ipv4_next_hop_unchanged]
+    attrs[:v4unc] = PuppetX::Cisco::Utils.flush_boolean?(pf) ? pf : @nu.set_ipv4_next_hop_unchanged
+  end
+
+  def v6_ip_next_hop(attrs)
+    pf = @property_flush[:set_ipv6_default_next_hop]
+    attrs[:v6dnh] = pf ? pf : @nu.set_ipv6_default_next_hop
+    pf = @property_flush[:set_ipv6_default_next_hop_load_share]
+    attrs[:v6dls] = PuppetX::Cisco::Utils.flush_boolean?(pf) ? pf : @nu.set_ipv6_default_next_hop_load_share
+    pf = @property_flush[:set_ipv6_next_hop]
+    attrs[:v6nh] = pf ? pf : @nu.set_ipv6_next_hop
+    pf = @property_flush[:set_ipv6_next_hop_load_share]
+    attrs[:v6ls] = PuppetX::Cisco::Utils.flush_boolean?(pf) ? pf : @nu.set_ipv6_next_hop_load_share
+    pf = @property_flush[:set_ipv6_next_hop_peer_addr]
+    attrs[:v6peer] = PuppetX::Cisco::Utils.flush_boolean?(pf) ? pf : @nu.set_ipv6_next_hop_peer_addr
+    pf = @property_flush[:set_ipv6_next_hop_redist]
+    if legacy_image?
+      attrs[:v4red] = nil
+    else
+      attrs[:v6red] = PuppetX::Cisco::Utils.flush_boolean?(pf) ? pf : @nu.set_ipv6_next_hop_redist
+    end
+    pf = @property_flush[:set_ipv6_next_hop_unchanged]
+    attrs[:v6unc] = PuppetX::Cisco::Utils.flush_boolean?(pf) ? pf : @nu.set_ipv6_next_hop_unchanged
+  end
+
+  def set_ip_next_hop_set
+    attrs = {}
+    attrs[:intf] = @property_flush[:set_interface] ? @property_flush[:set_interface] : @nu.set_interface
+    v4_ip_next_hop(attrs)
+    v6_ip_next_hop(attrs)
+    @nu.set_ip_next_hop_set(attrs)
   end
 
   def flush
