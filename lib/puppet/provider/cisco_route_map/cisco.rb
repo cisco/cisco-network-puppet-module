@@ -167,10 +167,10 @@ Puppet::Type.type(:cisco_route_map).provide(:cisco) do
     :set_extcommunity_cost_pre_bestpath,
   ]
 
-  ROUTE_MAP_ALL_PROPS =  ROUTE_MAP_BOOL_PROPS +
-                         ROUTE_MAP_NON_BOOL_PROPS +
+  ROUTE_MAP_ALL_PROPS =  ROUTE_MAP_NON_BOOL_PROPS +
                          ROUTE_MAP_ARRAY_FLAT_PROPS +
-                         ROUTE_MAP_ARRAY_NESTED_PROPS
+                         ROUTE_MAP_ARRAY_NESTED_PROPS +
+                         ROUTE_MAP_BOOL_PROPS
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@nu',
                                             ROUTE_MAP_BOOL_PROPS)
@@ -272,6 +272,7 @@ Puppet::Type.type(:cisco_route_map).provide(:cisco) do
     match_ext_community_set
     match_ipv4_multicast_set
     match_ipv6_multicast_set
+    match_ip_addr_access_list
     match_route_type_set
     set_metric_set
     set_dampening_set
@@ -284,6 +285,15 @@ Puppet::Type.type(:cisco_route_map).provide(:cisco) do
     set_extcommunity_4bytes_set
     set_extcommunity_rt_set
     set_extcommunity_cost_set
+    set_ip_precedence
+  end
+
+  def match_ip_addr_access_list
+    pf = @property_flush[:match_ipv4_addr_access_list]
+    v4 = pf.nil? ? @nu.match_ipv4_addr_access_list : pf
+    pf = @property_flush[:match_ipv6_addr_access_list]
+    v6 = pf.nil? ? @nu.match_ipv6_addr_access_list : pf
+    @nu.match_ip_addr_access_list(v4, v6)
   end
 
   def match_community_set
@@ -388,30 +398,38 @@ Puppet::Type.type(:cisco_route_map).provide(:cisco) do
     end
   end
 
+  def set_ip_precedence
+    pf = @property_flush[:set_ipv4_precedence]
+    v4 = pf.nil? ? @nu.set_ipv4_precedence : pf
+    pf = @property_flush[:set_ipv6_precedence]
+    v6 = pf.nil? ? @nu.set_ipv6_precedence : pf
+    @nu.set_ip_precedence(v4, v6)
+  end
+
   def set_metric_set
     pf = @property_flush[:set_metric_additive]
     plus = PuppetX::Cisco::Utils.flush_boolean?(pf) ? pf : @nu.set_metric_additive
-    bw = @property_flush[:set_metric_bandwidth] ? @property_flush[:set_metric_bandwidth] : @nu.set_metric_bandwidth
-    del = @property_flush[:set_metric_delay] ? @property_flush[:set_metric_delay] : @nu.set_metric_delay
-    rel = @property_flush[:set_metric_reliability] ? @property_flush[:set_metric_reliability] : @nu.set_metric_reliability
+    bw = @property_flush[:set_metric_bandwidth].nil? ? @nu.set_metric_bandwidth : @property_flush[:set_metric_bandwidth]
+    del = @property_flush[:set_metric_delay].nil? ? @nu.set_metric_delay : @property_flush[:set_metric_delay]
+    rel = @property_flush[:set_metric_reliability].nil? ? @nu.set_metric_reliability : @property_flush[:set_metric_reliability]
     pf = @property_flush[:set_metric_effective_bandwidth]
-    ebw = pf ? pf : @nu.set_metric_effective_bandwidth
-    mtu = @property_flush[:set_metric_mtu] ? @property_flush[:set_metric_mtu] : @nu.set_metric_mtu
+    ebw = pf.nil? ? @nu.set_metric_effective_bandwidth : pf
+    mtu = @property_flush[:set_metric_mtu].nil? ? @nu.set_metric_mtu : @property_flush[:set_metric_mtu]
     @nu.set_metric_set(plus, bw, del, rel, ebw, mtu)
   end
 
   def set_dampening_set
-    hl = @property_flush[:set_dampening_half_life] ? @property_flush[:set_dampening_half_life] : @nu.set_dampening_half_life
-    md = @property_flush[:set_dampening_max_duation] ? @property_flush[:set_dampening_max_duation] : @nu.set_dampening_max_duation
-    re = @property_flush[:set_dampening_reuse] ? @property_flush[:set_dampening_reuse] : @nu.set_dampening_reuse
-    sup = @property_flush[:set_dampening_suppress] ? @property_flush[:set_dampening_suppress] : @nu.set_dampening_suppress
+    hl = @property_flush[:set_dampening_half_life].nil? ? @nu.set_dampening_half_life : @property_flush[:set_dampening_half_life]
+    md = @property_flush[:set_dampening_max_duation].nil? ? @nu.set_dampening_max_duation : @property_flush[:set_dampening_max_duation]
+    re = @property_flush[:set_dampening_reuse].nil? ? @nu.set_dampening_reuse : @property_flush[:set_dampening_reuse]
+    sup = @property_flush[:set_dampening_suppress].nil? ? @nu.set_dampening_suppress : @property_flush[:set_dampening_suppress]
     @nu.set_dampening_set(hl, re, sup, md)
   end
 
   def set_distance_set
-    igp = @property_flush[:set_distance_igp_ebgp] ? @property_flush[:set_distance_igp_ebgp] : @nu.set_distance_igp_ebgp
-    int = @property_flush[:set_distance_internal] ? @property_flush[:set_distance_internal] : @nu.set_distance_internal
-    loc = @property_flush[:set_distance_local] ? @property_flush[:set_distance_local] : @nu.set_distance_local
+    igp = @property_flush[:set_distance_igp_ebgp].nil? ? @nu.set_distance_igp_ebgp : @property_flush[:set_distance_igp_ebgp]
+    int = @property_flush[:set_distance_internal].nil? ? @nu.set_distance_internal : @property_flush[:set_distance_internal]
+    loc = @property_flush[:set_distance_local].nil? ? @nu.set_distance_local : @property_flush[:set_distance_local]
     @nu.set_distance_set(igp, int, loc)
   end
 
