@@ -84,6 +84,36 @@ class ciscopuppet::cisco::demo_route_map {
     default => undef
   }
 
+  $set_ipv4_default_next_hop = platform_get() ? {
+    /(n3k|n7k)/ => ['1.1.1.1', '2.2.2.2'],
+    default => undef
+  }
+
+  $set_ipv4_default_next_hop_load_share = platform_get() ? {
+    /(n3k|n7k)/ => true,
+    default => undef
+  }
+
+  $set_ipv4_next_hop_load_share = platform_get() ? {
+    /(n3k|n7k|n9k)/ => true,
+    default => undef
+  }
+
+  $set_ipv4_prefix = platform_get() ? {
+    /(n3k|n7k|n9k)/ => 'abcdef',
+    default => undef
+  }
+
+  $set_ipv6_default_next_hop = platform_get() ? {
+    /(n3k|n7k)/ => ['2000::1', '2000::11', '2000::22'],
+    default => undef
+  }
+
+  $set_ipv6_default_next_hop_load_share = platform_get() ? {
+    /(n3k|n7k)/ => true,
+    default => undef
+  }
+
   $set_ipv4_next_hop_redist = platform_get() ? {
     /(n3k|n9k$)/ => $facts['cisco']['images']['system_image'] ? {
       /(I2|I3|I4)/ => undef,
@@ -98,6 +128,16 @@ class ciscopuppet::cisco::demo_route_map {
       default => true
     },
     default => true
+  }
+
+  $set_ipv6_next_hop_load_share = platform_get() ? {
+    /(n3k|n7k|n9k)/ => true,
+    default => undef
+  }
+
+  $set_ipv6_prefix = platform_get() ? {
+    /(n3k|n7k|n9k)/ => 'wxyz',
+    default => undef
   }
 
   $set_vrf = platform_get() ? {
@@ -134,7 +174,6 @@ class ciscopuppet::cisco::demo_route_map {
     match_ipv4_multicast_rp_type           => 'ASM',
     match_ipv4_next_hop_prefix_list        => ['nh5', 'nh1', 'nh42'],
     match_ipv4_route_src_prefix_list       => ['rs2', 'rs22', 'pre15'],
-    match_ipv6_addr_prefix_list            => ['pv6', 'pv67', 'prev6'],
     match_ipv6_multicast_enable            => true,
     match_ipv6_multicast_src_addr          => '2001::348:0:0/96',
     match_ipv6_multicast_group_addr        => 'ff0e::2:101:0:0/96',
@@ -186,13 +225,12 @@ class ciscopuppet::cisco::demo_route_map {
     set_extcommunity_rt_asn                => ['11:22', '33:44', '12.22.22.22:12', '123.256:543'],
     set_forwarding_addr                    => true,
     set_ipv4_next_hop                      => ['3.3.3.3', '4.4.4.4'],
-    set_ipv4_next_hop_load_share           => true,
-    set_ipv4_next_hop_redist               => $set_ipv4_next_hop_redist,
+    set_ipv4_next_hop_load_share           => $set_ipv4_next_hop_load_share,
     set_ipv4_precedence                    => 'critical',
-    set_ipv4_prefix                        => 'abcdef',
+    set_ipv4_prefix                        => $set_ipv4_prefix,
     set_ipv6_next_hop                      => ['2000::1', '2000::11', '2000::22'],
-    set_ipv6_next_hop_load_share           => true,
-    set_ipv6_prefix                        => 'wxyz',
+    set_ipv6_next_hop_load_share           => $set_ipv6_next_hop_load_share,
+    set_ipv6_prefix                        => $set_ipv6_prefix,
     set_level                              => 'level-1',
     set_local_preference                   => 100,
     set_metric_additive                    => false,
@@ -212,6 +250,7 @@ class ciscopuppet::cisco::demo_route_map {
 
   cisco_route_map {'MyRouteMap2 149 deny':
     ensure                                      => 'present',
+    match_ipv6_addr_prefix_list                 => ['pv6', 'pv67', 'prev6'],
     match_ipv4_multicast_enable                 => true,
     match_ipv4_multicast_src_addr               => '242.1.1.1/32',
     match_ipv4_multicast_group_range_begin_addr => '239.1.1.1',
@@ -227,8 +266,8 @@ class ciscopuppet::cisco::demo_route_map {
     match_ipv6_multicast_rp_type                => 'Bidir',
     set_community_none                          => true,
     set_extcommunity_4bytes_none                => true,
-    set_ipv4_default_next_hop                   => ['1.1.1.1', '2.2.2.2'],
-    set_ipv4_default_next_hop_load_share        => true,
+    set_ipv4_default_next_hop                   => $set_ipv4_default_next_hop,
+    set_ipv4_default_next_hop_load_share        => $set_ipv4_default_next_hop_load_share,
     set_ipv4_next_hop_peer_addr                 => true,
     set_ipv6_precedence                         => 'flash',
     set_level                                   => 'level-1-2',
@@ -239,13 +278,14 @@ class ciscopuppet::cisco::demo_route_map {
   }
 
   cisco_route_map {'MyRouteMap3 159 deny':
-    set_ipv6_default_next_hop                   => ['2000::1', '2000::11', '2000::22'],
-    set_ipv6_default_next_hop_load_share        => true,
+    set_ipv6_default_next_hop                   => $set_ipv6_default_next_hop,
+    set_ipv6_default_next_hop_load_share        => $set_ipv6_default_next_hop_load_share,
     set_ipv6_next_hop_peer_addr                 => true,
   }
 
   cisco_route_map {'MyRouteMap4 200 permit':
     set_interface                               => 'Null0',
+    set_ipv4_next_hop_redist                    => $set_ipv4_next_hop_redist,
     set_ipv6_next_hop_redist                    => $set_ipv6_next_hop_redist,
     set_ipv6_next_hop_unchanged                 => true,
     set_ipv4_next_hop_unchanged                 => true,
