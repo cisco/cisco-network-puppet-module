@@ -76,7 +76,7 @@ class ciscopuppet::cisco::demo_route_map {
       /(I2|I3|I4)/ => undef,
       default => ['10', '7', '222']
     },
-    default => ['10', '7', '222']
+    default => undef
   }
 
   $match_vlan = platform_get() ? {
@@ -165,7 +165,6 @@ class ciscopuppet::cisco::demo_route_map {
     match_ext_community_exact_match        => true,
     match_interface                        => ['ethernet1/1', 'loopback2', 'mgmt0', 'null0', 'port-channel10'],
     match_ipv4_addr_access_list            => 'access',
-    match_ipv6_addr_access_list            => 'default',
     match_ipv4_addr_prefix_list            => ['p1', 'p7', 'pre5'],
     match_ipv4_multicast_enable            => true,
     match_ipv4_multicast_src_addr          => '242.1.1.1/32',
@@ -181,7 +180,6 @@ class ciscopuppet::cisco::demo_route_map {
     match_ipv6_multicast_rp_type           => 'ASM',
     match_ipv6_next_hop_prefix_list        => ['nhv6', 'v6nh1', 'nhv42'],
     match_ipv6_route_src_prefix_list       => ['rsv6', 'rs22v6', 'prev6'],
-    match_length                           => $match_length,
     match_mac_list                         => $match_mac_list,
     match_metric                           => [['1', '0'], ['8', '0'], ['224', '9'], ['23', '0'], ['5', '8'], ['6', '0']],
     match_ospf_area                        => $match_ospf_area,
@@ -244,7 +242,6 @@ class ciscopuppet::cisco::demo_route_map {
     set_origin                             => 'egp',
     set_path_selection                     => true,
     set_tag                                => 101,
-    set_vrf                                => $set_vrf,
     set_weight                             => 222,
   }
 
@@ -289,5 +286,10 @@ class ciscopuppet::cisco::demo_route_map {
     set_ipv6_next_hop_redist                    => $set_ipv6_next_hop_redist,
     set_ipv6_next_hop_unchanged                 => true,
     set_ipv4_next_hop_unchanged                 => true,
+  }
+
+  cisco_route_map {'MyRouteMap5 199 deny':
+    match_length                                => $match_length,
+    set_vrf                                     => $set_vrf,
   }
 }

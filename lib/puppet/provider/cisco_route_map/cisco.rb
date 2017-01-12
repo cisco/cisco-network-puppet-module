@@ -273,6 +273,7 @@ Puppet::Type.type(:cisco_route_map).provide(:cisco) do
     match_ipv4_multicast_set
     match_ipv6_multicast_set
     match_ip_addr_access_list
+    match_ip_addr_prefix_list
     match_route_type_set
     set_dampening_set
     set_distance_set
@@ -291,6 +292,14 @@ Puppet::Type.type(:cisco_route_map).provide(:cisco) do
     pf = @property_flush[:match_ipv6_addr_access_list]
     v6 = pf.nil? ? @nu.match_ipv6_addr_access_list : pf
     @nu.match_ip_addr_access_list(v4, v6)
+  end
+
+  def match_ip_addr_prefix_list
+    pf = @property_flush[:match_ipv4_addr_prefix_list]
+    v4 = pf.nil? ? @nu.match_ipv4_addr_prefix_list : pf
+    pf = @property_flush[:match_ipv6_addr_prefix_list]
+    v6 = pf.nil? ? @nu.match_ipv6_addr_prefix_list : pf
+    @nu.match_ip_addr_prefix_list(v4, v6)
   end
 
   def match_community_set
