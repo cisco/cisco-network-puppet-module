@@ -29,7 +29,7 @@ Puppet::Type.newtype(:cisco_route_map) do
 
     Examples:
     cisco_route_map {'MyRouteMap1 123 permit':
-      ensure                        => 'present',
+      ensure                                 => 'present',
       description                            => 'Testing',
       match_as_number                        => ['3', '22-34', '38'],
       match_as_number_as_path_list           => ['abc', 'xyz', 'pqr'],
@@ -69,10 +69,10 @@ Puppet::Type.newtype(:cisco_route_map) do
       match_ipv6_multicast_rp_type           => 'ASM',
       match_ipv6_next_hop_prefix_list        => ['nhv6', 'v6nh1', 'nhv42'],
       match_ipv6_route_src_prefix_list       => ['rsv6', 'rs22v6', 'prev6'],
-      match_length                           => [45, 345],
+      match_length                           => ['45', '345'],
       match_mac_list                         => ['mac1', 'listmac'],
-      match_metric                           => [[8, 0], [224, 9], [23, 8]]
-      match_ospf_area                        => [10, 7, 222],
+      match_metric                           => [['8', '0'], ['224', '9']]
+      match_ospf_area                        => ['10', '7', '222'],
       match_route_type_external              => true,
       match_route_type_inter_area            => true,
       match_route_type_internal              => true,
@@ -83,7 +83,7 @@ Puppet::Type.newtype(:cisco_route_map) do
       match_route_type_type_1                => true,
       match_route_type_type_2                => true,
       match_src_proto                        => ['tcp', 'udp', 'igmp'],
-      match_tag                              => [5, 342, 28, 3221],
+      match_tag                              => ['5', '342', '28', '3221'],
       match_vlan                             => '32, 45-200, 300-399, 402',
       set_as_path_prepend                    => ['55.77', '12', '45.3'],
       set_as_path_prepend_last_as            => 1,
@@ -971,7 +971,8 @@ Puppet::Type.newtype(:cisco_route_map) do
           keyword 'default'"
 
     munge do |value|
-      value = :default if value == 'default'
+      value = value == 'default' ? :default : PuppetX::Cisco::Utils.range_summarize(value)
+      value = value.gsub(',', ', ')
       value
     end
   end # property match_vlan
