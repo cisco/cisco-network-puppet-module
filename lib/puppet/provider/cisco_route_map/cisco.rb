@@ -104,6 +104,7 @@ Puppet::Type.type(:cisco_route_map).provide(:cisco) do
     :match_route_type_intra_area,
     :match_route_type_level_1,
     :match_route_type_level_2,
+    :match_route_type_local,
     :match_route_type_nssa_external,
     :match_route_type_type_1,
     :match_route_type_type_2,

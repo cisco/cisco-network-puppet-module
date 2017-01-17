@@ -62,7 +62,7 @@ class ciscopuppet::cisco::demo_route_map {
   }
 
   $match_length = platform_get() ? {
-    /(n5k|n6k|n7k)/ => ['45', '345'],
+    /(n5k|n6k|n7k)/ => ['345', '45'],
     default => undef
   }
 
@@ -80,7 +80,7 @@ class ciscopuppet::cisco::demo_route_map {
   }
 
   $match_vlan = platform_get() ? {
-    /(n5k|n6k|n7k)/ => '32, 45-200, 300-399, 402',
+    /(n5k|n6k|n7k)/ => '42-128, 32, 45-200, 300-399, 400-453',
     default => undef
   }
 
@@ -189,6 +189,7 @@ class ciscopuppet::cisco::demo_route_map {
     match_route_type_intra_area            => true,
     match_route_type_level_1               => true,
     match_route_type_level_2               => true,
+    match_route_type_local                 => true,
     match_route_type_nssa_external         => true,
     match_route_type_type_1                => true,
     match_route_type_type_2                => true,
@@ -217,8 +218,8 @@ class ciscopuppet::cisco::demo_route_map {
     set_extcommunity_4bytes_additive       => true,
     set_extcommunity_4bytes_non_transitive => ['21:42', '43:22', '59:17'],
     set_extcommunity_4bytes_transitive     => ['11:22', '33:44', '66:77'],
-    set_extcommunity_cost_igp              => [[0, 23], [3, 33], [100, 10954]],
-    set_extcommunity_cost_pre_bestpath     => [[23, 999], [88, 482], [120, 2323]],
+    set_extcommunity_cost_igp              => [['0', '23'], ['3', '33'], ['100', '10954']],
+    set_extcommunity_cost_pre_bestpath     => [['23', '999'], ['88', '482'], ['120', '2323']],
     set_extcommunity_rt_additive           => true,
     set_extcommunity_rt_asn                => ['11:22', '33:44', '12.22.22.22:12', '123.256:543'],
     set_forwarding_addr                    => true,
@@ -275,12 +276,14 @@ class ciscopuppet::cisco::demo_route_map {
   }
 
   cisco_route_map {'MyRouteMap3 159 deny':
+    ensure                                      => 'present',
     set_ipv6_default_next_hop                   => $set_ipv6_default_next_hop,
     set_ipv6_default_next_hop_load_share        => $set_ipv6_default_next_hop_load_share,
     set_ipv6_next_hop_peer_addr                 => true,
   }
 
   cisco_route_map {'MyRouteMap4 200 permit':
+    ensure                                      => 'present',
     set_interface                               => 'Null0',
     set_ipv4_next_hop_redist                    => $set_ipv4_next_hop_redist,
     set_ipv6_next_hop_redist                    => $set_ipv6_next_hop_redist,
@@ -289,6 +292,7 @@ class ciscopuppet::cisco::demo_route_map {
   }
 
   cisco_route_map {'MyRouteMap5 199 deny':
+    ensure                                      => 'present',
     match_length                                => $match_length,
     set_vrf                                     => $set_vrf,
   }

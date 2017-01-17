@@ -79,6 +79,7 @@ Puppet::Type.newtype(:cisco_route_map) do
       match_route_type_intra_area            => true,
       match_route_type_level_1               => true,
       match_route_type_level_2               => true,
+      match_route_type_local                 => true,
       match_route_type_nssa_external         => true,
       match_route_type_type_1                => true,
       match_route_type_type_2                => true,
