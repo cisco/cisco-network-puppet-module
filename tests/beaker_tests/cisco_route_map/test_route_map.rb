@@ -29,6 +29,7 @@ tests = {
   master:           master,
   agent:            agent,
   operating_system: 'nexus',
+  platform:         'n(3|5|6|7|9)k$',
   resource_name:    'cisco_route_map',
 }
 
@@ -406,29 +407,93 @@ tests[:non_default_5] = {
   },
 }
 
-def unsupported_properties(_tests, _id)
+def unsupp_n3k
+  im = nexus_image
   unprops = []
-  if platform[/n3k/]
-    unprops <<
-      :match_evpn_route_type_1 <<
-      :match_evpn_route_type_2_all <<
-      :match_evpn_route_type_2_mac_ip <<
-      :match_evpn_route_type_2_mac_only <<
-      :match_evpn_route_type_3 <<
-      :match_evpn_route_type_4 <<
-      :match_evpn_route_type_5 <<
-      :match_evpn_route_type_6 <<
-      :match_evpn_route_type_all <<
-      :match_length <<
-      :match_mac_list <<
-      :match_vlan <<
-      :set_vrf
-  end
   unprops <<
+    :match_evpn_route_type_1 <<
+    :match_evpn_route_type_2_all <<
+    :match_evpn_route_type_2_mac_ip <<
+    :match_evpn_route_type_2_mac_only <<
+    :match_evpn_route_type_3 <<
+    :match_evpn_route_type_4 <<
+    :match_evpn_route_type_5 <<
+    :match_evpn_route_type_6 <<
+    :match_evpn_route_type_all <<
+    :match_length <<
+    :match_mac_list <<
+    :match_vlan <<
+    :set_vrf
+  unprops <<
+    :match_ospf_area <<
     :set_ipv4_next_hop_redist <<
-    :set_ipv6_next_hop_redist if nexus_image[/(I2|I3|I4)/]
-  unprops << :match_ospf_area unless nexus_image['I5']
+    :set_ipv6_next_hop_redist if im[/(I2|I3|I4)/]
   unprops
+end
+
+def unsupp_n56k
+  unprops = []
+  unprops <<
+    :match_ospf_area <<
+    :set_ipv4_default_next_hop <<
+    :set_ipv4_default_next_hop_load_share <<
+    :set_ipv4_next_hop_load_share <<
+    :set_ipv4_prefix <<
+    :set_ipv6_default_next_hop <<
+    :set_ipv6_default_next_hop_load_share <<
+    :set_ipv6_next_hop_load_share <<
+    :set_ipv6_prefix <<
+    :set_vrf
+  unprops
+end
+
+def unsupp_n7k
+  unprops = []
+  unprops <<
+    :match_ospf_area
+  unprops
+end
+
+def unsupp_n9k
+  im = nexus_image
+  unprops = []
+  unprops <<
+    :match_evpn_route_type_1 <<
+    :match_evpn_route_type_2_all <<
+    :match_evpn_route_type_2_mac_ip <<
+    :match_evpn_route_type_2_mac_only <<
+    :match_evpn_route_type_3 <<
+    :match_evpn_route_type_4 <<
+    :match_evpn_route_type_5 <<
+    :match_evpn_route_type_6 <<
+    :match_evpn_route_type_all <<
+    :match_length <<
+    :match_mac_list <<
+    :match_ospf_area <<
+    :match_vlan <<
+    :set_ipv4_default_next_hop <<
+    :set_ipv4_default_next_hop_load_share <<
+    :set_ipv6_default_next_hop <<
+    :set_ipv6_default_next_hop_load_share <<
+    :set_vrf
+  unprops <<
+    :match_ospf_area <<
+    :set_ipv4_next_hop_redist <<
+    :set_ipv6_next_hop_redist if im[/(I2|I3|I4)/]
+  unprops << :set_extcommunity_rt_asn if im['I5']
+  unprops
+end
+
+def unsupported_properties(_tests, _id)
+  if platform[/n3k/]
+    unsupp_n3k
+  elsif platform[/n(5|6)k/]
+    unsupp_n56k
+  elsif platform[/n7k/]
+    unsupp_n7k
+  elsif platform[/n9k$/]
+    unsupp_n9k
+  end
 end
 
 def cleanup(agent)

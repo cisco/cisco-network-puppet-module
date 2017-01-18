@@ -973,7 +973,7 @@ Puppet::Type.newtype(:cisco_route_map) do
 
     munge do |value|
       value = value == 'default' ? :default : PuppetX::Cisco::Utils.range_summarize(value)
-      value = value.gsub(',', ', ')
+      value = value.gsub(',', ', ') unless value == :default
       value
     end
   end # property match_vlan
