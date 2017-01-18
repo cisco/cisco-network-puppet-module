@@ -62,7 +62,7 @@ class ciscopuppet::cisco::demo_route_map {
   }
 
   $match_length = platform_get() ? {
-    /(n5k|n6k|n7k)/ => ['345', '45'],
+    /(n5k|n6k|n7k)/ => ['45', '345'],
     default => undef
   }
 
@@ -80,7 +80,7 @@ class ciscopuppet::cisco::demo_route_map {
   }
 
   $match_vlan = platform_get() ? {
-    /(n5k|n6k|n7k)/ => '42-128, 32, 45-200, 300-399, 400-453',
+    /(n5k|n6k|n7k)/ => '32, 45-200, 300-350, 400-453',
     default => undef
   }
 
