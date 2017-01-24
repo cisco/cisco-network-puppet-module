@@ -29,7 +29,6 @@ tests = {
   master:           master,
   agent:            agent,
   operating_system: 'nexus',
-  platform:         'n(3|5|6|7|9)k$',
   resource_name:    'cisco_route_map',
 }
 
@@ -477,10 +476,54 @@ def unsupp_n9k
     :set_ipv6_default_next_hop_load_share <<
     :set_vrf
   unprops <<
+    :set_ipv4_next_hop_load_share <<
+    :set_ipv6_next_hop_load_share <<
     :match_ospf_area <<
     :set_ipv4_next_hop_redist <<
     :set_ipv6_next_hop_redist if im[/(I2|I3|I4)/]
   unprops << :set_extcommunity_rt_asn if im['I5']
+  unprops
+end
+
+def unsupp_n9kf
+  unprops = []
+  unprops <<
+    :match_evpn_route_type_1 <<
+    :match_evpn_route_type_2_all <<
+    :match_evpn_route_type_2_mac_ip <<
+    :match_evpn_route_type_2_mac_only <<
+    :match_evpn_route_type_3 <<
+    :match_evpn_route_type_4 <<
+    :match_evpn_route_type_5 <<
+    :match_evpn_route_type_6 <<
+    :match_evpn_route_type_all <<
+    :match_length <<
+    :match_mac_list <<
+    :match_metric <<
+    :match_ospf_area <<
+    :match_vlan <<
+    :set_extcommunity_4bytes_additive <<
+    :set_extcommunity_4bytes_non_transitive <<
+    :set_extcommunity_4bytes_transitive <<
+    :set_extcommunity_cost_igp <<
+    :set_extcommunity_cost_pre_bestpath <<
+    :set_extcommunity_rt_additive <<
+    :set_extcommunity_rt_asn <<
+    :set_forwarding_addr <<
+    :set_ipv4_default_next_hop <<
+    :set_ipv4_default_next_hop_load_share <<
+    :set_ipv6_default_next_hop <<
+    :set_ipv6_default_next_hop_load_share <<
+    :set_ipv4_next_hop <<
+    :set_ipv4_next_hop_load_share <<
+    :set_ipv4_next_hop_redist <<
+    :set_ipv4_precedence <<
+    :set_ipv4_prefix <<
+    :set_ipv6_next_hop <<
+    :set_ipv6_next_hop_load_share <<
+    :set_ipv4_next_hop_redist <<
+    :set_ipv6_prefix <<
+    :set_vrf
   unprops
 end
 
@@ -493,6 +536,8 @@ def unsupported_properties(_tests, _id)
     unsupp_n7k
   elsif platform[/n9k$/]
     unsupp_n9k
+  elsif platform[/n9k-f/]
+    unsupp_n9kf
   end
 end
 
