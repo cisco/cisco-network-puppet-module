@@ -103,6 +103,7 @@ Puppet::Type.newtype(:cisco_interface_hsrp_group) do
 
   newparam(:interface, namevar: true) do
     desc 'Name of the interface instance. Valid values are string.'
+    munge(&:downcase)
   end # param interface
 
   ##############
