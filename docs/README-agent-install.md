@@ -493,7 +493,7 @@ The `guestshell` environment uses **systemd** for service management. The Puppet
  EnvironmentFile=-/etc/sysconfig/puppet
  EnvironmentFile=-/etc/default/puppet
 -ExecStart=/opt/puppetlabs/puppet/bin/puppet agent $PUPPET_EXTRA_OPTS --no-daemonize
-+ExecStart=/bin/nsenter --net=/var/run/netns/management /opt/puppetlabs/puppet/bin/puppet agent $PUPPET_EXTRA_OPTS --no-daemonize
++ExecStart=/bin/nsenter --net=/var/run/netns/management -- /opt/puppetlabs/puppet/bin/puppet agent $PUPPET_EXTRA_OPTS --no-daemonize
  KillMode=process
 
  [Install]
