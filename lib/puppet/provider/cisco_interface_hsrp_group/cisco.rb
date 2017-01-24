@@ -135,7 +135,7 @@ Puppet::Type.type(:cisco_interface_hsrp_group).provide(:cisco) do
     hg_instances = instances
     resources.keys.each do |id|
       provider = hg_instances.find do |hgi|
-        hgi.interface.to_s == resources[id][:interface].to_s.downcase &&
+        hgi.interface.to_s == resources[id][:interface].to_s &&
         hgi.group.to_s == resources[id][:group].to_s &&
         hgi.iptype.to_s == resources[id][:iptype].to_s
       end
