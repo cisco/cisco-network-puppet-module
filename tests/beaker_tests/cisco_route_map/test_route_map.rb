@@ -468,7 +468,6 @@ def unsupp_n9k
     :match_evpn_route_type_all <<
     :match_length <<
     :match_mac_list <<
-    :match_ospf_area <<
     :match_vlan <<
     :set_ipv4_default_next_hop <<
     :set_ipv4_default_next_hop_load_share <<
@@ -516,12 +515,10 @@ def unsupp_n9kf
     :set_ipv6_default_next_hop_load_share <<
     :set_ipv4_next_hop <<
     :set_ipv4_next_hop_load_share <<
-    :set_ipv4_next_hop_redist <<
     :set_ipv4_precedence <<
     :set_ipv4_prefix <<
     :set_ipv6_next_hop <<
     :set_ipv6_next_hop_load_share <<
-    :set_ipv4_next_hop_redist <<
     :set_ipv6_prefix <<
     :set_vrf
   unprops

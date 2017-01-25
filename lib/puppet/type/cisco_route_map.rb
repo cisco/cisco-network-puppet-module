@@ -825,7 +825,7 @@ Puppet::Type.newtype(:cisco_route_map) do
 
   newproperty(:match_ospf_area, array_matching: :all) do
     format = '[area1, area2]'
-    desc 'Match entries of mac-lists. An array of [area1, area2 and so on]' \
+    desc 'Match entries of ospf area IDs. An array of [area1, area2 and so on]' \
          "Valid values match format #{format}."
 
     # Override puppet's insync method, which checks whether current value is
