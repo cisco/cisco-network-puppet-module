@@ -480,7 +480,8 @@ def unsupp_n9k
     :match_ospf_area <<
     :set_ipv4_next_hop_redist <<
     :set_ipv6_next_hop_redist if im[/(I2|I3|I4)/]
-  unprops << :set_extcommunity_rt_asn if im['I5']
+  unprops << :match_metric if im['I4']
+  unprops << :set_extcommunity_rt_asn if im[/(I4|I5)/]
   unprops
 end
 
