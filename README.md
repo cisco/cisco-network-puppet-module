@@ -3242,7 +3242,7 @@ Manages a Cisco Route Map.
 | N7k      | 7.3(0)D1(1)        | 1.6.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.6.0                  |
 
-#### <a name="cisco_interface-caveats">Caveats</a>
+#### <a name="cisco_route_map-caveats">Caveats</a>
 
 | Property | Caveat Description |
 |:---------|:-------------|
@@ -3258,7 +3258,7 @@ Manages a Cisco Route Map.
 | `match_length`                           | Not supported on N3k,N9k-F,N9k  |
 | `match_mac_list`                         | Not supported on N3k,N9k-F,N9k  |
 | `match_metric`                           | Not supported on N9k-F          |
-| `match_ospf_area`                        | Not supported on N3k,N5k,N6k,N9k-F,N9k <br> Supported in OS Version I5 and later on N3k,N9k  |
+| `match_ospf_area`                        | Not supported on N5k,N6k,N7k,N9k-F <br> Supported in OS version 7.0(3)I5.1 and later on N3k, N9k  |
 | `match_vlan`                             | Not supported on N3k,N9k-F,N9k  |
 | `set_extcommunity_4bytes_additive`       | Not supported on N9k-F          |
 | `set_extcommunity_4bytes_non_transitive` | Not supported on N9k-F          |
@@ -3266,21 +3266,21 @@ Manages a Cisco Route Map.
 | `set_extcommunity_cost_igp`              | Not supported on N9k-F          |
 | `set_extcommunity_cost_pre_bestpath`     | Not supported on N9k-F          |
 | `set_extcommunity_rt_additive`           | Not supported on N9k-F          |
-| `set_extcommunity_rt_asn`                | Not supported on N9k-F <br> Supported in OS Version I4 and before on N9k |
+| `set_extcommunity_rt_asn`                | Not supported on N9k-F,N9k      |
 | `set_forwarding_addr`                    | Not supported on N9k-F          |
 | `set_ipv4_default_next_hop`              | Not supported on N5k,N6k,N9k-F,N9k  |
 | `set_ipv4_default_next_hop_load_share`   | Not supported on N5k,N6k,N9k-F,N9k  |
 | `set_ipv4_next_hop`                      | Not supported on N9k-F          |
-| `set_ipv4_next_hop_load_share`           | Not supported on N5k,N6k,N9k-F <br> Supported in OS Version I5 and later on N9k  |
-| `set_ipv4_next_hop_redist`               | Supported on N5k,N6k,N7k,N9k-F <br> Supported in OS Version I5 and later on N3k,N9k  |
+| `set_ipv4_next_hop_load_share`           | Not supported on N5k,N6k,N9k-F <br> Supported in OS Version 7.0(3)I5.1 and later on N9k  |
+| `set_ipv4_next_hop_redist`               | Supported on N5k,N6k,N7k,N9k-F <br> Supported in OS Version 7.0(3)I5.1 and later on N3k,N9k  |
 | `set_ipv4_precedence`                    | Not supported on N9k-F          |
 | `set_ipv4_prefix`                        | Not supported on N5k,N6k,N9k-F  |
-OS Version I5 and later on N3k,N9k  |
+OS Version 7.0(3)I5.1 and later on N3k,N9k  |
 | `set_ipv6_default_next_hop`              | Not supported on N5k,N6k,N9k-F,N9k  |
 | `set_ipv6_default_next_hop_load_share`   | Not supported on N5k,N6k,N9k-F,N9k  |
 | `set_ipv6_next_hop`                      | Not supported on N9k-F          |
-| `set_ipv6_next_hop_load_share`           | Not supported on N5k,N6k,N9k-F <br> Supported in OS Version I5 and later on N9k  |
-| `set_ipv6_next_hop_redist`               | Supported on N5k,N6k,N7k,N9k-F <br> Supported in OS Version I5 and later on N3k,N9k  |
+| `set_ipv6_next_hop_load_share`           | Not supported on N5k,N6k,N9k-F <br> Supported in OS Version 7.0(3)I5.1 and later on N9k  |
+| `set_ipv6_next_hop_redist`               | Supported on N5k,N6k,N7k,N9k-F <br> Supported in OS Version 7.0(3)I5.1 and later on N3k,N9k  |
 | `set_ipv6_prefix`                        | Not supported on N5k,N6k,N9k-F  |
 | `set_vrf`                                | Supported on N7k                |
 
@@ -3298,6 +3298,10 @@ Description of the route-map. Valid values are string, or keyword 'default'
 
 ##### `match_as_number`
 Match BGP peer AS number. Valid values are an array of ranges or keyword 'default'
+| Example Parameter Usage |
+|:--|:--
+|`match_as_number { '<AA4>,  <AA4>-<AA4>, ..':`
+|`match_as_number { '['3', '22-34', '38', '101-110', '120']':`
 
 ##### `match_as_number_as_path_list`
 Match BGP AS path list. Valid values are an array of list names or keyword 'default'

@@ -148,6 +148,11 @@ class ciscopuppet::cisco::demo_route_map {
     default => undef
   }
 
+  $set_extcommunity_rt_asn = platform_get() ? {
+    /(n3k|n5k|n6k|n7k)/ => ['11:22', '33:44', '12.22.22.22:12', '123.256:543'],
+    default => undef
+  }
+
   $set_vrf = platform_get() ? {
     'n7k' => 'igp',
     default => undef
@@ -230,7 +235,7 @@ class ciscopuppet::cisco::demo_route_map {
       set_extcommunity_cost_igp              => [['0', '23'], ['3', '33'], ['100', '10954']],
       set_extcommunity_cost_pre_bestpath     => [['23', '999'], ['88', '482'], ['120', '2323']],
       set_extcommunity_rt_additive           => true,
-      set_extcommunity_rt_asn                => ['11:22', '33:44', '12.22.22.22:12', '123.256:543'],
+      set_extcommunity_rt_asn                => $set_extcommunity_rt_asn,
       set_forwarding_addr                    => true,
       set_ipv4_next_hop                      => ['3.3.3.3', '4.4.4.4'],
       set_ipv4_next_hop_load_share           => $set_ipv4_next_hop_load_share,

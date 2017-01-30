@@ -473,6 +473,7 @@ def unsupp_n9k
     :set_ipv4_default_next_hop_load_share <<
     :set_ipv6_default_next_hop <<
     :set_ipv6_default_next_hop_load_share <<
+    :set_extcommunity_rt_asn <<
     :set_vrf
   unprops <<
     :set_ipv4_next_hop_load_share <<
@@ -481,7 +482,6 @@ def unsupp_n9k
     :set_ipv4_next_hop_redist <<
     :set_ipv6_next_hop_redist if im[/(I2|I3|I4)/]
   unprops << :match_metric if im['I4']
-  unprops << :set_extcommunity_rt_asn if im[/(I4|I5)/]
   unprops
 end
 

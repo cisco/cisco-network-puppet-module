@@ -187,20 +187,20 @@ Puppet::Type.newtype(:cisco_route_map) do
     desc 'Name of cisco_route_map, not used, but needed for puppet'
   end
 
-  newparam(:action, namevar: true) do
-    desc 'Action for set oprtations. Valid values are permit or deny.'
-    munge(&:to_s)
-    newvalues(:permit, :deny)
-  end # param action
+  newparam(:rmname, namevar: true) do
+    desc 'Name of the route map instance. Valid values are string.'
+  end # param rmname
 
   newparam(:sequence, namevar: true) do
     desc "Sequence to insert/delete existing route-map entry.
           Valid values are integer."
   end # param sequence
 
-  newparam(:rmname, namevar: true) do
-    desc 'Name of the route map instance. Valid values are string.'
-  end # param rmname
+  newparam(:action, namevar: true) do
+    desc 'Action for set oprtations. Valid values are permit or deny.'
+    munge(&:to_s)
+    newvalues(:permit, :deny)
+  end # param action
 
   ##############
   # Attributes #
@@ -799,11 +799,7 @@ Puppet::Type.newtype(:cisco_route_map) do
     # equal to value specified in manifest.  Make sure puppet considers
     # 2 arrays with same elements but in different order as equal.
     def insync?(is)
-      slist = []
-      should.each do |elem|
-        slist << elem unless elem[1] == 'default'
-      end
-      (is.size == slist.size && is.sort == slist.sort)
+      (is.size == should.size && is.sort == should.sort)
     end
 
     def should_to_s(value)
@@ -1229,11 +1225,7 @@ Puppet::Type.newtype(:cisco_route_map) do
     # equal to value specified in manifest.  Make sure puppet considers
     # 2 arrays with same elements but in different order as equal.
     def insync?(is)
-      slist = []
-      should.each do |elem|
-        slist << elem unless elem[1] == 'default'
-      end
-      (is.size == slist.size && is.sort == slist.sort)
+      (is.size == should.size && is.sort == should.sort)
     end
 
     def should_to_s(value)
@@ -1262,11 +1254,7 @@ Puppet::Type.newtype(:cisco_route_map) do
     # equal to value specified in manifest.  Make sure puppet considers
     # 2 arrays with same elements but in different order as equal.
     def insync?(is)
-      slist = []
-      should.each do |elem|
-        slist << elem unless elem[1] == 'default'
-      end
-      (is.size == slist.size && is.sort == slist.sort)
+      (is.size == should.size && is.sort == should.sort)
     end
 
     def should_to_s(value)
