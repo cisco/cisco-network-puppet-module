@@ -3284,7 +3284,11 @@ OS Version 7.0(3)I5.1 and later on N3k,N9k  |
 | `set_ipv6_prefix`                        | Not supported on N5k,N6k,N9k-F  |
 | `set_vrf`                                | Supported on N7k                |
 
-#### Parameters
+
+| Example Parameter Usage |
+|:--
+|`match_as_number { '<AA4>,  <AA4>-<AA4>, ..':`
+|`match_as_number { '['3', '22-34', '38', '101-110', '120']':`
 
 ##### Basic interface config attributes
 
@@ -3298,10 +3302,7 @@ Description of the route-map. Valid values are string, or keyword 'default'
 
 ##### `match_as_number`
 Match BGP peer AS number. Valid values are an array of ranges or keyword 'default'
-| Example Parameter Usage |
-|:--|:--
-|`match_as_number { '<AA4>,  <AA4>-<AA4>, ..':`
-|`match_as_number { '['3', '22-34', '38', '101-110', '120']':`
+
 
 ##### `match_as_number_as_path_list`
 Match BGP AS path list. Valid values are an array of list names or keyword 'default'
