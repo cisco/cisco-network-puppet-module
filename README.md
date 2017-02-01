@@ -3356,7 +3356,7 @@ Match IPv4 access-list name. Valid values are String or keyword 'default'
 Match entries of prefix-lists for IPv4. Valid values are array of prefixes or keyword 'default'
 
 ##### `match_ipv4_multicast_enable`
-Enable match IPv4 multicast. Valid values are are 'true', 'false' or keyword 'default'
+Enable match IPv4 multicast. This property should be set to 'true' before setting any IPv4 multicast properties. Valid values are are 'true', 'false' or keyword 'default'
 
 ##### `match_ipv4_multicast_group_addr`
 Match IPv4 multicast group prefix. Valid values are string, or keyword 'default'
@@ -3389,7 +3389,7 @@ Match IPv6 access-list name. Valid values are string or keyword 'default'
 Match entries of prefix-lists for IPv6. Valid values are array of prefixes or keyword 'default'
 
 ##### `match_ipv6_multicast_enable`
-Enable match IPv6 multicast. Valid values are 'true', 'false' or keyword 'default'
+Enable match IPv6 multicast. This property should be set to 'true' before setting any IPv6 multicast properties. Valid values are 'true', 'false' or keyword 'default'
 
 ##### `match_ipv6_multicast_group_addr`
 Match IPv6 multicast group prefix. Valid values are string, or keyword 'default'
