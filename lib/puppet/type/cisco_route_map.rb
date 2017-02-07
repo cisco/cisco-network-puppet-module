@@ -1627,4 +1627,33 @@ Puppet::Type.newtype(:cisco_route_map) do
 
     munge { |value| value == 'default' ? :default : Integer(value) }
   end # property set_weight
+
+  def cmprop(prop)
+    self[prop].nil? || self[prop].empty? || self[prop] == :default
+  end
+
+  def check_match_ipv4_multicast
+    return unless self[:match_ipv4_multicast_enable]
+    fail ArgumentError, 'At least one of the ipv4 multicast properties MUST be non default' if
+      cmprop(:match_ipv4_multicast_src_addr) &&
+      cmprop(:match_ipv4_multicast_group_addr) &&
+      cmprop(:match_ipv4_multicast_rp_addr) &&
+      cmprop(:match_ipv4_multicast_group_range_begin_addr) &&
+      cmprop(:match_ipv4_multicast_group_range_end_addr)
+  end
+
+  def check_match_ipv6_multicast
+    return unless self[:match_ipv6_multicast_enable]
+    fail ArgumentError, 'At least one of the ipv6 multicast properties MUST be non default' if
+      cmprop(:match_ipv6_multicast_src_addr) &&
+      cmprop(:match_ipv6_multicast_group_addr) &&
+      cmprop(:match_ipv6_multicast_rp_addr) &&
+      cmprop(:match_ipv6_multicast_group_range_begin_addr) &&
+      cmprop(:match_ipv6_multicast_group_range_end_addr)
+  end
+
+  validate do
+    check_match_ipv4_multicast
+    check_match_ipv6_multicast
+  end
 end
