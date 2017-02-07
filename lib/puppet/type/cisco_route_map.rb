@@ -1633,7 +1633,7 @@ Puppet::Type.newtype(:cisco_route_map) do
   end
 
   def check_match_ipv4_multicast
-    return unless self[:match_ipv4_multicast_enable]
+    return if cmprop(:match_ipv4_multicast_enable)
     fail ArgumentError, 'At least one of the ipv4 multicast properties MUST be non default' if
       cmprop(:match_ipv4_multicast_src_addr) &&
       cmprop(:match_ipv4_multicast_group_addr) &&
@@ -1643,7 +1643,7 @@ Puppet::Type.newtype(:cisco_route_map) do
   end
 
   def check_match_ipv6_multicast
-    return unless self[:match_ipv6_multicast_enable]
+    return if cmprop(:match_ipv6_multicast_enable)
     fail ArgumentError, 'At least one of the ipv6 multicast properties MUST be non default' if
       cmprop(:match_ipv6_multicast_src_addr) &&
       cmprop(:match_ipv6_multicast_group_addr) &&
