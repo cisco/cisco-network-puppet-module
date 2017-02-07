@@ -273,8 +273,8 @@ Puppet::Type.type(:cisco_route_map).provide(:cisco) do
     match_ext_community_set
     match_ipv4_multicast_set
     match_ipv6_multicast_set
-    match_ip_addr_access_list
-    match_ip_addr_prefix_list
+    match_ip_addr_access_list_set
+    match_ip_addr_prefix_list_set
     match_route_type_set
     set_dampening_set
     set_distance_set
@@ -283,11 +283,11 @@ Puppet::Type.type(:cisco_route_map).provide(:cisco) do
     set_extcommunity_rt_set
     set_extcommunity_cost_set
     set_ip_next_hop_set
-    set_ip_precedence
+    set_ip_precedence_set
     set_metric_set
   end
 
-  def match_ip_addr_access_list
+  def match_ip_addr_access_list_set
     pf = @property_flush[:match_ipv4_addr_access_list]
     v4 = pf.nil? ? @nu.match_ipv4_addr_access_list : pf
     pf = @property_flush[:match_ipv6_addr_access_list]
@@ -295,7 +295,7 @@ Puppet::Type.type(:cisco_route_map).provide(:cisco) do
     @nu.match_ip_addr_access_list(v4, v6)
   end
 
-  def match_ip_addr_prefix_list
+  def match_ip_addr_prefix_list_set
     pf = @property_flush[:match_ipv4_addr_prefix_list]
     v4 = pf.nil? ? @nu.match_ipv4_addr_prefix_list : pf
     pf = @property_flush[:match_ipv6_addr_prefix_list]
@@ -317,9 +317,23 @@ Puppet::Type.type(:cisco_route_map).provide(:cisco) do
     @nu.match_ext_community_set(comm, exact)
   end
 
-  def match_ipv4_multicast_set
+  def match_set_helper(properties, setter)
+    return unless properties.any? { |p| @property_flush.key?(p) }
     attrs = {}
-    vars = [
+    # At least one var has changed, get all vals from manifest
+    properties.each do |p|
+      if @resource[p] == :default
+        attrs[p] = @nu.send("default_#{p}")
+      else
+        attrs[p] = @resource[p]
+        attrs[p] = PuppetX::Cisco::Utils.bool_sym_to_s(attrs[p])
+      end
+    end
+    @nu.send(setter, *[attrs])
+  end
+
+  def match_ipv4_multicast_set
+    properties = [
       :match_ipv4_multicast_src_addr,
       :match_ipv4_multicast_group_addr,
       :match_ipv4_multicast_group_range_begin_addr,
@@ -328,29 +342,11 @@ Puppet::Type.type(:cisco_route_map).provide(:cisco) do
       :match_ipv4_multicast_rp_type,
       :match_ipv4_multicast_enable,
     ]
-    if vars.any? { |p| @property_flush.key?(p) }
-      # At least one var has changed, get all vals from manifest
-      vars.each do |p|
-        if @resource[p] == :default
-          attrs[p] = @nu.send("default_#{p}")
-        else
-          attrs[p] = @resource[p]
-          attrs[p] = PuppetX::Cisco::Utils.bool_sym_to_s(attrs[p])
-        end
-      end
-      @nu.match_ipv4_multicast_set(attrs)
-    else
-      call_empty
-    end
-  end
-
-  # method to keep rubocop happy
-  def call_empty
+    match_set_helper(properties, 'match_ipv4_multicast_set')
   end
 
   def match_ipv6_multicast_set
-    attrs = {}
-    vars = [
+    properties = [
       :match_ipv6_multicast_src_addr,
       :match_ipv6_multicast_group_addr,
       :match_ipv6_multicast_group_range_begin_addr,
@@ -359,25 +355,11 @@ Puppet::Type.type(:cisco_route_map).provide(:cisco) do
       :match_ipv6_multicast_rp_type,
       :match_ipv6_multicast_enable,
     ]
-    if vars.any? { |p| @property_flush.key?(p) }
-      # At least one var has changed, get all vals from manifest
-      vars.each do |p|
-        if @resource[p] == :default
-          attrs[p] = @nu.send("default_#{p}")
-        else
-          attrs[p] = @resource[p]
-          attrs[p] = PuppetX::Cisco::Utils.bool_sym_to_s(attrs[p])
-        end
-      end
-      @nu.match_ipv6_multicast_set(attrs)
-    else
-      call_empty
-    end
+    match_set_helper(properties, 'match_ipv6_multicast_set')
   end
 
   def match_route_type_set
-    attrs = {}
-    vars = [
+    properties = [
       :match_route_type_external,
       :match_route_type_inter_area,
       :match_route_type_internal,
@@ -389,23 +371,10 @@ Puppet::Type.type(:cisco_route_map).provide(:cisco) do
       :match_route_type_type_1,
       :match_route_type_type_2,
     ]
-    if vars.any? { |p| @property_flush.key?(p) }
-      # At least one var has changed, get all vals from manifest
-      vars.each do |p|
-        if @resource[p] == :default
-          attrs[p] = @nu.send("default_#{p}")
-        else
-          attrs[p] = @resource[p]
-          attrs[p] = PuppetX::Cisco::Utils.bool_sym_to_s(attrs[p])
-        end
-      end
-      @nu.match_route_type_set(attrs)
-    else
-      call_empty
-    end
+    match_set_helper(properties, 'match_route_type_set')
   end
 
-  def set_ip_precedence
+  def set_ip_precedence_set
     pf = @property_flush[:set_ipv4_precedence]
     v4 = pf.nil? ? @nu.set_ipv4_precedence : pf
     pf = @property_flush[:set_ipv6_precedence]
