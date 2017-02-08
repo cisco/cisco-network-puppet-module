@@ -173,7 +173,7 @@ feature bgp\r\n
 router bgp 55\r\n
   neighbor 1.1.1.1\r\n
     address-family ipv6 unicast\r\n
-      capability additional-paths send\r\n
+      capability additional-paths send\t\r\n
     "
   },
   resource:       {
