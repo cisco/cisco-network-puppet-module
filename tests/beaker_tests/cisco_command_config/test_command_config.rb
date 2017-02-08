@@ -229,6 +229,9 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run_cc(tests, :bgp_neighbor, 'cisco_bgp_neighbor')
   test_harness_run_cc(tests, :bgp_neighbor_af, 'cisco_bgp_neighbor_af')
   test_harness_run_cc(tests, :loopback, 'cisco_interface')
+
+  # Cleanup before next test.
+  cleanup(agent)
   test_harness_run_cc(tests, :control_characters, 'cisco_bgp_neighbor_af')
 
   # -------------------------------------------------------------------
