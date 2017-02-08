@@ -163,6 +163,25 @@ interface loopback1
   },
 }
 
+tests[:control_characters] = {
+  desc:           '1.6 CTRL_CHARS',
+  # Command indentation is very important!
+  # Make sure config appears exactly how it nvgens on the switch.
+  manifest_props: {
+    command: "
+feature bgp\r\n
+router bgp 55\r\n
+  neighbor 1.1.1.1\r\n
+    address-family ipv6 unicast\r\n
+      capability additional-paths send\r\n
+    "
+  },
+  resource:       {
+    'ensure'                => 'present',
+    'additional_paths_send' => 'enable',
+  },
+}
+
 def test_set_get
   stepinfo = 'Test test_get/test_set properties'
   logger.info("\n#{'-' * 60}\n#{stepinfo}")
@@ -210,6 +229,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run_cc(tests, :bgp_neighbor, 'cisco_bgp_neighbor')
   test_harness_run_cc(tests, :bgp_neighbor_af, 'cisco_bgp_neighbor_af')
   test_harness_run_cc(tests, :loopback, 'cisco_interface')
+  test_harness_run_cc(tests, :control_characters, 'cisco_bgp_neighbor_af')
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. test_set / test_get")
