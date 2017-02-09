@@ -42,15 +42,16 @@ Puppet::Type.type(:cisco_command_config).provide(:cisco) do
     manifest_hash = Cisco::ConfigParser::Configuration.new(@resource[:command])
 
     # Compare full manifest config to running-config.
-    existing_str = manifest_hash.compare_with(running_hash)
-    debug "Existing:\n>#{existing_str}<"
+    strip_pattern = Regexp.new('^ *| *$|\s')
+    existing_str = manifest_hash.compare_with(running_hash).gsub(strip_pattern, '')
+    debug "Existing:\n>#{existing_str.inspect}<"
 
     manifest_config_str =
       Cisco::ConfigParser::Configuration.config_hash_to_str(
-        manifest_hash.configuration)
-    debug "Manifest:\n>#{manifest_config_str}<"
+        manifest_hash.configuration).gsub(strip_pattern, '')
+    debug "Manifest:\n>#{manifest_config_str.inspect}<"
 
-    if existing_str.gsub(/^ *| *$/, '').include?(manifest_config_str)
+    if existing_str.include?(manifest_config_str)
       debug 'Current running-config already satisfies manifest'
       @property_hash[:command] = @resource[:command]
     else
