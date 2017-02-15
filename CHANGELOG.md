@@ -10,6 +10,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Extend cisco_interface with attributes:
+ - `load_interval_counter_1_delay`
+ - `load_interval_counter_2_delay`
+ - `load_interval_counter_3_delay`
+
 ### Changed
 
 ### Removed
@@ -117,7 +122,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [1.3.2] - 2016-07-26
 ### Fixed:
 - Remove `autorequire` references in cisco types.
-  - Fixes incompatibility between cisco resources and latest puppet agent rpm.
+	- Fixes incompatibility between cisco resources and latest puppet agent rpm.
 - Fix `undefined method 'previous'` bug in `cisco_command_config` provider.
 
 ## [1.3.1] - 2016-05-06
@@ -133,47 +138,47 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 - Extended the following providers to support `Nexus N5k`, `Nexus N6k`, and `Nexus N7k`
-  - `cisco_aaa_authentication_login`, `cisco_aaa_authorization_login_cfg_svc`, `cisco_aaa_authorization_login_exec_svc`, `cisco_aaa_group_tacacs`
-  - `cisco_fabricpath_global`, `cisco_fabricpath_topology`
-  - `cisco_interface_channel_group`, `cisco_interface_portchannel`, `cisco_portchannel_global`
-  - `cisco_snmp_community`, `cisco_snmp_group`, `cisco_snmp_server`, `cisco_snmp_user`
-  - `cisco_vpc_domain`
-  - `cisco_vtp`
-  - `domain_name`, `name_server`, `network_dns`, `network_vlan`, `search_domain`
-  - `ntp_config`, `ntp_server`
-  - `port_channel`
-  - `radius`, `radius_global`, `radius_server`, `radius_server_group`
-  - `network_snmp`, `snmp_community`, `snmp_notification`, `snmp_notification_receiver`, `snmp_user`
-  - `tacacs`, `tacacs_global`, `tacacs_server`, `tacacs_server_group`
+	- `cisco_aaa_authentication_login`, `cisco_aaa_authorization_login_cfg_svc`, `cisco_aaa_authorization_login_exec_svc`, `cisco_aaa_group_tacacs`
+	- `cisco_fabricpath_global`, `cisco_fabricpath_topology`
+	- `cisco_interface_channel_group`, `cisco_interface_portchannel`, `cisco_portchannel_global`
+	- `cisco_snmp_community`, `cisco_snmp_group`, `cisco_snmp_server`, `cisco_snmp_user`
+	- `cisco_vpc_domain`
+	- `cisco_vtp`
+	- `domain_name`, `name_server`, `network_dns`, `network_vlan`, `search_domain`
+	- `ntp_config`, `ntp_server`
+	- `port_channel`
+	- `radius`, `radius_global`, `radius_server`, `radius_server_group`
+	- `network_snmp`, `snmp_community`, `snmp_notification`, `snmp_notification_receiver`, `snmp_user`
+	- `tacacs`, `tacacs_global`, `tacacs_server`, `tacacs_server_group`
 - Extended `cisco_bgp` with the following attributes:
-  - `nsr`
-  - `reconnect_interval`
+	- `nsr`
+	- `reconnect_interval`
 - Extended `cisco_interface` with the following attributes:
-  - `ipv4_forwarding`, `switchport_mode fabricpath`
-  - `stp_bpdufilter`, `stp_bpduguard`, `stp_cost`, `stp_guard`, `stp_link_type`, `stp_mst_cost`
-  - `stp_mst_port_priority`, `stp_port_priority`, `stp_port_type`, `stp_vlan_cost`, `stp_vlan_port_priority`
-  - `switchport_mode_private_vlan_host`, `switchport_mode_private_vlan_host_association`
-  - `switchport_mode_private_vlan_host_promisc`, `switchport_mode_private_vlan_trunk_promiscuous`
-  - `switchport_mode_private_vlan_trunk_secondary`, `switchport_private_vlan_association_trunk`
-  - `switchport_private_vlan_mapping_trunk`, `switchport_private_vlan_trunk_allowed_vlan`
-  - `switchport_private_vlan_trunk_native_vlan`, `private_vlan_mapping`
-  - `modify switchport_trunk_allowed_vlan to use range_summarize() which takes care of idempotency issues with vlan ranges`
+	- `ipv4_forwarding`, `switchport_mode fabricpath`
+	- `stp_bpdufilter`, `stp_bpduguard`, `stp_cost`, `stp_guard`, `stp_link_type`, `stp_mst_cost`
+	- `stp_mst_port_priority`, `stp_port_priority`, `stp_port_type`, `stp_vlan_cost`, `stp_vlan_port_priority`
+	- `switchport_mode_private_vlan_host`, `switchport_mode_private_vlan_host_association`
+	- `switchport_mode_private_vlan_host_promisc`, `switchport_mode_private_vlan_trunk_promiscuous`
+	- `switchport_mode_private_vlan_trunk_secondary`, `switchport_private_vlan_association_trunk`
+	- `switchport_private_vlan_mapping_trunk`, `switchport_private_vlan_trunk_allowed_vlan`
+	- `switchport_private_vlan_trunk_native_vlan`, `private_vlan_mapping`
+	- `modify switchport_trunk_allowed_vlan to use range_summarize() which takes care of idempotency issues with vlan ranges`
 - Extended `cisco_portchannel_global` provider to support `Nexus N3k`
 - Extended `cisco_vlan` with the following attributes:
-  - `mode`
-  - `private_vlan_type`
-  - `private_vlan_association`
+	- `mode`
+	- `private_vlan_type`
+	- `private_vlan_association`
 - Extended `cisco_vpc_domain` with the following attributes:
-  - `fabricpath_emulated_switch_id`
-  - `fabricpath_multicast_load_balance`
-  - `port_channel_limit`
+	- `fabricpath_emulated_switch_id`
+	- `fabricpath_multicast_load_balance`
+	- `port_channel_limit`
 - Extended `cisco_vrf_af` with the following attributes:
-  - `route_policy_export`
-  - `route_policy_import`
-  - `route_target_export_stitching`
-  - `route_target_import_stitching`
+	- `route_policy_export`
+	- `route_policy_import`
+	- `route_target_export_stitching`
+	- `route_target_import_stitching`
 - Extended `cisco_vxlan_vtep` with the following attributes:
-  - `source_interface_hold_down_time`
+	- `source_interface_hold_down_time`
 
 ### Removed
 - Removed 'cisco_nxapi' fact as this gem is no longer a dependency.
@@ -233,33 +238,33 @@ This version was never released.
 
 ### Added
 - Extended `cisco_bgp` with the following attributes:
-  - `disable_policy_batching`, `disable_policy_batching_ipv4`, `disable_policy_batching_ipv6`
-  - `fast_external_fallover`
-  - `flush_routes`
-  - `isolate`
-  - `neighbor_down_fib_accelerate`
-  - `route_distinguisher`
-  - `event_history_cli`
-  - `event_history_detail`
-  - `event_history_events`
-  - `event_history_periodic`
+	- `disable_policy_batching`, `disable_policy_batching_ipv4`, `disable_policy_batching_ipv6`
+	- `fast_external_fallover`
+	- `flush_routes`
+	- `isolate`
+	- `neighbor_down_fib_accelerate`
+	- `route_distinguisher`
+	- `event_history_cli`
+	- `event_history_detail`
+	- `event_history_events`
+	- `event_history_periodic`
 - Extended `cisco_bgp_af` with the following attributes:
-  - `default_metric`
-  - `distance_ebgp`, `distance_ibgp`, `distance_local`
-  - `inject_map`
-  - `table_map`, `table_map_filter`
-  - `suppress_inactive`
+	- `default_metric`
+	- `distance_ebgp`, `distance_ibgp`, `distance_local`
+	- `inject_map`
+	- `table_map`, `table_map_filter`
+	- `suppress_inactive`
 - Extended `cisco_interface` with the following attributes:
-  - `fabric_forwarding_anycast_gateway`
-  - `ipv4_address_secondary`, `ipv4_netmask_length_secondary`
-  - `ipv4_arp_timeout`
-  - `ipv4_pim_sparse_mode`
-  - `vlan_mapping`, `vlan_mapping_enable`
-  - `ipv4_acl_in`, `ipv4_acl_out`, `ipv6_acl_in`, `ipv6_acl_out`
-  - `vpc_id`, `vpc_peer_link`
+	- `fabric_forwarding_anycast_gateway`
+	- `ipv4_address_secondary`, `ipv4_netmask_length_secondary`
+	- `ipv4_arp_timeout`
+	- `ipv4_pim_sparse_mode`
+	- `vlan_mapping`, `vlan_mapping_enable`
+	- `ipv4_acl_in`, `ipv4_acl_out`, `ipv6_acl_in`, `ipv6_acl_out`
+	- `vpc_id`, `vpc_peer_link`
 - Extended `cisco_vrf` with the following attributes:
-  - `route_distinguisher`
-  - `vni`
+	- `route_distinguisher`
+	- `vni`
 
 ### Removed
 
@@ -290,12 +295,12 @@ This version was never released.
 ### Added
 - New documentation for developing beaker testcases: README-develop-beaker-scripts.md
 - Extended cisco_interface with the following attributes:
-  - encapsulation dot1q
-  - mtu
-  - speed
-  - duplex
-  - switchport trunk allowed VLANs
-  - switchport trunk native VLAN
+	- encapsulation dot1q
+	- mtu
+	- speed
+	- duplex
+	- switchport trunk allowed VLANs
+	- switchport trunk native VLAN
 - Added support for network_interface from puppets netdev_stdlib
 - Rubocop enabled and passes (@robert-w-gries)
 - Gemfile now requires puppet version 4.0 or higher
