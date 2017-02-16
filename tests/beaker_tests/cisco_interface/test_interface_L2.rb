@@ -86,6 +86,9 @@ tests[:default_trunk] = {
   sys_def_sw_shut:    true,
   manifest_props:     {
     shutdown:                      'default',
+    load_interval_counter_1_delay: 'default',
+    load_interval_counter_2_delay: 'default',
+    load_interval_counter_3_delay: 'default',
     storm_control_broadcast:       'default',
     storm_control_multicast:       'default',
     storm_control_unicast:         'default',
@@ -97,6 +100,9 @@ tests[:default_trunk] = {
   },
   resource:           {
     shutdown:                      'true',
+    load_interval_counter_1_delay: '30',
+    load_interval_counter_2_delay: '300',
+    load_interval_counter_3_delay: 'false',
     storm_control_broadcast:       '100.00',
     storm_control_multicast:       '100.00',
     storm_control_unicast:         '100.00',
@@ -115,6 +121,9 @@ tests[:non_default_trunk] = {
   sys_def_sw_shut:    true,
   manifest_props:     {
     shutdown:                      'false',
+    load_interval_counter_1_delay: '200',
+    load_interval_counter_2_delay: '100',
+    load_interval_counter_3_delay: '150',
     storm_control_broadcast:       '22.22',
     storm_control_multicast:       '44.44',
     storm_control_unicast:         '66.66',

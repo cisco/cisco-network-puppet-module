@@ -78,10 +78,13 @@ class ciscopuppet::cisco::demo_interface {
     }
 
     cisco_interface { 'Ethernet1/3':
-      description     => 'default',
-      shutdown        => 'default',
-      access_vlan     => 'default',
-      switchport_mode => access,
+      description                   => 'default',
+      shutdown                      => 'default',
+      access_vlan                   => 'default',
+      load_interval_counter_1_delay => 150,
+      load_interval_counter_2_delay => 250,
+      load_interval_counter_3_delay => 90,
+      switchport_mode               => access,
     }
 
     cisco_interface { 'Ethernet1/4':

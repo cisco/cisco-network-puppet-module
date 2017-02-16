@@ -1990,6 +1990,9 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | `hsrp_use_bia`                        | Not supported on N5k,N6k <br> Minimum puppet module version 1.5.0 <br> Supported in OS Version 8.0 and later on N7k |
 | `hsrp_version`                        | Not supported on N5k,N6k <br> Minimum puppet module version 1.5.0 <br> Supported in OS Version 8.0 and later on N7k |
 | `pim_bfd`                             | Minimum puppet module version 1.5.0 |
+| `load_interval_counter_1_delay`       | Minimum puppet module version 1.6.0 |
+| `load_interval_counter_2_delay`       | Minimum puppet module version 1.6.0 |
+| `load_interval_counter_3_delay`       | Minimum puppet module version 1.6.0 |
 
 #### Parameters
 
@@ -2293,6 +2296,17 @@ HSRP uses this interface's burned in address. Valid values are 'use_bia', 'use_b
 
 ##### `hsrp_version`
 HSRP version for this interface. Valid values are integer, keyword 'default'.
+
+##### load-interval config attributes
+
+##### `load_interval_counter_1_delay`
+Load interval delay for counter 1 in seconds. Valid values are integer, keyword 'default'
+
+##### `load_interval_counter_2_delay`
+Load interval delay for counter 2 in seconds. Valid values are integer, keyword 'default'
+
+##### `load_interval_counter_3_delay`
+Load interval delay for counter 3 in seconds. Valid values are integer, keyword 'default'
 
 --
 ### Type: cisco_interface_channel_group
