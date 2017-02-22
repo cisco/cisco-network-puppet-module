@@ -100,7 +100,7 @@ test_name "TestCase :: #{testheader}" do
                              { 'ensure'              => 'present',
                                'timeout'             => '50',
                                'deadtime'            => '0',
-                               'encryption_password' => add_quotes('WXYZ12'),
+                               'encryption_password' => '"WXYZ12"',
                                'directed_request'    => 'false',
                                'source_interface'    => 'Ethernet1/4' },
                              false, self, logger)
@@ -131,7 +131,7 @@ test_name "TestCase :: #{testheader}" do
                              { 'ensure'              => 'present',
                                'timeout'             => '50',
                                'deadtime'            => '0',
-                               'encryption_password' => add_quotes('WXYZ12'),
+                               'encryption_password' => '"WXYZ12"',
                                'directed_request'    => 'false',
                                'source_interface'    => 'Ethernet1/4' },
                              true, self, logger)

@@ -108,7 +108,7 @@ test_name "TestCase :: #{testheader}" do
                              { 'ensure'              => 'present',
                                'port'                => '90',
                                'timeout'             => '39',
-                               'encryption_password' => add_quotes('test123') },
+                               'encryption_password' => '"test123"' },
                              false, self, logger)
 
     logger.info("Check cisco_tacacs_server_host presence on agent :: #{result}")
@@ -137,7 +137,7 @@ test_name "TestCase :: #{testheader}" do
                              { 'ensure'              => 'present',
                                'port'                => '90',
                                'timeout'             => '39',
-                               'encryption_password' => add_quotes('test123') },
+                               'encryption_password' => '"test123"' },
                              true, self, logger)
 
     logger.info("Check cisco_tacacs_server_host absence on agent :: #{result}")

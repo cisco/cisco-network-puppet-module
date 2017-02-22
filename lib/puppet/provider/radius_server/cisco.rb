@@ -89,6 +89,15 @@ Puppet::Type.type(:radius_server).provide(:cisco) do
     end
   end # self.prefetch
 
+  def key
+    res = @resource[:key]
+    return @property_hash[:key] if res.nil?
+    unless res.start_with?('"') && res.end_with?('"')
+      return @property_hash[:key].delete('"')
+    end
+    @property_hash[:key]
+  end
+
   def munge_flush(val)
     if val.is_a?(String) && val.eql?('unset')
       nil

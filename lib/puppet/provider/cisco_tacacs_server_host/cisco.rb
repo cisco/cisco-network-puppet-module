@@ -69,6 +69,15 @@ Puppet::Type.type(:cisco_tacacs_server_host).provide(:cisco) do
     @property_flush[:ensure] = :absent
   end
 
+  def encryption_password
+    res = @resource[:encryption_password]
+    return @property_hash[:encryption_password] if res.nil?
+    unless res.start_with?('"') && res.end_with?('"')
+      return @property_hash[:encryption_password].delete('"')
+    end
+    @property_hash[:encryption_password]
+  end
+
   def port
     if @resource[:port] == :default &&
        @property_hash[:port] == Cisco::TacacsServerHost.default_port

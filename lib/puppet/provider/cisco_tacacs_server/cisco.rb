@@ -114,6 +114,15 @@ Puppet::Type.type(:cisco_tacacs_server).provide(:cisco) do
     @tacacs_server = nil
   end # destroy
 
+  def encryption_password
+    res = @resource[:encryption_password]
+    return @property_hash[:encryption_password] if res.nil?
+    unless res.start_with?('"') && res.end_with?('"')
+      return @property_hash[:encryption_password].delete('"')
+    end
+    @property_hash[:encryption_password]
+  end
+
   def timeout
     debug 'Getting timeout.'
     if @resource[:timeout] == :default &&
