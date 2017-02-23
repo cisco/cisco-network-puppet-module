@@ -1450,6 +1450,7 @@ end
 # Returns: String with double quotes: (Example: '"foo"'
 #
 def add_quotes(string)
-  string = "\"#{string}\"" if image?[/8.0/]
+  return string if image?[/7.3.0/]
+  string = "\"#{string}\""
   string
 end

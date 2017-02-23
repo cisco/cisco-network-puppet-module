@@ -69,13 +69,19 @@ Puppet::Type.type(:cisco_tacacs_server_host).provide(:cisco) do
     @property_flush[:ensure] = :absent
   end
 
+  # this method is put here instead of type file due to older
+  # releases of platform code is not taking care of quotes in
+  # the manifest properly
   def encryption_password
     res = @resource[:encryption_password]
-    return @property_hash[:encryption_password] if res.nil?
+    ph = @property_hash[:encryption_password]
+    return ph if res.nil?
+    return :default if res == :default &&
+                       ph == @tacacs_server_host.default_encryption_password
     unless res.start_with?('"') && res.end_with?('"')
-      return @property_hash[:encryption_password].delete('"')
+      ph = ph.gsub(/\A"|"\Z/, '')
     end
-    @property_hash[:encryption_password]
+    ph
   end
 
   def port

@@ -119,11 +119,14 @@ Puppet::Type.type(:tacacs_server).provide(:cisco) do
 
   def key
     res = @resource[:key]
-    return @property_hash[:key] if res.nil?
+    ph = @property_hash[:key]
+    return ph if res.nil?
+    return :default if res == :default &&
+                       ph == @tacacs_server.encryption_password
     unless res.start_with?('"') && res.end_with?('"')
-      return @property_hash[:key].delete('"')
+      ph = ph.gsub(/\A"|"\Z/, '')
     end
-    @property_hash[:key]
+    ph
   end
 
   def munge_flush(val)

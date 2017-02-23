@@ -78,11 +78,14 @@ Puppet::Type.type(:radius_global).provide(:cisco) do
 
   def key
     res = @resource[:key]
-    return @property_hash[:key] if res.nil?
+    ph = @property_hash[:key]
+    return ph if res.nil?
+    return :default if res == :default &&
+                       ph == @radius_global.default_key
     unless res.start_with?('"') && res.end_with?('"')
-      return @property_hash[:key].delete('"')
+      ph = ph.gsub(/\A"|"\Z/, '')
     end
-    @property_hash[:key]
+    ph
   end
 
   def munge_flush(val)

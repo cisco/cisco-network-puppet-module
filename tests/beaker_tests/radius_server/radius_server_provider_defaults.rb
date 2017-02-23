@@ -95,7 +95,7 @@ test_name "TestCase :: #{testheader}" do
                              false, self, logger)
     search_pattern_in_output(output, { 'authentication_only' => 'true' },
                              false, self, logger) unless operating_system == 'ios_xr'
-    search_pattern_in_output(output, { 'key' => '"44444444"' },
+    search_pattern_in_output(output, { 'key' => add_quotes('44444444') },
                              false, self, logger)
     search_pattern_in_output(output, { 'key_format' => '7' },
                              false, self, logger)
@@ -202,7 +202,7 @@ test_name "TestCase :: #{testheader}" do
                              false, self, logger)
     search_pattern_in_output(output, { 'authentication_only' => 'true' },
                              false, self, logger) unless operating_system == 'ios_xr'
-    search_pattern_in_output(output, { 'key' => '"44444444"' },
+    search_pattern_in_output(output, { 'key' => add_quotes('44444444') },
                              false, self, logger)
     search_pattern_in_output(output, { 'key_format' => '7' },
                              false, self, logger)
