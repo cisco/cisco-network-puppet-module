@@ -74,6 +74,18 @@ Puppet::Type.type(:tacacs_global).provide(:cisco) do
     end
   end # self.prefetch
 
+  def key
+    res = @resource[:key]
+    ph = @property_hash[:key]
+    return ph if res.nil?
+    return :default if res == :default &&
+                       ph == @tacacs_global.default_key
+    unless res.start_with?('"') && res.end_with?('"')
+      ph = ph.gsub(/\A"|"\Z/, '')
+    end
+    ph
+  end
+
   def munge_flush(val)
     if val.is_a?(String) && val.eql?('unset')
       nil
