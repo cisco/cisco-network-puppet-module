@@ -1,7 +1,7 @@
 #
-# Puppet provider for feature service
+# Puppet provider to manage upgrade of Cisco devices
 #
-# Copyright (c) 2014-2016 Cisco and/or its affiliates.
+# Copyright (c) 2016-2017 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -40,19 +40,17 @@ Puppet::Type.type(:cisco_service).provide(:cisco) do
   mk_resource_methods
 
   SERVICE_NON_BOOL_PROPS = [
-    :source_uri,
+    :source_uri
   ]
 
   SERVICE_ALL_PROPS = SERVICE_NON_BOOL_PROPS
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@nu',
-					    SERVICE_NON_BOOL_PROPS)
-  
+                                            SERVICE_NON_BOOL_PROPS)
+
   def initialize(value={})
     super(value)
     version = @property_hash[:version]
-    force_all = @property_hash[:force_all]
-    delete_boot = @property_hash[:delete_boot]
     @nu = Cisco::Service.image_version unless version.nil?
     @property_flush = {}
   end
@@ -62,10 +60,10 @@ Puppet::Type.type(:cisco_service).provide(:cisco) do
     service = Cisco::Service
 
     inst << new(
-      name: service.image_version,
-      version: service.image_version,
-      source_uri: service.image,
-      force_all: :false,
+      name:        service.image_version,
+      version:     service.image_version,
+      source_uri:  service.image,
+      force_all:   :false,
       delete_boot: :false)
   end
 
@@ -92,12 +90,11 @@ Puppet::Type.type(:cisco_service).provide(:cisco) do
     end
     upgrade
   end
-  
 
   def upgrade
-    attrs = {}	  
+    attrs = {}
     vars = [
-      :source_uri,
+      :source_uri
     ]
     if vars.any? { |p| @property_flush.key?(p) }
       # At least one var has changed, get all vals from manifest
@@ -114,15 +111,14 @@ Puppet::Type.type(:cisco_service).provide(:cisco) do
     end
 
     attrs.each do |k, v|
-      if k == :source_uri
-        media = v.split('/')[0]
-        image = v.split('/')[-1]
-        Cisco::Service.upgrade(image,media,@resource[:delete_boot],@resource[:force_all])
-      end
+      next unless k == :source_uri
+      media = v.split('/')[0]
+      image = v.split('/')[-1]
+      Cisco::Service.upgrade(image, media, @resource[:delete_boot], @resource[:force_all])
     end
   end
 
   def flush
-    properties_set	  
+    properties_set
   end
 end
