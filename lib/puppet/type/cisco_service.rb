@@ -23,7 +23,7 @@ Puppet::Type.newtype(:cisco_service) do
     ..attributes..
   }
   ```
-  
+
   <version> is the version of the Cisco image.
 
   Example:
@@ -39,16 +39,16 @@ Puppet::Type.newtype(:cisco_service) do
   # Parse out the title to fill in the attributes in these
   # patterns. These attributes can be overwritten later.
   def self.title_patterns
-   identity = ->(x) { x }
-   patterns = []
+    identity = ->(x) { x }
+    patterns = []
 
-   patterns << [
-     /^(\S+)$/,
-     [
-       [:version, identity],
-     ],
-   ]
-   patterns
+    patterns << [
+      /^(\S+)$/,
+      [
+        [:version, identity]
+      ],
+    ]
+    patterns
   end
 
   # Overwrites name method.
@@ -87,15 +87,15 @@ Puppet::Type.newtype(:cisco_service) do
 
   def check_version
     # validate that the version string is not empty or nil
-    # and that only the version string consists of only a 
-    # few permitted characters    
+    # and that only the version string consists of only a
+    # few permitted characters
     fail ArgumentError,
-	 "The version shouldn't be nil or an empty string" if
-      self[:version] == '' || self[:version].nil? == :true
+         "The version shouldn't be nil or an empty string" if
+         self[:version] == '' || self[:version].nil? == :true
     fail ArgumentError,
-	 'Invalid version string. Version can only have the following 
-	  characters: 0-9, a-z, A-Z, (, ) and .' unless
-      (/([0-9a-zA-Z().]*)/.match(self[:version]))[0] == self[:version]  
+         'Invalid version string. Version can only have the following
+          characters: 0-9, a-z, A-Z, (, ) and .' unless
+         (/([0-9a-zA-Z().]*)/.match(self[:version]))[0] == self[:version]
   end
 
   def check_source_uri
@@ -104,13 +104,13 @@ Puppet::Type.newtype(:cisco_service) do
     image = self[:source_uri].split(':')
     fail ArgumentError,
          'source_uri should be of the format <media>:<filename>' if
-      image[0] == image[-1]    
-  end	  
+      image[0] == image[-1]
+  end
 
   # Validation block
   validate do
     fail ArgumentError,
-	    'source_uri is required' if self[:source_uri].nil?   
+         'source_uri is required' if self[:source_uri].nil?
     check_version
     check_source_uri
   end
