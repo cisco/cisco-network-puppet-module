@@ -19,18 +19,19 @@ Puppet::Type.newtype(:cisco_upgrade) do
   @doc = "Manages the version of Cisco Image running on a device.
 
   ```
-  cisco_upgrade {\"<version>\":
+  cisco_upgrade {\"<instance_name>\":
     ..attributes..
   }
   ```
 
-  <version> is the version of the Cisco image.
+  There can only be one instance of cisco_upgrade i.e. 'image'
 
   Example:
   ```
-    cisco_upgrade {'7.0(3)I5(1)' :
+    cisco_upgrade {'image' :
+      version           => '7.0(3)I5(1)'
       source_uri        => 'bootflash:///nxos.7.0.3.I5.1.bin',
-      force_all         => false,
+      force_upgrade     => false,
       delete_boot_image => false,
     }
   ```
@@ -45,73 +46,78 @@ Puppet::Type.newtype(:cisco_upgrade) do
     patterns << [
       /^(\S+)$/,
       [
-        [:version, identity]
+        [:name, identity]
       ],
     ]
     patterns
   end
 
-  # Overwrites name method.
-  def name
-    "#{self[:version]}"
+  newparam(:name, namevar: :true) do
+    # Parameter used only to satisfy namevar
+    desc 'Name of cisco_upgrade instance. Valid values are string'
+    validate do |name|
+      warning "only 'image' is accepted as a valid name" if name != 'image'
+    end
   end
 
-  newparam(:name) do
-    desc 'Name of cisco_service, not used, but needed for puppet'
-  end
+  newparam(:source_uri) do
+    desc 'URI to the image to install on the device. Format <media>:<image>.
+          Valid values are string.'
+    validate do |uri|
+      fail "source_uri can't be nil or an empty string" if
+        uri == '' || uri.nil? == :true
+      fail 'source_uri should be of the format <media>:<filename>' unless
+        uri.include?(':')
+    end
+    munge do |uri|
+      image = {}
+      if uri.include?('/')
+        image[:media] = uri.split('/')[0]
+        image[:image_name] = uri.split('/')[-1]
+      else
+        image[:media] = uri.split(':')[0] + ':'
+        image[:image_name] = uri.split(':')[-1]
+      end
+      image
+    end
+  end # param source_uri
 
-  newparam(:version, namevar: :true) do
-    desc 'Name of the version of image. Valid values are string.'
-  end # param version
-
-  newparam(:force_all) do
+  newparam(:force_upgrade) do
     desc 'Force upgrade the device.'
     defaultto :false
     newvalues(:true, :false)
-  end # param force_all
+    munge do |value|
+      value = true if value == :true
+      value = false if value == :false
+      value
+    end
+  end # param force_upgrade
 
-  newparam(:delete_boot) do
+  newparam(:delete_boot_image) do
     desc 'Delete the booted image(s).'
     defaultto :false
     newvalues(:true, :false)
-  end # param delete_boot
+    munge do |value|
+      value = true if value == :true
+      value = false if value == :false
+      value
+    end
+  end # param delete_boot_image
 
   ##############
   # Attributes #
   ##############
 
-  newproperty(:source_uri) do
-    desc 'URI to the image to install on the device. Format <media>:<image>.
-          Valid values are string.'
-  end # property source_uri
-
-  def check_version
-    # validate that the version string is not empty or nil
-    # and that only the version string consists of only a
-    # few permitted characters
-    fail ArgumentError,
-         "The version shouldn't be nil or an empty string" if
-         self[:version] == '' || self[:version].nil? == :true
-    fail ArgumentError,
-         'Invalid version string. Version can only have the following
-          characters: 0-9, a-z, A-Z, (, ) and .' unless
-         (/([0-9a-zA-Z().]*)/.match(self[:version]))[0] == self[:version]
-  end
-
-  def check_source_uri
-    # validate that the source_uri property is specified as
-    # <media>:<filename>
-    image = self[:source_uri].split(':')
-    fail ArgumentError,
-         'source_uri should be of the format <media>:<filename>' if
-      image[0] == image[-1]
-  end
-
-  # Validation block
-  validate do
-    fail ArgumentError,
-         'source_uri is required' if self[:source_uri].nil?
-    check_version
-    check_source_uri
-  end
+  newproperty(:version) do
+    desc 'Version of the Cisco image to install on the device.
+          Valid values are strings'
+    validate do |ver|
+      fail "Version can't be nil or an empty string" if
+        ver == '' || ver.nil? == :true
+      valid_chars = 'Version can only have the following
+          characters: 0-9, a-z, A-Z, (, ) and .'
+      fail "Invalid version string. #{valid_chars}" unless
+        (/([0-9a-zA-Z().]*)/.match(ver))[0] == ver
+    end
+  end # property version
 end
