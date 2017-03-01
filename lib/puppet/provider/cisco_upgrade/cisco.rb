@@ -72,8 +72,12 @@ Puppet::Type.type(:cisco_upgrade).provide(:cisco) do
 
   def version=(set_value)
     return if set_value.nil?
-    @nu.upgrade(@resource[:source_uri][:image_name], @resource[:source_uri][:media],
-                @resource[:delete_boot_image], @resource[:force_upgrade])
+    # Convert del_boot_image and force_upgrade from symbols
+    # to Boolean Class
+    del_boot_image = (@resource[:delete_boot_image] == :true)
+    force_upgrade = (@resource[:force_upgrade] == :true)
+    @nu.upgrade(@resource[:source_uri][:image_name], @resource[:source_uri][:uri],
+                del_boot_image, force_upgrade)
     @property_hash[:version] = set_value
   end
 end
