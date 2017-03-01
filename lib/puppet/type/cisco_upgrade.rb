@@ -29,7 +29,7 @@ Puppet::Type.newtype(:cisco_upgrade) do
   Example:
   ```
     cisco_upgrade {'image' :
-      version           => '7.0(3)I5(1)'
+      version           => '7.0(3)I5(1)',
       source_uri        => 'bootflash:///nxos.7.0.3.I5.1.bin',
       force_upgrade     => false,
       delete_boot_image => false,
@@ -61,21 +61,24 @@ Puppet::Type.newtype(:cisco_upgrade) do
   end
 
   newparam(:source_uri) do
-    desc 'URI to the image to install on the device. Format <media>:<image>.
-          Valid values are string.'
+    examples = "\nExample:\nbootflash:nxos.7.0.3.I5.2.bin"
+    supported = "\nNOTE: Only bootflash: is supported."
+    desc "URI to the image to install on the device. Format <uri>:<image>.
+          Valid values are string.#{examples}#{supported}"
+
     validate do |uri|
-      fail "source_uri can't be nil or an empty string" if
-        uri == '' || uri.nil? == :true
-      fail 'source_uri should be of the format <media>:<filename>' unless
-        uri.include?(':')
+      fail 'source_uri must match format <uri>:<image>' unless uri[/\S+:\S+/]
     end
     munge do |uri|
       image = {}
+      # Convert <uri>:<image> to a hash.
+      # The Node-utils API expects uri and image_name as two
+      # separate arguments. Pre-processing the arguments here. 
       if uri.include?('/')
-        image[:media] = uri.split('/')[0]
+        image[:uri] = uri.split('/')[0]
         image[:image_name] = uri.split('/')[-1]
       else
-        image[:media] = uri.split(':')[0] + ':'
+        image[:uri] = uri.split(':')[0] + ':'
         image[:image_name] = uri.split(':')[-1]
       end
       image
@@ -86,22 +89,12 @@ Puppet::Type.newtype(:cisco_upgrade) do
     desc 'Force upgrade the device.'
     defaultto :false
     newvalues(:true, :false)
-    munge do |value|
-      value = true if value == :true
-      value = false if value == :false
-      value
-    end
   end # param force_upgrade
 
   newparam(:delete_boot_image) do
     desc 'Delete the booted image(s).'
     defaultto :false
     newvalues(:true, :false)
-    munge do |value|
-      value = true if value == :true
-      value = false if value == :false
-      value
-    end
   end # param delete_boot_image
 
   ##############
