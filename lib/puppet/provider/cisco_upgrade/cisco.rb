@@ -40,7 +40,7 @@ Puppet::Type.type(:cisco_upgrade).provide(:cisco) do
   mk_resource_methods
 
   SERVICE_NON_BOOL_PROPS = [
-    :source_uri
+    :version
   ]
 
   SERVICE_ALL_PROPS = SERVICE_NON_BOOL_PROPS
@@ -50,8 +50,7 @@ Puppet::Type.type(:cisco_upgrade).provide(:cisco) do
 
   def initialize(value={})
     super(value)
-    version = @property_hash[:version]
-    @nu = Cisco::Service.image_version unless version.nil?
+    @nu = Cisco::Service
     @property_flush = {}
   end
 
@@ -60,65 +59,21 @@ Puppet::Type.type(:cisco_upgrade).provide(:cisco) do
     service = Cisco::Service
 
     inst << new(
-      name:        service.image_version,
-      version:     service.image_version,
-      source_uri:  service.image,
-      force_all:   :false,
-      delete_boot: :false)
+      name:              'image',
+      version:           service.image_version,
+      source_uri:        service.image,
+      force_upgrade:     :false,
+      delete_boot_image: :false)
   end
 
   def self.prefetch(resources)
-    image_instances = instances
-    resources.keys.each do |id|
-      provider = image_instances.find do |i|
-        i.version.to_s == resources[id][:version].to_s &&
-        i.force_all == resources[id][:force_all] &&
-        i.delete_boot == resources[id][:delete_boot]
-      end
-      resources[id].provider = provider unless provider.nil?
-    end
+    resources.values.first.provider = instances.first
   end
 
-  def properties_set
-    SERVICE_ALL_PROPS.each do |prop|
-      next unless @resource[prop]
-      send("#{prop}=", @resource[prop])
-      unless @property_flush[prop].nil?
-        @nu.send("#{prop}=", @property_flush[prop]) if
-          @nu.respond_to?("#{prop}=")
-      end
-    end
-    upgrade
-  end
-
-  def upgrade
-    attrs = {}
-    vars = [
-      :source_uri
-    ]
-    if vars.any? { |p| @property_flush.key?(p) }
-      # At least one var has changed, get all vals from manifest
-      vars.each do |p|
-        val = @resource[p]
-        if val == :default
-          val = @nu.send("default_#{p}")
-        else
-          val = PuppetX::Cisco::Utils.bool_sym_to_s(val)
-        end
-        next if val == false || val.to_s.empty?
-        attrs[p] = val
-      end
-    end
-
-    attrs.each do |k, v|
-      next unless k == :source_uri
-      media = v.split('/')[0]
-      image = v.split('/')[-1]
-      Cisco::Service.upgrade(image, media, @resource[:delete_boot], @resource[:force_all])
-    end
-  end
-
-  def flush
-    properties_set
+  def version=(set_value)
+    return if set_value.nil?
+    @nu.upgrade(@resource[:source_uri][:image_name], @resource[:source_uri][:media],
+                @resource[:delete_boot_image], @resource[:force_upgrade])
+    @property_hash[:version] = set_value
   end
 end
