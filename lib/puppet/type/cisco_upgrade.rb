@@ -73,7 +73,7 @@ Puppet::Type.newtype(:cisco_upgrade) do
       image = {}
       # Convert <uri>:<image> to a hash.
       # The Node-utils API expects uri and image_name as two
-      # separate arguments. Pre-processing the arguments here. 
+      # separate arguments. Pre-processing the arguments here.
       if uri.include?('/')
         image[:uri] = uri.split('/')[0]
         image[:image_name] = uri.split('/')[-1]
