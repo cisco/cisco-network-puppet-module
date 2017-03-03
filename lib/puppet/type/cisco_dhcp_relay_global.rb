@@ -124,7 +124,11 @@ Puppet::Type.newtype(:cisco_dhcp_relay_global) do
 
     munge do |value|
       value = value.strip
-      value = :default if value == 'default'
+      if value == 'default'
+        value = :default
+      else
+        value = "\"#{value}\"" unless value.start_with?('"') && value.end_with?('"')
+      end
       value
     end
   end # property ipv4_sub_option_circuit_id_string
