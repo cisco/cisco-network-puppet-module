@@ -32,52 +32,49 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'cmnutils.rb'))
 end
 Puppet::Type.type(:cisco_upgrade).provide(:cisco) do
-  desc 'The Cisco Service provider to upgrade Cisco devices.'
+  desc 'The Cisco Upgrade provider to upgrade Cisco devices.'
 
   confine feature: :cisco_node_utils
   defaultfor operatingsystem: :nexus
 
   mk_resource_methods
 
-  SERVICE_NON_BOOL_PROPS = [
+  UPGRADE_NON_BOOL_PROPS = [
     :version
   ]
 
-  SERVICE_ALL_PROPS = SERVICE_NON_BOOL_PROPS
+  UPGRADE_ALL_PROPS = UPGRADE_NON_BOOL_PROPS
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@nu',
-                                            SERVICE_NON_BOOL_PROPS)
+                                            UPGRADE_NON_BOOL_PROPS)
 
   def initialize(value={})
     super(value)
-    @nu = Cisco::Service
+    @nu = Cisco::Upgrade
     @property_flush = {}
   end
 
   def self.instances
     inst = []
-    service = Cisco::Service
+    upgrade = Cisco::Upgrade
 
     inst << new(
-      name:              'image',
-      version:           service.image_version,
-      source_uri:        service.image,
-      force_upgrade:     :false,
-      delete_boot_image: :false)
+      name:    'image',
+      version: upgrade.image_version)
   end
 
   def self.prefetch(resources)
     resources.values.first.provider = instances.first
   end
 
-  def version=(set_value)
-    return if set_value.nil?
+  def version=(new_version)
+    return if new_version.nil?
     # Convert del_boot_image and force_upgrade from symbols
     # to Boolean Class
     del_boot_image = (@resource[:delete_boot_image] == :true)
     force_upgrade = (@resource[:force_upgrade] == :true)
-    @nu.upgrade(@resource[:source_uri][:image_name], @resource[:source_uri][:uri],
+    @nu.upgrade(new_version, @resource[:source_uri][:image_name], @resource[:source_uri][:uri],
                 del_boot_image, force_upgrade)
-    @property_hash[:version] = set_value
+    @property_hash[:version] = new_version
   end
 end
