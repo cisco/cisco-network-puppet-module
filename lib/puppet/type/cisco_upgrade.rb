@@ -113,4 +113,9 @@ Puppet::Type.newtype(:cisco_upgrade) do
         (/([0-9a-zA-Z().]*)/.match(ver))[0] == ver
     end
   end # property version
+
+  validate do
+    fail("The 'source_uri' parameter must be set in the manifest") if
+      self[:source_uri].nil? || self[:source_uri] == ''
+  end
 end
