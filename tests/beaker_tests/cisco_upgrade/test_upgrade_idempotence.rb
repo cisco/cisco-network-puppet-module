@@ -37,6 +37,7 @@ tests[:non_default] = {
   desc:           '1.1 Non_Defaults',
   code:           [0],
   title_pattern:  'image',
+  platform:       'n(3|9)k',
   manifest_props: {
     version:           @version,
     source_uri:        on(agent, facter_cmd('-p cisco.images.system_image')).output,
