@@ -4029,7 +4029,7 @@ Manages the upgrade of a Cisco device.
 
 #### <a name="cisco_upgrade-caveats">Caveats</a>
 
-The `cisco_upgrade` is supported on *simplex* N3K and N9K devices. HA devices are currently not supported. 
+The `cisco_upgrade` is only supported on *simplex* N3K and N9K devices. HA devices are currently not supported. 
 
 | Property | Caveat Description |
 |:--------|:-------------|
