@@ -147,6 +147,7 @@ The following resources include cisco types and providers along with cisco provi
 * Miscellaneous Types
   * [`cisco_command_config`](#type-cisco_command_config)
   * [`cisco_vdc`](#type-cisco_vdc)
+  * [`cisco_upgrade`](#type-cisco_upgrade)
 
 * AAA Types
   * [`cisco_aaa_authentication_login`](#type-cisco_aaa_authentication_login)
@@ -334,6 +335,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_snmp_user`](#type-cisco_snmp_user)
 * [`cisco_tacacs_server`](#type-cisco_tacacs_server)
 * [`cisco_tacacs_server_host`](#type-cisco_tacacs_server_host)
+* [`cisco_upgrade`](#type-cisco_upgrade)
 * [`cisco_vdc`](#type-cisco_vdc)
 * [`cisco_vlan`](#type-cisco_vlan)
 * [`cisco_vpc_domain`](#type-cisco_vpc_domain)
@@ -445,6 +447,7 @@ Symbol | Meaning | Description
 | [cisco_snmp_user](#type-cisco_snmp_user)                   | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
 | [cisco_tacacs_server](#type-cisco_tacacs_server)           | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
 | [cisco_tacacs_server_host](#type-cisco_tacacs_server_host) | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_upgrade](type-cisco_upgrade)                        | ✅* | ✅* | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign:| \*[caveats](#cisco_upgrade-caveats) |
 | [cisco_vdc](#type-cisco_vdc)                               | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
 | [cisco_vlan](#type-cisco_vlan)                             | ✅* | ✅* | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_vlan-caveats) |
 | [cisco_vpc_domain](#type-cisco_vpc_domain)                 | ✅* | ✅* | ✅* | ✅* | ✅* | :heavy_minus_sign: | \*[caveats](#cisco_vpc_domain-caveats) |
@@ -4009,6 +4012,50 @@ Specifies a preshared key for the host. Valid values are 'clear', 'encrypted',
 
 ##### `encryption_password`
 "Specifies the preshared key password for the host. Valid value is a string.
+
+--
+### Type: cisco_upgrade
+
+Manages the upgrade of a Cisco device.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.6.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.6.0                  |
+| N5k      | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
+| N7k      | not applicable     | not applicable         |
+| N9k-F    | not applicable     | not applicable         |
+
+#### <a name="cisco_upgrade-caveats">Caveats</a>
+
+The `cisco_upgrade` is supported on *simplex* N3K and N9K devices. HA devices are currently not supported. 
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `source_uri`    | Only images on `bootflash:`  are supported. |
+
+#### Parameters
+
+##### `name`
+Name of cisco_upgrade instance. Valid values are string.
+*Only 'image' is a valid name for the cisco_upgrade resource.*
+
+##### `source_uri`
+URI to the image to install on the device. Format <uri>:<image>.Valid values are string.
+*Example --> bootflash:nxos.7.0.3.I5.2.bin*
+*NOTE: Only images on `bootflash:` are supported.*
+
+##### `delete_boot_image`
+Delete the booted image. Valid values are `true`, `false`.
+
+##### `force_upgrade`
+Force upgrade the device.Valid values are `true`, `false`.
+
+#### Properties
+
+##### `version`
+Version of the Cisco image to install on the device. Valid values are strings.
 
 --
 ### Type: cisco_vdc
