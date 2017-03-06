@@ -71,6 +71,8 @@ Puppet::Type.type(:cisco_upgrade).provide(:cisco) do
     return if new_version.nil?
     # Convert del_boot_image and force_upgrade from symbols
     # to Boolean Class
+    fail 'The source_uri parameter must be set in the manifest' if
+      @resource[:source_uri].nil?
     del_boot_image = (@resource[:delete_boot_image] == :true)
     force_upgrade = (@resource[:force_upgrade] == :true)
     @nu.upgrade(new_version, @resource[:source_uri][:image_name], @resource[:source_uri][:uri],
