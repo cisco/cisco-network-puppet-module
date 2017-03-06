@@ -75,9 +75,7 @@ def hash_to_patterns(hash)
     if /^\[.*\]$/.match(value)
       value.gsub!(/[\[\]]/) { |s| '\\' + "#{s}" }.gsub!(/\"/) { |_s| '\'' }
     end
-    if /\(.*\)/.match(value)
-      value.gsub!(/[\(\)]/) { |s| '\\' + "#{s}" }
-    end
+    value.gsub!(/[\(\)]/) { |s| '\\' + "#{s}" } if /\(.*\)/.match(value)
     regexparr << Regexp.new("#{key}\s+=>\s+'?#{value}'?")
   end
   regexparr
