@@ -1414,12 +1414,6 @@ def remove_all_vrfs(agent)
   test_set(agent, found.compact.join(' ; '))
 end
 
-def remove_all_route_maps(agent)
-  found = test_get(agent, 'incl ^route-map').split("\n")
-  found.map! { |cmd| "no #{cmd}" if cmd[/^route-map/] }
-  test_set(agent, found.compact.join(' ; '))
-end
-
 # Return yum patch version from host
 def get_patch_version(name)
   cmd = get_vshell_cmd("show install packages | inc #{name}")
