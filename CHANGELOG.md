@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### New feature support
 #### Cisco Resources
 - `cisco_route_map` type and provider.
+- `cisco_upgrade` type and provider.
 
 ### Added
 - Extend cisco_interface with attributes:

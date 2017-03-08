@@ -75,6 +75,7 @@ def hash_to_patterns(hash)
     if /^\[.*\]$/.match(value)
       value.gsub!(/[\[\]]/) { |s| '\\' + "#{s}" }.gsub!(/\"/) { |_s| '\'' }
     end
+    value.gsub!(/[\(\)]/) { |s| '\\' + "#{s}" } if /\(.*\)/.match(value)
     regexparr << Regexp.new("#{key}\s+=>\s+'?#{value}'?")
   end
   regexparr
@@ -1108,6 +1109,14 @@ def nexus_image
   image_regexp = /.*\.(\S+\.\S+)\.bin/
   data = on(agent, facter_cmd(facter_opt)).output
   @image ||= image_regexp.match(data)[1]
+end
+
+# Gets the version of the image running on a device
+@version = nil
+def image_version
+  facter_opt = '-p os.release.full'
+  data = on(agent, facter_cmd(facter_opt)).output
+  @version ||= data
 end
 
 # On match will skip all testcases
