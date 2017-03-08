@@ -4029,11 +4029,11 @@ Manages the upgrade of a Cisco device.
 
 #### <a name="cisco_upgrade-caveats">Caveats</a>
 
-The `cisco_upgrade` is only supported on *simplex* N3K and N9K devices. HA devices are currently not supported. 
+The `cisco_upgrade` is only supported on *simplex* N3k, N9k and N9k-F devices. HA devices are currently not supported. 
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `source_uri`    | Only images on `bootflash:`  are supported. |
+| `source_uri`    | Only images on `bootflash:`  are supported. The puppet file provider can be used to copy the image file to          `bootflash`. | 
 
 #### Parameters
 
@@ -4042,7 +4042,7 @@ Name of cisco_upgrade instance. Valid values are string.
 *Only 'image' is a valid name for the cisco_upgrade resource.*
 
 ##### `source_uri`
-URI to the image to install on the device. Format <uri>:<image>.Valid values are string.
+Image upgrade URI. Format `<uri>:<image>`. Valid values are string.
 *Example --> bootflash:nxos.7.0.3.I5.2.bin*
 *NOTE: Only images on `bootflash:` are supported.*
 
