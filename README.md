@@ -4033,7 +4033,7 @@ The `cisco_upgrade` is only supported on *simplex* N3k, N9k and N9k-F devices. H
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `source_uri`    | Only images on `bootflash:`  are supported. The puppet file provider can be used to copy the image file to          `bootflash`. | 
+| `source_uri`    | Only images on `bootflash:`  are supported. The puppet file provider can be used to copy the image file to          `bootflash`. Refer to <a href="https://github.com/cisco/cisco-network-puppet-module/blob/develop/examples/cisco/demo_patching.pp">Demo Patching</a> for an example. | 
 
 #### Parameters
 
