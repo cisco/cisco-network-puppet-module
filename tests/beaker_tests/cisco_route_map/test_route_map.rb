@@ -540,11 +540,7 @@ def unsupported_properties(_tests, _id)
 end
 
 def cleanup(agent)
-  test_set(agent, 'no route-map rm1')
-  test_set(agent, 'no route-map rm2')
-  test_set(agent, 'no route-map rm3')
-  test_set(agent, 'no route-map rm4')
-  test_set(agent, 'no route-map rm5')
+  resource_absent_cleanup(agent, 'cisco_route_map')
 end
 
 #################################################################
