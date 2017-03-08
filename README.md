@@ -4020,12 +4020,12 @@ Manages the upgrade of a Cisco device.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.6.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.6.0                  |
+| N9k      | 7.0(3)I2(2e)       | 1.6.0                  |
+| N3k      | 7.0(3)I2(2e)       | 1.6.0                  |
 | N5k      | not applicable     | not applicable         |
 | N6k      | not applicable     | not applicable         |
 | N7k      | not applicable     | not applicable         |
-| N9k-F    | not applicable     | not applicable         |
+| N9k-F    | 7.0(3)F1(1)        | 1.6.0                  |
 
 #### <a name="cisco_upgrade-caveats">Caveats</a>
 
