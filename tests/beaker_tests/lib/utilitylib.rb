@@ -1115,7 +1115,7 @@ end
 @version = nil
 def image_version
   facter_opt = '-p os.release.full'
-  data = on(agent, facter_cmd(facter_opt)).output
+  data = on(agent, facter_cmd(facter_opt)).stdout.chomp
   @version ||= data
 end
 
