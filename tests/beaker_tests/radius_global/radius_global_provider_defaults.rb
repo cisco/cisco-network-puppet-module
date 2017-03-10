@@ -72,7 +72,7 @@ test_name "TestCase :: #{testheader}" do
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = PUPPET_BINPATH + 'agent -t'
-    on(agent, cmd_str, acceptable_exit_codes: [0,2])
+    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
 
     logger.info("Get resource present manifest from master :: #{result}")
   end
