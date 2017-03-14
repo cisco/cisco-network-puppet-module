@@ -147,6 +147,7 @@ The following resources include cisco types and providers along with cisco provi
 * Miscellaneous Types
   * [`cisco_command_config`](#type-cisco_command_config)
   * [`cisco_vdc`](#type-cisco_vdc)
+  * [`cisco_upgrade`](#type-cisco_upgrade)
 
 * AAA Types
   * [`cisco_aaa_authentication_login`](#type-cisco_aaa_authentication_login)
@@ -231,6 +232,9 @@ The following resources include cisco types and providers along with cisco provi
   * [`radius_global (netdev_stdlib)`](#type-radius_global)
   * [`radius_server (netdev_stdlib)`](#type-radius_server)
   * [`radius_server_group (netdev_stdlib)`](#type-radius_server_group)
+
+* RouteMap Types
+  * [`cisco_route_map`](#type-cisco_route_map)
 
 * STP Types
   * [`cisco_stp_global`](#type-cisco_stp_global)
@@ -323,6 +327,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_pim_grouplist`](#type-cisco_pim_grouplist)
 * [`cisco_pim_rp_address`](#type-cisco_pim_rp_address)
 * [`cisco_portchannel_global`](#type-cisco_portchannel_global)
+* [`cisco_route_map`](#type-cisco_route_map)
 * [`cisco_stp_global`](#type-cisco_stp_global)
 * [`cisco_snmp_community`](#type-cisco_snmp_community)
 * [`cisco_snmp_group`](#type-cisco_snmp_group)
@@ -330,6 +335,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_snmp_user`](#type-cisco_snmp_user)
 * [`cisco_tacacs_server`](#type-cisco_tacacs_server)
 * [`cisco_tacacs_server_host`](#type-cisco_tacacs_server_host)
+* [`cisco_upgrade`](#type-cisco_upgrade)
 * [`cisco_vdc`](#type-cisco_vdc)
 * [`cisco_vlan`](#type-cisco_vlan)
 * [`cisco_vpc_domain`](#type-cisco_vpc_domain)
@@ -433,6 +439,7 @@ Symbol | Meaning | Description
 | [cisco_pim_rp_address](#type-cisco_pim_rp_address)         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
 | [cisco_pim_grouplist](#type-cisco_pim_grouplist)           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
 | [cisco_portchannel_global](#type-cisco_portchannel_global) | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_portchannel_global-caveats) |
+| [cisco_route_map](#type-cisco_route_map)                   | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_route_map-caveats) |
 | [cisco_stp_global](#type-cisco_stp_global)                 | ✅* | ✅* | ✅* | ✅* | ✅ | ✅ | \*[caveats](#cisco_stp_global-caveats) |
 | [cisco_snmp_community](#type-cisco_snmp_community)         | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
 | [cisco_snmp_group](#type-cisco_snmp_group)                 | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
@@ -440,6 +447,7 @@ Symbol | Meaning | Description
 | [cisco_snmp_user](#type-cisco_snmp_user)                   | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
 | [cisco_tacacs_server](#type-cisco_tacacs_server)           | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
 | [cisco_tacacs_server_host](#type-cisco_tacacs_server_host) | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_upgrade](type-cisco_upgrade)                        | ✅* | ✅* | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign:| \*[caveats](#cisco_upgrade-caveats) |
 | [cisco_vdc](#type-cisco_vdc)                               | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
 | [cisco_vlan](#type-cisco_vlan)                             | ✅* | ✅* | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_vlan-caveats) |
 | [cisco_vpc_domain](#type-cisco_vpc_domain)                 | ✅* | ✅* | ✅* | ✅* | ✅* | :heavy_minus_sign: | \*[caveats](#cisco_vpc_domain-caveats) |
@@ -1985,6 +1993,9 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | `hsrp_use_bia`                        | Not supported on N5k,N6k <br> Minimum puppet module version 1.5.0 <br> Supported in OS Version 8.0 and later on N7k |
 | `hsrp_version`                        | Not supported on N5k,N6k <br> Minimum puppet module version 1.5.0 <br> Supported in OS Version 8.0 and later on N7k |
 | `pim_bfd`                             | Minimum puppet module version 1.5.0 |
+| `load_interval_counter_1_delay`       | Minimum puppet module version 1.6.0 |
+| `load_interval_counter_2_delay`       | Minimum puppet module version 1.6.0 |
+| `load_interval_counter_3_delay`       | Minimum puppet module version 1.6.0 |
 
 #### Parameters
 
@@ -2288,6 +2299,17 @@ HSRP uses this interface's burned in address. Valid values are 'use_bia', 'use_b
 
 ##### `hsrp_version`
 HSRP version for this interface. Valid values are integer, keyword 'default'.
+
+##### load-interval config attributes
+
+##### `load_interval_counter_1_delay`
+Load interval delay for counter 1 in seconds. Valid values are integer, keyword 'default'
+
+##### `load_interval_counter_2_delay`
+Load interval delay for counter 2 in seconds. Valid values are integer, keyword 'default'
+
+##### `load_interval_counter_3_delay`
+Load interval delay for counter 3 in seconds. Valid values are integer, keyword 'default'
 
 --
 ### Type: cisco_interface_channel_group
@@ -3224,6 +3246,430 @@ port-channel hash input offset. Valid values are integer or 'default'.
 port-channel symmetry hash. Valid values are true, false or 'default'.
 
 --
+### Type: cisco_route_map
+
+Manages a Cisco Route Map.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.6.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.6.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.6.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.6.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.6.0                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.6.0                  |
+
+#### <a name="cisco_route_map-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:---------|:-------------|
+| `match_evpn_route_type_1`                | Not supported on N3k,N9k-F,N9k  |
+| `match_evpn_route_type_2_all`            | Not supported on N3k,N9k-F,N9k  |
+| `match_evpn_route_type_2_mac_ip`         | Not supported on N3k,N9k-F,N9k  |
+| `match_evpn_route_type_2_mac_only`       | Not supported on N3k,N9k-F,N9k  |
+| `match_evpn_route_type_3`                | Not supported on N3k,N9k-F,N9k  |
+| `match_evpn_route_type_4`                | Not supported on N3k,N9k-F,N9k  |
+| `match_evpn_route_type_5`                | Not supported on N3k,N9k-F,N9k  |
+| `match_evpn_route_type_6`                | Not supported on N3k,N9k-F,N9k  |
+| `match_evpn_route_type_all`              | Not supported on N3k,N9k-F,N9k  |
+| `match_length`                           | Not supported on N3k,N9k-F,N9k  |
+| `match_mac_list`                         | Not supported on N3k,N9k-F,N9k  |
+| `match_metric`                           | Not supported on N9k-F          |
+| `match_ospf_area`                        | Not supported on N5k,N6k,N7k,N9k-F <br> Supported in OS version 7.0(3)I5.1 and later on N3k, N9k  |
+| `match_vlan`                             | Not supported on N3k,N9k-F,N9k  |
+| `set_extcommunity_4bytes_additive`       | Not supported on N9k-F          |
+| `set_extcommunity_4bytes_non_transitive` | Not supported on N9k-F          |
+| `set_extcommunity_4bytes_transitive`     | Not supported on N9k-F          |
+| `set_extcommunity_cost_igp`              | Not supported on N9k-F          |
+| `set_extcommunity_cost_pre_bestpath`     | Not supported on N9k-F          |
+| `set_extcommunity_rt_additive`           | Not supported on N9k-F          |
+| `set_extcommunity_rt_asn`                | Not supported on N9k-F,N9k      |
+| `set_forwarding_addr`                    | Not supported on N9k-F          |
+| `set_ipv4_default_next_hop`              | Not supported on N5k,N6k,N9k-F,N9k  |
+| `set_ipv4_default_next_hop_load_share`   | Not supported on N5k,N6k,N9k-F,N9k  |
+| `set_ipv4_next_hop`                      | Not supported on N9k-F          |
+| `set_ipv4_next_hop_load_share`           | Not supported on N5k,N6k,N9k-F <br> Supported in OS Version 7.0(3)I5.1 and later on N9k  |
+| `set_ipv4_next_hop_redist`               | Supported on N5k,N6k,N7k,N9k-F <br> Supported in OS Version 7.0(3)I5.1 and later on N3k,N9k  |
+| `set_ipv4_precedence`                    | Not supported on N9k-F          |
+| `set_ipv4_prefix`                        | Not supported on N5k,N6k,N9k-F  |
+OS Version 7.0(3)I5.1 and later on N3k,N9k  |
+| `set_ipv6_default_next_hop`              | Not supported on N5k,N6k,N9k-F,N9k  |
+| `set_ipv6_default_next_hop_load_share`   | Not supported on N5k,N6k,N9k-F,N9k  |
+| `set_ipv6_next_hop`                      | Not supported on N9k-F          |
+| `set_ipv6_next_hop_load_share`           | Not supported on N5k,N6k,N9k-F <br> Supported in OS Version 7.0(3)I5.1 and later on N9k  |
+| `set_ipv6_next_hop_redist`               | Supported on N5k,N6k,N7k,N9k-F <br> Supported in OS Version 7.0(3)I5.1 and later on N3k,N9k  |
+| `set_ipv6_prefix`                        | Not supported on N5k,N6k,N9k-F  |
+| `set_vrf`                                | Supported on N7k                |
+
+
+| Example Parameter Usage |
+|:--
+|`match_as_number { '<AA4>,  <AA4>-<AA4>, ..':`
+|`match_as_number { '['3', '22-34', '38', '101-110', '120']':`
+
+##### Basic interface config attributes
+
+###### `ensure`
+Determine whether the route map config should be present or not. Valid values
+are 'present' and 'absent'.
+
+
+##### `description`
+Description of the route-map. Valid values are string, or keyword 'default'
+
+##### `match_as_number`
+Match BGP peer AS number. Valid values are an array of ranges or keyword 'default'
+
+
+##### `match_as_number_as_path_list`
+Match BGP AS path list. Valid values are an array of list names or keyword 'default'
+
+##### `match_community`
+Match BGP community list. Valid values are an array of communities or keyword 'default'
+
+##### `match_community_exact_match`
+Enable exact matching of communities. Valid values 'true', 'false' or keyword 'default'
+
+##### `match_evpn_route_type_1`
+Enable match BGP EVPN route type-1. Valid values are 'true', 'false' or keyword 'default'
+
+##### `match_evpn_route_type_2_all`
+Enable match all BGP EVPN route in type-2. Valid values are 'true', false or keyword 'default'
+
+##### `match_evpn_route_type_2_mac_ip`
+Enable match mac-ip BGP EVPN route in type-2. Valid values are 'true', 'false' or keyword 'default'
+
+##### `match_evpn_route_type_2_mac_only`
+Enable match mac-only BGP EVPN route in type-2. Valid values are 'true', 'false' or keyword 'default'
+
+##### `match_evpn_route_type_3`
+Enable match BGP EVPN route type-3. Valid values are 'true', 'false' or keyword 'default'
+
+##### `match_evpn_route_type_4`
+Enable match BGP EVPN route type-4. Valid values are 'true', 'false' or keyword 'default'
+
+##### `match_evpn_route_type_5`
+Enable match BGP EVPN route type-5. Valid values are 'true', 'false' or keyword 'default'
+
+##### `match_evpn_route_type_6`
+Enable match BGP EVPN route type-6. Valid values are 'true', 'false' or keyword 'default'
+
+##### `match_evpn_route_type_all`
+Enable match BGP EVPN route type 1-6. Valid values are 'true', 'false' or keyword 'default'
+
+##### `match_ext_community`
+Match BGP extended community list. Valid values are an array of extended communities or keyword 'default'
+
+##### `match_ext_community_exact_match`
+Enable exact matching of extended communities. Valid values are 'true', 'false' or keyword 'default'
+
+##### `match_interface`
+Match first hop interface of route. Valid values are array of interfaces or keyword 'default'
+
+##### `match_ipv4_addr_access_list`
+Match IPv4 access-list name. Valid values are String or keyword 'default'
+
+##### `match_ipv4_addr_prefix_list`
+Match entries of prefix-lists for IPv4. Valid values are array of prefixes or keyword 'default'
+
+##### `match_ipv4_multicast_enable`
+Enable match IPv4 multicast. This property should be set to 'true' before setting any IPv4 multicast properties. Valid values are are 'true', 'false' or keyword 'default'
+
+##### `match_ipv4_multicast_group_addr`
+Match IPv4 multicast group prefix. Valid values are string, or keyword 'default'
+
+##### `match_ipv4_multicast_group_range_begin_addr`
+Match IPv4 multicast group address begin range. Valid values are string, or keyword 'default'
+
+##### `match_ipv4_multicast_group_range_end_addr`
+Match IPv4 multicast group address end range. Valid values are string, or keyword 'default'
+
+##### `match_ipv4_multicast_rp_addr`
+Match IPv4 multicast rendezvous prefix. Valid values are string, or keyword 'default'
+
+##### `match_ipv4_multicast_rp_type`
+Match IPv4 multicast rendezvous point type. Valid values are 'ASM', 'Bidir' or keyword 'default'
+
+##### `match_ipv4_multicast_src_addr`
+Match IPv4 multicast source prefix. Valid values are string or keyword 'default'
+
+##### `match_ipv4_next_hop_prefix_list`
+Match entries of prefix-lists for next-hop address of route for IPv4. Valid values are an array of prefixes or keyword 'default'
+
+##### `match_ipv4_route_src_prefix_list`
+Match entries of prefix-lists for advertising source address of route for IPv4. Valid values are an array of prefixes or keyword 'default'
+
+##### `match_ipv6_addr_access_list`
+Match IPv6 access-list name. Valid values are string or keyword 'default'
+
+##### `match_ipv6_addr_prefix_list`
+Match entries of prefix-lists for IPv6. Valid values are array of prefixes or keyword 'default'
+
+##### `match_ipv6_multicast_enable`
+Enable match IPv6 multicast. This property should be set to 'true' before setting any IPv6 multicast properties. Valid values are 'true', 'false' or keyword 'default'
+
+##### `match_ipv6_multicast_group_addr`
+Match IPv6 multicast group prefix. Valid values are string, or keyword 'default'
+
+##### `match_ipv6_multicast_group_range_begin_addr`
+Match IPv6 multicast group address begin range. Valid values are string, or keyword 'default'
+
+##### `match_ipv6_multicast_group_range_end_addr`
+Match IPv6 multicast group address end range. Valid values are string, or keyword 'default'
+
+##### `match_ipv6_multicast_rp_addr`
+Match IPv6 multicast rendezvous prefix. Valid values are string, or keyword 'default'
+
+##### `match_ipv6_multicast_rp_type`
+Match IPv6 multicast rendezvous point type. Valid values are 'ASM', 'Bidir' or keyword 'default'
+
+##### `match_ipv6_multicast_src_addr`
+Match IPv6 multicast source prefix. Valid values are string or keyword 'default'
+
+##### `match_ipv6_next_hop_prefix_list`
+Match entries of prefix-lists for next-hop address of route for IPv6. Valid values are array of prefixes or keyword 'default'
+
+##### `match_ipv6_route_src_prefix_list`
+Match entries of prefix-lists for advertising source address of route for IPv6. Valid values are array of prefixes or keyword 'default'
+
+##### `match_length`
+Match packet length. Valid values are array of minimum and maximum lengths or keyword 'default'
+
+##### `match_mac_list`
+Match entries of mac-lists. Valid values are array of mac list names or keyword 'default'
+
+##### `match_metric`
+Match metric of route. Valid values are array of [metric, deviation] pairs or keyword 'default'
+
+##### `match_ospf_area`
+Match entries of ospf area IDs. Valid values are array of ids or keyword 'default'
+
+##### `match_route_type_external`
+Enable match external route type (BGP, EIGRP and OSPF type 1/2). Valid values are 'true', 'false' or keyword 'default'
+
+##### `match_route_type_inter_area`
+Enable match OSPF inter area type. Valid values are 'true', 'false' or keyword 'default'
+
+##### `match_route_type_internal`
+Enable match OSPF inter area type (OSPF intra/inter area). Valid values are 'true', 'false' or keyword 'default'
+
+##### `match_route_type_intra_area`
+Enable match OSPF intra area route. Valid values are 'true', 'false' or keyword 'default'
+
+##### `match_route_type_level_1`
+Enable match IS-IS level-1 route. Valid values are 'true', 'false' or keyword 'default'
+
+##### `match_route_type_level_2`
+Enable match IS-IS level-2 route. Valid values are 'true', 'false' or keyword 'default'
+
+##### `match_route_type_local`
+Enable match locally generated route. Valid values are 'true', 'false' or keyword 'default'
+
+##### `match_route_type_nssa_external`
+Enable match nssa-external route (OSPF type 1/2). Valid values are 'true', 'false' or keyword 'default'
+
+##### `match_route_type_type_1`
+Enable match OSPF external type 1 route. Valid values are 'true', 'false' or keyword 'default'
+
+##### `match_route_type_type_2`
+Enable match OSPF external type 2 route. Valid values are 'true', 'false' or keyword 'default'
+
+##### `match_src_proto`
+Match source protocol. Valid values are array of protocols or keyword 'default'
+
+##### `match_tag`
+Match tag of route. Valid values are array of tags or keyword 'default'
+
+##### `match_vlan`
+Match VLAN Id. Valid values are array of string of VLAN ranges or keyword 'default'
+
+##### `set_as_path_prepend`
+Prepend string for a BGP AS-path attribute. Valid values are array of AS numbers or keyword 'default'
+
+##### `set_as_path_prepend_last_as`
+Number of last-AS prepends. Valid values are integer or keyword 'default'
+
+##### `set_as_path_tag`
+Set the tag as an AS-path attribute. Valid values are 'true', 'false' or keyword 'default'
+
+##### `set_comm_list`
+Set BGP community list (for deletion). Valid values are String or keyword 'default'
+
+##### `set_community_additive`
+Add to existing BGP community. Valid values are 'true', 'false' or keyword 'default'
+
+##### `set_community_asn`
+Set community number. Valid values are array of AS numbers or keyword 'default'
+
+##### `set_community_internet`
+Set Internet community. Valid values are 'true', 'false' or keyword 'default'
+
+##### `set_community_local_as`
+Do not send outside local AS. Valid values are 'true', 'false' or keyword 'default'
+
+##### `set_community_no_advtertise`
+Do not advertise to any peer. Valid values are 'true', 'false' or keyword 'default'
+
+##### `set_community_no_export`
+Do not export to next AS. Valid values are 'true', 'false' or keyword 'default'
+
+##### `set_community_none`
+Set no community attribute. Valid values are 'true', 'false' or keyword 'default'
+
+##### `set_dampening_half_life`
+Set half-life time for the penalty of BGP route flap dampening. Valid values are integer or keyword 'default'
+
+##### `set_dampening_max_duation`
+Set maximum duration to suppress a stable route of BGP route flap dampening. Valid values are integer or keyword 'default'
+
+##### `set_dampening_reuse`
+Set penalty to start reusing a route of BGP route flap dampening. Valid values are integer or keyword 'default'
+
+##### `set_dampening_suppress`
+Set penalty to start suppressing a route of BGP route flap dampening. Valid values are integer or keyword 'default'
+
+##### `set_distance_igp_ebgp`
+Set administrative distance for IGP or EBGP routes. Valid values are integer or keyword 'default'
+
+##### `set_distance_internal`
+Set administrative distance for internal routes. Valid values are integer or keyword 'default'
+
+##### `set_distance_local`
+Set administrative distance for local routes. Valid values are integer or keyword 'default'
+
+##### `set_extcomm_list`
+Set BGP extended community list (for deletion). Valid values are string or keyword 'default'
+
+##### `set_extcommunity_4bytes_additive`
+Add to existing generic extcommunity. Valid values are 'true', 'false' or keyword 'default'
+
+##### `set_extcommunity_4bytes_non_transitive`
+Set non-transitive extended community. Valid values are array of communities, or keyword 'default'
+
+##### `set_extcommunity_4bytes_none`
+Set no extcommunity generic attribute. Valid values are 'true', 'false' or keyword 'default'
+
+##### `set_extcommunity_4bytes_transitive`
+Set transitive extended community. Valid values are array of communities, or keyword 'default'
+
+##### `set_extcommunity_cost_igp`
+Compare following IGP cost comparison. Valid values are array of [communityId, cost] pairs or keyword 'default'
+
+##### `set_extcommunity_cost_pre_bestpath`
+Compare before all other steps in bestpath calculation. Valid values are array of [communityId, cost] pairs or keyword 'default'
+
+##### `set_extcommunity_rt_additive`
+Set add to existing route target extcommunity. Valid values are 'true', 'false' or keyword 'default'
+
+##### `set_extcommunity_rt_asn`
+Set community number. Valid values are array of AS numbers or keyword 'default'
+
+##### `set_forwarding_addr`
+Set the forwarding address. Valid values are 'true', 'false' or keyword 'default'
+
+##### `set_interface`
+Set output interface. Valid values are 'Null0' or keyword 'default'
+
+##### `set_ipv4_default_next_hop`
+Set default next-hop IPv4 address. Valid values are array of next hops or keyword 'default'
+
+##### `set_ipv4_default_next_hop_load_share`
+Enable default IPv4 next-hop load-sharing. Valid values are 'true', 'false' or keyword 'default'
+
+##### `set_ipv4_next_hop`
+Set next-hop IPv4 address. Valid values are array of next hops or keyword 'default'
+
+##### `set_ipv4_next_hop_load_share`
+Enable IPv4 next-hop load-sharing. Valid values are 'true', 'false' or keyword 'default'
+
+##### `set_ipv4_next_hop_peer_addr`
+Enable IPv4 next-hop peer address. Valid values are 'true', 'false' or keyword 'default'
+
+##### `set_ipv4_next_hop_redist`
+Enable IPv4 next-hop unchanged address during redistribution. Valid values are 'true', 'false' or keyword 'default'
+
+##### `set_ipv4_next_hop_unchanged`
+Enable IPv4 next-hop unchanged address. Valid values are 'true', 'false' or keyword 'default'
+
+##### `set_ipv4_precedence`
+Set IPv4 precedence field. Valid values are 'critical', 'flash', 'flash-override', 'immediate', 'internet', 'network', 'priority', 'routine' or keyword 'default'
+
+##### `set_ipv4_prefix`
+Set IPv4 prefix-list. Valid values are string or keyword 'default'
+
+##### `set_ipv6_default_next_hop`
+Set default next-hop IPv6 address. Valid values are array of next hops or keyword 'default'
+
+##### `set_ipv6_default_next_hop_load_share`
+Enable default IPv6 next-hop load-sharing. Valid values are 'true', 'false' or keyword 'default'
+
+##### `set_ipv6_next_hop`
+Set next-hop IPv6 address. Valid values are array of next hops or keyword 'default'
+
+##### `set_ipv6_next_hop_load_share`
+Enable IPv6 next-hop load-sharing. Valid values are 'true', 'false' or keyword 'default'
+
+##### `set_ipv6_next_hop_peer_addr`
+Enable IPv6 next-hop peer address. Valid values are 'true', 'false' or keyword 'default'
+
+##### `set_ipv6_next_hop_redist`
+Enable IPv6 next-hop unchanged address during redistribution. Valid values are 'true', 'false' or keyword 'default'
+
+##### `set_ipv6_next_hop_unchanged`
+Enable IPv6 next-hop unchanged address. Valid values are 'true', 'false' or keyword 'default'
+
+##### `set_ipv6_precedence`
+Set IPv6 precedence field. Valid values are 'critical', 'flash', 'flash-override', 'immediate', 'internet', 'network', 'priority', 'routine' or keyword 'default'
+
+##### `set_ipv6_prefix`
+Set IPv6 prefix-list. Valid values are string or keyword 'default'
+
+##### `set_level`
+Set where to import route. Valid values are 'level-1', 'level-1-2', 'level-2' or keyword 'default'
+
+##### `set_local_preference`
+Set BGP local preference path attribute. Valid values are integer or keyword 'default'
+
+##### `set_metric_additive`
+Set add to metric. Valid values are 'true', 'false' or keyword 'default'
+
+##### `set_metric_bandwidth`
+Set metric value or Bandwidth in kbps. Valid values are integer or keyword 'default'
+
+##### `set_metric_delay`
+Set IGRP delay metric. Valid values are integer or keyword 'default'
+
+##### `set_metric_effective_bandwidth`
+Set IGRP Effective bandwidth metric. Valid values are integer or keyword 'default'
+
+##### `set_metric_mtu`
+Set IGRP MTU of the path. Valid values are integer or keyword 'default'
+
+##### `set_metric_reliability`
+Set IGRP reliability metric. Valid values are integer or keyword 'default'
+
+##### `set_metric_type`
+Set type of metric for destination routing protocol. Valid values are 'external, 'internal', 'type-1, 'type-2, or keyword 'default'
+
+##### `set_nssa_only`
+Set OSPF NSSA Areas. Valid values are 'true, 'false' or keyword 'default'
+
+##### `set_origin`
+Set BGP origin code. Valid values are 'egp, 'igp', 'incomplete', or keyword 'default'
+
+##### `set_path_selection`
+Set path selection criteria for BGP. Valid values are 'true, 'false' or keyword 'default'
+
+##### `set_tag`
+Set tag value for destination routing protocol. Valid values are integer or keyword 'default'
+
+##### `set_vrf`
+Set the VRF for next-hop resolution. Valid values are string or keyword 'default'
+
+##### `set_weight`
+Set BGP weight for routing table. Valid values are integer or keyword 'default'
+
+--
 ### Type: cisco_stp_global
 Manages spanning tree global parameters
 
@@ -3566,6 +4012,50 @@ Specifies a preshared key for the host. Valid values are 'clear', 'encrypted',
 
 ##### `encryption_password`
 "Specifies the preshared key password for the host. Valid value is a string.
+
+--
+### Type: cisco_upgrade
+
+Manages the upgrade of a Cisco device.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(2e)       | 1.6.0                  |
+| N3k      | 7.0(3)I2(2e)       | 1.6.0                  |
+| N5k      | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
+| N7k      | not applicable     | not applicable         |
+| N9k-F    | 7.0(3)F1(1)        | 1.6.0                  |
+
+#### <a name="cisco_upgrade-caveats">Caveats</a>
+
+The `cisco_upgrade` is only supported on *simplex* N3k, N9k and N9k-F devices. HA devices are currently not supported. 
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `source_uri`    | Only images on `bootflash:`  are supported. The puppet file provider can be used to copy the image file to          `bootflash`. Refer to <a href="https://github.com/cisco/cisco-network-puppet-module/blob/develop/examples/cisco/demo_upgrade.pp">Demo Upgrade</a> for an example. | 
+
+#### Parameters
+
+##### `name`
+Name of cisco_upgrade instance. Valid values are string.
+*Only 'image' is a valid name for the cisco_upgrade resource.*
+
+##### `source_uri`
+Image upgrade URI. Format `<uri>:<image>`. Valid values are string.
+*Example --> bootflash:nxos.7.0.3.I5.2.bin*
+*NOTE: Only images on `bootflash:` are supported.*
+
+##### `delete_boot_image`
+Delete the booted image. Valid values are `true`, `false`.
+
+##### `force_upgrade`
+Force upgrade the device.Valid values are `true`, `false`.
+
+#### Properties
+
+##### `version`
+Version of the Cisco image to install on the device. Valid values are strings.
 
 --
 ### Type: cisco_vdc

@@ -75,6 +75,7 @@ def hash_to_patterns(hash)
     if /^\[.*\]$/.match(value)
       value.gsub!(/[\[\]]/) { |s| '\\' + "#{s}" }.gsub!(/\"/) { |_s| '\'' }
     end
+    value.gsub!(/[\(\)]/) { |s| '\\' + "#{s}" } if /\(.*\)/.match(value)
     regexparr << Regexp.new("#{key}\s+=>\s+'?#{value}'?")
   end
   regexparr
@@ -1110,6 +1111,14 @@ def nexus_image
   @image ||= image_regexp.match(data)[1]
 end
 
+# Gets the version of the image running on a device
+@version = nil
+def image_version
+  facter_opt = '-p os.release.full'
+  data = on(agent, facter_cmd(facter_opt)).stdout.chomp
+  @version ||= data
+end
+
 # On match will skip all testcases
 # Do not use this for skipping individual properties.
 def skip_nexus_image(image, tests)
@@ -1450,6 +1459,7 @@ end
 # Returns: String with double quotes: (Example: '"foo"'
 #
 def add_quotes(string)
-  string = "\"#{string}\"" if image?[/8.0/]
+  return string if image?[/7.3.0/]
+  string = "\"#{string}\""
   string
 end

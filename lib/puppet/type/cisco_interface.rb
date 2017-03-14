@@ -110,6 +110,9 @@ Puppet::Type.newtype(:cisco_interface) do
      ipv4_arp_timeout             => 300,
      svi_autostate                => true,
      svi_management               => true,
+     load_interval_counter_1_delay => 150,
+     load_interval_counter_2_delay => 250,
+     load_interval_counter_3_delay => 90,
     }
     cisco_interface { 'ethernet8/1' :
      description                        => 'Private-vlan host',
@@ -1251,4 +1254,29 @@ Puppet::Type.newtype(:cisco_interface) do
 
     munge { |value| value == 'default' ? :default : Integer(value) }
   end # property hsrp_version
+
+  ############################
+  # load-interval attributes #
+  ############################
+
+  newproperty(:load_interval_counter_1_delay) do
+    desc "Load interval delay for counter 1 in seconds. Valid values
+          are integer, keyword 'default'."
+
+    munge { |value| value == 'default' ? :default : Integer(value) }
+  end # property load_interval_counter_1_delay
+
+  newproperty(:load_interval_counter_2_delay) do
+    desc "Load interval delay for counter 2 in seconds. Valid values
+          are integer, keyword 'default'."
+
+    munge { |value| value == 'default' ? :default : Integer(value) }
+  end # property load_interval_counter_2_delay
+
+  newproperty(:load_interval_counter_3_delay) do
+    desc "Load interval delay for counter 3 in seconds. Valid values
+          are integer, keyword 'default'."
+
+    munge { |value| value == 'default' ? :default : Integer(value) }
+  end # property load_interval_counter_3_delay
 end # Puppet::Type.newtype

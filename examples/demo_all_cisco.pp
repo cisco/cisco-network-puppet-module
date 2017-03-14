@@ -42,12 +42,14 @@ class ciscopuppet::demo_all_cisco {
   include ciscopuppet::cisco::demo_patching
   include ciscopuppet::cisco::demo_pim
   include ciscopuppet::cisco::demo_portchannel
+  include ciscopuppet::cisco::demo_route_map
   include ciscopuppet::cisco::demo_snmp
   #stp_bd and stp_vlan are exclusive, so comment one of them
   #include ciscopuppet::cisco::demo_stp_bd
   include ciscopuppet::cisco::demo_stp_vlan
   include ciscopuppet::cisco::demo_tacacs_server
   include ciscopuppet::cisco::demo_tacacs_server_host
+  # include ciscopuppet::cisco::demo_upgrade
   include ciscopuppet::cisco::demo_vlan
   include ciscopuppet::cisco::demo_vpc_domain
   include ciscopuppet::cisco::demo_vrf
