@@ -1996,6 +1996,7 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | `load_interval_counter_1_delay`       | Minimum puppet module version 1.6.0 |
 | `load_interval_counter_2_delay`       | Minimum puppet module version 1.6.0 |
 | `load_interval_counter_3_delay`       | Minimum puppet module version 1.6.0 |
+| `purge_config`                        | Minimum puppet module version 1.7.0 |
 
 #### Parameters
 
@@ -2019,6 +2020,16 @@ Description of the interface. Valid values are a string or the keyword 'default'
 
 ###### `duplex`
 Duplex of the interface. Valid values are 'full', and 'auto'.
+
+###### `purge_config`
+Puts the ethenet interface into default state. Valid value is 'true'. When this property is set to 'true', the manifest can have no other properties.
+
+#### Example Usage
+
+```puppet
+cisco_interface { 'ethernet1/10':
+    purge_config => true,
+  }
 
 ###### `speed`
 Speed of the interface. Valid values are 100, 1000, 10000, 40000, 1000000, and 'auto'.
