@@ -2022,7 +2022,14 @@ Description of the interface. Valid values are a string or the keyword 'default'
 Duplex of the interface. Valid values are 'full', and 'auto'.
 
 ###### `purge_config`
-Puts the ethenet interface into default state. Valid value is 'true'.
+Puts the ethenet interface into default state. Valid value is 'true'. When this property is set to 'true', the manifest can have no other properties.
+
+#### Example Usage
+
+```puppet
+cisco_interface { 'ethernet1/10':
+    purge_config => true,
+  }
 
 ###### `speed`
 Speed of the interface. Valid values are 100, 1000, 10000, 40000, 1000000, and 'auto'.
