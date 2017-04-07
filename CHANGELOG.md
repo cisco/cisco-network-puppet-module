@@ -7,6 +7,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### New feature support
 
 ### Added
+- Extend cisco_interface with attributes:
+ - `purge_config`
 
 ### Changed
 
