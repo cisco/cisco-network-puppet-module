@@ -1279,4 +1279,14 @@ Puppet::Type.newtype(:cisco_interface) do
 
     munge { |value| value == 'default' ? :default : Integer(value) }
   end # property load_interval_counter_3_delay
+
+  newproperty(:purge_config) do
+    desc 'Puts the ethernet interface in default state.'
+
+    newvalues(:true)
+  end
+
+  validate do
+    fail ArgumentError, 'All params MUST be nil if purge_config is true' if self[:purge_config] == :true && properties.length > 2
+  end
 end # Puppet::Type.newtype
