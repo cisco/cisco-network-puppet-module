@@ -37,13 +37,15 @@ tests[:default] = {
   title_pattern:  intf,
   code:           [0, 2],
   manifest_props: {
-    channel_group: 'default',
-    description:   'default',
-    shutdown:      'default',
+    channel_group:      'default',
+    channel_group_mode: 'default',
+    description:        'default',
+    shutdown:           'default',
   },
   resource:       {
-    'channel_group' => 'false',
-    'shutdown'      => 'true',
+    'channel_group'      => 'false',
+    'channel_group_mode' => 'false',
+    'shutdown'           => 'true',
   },
 }
 
@@ -51,14 +53,16 @@ tests[:non_default] = {
   desc:           '2.1 Non Default Properties commands',
   title_pattern:  intf,
   manifest_props: {
-    channel_group: 201,
-    description:   'chan group desc',
-    shutdown:      'false',
+    channel_group:      201,
+    channel_group_mode: 'active',
+    description:        'chan group desc',
+    shutdown:           'false',
   },
   resource:       {
-    'channel_group' => '201',
-    'description'   => 'chan group desc',
-    'shutdown'      => 'false',
+    'channel_group'      => '201',
+    'channel_group_mode' => 'active',
+    'description'        => 'chan group desc',
+    'shutdown'           => 'false',
   },
 }
 
