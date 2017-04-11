@@ -2030,6 +2030,7 @@ Puts the ethernet interface into default state. Valid value is 'true'. When this
 cisco_interface { 'ethernet1/10':
     purge_config => true,
   }
+```
 
 ###### `speed`
 Speed of the interface. Valid values are 100, 1000, 10000, 40000, 1000000, and 'auto'.
@@ -2340,7 +2341,7 @@ Manages a Cisco Network Interface Channel-group.
 
 | Property | Caveat Description |
 |:---------|:-------------|
-| `channel_group_mode`    | Minimum puppet module version 1.7.0 |
+| `channel_group_mode`          | Minimum puppet module version 1.7.0 |
 
 #### Parameters
 
