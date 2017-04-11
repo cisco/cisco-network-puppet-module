@@ -423,7 +423,7 @@ Symbol | Meaning | Description
 | [cisco_fabricpath_topology](#type-cisco_fabricpath_topology) | ➖ | ➖ | ✅ | ✅ | ✅  | ➖ |
 | [cisco_hsrp_global](#type-cisco_hsrp_global)                         | ✅  | ✅* | ✅  | ✅  | ✅  | ✅  | \*[caveats](#cisco_hsrp_global-caveats) |
 | [cisco_interface](#type-cisco_interface)                             | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_interface-caveats) |
-| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
+| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | \*[caveats](#cisco_interface_channel_group-caveats) |
 | [cisco_interface_hsrp_group](#type-cisco_interface_hsrp_group)       | ✅  | ✅ | ➖ | ➖ | ✅* | ✅ | \*[caveats](#cisco_interface_hsrp_group-caveats) |
 | [cisco_interface_ospf](#type-cisco_interface_ospf)                   | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
 | [cisco_interface_portchannel](#type-cisco_interface_portchannel)     | ✅* | ✅* | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_interface_portchannel-caveats) |
@@ -2336,6 +2336,12 @@ Manages a Cisco Network Interface Channel-group.
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
+#### <a name="cisco_interface_channel_group-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:---------|:-------------|
+| `channel_group_mode`    | Minimum puppet module version 1.7.0 |
+
 #### Parameters
 
 ##### Basic interface channel-group config attributes
@@ -2350,6 +2356,9 @@ Name of the interface where the service resides. Valid value is a string.
 channel_group is an aggregation of multiple physical interfaces that creates a logical interface. Valid values are 1 to 4096 and 'default'.
 
 Note: On some platforms a normal side-effect of adding the channel-group property is that an independent port-channel interface will be created; however, removing the channel-group configuration by itself will not also remove the port-channel interface. Therefore, the port-channel interface itself may be explicitly removed by using the `cisco_interface` provider with `ensure => absent`.
+
+###### `channel_group_mode`
+channel_group_mode is the port-channel mode of the interface. Valid values are 'active', 'passive', 'on', and 'default'.
 
 ###### `description`
 Description of the interface. Valid values are a string or the keyword 'default'.

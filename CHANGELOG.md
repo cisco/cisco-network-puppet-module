@@ -10,6 +10,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Extend cisco_interface with attributes:
  - `purge_config`
 
+- Extend cisco_interface_channel_group with attributes:
+ - `channel_group_mode`
+
 ### Changed
 
 ### Removed
