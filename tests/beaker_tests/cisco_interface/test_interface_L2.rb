@@ -135,6 +135,14 @@ tests[:non_default_trunk] = {
   },
 }
 
+tests[:purge] = {
+  desc:           '2.3 Purge Properties',
+  title_pattern:  intf,
+  manifest_props: {
+    purge_config: 'true'
+  },
+}
+
 def unsupported_properties(_tests, _id)
   unprops = []
   unprops <<
@@ -161,6 +169,10 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   logger.info("\n#{'-' * 60}\nSection 1. 'trunk' Property Testing")
   test_harness_run(tests, :default_trunk)
   test_harness_run(tests, :non_default_trunk)
+
+  # -------------------------------------------------------------------
+  logger.info("\n#{'-' * 60}\nSection 2.3 Purge_config Testing")
+  test_harness_run(tests, :purge)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
