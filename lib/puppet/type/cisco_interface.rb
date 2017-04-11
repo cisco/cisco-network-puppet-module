@@ -126,6 +126,9 @@ Puppet::Type.newtype(:cisco_interface) do
      switchport_pvlan_trunk_allowed_vlan => '88-91,94',
      switchport_pvlan_trunk_native_vlan  => 12,
     }
+    cisco_interface { 'ethernet8/2' :
+     purge_config                        => true,
+    }
     cisco_interface {'Vlan98':
      pvlan_mapping => '10-11,13',
     }

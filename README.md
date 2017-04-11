@@ -2022,7 +2022,7 @@ Description of the interface. Valid values are a string or the keyword 'default'
 Duplex of the interface. Valid values are 'full', and 'auto'.
 
 ###### `purge_config`
-Puts the ethenet interface into default state. Valid value is 'true'. When this property is set to 'true', the manifest can have no other properties.
+Puts the ethernet interface into default state. Valid value is 'true'. When this property is set to 'true', the manifest can have no other properties.
 
 #### Example Usage
 
