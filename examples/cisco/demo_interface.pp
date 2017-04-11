@@ -74,7 +74,8 @@ class ciscopuppet::cisco::demo_interface {
     }
 
     cisco_interface_channel_group { 'Ethernet1/2':
-      channel_group   => 200,
+      channel_group      => 200,
+      channel_group_mode => 'active',
     }
 
     cisco_interface { 'Ethernet1/3':
@@ -130,19 +131,19 @@ class ciscopuppet::cisco::demo_interface {
     }
 
     if platform_get() =~ /n7k/ {
-      cisco_bridge_domain { "100":
-        ensure    => 'present',
-        shutdown  => false,
-        bd_name   => 'test1'
+      cisco_bridge_domain { '100':
+        ensure   => 'present',
+        shutdown => false,
+        bd_name  => 'test1'
       }
 
       cisco_interface { 'Bdi100':
-        require               => Cisco_bridge_domain['100'],
-        ensure                => 'present',
-        shutdown              => false,
-        ipv4_address          => "10.10.10.1",
-        ipv4_netmask_length   => 24,
-        vrf                   => 'test1'
+        require             => Cisco_bridge_domain['100'],
+        ensure              => 'present',
+        shutdown            => false,
+        ipv4_address        => '10.10.10.1',
+        ipv4_netmask_length => 24,
+        vrf                 => 'test1'
       }
     } else {
       warning('This platform does not support cisco_bridge_domain')
@@ -154,9 +155,9 @@ class ciscopuppet::cisco::demo_interface {
       cisco_vlan {  '2': pvlan_type => 'primary', pvlan_association => '12' }
 
       cisco_interface { 'Ethernet1/6':
-        description                         => 'Private-vlan Host Port',
-        switchport_pvlan_host               => true,
-        switchport_pvlan_host_association   => [2, 12],
+        description                       => 'Private-vlan Host Port',
+        switchport_pvlan_host             => true,
+        switchport_pvlan_host_association => [2, 12],
       }
 
       cisco_vlan { '13': pvlan_type => 'isolated' }
@@ -194,8 +195,8 @@ class ciscopuppet::cisco::demo_interface {
         switchport_pvlan_mapping_trunk      => $trunk_map,
       }
       cisco_interface { 'vlan29':
-        description                         => 'SVI Private-vlan Mapping',
-        pvlan_mapping                       => '108-109',
+        description   => 'SVI Private-vlan Mapping',
+        pvlan_mapping => '108-109',
       }
     } else {
       warning('This platform does not support the private-vlan feature')
