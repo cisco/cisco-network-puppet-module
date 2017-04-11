@@ -29,9 +29,10 @@ Puppet::Type.newtype(:cisco_interface_channel_group) do
 
   Example:
   cisco_interface_channel_group {'Ethernet1/15':
-    channel_group   => 201,
-    description     => 'my channel group',
-    shutdown        => true,
+    channel_group      => 201,
+    channel_group_mode => 'active',
+    description        => 'myChannelGroup',
+    shutdown           => true,
   }
   "
 
