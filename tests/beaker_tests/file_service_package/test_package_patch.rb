@@ -72,7 +72,7 @@ tests = {
 
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
 skip_unless_supported(tests)
-skip_nexus_image('I2|I3', tests)
+skip_nexus_image(%w(I2 I3), tests)
 
 tests[:yum_patch_install] = {
   desc:           "1.1 Apply sample patch #{name} to image #{image?}",
