@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2014-2017 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,9 +35,6 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 # A library to assist testing ntp_server resource
 module NtpServerLib
-  # Group of Constants used in negative tests for ntp_server provider.
-  ENSURE_NEGATIVE = 'unknown'
-
   # A. Methods to create manifests for ntp_server Puppet provider test cases.
 
   # Method to create a manifest for ntp_server resource attribute 'ensure'
@@ -70,31 +67,31 @@ EOF"
     manifest_str
   end
 
-  # Method to create a manifest for ntp_server resource attribute 'ensure'
-  # where 'ensure' is set to unknown.
-  # @param none [None] No input parameters exist.
+  # Method to create a manifest for ntp_server attributes:
+  # ensure, timeout, deadtime, encryption_type, encryption_password
+  # @param intf [String] source_interface
   # @result none [None] Returns no object.
-  def self.create_ntp_server_manifest_negative
+  def self.create_ntp_server_manifest_present_nondefault(intf)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
-  ntp_server {'5.5.5.5':
-    ensure => #{NtpServerLib::ENSURE_NEGATIVE},
+  ntp_auth_key { '1':
+    ensure    => 'present',
+    algorithm => 'md5',
+    mode      => '7',
+    password  => 'test',
   }
-}
-EOF"
-    manifest_str
-  end
-
-  # Method to create a manifest for ntp_server resource attribute 'ensure' and 'prefer',
-  # where 'ensure' is set to present and 'prefer' is set to true.
-  # @param none [None] No input parameters exist.
-  # @result none [None] Returns no object.
-  def self.create_ntp_server_manifest_present_prefer
-    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
-node default {
   ntp_server {'5.5.5.5':
     ensure => present,
+    key => 1,
     prefer => true,
+    maxpoll => 12,
+    minpoll => 6,
+    source_interface => '#{intf}',
+    vrf => 'red',
+    require => [ Cisco_vrf['red'], Ntp_auth_key['1'] ],
+  }
+  cisco_vrf { 'red':
+    ensure   => 'present',
   }
 }
 EOF"
