@@ -232,7 +232,9 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
     if in_guestshell? && target_host?
       debug 'Guestshell + target=>host detected, using nxapi for uninstall'
       if @resource[:platform]
-        Cisco::Yum.remove("#{@resource[:name]}.#{@resource[:platform]}")
+        # TODO: adding platform to the name is NOT working, for now just use name
+        # Cisco::Yum.remove("#{@resource[:name]}.#{@resource[:platform]}")
+        Cisco::Yum.remove(@resource[:name])
       else
         Cisco::Yum.remove(@resource[:name])
       end
