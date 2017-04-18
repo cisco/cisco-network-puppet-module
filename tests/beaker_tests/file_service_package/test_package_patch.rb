@@ -43,6 +43,9 @@ when /7.0.3.I4.1/
 when /7.0.3.I4.2/
   filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I4.2.lib32_n9000.rpm'
   version =  '1.0.0-7.0.3.I4.2'
+when /7.0.3.I4.5/
+  filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I4.5.lib32_n9000.rpm'
+  version =  '1.0.0-7.0.3.I4.5'
 when /7.0.3.I5.1/
   name = 'nxos.sample-n9k_ALL'
   filename = 'nxos.sample-n9k_ALL-1.0.0-7.0.3.I5.1.lib32_n9000.rpm'
@@ -72,7 +75,7 @@ tests = {
 
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
 skip_unless_supported(tests)
-skip_nexus_image('I2|I3', tests)
+skip_nexus_image(%w(I2 I3), tests)
 
 tests[:yum_patch_install] = {
   desc:           "1.1 Apply sample patch #{name} to image #{image?}",

@@ -37,18 +37,20 @@ tests[:default] = {
   title_pattern:  intf,
   code:           [0, 2],
   manifest_props: {
-    channel_group: 'default',
-    description:   'default',
-    shutdown:      'default',
+    channel_group:      'default',
+    channel_group_mode: 'default',
+    description:        'default',
+    shutdown:           'default',
   },
   resource:       {
-    'channel_group' => 'false',
-    'shutdown'      => 'true',
+    'channel_group'      => 'false',
+    'channel_group_mode' => 'false',
+    'shutdown'           => 'true',
   },
 }
 
-tests[:non_default] = {
-  desc:           '2.1 Non Default Properties commands',
+tests[:non_default_no_mode] = {
+  desc:           '2.1 Non Default Properties with no channel group mode',
   title_pattern:  intf,
   manifest_props: {
     channel_group: 201,
@@ -59,6 +61,23 @@ tests[:non_default] = {
     'channel_group' => '201',
     'description'   => 'chan group desc',
     'shutdown'      => 'false',
+  },
+}
+
+tests[:non_default_mode] = {
+  desc:           '2.2 Non Default Properties with channel group mode',
+  title_pattern:  intf,
+  manifest_props: {
+    channel_group:      201,
+    channel_group_mode: 'active',
+    description:        'chan group desc',
+    shutdown:           'false',
+  },
+  resource:       {
+    'channel_group'      => '201',
+    'channel_group_mode' => 'active',
+    'description'        => 'chan group desc',
+    'shutdown'           => 'false',
   },
 }
 
@@ -75,6 +94,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  test_harness_run(tests, :non_default)
+  test_harness_run(tests, :non_default_no_mode)
+  test_harness_run(tests, :non_default_mode)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

@@ -36,6 +36,7 @@ Puppet::Type.type(:cisco_interface_channel_group).provide(:cisco) do
   # Note: channel_group should always process first.
   INTF_CG_NON_BOOL_PROPS = [
     :channel_group,
+    :channel_group_mode,
     :description,
   ]
   INTF_CG_BOOL_PROPS = [
@@ -119,6 +120,16 @@ Puppet::Type.type(:cisco_interface_channel_group).provide(:cisco) do
           @nu.respond_to?("#{prop}=")
       end
     end
+    # custom setters which require one-shot multi-param setters
+    channel_group_mode_set
+  end
+
+  def channel_group_mode_set
+    group = @property_flush[:channel_group] ? @property_flush[:channel_group] : @nu.channel_group
+    mode = @property_flush[:channel_group_mode] ? @property_flush[:channel_group_mode] : @nu.channel_group_mode
+    group = false if @resource[:channel_group] == :default
+    mode = false if @resource[:channel_group_mode] == :default
+    @nu.channel_group_mode_set(group, mode)
   end
 
   def flush

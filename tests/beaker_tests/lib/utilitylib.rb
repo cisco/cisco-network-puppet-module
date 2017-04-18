@@ -1122,7 +1122,7 @@ end
 # On match will skip all testcases
 # Do not use this for skipping individual properties.
 def skip_nexus_image(image, tests)
-  return unless nexus_image[image]
+  return unless nexus_image.match(Regexp.union(image))
   msg = "Skipping all tests; '#{tests[:resource_name]}' "\
         "is not supported on #{image} images"
   banner = '#' * msg.length
