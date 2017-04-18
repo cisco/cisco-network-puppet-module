@@ -121,7 +121,7 @@ Puppet::Type.newtype(:cisco_upgrade) do
   newproperty(:package) do
     desc 'The name of the nxos package to install on the device.'
     validate do |pkg_name|
-      fail "Package should be a string" unless pkg_name.is?(String)
+      fail "Package should be a string." unless pkg_name.is_a?(String)
     end
   end # property package
 
