@@ -38,6 +38,7 @@ Puppet::Type.type(:cisco_vxlan_vtep).provide(:nxapi) do
     :description,
     :host_reachability,
     :source_interface,
+    :source_interface_hold_down_time,
   ]
 
   VXLAN_VTEP_BOOL_PROPS = [
