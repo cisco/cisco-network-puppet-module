@@ -29,9 +29,10 @@ Puppet::Type.newtype(:cisco_interface_channel_group) do
 
   Example:
   cisco_interface_channel_group {'Ethernet1/15':
-    channel_group   => 201,
-    description     => 'my channel group',
-    shutdown        => true,
+    channel_group      => 201,
+    channel_group_mode => 'active',
+    description        => 'myChannelGroup',
+    shutdown           => true,
   }
   "
 
@@ -69,6 +70,13 @@ Puppet::Type.newtype(:cisco_interface_channel_group) do
     munge { |value| value == 'default' ? :default : value.to_i }
   end # property channel_group
 
+  newproperty(:channel_group_mode) do
+    desc 'Port-channel mode of the interface. Valid values are string'
+
+    munge { |value| value == 'on' || value == 'default' ? :default : value }
+    newvalues(:active, :passive, :on, :default)
+  end
+
   newproperty(:description) do
     desc "Description of the interface. Valid values are string, keyword
          'default'."
@@ -84,4 +92,10 @@ Puppet::Type.newtype(:cisco_interface_channel_group) do
 
     newvalues(:true, :false, :default)
   end # property shutdown
+
+  validate do
+    return unless self[:channel_group] == :default
+    fail ArgumentError, 'channel_group_mode MUST be default if channel_group_mode is default' unless
+      self[:channel_group_mode] == :default
+  end
 end # Puppet::Type.newtype
