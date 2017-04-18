@@ -29,7 +29,7 @@ Puppet::Type.newtype(:cisco_upgrade) do
   Example:
   ```
     cisco_upgrade {'image' :
-      version           => '7.0(3)I5(1)',
+      package           => 'nxos.7.0.3.I5.1.bin'
       source_uri        => 'bootflash:///nxos.7.0.3.I5.1.bin',
       force_upgrade     => false,
       delete_boot_image => false,
@@ -61,8 +61,9 @@ Puppet::Type.newtype(:cisco_upgrade) do
   end
 
   newparam(:source_uri) do
-    examples = "\nExample:\nbootflash:nxos.7.0.3.I5.2.bin"
-    supported = "\nNOTE: Only bootflash: is supported."
+    examples = "\nExample:\nbootflash:nxos.7.0.3.I5.2.bin\n
+      tftp://x.x.x.x/path/to/nxos.7.0.3.I5.2.bin"
+    supported = "\nNOTE: Only bootflash: and tftp: are supported."
     desc "URI to the image to install on the device. Format <uri>:<image>.
           Valid values are string.#{examples}#{supported}"
 
@@ -75,7 +76,11 @@ Puppet::Type.newtype(:cisco_upgrade) do
       # The Node-utils API expects uri and image_name as two
       # separate arguments. Pre-processing the arguments here.
       if uri.include?('/')
-        image[:uri] = uri.split('/')[0]
+        if uri.include?('bootflash:')
+          image[:uri] = uri.split('/')[0]
+        else
+          image[:uri] = uri.rpartition('/')[0] + '/'
+        end
         image[:image_name] = uri.split('/')[-1]
       else
         image[:uri] = uri.split(':')[0] + ':'
@@ -101,16 +106,29 @@ Puppet::Type.newtype(:cisco_upgrade) do
   # Attributes #
   ##############
 
+  # Deprecated
   newproperty(:version) do
     desc 'Version of the Cisco image to install on the device.
           Valid values are strings'
     validate do |ver|
-      fail "Version can't be nil or an empty string" if
-        ver == '' || ver.nil? == :true
       valid_chars = 'Version can only have the following
           characters: 0-9, a-z, A-Z, (, ) and .'
       fail "Invalid version string. #{valid_chars}" unless
         (/([0-9a-zA-Z().]*)/.match(ver))[0] == ver
     end
   end # property version
+
+  newproperty(:package) do
+    desc 'The name of the nxos package to install on the device.'
+    validate do |pkg_name|
+      fail "Package should be a string" unless pkg_name.is?(String)
+    end
+  end # property package
+
+  validate do
+    self[:version] = nil unless self[:package].nil?
+    fail "The property 'version' has been deprecated. Please use 'package'." if
+      (self[:version] && self[:package].nil?)
+    fail "'package' is required." if self[:package].nil?
+  end
 end
