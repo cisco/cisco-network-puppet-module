@@ -126,7 +126,6 @@ Puppet::Type.newtype(:cisco_upgrade) do
   end # property package
 
   validate do
-    self[:version] = nil unless self[:package].nil?
     fail "The property 'version' has been deprecated. Please use 'package'." if
       (self[:version] && self[:package].nil?)
     fail "'package' is required." if self[:package].nil?
