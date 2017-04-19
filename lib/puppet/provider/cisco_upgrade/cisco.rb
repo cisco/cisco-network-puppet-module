@@ -69,7 +69,7 @@ Puppet::Type.type(:cisco_upgrade).provide(:cisco) do
 
   def version=(new_version)
     return if new_version.nil?
-    fail "The property 'version' has been deprecated. Please use 'package'."
+    fail "The property 'version' has been deprecated."
   end
 
   def package=(new_package)
