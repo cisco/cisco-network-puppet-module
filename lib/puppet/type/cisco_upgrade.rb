@@ -76,7 +76,7 @@ Puppet::Type.newtype(:cisco_upgrade) do
       # The Node-utils API expects uri and image_name as two
       # separate arguments. Pre-processing the arguments here.
       if uri.include?('/')
-        if uri.include?('bootflash:')
+        if uri.include?('bootflash') || uri.include?('usb')
           image[:uri] = uri.split('/')[0]
         else
           image[:uri] = uri.rpartition('/')[0] + '/'
