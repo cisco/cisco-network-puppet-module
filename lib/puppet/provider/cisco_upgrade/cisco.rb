@@ -40,7 +40,8 @@ Puppet::Type.type(:cisco_upgrade).provide(:cisco) do
   mk_resource_methods
 
   UPGRADE_NON_BOOL_PROPS = [
-    :version
+    :version,
+    :package,
   ]
 
   UPGRADE_ALL_PROPS = UPGRADE_NON_BOOL_PROPS
