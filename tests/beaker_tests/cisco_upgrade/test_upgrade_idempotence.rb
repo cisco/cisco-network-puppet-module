@@ -22,7 +22,7 @@
 #
 ###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-@source_uri = on(agent, facter_cmd('-p cisco.images.system_image')).output
+@source_uri = on(agent, facter_cmd('-p cisco.images.system_image')).stdout.chomp
 # Test hash top-level keys
 tests = {
   master:           master,
