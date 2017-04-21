@@ -2,7 +2,7 @@
 #
 # January 2016
 #
-# Copyright (c) 2013-2016 Cisco and/or its affiliates.
+# Copyright (c) 2013-2017 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -112,39 +112,20 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
   end # property name
 
   newproperty(:auto_recovery_reload_delay) do
-    desc 'Delay (in secs) before peer is assumed dead before attempting to
-          recover VPCs. Valid values are integers in the range 240 .. 3600'
-    validate do |value|
-      if value != 'default'
-        fail('auto_recovery_reload_delay should be a value in the range
-              240 .. 3600') unless value.to_i.between?(240, 3600)
-      end
-    end
+    desc "Delay (in secs) before peer is assumed dead before attempting to
+          recover VPCs. Valid values are Integer, keyword 'default'"
     munge { |value| value == 'default' ? :default : value.to_i }
   end # property name
 
   newproperty(:delay_restore) do
-    desc 'Delay (in secs) after peer link is restored to bring up VPCs
-          Valid values are integers in the range 240 .. 3600'
-    validate do |value|
-      if value != 'default'
-        fail('delay_restore should be a value in the range 240 .. 3600') unless
-          value.to_i.between?(240, 3600)
-      end
-    end
+    desc "Delay (in secs) after peer link is restored to bring up VPCs
+          Valid values are Integer, keyword 'default'"
     munge { |value| value == 'default' ? :default : value.to_i }
   end # property name
 
   newproperty(:delay_restore_interface_vlan) do
-    desc 'Delay (in secs) after peer link is restored to bring up Interface
-          VLANs or Interface BDs. Valid values are integers in the
-          range 240 .. 3600'
-    validate do |value|
-      if value != 'default'
-        fail('delay_restore should be a value in the range 240 .. 3600') unless
-          value.to_i.between?(240, 3600)
-      end
-    end
+    desc "Delay (in secs) after peer link is restored to bring up Interface
+          VLANs or Interface BDs. Valid values are Integer, keyword 'default'"
     munge { |value| value == 'default' ? :default : value.to_i }
   end # property name
 
@@ -159,7 +140,7 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
 
   newproperty(:fabricpath_emulated_switch_id) do
     desc 'In vPC+ mode, configure the fabricpath switch-id aka the
-          Emulated switch-id.  Valid values are integers in the range 1..4095'
+          Emulated switch-id.  Valid value is an Integer'
     munge(&:to_i)
   end # property name
 
@@ -191,50 +172,26 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
   end # property name
 
   newproperty(:peer_keepalive_hold_timeout) do
-    desc 'Peer keep-alive hold timeout in secs. Valid Values are integers in the
-          range 3..10'
-    validate do |value|
-      if value != 'default'
-        fail('pka hold_timeout should be a value in the range 3 .. 10') unless
-          value.to_i.between?(3, 10)
-      end
-    end
+    desc "Peer keep-alive hold timeout in secs. Valid values are Integer
+          or keyword 'default'"
     munge { |value| value == 'default' ? :default : value.to_i }
   end # property name
 
   newproperty(:peer_keepalive_interval) do
-    desc 'Peer keep-alive interval in millisecs. Valid Values are integers in
-          the range 400..10000'
-    validate do |value|
-      if value != 'default'
-        fail('pka interval should be a value in the range 400..10000') unless
-          value.to_i.between?(400, 10_000)
-      end
-    end
+    desc "Peer keep-alive interval in millisecs. Valid values are Integer
+          or keyword 'default'"
     munge { |value| value == 'default' ? :default : value.to_i }
   end # property name
 
   newproperty(:peer_keepalive_interval_timeout) do
-    desc 'Peer keep-alive interval timeout. Valid Values are integers in the
-          range 3..20'
-    validate do |value|
-      if value != 'default'
-        fail('pka interval timeout should be a value in the range 3..20') unless
-          value.to_i.between?(3, 20)
-      end
-    end
+    desc "Peer keep-alive interval timeout. Valid values are Integer
+          or keyword 'default'"
     munge { |value| value == 'default' ? :default : value.to_i }
   end # property name
 
   newproperty(:peer_keepalive_precedence) do
-    desc 'Peer keep-alive precedence. Valid Values are integers in the
-          range 0..7'
-    validate do |value|
-      if value != 'default'
-        fail('pka precedence should be a value in the range 0..7') unless
-          value.to_i.between?(0, 7)
-      end
-    end
+    desc "Peer keep-alive precedence. Valid Values are Integer
+          or keyword 'default'"
     munge { |value| value == 'default' ? :default : value.to_i }
   end # property name
 
@@ -248,14 +205,8 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
   end # property name
 
   newproperty(:peer_keepalive_udp_port) do
-    desc 'Peer keep-alive udp port used for hellos. Valid Values are integers
-          in the range 1024..65000'
-    validate do |value|
-      if value != 'default'
-        fail('pka udp port should be a value in the range 1024..65000') unless
-          value.to_i.between?(1024, 65_000)
-      end
-    end
+    desc "Peer keep-alive udp port used for hellos. Valid Values are Integer
+          or keyword 'default'"
     munge { |value| value == 'default' ? :default : value.to_i }
   end # property name
 
@@ -298,14 +249,8 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
   end # property name
 
   newproperty(:role_priority) do
-    desc 'Priority to be used during vPC role selection of primary vs secondary
-          Valid values are integers in the range 1 .. 65535'
-    validate do |value|
-      if value != 'default'
-        fail('system_priority should be a value in the range 1 .. 65535') unless
-          value.to_i.between?(1, 65_535)
-      end
-    end
+    desc "Priority to be used during vPC role selection of primary vs secondary
+          Valid values are Integer or keyword 'defalult'"
     munge { |value| value == 'default' ? :default : value.to_i }
   end # property name
 
@@ -326,13 +271,7 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
   end # property name
 
   newproperty(:system_priority) do
-    desc 'VPC system priority. Valid values are integers in the range 1..65535'
-    validate do |value|
-      if value != 'default'
-        fail('system_priority should be a value in the range 1..65535') unless
-          value.to_i.between?(1, 65_535)
-      end
-    end
+    desc "VPC system priority. Valid values are Integer or keyword 'default'"
     munge { |value| value == 'default' ? :default : value.to_i }
   end # property name
 end # Puppet::Type.newtype
