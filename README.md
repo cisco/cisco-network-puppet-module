@@ -4208,20 +4208,19 @@ vPC domain ID. Valid values are integer in the range 1-1000. There is no default
 Auto Recovery enable or disable if peer is non-operational. Valid values are true, false or default. This parameter is available only on Nexus 7000 series. Default value: true.
 
 ##### `auto_recovery_reload_delay`
-Delay (in secs) before peer is assumed dead before attempting to recover vPCs. Valid values are integers in the range 240..3600. Default value: 240.
+Delay (in secs) before peer is assumed dead before attempting to recover vPCs. Valid values are Integer or keyword 'default'
 
 ##### `delay_restore`
-Delay (in secs) after peer link is restored to bring up vPCs. Valid values are integers in the range 1..3600. Default vlaue: 30.
+Delay (in secs) after peer link is restored to bring up vPCs. Valid values are Integer or keyword 'default'.
 
 ##### `delay_restore_interface_vlan`
-Delay (in secs) after peer link is restored to bring up Interface VLANs or Interface BDs. Valid values are integers in the
-range 1..3600. Default value: 10.
+Delay (in secs) after peer link is restored to bring up Interface VLANs or Interface BDs. Valid values are Integer or keyword 'default'.
 
 ##### `dual_active_exclude_interface_vlan_bridge_domain`
-Interface VLANs or BDs to exclude from suspension when dual-active. Valid value is a string of integer ranges from 1..4095. There is no default value.
+Interface VLANs or BDs to exclude from suspension when dual-active. Valid values are Integer or keyword 'default'.
 
 ##### `fabricpath_emulated_switch_id`
-Configure a fabricpath switch_Id to enable vPC+ mode. This is also known as the Emulated switch-id.  Valid values are integers in the range 1..4095. There is no default value.
+Configure a fabricpath switch_Id to enable vPC+ mode. This is also known as the Emulated switch-id. Valid values are Integer or keyword 'default'. 
 
 ##### `fabricpath_multicast_load_balance`
 In vPC+ mode, enable or disable the fabricpath multicast load balance. This loadbalances the Designated Forwarder selection for multicast traffic. Valid values are true, false or default
@@ -4236,10 +4235,10 @@ Enable or Disable Layer3 peer routing. Valid values are true/false or default. D
 Destination IPV4 address of the peer where Peer Keep-alives are terminated. Valid values are IPV4 unicast address. There is no default value.
 
 ##### `peer_keepalive_hold_timeout`
-Peer keep-alive hold timeout in secs. Valid Values are integers in the range 3..10. Default value: 3.
+Peer keep-alive hold timeout in secs. Valid values are Integer or keyword 'default'.
 
 ##### `peer_keepalive_interval`
-Peer keep-alive interval in millisecs. Valid Values are integers in the range 400..10000. Default value: 1000.
+Peer keep-alive interval in millisecs. Valid values are Integer or keyword 'default'.
 
 ##### `peer_keepalive_interval_timeout`
 Peer keep-alive interval timeout. Valid Values are integers in the range 3..20. Default value: 5.
