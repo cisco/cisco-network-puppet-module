@@ -28,13 +28,12 @@ class ciscopuppet::cisco::demo_upgrade {
   # agent-lab9-pm:files:2011>
 
   node default {
-    $gem = 'cisco_node_utils-1.5.0.gem'
+    $gem = 'cisco_node_utils-1.6.0.gem'
     $uri = 'bootflash'
     $image = 'nxos.7.0.3.I2.5.bin'
-    $version = '7.0(3)I2(5)'
-    
+
     # If you are behind proxy, please set the proxy variable.
-    # $proxy = 'http://<proxy>.<domain>:<port>'  
+    # $proxy = 'http://<proxy>.<domain>:<port>'
     $proxy = ''
 
     if $proxy == '' {
@@ -69,7 +68,7 @@ class ciscopuppet::cisco::demo_upgrade {
     }
 
     cisco_upgrade { 'image' :
-      version           => "${version}",
+      package           => "${image}",
       source_uri        => "${uri}:///${image}",
       force_upgrade     => false,
       delete_boot_image => false,
