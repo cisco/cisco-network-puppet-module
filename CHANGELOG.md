@@ -13,9 +13,16 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Extend cisco_interface_channel_group with attributes:
  - `channel_group_mode`
 
+- Added support for tftp and usb URIs to `cisco_upgrade`
+
+- Extend `cisco_upgrade` with attributes:
+ - `package`
+
 ### Changed
 
 ### Removed
+- Deprecated attribute for `cisco_upgrade`:
+ - `version`
 
 ### Resolved Issues
 
