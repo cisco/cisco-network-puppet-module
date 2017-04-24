@@ -228,7 +228,7 @@ def unsupported_properties(tests, id)
 
     unprops <<
       :event_history_errors <<
-      :event_history_objstore if nexus_image[/I2|I3|I4/] || platform[/n5|n6|n7|n9k-f/]
+      :event_history_objstore if platform[/n5|n6|n7|n9k-f/]
 
     if vrf != 'default'
       # NX-OS does not support these properties under a non-default vrf
@@ -247,13 +247,27 @@ def unsupported_properties(tests, id)
         :suppress_fib_pending
     end
 
-    if platform[/n(5|6|7)k/]
+    if platform[/n(5|6)k/]
       unprops <<
         :disable_policy_batching_ipv4 <<
         :disable_policy_batching_ipv6 <<
         :neighbor_down_fib_accelerate <<
         :reconnect_interval
     end
+  end
+  unprops
+end
+
+def version_unsupported_properties(_tests, _id)
+  unprops = {}
+  if platform[/n7k/]
+    unprops[:disable_policy_batching_ipv4] = '8.1.1'
+    unprops[:disable_policy_batching_ipv6] = '8.1.1'
+    unprops[:neighbor_down_fib_accelerate] = '8.1.1'
+    unprops[:reconnect_interval] = '8.1.1'
+  elsif platform[/n3k|n9k$/]
+    unprops[:event_history_errors] = '7.0.3.I5.1'
+    unprops[:event_history_objstore] = '7.0.3.I5.1'
   end
   unprops
 end

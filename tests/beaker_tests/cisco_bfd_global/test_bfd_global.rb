@@ -139,10 +139,13 @@ def unsupported_properties(_tests, _id)
     unprops <<
       :startup_timer
   end
+  unprops
+end
 
-  # TBD: this is due to nxos bug on n9k-f and n9k
-  unprops << :interval if platform[/n9k/]
-
+def version_unsupported_properties(_tests, _id)
+  unprops = {}
+  unprops[:interval] = '7.0.3.I6.1' if platform[/n9k$/]
+  unprops[:interval] = '7.0.3.F2.1' if platform[/n9k-f/]
   unprops
 end
 

@@ -685,6 +685,16 @@ def unsupported_properties(_tests, _id)
   [] # defaults to no unsupported properties
 end
 
+# version_unsupported_properties
+#
+# Returns an array of properties that are not supported for
+# a particular operating_system or platform for a particular
+# software version
+# Override this in a particular test file as needed.
+def version_unsupported_properties(_tests, _id)
+  {} # defaults to no version_unsupported properties
+end
+
 # supported_property_hash
 #
 # This method creates a clone of the specified property
@@ -698,6 +708,21 @@ def supported_property_hash(tests, id, property_hash)
     copy.delete(prop_symbol)
     # because :resource hash currently uses strings for keys
     copy.delete(prop_symbol.to_s)
+  end
+  return copy if version_unsupported_properties(tests, id).empty?
+  lim = no_build_version.split[0].tr('(', '.').tr(')', '.').chomp('.')
+  # due to a bug in Gem::Version, we need to append a letter
+  # to the version field if the to be compared version
+  # has a letter at the end
+  append_a = false
+  append_a = true if lim[-1, 1] =~ /[[:alpha:]]/
+  version_unsupported_properties(tests, id).each do |key, val|
+    val << 'a' if append_a
+    append_a = false
+    next unless Gem::Version.new(lim) < Gem::Version.new(val)
+    copy.delete(key)
+    # because :resource hash currently uses strings for keys
+    copy.delete(key.to_s)
   end
   copy
 end
@@ -1117,6 +1142,15 @@ def image_version
   facter_opt = '-p os.release.full'
   data = on(agent, facter_cmd(facter_opt)).stdout.chomp
   @version ||= data
+end
+
+# Gets the final version of the image running on a device
+# without any build info
+@no_bld_ver = nil
+def no_build_version
+  facter_opt = '-p cisco.images.no_build_ver'
+  data = on(agent, facter_cmd(facter_opt)).stdout.chomp
+  @no_bld_ver ||= data
 end
 
 # On match will skip all testcases
