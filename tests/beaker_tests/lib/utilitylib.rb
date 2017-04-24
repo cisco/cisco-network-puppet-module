@@ -710,7 +710,7 @@ def supported_property_hash(tests, id, property_hash)
     copy.delete(prop_symbol.to_s)
   end
   return copy if version_unsupported_properties(tests, id).empty?
-  lim = no_build_version.split[0].tr('(', '.').tr(')', '.').chomp('.')
+  lim = full_version.split[0].tr('(', '.').tr(')', '.').chomp('.')
   # due to a bug in Gem::Version, we need to append a letter
   # to the version field if the to be compared version
   # has a letter at the end
@@ -1144,13 +1144,12 @@ def image_version
   @version ||= data
 end
 
-# Gets the final version of the image running on a device
-# without any build info
-@no_bld_ver = nil
-def no_build_version
-  facter_opt = '-p cisco.images.no_build_ver'
+# Gets the full version of the image running on a device
+@full_ver = nil
+def full_version
+  facter_opt = '-p cisco.images.full_version'
   data = on(agent, facter_cmd(facter_opt)).stdout.chomp
-  @no_bld_ver ||= data
+  @full_ver ||= data
 end
 
 # On match will skip all testcases
