@@ -75,6 +75,7 @@ tests[:default_properties_ingress_replication] = {
     ingress_replication: 'default',
     suppress_arp:        'default',
   },
+  code:           [0, 2],
   resource:       {
     suppress_arp: 'false'
   },
@@ -88,6 +89,7 @@ tests[:default_properties_multicast_group] = {
     suppress_arp:    'default',
     suppress_uuc:    'default',
   },
+  code:           [0, 2],
   resource:       {
     suppress_arp: 'false',
     suppress_uuc: 'false',
@@ -103,6 +105,7 @@ tests[:ingress_replication_static_peer_list_empty] = {
     peer_list:           [],
     suppress_arp:        'default',
   },
+  code:           [0, 2],
   resource:       {
     suppress_arp: 'false'
   },
@@ -117,6 +120,7 @@ tests[:peer_list] = {
     peer_list:           ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
     suppress_arp:        'default',
   },
+  code:           [0, 2],
   resource:       {
     suppress_arp: 'false'
   },
@@ -131,6 +135,7 @@ tests[:peer_list_change_add] = {
     peer_list:           ['1.1.1.1', '6.6.6.6', '3.3.3.3', '4.4.4.4'],
     suppress_arp:        'default',
   },
+  code:           [0, 2],
   resource:       {
     suppress_arp: 'false'
   },
@@ -145,6 +150,7 @@ tests[:peer_list_default] = {
     peer_list:           'default',
     suppress_arp:        'default',
   },
+  code:           [0, 2],
   resource:       {
     suppress_arp: 'false'
   },
@@ -158,6 +164,7 @@ tests[:ingress_replication_bgp] = {
     ingress_replication: 'bgp',
     suppress_arp:        'default',
   },
+  code:           [0, 2],
   resource:       {
     suppress_arp: 'false'
   },
@@ -170,6 +177,7 @@ tests[:multicast_group] = {
     multicast_group: '224.1.1.1',
     suppress_arp:    'default',
   },
+  code:           [0, 2],
   resource:       {
     suppress_arp: 'false'
   },
@@ -181,6 +189,7 @@ tests[:suppress_arp_true] = {
   manifest_props: {
     suppress_arp: 'true'
   },
+  code:           [0, 2],
 }
 
 tests[:suppress_arp_false] = {
@@ -189,6 +198,7 @@ tests[:suppress_arp_false] = {
   manifest_props: {
     suppress_arp: 'false'
   },
+  code:           [0, 2],
 }
 
 tests[:suppress_uuc_true] = {
@@ -197,6 +207,7 @@ tests[:suppress_uuc_true] = {
   manifest_props: {
     suppress_uuc: 'true'
   },
+  code:           [0, 2],
 }
 
 tests[:suppress_uuc_false] = {
@@ -205,6 +216,7 @@ tests[:suppress_uuc_false] = {
   manifest_props: {
     suppress_uuc: 'false'
   },
+  code:           [0, 2],
 }
 
 # Note: In the current implementation assciate-vrf is a namevar.
@@ -214,6 +226,17 @@ tests[:suppress_uuc_false] = {
 def test_harness_dependencies(*)
   return unless platform[/n(5|6)k/]
   skip_if_nv_overlay_rejected(agent)
+end
+
+# Overridden to properly handle dependencies for this test file.
+def dependency_manifest(_tests, _id)
+  "
+    cisco_vxlan_vtep {'nve1':
+      ensure => present,
+      host_reachability  => 'evpn',
+      shutdown           => 'false',
+    }
+  "
 end
 
 def unsupported_properties(_tests, _id)
