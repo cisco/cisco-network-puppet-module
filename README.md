@@ -4072,7 +4072,8 @@ Force upgrade the device.Valid values are `true`, `false`.
 
 ##### `package`
 Package to install on the device. Format `<uri>:<image>`. Valid values are strings.
-*Example --> bootflash:nxos.7.0.3.I5.2.bin*
+*Example --> bootflash:nxos.7.0.3.I5.2.bin
+         --> tftp://x.x.x.x/path/to/nxos.7.0.3.I5.2.bin*
 *NOTE: Only images on `bootflash:`, `tftp:` and `usb` (if available) are supported.*
 
 --
