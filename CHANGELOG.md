@@ -21,8 +21,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 ### Removed
-- Deprecated attribute for `cisco_upgrade`:
+- Deprecated attributes for `cisco_upgrade`:
  - `version`
+ - `source_uri`
 
 ### Resolved Issues
 

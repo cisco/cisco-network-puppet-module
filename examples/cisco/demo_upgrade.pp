@@ -68,8 +68,7 @@ class ciscopuppet::cisco::demo_upgrade {
     }
 
     cisco_upgrade { 'image' :
-      package           => "${image}",
-      source_uri        => "${uri}:///${image}",
+      package           => "${uri}:///${image}",
       force_upgrade     => false,
       delete_boot_image => false,
     }
