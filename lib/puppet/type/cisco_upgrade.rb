@@ -98,25 +98,6 @@ Puppet::Type.newtype(:cisco_upgrade) do
       fail 'Package should be a string.' unless pkg.is_a?(String)
       fail 'package must match format <uri>:<image>' unless pkg[/\S+:\S+/]
     end
-    munge do |pkg|
-      image = {}
-      # Convert <uri>:<image> to a hash.
-      # The Node-utils API expects uri and image_name as two
-      # separate arguments. Pre-processing the arguments here.
-      if pkg.include?('/')
-        if pkg.include?('bootflash') || pkg.include?('usb')
-          image[:uri] = pkg.split('/')[0]
-        else
-          image[:uri] = pkg.rpartition('/')[0] + '/'
-        end
-        image[:image_name] = pkg.split('/')[-1]
-      else
-        image[:uri] = pkg.split(':')[0] + ':'
-        image[:image_name] = pkg.split(':')[-1]
-      end
-      image[:package] = pkg
-      image
-    end
   end # property package
 
   validate do

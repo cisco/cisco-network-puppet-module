@@ -80,8 +80,21 @@ Puppet::Type.type(:cisco_upgrade).provide(:cisco) do
     # to Boolean Class
     del_boot_image = (@resource[:delete_boot_image] == :true)
     force_upgrade = (@resource[:force_upgrade] == :true)
-    @nu.upgrade(@resource[:package][:image_name], @resource[:package][:uri],
-                del_boot_image, force_upgrade)
-    @property_hash[:package] = @resource[:package][:package]
+    # The Node-utils API expects uri and image_name as two
+    # separate arguments. Pre-processing the arguments here.
+    pkg = @resource[:package]
+    if pkg.include?('/')
+      if pkg.include?('bootflash') || pkg.include?('usb')
+        uri = pkg.split('/')[0]
+      else
+        uri = pkg.rpartition('/')[0] + '/'
+      end
+      image_name = pkg.split('/')[-1]
+    else
+      uri = pkg.split(':')[0] + ':'
+      image_name = pkg.split(':')[-1]
+    end
+    @nu.upgrade(image_name, uri, del_boot_image, force_upgrade)
+    @property_hash[:package] = pkg
   end
 end
