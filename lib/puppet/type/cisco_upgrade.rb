@@ -29,8 +29,7 @@ Puppet::Type.newtype(:cisco_upgrade) do
   Example:
   ```
     cisco_upgrade {'image' :
-      package           => 'nxos.7.0.3.I5.1.bin'
-      source_uri        => 'bootflash:///nxos.7.0.3.I5.1.bin',
+      package           => 'bootflash:///nxos.7.0.3.I5.1.bin',
       force_upgrade     => false,
       delete_boot_image => false,
     }
@@ -59,36 +58,6 @@ Puppet::Type.newtype(:cisco_upgrade) do
       warning "only 'image' is accepted as a valid name" if name != 'image'
     end
   end
-
-  newparam(:source_uri) do
-    examples = "\nExample:\nbootflash:nxos.7.0.3.I5.2.bin\n
-      tftp://x.x.x.x/path/to/nxos.7.0.3.I5.2.bin"
-    supported = "\nNOTE: Only bootflash: and tftp: are supported."
-    desc "URI to the image to install on the device. Format <uri>:<image>.
-          Valid values are string.#{examples}#{supported}"
-
-    validate do |uri|
-      fail 'source_uri must match format <uri>:<image>' unless uri[/\S+:\S+/]
-    end
-    munge do |uri|
-      image = {}
-      # Convert <uri>:<image> to a hash.
-      # The Node-utils API expects uri and image_name as two
-      # separate arguments. Pre-processing the arguments here.
-      if uri.include?('/')
-        if uri.include?('bootflash') || uri.include?('usb')
-          image[:uri] = uri.split('/')[0]
-        else
-          image[:uri] = uri.rpartition('/')[0] + '/'
-        end
-        image[:image_name] = uri.split('/')[-1]
-      else
-        image[:uri] = uri.split(':')[0] + ':'
-        image[:image_name] = uri.split(':')[-1]
-      end
-      image
-    end
-  end # param source_uri
 
   newparam(:force_upgrade) do
     desc 'Force upgrade the device.'
@@ -119,9 +88,33 @@ Puppet::Type.newtype(:cisco_upgrade) do
   end # property version
 
   newproperty(:package) do
-    desc 'The name of the nxos package to install on the device.'
-    validate do |pkg_name|
-      fail 'Package should be a string.' unless pkg_name.is_a?(String)
+    examples = "\nExample:\nbootflash:nxos.7.0.3.I5.2.bin\n
+      tftp://x.x.x.x/path/to/nxos.7.0.3.I5.2.bin\n
+      usb1:nxos.7.0.3.I5.2.bin"
+    supported = "\nNOTE: Only bootflash:,tftp: and usb are supported."
+    desc "{ackage to install on the device. Format <uri>:<image>.
+          Valid values are string.#{examples}#{supported}"
+    validate do |pkg|
+      fail 'Package should be a string.' unless pkg.is_a?(String)
+      fail 'package must match format <uri>:<image>' unless pkg[/\S+:\S+/]
+    end
+    munge do |pkg|
+      image = {}
+      # Convert <uri>:<image> to a hash.
+      # The Node-utils API expects uri and image_name as two
+      # separate arguments. Pre-processing the arguments here.
+      if pkg.include?('/')
+        if pkg.include?('bootflash') || pkg.include?('usb')
+          image[:uri] = pkg.split('/')[0]
+        else
+          image[:uri] = pkg.rpartition('/')[0] + '/'
+        end
+        image[:image_name] = pkg.split('/')[-1]
+      else
+        image[:uri] = pkg.split(':')[0] + ':'
+        image[:image_name] = pkg.split(':')[-1]
+      end
+      image
     end
   end # property package
 
