@@ -114,6 +114,7 @@ Puppet::Type.newtype(:cisco_upgrade) do
         image[:uri] = pkg.split(':')[0] + ':'
         image[:image_name] = pkg.split(':')[-1]
       end
+      image[:package] = pkg
       image
     end
   end # property package

@@ -82,6 +82,6 @@ Puppet::Type.type(:cisco_upgrade).provide(:cisco) do
     force_upgrade = (@resource[:force_upgrade] == :true)
     @nu.upgrade(@resource[:package][:image_name], @resource[:package][:uri],
                 del_boot_image, force_upgrade)
-    @property_hash[:package] = new_package
+    @property_hash[:package] = @resource[:package][:package]
   end
 end
