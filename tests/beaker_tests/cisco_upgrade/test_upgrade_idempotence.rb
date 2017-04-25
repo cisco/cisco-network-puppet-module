@@ -46,7 +46,7 @@ tests[:non_default] = {
   },
   resource:       {
     package: @package,
-    version: @version
+    version: @version,
   },
 }
 
