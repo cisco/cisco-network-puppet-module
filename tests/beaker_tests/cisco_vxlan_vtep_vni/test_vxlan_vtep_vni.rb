@@ -107,7 +107,7 @@ skip_unless_supported(tests)
 #
 tests['default_properties_ingress_replication'] = {
   title_pattern:  'nve1 10000',
-  platform:       'n9k',
+  platform:       'n(7|9)k',
   manifest_props: "
     ingress_replication => 'default',
     suppress_arp        => 'default',
@@ -131,7 +131,7 @@ tests['default_properties_multicast_group'] = {
 }
 
 # Suppress Unknown Unicast
-if platform[/n(5|6)k/]
+if platform[/n(5|6|7)k/]
   tests['default_properties_multicast_group'][:manifest_props] +=
     "  suppress_uuc => 'default',"
   tests['default_properties_multicast_group'][:resource_props]['suppress_uuc'] = 'false'
@@ -139,7 +139,7 @@ end
 
 tests['ingress_replication_static_peer_list_empty'] = {
   title_pattern:  'nve1 10000',
-  platform:       'n9k',
+  platform:       'n(7|9)k',
   manifest_props: "
     ingress_replication => 'static',
     peer_list           => [],
@@ -154,7 +154,7 @@ tests['ingress_replication_static_peer_list_empty'] = {
 
 tests['peer_list'] = {
   title_pattern:  'nve1 10000',
-  platform:       'n9k',
+  platform:       'n(7|9)k',
   manifest_props: "
     ingress_replication => 'static',
     peer_list           => ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
@@ -169,7 +169,7 @@ tests['peer_list'] = {
 
 tests['peer_list_change_add'] = {
   title_pattern:  'nve1 10000',
-  platform:       'n9k',
+  platform:       'n(7|9)k',
   manifest_props: "
     ingress_replication => 'static',
     peer_list           => ['1.1.1.1', '6.6.6.6', '3.3.3.3', '4.4.4.4'],
@@ -184,7 +184,7 @@ tests['peer_list_change_add'] = {
 
 tests['peer_list_default'] = {
   title_pattern:  'nve1 10000',
-  platform:       'n9k',
+  platform:       'n(7|9)k',
   manifest_props: "
     ingress_replication => 'static',
     peer_list           => 'default',
@@ -199,7 +199,7 @@ tests['peer_list_default'] = {
 
 tests['ingress_replication_bgp'] = {
   title_pattern:  'nve1 10000',
-  platform:       'n9k',
+  platform:       'n(7|9)k',
   manifest_props: "
     ingress_replication => 'bgp',
     suppress_arp        => 'default'
@@ -244,7 +244,7 @@ tests['suppress_arp_false'] = {
 
 tests['suppress_uuc_true'] = {
   title_pattern:  'nve1 10000',
-  platform:       'n(5|6)k',
+  platform:       'n(5|6|7)k',
   manifest_props: "
     suppress_uuc => 'true'
   ",
@@ -255,7 +255,7 @@ tests['suppress_uuc_true'] = {
 
 tests['suppress_uuc_false'] = {
   title_pattern:  'nve1 10000',
-  platform:       'n(5|6)k',
+  platform:       'n(5|6|7)k',
   manifest_props: "
     suppress_uuc => 'false'
   ",
@@ -328,6 +328,16 @@ def test_harness_cisco_vxlan_vtep_vni(tests, id)
   test_idempotence(tests, id)
 
   tests[id][:ensure] = nil
+end
+
+def version_unsupported_properties(_tests, _id)
+  unprops = {}
+  if platform[/n7k/]
+    unprops[:ingress_replication] = '8.1.1'
+    unprops[:peer_list] = '8.1.1'
+    unprops[:suppress_uuc] = '8.1.1'
+  end
+  unprops
 end
 
 #################################################################
