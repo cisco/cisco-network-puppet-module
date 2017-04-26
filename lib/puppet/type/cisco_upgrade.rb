@@ -29,8 +29,7 @@ Puppet::Type.newtype(:cisco_upgrade) do
   Example:
   ```
     cisco_upgrade {'image' :
-      version           => '7.0(3)I5(1)',
-      source_uri        => 'bootflash:///nxos.7.0.3.I5.1.bin',
+      package           => 'bootflash:///nxos.7.0.3.I5.1.bin',
       force_upgrade     => false,
       delete_boot_image => false,
     }
@@ -60,31 +59,6 @@ Puppet::Type.newtype(:cisco_upgrade) do
     end
   end
 
-  newparam(:source_uri) do
-    examples = "\nExample:\nbootflash:nxos.7.0.3.I5.2.bin"
-    supported = "\nNOTE: Only bootflash: is supported."
-    desc "URI to the image to install on the device. Format <uri>:<image>.
-          Valid values are string.#{examples}#{supported}"
-
-    validate do |uri|
-      fail 'source_uri must match format <uri>:<image>' unless uri[/\S+:\S+/]
-    end
-    munge do |uri|
-      image = {}
-      # Convert <uri>:<image> to a hash.
-      # The Node-utils API expects uri and image_name as two
-      # separate arguments. Pre-processing the arguments here.
-      if uri.include?('/')
-        image[:uri] = uri.split('/')[0]
-        image[:image_name] = uri.split('/')[-1]
-      else
-        image[:uri] = uri.split(':')[0] + ':'
-        image[:image_name] = uri.split(':')[-1]
-      end
-      image
-    end
-  end # param source_uri
-
   newparam(:force_upgrade) do
     desc 'Force upgrade the device.'
     defaultto :false
@@ -101,16 +75,33 @@ Puppet::Type.newtype(:cisco_upgrade) do
   # Attributes #
   ##############
 
+  # Deprecated
   newproperty(:version) do
     desc 'Version of the Cisco image to install on the device.
           Valid values are strings'
     validate do |ver|
-      fail "Version can't be nil or an empty string" if
-        ver == '' || ver.nil? == :true
       valid_chars = 'Version can only have the following
           characters: 0-9, a-z, A-Z, (, ) and .'
       fail "Invalid version string. #{valid_chars}" unless
         (/([0-9a-zA-Z().]*)/.match(ver))[0] == ver
     end
   end # property version
+
+  newproperty(:package) do
+    examples = "\nExample:\nbootflash:nxos.7.0.3.I5.2.bin\n
+      tftp://x.x.x.x/path/to/nxos.7.0.3.I5.2.bin\n
+      usb1:nxos.7.0.3.I5.2.bin"
+    supported = "\nNOTE: Only bootflash:,tftp: and usb are supported."
+    desc "{ackage to install on the device. Format <uri>:<image>.
+          Valid values are string.#{examples}#{supported}"
+    validate do |pkg|
+      fail 'Package should be a string.' unless pkg.is_a?(String)
+      fail 'package must match format <uri>:<image>' unless pkg[/\S+:\S+/]
+    end
+  end # property package
+
+  validate do
+    fail "The property 'version' has been deprecated. Please use 'package'." if
+      self[:version] && self[:package].nil?
+  end
 end

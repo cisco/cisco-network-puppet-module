@@ -40,7 +40,8 @@ Puppet::Type.type(:cisco_upgrade).provide(:cisco) do
   mk_resource_methods
 
   UPGRADE_NON_BOOL_PROPS = [
-    :version
+    :version,
+    :package,
   ]
 
   UPGRADE_ALL_PROPS = UPGRADE_NON_BOOL_PROPS
@@ -60,6 +61,7 @@ Puppet::Type.type(:cisco_upgrade).provide(:cisco) do
 
     inst << new(
       name:    'image',
+      package: upgrade.package,
       version: upgrade.image_version)
   end
 
@@ -69,14 +71,30 @@ Puppet::Type.type(:cisco_upgrade).provide(:cisco) do
 
   def version=(new_version)
     return if new_version.nil?
+    fail "The property 'version' has been deprecated."
+  end
+
+  def package=(new_package)
+    return if new_package.nil?
     # Convert del_boot_image and force_upgrade from symbols
     # to Boolean Class
-    fail 'The source_uri parameter must be set in the manifest' if
-      @resource[:source_uri].nil?
     del_boot_image = (@resource[:delete_boot_image] == :true)
     force_upgrade = (@resource[:force_upgrade] == :true)
-    @nu.upgrade(new_version, @resource[:source_uri][:image_name], @resource[:source_uri][:uri],
-                del_boot_image, force_upgrade)
-    @property_hash[:version] = new_version
+    # The Node-utils API expects uri and image_name as two
+    # separate arguments. Pre-processing the arguments here.
+    pkg = @resource[:package]
+    if pkg.include?('/')
+      if pkg.include?('bootflash') || pkg.include?('usb')
+        uri = pkg.split('/')[0]
+      else
+        uri = pkg.rpartition('/')[0] + '/'
+      end
+      image_name = pkg.split('/')[-1]
+    else
+      uri = pkg.split(':')[0] + ':'
+      image_name = pkg.split(':')[-1]
+    end
+    @nu.upgrade(image_name, uri, del_boot_image, force_upgrade)
+    @property_hash[:package] = pkg
   end
 end
