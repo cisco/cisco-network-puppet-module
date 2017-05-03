@@ -972,7 +972,7 @@ Manages configuration of a BFD (Bidirectional Forwarding Detection) instance.
 | `fabricpath_interval`   | Not supported on N3k, N9k-F, N9k |
 | `fabricpath_slow_timer` | Not supported on N3k, N9k-F, N9k |
 | `fabricpath_vlan`       | Not supported on N3k, N9k-F, N9k |
-| `interval`              | Not supported on N9k-F, N9k      |
+| `interval`              | Supported on N3k, N5k, N6k, N7k <br> Minimum puppet module version 1.7.0 for N9k & N9k-F <br> Supported in OS Version 7.0(3)F2(1) and later on N9k-F <br> Supported in OS Version 7.0(3)I6.1 and later on N9k |
 | `ipv4_echo_rx_interval` | Not supported on N5k, N6k        |
 | `ipv4_interval`         | Not supported on N5k, N6k        |
 | `ipv4_slow_timer`       | Not supported on N5k, N6k        |
