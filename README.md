@@ -3323,7 +3323,6 @@ Manages a Cisco Route Map.
 | `set_ipv4_next_hop_redist`               | Supported on N5k,N6k,N7k,N9k-F <br> Supported in OS Version 7.0(3)I5.1 and later on N3k,N9k  |
 | `set_ipv4_precedence`                    | Not supported on N9k-F          |
 | `set_ipv4_prefix`                        | Not supported on N5k,N6k,N9k-F  |
-OS Version 7.0(3)I5.1 and later on N3k,N9k  |
 | `set_ipv6_default_next_hop`              | Not supported on N5k,N6k,N9k-F,N9k  |
 | `set_ipv6_default_next_hop_load_share`   | Not supported on N5k,N6k,N9k-F,N9k  |
 | `set_ipv6_next_hop`                      | Not supported on N9k-F          |
