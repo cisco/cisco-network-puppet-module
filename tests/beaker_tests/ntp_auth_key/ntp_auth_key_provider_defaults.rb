@@ -15,11 +15,11 @@
 ###############################################################################
 # TestCase Name:
 # -------------
-# NtpServer-Provider-Defaults.rb
+# NtpAuthKey-Provider-Defaults.rb
 #
 # TestCase Prerequisites:
 # -----------------------
-# This is a ntp_server resource testcase for Puppet Agent on Nexus devices.
+# This is a ntp_auth_key resource testcase for Puppet Agent on Nexus devices.
 # The test case assumes the following prerequisites are already satisfied:
 # A. Populating the HOSTS configuration file with the agent and master
 # information.
@@ -29,12 +29,12 @@
 #
 # TestCase:
 # ---------
-# This is a ntp_server resource test that tests for default value for
-# 'ensure' attribute of a ntp_server resource.
+# This is a ntp_auth_key resource test that tests for default value for
+# 'ensure' attribute of a ntp_auth_key resource.
 #
 # There are 2 sections to the testcase: Setup, group of teststeps.
 # The 1st step is the Setup teststep that cleans up the switch state.
-# Steps 2-4 deal with ntp_server resource and its
+# Steps 2-4 deal with ntp_auth_key resource and its
 # verification using Puppet Agent and the switch running-config.
 #
 # The testcode checks for exit_codes from Puppet Agent, Vegas shell and
@@ -51,27 +51,27 @@
 #
 ###############################################################################
 
-# Require UtilityLib.rb and NtpServerLib.rb paths.
+# Require UtilityLib.rb and NtpAuthKeyLib.rb paths.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-require File.expand_path('../ntp_serverlib.rb', __FILE__)
+require File.expand_path('../ntp_auth_keylib.rb', __FILE__)
 
 result = 'PASS'
-testheader = 'ntp_server Resource :: All Attributes Defaults'
+testheader = 'ntp_auth_key Resource :: All Attributes Defaults'
 
-# @test_name [TestCase] Executes defaults testcase for ntp_server Resource.
+# @test_name [TestCase] Executes defaults testcase for ntp_auth_key Resource.
 test_name "TestCase :: #{testheader}" do
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
     # Cleanup before starting test.
-    resource_absent_cleanup(agent, 'ntp_server')
+    resource_absent_cleanup(agent, 'ntp_auth_key')
     # Cleanup after running test.
-    teardown { resource_absent_cleanup(agent, 'ntp_server') }
+    teardown { resource_absent_cleanup(agent, 'ntp_auth_key') }
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource present manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, NtpServerLib.create_ntp_server_manifest_present)
+    on(master, NtpAuthKeyLib.create_ntp_auth_key_manifest_present)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = PUPPET_BINPATH + 'agent -t'
@@ -80,27 +80,29 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Get resource present manifest from master :: #{result}")
   end
 
-  # @step [Step] Checks ntp_server resource on agent using resource cmd.
-  step 'TestStep :: Check ntp_server resource presence on agent' do
+  # @step [Step] Checks ntp_auth_key resource on agent using resource cmd.
+  step 'TestStep :: Check ntp_auth_key resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = PUPPET_BINPATH + 'resource ntp_server 5.5.5.5'
+    cmd_str = PUPPET_BINPATH + 'resource ntp_auth_key 1'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                false, self, logger)
-      search_pattern_in_output(stdout, { 'prefer' => 'false' },
+      search_pattern_in_output(stdout, { 'algorithm' => 'md5' },
                                false, self, logger)
-      search_pattern_in_output(stdout, { 'vrf' => 'default' },
+      search_pattern_in_output(stdout, { 'mode' => '7' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'password' => 'test' },
                                false, self, logger)
     end
 
-    logger.info("Check ntp_server resource presence on agent :: #{result}")
+    logger.info("Check ntp_auth_key resource presence on agent :: #{result}")
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource absent manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, NtpServerLib.create_ntp_server_manifest_absent)
+    on(master, NtpAuthKeyLib.create_ntp_auth_key_manifest_absent)
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = PUPPET_BINPATH + 'agent -t'
@@ -109,67 +111,17 @@ test_name "TestCase :: #{testheader}" do
     logger.info("Get resource absent manifest from master :: #{result}")
   end
 
-  # @step [Step] Checks ntp_server resource on agent using resource cmd.
-  step 'TestStep :: Check ntp_server resource absence on agent' do
+  # @step [Step] Checks ntp_auth_key resource on agent using resource cmd.
+  step 'TestStep :: Check ntp_auth_key resource absence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = PUPPET_BINPATH + 'resource ntp_server 5.5.5.5'
+    cmd_str = PUPPET_BINPATH + 'resource ntp_auth_key 1'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                true, self, logger)
     end
 
-    logger.info("Check ntp_server resource absence on agent :: #{result}")
-  end
-
-  # @step [Step] Requests manifest from the master server to the agent.
-  step 'TestStep :: Get resource present manifest from master' do
-    # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, NtpServerLib.create_ntp_server_manifest_present_ipv6)
-
-    # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = PUPPET_BINPATH + 'agent -t'
-    on(agent, cmd_str, acceptable_exit_codes: [2])
-
-    logger.info("Get resource present manifest from master :: #{result}")
-  end
-
-  # @step [Step] Checks ntp_server resource on agent using resource cmd.
-  step 'TestStep :: Check ntp_server resource presence on agent' do
-    # Expected exit_code is 0 since this is a puppet resource cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = PUPPET_BINPATH + 'resource ntp_server 2002::5'
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, { 'ensure' => 'present' },
-                               false, self, logger)
-      search_pattern_in_output(stdout, { 'prefer' => 'false' },
-                               false, self, logger)
-    end
-  end
-
-  # @step [Step] Requests manifest from the master server to the agent.
-  step 'TestStep :: Get resource absent manifest from master' do
-    # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, NtpServerLib.create_ntp_server_manifest_absent_ipv6)
-
-    # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = PUPPET_BINPATH + 'agent -t'
-    on(agent, cmd_str, acceptable_exit_codes: [2])
-
-    logger.info("Get resource absent manifest from master :: #{result}")
-  end
-
-  # @step [Step] Checks ntp_server resource on agent using resource cmd.
-  step 'TestStep :: Check ntp_server resource absence on agent' do
-    # Expected exit_code is 0 since this is a puppet resource cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = PUPPET_BINPATH + 'resource ntp_server 2002::5'
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, { 'ensure' => 'present' },
-                               true, self, logger)
-    end
-
-    logger.info("Check ntp_server resource absence on agent :: #{result}")
+    logger.info("Check ntp_auth_key resource absence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.

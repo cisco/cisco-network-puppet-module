@@ -15,7 +15,7 @@
 ###############################################################################
 # TestCase Name:
 # -------------
-# NtpServer-Provider-Defaults.rb
+# NtpServer-Provider-NonDefaults.rb
 #
 # TestCase Prerequisites:
 # -----------------------
@@ -29,7 +29,7 @@
 #
 # TestCase:
 # ---------
-# This is a ntp_server resource test that tests for default value for
+# This is a ntp_server resource test that tests for nondefault value for
 # 'ensure' attribute of a ntp_server resource.
 #
 # There are 2 sections to the testcase: Setup, group of teststeps.
@@ -56,22 +56,38 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 require File.expand_path('../ntp_serverlib.rb', __FILE__)
 
 result = 'PASS'
-testheader = 'ntp_server Resource :: All Attributes Defaults'
+testheader = 'ntp_server Resource :: All Attributes Nondefaults'
+
+tests = {
+  agent:         agent,
+  master:        master,
+  intf_type:     'ethernet',
+  resource_name: 'ntp_server',
+}
 
 # @test_name [TestCase] Executes defaults testcase for ntp_server Resource.
 test_name "TestCase :: #{testheader}" do
+  # Find an available test interface on this device
+  intf = find_interface(tests)
+
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
     # Cleanup before starting test.
+    resource_absent_cleanup(agent, 'ntp_auth_key')
     resource_absent_cleanup(agent, 'ntp_server')
+    resource_absent_cleanup(agent, 'cisco_vrf')
     # Cleanup after running test.
-    teardown { resource_absent_cleanup(agent, 'ntp_server') }
+    teardown do
+      resource_absent_cleanup(agent, 'ntp_auth_key')
+      resource_absent_cleanup(agent, 'ntp_server')
+      resource_absent_cleanup(agent, 'cisco_vrf')
+    end
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource present manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, NtpServerLib.create_ntp_server_manifest_present)
+    on(master, NtpServerLib.create_ntp_server_manifest_present_nondefault(intf))
 
     # Expected exit_code is 2 since this is a puppet agent cmd with change.
     cmd_str = PUPPET_BINPATH + 'agent -t'
@@ -88,9 +104,15 @@ test_name "TestCase :: #{testheader}" do
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                false, self, logger)
-      search_pattern_in_output(stdout, { 'prefer' => 'false' },
+      search_pattern_in_output(stdout, { 'key' => '1' },
                                false, self, logger)
-      search_pattern_in_output(stdout, { 'vrf' => 'default' },
+      search_pattern_in_output(stdout, { 'maxpoll' => '12' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'minpoll' => '6' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'prefer' => 'true' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'vrf' => 'red' },
                                false, self, logger)
     end
 
@@ -114,56 +136,6 @@ test_name "TestCase :: #{testheader}" do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to true to check for absence of RegExp pattern in stdout.
     cmd_str = PUPPET_BINPATH + 'resource ntp_server 5.5.5.5'
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, { 'ensure' => 'present' },
-                               true, self, logger)
-    end
-
-    logger.info("Check ntp_server resource absence on agent :: #{result}")
-  end
-
-  # @step [Step] Requests manifest from the master server to the agent.
-  step 'TestStep :: Get resource present manifest from master' do
-    # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, NtpServerLib.create_ntp_server_manifest_present_ipv6)
-
-    # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = PUPPET_BINPATH + 'agent -t'
-    on(agent, cmd_str, acceptable_exit_codes: [2])
-
-    logger.info("Get resource present manifest from master :: #{result}")
-  end
-
-  # @step [Step] Checks ntp_server resource on agent using resource cmd.
-  step 'TestStep :: Check ntp_server resource presence on agent' do
-    # Expected exit_code is 0 since this is a puppet resource cmd.
-    # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = PUPPET_BINPATH + 'resource ntp_server 2002::5'
-    on(agent, cmd_str) do
-      search_pattern_in_output(stdout, { 'ensure' => 'present' },
-                               false, self, logger)
-      search_pattern_in_output(stdout, { 'prefer' => 'false' },
-                               false, self, logger)
-    end
-  end
-
-  # @step [Step] Requests manifest from the master server to the agent.
-  step 'TestStep :: Get resource absent manifest from master' do
-    # Expected exit_code is 0 since this is a bash shell cmd.
-    on(master, NtpServerLib.create_ntp_server_manifest_absent_ipv6)
-
-    # Expected exit_code is 2 since this is a puppet agent cmd with change.
-    cmd_str = PUPPET_BINPATH + 'agent -t'
-    on(agent, cmd_str, acceptable_exit_codes: [2])
-
-    logger.info("Get resource absent manifest from master :: #{result}")
-  end
-
-  # @step [Step] Checks ntp_server resource on agent using resource cmd.
-  step 'TestStep :: Check ntp_server resource absence on agent' do
-    # Expected exit_code is 0 since this is a puppet resource cmd.
-    # Flag is set to true to check for absence of RegExp pattern in stdout.
-    cmd_str = PUPPET_BINPATH + 'resource ntp_server 2002::5'
     on(agent, cmd_str) do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                true, self, logger)

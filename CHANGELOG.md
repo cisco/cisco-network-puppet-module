@@ -18,6 +18,23 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Extend `cisco_upgrade` with attributes:
  - `package`
 
+- Added `ntp_auth_key` with attributes:
+ - `algorithm`
+ - `key`
+ - `mode`
+ - `password`
+
+- Extend `ntp_config` with attributes:
+ - `authenticate`
+ - `trusted_key`
+
+- Extend `ntp_server` with attributes:
+ - `key`
+ - `maxpoll`
+ - `minpoll`
+ - `source_interface`
+ - `vrf`
+
 ### Changed
 
 ### Removed
