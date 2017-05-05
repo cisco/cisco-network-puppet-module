@@ -207,6 +207,19 @@ class ciscopuppet::cisco::demo_bgp {
     redistribute                  => $ipv4_redistribute,
   }
 
+  cisco_bgp_af_aa { '55.77 default ipv4 unicast 1.1.1.1/32':
+    ensure        => present,
+    as_set        => true,
+    advertise_map => 'adm',
+    attribute_map => 'atm',
+    suppress_map  => 'sum',
+  }
+
+  cisco_bgp_af_aa { '55.77 default ipv4 unicast 2.2.2.2/32':
+    ensure        => present,
+    summary_only  => true,
+  }
+
   if platform_get() != 'n3k' {
     cisco_bgp_af { '55.77 default l2vpn evpn':
       ensure                      => present,
