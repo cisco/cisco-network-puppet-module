@@ -691,7 +691,7 @@ end
 # a particular operating_system or platform for a particular
 # software version.
 # Override this in a particular test file as needed.
-# Ex: If property 'ipv4_sub_option_circuit_id_string' is 
+# Ex: If property 'ipv4_sub_option_circuit_id_string' is
 # supported on n9k only on version '7.0.3.I6.1' or higher
 # then add this line in the overridden method.
 # unprops[:ipv4_sub_option_circuit_id_string] = '7.0.3.I6.1' if
