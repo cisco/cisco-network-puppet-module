@@ -689,8 +689,13 @@ end
 #
 # Returns an array of properties that are not supported for
 # a particular operating_system or platform for a particular
-# software version
+# software version.
 # Override this in a particular test file as needed.
+# Ex: If property 'ipv4_sub_option_circuit_id_string' is 
+# supported on n9k only on version '7.0.3.I6.1' or higher
+# then add this line in the overridden method.
+# unprops[:ipv4_sub_option_circuit_id_string] = '7.0.3.I6.1' if
+#   platform[/n9k$/]
 def version_unsupported_properties(_tests, _id)
   {} # defaults to no version_unsupported properties
 end
@@ -714,6 +719,10 @@ def supported_property_hash(tests, id, property_hash)
   # due to a bug in Gem::Version, we need to append a letter
   # to the version field if the to be compared version
   # has a letter at the end
+  # For ex:
+  # 7.0.3.I2.2e < 7.0.3.I2.2 is TRUE instead of FALSE
+  # Once we add a letter 'a' to the end,
+  # 7.0.3.I2.2e < 7.0.3.I2.2a is FALSE
   append_a = false
   append_a = true if lim[-1, 1] =~ /[[:alpha:]]/
   version_unsupported_properties(tests, id).each do |key, val|
