@@ -64,7 +64,13 @@ tests[:non_default] = {
 
 def unsupported_properties(*)
   unprops = []
-  unprops << :source_interface_hold_down_time unless platform[/n(9)k/]
+  unprops << :source_interface_hold_down_time if platform[/n(5|6)k/]
+  unprops
+end
+
+def version_unsupported_properties(_tests, _id)
+  unprops = {}
+  unprops[:source_interface_hold_down_time] = '8.1.1' if platform[/n7k/]
   unprops
 end
 

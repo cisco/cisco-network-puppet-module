@@ -43,8 +43,10 @@ tests[:default_properties] = {
     delay_restore:                'default',
     delay_restore_interface_vlan: 'default',
     graceful_consistency_check:   'default',
+    layer3_peer_routing:          'default',
     peer_gateway:                 'default',
     role_priority:                'default',
+    shutdown:                     'default',
     system_priority:              'default',
 
   },
@@ -53,8 +55,10 @@ tests[:default_properties] = {
     'delay_restore'                => '30',
     'delay_restore_interface_vlan' => '10',
     'graceful_consistency_check'   => 'true',
+    'layer3_peer_routing'          => 'false',
     'peer_gateway'                 => 'false',
     'role_priority'                => '32667',
+    'shutdown'                     => 'false',
     'system_priority'              => '32667',
   },
 }
@@ -68,6 +72,7 @@ tests[:non_default_properties] = {
     delay_restore_interface_vlan:                     '300',
     dual_active_exclude_interface_vlan_bridge_domain: '10-30, 500',
     graceful_consistency_check:                       'true',
+    layer3_peer_routing:                              'true',
     peer_keepalive_dest:                              '1.1.1.1',
     peer_keepalive_hold_timeout:                      5,
     peer_keepalive_interval:                          1000,
@@ -78,6 +83,7 @@ tests[:non_default_properties] = {
     peer_keepalive_vrf:                               'management',
     peer_gateway:                                     'true',
     role_priority:                                    '1024',
+    shutdown:                                         'true',
     system_mac:                                       '00:0c:0d:11:22:33',
     system_priority:                                  '3000',
 
@@ -89,6 +95,7 @@ tests[:non_default_properties] = {
     'delay_restore_interface_vlan'                     => '300',
     'dual_active_exclude_interface_vlan_bridge_domain' => '10-30,500',
     'graceful_consistency_check'                       => 'true',
+    'layer3_peer_routing'                              => 'true',
     'peer_keepalive_dest'                              => '1.1.1.1',
     'peer_keepalive_hold_timeout'                      => '5',
     'peer_keepalive_interval'                          => '1000',
@@ -99,23 +106,9 @@ tests[:non_default_properties] = {
     'peer_keepalive_vrf'                               => 'management',
     'peer_gateway'                                     => 'true',
     'role_priority'                                    => '1024',
+    'shutdown'                                         => 'true',
     'system_mac'                                       => '00:0c:0d:11:22:33',
     'system_priority'                                  => '3000',
-  },
-}
-
-tests[:default_properties_n6k7k] = {
-  desc:           '1.2 Default Properties exclusive to N6K and N7K',
-  title_pattern:  '200',
-  platform:       'n(6|7)k',
-  manifest_props: {
-    layer3_peer_routing: 'default',
-    shutdown:            'default',
-  },
-  code:           [0, 2],
-  resource:       {
-    'layer3_peer_routing' => 'false',
-    'shutdown'            => 'false',
   },
 }
 
@@ -124,16 +117,12 @@ tests[:non_default_properties_n6k7k] = {
   title_pattern:  '200',
   platform:       'n(6|7)k',
   manifest_props: {
-    layer3_peer_routing:       'true',
-    peer_gateway_exclude_vlan: '500-510, 1100, 1120',
-    shutdown:                  'true',
+    peer_gateway_exclude_vlan: '500-510, 1100, 1120'
 
   },
   code:           [0, 2],
   resource:       {
-    'layer3_peer_routing'       => 'true',
-    'peer_gateway_exclude_vlan' => '500-510,1100,1120',
-    'shutdown'                  => 'true',
+    'peer_gateway_exclude_vlan' => '500-510,1100,1120'
   },
 }
 
@@ -184,6 +173,13 @@ tests[:vpc_plus_non_default_properties_n7k] = {
   },
 }
 
+def version_unsupported_properties(_tests, _id)
+  unprops = {}
+  unprops[:layer3_peer_routing] = '7.0.3.I6.1' if platform[/n(3|9)k$/]
+  unprops[:shutdown] = '7.0.3.I6.1' if platform[/n(3|9)k$/]
+  unprops
+end
+
 def cleanup(agent)
   remove_all_vlans(agent)
   resource_absent_cleanup(agent, 'cisco_vpc_domain')
@@ -203,7 +199,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
   test_harness_run(tests, :default_properties)
-  test_harness_run(tests, :default_properties_n6k7k)
   test_harness_run(tests, :default_properties_n7k)
 
   # Resource absent test

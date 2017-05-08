@@ -407,7 +407,6 @@ tests[:non_default_5] = {
 }
 
 def unsupp_n3k
-  im = nexus_image
   unprops = []
   unprops <<
     :match_evpn_route_type_1 <<
@@ -423,10 +422,6 @@ def unsupp_n3k
     :match_mac_list <<
     :match_vlan <<
     :set_vrf
-  unprops <<
-    :match_ospf_area <<
-    :set_ipv4_next_hop_redist <<
-    :set_ipv6_next_hop_redist if im[/(I2|I3|I4)/]
   unprops
 end
 
@@ -475,12 +470,6 @@ def unsupp_n9k
     :set_ipv6_default_next_hop_load_share <<
     :set_extcommunity_rt_asn <<
     :set_vrf
-  unprops <<
-    :set_ipv4_next_hop_load_share <<
-    :set_ipv6_next_hop_load_share <<
-    :match_ospf_area <<
-    :set_ipv4_next_hop_redist <<
-    :set_ipv6_next_hop_redist if im[/(I2|I3|I4)/]
   unprops << :match_metric if im['I4']
   unprops
 end
@@ -499,12 +488,8 @@ def unsupp_n9kf
     :match_evpn_route_type_all <<
     :match_length <<
     :match_mac_list <<
-    :match_metric <<
     :match_ospf_area <<
     :match_vlan <<
-    :set_extcommunity_4bytes_additive <<
-    :set_extcommunity_4bytes_non_transitive <<
-    :set_extcommunity_4bytes_transitive <<
     :set_extcommunity_cost_igp <<
     :set_extcommunity_cost_pre_bestpath <<
     :set_extcommunity_rt_additive <<
@@ -515,11 +500,9 @@ def unsupp_n9kf
     :set_ipv6_default_next_hop <<
     :set_ipv6_default_next_hop_load_share <<
     :set_ipv4_next_hop <<
-    :set_ipv4_next_hop_load_share <<
     :set_ipv4_precedence <<
     :set_ipv4_prefix <<
     :set_ipv6_next_hop <<
-    :set_ipv6_next_hop_load_share <<
     :set_ipv6_prefix <<
     :set_vrf
   unprops
@@ -537,6 +520,30 @@ def unsupported_properties(_tests, _id)
   elsif platform[/n9k-f/]
     unsupp_n9kf
   end
+end
+
+def version_unsupported_properties(_tests, _id)
+  unprops = {}
+  if platform[/n9k-f/]
+    unprops[:match_metric] = '7.0.3.F2.1'
+    unprops[:set_extcommunity_4bytes_additive] = '7.0.3.F2.1'
+    unprops[:set_extcommunity_4bytes_non_transitive] = '7.0.3.F2.1'
+    unprops[:set_extcommunity_4bytes_transitive] = '7.0.3.F2.1'
+    unprops[:set_ipv4_next_hop_load_share] = '7.0.3.F2.1'
+    unprops[:set_ipv6_next_hop_load_share] = '7.0.3.F2.1'
+  elsif platform[/n9k$/]
+    unprops[:match_ospf_area] = '7.0.3.I5.1'
+    unprops[:set_ipv4_next_hop_load_share] = '7.0.3.I5.1'
+    unprops[:set_ipv6_next_hop_load_share] = '7.0.3.I5.1'
+    unprops[:set_ipv4_next_hop_redist] = '7.0.3.I5.1'
+    unprops[:set_ipv6_next_hop_redist] = '7.0.3.I5.1'
+    unprops[:set_community] = '7.0.3.I5.1'
+  elsif platform[/n3k/]
+    unprops[:match_ospf_area] = '7.0.3.I5.1'
+    unprops[:set_ipv4_next_hop_redist] = '7.0.3.I5.1'
+    unprops[:set_ipv6_next_hop_redist] = '7.0.3.I5.1'
+  end
+  unprops
 end
 
 def cleanup(agent)

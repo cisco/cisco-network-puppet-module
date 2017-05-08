@@ -140,10 +140,15 @@ def unsupported_properties(_tests, _id)
       :ipv4_sub_option_circuit_id_string
   elsif platform[/n9k/]
     unprops <<
-      :ipv4_src_addr_hsrp <<
-      :ipv4_sub_option_circuit_id_string
+      :ipv4_src_addr_hsrp
   end
   unprops << :ipv4_sub_option_circuit_id_custom if nexus_image['I2']
+  unprops
+end
+
+def version_unsupported_properties(_tests, _id)
+  unprops = {}
+  unprops[:ipv4_sub_option_circuit_id_string] = '7.0.3.I6.1' if platform[/n9k$/]
   unprops
 end
 
