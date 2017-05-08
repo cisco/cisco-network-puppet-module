@@ -26,7 +26,7 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 tests = {
   agent:         agent,
   master:        master,
-  platform:      'n(5|6|7|9)k',
+  platform:      'n(3|5|6|7|9)k',
   resource_name: 'cisco_overlay_global',
   ensurable:     false,
 }
@@ -72,6 +72,26 @@ tests[:non_default] = {
     'dup_host_mac_detection_timeout'        => '20',
   },
 }
+
+def unsupported_properties(_tests, _id)
+  unprops = []
+  if platform[/n3k/]
+    unprops <<
+      :anycast_gateway_mac <<
+      :dup_host_ip_addr_detection_host_moves <<
+      :dup_host_ip_addr_detection_timeout
+  end
+  unprops
+end
+
+def version_unsupported_properties(_tests, _id)
+  unprops = {}
+  if platform[/n3k/]
+    unprops[:dup_host_mac_detection_host_moves] = '7.0.3.I6.1'
+    unprops[:dup_host_mac_detection_timeout] = '7.0.3.I6.1'
+  end
+  unprops
+end
 
 def cleanup(agent)
   config_find_remove(agent, 'nv overlay evpn', 'incl ^nv')

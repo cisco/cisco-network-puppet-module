@@ -434,7 +434,7 @@ Symbol | Meaning | Description
 | [cisco_ospf](#type-cisco_ospf)                             | ✅  | ✅  | ✅ | ✅  | ✅ | ✅ |
 | [cisco_ospf_vrf](#type-cisco_ospf_vrf)                     | ✅  | ✅  | ✅ | ✅  | ✅ | ✅ |
 | ✅ = Supported <br> ➖ = Not Applicable | N9k | N3k | N5k | N6k | N7k | N9k-F | Caveats |
-| [cisco_overlay_global](#type-cisco_overlay_global)         | ✅  | ➖ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_overlay_global](#type-cisco_overlay_global)         | ✅  | ✅* | ✅  | ✅  | ✅  | ✅ | \*[caveats](#cisco_overlay_global-caveats) |
 | [cisco_pim](#type-cisco_pim)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | \*[caveats](#cisco_pim-caveats) |
 | [cisco_pim_rp_address](#type-cisco_pim_rp_address)         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
 | [cisco_pim_grouplist](#type-cisco_pim_grouplist)           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
@@ -454,8 +454,8 @@ Symbol | Meaning | Description
 | [cisco_vrf](#type-cisco_vrf)                               | ✅  | ✅* | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_vrf-caveats) |
 | [cisco_vrf_af](#type-cisco_vrf_af)                         | ✅  | ✅* | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_vrf_af-caveats) |
 | [cisco_vtp](#type-cisco_vtp)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
-| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep)                 | ✅  | ➖ | ✅  | ✅  | ✅  | ✅ |
-| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni)         | ✅  | ➖ | ✅  | ✅  | ✅  | ✅ |
+| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep)                 | ✅  | ➖ | ✅  | ✅  | ✅* | ✅ | \*[caveats](#cisco_vxlan_vtep-caveats) |
+| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni)         | ✅  | ➖ | ✅  | ✅  | ✅  | ✅ | \*[caveats](#cisco_vxlan_vtep_vni-caveats) |
 
 ##### NetDev Providers
 
@@ -972,7 +972,7 @@ Manages configuration of a BFD (Bidirectional Forwarding Detection) instance.
 | `fabricpath_interval`   | Not supported on N3k, N9k-F, N9k |
 | `fabricpath_slow_timer` | Not supported on N3k, N9k-F, N9k |
 | `fabricpath_vlan`       | Not supported on N3k, N9k-F, N9k |
-| `interval`              | Not supported on N9k-F, N9k      |
+| `interval`              | Supported on N3k, N5k, N6k, N7k <br> Supported in OS Version 7.0(3)F2(1) and later on N9k-F <br> Supported in OS Version 7.0(3)I6(1) and later on N9k |
 | `ipv4_echo_rx_interval` | Not supported on N5k, N6k        |
 | `ipv4_interval`         | Not supported on N5k, N6k        |
 | `ipv4_slow_timer`       | Not supported on N5k, N6k        |
@@ -1053,14 +1053,14 @@ Manages configuration of a BGP instance.
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `disable_policy_batching_ipv4` | Not supported on N5k, N6k, N7k |
-| `disable_policy_batching_ipv6` | Not supported on N5k, N6k, N7k |
+| `disable_policy_batching_ipv4` | Not supported on N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
+| `disable_policy_batching_ipv6` | Not supported on N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
 | `event_history_errors        ` | supported on N3|9k on 7.0(3)I5(1) and later images |
 | `event_history_events        ` | default value is 'large' for N3|9k on 7.0(3)I5(1) and later images |
 | `event_history_objstore      ` | supported on N3|9k on 7.0(3)I5(1) and later images |
 | `event_history_periodic      ` | default value is 'false' for N3|9k on 7.0(3)I5(1) and later images |
-| `neighbor_down_fib_accelerate` | Not supported on N5k, N6k, N7k |
-| `reconnect_interval`           | Not supported on N5k, N6k, N7k |
+| `neighbor_down_fib_accelerate` | Not supported on N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
+| `reconnect_interval`           | Not supported on N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
 | `suppress_fib_pending`         | Idempotence supported only on 7.0(3)I5(1) and later images N3|9k |
 
 #### Parameters
@@ -1402,7 +1402,7 @@ Manages configuration of a BGP Neighbor.
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `log_neighbor_changes` | Not supported on N5k, N6k, N7k |
+| `log_neighbor_changes` | Not supported on N5k, N6k <br> Minimum puppet module version 1.7.0 for N7k <br> Supported in OS Version 8.1.1 and later on N7k |
 | `bfd` | (ciscopuppet v1.4.0) BFD support added for all platforms |
 | `bfd` on IPv6 | Not supported on N5k, N6k |
 
@@ -1689,7 +1689,7 @@ Manages configuration of a DHCP relay global configuration.
 | `ipv4_information_trust_all`        | Not supported on N5k, N6k        |
 | `ipv4_src_addr_hsrp`                | Not supported on N3k, N9k, N9k-F |
 | `ipv4_sub_option_circuit_id_custom` | Not supported on N7k, N9k-F(TBD) and supported on N3k and N9k running os version 7.0(3)I3.1 and later |
-| `ipv4_sub_option_circuit_id_string` | Only supported on N3k          |
+| `ipv4_sub_option_circuit_id_string` | Supported on N3k <br> Supported in OS Version 7.0(3)I6(1) and later on N9k |
 | `ipv6_option_cisco`                 | Not supported on N5k, N6k      |
 
 #### Parameters
@@ -3096,11 +3096,21 @@ Also configures anycast gateway MAC of the switch.
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | not applicable     | not applicable         |
+| N3k      | 7.0(3)I6(1)        | 1.7.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+
+#### <a name="cisco_overlay_global-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `anycast_gateway_mac `                   | Not supported on N3k        |
+| `dup_host_ip_addr_detection_host_moves`  | Not supported on N3k        |
+| `dup_host_ip_addr_detection_timeout`     | Not supported on N3k        |
+| `dup_host_mac_detection_host_moves`      | Supported in OS Version 7.0(3)I6(1) and later on N3k |
+| `dup_host_mac_detection_timeout`         | Supported in OS Version 7.0(3)I6(1) and later on N3k |
 
 #### Parameters
 
@@ -3295,12 +3305,12 @@ Manages a Cisco Route Map.
 | `match_evpn_route_type_all`              | Not supported on N3k,N9k-F,N9k  |
 | `match_length`                           | Not supported on N3k,N9k-F,N9k  |
 | `match_mac_list`                         | Not supported on N3k,N9k-F,N9k  |
-| `match_metric`                           | Not supported on N9k-F          |
+| `match_metric`                           | Supported in OS Version 7.0(3)F2(1) and later on N9k-F |
 | `match_ospf_area`                        | Not supported on N5k,N6k,N7k,N9k-F <br> Supported in OS version 7.0(3)I5.1 and later on N3k, N9k  |
 | `match_vlan`                             | Not supported on N3k,N9k-F,N9k  |
-| `set_extcommunity_4bytes_additive`       | Not supported on N9k-F          |
-| `set_extcommunity_4bytes_non_transitive` | Not supported on N9k-F          |
-| `set_extcommunity_4bytes_transitive`     | Not supported on N9k-F          |
+| `set_extcommunity_4bytes_additive`       | Supported in OS Version 7.0(3)F2(1) and later on N9k-F |
+| `set_extcommunity_4bytes_non_transitive` | Supported in OS Version 7.0(3)F2(1) and later on N9k-F |
+| `set_extcommunity_4bytes_transitive`     | Supported in OS Version 7.0(3)F2(1) and later on N9k-F |
 | `set_extcommunity_cost_igp`              | Not supported on N9k-F          |
 | `set_extcommunity_cost_pre_bestpath`     | Not supported on N9k-F          |
 | `set_extcommunity_rt_additive`           | Not supported on N9k-F          |
@@ -3309,15 +3319,14 @@ Manages a Cisco Route Map.
 | `set_ipv4_default_next_hop`              | Not supported on N5k,N6k,N9k-F,N9k  |
 | `set_ipv4_default_next_hop_load_share`   | Not supported on N5k,N6k,N9k-F,N9k  |
 | `set_ipv4_next_hop`                      | Not supported on N9k-F          |
-| `set_ipv4_next_hop_load_share`           | Not supported on N5k,N6k,N9k-F <br> Supported in OS Version 7.0(3)I5.1 and later on N9k  |
+| `set_ipv4_next_hop_load_share`           | Not supported on N5k,N6k <br> Supported in OS Version 7.0(3)I5.1 and later on N9k <br> Supported in OS Version 7.0(3)F2(1) and later on N9k-F |
 | `set_ipv4_next_hop_redist`               | Supported on N5k,N6k,N7k,N9k-F <br> Supported in OS Version 7.0(3)I5.1 and later on N3k,N9k  |
 | `set_ipv4_precedence`                    | Not supported on N9k-F          |
 | `set_ipv4_prefix`                        | Not supported on N5k,N6k,N9k-F  |
-OS Version 7.0(3)I5.1 and later on N3k,N9k  |
 | `set_ipv6_default_next_hop`              | Not supported on N5k,N6k,N9k-F,N9k  |
 | `set_ipv6_default_next_hop_load_share`   | Not supported on N5k,N6k,N9k-F,N9k  |
 | `set_ipv6_next_hop`                      | Not supported on N9k-F          |
-| `set_ipv6_next_hop_load_share`           | Not supported on N5k,N6k,N9k-F <br> Supported in OS Version 7.0(3)I5.1 and later on N9k  |
+| `set_ipv6_next_hop_load_share`           | Not supported on N5k,N6k <br> Supported in OS Version 7.0(3)I5.1 and later on N9k <br> Supported in OS Version 7.0(3)F2(1) and later on N9k-F |
 | `set_ipv6_next_hop_redist`               | Supported on N5k,N6k,N7k,N9k-F <br> Supported in OS Version 7.0(3)I5.1 and later on N3k,N9k  |
 | `set_ipv6_prefix`                        | Not supported on N5k,N6k,N9k-F  |
 | `set_vrf`                                | Supported on N7k                |
@@ -3712,7 +3721,7 @@ Manages spanning tree global parameters
 | `bd_max_age`             | Supported only on N7k |
 | `bd_priority`            | Supported only on N7k |
 | `bd_root_priority`       | Supported only on N7k |
-| `domain`                 | Supported only on N5k, N6k, N7k |
+| `domain`                 | Supported only on N5k, N6k, N7k <br> Supported in OS Version 7.0(3)I6(1) and later on N3k, N9k |
 | `fcoe`                   | Supported only on N9k |
 
 #### Parameters
@@ -4188,11 +4197,11 @@ Manages the virtual Port Channel (vPC) domain configuration of a Cisco device.
 | `auto_recovery`                     | Only supported on N3k, N7k, N9k |
 | `fabricpath_emulated_switch_id`     | Only supported on N7k           |
 | `fabricpath_multicast_load_balance` | Only supported on N7k           |
-| `layer3_peer_routing`               | Only supported on N5k, N6k, N7k |
+| `layer3_peer_routing`               | Only supported on N5k, N6k, N7k <br> Supported in OS Version 7.0(3)I6(1) and later on N3k, N9k |
 | `peer_gateway_exclude_vlan`         | Only supported on N5k, N6k, N7k |
 | `port_channel_limit`                | Only supported on N7k           |
 | `self_isolation`                    | Only supported on N7k           |
-| `shutdown`                          | Only supported on N5k, N6k, N7k |
+| `shutdown`                          | Only supported on N5k, N6k, N7k <br> Supported in OS Version 7.0(3)I6(1) and later on N3k, N9k |
 
 #### Parameters
 
@@ -4480,6 +4489,12 @@ Creates a VXLAN Network Virtualization Endpoint (NVE) overlay interface that ter
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
+#### <a name="cisco_vxlan_vtep-caveats">Caveats</a>
+
+| Property                        | Caveat Description                   |
+|---------------------------------|--------------------------------------|
+| source_interface_hold_down_time | Not supported on N3k, N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
+
 #### Parameters
 
 ##### `ensure`
@@ -4513,6 +4528,14 @@ Creates a Virtual Network Identifier member (VNI) for an NVE overlay interface.
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
+#### <a name="cisco_vxlan_vtep_vni-caveats">Caveats</a>
+
+| Property                        | Caveat Description                   |
+|---------------------------------|--------------------------------------|
+| ingress_replication             | Not supported on N3k, N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
+| peer_list                       | Not supported on N3k, N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
+| suppress_uuc                    | Not supported on N3k, N9k, N9k-F <br> Supported in OS Version 8.1.1 and later on N7k |
+
 #### Parameters
 
 ##### `ensure`
@@ -4538,6 +4561,9 @@ Set the ingress-replication static peer list. Valid values are an Array, a space
 
 ##### `suppress_arp`
 Suppress arp under layer 2 VNI. Valid values are true, false, or 'default'.
+
+##### `suppress_uuc`
+Suppress uuc under layer 2 VNI. Valid values are true, false, or 'default'.
 
 --
 ### NetDev StdLib Resource Type Details

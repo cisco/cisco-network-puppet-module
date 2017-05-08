@@ -130,9 +130,15 @@ def unsupported_properties(_tests, _id)
       :remove_private_as
 
   else
-    unprops << :log_neighbor_changes if platform[/n(5|6|7)/]
+    unprops << :log_neighbor_changes if platform[/n(5|6)/]
   end
 
+  unprops
+end
+
+def version_unsupported_properties(_tests, _id)
+  unprops = {}
+  unprops[:log_neighbor_changes] = '8.1.1' if platform[/n7k/]
   unprops
 end
 

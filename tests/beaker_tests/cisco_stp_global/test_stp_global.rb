@@ -41,6 +41,8 @@ tests[:default] = {
     bpdufilter:               'default',
     bpduguard:                'default',
     bridge_assurance:         'default',
+    domain:                   'default',
+    fcoe:                     'default',
     loopguard:                'default',
     mode:                     'default',
     pathcost:                 'default',
@@ -56,6 +58,8 @@ tests[:default] = {
     'bpdufilter'       => 'false',
     'bpduguard'        => 'false',
     'bridge_assurance' => 'true',
+    'domain'           => 'false',
+    'fcoe'             => 'true',
     'loopguard'        => 'false',
     'mode'             => 'rapid-pvst',
     'pathcost'         => 'short',
@@ -117,6 +121,8 @@ tests[:non_default] = {
     bpdufilter:               'true',
     bpduguard:                'true',
     bridge_assurance:         'false',
+    domain:                   '100',
+    fcoe:                     'true',
     loopguard:                'true',
     mode:                     'mst',
     mst_designated_priority:  mst_dp,
@@ -148,50 +154,6 @@ tests[:non_default] = {
     vlan_max_age:             "#{vlan_ma}",
     vlan_priority:            "#{vlan_pri}",
     vlan_root_priority:       "#{vlan_rpri}",
-  },
-}
-
-tests[:default_plat_1] = {
-  desc:           '1.4 Default Properties platform specific part 1',
-  platform:       'n9k',
-  title_pattern:  'default',
-  manifest_props: {
-    fcoe: 'default'
-  },
-  code:           [0, 2],
-  resource:       {
-    'fcoe' => 'true'
-  },
-}
-
-tests[:non_default_plat_1] = {
-  desc:           '2.3 Non Default Properties platform specific part 1',
-  platform:       'n9k',
-  title_pattern:  'default',
-  manifest_props: {
-    fcoe: 'false'
-  },
-}
-
-tests[:default_plat_2] = {
-  desc:           '1.4 Default Properties platform specific part 2',
-  platform:       'n(5|6|7)k',
-  title_pattern:  'default',
-  manifest_props: {
-    domain: 'default'
-  },
-  code:           [0, 2],
-  resource:       {
-    'domain' => 'false'
-  },
-}
-
-tests[:non_default_plat_2] = {
-  desc:           '2.3 Non Default Properties platform specific part 2',
-  platform:       'n(5|6|7)k',
-  title_pattern:  'default',
-  manifest_props: {
-    domain: '100'
   },
 }
 
@@ -258,6 +220,20 @@ def test_harness_dependencies(_tests, id)
   end
 end
 
+def unsupported_properties(_tests, _id)
+  unprops = []
+  unprops << :domain if platform[/n9k-f/]
+  unprops << :fcoe if platform[/n(3|5|6|7)k/]
+  unprops
+end
+
+def version_unsupported_properties(_tests, _id)
+  unprops = {}
+  unprops[:domain] = '7.0.3.I6.1' if platform[/n3k/]
+  unprops[:domain] = '7.0.3.I6.1' if platform[/n9k$/]
+  unprops
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
@@ -270,16 +246,12 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :default)
   test_harness_run(tests, :default_bd)
   test_harness_run(tests, :default_mst)
-  test_harness_run(tests, :default_plat_1)
-  test_harness_run(tests, :default_plat_2)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
   test_harness_run(tests, :non_default)
   test_harness_run(tests, :non_default_bd)
-  test_harness_run(tests, :non_default_plat_1)
-  test_harness_run(tests, :non_default_plat_2)
 
   # -------------------------------------------------------------------
   skipped_tests_summary(tests)
