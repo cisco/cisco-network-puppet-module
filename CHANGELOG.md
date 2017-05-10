@@ -5,6 +5,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 ### New feature support
+#### Cisco Resources
+- `cisco_bgp_af_aa` type and provider.
 
 ### Added
 - Extend cisco_interface with attributes:

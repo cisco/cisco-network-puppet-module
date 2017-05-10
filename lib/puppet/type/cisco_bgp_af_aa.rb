@@ -127,7 +127,7 @@ Example:
   end # property summary_only
 
   newproperty(:advertise_map) do
-    desc "Selects attribute information from specific routes. Valid values are String or 'default'"
+    desc "Route map to select attribute information from specific routes. Valid values are String or 'default'"
 
     munge do |value|
       value = :default if value == 'default'
@@ -136,7 +136,7 @@ Example:
   end # property advertise_map
 
   newproperty(:attribute_map) do
-    desc "Sets attribute information of aggregate. Valid values are String or 'default'"
+    desc "Route map to set attribute information of aggregate. Valid values are String or 'default'"
 
     munge do |value|
       value = :default if value == 'default'
@@ -145,7 +145,7 @@ Example:
   end # property attribute_map
 
   newproperty(:suppress_map) do
-    desc "Conditionally filters more specific routes. Valid values are String or 'default'"
+    desc "Route map to conditionally filter more specific routes. Valid values are String or 'default'"
 
     munge do |value|
       value = :default if value == 'default'

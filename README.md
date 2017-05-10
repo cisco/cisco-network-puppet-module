@@ -167,6 +167,7 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_vrf_af`](#type-cisco_vrf_af)
   * [`cisco_bgp`](#type-cisco_bgp)
   * [`cisco_bgp_af`](#type-cisco_bgp_af)
+  * [`cisco_bgp_af_aa`](#type-cisco_bgp_af_aa)
   * [`cisco_bgp_neighbor`](#type-cisco_bgp_neighbor)
   * [`cisco_bgp_neighbor_af`](#type-cisco_bgp_neighbor_af)
 
@@ -299,6 +300,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_bfd_global`](#type-cisco_bfd_global)
 * [`cisco_bgp`](#type-cisco_bgp)
 * [`cisco_bgp_af`](#type-cisco_bgp_af)
+* [`cisco_bgp_af_aa`](#type-cisco_bgp_af_aa)
 * [`cisco_bgp_neighbor`](#type-cisco_bgp_neighbor)
 * [`cisco_bgp_neighbor_af`](#type-cisco_bgp_neighbor_af)
 * [`cisco_bridge_domain`](#type-cisco_bridge_domain)
@@ -412,6 +414,7 @@ Symbol | Meaning | Description
 | [cisco_command_config](#type-cisco_command_config)         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
 | [cisco_bgp](#type-cisco_bgp)                               | ✅  | ✅  | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_bgp-caveats) |
 | [cisco_bgp_af](#type-cisco_bgp_af)                         | ✅* | ✅* | ✅  | ✅* | ✅  | ✅ | \*[caveats](#cisco_bgp_af-caveats) |
+| [cisco_bgp_af_aa](#type-cisco_bgp_af_aa)                   | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
 | [cisco_bgp_neighbor](#type-cisco_bgp_neighbor)             | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
 | [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af)       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
 | [cisco_bridge_domain](#type-cisco_bridge_domain)           | ➖ | ➖ | ➖ | ➖ | ✅ | ➖ |
@@ -1383,6 +1386,58 @@ Apply table-map to filter routes downloaded into URIB. Valid values are a string
 
 ##### `table_map_filter`
 Filters routes rejected by the route-map and does not download them to the RIB. Valid values are true, false, or 'default'.
+
+--
+### Type: cisco_bgp_af_aa
+
+Manages configuration of a BGP Address-family Aggregate-address instance.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(5)        | 1.7.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.7.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.7.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.7.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.7.0                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.7.0                  |
+
+#### Parameters
+
+###### `ensure`
+Determine whether the BGP address family aggregate address should be present or not. Valid values
+ are 'present' and 'absent'.
+
+##### `asn`
+BGP autonomous system number. Required. Valid values are String, Integer in ASPLAIN or ASDOT notation.
+
+##### `vrf`
+VRF name. Required. Valid values are string. The name 'default' is a valid VRF representing the global bgp.
+
+##### `afi`
+Address Family Identifier (AFI). Required. Valid values are `ipv4`, `ipv6`, `vpnv4`, `vpnv6` and `l2vpn`.
+
+##### `safi`
+Sub Address Family Identifier (SAFI). Required. Valid values are `unicast`, `multicast` and `evpn`.
+
+##### `aa`
+Aggregate address prefix in ipv4/ipv6 format. Required. Valid values are string. For example, it could be '1.1.1.1/32' or '2000::1/128'.
+
+#### Properties
+
+##### `as_set`
+Generates AS-SET information. Valid values are true, false or 'default'.
+
+##### `advertise_map`
+Route-map to select attribute information from specific routes. Valid values are String or 'default'.
+
+##### `attribute_map`
+Route-map to set attribute information of aggregate. Valid values are String or 'default'.
+
+##### `summary_only`
+Stops advertising more specifics.  Valid values are true, false or 'default'.
+
+##### `suppress_map`
+Route-map to conditionally filter more specific routes. Valid values are String or 'default'.
 
 --
 ### Type: cisco_bgp_neighbor
