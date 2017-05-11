@@ -69,7 +69,7 @@ When we are considering publishing a new release, all of the following steps mus
 1. Open pull request from release branch against the `master` branch.
      * Merge after approval.
      
-1. Reach out to PuppetLabs and ask them to verify new release branche (Puppet and NodeUtils) in their CI.
+1. Reach out to PuppetLabs and ask them to verify new release branches (Puppet and NodeUtils) against their CI.
      * **Important** Only after getting approval from puppet, move on to post-merge steps.
 
 ### Post-Merge to `master` branch:
