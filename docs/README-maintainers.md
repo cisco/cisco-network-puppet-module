@@ -14,94 +14,73 @@ Guidelines for the core maintainers of the ciscopuppet project - above and beyon
   * Is the data still relevant?
   * Do the version dependencies need to be updated? (e.g. rubocop)
 
-## Setting up git-flow
+## Release Process Checklist
 
-If you don't already have [`git-flow`](https://github.com/petervanderdoes/gitflow/) installed, install it.
-
-Either run `git flow init` from the repository root directory, or manually edit your `.git/config` file. Either way, when done, you should have the following in your config:
-
-```ini
-[gitflow "branch"]
-        master = master
-        develop = develop
-[gitflow "prefix"]
-        feature = feature/
-        release = release/
-        hotfix = hotfix/
-        support = support/
-        versiontag = v
-```
-
-Most of these are default for git-flow except for the `versiontag` setting.
-
-## Release Checklist
+### Pre-Merge to `master` branch:
 
 When we are considering publishing a new release, all of the following steps must be carried out (using the latest code base in `develop`):
 
-1. With the latest released `cisco_node_utils` gem (no development code!
-released only! Do a new gem release first if needed!), run Beaker tests and
-demo manifests against all supported platforms running latest OS release or
-release candidate:
-  * N30xx
-  * N31xx
-  * N9xxx
+1. Pull release branch based on the `develop` branch.
+      * 0.0.x - a bugfix release
+      * 0.x.0 - new feature(s)
+      * x.0.0 - backward-incompatible change (if unvoidable!)
 
-2. Triage any test failures.
-
-3. Make sure CHANGELOG.md accurately reflects all changes since the last release.
-  * Add any significant changes that weren't documented in the changelog
-  * Clean up any entries that are overly verbose, unclear, or otherwise could be improved.
-
-## Release Process
-
-When the release checklist above has been fully completed, the process for publishing a new release is as follows:
+1. Run full beaker test regression on [supported platforms.](https://github.com/cisco/cisco-network-puppet-module#resource-platform-support-matrix)
+     * Fix All Bugs.
+     * Make sure proper test case skips are in place for unsupported platforms.
+     * Ensure that tests have been executed against released Gem versions (release a new version if necessary!) and do not have dependencies on unreleased Gem code.
 
 
-1. Ensure that tests have been executed against released Gem versions (release a new version if necessary!) and do not have dependencies on unreleased Gem code.
+1. Update [changelog.](https://github.com/cisco/cisco-network-node-utils/blob/develop/CHANGELOG.md)
+     * Make sure CHANGELOG.md accurately reflects all changes since the last release.
+     * Add any significant changes that weren't documented in the changelog
+     * Clean up any entries that are overly verbose, unclear, or otherwise could be improved.
+     * Indicate new platform support (if any) for exisiting providers.
+     * Create markdown release tag.
+       ```diff
+       -## [Unreleased]
+       +## [1.0.1] - 2015-08-28
+       ...
+       +[1.0.1]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.0.0...v1.0.1
+       [1.0.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v0.9.0...v1.0.0
+       ```
 
-2. Create a release branch. Follow [semantic versioning](http://semver.org):
-    * 0.0.x - a bugfix release
-    * 0.x.0 - new feature(s)
-    * x.0.0 - backward-incompatible change (only if unavoidable!)
+1. Update [metadata.json](https://github.com/cisco/cisco-network-puppet-module/blob/develop/metadata.json) file.
+     * Update Version
+       ```diff
+          "name": "puppetlabs-ciscopuppet",
+       -  "version": "1.0.0",
+       +  "version": "1.0.1",
+          "author": "cisco",
+       ```
+     * Update Supported OS Verions (if applicable)
 
-    ```
-    git flow release start 1.0.1
-    ```
+1. Update [`cisco_node_utils.rb` rec_version = Gem::Version.new('x.x.x')](https://github.com/cisco/cisco-network-puppet-module/blob/develop/lib/puppet/feature/cisco_node_utils.rb#L40) version.
 
-3. In the newly created release branch, update `CHANGELOG.md`:
+1. Verify/Update [netdev_stdlib version](https://github.com/cisco/cisco-network-puppet-module/blob/develop/metadata.json#L11) requirement if needed.
 
-    ```diff
-    -## [Unreleased]
-    +## [1.0.1] - 2015-08-28
-    ...
-    +[1.0.1]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.0.0...v1.0.1
-    [1.0.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v0.9.0...v1.0.0
-    ```
-    
-    and also update `metadata.json`:
-    
-    ```diff
-       "name": "puppetlabs-ciscopuppet",
-    -  "version": "1.0.0",
-    +  "version": "1.0.1",
-       "author": "cisco",
-    ```
-    
-4. Commit your changes and push the release branch to GitHub for review by Cisco and PuppetLabs:
+1. Verify puppet module can be built using the [new puppet module version](https://github.com/cisco/cisco-network-puppet-module/blob/develop/metadata.json#L3).
 
-	```
-	git flow release publish 1.0.1
-	```
-	
-5. Once Cisco and PuppetLabs are in agreement that the release branch is sane, finish the release and push the finished release to GitHub:
+1. Scrub README Docs.
+     * Update references to indicate new platorm support where applicable.
+     * Update nxos release information where applicable.
+     * Update caveats for any new properties added in to existing/new providers.
 
-    ```
-    git flow release finish 1.0.1
-    git push origin master
-    git push origin develop
-    git push --tags
-    ```
+1. Open pull request from release branch against the `master` branch.
+     * Merge after approval.
+     
+1. Reach out to PuppetLabs and ask them to verify new release branche (Puppet and NodeUtils) in their CI.
+     * **Important** Only after getting approval from puppet, move on to post-merge steps.
 
-6. Add release notes on GitHub, for example `https://github.com/cisco/cisco-network-puppet-module/releases/new?tag=v1.0.1`. Usually this will just be a copy-and-paste of the relevant section of the `CHANGELOG.md`.
+### Post-Merge to `master` branch:
 
-7. Reach out to PuppetLabs to publish the new module version to PuppetForge.
+1. Create annotated git tag for the release.
+     * [HowTo](https://git-scm.com/book/en/v2/Git-Basics-Tagging#Annotated-Tags)
+  
+1. Draft a [new release](https://github.com/cisco/cisco-network-puppet-module/releases) on github.
+  
+1. Merge `master` branch back into `develop` branch.
+     * Resolve any merge conflicts
+     * Optional: Delete release branch (May want to keep for reference)
+ 
+1. Reach out to PuppetLabs to publish the new module version to PuppetForge.
