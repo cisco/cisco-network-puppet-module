@@ -31,7 +31,7 @@ When we are considering publishing a new release, all of the following steps mus
      * Ensure that tests have been executed against released Gem versions (release a new version if necessary!) and do not have dependencies on unreleased Gem code.
 
 
-1. Update [changelog.](https://github.com/cisco/cisco-network-node-utils/blob/develop/CHANGELOG.md)
+1. Update [changelog.](https://github.com/cisco/cisco-network-puppet-module/blob/develop/CHANGELOG.md)
      * Make sure CHANGELOG.md accurately reflects all changes since the last release.
      * Add any significant changes that weren't documented in the changelog
      * Clean up any entries that are overly verbose, unclear, or otherwise could be improved.
