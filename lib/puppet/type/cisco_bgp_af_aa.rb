@@ -107,7 +107,14 @@ Example:
 
   newparam(:aa, namevar: true) do
     desc 'BGP aggregate address prefix. Valid values are String.'
-    munge(&:to_s)
+    munge do |value|
+      begin
+        value = PuppetX::Cisco::Utils.process_network_mask(value) unless value.nil?
+        value
+      rescue
+        raise 'aggregate address must be in valid address/length format'
+      end
+    end
   end
 
   ##############
@@ -115,41 +122,32 @@ Example:
   ##############
 
   newproperty(:as_set) do
-    desc "Generates AS-SET information. Valid values are true, false or 'default'"
+    desc "Generates autonomous system set path information. Valid values are true, false or 'default'"
 
     newvalues(:true, :false, :default)
   end # property as_set
 
   newproperty(:summary_only) do
-    desc "Stops advertising more specifics.  Valid values are true, false or 'default'"
+    desc "Filters all more-specific routes from updates.  Valid values are true, false or 'default'"
 
     newvalues(:true, :false, :default)
   end # property summary_only
 
   newproperty(:advertise_map) do
-    desc "Route map to select attribute information from specific routes. Valid values are String or 'default'"
+    desc "Name of the route map used to select the routes to create AS_SET origin communities. Valid values are String or 'default'"
 
-    munge do |value|
-      value = :default if value == 'default'
-      value
-    end
+    munge { |value| value == 'default' ? :default : value }
   end # property advertise_map
 
   newproperty(:attribute_map) do
-    desc "Route map to set attribute information of aggregate. Valid values are String or 'default'"
+    desc "Name of the route map used to set the attribute of the aggregate route. Valid values are String or 'default'"
 
-    munge do |value|
-      value = :default if value == 'default'
-      value
-    end
+    munge { |value| value == 'default' ? :default : value }
   end # property attribute_map
 
   newproperty(:suppress_map) do
-    desc "Route map to conditionally filter more specific routes. Valid values are String or 'default'"
+    desc "Name of the route map used to select the routes to be suppressed. Valid values are String or 'default'"
 
-    munge do |value|
-      value = :default if value == 'default'
-      value
-    end
+    munge { |value| value == 'default' ? :default : value }
   end # property suppress_map
 end

@@ -1420,24 +1420,24 @@ Address Family Identifier (AFI). Required. Valid values are `ipv4`, `ipv6`, `vpn
 Sub Address Family Identifier (SAFI). Required. Valid values are `unicast`, `multicast` and `evpn`.
 
 ##### `aa`
-Aggregate address prefix in ipv4/ipv6 format. Required. Valid values are string. For example, it could be '1.1.1.1/32' or '2000::1/128'.
+Aggregate address mask in ipv4/ipv6 format. Required. Valid values are string. Examples: 1.1.1.1/32 or 2000:1/128.
 
 #### Properties
 
 ##### `as_set`
-Generates AS-SET information. Valid values are true, false or 'default'.
+Generates autonomous system set path information. Valid values are true, false or 'default'.
 
 ##### `advertise_map`
-Route-map to select attribute information from specific routes. Valid values are String or 'default'.
+Name of the route map used to select the routes to create AS_SET origin communities. Valid values are string or 'default'.
 
 ##### `attribute_map`
-Route-map to set attribute information of aggregate. Valid values are String or 'default'.
+Name of the route map used to set the attribute of the aggregate route. Valid values are string or 'default'.
 
 ##### `summary_only`
-Stops advertising more specifics.  Valid values are true, false or 'default'.
+Filters all more-specific routes from updates.  Valid values are true, false or 'default'.
 
 ##### `suppress_map`
-Route-map to conditionally filter more specific routes. Valid values are String or 'default'.
+Name of the route map used to select the routes to be suppressed. Valid values are string or 'default'.
 
 --
 ### Type: cisco_bgp_neighbor
