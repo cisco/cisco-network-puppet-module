@@ -34,7 +34,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
  - `key`
  - `maxpoll`
  - `minpoll`
- - `source_interface`
  - `vrf`
 
 ### Changed
@@ -43,6 +42,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Deprecated `version` and `source_uri` attributes for `cisco_upgrade` in favor of a single attribute `package`.
 
 ### Resolved Issues
+* https://github.com/cisco/cisco-network-puppet-module/issues/424
+* https://github.com/cisco/cisco-network-puppet-module/issues/432
+* https://github.com/cisco/cisco-network-puppet-module/issues/446
+* https://github.com/cisco/cisco-network-puppet-module/issues/452
 
 ## [1.6.0] - 2017-03-13
 
@@ -60,6 +63,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 ### Removed
+
+### Resolved Issues
+* https://github.com/cisco/cisco-network-puppet-module/issues/413
+* https://github.com/cisco/cisco-network-puppet-module/issues/414
+* https://github.com/cisco/cisco-network-puppet-module/issues/415
+* https://github.com/cisco/cisco-network-puppet-module/issues/417
+* https://github.com/cisco/cisco-network-puppet-module/issues/419
+* https://github.com/cisco/cisco-network-puppet-module/issues/420
+* https://github.com/cisco/cisco-network-puppet-module/issues/423
 
 ## [1.5.0] - 2017-01-11
 

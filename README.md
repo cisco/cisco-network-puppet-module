@@ -211,6 +211,7 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_pim_rp_address`](#type-cisco_pim_rp_address)
 
 * NTP Types
+  * [`ntp_auth_key (netdev_stdlib)`](#type-ntp_auth_key)
   * [`ntp_config (netdev_stdlib)`](#type-ntp_config)
   * [`ntp_server (netdev_stdlib)`](#type-ntp_server)
 
@@ -357,6 +358,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`network_snmp`](#type-network_snmp)
 * [`network_trunk`](#type-network_trunk)
 * [`network_vlan`](#type-network_vlan)
+* [`ntp_auth_key`](#type-ntp_auth_key)
 * [`ntp_config`](#type-ntp_config)
 * [`ntp_server`](#type-ntp_server)
 * [`port_channel`](#type-port_channel)
@@ -471,8 +473,9 @@ Symbol | Meaning | Description
 | [network_snmp](#type-network_snmp)                         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [network_trunk](#type-network_trunk)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [network_vlan](#type-network_vlan)                         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [ntp_config](#type-ntp_config)                             | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [ntp_server](#type-ntp_server)                             | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [ntp_auth_key](#type-ntp_auth_key)                         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [ntp_config](#type-ntp_config)                             | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | \*[caveats](#ntp_config-caveats)
+| [ntp_server](#type-ntp_server)                             | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | \*[caveats](#ntp_server-caveats)
 | [port_channel](#type-port_channel)                         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [radius](#type-radius)                                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [radius_global](#type-radius_global)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
@@ -4822,6 +4825,32 @@ Whether or not the vlan is shutdown. Valid values are 'true' or 'false'.
 The name of the VLAN.  Valid value is a string.
 
 --
+### Type: ntp_auth_key
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.7.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.7.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.7.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.7.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.7.0                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.7.0                  |
+
+#### Parameters
+
+##### `algorithm`
+Authentication scheme.  Valid value is 'md5'.
+
+##### `key`
+Authentication key number.  Valid value is a string.
+
+##### `mode`
+Authentication mode.  Valid values are '0' and '7'.
+
+##### `password`
+Authentication password.  Valid value is a string.
+
+--
 ### Type: ntp_config
 
 | Platform | OS Minimum Version | Module Minimum Version |
@@ -4833,13 +4862,26 @@ The name of the VLAN.  Valid value is a string.
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
+#### <a name="ntp_config-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `authenticate` | Module minimum version 1.7.0 |
+| `trusted_key`  | Module minimum version 1.7.0 |
+
 #### Parameters
+
+##### `authenticate`
+Enable authentication.  Valid values are 'true', 'false' and 'default'.
 
 ##### `name`
 Resource name, not used to configure the device.  Valid value is a string.
 
 ##### `source_interface`
 Source interface for the NTP server.  Valid value is a string.
+
+##### `trusted_key`
+Trusted key for the NTP server.  Valid value is integer.
 
 --
 ### Type: ntp_server
@@ -4853,13 +4895,34 @@ Source interface for the NTP server.  Valid value is a string.
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
+#### <a name="ntp_server-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `key`     | Module minimum version 1.7.0 |
+| `maxpoll` | Module minimum version 1.7.0 |
+| `minpoll` | Module minimum version 1.7.0 |
+| `vrf`     | Module minimum version 1.7.0 |
+
 #### Parameters
 
 ##### `ensure`
 Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
 
+##### `key`
+Key id to be used while communicating to this NTP.  Valid value is an integer.
+
+##### `maxpoll`
+Maximum interval to poll NTP server.  Valid value is an integer.
+
+##### `minpoll`
+Minimum interval to poll NTP server.  Valid value is an integer.
+
 ##### `name`
 Hostname or IPv4/IPv6 address of the NTP server.  Valid value is a string.
+
+##### `vrf`
+Name of the vrf.  Valid value is a string.
 
 --
 ### Type: port_channel
