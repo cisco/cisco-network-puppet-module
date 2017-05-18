@@ -269,6 +269,7 @@ def unsupported_properties(tests, id)
       vrf == 'default' || platform[/n(3|6)k/]
 
     unprops << :additional_paths_install if platform[/n(3|9)k/]
+    unprops << :additional_paths_selection if platform[/n9k$/] && nexus_image[/I5.3/]
   end
   unprops
 end
