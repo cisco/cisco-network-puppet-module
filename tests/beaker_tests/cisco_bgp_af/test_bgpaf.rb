@@ -270,6 +270,7 @@ def unsupported_properties(tests, id)
 
     unprops << :additional_paths_install if platform[/n(3|9)k/]
     unprops << :additional_paths_selection if platform[/n9k$/] && nexus_image[/I5.3/]
+    unprops << :additional_paths_selection if platform[/n9k/] && nexus_image[/F2.1/]
   end
   unprops
 end
