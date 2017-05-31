@@ -65,7 +65,7 @@ Puppet::Type.type(:port_channel).provide(:cisco, parent: Puppet::Type.type(:cisc
       if @resource[:interfaces]
         @resource[:interfaces].each do |i|
           bla = Cisco::InterfaceChannelGroup.interfaces[i]
-          bla.channel_group = @resource[:id] if @resource[:id]
+          bla.channel_group_mode_set(@resource[:id]) if @resource[:id]
         end
       end
     end

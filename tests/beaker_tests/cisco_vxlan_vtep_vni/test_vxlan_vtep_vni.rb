@@ -55,20 +55,7 @@
 
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
-# -----------------------------
-# Common settings and variables
-# -----------------------------
-testheader = 'Resource cisco_vxlan_vtep_vni'
-
-# The 'tests' hash is used to define all of the test data values and expected
-# results. It is also used to pass optional flags to the test methods when
-# necessary.
-
-# 'tests' hash
-# Top-level keys set by caller:
-# tests[:master] - the master object
-# tests[:agent] - the agent object
-#
+# Test hash top-level keys
 tests = {
   master:        master,
   agent:         agent,
@@ -79,261 +66,206 @@ tests = {
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
 skip_unless_supported(tests)
 
-# tests[id] keys set by caller and used by test_harness_common:
-#
-# tests[id] keys set by caller:
-# tests[id][:desc] - a string to use with logs & debugs
-# tests[id][:manifest] - the complete manifest, as used by test_harness_common
-# tests[id][:resource] - a hash of expected states, used by test_resource
-# tests[id][:resource_cmd] - 'puppet resource' command to use with test_resource
-# tests[id][:ensure] - (Optional) set to :present or :absent before calling
-# tests[id][:code] - (Optional) override the default exit code in some tests.
-#
-# These keys are local use only and not used by test_harness_common:
-#
-# tests[id][:manifest_props] - This is essentially a master list of properties
-#   that permits re-use of the properties for both :present and :absent testing
-#   without destroying the list
-# tests[id][:resource_props] - This is essentially a master hash of properties
-#   that permits re-use of the properties for both :present and :absent testing
-#   without destroying the hash
-# tests[id][:title_pattern] - (Optional) defines the manifest title.
-#   Can be used with :af for mixed title/af testing. If mixing, :af values will
-#   be merged with title values and override any duplicates. If omitted,
-#   :title_pattern will be set to 'id'.
-# tests[id][:af] - (Optional) defines the address-family values.
-#   Must use :title_pattern if :af is not specified. Useful for testing mixed
-#   title/af manifests
-#
-tests['default_properties_ingress_replication'] = {
+# Test hash test cases
+tests[:default_properties_ingress_replication] = {
+  desc:           '1.1 Default Properties Ingress replication',
   title_pattern:  'nve1 10000',
-  platform:       'n9k',
-  manifest_props: "
-    ingress_replication => 'default',
-    suppress_arp        => 'default',
-  ",
-  resource_props: {
-    # 'ingress_replication' not set.
-    'suppress_arp' => 'false'
+  platform:       'n(7|9)k',
+  manifest_props: {
+    ingress_replication: 'default',
+    suppress_arp:        'default',
+  },
+  code:           [0, 2],
+  resource:       {
+    suppress_arp: 'false'
   },
 }
 
-tests['default_properties_multicast_group'] = {
+tests[:default_properties_multicast_group] = {
+  desc:           '1.2 Default Properties Multicast Group',
   title_pattern:  'nve1 10000',
-  manifest_props: "
-    multicast_group => 'default',
-    suppress_arp    => 'default',
-  ",
-  resource_props: {
-    # 'multicast_group' not set.
-    'suppress_arp' => 'false'
+  manifest_props: {
+    multicast_group: 'default',
+    suppress_arp:    'default',
+    suppress_uuc:    'default',
+  },
+  code:           [0, 2],
+  resource:       {
+    suppress_arp: 'false',
+    suppress_uuc: 'false',
   },
 }
 
-# Suppress Unknown Unicast
-if platform[/n(5|6)k/]
-  tests['default_properties_multicast_group'][:manifest_props] +=
-    "  suppress_uuc => 'default',"
-  tests['default_properties_multicast_group'][:resource_props]['suppress_uuc'] = 'false'
-end
-
-tests['ingress_replication_static_peer_list_empty'] = {
+tests[:ingress_replication_static_peer_list_empty] = {
+  desc:           '2.1 Ingress Replication Static Peer List Empty',
   title_pattern:  'nve1 10000',
-  platform:       'n9k',
-  manifest_props: "
-    ingress_replication => 'static',
-    peer_list           => [],
-    suppress_arp        => 'default'
-  ",
-  resource_props: {
-    'ingress_replication' => 'static',
-    # 'peer_list' not set.
-    'suppress_arp'        => 'false',
+  platform:       'n(7|9)k',
+  manifest_props: {
+    ingress_replication: 'static',
+    peer_list:           [],
+    suppress_arp:        'default',
+  },
+  code:           [0, 2],
+  resource:       {
+    suppress_arp: 'false'
   },
 }
 
-tests['peer_list'] = {
+tests[:peer_list] = {
+  desc:           '2.2 Peer List',
   title_pattern:  'nve1 10000',
-  platform:       'n9k',
-  manifest_props: "
-    ingress_replication => 'static',
-    peer_list           => ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
-    suppress_arp        => 'default'
-  ",
-  resource_props: {
-    'ingress_replication' => 'static',
-    'peer_list'           => "['1.1.1.1', '2.2.2.2', '3.3.3.3']",
-    'suppress_arp'        => 'false',
+  platform:       'n(7|9)k',
+  manifest_props: {
+    ingress_replication: 'static',
+    peer_list:           ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
+    suppress_arp:        'default',
+  },
+  code:           [0, 2],
+  resource:       {
+    suppress_arp: 'false'
   },
 }
 
-tests['peer_list_change_add'] = {
+tests[:peer_list_change_add] = {
+  desc:           '2.3 Peer List Change Add',
   title_pattern:  'nve1 10000',
-  platform:       'n9k',
-  manifest_props: "
-    ingress_replication => 'static',
-    peer_list           => ['1.1.1.1', '6.6.6.6', '3.3.3.3', '4.4.4.4'],
-    suppress_arp        => 'default'
-  ",
-  resource_props: {
-    'ingress_replication' => 'static',
-    'peer_list'           => "['1.1.1.1', '3.3.3.3', '4.4.4.4', '6.6.6.6']",
-    'suppress_arp'        => 'false',
+  platform:       'n(7|9)k',
+  manifest_props: {
+    ingress_replication: 'static',
+    peer_list:           ['1.1.1.1', '6.6.6.6', '3.3.3.3', '4.4.4.4'],
+    suppress_arp:        'default',
+  },
+  code:           [0, 2],
+  resource:       {
+    suppress_arp: 'false'
   },
 }
 
-tests['peer_list_default'] = {
+tests[:peer_list_default] = {
+  desc:           '2.4 Peer List Default',
   title_pattern:  'nve1 10000',
-  platform:       'n9k',
-  manifest_props: "
-    ingress_replication => 'static',
-    peer_list           => 'default',
-    suppress_arp        => 'default'
-  ",
-  resource_props: {
-    'ingress_replication' => 'static',
-    # 'peer_list' not set.
-    'suppress_arp'        => 'false',
+  platform:       'n(7|9)k',
+  manifest_props: {
+    ingress_replication: 'static',
+    peer_list:           'default',
+    suppress_arp:        'default',
+  },
+  code:           [0, 2],
+  resource:       {
+    suppress_arp: 'false'
   },
 }
 
-tests['ingress_replication_bgp'] = {
+tests[:ingress_replication_bgp] = {
+  desc:           '2.5 Ingress replication BGP',
   title_pattern:  'nve1 10000',
-  platform:       'n9k',
-  manifest_props: "
-    ingress_replication => 'bgp',
-    suppress_arp        => 'default'
-  ",
-  resource_props: {
-    'ingress_replication' => 'bgp',
-    'suppress_arp'        => 'false',
+  platform:       'n(7|9)k',
+  manifest_props: {
+    ingress_replication: 'bgp',
+    suppress_arp:        'default',
+  },
+  code:           [0, 2],
+  resource:       {
+    suppress_arp: 'false'
   },
 }
 
-tests['multicast_group'] = {
+tests[:multicast_group] = {
+  desc:           '2.6 Multicast Group',
   title_pattern:  'nve1 10000',
-  manifest_props: "
-    multicast_group => '224.1.1.1',
-    suppress_arp    => 'default'
-  ",
-  resource_props: {
-    'multicast_group' => '224.1.1.1',
-    'suppress_arp'    => 'false',
+  manifest_props: {
+    multicast_group: '224.1.1.1',
+    suppress_arp:    'default',
+  },
+  code:           [0, 2],
+  resource:       {
+    suppress_arp: 'false'
   },
 }
 
-tests['suppress_arp_true'] = {
+tests[:suppress_arp_true] = {
+  desc:           '2.7 Suppress ARP True',
   title_pattern:  'nve1 10000',
-  manifest_props: "
-    suppress_arp => 'true'
-  ",
-  resource_props: {
-    'suppress_arp' => 'true'
+  manifest_props: {
+    suppress_arp: 'true'
   },
+  code:           [0, 2],
 }
 
-tests['suppress_arp_false'] = {
+tests[:suppress_arp_false] = {
+  desc:           '2.8 Suppress ARP False',
   title_pattern:  'nve1 10000',
-  manifest_props: "
-    suppress_arp => 'false'
-  ",
-  resource_props: {
-    'suppress_arp' => 'false'
+  manifest_props: {
+    suppress_arp: 'false'
   },
+  code:           [0, 2],
 }
 
-tests['suppress_uuc_true'] = {
+tests[:suppress_uuc_true] = {
+  desc:           '2.9 Suppress UUC True',
   title_pattern:  'nve1 10000',
-  platform:       'n(5|6)k',
-  manifest_props: "
-    suppress_uuc => 'true'
-  ",
-  resource_props: {
-    'suppress_uuc' => 'true'
+  manifest_props: {
+    suppress_uuc: 'true'
   },
+  code:           [0, 2],
 }
 
-tests['suppress_uuc_false'] = {
+tests[:suppress_uuc_false] = {
+  desc:           '2.10 Suppress UUC False',
   title_pattern:  'nve1 10000',
-  platform:       'n(5|6)k',
-  manifest_props: "
-    suppress_uuc => 'false'
-  ",
-  resource_props: {
-    'suppress_uuc' => 'false'
+  manifest_props: {
+    suppress_uuc: 'false'
   },
+  code:           [0, 2],
 }
 
 # Note: In the current implementation assciate-vrf is a namevar.
 # It will be changed to a property in future. A correspoding test
 # will be added here.
 
-#################################################################
-# HELPER FUNCTIONS
-#################################################################
-
-# Full command string for puppet resource command
-def puppet_resource_cmd
-  PUPPET_BINPATH + 'resource cisco_vxlan_vtep_vni'
-end
-
 def test_harness_dependencies(*)
   return unless platform[/n(5|6)k/]
   skip_if_nv_overlay_rejected(agent)
 end
 
-def build_manifest_cisco_vxlan_vtep_vni(tests, id)
-  if tests[id][:ensure] == :absent
-    state = 'ensure => absent,'
-    tests[id][:resource] = {}
-  else
-    state = 'ensure => present,'
-    manifest = tests[id][:manifest_props]
-    tests[id][:resource] = tests[id][:resource_props]
-  end
-
-  tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
-  logger.debug("build_manifest_cisco_vxlan_vtep_vni :: title_pattern:\n" +
-               tests[id][:title_pattern])
-
-  # cisco_vxlan_vtep_vni needs cisco_vxlan_vtep as a prerequisite.
-  tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
-  node 'default' {
+# Overridden to properly handle dependencies for this test file.
+def dependency_manifest(_tests, _id)
+  "
     cisco_vxlan_vtep {'nve1':
       ensure => present,
       host_reachability  => 'evpn',
       shutdown           => 'false',
     }
-    cisco_vxlan_vtep_vni { '#{tests[id][:title_pattern]}':
-      #{state}
-      #{manifest}
-    }
-  }
-EOF"
+  "
 end
 
-def test_harness_cisco_vxlan_vtep_vni(tests, id)
-  return unless platform_supports_test(tests, id)
+def unsupported_properties(_tests, _id)
+  unprops = []
+  if platform[/n(5|6)k/]
+    unprops <<
+      :ingress_replication <<
+      :peer_list
+  elsif platform[/n9k/]
+    unprops <<
+      :suppress_uuc
+  end
+  unprops
+end
 
-  test_harness_dependencies(tests, id)
-
-  tests[id][:ensure] = :present if tests[id][:ensure].nil?
-  tests[id][:resource_cmd] = puppet_resource_cmd
-  tests[id][:desc] += " [ensure => #{tests[id][:ensure]}]"
-
-  build_manifest_cisco_vxlan_vtep_vni(tests, id)
-
-  test_manifest(tests, id)
-  test_resource(tests, id)
-  test_idempotence(tests, id)
-
-  tests[id][:ensure] = nil
+def version_unsupported_properties(_tests, _id)
+  unprops = {}
+  if platform[/n7k/]
+    unprops[:ingress_replication] = '8.1.1'
+    unprops[:peer_list] = '8.1.1'
+    unprops[:suppress_uuc] = '8.1.1'
+  end
+  unprops
 end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
-test_name "TestCase :: #{testheader}" do
+test_name "TestCase :: #{tests[:resource_name]}" do
   teardown do
     resource_absent_cleanup(agent, 'cisco_vxlan_vtep_vni')
     vdc_limit_f3_no_intf_needed(:clear)
@@ -343,69 +275,38 @@ test_name "TestCase :: #{testheader}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  id = 'default_properties_ingress_replication'
-  tests[id][:desc] = '1.1 Default Properties Ingress Replication'
-  test_harness_cisco_vxlan_vtep_vni(tests, id)
-
-  tests[id][:desc] = '1.2 Default Properties Ingress Replication'
+  id = :default_properties_ingress_replication
+  test_harness_run(tests, id)
   tests[id][:ensure] = :absent
-  test_harness_cisco_vxlan_vtep_vni(tests, id)
-
-  id = 'default_properties_multicast_group'
-  tests[id][:desc] = '1.3 Default Properties Multicast Group'
-  test_harness_cisco_vxlan_vtep_vni(tests, id)
-
-  tests[id][:desc] = '1.4 Default Properties Multicast Group'
+  test_harness_run(tests, id)
+  id = :default_properties_multicast_group
+  test_harness_run(tests, id)
   tests[id][:ensure] = :absent
-  test_harness_cisco_vxlan_vtep_vni(tests, id)
+  test_harness_run(tests, id)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
-  id = 'ingress_replication_static_peer_list_empty'
-  tests[id][:desc] = '2.1 Ingress Replication Static'
-  test_harness_cisco_vxlan_vtep_vni(tests, id)
-
-  id = 'peer_list'
-  tests[id][:desc] = '2.2 Peer List'
-  test_harness_cisco_vxlan_vtep_vni(tests, id)
-
-  id = 'peer_list_change_add'
-  tests[id][:desc] = '2.3 Peer List Change Add'
-  test_harness_cisco_vxlan_vtep_vni(tests, id)
-
-  id = 'peer_list_default'
-  tests[id][:desc] = '2.4 Peer List Default'
-  test_harness_cisco_vxlan_vtep_vni(tests, id)
-
-  id = 'ingress_replication_bgp'
-  tests[id][:desc] = '2.5 Ingress Replication BGP'
-  test_harness_cisco_vxlan_vtep_vni(tests, id)
-
-  id = 'multicast_group'
-  tests[id][:desc] = '2.6 Multicast Group'
-  test_harness_cisco_vxlan_vtep_vni(tests, id)
+  test_harness_run(tests, :ingress_replication_static_peer_list_empty)
+  test_harness_run(tests, :peer_list)
+  test_harness_run(tests, :peer_list_change_add)
+  test_harness_run(tests, :peer_list_default)
+  test_harness_run(tests, :ingress_replication_bgp)
+  test_harness_run(tests, :multicast_group)
 
   # TBD - The suppress_arp tests will generate the following error.
   #  ERROR: Please configure TCAM region... Configuring the TCAM region
   # requires a switch reboot.  These tests will remain commented out
   # until we can design a solution.
 
-  # id = 'suppress_arp_true'
-  # tests[id][:desc] = '2.7 Suppress ARP'
-  # test_harness_cisco_vxlan_vtep_vni(tests, id)
+  # test_harness_run(tests, :suppress_arp_true)
+  # test_harness_run(tests, :suppress_arp_false)
 
-  # id = 'suppress_arp_false'
-  # tests[id][:desc] = '2.8 Suppress ARP'
-  # test_harness_cisco_vxlan_vtep_vni(tests, id)
+  test_harness_run(tests, :suppress_uuc_true)
+  test_harness_run(tests, :suppress_uuc_false)
 
-  id = 'suppress_uuc_true'
-  tests[id][:desc] = '2.9 Suppress Unknown Unicast'
-  test_harness_cisco_vxlan_vtep_vni(tests, id)
-
-  id = 'suppress_uuc_false'
-  tests[id][:desc] = '2.10 Suppress Unknown Unicast'
-  test_harness_cisco_vxlan_vtep_vni(tests, id)
+  # -------------------------------------------------------------------
+  skipped_tests_summary(tests)
 end
 
-logger.info('TestCase :: # {testheader} :: End')
+logger.info("TestCase :: #{tests[:resource_name]} :: End")

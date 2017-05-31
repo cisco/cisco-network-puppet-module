@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2016 Cisco and/or its affiliates.
+# Copyright (c) 2017 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,70 +23,79 @@
 ###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
+# Test hash top-level keys
 tests = {
-  agent:         agent,
-  master:        master,
-  intf_type:     'ethernet',
-  resource_name: 'cisco_interface_channel_group',
+  master:           master,
+  agent:            agent,
+  operating_system: 'nexus',
+  resource_name:    'cisco_bgp_af_aa',
 }
 
-intf = find_interface(tests)
+skip_unless_supported(tests)
 
+# Test hash test cases
 tests[:default] = {
   desc:           '1.1 Default Properties',
-  title_pattern:  intf,
+  title_pattern:  '2 default ipv4 unicast 1.1.1.1/32',
+  manifest_props: {
+    as_set:        'default',
+    summary_only:  'default',
+    advertise_map: 'default',
+    attribute_map: 'default',
+    suppress_map:  'default',
+  },
   code:           [0, 2],
-  manifest_props: {
-    channel_group:      'default',
-    channel_group_mode: 'default',
-    description:        'default',
-    shutdown:           'default',
-  },
   resource:       {
-    'channel_group'      => 'false',
-    'channel_group_mode' => 'false',
-    'shutdown'           => 'true',
+    as_set:       'false',
+    summary_only: 'false',
   },
 }
 
-tests[:non_default_no_mode] = {
-  desc:           '2.1 Non Default Properties with no channel group mode',
-  title_pattern:  intf,
+tests[:non_default1] = {
+  desc:           '2.1 Non Defaults',
+  title_pattern:  '2 red ipv6 multicast 2000::1/128',
   manifest_props: {
-    channel_group: 201,
-    description:   'chan group desc',
-    shutdown:      'false',
-  },
-  resource:       {
-    'channel_group' => '201',
-    'description'   => 'chan group desc',
-    'shutdown'      => 'false',
+    as_set:        'true',
+    advertise_map: 'adm',
+    attribute_map: 'atm',
+    suppress_map:  'sum',
   },
 }
 
-tests[:non_default_mode] = {
-  desc:           '2.2 Non Default Properties with channel group mode',
-  title_pattern:  intf,
+tests[:non_default2] = {
+  desc:           '2.2 Non Defaults',
+  title_pattern:  '2 red ipv6 multicast 2000::1/128',
   manifest_props: {
-    channel_group:      201,
-    channel_group_mode: 'active',
-    description:        'chan group desc',
-    shutdown:           'false',
-  },
-  resource:       {
-    'channel_group'      => '201',
-    'channel_group_mode' => 'active',
-    'description'        => 'chan group desc',
-    'shutdown'           => 'false',
+    summary_only: 'true'
   },
 }
+
+def dependency_manifest(_tests, _id)
+  "
+    cisco_bgp { '2 default':
+      ensure => present,
+    }
+
+    cisco_bgp_af { '2 default ipv4 unicast':
+      ensure => present,
+    }
+
+    cisco_bgp_af { '2 red ipv6 multicast':
+      ensure => present,
+    }
+  "
+end
+
+def cleanup(agent)
+  test_set(agent, 'no feature bgp')
+end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  teardown { interface_cleanup(agent, intf) }
-  interface_cleanup(agent, intf)
+  teardown { cleanup(agent) }
+  cleanup(agent)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
@@ -94,7 +103,12 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  test_harness_run(tests, :non_default_no_mode)
-  test_harness_run(tests, :non_default_mode)
+
+  test_harness_run(tests, :non_default1)
+  test_harness_run(tests, :non_default2)
+
+  # -------------------------------------------------------------------
+  skipped_tests_summary(tests)
 end
+
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

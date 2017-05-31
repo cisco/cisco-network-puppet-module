@@ -167,6 +167,7 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_vrf_af`](#type-cisco_vrf_af)
   * [`cisco_bgp`](#type-cisco_bgp)
   * [`cisco_bgp_af`](#type-cisco_bgp_af)
+  * [`cisco_bgp_af_aa`](#type-cisco_bgp_af_aa)
   * [`cisco_bgp_neighbor`](#type-cisco_bgp_neighbor)
   * [`cisco_bgp_neighbor_af`](#type-cisco_bgp_neighbor_af)
 
@@ -210,6 +211,7 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_pim_rp_address`](#type-cisco_pim_rp_address)
 
 * NTP Types
+  * [`ntp_auth_key (netdev_stdlib)`](#type-ntp_auth_key)
   * [`ntp_config (netdev_stdlib)`](#type-ntp_config)
   * [`ntp_server (netdev_stdlib)`](#type-ntp_server)
 
@@ -299,6 +301,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_bfd_global`](#type-cisco_bfd_global)
 * [`cisco_bgp`](#type-cisco_bgp)
 * [`cisco_bgp_af`](#type-cisco_bgp_af)
+* [`cisco_bgp_af_aa`](#type-cisco_bgp_af_aa)
 * [`cisco_bgp_neighbor`](#type-cisco_bgp_neighbor)
 * [`cisco_bgp_neighbor_af`](#type-cisco_bgp_neighbor_af)
 * [`cisco_bridge_domain`](#type-cisco_bridge_domain)
@@ -355,6 +358,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`network_snmp`](#type-network_snmp)
 * [`network_trunk`](#type-network_trunk)
 * [`network_vlan`](#type-network_vlan)
+* [`ntp_auth_key`](#type-ntp_auth_key)
 * [`ntp_config`](#type-ntp_config)
 * [`ntp_server`](#type-ntp_server)
 * [`port_channel`](#type-port_channel)
@@ -396,11 +400,11 @@ Platform | Description | Environments
 Symbol | Meaning | Description
 :--|:--|:--
 ✅ | Supported      | The provider has been validated to work on the platform.<br>An asterisk '*' indicates that some provider properties may have software or hardware limitations, caveats, or other noted behaviors.<br>Click on the associated caveat link for more information.
-:heavy_minus_sign: | Not Applicable | The provider is not supported on the platform because of hardware or software limitations.
+➖ | Not Applicable | The provider is not supported on the platform because of hardware or software limitations.
 
 **Support Matrix**
 
-| ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | N9k-F | Caveats |
+| ✅ = Supported <br> ➖ = Not Applicable | N9k | N3k | N5k | N6k | N7k | N9k-F | Caveats |
 |:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | [cisco_aaa_<br>authentication_login](#type-cisco_aaa_authentication_login)                 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [cisco_aaa_<br>authorization_login_cfg_svc](#type-cisco_aaa_authorization_login_cfg_svc)   | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
@@ -412,29 +416,30 @@ Symbol | Meaning | Description
 | [cisco_command_config](#type-cisco_command_config)         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
 | [cisco_bgp](#type-cisco_bgp)                               | ✅  | ✅  | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_bgp-caveats) |
 | [cisco_bgp_af](#type-cisco_bgp_af)                         | ✅* | ✅* | ✅  | ✅* | ✅  | ✅ | \*[caveats](#cisco_bgp_af-caveats) |
+| [cisco_bgp_af_aa](#type-cisco_bgp_af_aa)                   | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
 | [cisco_bgp_neighbor](#type-cisco_bgp_neighbor)             | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
 | [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af)       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
-| [cisco_bridge_domain](#type-cisco_bridge_domain)           | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
-| [cisco_bridge_domain_vni](#type-cisco_bridge_domain_vni)   | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
-| [cisco_dhcp_relay_global](#type-cisco_dhcp_relay_global)   | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_dhcp_relay_global-caveats) 
-| [cisco_encapsulation](#type-cisco_encapsulation)           | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
-| [cisco_evpn_vni](#type-cisco_evpn_vni)                     | ✅ | :heavy_minus_sign: | ✅ | ✅ | ✅ | ✅ | \*[caveats](#cisco_evpn_vni-caveats) |
-| [cisco_fabricpath_global](#type-cisco_fabricpath_global)     | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅* | :heavy_minus_sign: | \*[caveats](#cisco_fabricpath_global-caveats) |
-| [cisco_fabricpath_topology](#type-cisco_fabricpath_topology) | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | ✅ | ✅  | :heavy_minus_sign: |
+| [cisco_bridge_domain](#type-cisco_bridge_domain)           | ➖ | ➖ | ➖ | ➖ | ✅ | ➖ |
+| [cisco_bridge_domain_vni](#type-cisco_bridge_domain_vni)   | ➖ | ➖ | ➖ | ➖ | ✅ | ➖ |
+| [cisco_dhcp_relay_global](#type-cisco_dhcp_relay_global)   | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_dhcp_relay_global-caveats)
+| [cisco_encapsulation](#type-cisco_encapsulation)           | ➖ | ➖ | ➖ | ➖ | ✅ | ➖ |
+| [cisco_evpn_vni](#type-cisco_evpn_vni)                     | ✅ | ➖ | ✅ | ✅ | ✅ | ✅ | \*[caveats](#cisco_evpn_vni-caveats) |
+| [cisco_fabricpath_global](#type-cisco_fabricpath_global)     | ➖ | ➖ | ✅ | ✅ | ✅* | ➖ | \*[caveats](#cisco_fabricpath_global-caveats) |
+| [cisco_fabricpath_topology](#type-cisco_fabricpath_topology) | ➖ | ➖ | ✅ | ✅ | ✅  | ➖ |
 | [cisco_hsrp_global](#type-cisco_hsrp_global)                         | ✅  | ✅* | ✅  | ✅  | ✅  | ✅  | \*[caveats](#cisco_hsrp_global-caveats) |
 | [cisco_interface](#type-cisco_interface)                             | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_interface-caveats) |
-| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
-| [cisco_interface_hsrp_group](#type-cisco_interface_hsrp_group)       | ✅  | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | ✅* | ✅ | \*[caveats](#cisco_interface_hsrp_group-caveats) |
+| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | \*[caveats](#cisco_interface_channel_group-caveats) |
+| [cisco_interface_hsrp_group](#type-cisco_interface_hsrp_group)       | ✅  | ✅ | ➖ | ➖ | ✅* | ✅ | \*[caveats](#cisco_interface_hsrp_group-caveats) |
 | [cisco_interface_ospf](#type-cisco_interface_ospf)                   | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
 | [cisco_interface_portchannel](#type-cisco_interface_portchannel)     | ✅* | ✅* | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_interface_portchannel-caveats) |
-| [cisco_interface_service_vni](#type-cisco_interface_service_vni) | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
-| [cisco_itd_device_group](#type-cisco_itd_device_group)           | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
-| [cisco_itd_device_group_node](#type-cisco_itd_device_group_node) | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
-| [cisco_itd_service](#type-cisco_itd_service)                     | ✅ | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: | \*[caveats](#cisco_itd_service-caveats) |
+| [cisco_interface_service_vni](#type-cisco_interface_service_vni) | ➖ | ➖ | ➖ | ➖ | ✅ | ➖ |
+| [cisco_itd_device_group](#type-cisco_itd_device_group)           | ✅ | ➖ | ➖ | ➖ | ✅ | ➖ |
+| [cisco_itd_device_group_node](#type-cisco_itd_device_group_node) | ✅ | ➖ | ➖ | ➖ | ✅ | ➖ |
+| [cisco_itd_service](#type-cisco_itd_service)                     | ✅ | ➖ | ➖ | ➖ | ✅ | ➖ | \*[caveats](#cisco_itd_service-caveats) |
 | [cisco_ospf](#type-cisco_ospf)                             | ✅  | ✅  | ✅ | ✅  | ✅ | ✅ |
 | [cisco_ospf_vrf](#type-cisco_ospf_vrf)                     | ✅  | ✅  | ✅ | ✅  | ✅ | ✅ |
-| ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | N9k-F | Caveats |
-| [cisco_overlay_global](#type-cisco_overlay_global)         | ✅  | :heavy_minus_sign: | ✅ | ✅ | ✅ | ✅ |
+| ✅ = Supported <br> ➖ = Not Applicable | N9k | N3k | N5k | N6k | N7k | N9k-F | Caveats |
+| [cisco_overlay_global](#type-cisco_overlay_global)         | ✅  | ✅* | ✅  | ✅  | ✅  | ✅ | \*[caveats](#cisco_overlay_global-caveats) |
 | [cisco_pim](#type-cisco_pim)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | \*[caveats](#cisco_pim-caveats) |
 | [cisco_pim_rp_address](#type-cisco_pim_rp_address)         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
 | [cisco_pim_grouplist](#type-cisco_pim_grouplist)           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
@@ -447,19 +452,19 @@ Symbol | Meaning | Description
 | [cisco_snmp_user](#type-cisco_snmp_user)                   | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
 | [cisco_tacacs_server](#type-cisco_tacacs_server)           | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
 | [cisco_tacacs_server_host](#type-cisco_tacacs_server_host) | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
-| [cisco_upgrade](type-cisco_upgrade)                        | ✅* | ✅* | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign:| \*[caveats](#cisco_upgrade-caveats) |
-| [cisco_vdc](#type-cisco_vdc)                               | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | :heavy_minus_sign: | ✅ | :heavy_minus_sign: |
+| [cisco_upgrade](type-cisco_upgrade)                        | ✅* | ✅* | ➖ | ➖ | ➖ | ✅* | \*[caveats](#cisco_upgrade-caveats) |
+| [cisco_vdc](#type-cisco_vdc)                               | ➖ | ➖ | ➖ | ➖ | ✅ | ➖ |
 | [cisco_vlan](#type-cisco_vlan)                             | ✅* | ✅* | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_vlan-caveats) |
-| [cisco_vpc_domain](#type-cisco_vpc_domain)                 | ✅* | ✅* | ✅* | ✅* | ✅* | :heavy_minus_sign: | \*[caveats](#cisco_vpc_domain-caveats) |
+| [cisco_vpc_domain](#type-cisco_vpc_domain)                 | ✅* | ✅* | ✅* | ✅* | ✅* | ➖ | \*[caveats](#cisco_vpc_domain-caveats) |
 | [cisco_vrf](#type-cisco_vrf)                               | ✅  | ✅* | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_vrf-caveats) |
 | [cisco_vrf_af](#type-cisco_vrf_af)                         | ✅  | ✅* | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_vrf_af-caveats) |
 | [cisco_vtp](#type-cisco_vtp)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
-| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep)                 | ✅  | :heavy_minus_sign: | ✅  | ✅  | ✅  | ✅ |
-| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni)         | ✅  | :heavy_minus_sign: | ✅  | ✅  | ✅  | ✅ |
+| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep)                 | ✅  | ➖ | ✅  | ✅  | ✅* | ✅ | \*[caveats](#cisco_vxlan_vtep-caveats) |
+| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni)         | ✅  | ➖ | ✅  | ✅  | ✅  | ✅ | \*[caveats](#cisco_vxlan_vtep_vni-caveats) |
 
 ##### NetDev Providers
 
-| ✅ = Supported <br> :heavy_minus_sign: = Not Applicable | N9k | N3k | N5k | N6k | N7k | N9k-F | Caveats |
+| ✅ = Supported <br> ➖ = Not Applicable | N9k | N3k | N5k | N6k | N7k | N9k-F | Caveats |
 |:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | [domain_name](#type-domain_name)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [name_server](#type-name_server)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
@@ -468,8 +473,9 @@ Symbol | Meaning | Description
 | [network_snmp](#type-network_snmp)                         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [network_trunk](#type-network_trunk)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [network_vlan](#type-network_vlan)                         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [ntp_config](#type-ntp_config)                             | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [ntp_server](#type-ntp_server)                             | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [ntp_auth_key](#type-ntp_auth_key)                         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [ntp_config](#type-ntp_config)                             | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | \*[caveats](#ntp_config-caveats)
+| [ntp_server](#type-ntp_server)                             | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | \*[caveats](#ntp_server-caveats)
 | [port_channel](#type-port_channel)                         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [radius](#type-radius)                                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [radius_global](#type-radius_global)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
@@ -972,7 +978,7 @@ Manages configuration of a BFD (Bidirectional Forwarding Detection) instance.
 | `fabricpath_interval`   | Not supported on N3k, N9k-F, N9k |
 | `fabricpath_slow_timer` | Not supported on N3k, N9k-F, N9k |
 | `fabricpath_vlan`       | Not supported on N3k, N9k-F, N9k |
-| `interval`              | Not supported on N9k-F, N9k      |
+| `interval`              | Supported on N3k, N5k, N6k, N7k <br> Supported in OS Version 7.0(3)F2(1) and later on N9k-F <br> Supported in OS Version 7.0(3)I6(1) and later on N9k |
 | `ipv4_echo_rx_interval` | Not supported on N5k, N6k        |
 | `ipv4_interval`         | Not supported on N5k, N6k        |
 | `ipv4_slow_timer`       | Not supported on N5k, N6k        |
@@ -1053,14 +1059,14 @@ Manages configuration of a BGP instance.
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `disable_policy_batching_ipv4` | Not supported on N5k, N6k, N7k |
-| `disable_policy_batching_ipv6` | Not supported on N5k, N6k, N7k |
+| `disable_policy_batching_ipv4` | Not supported on N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
+| `disable_policy_batching_ipv6` | Not supported on N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
 | `event_history_errors        ` | supported on N3|9k on 7.0(3)I5(1) and later images |
 | `event_history_events        ` | default value is 'large' for N3|9k on 7.0(3)I5(1) and later images |
 | `event_history_objstore      ` | supported on N3|9k on 7.0(3)I5(1) and later images |
 | `event_history_periodic      ` | default value is 'false' for N3|9k on 7.0(3)I5(1) and later images |
-| `neighbor_down_fib_accelerate` | Not supported on N5k, N6k, N7k |
-| `reconnect_interval`           | Not supported on N5k, N6k, N7k |
+| `neighbor_down_fib_accelerate` | Not supported on N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
+| `reconnect_interval`           | Not supported on N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
 | `suppress_fib_pending`         | Idempotence supported only on 7.0(3)I5(1) and later images N3|9k |
 
 #### Parameters
@@ -1385,6 +1391,58 @@ Apply table-map to filter routes downloaded into URIB. Valid values are a string
 Filters routes rejected by the route-map and does not download them to the RIB. Valid values are true, false, or 'default'.
 
 --
+### Type: cisco_bgp_af_aa
+
+Manages configuration of a BGP Address-family Aggregate-address instance.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(5)        | 1.7.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.7.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.7.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.7.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.7.0                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.7.0                  |
+
+#### Parameters
+
+###### `ensure`
+Determine whether the BGP address family aggregate address should be present or not. Valid values
+ are 'present' and 'absent'.
+
+##### `asn`
+BGP autonomous system number. Required. Valid values are String, Integer in ASPLAIN or ASDOT notation.
+
+##### `vrf`
+VRF name. Required. Valid values are string. The name 'default' is a valid VRF representing the global bgp.
+
+##### `afi`
+Address Family Identifier (AFI). Required. Valid values are `ipv4`, `ipv6`, `vpnv4`, `vpnv6` and `l2vpn`.
+
+##### `safi`
+Sub Address Family Identifier (SAFI). Required. Valid values are `unicast`, `multicast` and `evpn`.
+
+##### `aa`
+Aggregate address mask in ipv4/ipv6 format. Required. Valid values are string. Examples: 1.1.1.1/32 or 2000:1/128.
+
+#### Properties
+
+##### `as_set`
+Generates autonomous system set path information. Valid values are true, false or 'default'.
+
+##### `advertise_map`
+Name of the route map used to select the routes to create AS_SET origin communities. Valid values are string or 'default'.
+
+##### `attribute_map`
+Name of the route map used to set the attribute of the aggregate route. Valid values are string or 'default'.
+
+##### `summary_only`
+Filters all more-specific routes from updates.  Valid values are true, false or 'default'.
+
+##### `suppress_map`
+Name of the route map used to select the routes to be suppressed. Valid values are string or 'default'.
+
+--
 ### Type: cisco_bgp_neighbor
 
 Manages configuration of a BGP Neighbor.
@@ -1402,7 +1460,7 @@ Manages configuration of a BGP Neighbor.
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `log_neighbor_changes` | Not supported on N5k, N6k, N7k |
+| `log_neighbor_changes` | Not supported on N5k, N6k <br> Minimum puppet module version 1.7.0 for N7k <br> Supported in OS Version 8.1.1 and later on N7k |
 | `bfd` | (ciscopuppet v1.4.0) BFD support added for all platforms |
 | `bfd` on IPv6 | Not supported on N5k, N6k |
 
@@ -1689,7 +1747,7 @@ Manages configuration of a DHCP relay global configuration.
 | `ipv4_information_trust_all`        | Not supported on N5k, N6k        |
 | `ipv4_src_addr_hsrp`                | Not supported on N3k, N9k, N9k-F |
 | `ipv4_sub_option_circuit_id_custom` | Not supported on N7k, N9k-F(TBD) and supported on N3k and N9k running os version 7.0(3)I3.1 and later |
-| `ipv4_sub_option_circuit_id_string` | Only supported on N3k          |
+| `ipv4_sub_option_circuit_id_string` | Supported on N3k <br> Supported in OS Version 7.0(3)I6(1) and later on N9k |
 | `ipv6_option_cisco`                 | Not supported on N5k, N6k      |
 
 #### Parameters
@@ -1996,6 +2054,7 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | `load_interval_counter_1_delay`       | Minimum puppet module version 1.6.0 |
 | `load_interval_counter_2_delay`       | Minimum puppet module version 1.6.0 |
 | `load_interval_counter_3_delay`       | Minimum puppet module version 1.6.0 |
+| `purge_config`                        | Minimum puppet module version 1.7.0 |
 
 #### Parameters
 
@@ -2019,6 +2078,17 @@ Description of the interface. Valid values are a string or the keyword 'default'
 
 ###### `duplex`
 Duplex of the interface. Valid values are 'full', and 'auto'.
+
+###### `purge_config`
+Puts the ethernet interface into default state. Valid value is 'true'. When this property is set to 'true', the manifest can have no other properties.
+
+#### Example Usage
+
+```puppet
+cisco_interface { 'ethernet1/10':
+    purge_config => true,
+  }
+```
 
 ###### `speed`
 Speed of the interface. Valid values are 100, 1000, 10000, 40000, 1000000, and 'auto'.
@@ -2325,6 +2395,12 @@ Manages a Cisco Network Interface Channel-group.
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
+#### <a name="cisco_interface_channel_group-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:---------|:-------------|
+| `channel_group_mode`          | Minimum puppet module version 1.7.0 |
+
 #### Parameters
 
 ##### Basic interface channel-group config attributes
@@ -2339,6 +2415,9 @@ Name of the interface where the service resides. Valid value is a string.
 channel_group is an aggregation of multiple physical interfaces that creates a logical interface. Valid values are 1 to 4096 and 'default'.
 
 Note: On some platforms a normal side-effect of adding the channel-group property is that an independent port-channel interface will be created; however, removing the channel-group configuration by itself will not also remove the port-channel interface. Therefore, the port-channel interface itself may be explicitly removed by using the `cisco_interface` provider with `ensure => absent`.
+
+###### `channel_group_mode`
+channel_group_mode is the port-channel mode of the interface. Valid values are 'active', 'passive', 'on', and 'default'.
 
 ###### `description`
 Description of the interface. Valid values are a string or the keyword 'default'.
@@ -3075,11 +3154,21 @@ Also configures anycast gateway MAC of the switch.
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
 | N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | not applicable     | not applicable         |
+| N3k      | 7.0(3)I6(1)        | 1.7.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+
+#### <a name="cisco_overlay_global-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `anycast_gateway_mac `                   | Not supported on N3k        |
+| `dup_host_ip_addr_detection_host_moves`  | Not supported on N3k        |
+| `dup_host_ip_addr_detection_timeout`     | Not supported on N3k        |
+| `dup_host_mac_detection_host_moves`      | Supported in OS Version 7.0(3)I6(1) and later on N3k |
+| `dup_host_mac_detection_timeout`         | Supported in OS Version 7.0(3)I6(1) and later on N3k |
 
 #### Parameters
 
@@ -3274,12 +3363,12 @@ Manages a Cisco Route Map.
 | `match_evpn_route_type_all`              | Not supported on N3k,N9k-F,N9k  |
 | `match_length`                           | Not supported on N3k,N9k-F,N9k  |
 | `match_mac_list`                         | Not supported on N3k,N9k-F,N9k  |
-| `match_metric`                           | Not supported on N9k-F          |
+| `match_metric`                           | Supported in OS Version 7.0(3)F2(1) and later on N9k-F |
 | `match_ospf_area`                        | Not supported on N5k,N6k,N7k,N9k-F <br> Supported in OS version 7.0(3)I5.1 and later on N3k, N9k  |
 | `match_vlan`                             | Not supported on N3k,N9k-F,N9k  |
-| `set_extcommunity_4bytes_additive`       | Not supported on N9k-F          |
-| `set_extcommunity_4bytes_non_transitive` | Not supported on N9k-F          |
-| `set_extcommunity_4bytes_transitive`     | Not supported on N9k-F          |
+| `set_extcommunity_4bytes_additive`       | Supported in OS Version 7.0(3)F2(1) and later on N9k-F |
+| `set_extcommunity_4bytes_non_transitive` | Supported in OS Version 7.0(3)F2(1) and later on N9k-F |
+| `set_extcommunity_4bytes_transitive`     | Supported in OS Version 7.0(3)F2(1) and later on N9k-F |
 | `set_extcommunity_cost_igp`              | Not supported on N9k-F          |
 | `set_extcommunity_cost_pre_bestpath`     | Not supported on N9k-F          |
 | `set_extcommunity_rt_additive`           | Not supported on N9k-F          |
@@ -3288,15 +3377,14 @@ Manages a Cisco Route Map.
 | `set_ipv4_default_next_hop`              | Not supported on N5k,N6k,N9k-F,N9k  |
 | `set_ipv4_default_next_hop_load_share`   | Not supported on N5k,N6k,N9k-F,N9k  |
 | `set_ipv4_next_hop`                      | Not supported on N9k-F          |
-| `set_ipv4_next_hop_load_share`           | Not supported on N5k,N6k,N9k-F <br> Supported in OS Version 7.0(3)I5.1 and later on N9k  |
+| `set_ipv4_next_hop_load_share`           | Not supported on N5k,N6k <br> Supported in OS Version 7.0(3)I5.1 and later on N9k <br> Supported in OS Version 7.0(3)F2(1) and later on N9k-F |
 | `set_ipv4_next_hop_redist`               | Supported on N5k,N6k,N7k,N9k-F <br> Supported in OS Version 7.0(3)I5.1 and later on N3k,N9k  |
 | `set_ipv4_precedence`                    | Not supported on N9k-F          |
 | `set_ipv4_prefix`                        | Not supported on N5k,N6k,N9k-F  |
-OS Version 7.0(3)I5.1 and later on N3k,N9k  |
 | `set_ipv6_default_next_hop`              | Not supported on N5k,N6k,N9k-F,N9k  |
 | `set_ipv6_default_next_hop_load_share`   | Not supported on N5k,N6k,N9k-F,N9k  |
 | `set_ipv6_next_hop`                      | Not supported on N9k-F          |
-| `set_ipv6_next_hop_load_share`           | Not supported on N5k,N6k,N9k-F <br> Supported in OS Version 7.0(3)I5.1 and later on N9k  |
+| `set_ipv6_next_hop_load_share`           | Not supported on N5k,N6k <br> Supported in OS Version 7.0(3)I5.1 and later on N9k <br> Supported in OS Version 7.0(3)F2(1) and later on N9k-F |
 | `set_ipv6_next_hop_redist`               | Supported on N5k,N6k,N7k,N9k-F <br> Supported in OS Version 7.0(3)I5.1 and later on N3k,N9k  |
 | `set_ipv6_prefix`                        | Not supported on N5k,N6k,N9k-F  |
 | `set_vrf`                                | Supported on N7k                |
@@ -3691,7 +3779,7 @@ Manages spanning tree global parameters
 | `bd_max_age`             | Supported only on N7k |
 | `bd_priority`            | Supported only on N7k |
 | `bd_root_priority`       | Supported only on N7k |
-| `domain`                 | Supported only on N5k, N6k, N7k |
+| `domain`                 | Supported only on N5k, N6k, N7k <br> Supported in OS Version 7.0(3)I6(1) and later on N3k, N9k |
 | `fcoe`                   | Supported only on N9k |
 
 #### Parameters
@@ -4029,22 +4117,17 @@ Manages the upgrade of a Cisco device.
 
 #### <a name="cisco_upgrade-caveats">Caveats</a>
 
-The `cisco_upgrade` is only supported on *simplex* N3k, N9k and N9k-F devices. HA devices are currently not supported. 
+The `cisco_upgrade` is only supported on *simplex* N3k, N9k and N9k-F devices. HA devices are currently not supported.
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `source_uri`    | Only images on `bootflash:`  are supported. The puppet file provider can be used to copy the image file to          `bootflash`. Refer to <a href="https://github.com/cisco/cisco-network-puppet-module/blob/develop/examples/cisco/demo_upgrade.pp">Demo Upgrade</a> for an example. | 
+| `package`    | Only images on `bootflash`, `tftp` and `usb` (if available) are supported. The puppet file provider can be used to copy the image file to `bootflash`. Refer to <a href="https://github.com/cisco/cisco-network-puppet-module/blob/develop/examples/cisco/demo_upgrade.pp">Demo Upgrade</a> for an example. |
 
 #### Parameters
 
 ##### `name`
 Name of cisco_upgrade instance. Valid values are string.
 *Only 'image' is a valid name for the cisco_upgrade resource.*
-
-##### `source_uri`
-Image upgrade URI. Format `<uri>:<image>`. Valid values are string.
-*Example --> bootflash:nxos.7.0.3.I5.2.bin*
-*NOTE: Only images on `bootflash:` are supported.*
 
 ##### `delete_boot_image`
 Delete the booted image. Valid values are `true`, `false`.
@@ -4054,8 +4137,11 @@ Force upgrade the device.Valid values are `true`, `false`.
 
 #### Properties
 
-##### `version`
-Version of the Cisco image to install on the device. Valid values are strings.
+##### `package`
+Package to install on the device. Format `<uri>:<image>`. Valid values are strings.
+*Example --> bootflash:nxos.7.0.3.I5.2.bin
+         --> tftp://x.x.x.x/path/to/nxos.7.0.3.I5.2.bin*
+*NOTE: Only images on `bootflash:`, `tftp:` and `usb` (if available) are supported.*
 
 --
 ### Type: cisco_vdc
@@ -4169,11 +4255,11 @@ Manages the virtual Port Channel (vPC) domain configuration of a Cisco device.
 | `auto_recovery`                     | Only supported on N3k, N7k, N9k |
 | `fabricpath_emulated_switch_id`     | Only supported on N7k           |
 | `fabricpath_multicast_load_balance` | Only supported on N7k           |
-| `layer3_peer_routing`               | Only supported on N5k, N6k, N7k |
+| `layer3_peer_routing`               | Only supported on N5k, N6k, N7k <br> Supported in OS Version 7.0(3)I6(1) and later on N3k, N9k |
 | `peer_gateway_exclude_vlan`         | Only supported on N5k, N6k, N7k |
 | `port_channel_limit`                | Only supported on N7k           |
 | `self_isolation`                    | Only supported on N7k           |
-| `shutdown`                          | Only supported on N5k, N6k, N7k |
+| `shutdown`                          | Only supported on N5k, N6k, N7k <br> Supported in OS Version 7.0(3)I6(1) and later on N3k, N9k |
 
 #### Parameters
 
@@ -4187,20 +4273,19 @@ vPC domain ID. Valid values are integer in the range 1-1000. There is no default
 Auto Recovery enable or disable if peer is non-operational. Valid values are true, false or default. This parameter is available only on Nexus 7000 series. Default value: true.
 
 ##### `auto_recovery_reload_delay`
-Delay (in secs) before peer is assumed dead before attempting to recover vPCs. Valid values are integers in the range 240..3600. Default value: 240.
+Delay (in secs) before peer is assumed dead before attempting to recover vPCs. Valid values are Integer or keyword 'default'
 
 ##### `delay_restore`
-Delay (in secs) after peer link is restored to bring up vPCs. Valid values are integers in the range 1..3600. Default vlaue: 30.
+Delay (in secs) after peer link is restored to bring up vPCs. Valid values are Integer or keyword 'default'.
 
 ##### `delay_restore_interface_vlan`
-Delay (in secs) after peer link is restored to bring up Interface VLANs or Interface BDs. Valid values are integers in the
-range 1..3600. Default value: 10.
+Delay (in secs) after peer link is restored to bring up Interface VLANs or Interface BDs. Valid values are Integer or keyword 'default'.
 
 ##### `dual_active_exclude_interface_vlan_bridge_domain`
-Interface VLANs or BDs to exclude from suspension when dual-active. Valid value is a string of integer ranges from 1..4095. There is no default value.
+Interface VLANs or BDs to exclude from suspension when dual-active. Valid values are Integer or keyword 'default'.
 
 ##### `fabricpath_emulated_switch_id`
-Configure a fabricpath switch_Id to enable vPC+ mode. This is also known as the Emulated switch-id.  Valid values are integers in the range 1..4095. There is no default value.
+Configure a fabricpath switch_Id to enable vPC+ mode. This is also known as the Emulated switch-id. Valid values are Integer or keyword 'default'. 
 
 ##### `fabricpath_multicast_load_balance`
 In vPC+ mode, enable or disable the fabricpath multicast load balance. This loadbalances the Designated Forwarder selection for multicast traffic. Valid values are true, false or default
@@ -4215,10 +4300,10 @@ Enable or Disable Layer3 peer routing. Valid values are true/false or default. D
 Destination IPV4 address of the peer where Peer Keep-alives are terminated. Valid values are IPV4 unicast address. There is no default value.
 
 ##### `peer_keepalive_hold_timeout`
-Peer keep-alive hold timeout in secs. Valid Values are integers in the range 3..10. Default value: 3.
+Peer keep-alive hold timeout in secs. Valid values are Integer or keyword 'default'.
 
 ##### `peer_keepalive_interval`
-Peer keep-alive interval in millisecs. Valid Values are integers in the range 400..10000. Default value: 1000.
+Peer keep-alive interval in millisecs. Valid values are Integer or keyword 'default'.
 
 ##### `peer_keepalive_interval_timeout`
 Peer keep-alive interval timeout. Valid Values are integers in the range 3..20. Default value: 5.
@@ -4462,6 +4547,12 @@ Creates a VXLAN Network Virtualization Endpoint (NVE) overlay interface that ter
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
+#### <a name="cisco_vxlan_vtep-caveats">Caveats</a>
+
+| Property                        | Caveat Description                   |
+|---------------------------------|--------------------------------------|
+| source_interface_hold_down_time | Not supported on N3k, N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
+
 #### Parameters
 
 ##### `ensure`
@@ -4495,6 +4586,14 @@ Creates a Virtual Network Identifier member (VNI) for an NVE overlay interface.
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
+#### <a name="cisco_vxlan_vtep_vni-caveats">Caveats</a>
+
+| Property                        | Caveat Description                   |
+|---------------------------------|--------------------------------------|
+| ingress_replication             | Not supported on N3k, N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
+| peer_list                       | Not supported on N3k, N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
+| suppress_uuc                    | Not supported on N3k, N9k, N9k-F <br> Supported in OS Version 8.1.1 and later on N7k |
+
 #### Parameters
 
 ##### `ensure`
@@ -4520,6 +4619,9 @@ Set the ingress-replication static peer list. Valid values are an Array, a space
 
 ##### `suppress_arp`
 Suppress arp under layer 2 VNI. Valid values are true, false, or 'default'.
+
+##### `suppress_uuc`
+Suppress uuc under layer 2 VNI. Valid values are true, false, or 'default'.
 
 --
 ### NetDev StdLib Resource Type Details
@@ -4723,6 +4825,32 @@ Whether or not the vlan is shutdown. Valid values are 'true' or 'false'.
 The name of the VLAN.  Valid value is a string.
 
 --
+### Type: ntp_auth_key
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(1)        | 1.7.0                  |
+| N3k      | 7.0(3)I2(1)        | 1.7.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.7.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.7.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.7.0                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.7.0                  |
+
+#### Parameters
+
+##### `algorithm`
+Authentication scheme.  Valid value is 'md5'.
+
+##### `key`
+Authentication key number.  Valid value is a string.
+
+##### `mode`
+Authentication mode.  Valid values are '0' and '7'.
+
+##### `password`
+Authentication password.  Valid value is a string.
+
+--
 ### Type: ntp_config
 
 | Platform | OS Minimum Version | Module Minimum Version |
@@ -4734,13 +4862,26 @@ The name of the VLAN.  Valid value is a string.
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
+#### <a name="ntp_config-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `authenticate` | Module minimum version 1.7.0 |
+| `trusted_key`  | Module minimum version 1.7.0 |
+
 #### Parameters
+
+##### `authenticate`
+Enable authentication.  Valid values are 'true', 'false' and 'default'.
 
 ##### `name`
 Resource name, not used to configure the device.  Valid value is a string.
 
 ##### `source_interface`
 Source interface for the NTP server.  Valid value is a string.
+
+##### `trusted_key`
+Trusted key for the NTP server.  Valid value is integer.
 
 --
 ### Type: ntp_server
@@ -4754,13 +4895,34 @@ Source interface for the NTP server.  Valid value is a string.
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 
+#### <a name="ntp_server-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `key`     | Module minimum version 1.7.0 |
+| `maxpoll` | Module minimum version 1.7.0 |
+| `minpoll` | Module minimum version 1.7.0 |
+| `vrf`     | Module minimum version 1.7.0 |
+
 #### Parameters
 
 ##### `ensure`
 Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
 
+##### `key`
+Key id to be used while communicating to this NTP.  Valid value is an integer.
+
+##### `maxpoll`
+Maximum interval to poll NTP server.  Valid value is an integer.
+
+##### `minpoll`
+Minimum interval to poll NTP server.  Valid value is an integer.
+
 ##### `name`
 Hostname or IPv4/IPv6 address of the NTP server.  Valid value is a string.
+
+##### `vrf`
+Name of the vrf.  Valid value is a string.
 
 --
 ### Type: port_channel

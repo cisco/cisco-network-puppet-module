@@ -530,7 +530,7 @@ Reference | Description
 [PUP_CR]: https://docs.puppetlabs.com/references/latest/configuration.html
 
 ## <a name="VIRT_9K">How to get a virtual Nexus N9k</a>
-A virtual Nexus N9k may be helpful for development and testing. To obtain a virtual N9k, first register for a [cisco.com](http://cisco.com) userid at <https://tools.cisco.com/IDREG/guestRegistration>, then send the userid in an email to <get-n9kv@cisco.com>.
+A virtual Nexus N9k may be helpful for development and testing. To obtain a virtual N9k, first register for a [cisco.com](http://cisco.com) userid at <https://tools.cisco.com/IDREG/guestRegistration>, then download the software from [CCO](https://software.cisco.com/download/release.html?mdfid=286312239&softwareid=282088129&release=7.0(3)I5(2)&relind=AVAILABLE&rellifecycle=&reltype=latest).
 
 ## License
 

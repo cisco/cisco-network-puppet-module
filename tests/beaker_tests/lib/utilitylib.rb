@@ -685,6 +685,21 @@ def unsupported_properties(_tests, _id)
   [] # defaults to no unsupported properties
 end
 
+# version_unsupported_properties
+#
+# Returns an array of properties that are not supported for
+# a particular operating_system or platform for a particular
+# software version.
+# Override this in a particular test file as needed.
+# Ex: If property 'ipv4_sub_option_circuit_id_string' is
+# supported on n9k only on version '7.0.3.I6.1' or higher
+# then add this line in the overridden method.
+# unprops[:ipv4_sub_option_circuit_id_string] = '7.0.3.I6.1' if
+#   platform[/n9k$/]
+def version_unsupported_properties(_tests, _id)
+  {} # defaults to no version_unsupported properties
+end
+
 # supported_property_hash
 #
 # This method creates a clone of the specified property
@@ -698,6 +713,25 @@ def supported_property_hash(tests, id, property_hash)
     copy.delete(prop_symbol)
     # because :resource hash currently uses strings for keys
     copy.delete(prop_symbol.to_s)
+  end
+  return copy if version_unsupported_properties(tests, id).empty?
+  lim = full_version.split[0].tr('(', '.').tr(')', '.').chomp('.')
+  # due to a bug in Gem::Version, we need to append a letter
+  # to the version field if the to be compared version
+  # has a letter at the end
+  # For ex:
+  # 7.0.3.I2.2e < 7.0.3.I2.2 is TRUE instead of FALSE
+  # Once we add a letter 'a' to the end,
+  # 7.0.3.I2.2e < 7.0.3.I2.2a is FALSE
+  append_a = false
+  append_a = true if lim[-1, 1] =~ /[[:alpha:]]/
+  version_unsupported_properties(tests, id).each do |key, val|
+    val << 'a' if append_a
+    append_a = false
+    next unless Gem::Version.new(lim) < Gem::Version.new(val)
+    copy.delete(key)
+    # because :resource hash currently uses strings for keys
+    copy.delete(key.to_s)
   end
   copy
 end
@@ -1119,10 +1153,18 @@ def image_version
   @version ||= data
 end
 
+# Gets the full version of the image running on a device
+@full_ver = nil
+def full_version
+  facter_opt = '-p cisco.images.full_version'
+  data = on(agent, facter_cmd(facter_opt)).stdout.chomp
+  @full_ver ||= data
+end
+
 # On match will skip all testcases
 # Do not use this for skipping individual properties.
 def skip_nexus_image(image, tests)
-  return unless nexus_image[image]
+  return unless nexus_image.match(Regexp.union(image))
   msg = "Skipping all tests; '#{tests[:resource_name]}' "\
         "is not supported on #{image} images"
   banner = '#' * msg.length

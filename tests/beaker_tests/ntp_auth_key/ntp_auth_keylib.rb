@@ -13,67 +13,55 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-# NTP Config Utility Library:
+# NTP Server Utility Library:
 # ---------------------
-# ntp_configlib.rb
+# ntp_auth_keylib.rb
 #
-# This is the utility library for the NTP Config provider Beaker test cases
-# that contains the common methods used across the NTP Config testsuite's
+# This is the utility library for the ntp server provider Beaker test cases
+# that contains the common methods used across the ntp server testsuite's
 # cases. The library is implemented as a module with related methods and
 # constants defined inside it for use as a namespace. All of the methods are
 # defined as module methods.
 #
-# Every Beaker NTP Config test case that runs an instance of Beaker::TestCase
-# requires NtpConfigLib module.
+# Every Beaker ntp server test case that runs an instance of Beaker::TestCase
+# requires NtpAuthKeyLib module.
 #
 # The module has a single set of methods:
-# A. Methods to create manifests for ntp_config Puppet provider test cases.
+# A. Methods to create manifests for ntp_auth_key Puppet provider test cases.
 ###############################################################################
 
 # Require UtilityLib.rb path.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
-# A library to assist testing ntp_config resource
-module NtpConfigLib
-  # A. Methods to create manifests for ntp_config Puppet provider test cases.
+# A library to assist testing ntp_auth_key resource
+module NtpAuthKeyLib
+  # A. Methods to create manifests for ntp_auth_key Puppet provider test cases.
 
-  # Method to create a manifest for ntp_config resource attribute 'ensure'
+  # Method to create a manifest for ntp_auth_key resource attribute 'ensure'
   # where 'ensure' is set to present.
-  # @param intf [String] source_interface
+  # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_ntp_config_manifest_set(intf)
+  def self.create_ntp_auth_key_manifest_present
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   ntp_auth_key { '1':
     ensure    => 'present',
-    algorithm => 'md5',
-    mode      => '7',
     password  => 'test',
- }
-  ntp_config {'default':
-    authenticate     => 'true',
-    source_interface => '#{intf}',
-    trusted_key      => '1',
   }
 }
 EOF"
     manifest_str
   end
 
-  # Method to create a manifest for ntp_config resource attribute 'ensure'
+  # Method to create a manifest for ntp_auth_key resource attribute 'ensure'
   # where 'ensure' is set to absent.
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_ntp_config_manifest_unset
+  def self.create_ntp_auth_key_manifest_absent
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
-    ntp_auth_key { '1':
-      ensure    => 'absent',
-   }
-    ntp_config {'default':
-      authenticate     => 'false',
-      source_interface => 'unset',
-      trusted_key      => 'unset',
+    ntp_auth_key {'1':
+      ensure => absent,
     }
 }
 EOF"

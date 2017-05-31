@@ -2,6 +2,51 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.7.0] - 2017-05-31
+
+### New feature support
+#### Cisco Resources
+- `cisco_bgp_af_aa` type and provider.
+
+### Added
+- Extend cisco_interface with attributes:
+ - `purge_config`
+
+- Extend cisco_interface_channel_group with attributes:
+ - `channel_group_mode`
+
+- Added support for tftp and usb URIs to `cisco_upgrade`
+
+- Extend `cisco_upgrade` with attributes:
+ - `package`
+
+- Added `ntp_auth_key` with attributes:
+ - `algorithm`
+ - `key`
+ - `mode`
+ - `password`
+
+- Extend `ntp_config` with attributes:
+ - `authenticate`
+ - `trusted_key`
+
+- Extend `ntp_server` with attributes:
+ - `key`
+ - `maxpoll`
+ - `minpoll`
+ - `vrf`
+
+### Changed
+
+### Removed
+- Deprecated `version` and `source_uri` attributes for `cisco_upgrade` in favor of a single attribute `package`.
+
+### Resolved Issues
+* https://github.com/cisco/cisco-network-puppet-module/issues/424
+* https://github.com/cisco/cisco-network-puppet-module/issues/432
+* https://github.com/cisco/cisco-network-puppet-module/issues/446
+* https://github.com/cisco/cisco-network-puppet-module/issues/452
+
 ## [1.6.0] - 2017-03-13
 
 ### New feature support
@@ -18,6 +63,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 ### Removed
+
+### Resolved Issues
+* https://github.com/cisco/cisco-network-puppet-module/issues/413
+* https://github.com/cisco/cisco-network-puppet-module/issues/414
+* https://github.com/cisco/cisco-network-puppet-module/issues/415
+* https://github.com/cisco/cisco-network-puppet-module/issues/417
+* https://github.com/cisco/cisco-network-puppet-module/issues/419
+* https://github.com/cisco/cisco-network-puppet-module/issues/420
+* https://github.com/cisco/cisco-network-puppet-module/issues/423
 
 ## [1.5.0] - 2017-01-11
 
@@ -354,6 +408,7 @@ This version was never released.
 - Initial release of puppetlabs-ciscopuppet module, supporting Cisco NX-OS software release 7.0(3)I2(1) on Cisco Nexus switch platforms: N95xx, N93xx, N30xx and N31xx.
 - Please note: 0.9.0 is an EFT pre-release for a limited audience with access to NX-OS 7.0(3)I2(1). Additional code changes may occur in 0.9.x prior to the final 1.0.0 release.
 
+[1.7.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.4.1...v1.5.0
 [1.4.1]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.4.0...v1.4.1
