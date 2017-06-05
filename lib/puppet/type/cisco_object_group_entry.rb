@@ -126,7 +126,7 @@ Puppet::Type.newtype(:cisco_object_group_entry) do
   end
 
   newproperty(:port) do
-    desc 'port to match port number. valid'\
+    desc 'port number to match against. valid'\
          ' port configuration should be eq 40 or range 30 50 etc.'
 
     validate do |port|
