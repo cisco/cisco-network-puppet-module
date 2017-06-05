@@ -114,7 +114,7 @@ Puppet::Type.newtype(:cisco_object_group_entry) do
   ##############
 
   newproperty(:address) do
-    desc 'Source address to match against. Valid values are an IP'\
+    desc 'Address to match against. Valid values are an IP'\
          ' address/prefix_len, IP Address and wildcard, host and '\
          'host address'
 
