@@ -27,8 +27,12 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 tests = {
   master:        master,
   agent:         agent,
+  platform:      'n(3|7|9)k',
   resource_name: 'cisco_object_group_entry',
 }
+
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
 
 tests[:seq_10_v4] = {
   title_pattern:  'ipv4 address beaker 10',
