@@ -2880,8 +2880,8 @@ Manages configuration of an ObjectGroup instance. This has no properties and it 
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(5)        | 1.8.0                  |
-| N3k      | 7.0(3)I2(5)        | 1.8.0                  |
+| N9k      | 7.0(3)I2(2e)       | 1.8.0                  |
+| N3k      | 7.0(3)I2(2e)       | 1.8.0                  |
 | N5k      | not applicable     | not applicable         |
 | N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.8.0                  |
@@ -2915,8 +2915,8 @@ Manages configuration of an ObjectGroupEntry instance.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(5)        | 1.8.0                  |
-| N3k      | 7.0(3)I2(5)        | 1.8.0                  |
+| N9k      | 7.0(3)I2(2e)       | 1.8.0                  |
+| N3k      | 7.0(3)I2(2e)       | 1.8.0                  |
 | N5k      | not applicable     | not applicable         |
 | N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.8.0                  |
