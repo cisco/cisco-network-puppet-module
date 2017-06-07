@@ -119,9 +119,11 @@ Puppet::Type.newtype(:cisco_object_group_entry) do
          'host address'
 
     validate do |address|
-      fail 'address must be ip address/prefix_len,'\
-           ' address/prefix_len, IP Address and wildcard, host and host address' unless
-        %r{host \S+|\S+\/\d+|\S+ [:\.0-9a-fA-F]+}.match(address)
+      addr_arr = address.split
+      addr_arr.each do |addr|
+        next if addr == 'host'
+        PuppetX::Cisco::Utils.process_network_mask(addr)
+      end
     end
   end
 

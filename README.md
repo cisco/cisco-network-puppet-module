@@ -687,7 +687,7 @@ Manages configuration of a Access Control List (ACL) instance.
 Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
 
 ##### `afi`
-Address Family Identifier (AFI). Required. Valid values are ipv4 and ipv6.
+Address Family Identifier (AFI). Required. Valid values are 'ipv4' and 'ipv6'.
 
 ##### `acl_name`
 Name of the acl instance. Valid values are string.
@@ -765,7 +765,7 @@ cisco_ace { 'ipv6 my_v6_acl 42':
 | `cisco_ace { 'ipv4 my_acl 42':`
 
 ##### `afi`
-Address Family Identifier (AFI). Required. Valid values are ipv4 and ipv6.
+Address Family Identifier (AFI). Required. Valid values are 'ipv4' and 'ipv6'.
 
 ##### `acl_name`
 Access Control List (ACL) name. Required. Valid values are type String.
@@ -2895,10 +2895,10 @@ Manages configuration of an ObjectGroup instance. This has no properties and it 
 | `cisco_object_group { 'ipv4 address myog_v4_addr':`
 
 ##### `afi`
-Address Family Identifier (AFI). Required. Valid values are ipv4 and ipv6.
+Address Family Identifier (AFI). Required. Valid values are 'ipv4' and 'ipv6'.
 
 ##### `type`
-Type of the object_group instance. Required. Valid values are address and port.
+Type of the object_group instance. Required. Valid values are 'address' and 'port'.
 
 ##### `grp_name`
 Name of the object_group instance. Required. Valid values are type String.
@@ -2949,10 +2949,10 @@ cisco_object_group_entry { 'ipv6 address myoge_v6_addr 30':
 | `cisco_object_group_entry { 'ipv4 address myoge_v4_addr 10':`
 
 ##### `afi`
-Address Family Identifier (AFI). Required. Valid values are ipv4 and ipv6.
+Address Family Identifier (AFI). Required. Valid values are 'ipv4' and 'ipv6'.
 
 ##### `type`
-Type of the object_group instance. Required. Valid values are address and port.
+Type of the object_group instance. Required. Valid values are 'address' and 'port'.
 
 ##### `grp_name`
 Name of the object_group instance. Required. Valid values are type String.
