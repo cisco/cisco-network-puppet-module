@@ -215,6 +215,10 @@ The following resources include cisco types and providers along with cisco provi
   * [`ntp_config (netdev_stdlib)`](#type-ntp_config)
   * [`ntp_server (netdev_stdlib)`](#type-ntp_server)
 
+* ObjectGroup Types
+  * [`cisco_object_group`](#type-cisco_object_group)
+  * [`cisco_object_group_entry`](#type-cisco_object_group_entry)
+
 * OSPF Types
   * [`cisco_vrf`](#type-cisco_vrf)
   * [`cisco_ospf`](#type-cisco_ospf)
@@ -321,6 +325,8 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_itd_device_group`](#type-cisco_itd_device_group)
 * [`cisco_itd_device_group_node`](#type-cisco_itd_device_group_node)
 * [`cisco_itd_service`](#type-cisco_itd_service)
+* [`cisco_object_group`](#type-cisco_object_group)
+* [`cisco_object_group_entry`](#type-cisco_object_group_entry)
 * [`cisco_ospf`](#type-cisco_ospf)
 * [`cisco_ospf_area`](#type-cisco_ospf_area)
 * [`cisco_ospf_area_vlink`](#type-cisco_ospf_area_vlink)
@@ -436,6 +442,8 @@ Symbol | Meaning | Description
 | [cisco_itd_device_group](#type-cisco_itd_device_group)           | ✅ | ➖ | ➖ | ➖ | ✅ | ➖ |
 | [cisco_itd_device_group_node](#type-cisco_itd_device_group_node) | ✅ | ➖ | ➖ | ➖ | ✅ | ➖ |
 | [cisco_itd_service](#type-cisco_itd_service)                     | ✅ | ➖ | ➖ | ➖ | ✅ | ➖ | \*[caveats](#cisco_itd_service-caveats) |
+| [cisco_object_group](#type-cisco_object_group)             | ✅  | ✅  | ➖ | ➖  | ✅ | ✅ |
+| [cisco_object_group_entry](#type-cisco_object_group_entry) | ✅  | ✅  | ➖ | ➖  | ✅ | ✅ |
 | [cisco_ospf](#type-cisco_ospf)                             | ✅  | ✅  | ✅ | ✅  | ✅ | ✅ |
 | [cisco_ospf_vrf](#type-cisco_ospf_vrf)                     | ✅  | ✅  | ✅ | ✅  | ✅ | ✅ |
 | ✅ = Supported <br> ➖ = Not Applicable | N9k | N3k | N5k | N6k | N7k | N9k-F | Caveats |
@@ -679,7 +687,7 @@ Manages configuration of a Access Control List (ACL) instance.
 Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
 
 ##### `afi`
-Address Family Identifier (AFI). Required. Valid values are ipv4 and ipv6.
+Address Family Identifier (AFI). Required. Valid values are 'ipv4' and 'ipv6'.
 
 ##### `acl_name`
 Name of the acl instance. Valid values are string.
@@ -757,7 +765,7 @@ cisco_ace { 'ipv6 my_v6_acl 42':
 | `cisco_ace { 'ipv4 my_acl 42':`
 
 ##### `afi`
-Address Family Identifier (AFI). Required. Valid values are ipv4 and ipv6.
+Address Family Identifier (AFI). Required. Valid values are 'ipv4' and 'ipv6'.
 
 ##### `acl_name`
 Access Control List (ACL) name. Required. Valid values are type String.
@@ -2864,6 +2872,126 @@ keyword 'default'.
 
 ##### `virtual_ip`
 Virtual ip configuration. Valid values are an array of Strings or 'default'.
+
+--
+### Type: cisco_object_group
+
+Manages configuration of an ObjectGroup instance. This has no properties and it is the parent of ObjectGroupEntry.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(2e)       | 1.8.0                  |
+| N3k      | 7.0(3)I2(2e)       | 1.8.0                  |
+| N5k      | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
+| N7k      | 7.3(0)D1(1)        | 1.8.0                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.8.0                  |
+
+#### Parameters
+
+| Example Parameter Usage
+|:--
+| `cisco_object_group { '<afi> <type> <grp_name>':`
+| `cisco_object_group { 'ipv4 address myog_v4_addr':`
+
+##### `afi`
+Address Family Identifier (AFI). Required. Valid values are 'ipv4' and 'ipv6'.
+
+##### `type`
+Type of the object_group instance. Required. Valid values are 'address' and 'port'.
+
+##### `grp_name`
+Name of the object_group instance. Required. Valid values are type String.
+
+##### Properties
+
+##### `ensure`
+Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
+
+--
+### Type: cisco_object_group_entry
+
+Manages configuration of an ObjectGroupEntry instance.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(2e)       | 1.8.0                  |
+| N3k      | 7.0(3)I2(2e)       | 1.8.0                  |
+| N5k      | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
+| N7k      | 7.3(0)D1(1)        | 1.8.0                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.8.0                  |
+
+#### Example Usage
+
+```puppet
+cisco_object_group_entry { 'ipv4 address myoge_v4_addr 10':
+  ensure              => 'present',
+  address             => '10.10.10.1/24',
+}
+
+cisco_object_group_entry { 'ipv4 port myoge_v4_port 20':
+  ensure              => 'present',
+  port                => 'neq 40',
+}
+
+cisco_object_group_entry { 'ipv6 address myoge_v6_addr 30':
+  ensure              => 'present',
+  address             => '2000::1/64',
+}
+```
+
+#### Parameters
+
+| Example Parameter Usage
+|:--
+| `cisco_object_group_entry { '<afi> <type> <grp_name> <seqno>':`
+| `cisco_object_group_entry { 'ipv4 address myoge_v4_addr 10':`
+
+##### `afi`
+Address Family Identifier (AFI). Required. Valid values are 'ipv4' and 'ipv6'.
+
+##### `type`
+Type of the object_group instance. Required. Valid values are 'address' and 'port'.
+
+##### `grp_name`
+Name of the object_group instance. Required. Valid values are type String.
+
+##### `seqno`
+Object Group Entry Sequence Number. Required. Valid values are type Integer.
+
+##### `ensure`
+Determines whether the config should be present or not on the device. Valid values are 'present' and 'absent'.
+
+#### Properties
+
+##### `address`
+The Address to match against. Valid values are type String, which must be one of the following forms:
+
+* An IPv4/IPv6 address/prefix length
+* The keyword `host` and a host address
+* An IP Address and wildcard
+
+| Examples
+|:--
+| `address => '10.10.10.1/24'`
+| `address => '10.10.10.1 11.12.13.14'`
+| `address => 'host 10.0.0.1'`
+| `address => '2000::1/64'`
+| `address => '2000::1 2002::1'`
+| `address => 'host 2001::1'`
+
+##### `port`
+The TCP or UDP Port to match against. Valid values are type String, which must be one of the following forms:
+
+* A comparison operator (`eq`, `neq`, `lt`, `gt`) and value
+* The keyword `range` and a range value
+
+| Examples
+|:--
+| `port => 'neq 40'`
+| `port => 'range 68 69'`
+| `port => 'lt 400'`
 
 --
 ### Type: cisco_ospf

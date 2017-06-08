@@ -5,6 +5,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 ### New feature support
+#### Cisco Resources
+- `cisco_object_group` type and provider.
+- `cisco_object_group_entry` type and provider.
 
 ### Added
 
