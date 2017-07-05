@@ -2970,7 +2970,7 @@ The Address to match against. Valid values are type String, which must be one of
 
 * An IPv4/IPv6 address/prefix length
 * The keyword `host` and a host address
-* An IP Address and wildcard
+* An IPv4 Address and wildcard
 
 | Examples
 |:--
@@ -2978,7 +2978,6 @@ The Address to match against. Valid values are type String, which must be one of
 | `address => '10.10.10.1 11.12.13.14'`
 | `address => 'host 10.0.0.1'`
 | `address => '2000::1/64'`
-| `address => '2000::1 2002::1'`
 | `address => 'host 2001::1'`
 
 ##### `port`
