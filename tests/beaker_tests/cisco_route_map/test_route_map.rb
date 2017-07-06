@@ -24,6 +24,14 @@
 
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
+# In I7 match_src_proto order is not maintained in running config.
+# This behavior is currently observed only on the N9K.
+if platform[/n9k/] && image_version.to_s.strip[/I7/]
+  @src_proto = %w(udp igmp tcp)
+else
+  @src_proto = %w(tcp udp igmp)
+end
+
 # Test hash top-level keys
 tests = {
   master:           master,
@@ -290,7 +298,6 @@ tests[:non_default_1] = {
     match_route_type_nssa_external:         'true',
     match_route_type_type_1:                'true',
     match_route_type_type_2:                'true',
-    match_src_proto:                        %w(tcp udp igmp),
     match_tag:                              %w(5 342 28 3221),
     match_vlan:                             '32, 45-200, 300-399, 402',
     set_as_path_prepend:                    ['55.77', '12', '45.3'],
@@ -403,6 +410,17 @@ tests[:non_default_5] = {
   manifest_props: {
     match_length: %w(45 345),
     set_vrf:      'igp',
+  },
+}
+
+tests[:non_default_6] = {
+  desc:           '2.6 Non Defaults 6',
+  title_pattern:  'rm6 321 permit',
+  manifest_props: {
+    match_src_proto: %w(tcp udp igmp)
+  },
+  resource:       {
+    match_src_proto: @src_proto
   },
 }
 
@@ -573,6 +591,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :non_default_3)
   test_harness_run(tests, :non_default_4)
   test_harness_run(tests, :non_default_5)
+  test_harness_run(tests, :non_default_6)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
