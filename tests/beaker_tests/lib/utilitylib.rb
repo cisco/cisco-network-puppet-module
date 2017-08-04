@@ -74,7 +74,7 @@ def hash_to_patterns(hash)
     #   \[\['192.168.5.0\/24', 'nrtemap1'\], \['192.168.6.0\/32'\]\]
     if /^\[.*\]$/.match(value)
       # Handle Puppet 5 line wrap issue
-      value.gsub!(/^[\[]/) {|s| '[\n? *' }.gsub!(', [') {|s| ',\n? +?[' }
+      value.gsub!(/^[\[]/, '[\n? *').gsub!(', [', ',\n? +?[')
       # END Handle Puppet 5 line wrap issue
       value.gsub!(/[\[\]]/) { |s| '\\' + "#{s}" }.gsub!(/\"/) { |_s| '\'' }
     end
