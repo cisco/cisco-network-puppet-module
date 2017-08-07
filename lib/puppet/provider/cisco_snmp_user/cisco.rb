@@ -214,7 +214,7 @@ Puppet::Type.type(:cisco_snmp_user).provide(:cisco) do
   end
 
   def unconfigure_snmp_user
-    @snmp_user.destroy
+    @snmp_user.destroy unless @resource[:user] == 'admin'
     @snmp_user = nil
     @property_hash[:ensure] = :absent
   end

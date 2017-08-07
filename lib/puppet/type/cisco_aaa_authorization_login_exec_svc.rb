@@ -81,7 +81,7 @@ Puppet::Type.newtype(:cisco_aaa_authorization_login_exec_svc) do
     end
 
     munge do |val|
-      val == 'default' ? :default : val.split
+      val == 'default' ? :default : val
     end
 
     def in_sync?(is)
