@@ -295,7 +295,7 @@ Puppet::Type.newtype(:cisco_ace) do
   validate do
     unless self[:remark].nil?
       fail ArgumentError,
-           'established and log parameters must be nil when remark is not nil' unless
+           "'established' and 'log' properties should not be set for remark ace" unless
         self[:log].nil? && self[:established].nil?
     end
   end
