@@ -193,7 +193,7 @@ def test_set_get
   logger.info('* check config')
   on(agent, cmd_prefix + "test_get='incl loopback1'")
   fail_test("TestStep :: set/get :: FAIL\nstdout:\n#{stdout}") unless
-    stdout[/^interface loopback1/]
+    stdout[/^?\n?interface loopback1/]
 
   logger.info("#{stepinfo} :: PASS\n#{'-' * 60}\n")
 end
