@@ -1463,8 +1463,8 @@ def remove_all_vlans(agent, stepinfo='Remove all vlans & bridge-domains')
 end
 
 def remove_all_vrfs(agent)
-  found = test_get(agent, "incl 'vrf context' | excl management").split("\n")
-  found.map! { |cmd| "no #{cmd}" if cmd[/^vrf context/] }
+  found = test_get(agent, "incl 'vrf context' | excl management").split("\\n")
+  found.map! { |cmd| "no #{cmd}" if cmd[/^?\n?vrf context/] }
   test_set(agent, found.compact.join(' ; '))
 end
 
