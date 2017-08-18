@@ -192,6 +192,19 @@ def test_set_get
 
   logger.info('* check config')
   on(agent, cmd_prefix + "test_get='incl loopback1'")
+  # The output of test_get has changed in Puppet5 and newer versions of Puppet.
+  # Old output:
+  # cisco_command_config { 'cc':
+  #   test_get => '
+  # interface loopback1
+  # interface loopback10
+  # ',
+  # }
+  # New output:
+  # cisco_command_config { 'cc':
+  #   test_get => "\ninterface loopback1\ninterface loopback10\n",
+  # }
+  # Modifying the below regular expression to make ^ and \n optional.
   fail_test("TestStep :: set/get :: FAIL\nstdout:\n#{stdout}") unless
     stdout[/^?\n?interface loopback1/]
 

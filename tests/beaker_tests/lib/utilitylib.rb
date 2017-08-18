@@ -1463,6 +1463,18 @@ def remove_all_vlans(agent, stepinfo='Remove all vlans & bridge-domains')
 end
 
 def remove_all_vrfs(agent)
+  # The output of test_get has changed in Puppet5 and newer versions of Puppet.
+  # Old output:
+  # cisco_command_config { 'cc':
+  #   test_get => '
+  # vrf context blue
+  # ',
+  # }
+  # New output:
+  # cisco_command_config { 'cc':
+  #   test_get => "\nvrf context blue\n",
+  # }
+  # Modifying the below regular expression to make ^ and \n optional.
   found = test_get(agent, "incl 'vrf context' | excl management").split('\\n')
   found.map! { |cmd| "no #{cmd}" if cmd[/^?\n?vrf context/] }
   test_set(agent, found.compact.join(' ; '))
