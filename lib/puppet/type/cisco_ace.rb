@@ -291,4 +291,12 @@ Puppet::Type.newtype(:cisco_ace) do
     desc 'Log matches against this entry'
     newvalues(:true, :false)
   end
+
+  validate do
+    unless self[:remark].nil?
+      fail ArgumentError,
+           "'established' and 'log' properties should not be set for remark ace" unless
+        self[:log].nil? && self[:established].nil?
+    end
+  end
 end

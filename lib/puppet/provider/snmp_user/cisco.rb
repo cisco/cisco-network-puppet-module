@@ -116,7 +116,13 @@ Puppet::Type.type(:snmp_user).provide(:cisco) do
 
   def flush
     validate
-    @snmpuser.destroy if @snmpuser
+    if @resource[:name] == 'admin'
+      fail ArgumentError,
+           'The admin account cannot be deactivated on this platform. ' \
+          if @property_flush[:ensure] == :absent
+    else
+      @snmpuser.destroy if @snmpuser
+    end
     @snmpuser = nil
 
     return if @property_flush[:ensure] == :absent
