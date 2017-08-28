@@ -1475,7 +1475,7 @@ def remove_all_vrfs(agent)
   #   test_get => "\nvrf context blue\n",
   # }
   # Modifying the below regular expression to make ^ and \n optional.
-  found = test_get(agent, "incl 'vrf context' | excl management").split("\n")
+  found = test_get(agent, "incl 'vrf context' | excl management").split('\\n')
   found.map! { |cmd| "no #{cmd}" if cmd[/^?\n?vrf context/] }
   test_set(agent, found.compact.join(' ; '))
 end
