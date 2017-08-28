@@ -1142,8 +1142,8 @@ end
 
 @image = nil # Cache the lookup result
 def nexus_image
-  facter_opt = '-p cisco.images.system_image'
-  image_regexp = /.*\.(\S+\.\S+)\.bin/
+  facter_opt = '-p cisco.images.full_version'
+  image_regexp = /(\S+)/
   data = on(agent, facter_cmd(facter_opt)).output
   @image ||= image_regexp.match(data)[1]
 end
