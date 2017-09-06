@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2014-2017 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -50,6 +50,7 @@ node default {
   syslog_server {'1.2.3.4':
     ensure         => present,
     severity_level => 2,
+    port           => 5555,
     vrf            => 'default',
   }
 }
@@ -84,6 +85,7 @@ node default {
   syslog_server {'2003::3':
     ensure         => present,
     severity_level => 2,
+    port           => 5555,
     vrf            => 'default',
   }
 }

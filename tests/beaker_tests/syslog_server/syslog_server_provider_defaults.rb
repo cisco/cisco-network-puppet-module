@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2014-2017 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -90,6 +90,8 @@ test_name "TestCase :: #{testheader}" do
                                false, self, logger)
       search_pattern_in_output(stdout, { 'severity_level' => '2' },
                                false, self, logger)
+      search_pattern_in_output(stdout, { 'port' => '5555' },
+                               false, self, logger)
       search_pattern_in_output(stdout, { 'vrf' => 'default' },
                                false, self, logger)
     end
@@ -143,6 +145,8 @@ test_name "TestCase :: #{testheader}" do
       search_pattern_in_output(stdout, { 'ensure' => 'present' },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'severity_level' => '2' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'port' => '5555' },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'vrf' => 'default' },
                                false, self, logger)
