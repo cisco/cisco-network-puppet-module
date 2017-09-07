@@ -1,6 +1,6 @@
-# June, 2016
+# September, 2017
 #
-# Copyright (c) 2014-2016 Cisco and/or its affiliates.
+# Copyright (c) 2014-2017 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,9 +31,21 @@ Puppet::Type.type(:tacacs_global).provide(:cisco) do
 
   mk_resource_methods
 
-  TACACS_GLOBAL_PROPS = {
-    timeout: :timeout
-  }
+  TACACS_GLOBAL_GET_PROPS = [
+    :key,
+    :key_format,
+  ]
+
+  TACACS_GLOBAL_SET_PROPS = [
+    :timeout,
+    :source_interface,
+  ]
+
+  TACACS_GLOBAL_NON_BOOL_PROPS = TACACS_GLOBAL_GET_PROPS +
+                                 TACACS_GLOBAL_SET_PROPS
+
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@tacacs_global',
+                                            TACACS_GLOBAL_NON_BOOL_PROPS)
 
   def initialize(value={})
     super(value)
@@ -46,11 +58,13 @@ Puppet::Type.type(:tacacs_global).provide(:cisco) do
     debug "Checking instance, TacacsGlobal #{name}"
 
     current_state = {
-      ensure:     :present,
-      name:       v.name,
-      timeout:    v.timeout ? v.timeout : -1,
-      key:        v.key ? v.key : 'unset',
-      key_format: v.key_format ? v.key_format : -1,
+      ensure:           :present,
+      name:             v.name,
+      timeout:          v.timeout ? v.timeout : -1,
+      key:              v.key.nil? || v.key.empty? ? 'unset' : v.key,
+      # Only return the key format if there is a key configured
+      key_format:       v.key.nil? || v.key.empty? ? nil : v.key_format,
+      source_interface: v.source_interface.nil? || v.source_interface.empty? ? 'unset' : v.source_interface,
     }
 
     new(current_state)
@@ -107,6 +121,8 @@ Puppet::Type.type(:tacacs_global).provide(:cisco) do
          "This provider does not support the 'enable' property." if @resource[:enable]
     fail ArgumentError,
          "The 'key' property must be set when specifying 'key_format'." if @resource[:key_format] && !resource[:key]
+    fail ArgumentError,
+         "This provider does not support the 'vrf' property. " if @resource[:vrf]
   end
 
   def exists?
@@ -116,11 +132,15 @@ Puppet::Type.type(:tacacs_global).provide(:cisco) do
   def flush
     validate
 
-    TACACS_GLOBAL_PROPS.each do |puppet_prop, cisco_prop|
-      if @resource[puppet_prop] && @tacacs_global.respond_to?("#{cisco_prop}=")
-        @tacacs_global.send("#{cisco_prop}=", munge_flush(@resource[puppet_prop]))
-      end
+    TACACS_GLOBAL_SET_PROPS.each do |prop|
+      next unless @resource[prop]
+      next if @property_flush[prop].nil?
+      # Call the AutoGen setters for the @tacacs_global node_utils object.
+      @property_flush[prop] = nil if @property_flush[prop] == 'unset'
+      @tacacs_global.send("#{prop}=", @property_flush[prop]) if
+        @tacacs_global.respond_to?("#{prop}=")
     end
-    @tacacs_global.send('encryption_key_set', munge_flush(@resource[:key_format]), @resource[:key]) if @resource[:key]
+
+    @tacacs_global.send('encryption_key_set', munge_flush(@property_flush[:key_format]), munge_flush(@property_flush[:key])) if @property_flush[:key]
   end
 end # Puppet::Type

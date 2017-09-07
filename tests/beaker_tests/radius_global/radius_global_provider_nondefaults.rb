@@ -15,7 +15,7 @@
 ###############################################################################
 # TestCase Name:
 # -------------
-# RadiusGlobal-Provider-Defaults.rb
+# RadiusGlobal-Provider-NonDefaults.rb
 #
 # TestCase Prerequisites:
 # -----------------------
@@ -29,7 +29,7 @@
 #
 # TestCase:
 # ---------
-# This is a radius_global resource test that tests default attributes of
+# This is a radius_global resource test that tests non-default attributes of
 # tacacs_global resource.
 #
 # There are 2 sections to the testcase: Setup, group of teststeps.
@@ -71,10 +71,93 @@ def cleanup
   command_config(agent, "no radius-server key #{key[1]} #{key[2]}", "removing key #{key[2]}") if key
 end
 
-# @test_name [TestCase] Executes defaults testcase for radius_global Resource.
+# @test_name [TestCase] Executes non-defaults testcase for radius_global Resource.
 test_name "TestCase :: #{testheader}" do
   cleanup
   teardown { cleanup }
+
+  # @step [Step] Sets up switch for provider test.
+  step 'TestStep :: Setup switch for provider' do
+    logger.info('Setup switch for provider')
+  end
+
+  # @step [Step] Requests manifest from the master server to the agent.
+  step 'TestStep :: Get resource present manifest from master' do
+    # Expected exit_code is 0 since this is a bash shell cmd.
+    on(master, RadiusGlobalLib.create_radius_global_manifest)
+
+    # Expected exit_code is 2 since this is a puppet agent cmd with change.
+    cmd_str = PUPPET_BINPATH + 'agent -t'
+    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
+
+    logger.info("Get resource present manifest from master :: #{result}")
+  end
+
+  # @step [Step] Checks radius_global resource on agent using resource cmd.
+  step 'TestStep :: Check radius_global resource presence on agent' do
+    # Expected exit_code is 0 since this is a puppet resource cmd.
+    # Flag is set to false to check for presence of RegExp pattern in stdout.
+    cmd_str = PUPPET_BINPATH + 'resource radius_global default'
+    on(agent, cmd_str)
+    output = stdout
+    search_pattern_in_output(output, { 'key' => add_quotes('44444444') },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'key_format' => '7' },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'retransmit_count' => '4' },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'source_interface' => 'loopback0' },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'timeout' => '2' },
+                             false, self, logger)
+
+    logger.info("Check radius_global resource presence on agent :: #{result}")
+  end
+
+  # @step [Step] Requests manifest from the master server to the agent.
+  step 'TestStep :: Get resource present (with changes)manifest from master' do
+    # Expected exit_code is 0 since this is a bash shell cmd.
+    on(master, RadiusGlobalLib.create_radius_global_manifest_change)
+
+    # Expected exit_code is 2 since this is a puppet agent cmd with change.
+    cmd_str = PUPPET_BINPATH + 'agent -t'
+    on(agent, cmd_str, acceptable_exit_codes: [2])
+
+    logger.info("Get resource present manifest from master :: #{result}")
+  end
+
+  # @step [Step] Checks radius_global resource on agent using resource cmd.
+  step 'TestStep :: Check radius_global resource presence on agent' do
+    # Expected exit_code is 0 since this is a puppet resource cmd.
+    # Flag is set to false to check for presence of RegExp pattern in stdout.
+    cmd_str = PUPPET_BINPATH + 'resource radius_global default'
+    on(agent, cmd_str)
+    output = stdout
+    search_pattern_in_output(output, { 'key' => add_quotes('55555555') },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'key_format' => '7' },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'retransmit_count' => '2' },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'source_interface' => 'loopback1' },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'timeout' => '2' },
+                             false, self, logger)
+
+    logger.info("Check radius_global resource presence on agent :: #{result}")
+  end
+
+  # @step [Step] Requests manifest from the master server to the agent.
+  step 'TestStep :: Get resource present (with changes)manifest from master' do
+    # Expected exit_code is 0 since this is a bash shell cmd.
+    on(master, RadiusGlobalLib.create_radius_global_default)
+
+    # Expected exit_code is 2 since this is a puppet agent cmd with change.
+    cmd_str = PUPPET_BINPATH + 'agent -t'
+    on(agent, cmd_str, acceptable_exit_codes: [2])
+
+    logger.info("Get resource present manifest from master :: #{result}")
+  end
 
   # @step [Step] Checks radius_global resource on agent using resource cmd.
   step 'TestStep :: Check radius_global resource presence on agent' do

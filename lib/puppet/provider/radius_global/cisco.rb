@@ -1,6 +1,6 @@
-# October, 2015
+# September, 2017
 #
-# Copyright (c) 2014-2016 Cisco and/or its affiliates.
+# Copyright (c) 2014-2017 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,10 +31,22 @@ Puppet::Type.type(:radius_global).provide(:cisco) do
 
   mk_resource_methods
 
-  RADIUS_GLOBAL_PROPS = {
-    timeout:          :timeout,
-    retransmit_count: :retransmit_count,
-  }
+  RADIUS_GLOBAL_GET_PROPS = [
+    :key,
+    :key_format,
+  ]
+
+  RADIUS_GLOBAL_SET_PROPS = [
+    :retransmit_count,
+    :source_interface,
+    :timeout,
+  ]
+
+  RADIUS_GLOBAL_NON_BOOL_PROPS = RADIUS_GLOBAL_GET_PROPS +
+                                 RADIUS_GLOBAL_SET_PROPS
+
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@radius_global',
+                                            RADIUS_GLOBAL_NON_BOOL_PROPS)
 
   def initialize(value={})
     super(value)
@@ -52,7 +64,9 @@ Puppet::Type.type(:radius_global).provide(:cisco) do
       timeout:          v.timeout ? v.timeout : -1,
       retransmit_count: v.retransmit_count ? v.retransmit_count : -1,
       key:              v.key ? v.key : 'unset',
-      key_format:       v.key_format ? v.key_format : -1,
+      # Only return the key format if there is a key configured
+      key_format:       v.key.nil? || v.key.empty? ? nil : v.key_format,
+      source_interface: v.source_interface.nil? || v.source_interface.empty? ? 'unset' : v.source_interface,
     }
 
     new(current_state)
@@ -109,6 +123,8 @@ Puppet::Type.type(:radius_global).provide(:cisco) do
          "This provider does not support the 'enable' property." if @resource[:enable]
     fail ArgumentError,
          "The 'key' property must be set when specifying 'key_format'." if @resource[:key_format] && !resource[:key]
+    fail ArgumentError,
+         "This provider does not support the 'vrf' property. " if @resource[:vrf]
   end
 
   def exists?
@@ -118,13 +134,16 @@ Puppet::Type.type(:radius_global).provide(:cisco) do
   def flush
     validate
 
-    RADIUS_GLOBAL_PROPS.each do |puppet_prop, cisco_prop|
-      if @resource[puppet_prop] && @radius_global.respond_to?("#{cisco_prop}=")
-        @radius_global.send("#{cisco_prop}=", munge_flush(@resource[puppet_prop]))
-      end
+    RADIUS_GLOBAL_SET_PROPS.each do |prop|
+      next unless @resource[prop]
+      next if @property_flush[prop].nil?
+      # Call the AutoGen setters for the @radius_global node_utils object.
+      @property_flush[prop] = nil if @property_flush[prop] == 'unset'
+      @radius_global.send("#{prop}=", @property_flush[prop]) if
+        @radius_global.respond_to?("#{prop}=")
     end
 
     # Handle key and keyformat setting
-    @radius_global.send('key_set', munge_flush(@resource[:key]), @resource[:key_format]) if @resource[:key]
+    @radius_global.send('key_set', munge_flush(@property_flush[:key]), munge_flush(@property_flush[:key_format])) if @property_flush[:key]
   end
 end # Puppet::Type
