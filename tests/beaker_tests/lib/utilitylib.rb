@@ -1475,14 +1475,12 @@ def remove_all_vrfs(agent)
   #   test_get => "\nvrf context blue\n",
   # }
   # Modifying the below regular expression to make ^ and \n optional.
-  #found = test_get(agent, "incl 'vrf context' | excl management").split('\\n')
   found = test_get(agent, "incl 'vrf context' | excl management")
-  if /.*test_get => \'(.*)\'/m.match(found)
-    vrfs = /.*test_get => \'(.*)\'/m.match(found)[1].split("\n")
-    vrfs.map! { |cmd| "no #{cmd}" if cmd[/^?\n?vrf context/] }
-    puts "VRFS:\n#{vrfs}\nVRFS:"
-    test_set(agent, vrfs.compact.join(' ; '))
-  end
+  return unless /.*test_get => \'(.*)\'/m.match(found)
+  vrfs = /.*test_get => \'(.*)\'/m.match(found)[1].split("\n")
+  vrfs.map! { |cmd| "no #{cmd}" if cmd[/^?\n?vrf context/] }
+  puts "VRFS:\n#{vrfs}\nVRFS:"
+  test_set(agent, vrfs.compact.join(' ; '))
 end
 
 # Return yum patch version from host
