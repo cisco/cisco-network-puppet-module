@@ -1701,13 +1701,13 @@ Determines whether or not the config should be present on the device. Valid valu
 ID of the Bridge Domain. Valid values are integer.
 
 ##### `bd_name`
-The bridge-domain name. Valid values are String or keyword 'default'.
+The bridge-domain name. Valid values are String or keyword 'default'. When the bd_name is set to 'default', this property is NOT idempotent.
 
 ##### `shutdown`
 Specifies the shutdown state of the bridge-domain. Valid values are true, false, 'default'.
 
 ##### `fabric_control`
-Specifies this bridge-domain as the fabric control bridge-domain. Only one bridge-domain or VLAN can be configured as fabric-control. Valid values are true, false.
+Specifies this bridge-domain as the fabric control bridge-domain. Only one bridge-domain or VLAN can be configured as fabric-control. Valid values are true, false, keyword 'default.
 
 --
 ### Type: cisco_bridge_domain_vni
