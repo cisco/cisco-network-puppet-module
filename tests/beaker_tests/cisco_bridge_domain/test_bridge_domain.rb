@@ -29,22 +29,6 @@ tests = {
   platform:      'n7k',
 }
 
-tests[:default] = {
-  desc:           '1.0 Common Defaults',
-  title_pattern:  '100',
-  manifest_props: {
-    bd_name:        'default',
-    fabric_control: 'default',
-    shutdown:       'default',
-  },
-  code:           [0, 2],
-  resource:       {
-    bd_name:        'Bridge-Domain100',
-    fabric_control: 'false',
-    shutdown:       'false',
-  },
-}
-
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
 skip_unless_supported(tests)
 
@@ -76,7 +60,6 @@ test_name "TestCase :: #{testheader}" do
   remove_all_vlans(agent)
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Non Default Property Testing")
-  test_harness_run(tests, :default)
   test_harness_run(tests, :non_default)
   test_harness_run(tests, :non_default_change_state)
 end

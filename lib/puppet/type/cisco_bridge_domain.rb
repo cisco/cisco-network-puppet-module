@@ -79,8 +79,7 @@ Puppet::Type.newtype(:cisco_bridge_domain) do
     desc "The bridge-domain name. Valid values are String or keyword 'default'."
 
     munge do |value|
-      fail 'BD Name is not a valid string' unless value.is_a?(String)
-      value = :false if value == 'default'
+      value = '' if value == 'default'
       value
     end
   end # property name
