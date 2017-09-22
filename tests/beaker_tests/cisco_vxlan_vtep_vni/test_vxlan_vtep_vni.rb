@@ -70,7 +70,7 @@ skip_unless_supported(tests)
 tests[:default_properties_ingress_replication] = {
   desc:           '1.1 Default Properties Ingress replication',
   title_pattern:  'nve1 10000',
-  platform:       'n(7|9)k',
+  platform:       'n9k',
   manifest_props: {
     ingress_replication: 'default',
     suppress_arp:        'default',
@@ -99,7 +99,7 @@ tests[:default_properties_multicast_group] = {
 tests[:ingress_replication_static_peer_list_empty] = {
   desc:           '2.1 Ingress Replication Static Peer List Empty',
   title_pattern:  'nve1 10000',
-  platform:       'n(7|9)k',
+  platform:       'n9k',
   manifest_props: {
     ingress_replication: 'static',
     peer_list:           [],
@@ -114,7 +114,7 @@ tests[:ingress_replication_static_peer_list_empty] = {
 tests[:peer_list] = {
   desc:           '2.2 Peer List',
   title_pattern:  'nve1 10000',
-  platform:       'n(7|9)k',
+  platform:       'n9k',
   manifest_props: {
     ingress_replication: 'static',
     peer_list:           ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
@@ -129,7 +129,7 @@ tests[:peer_list] = {
 tests[:peer_list_change_add] = {
   desc:           '2.3 Peer List Change Add',
   title_pattern:  'nve1 10000',
-  platform:       'n(7|9)k',
+  platform:       'n9k',
   manifest_props: {
     ingress_replication: 'static',
     peer_list:           ['1.1.1.1', '6.6.6.6', '3.3.3.3', '4.4.4.4'],
@@ -144,7 +144,7 @@ tests[:peer_list_change_add] = {
 tests[:peer_list_default] = {
   desc:           '2.4 Peer List Default',
   title_pattern:  'nve1 10000',
-  platform:       'n(7|9)k',
+  platform:       'n9k',
   manifest_props: {
     ingress_replication: 'static',
     peer_list:           'default',
@@ -159,7 +159,7 @@ tests[:peer_list_default] = {
 tests[:ingress_replication_bgp] = {
   desc:           '2.5 Ingress replication BGP',
   title_pattern:  'nve1 10000',
-  platform:       'n(7|9)k',
+  platform:       'n9k',
   manifest_props: {
     ingress_replication: 'bgp',
     suppress_arp:        'default',
@@ -241,7 +241,7 @@ end
 
 def unsupported_properties(_tests, _id)
   unprops = []
-  if platform[/n(5|6)k/]
+  if platform[/n(5|6|7)k/]
     unprops <<
       :ingress_replication <<
       :peer_list
@@ -254,11 +254,7 @@ end
 
 def version_unsupported_properties(_tests, _id)
   unprops = {}
-  if platform[/n7k/]
-    unprops[:ingress_replication] = '8.1.1'
-    unprops[:peer_list] = '8.1.1'
-    unprops[:suppress_uuc] = '8.1.1'
-  end
+  unprops[:suppress_uuc] = '8.1.1' if platform[/n7k/]
   unprops
 end
 
