@@ -1474,7 +1474,7 @@ def remove_all_vrfs(agent)
   # cisco_command_config { 'cc':
   #   test_get => "\nvrf context blue\n",
   # }
-  # Modifying the below regular expression to make ^ and \n optional.
+  # The following logic handles both output styles.
   found = test_get(agent, "incl 'vrf context' | excl management")
   found.gsub!(/\\n/, ' ')
   vrfs = found.scan(/(vrf context \S+)/)
