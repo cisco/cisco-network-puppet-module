@@ -79,8 +79,7 @@ Puppet::Type.newtype(:cisco_bridge_domain) do
     desc "The bridge-domain name. Valid values are String or keyword 'default'."
 
     munge do |value|
-      fail 'BD Name is not a valid string' unless value.is_a?(String)
-      value = :default if value == 'default'
+      value = '' if value == 'default'
       value
     end
   end # property name
@@ -88,18 +87,14 @@ Puppet::Type.newtype(:cisco_bridge_domain) do
   newproperty(:fabric_control) do
     desc %(Specifies this bridge-domain as the fabric control bridge-domain.
            Only one bridge-domain or VLAN can be configured as fabric-control.
-           Valid values are true, false.)
+           Valid values are true, false, 'default'.)
 
-    newvalues(
-      :true,
-      :false)
+    newvalues(:true, :false, :default)
   end # property fabric_control
 
   newproperty(:shutdown) do
     desc "Specifies the shutdown state of the bridge-domain. Valid values are true, false, 'default'."
 
-    newvalues(
-      :true,
-      :false)
+    newvalues(:true, :false, :default)
   end # property shutdown
 end # Puppet::Type.newtype
