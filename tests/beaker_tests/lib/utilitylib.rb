@@ -1474,10 +1474,13 @@ def remove_all_vrfs(agent)
   # cisco_command_config { 'cc':
   #   test_get => "\nvrf context blue\n",
   # }
-  # Modifying the below regular expression to make ^ and \n optional.
-  found = test_get(agent, "incl 'vrf context' | excl management").split('\\n')
-  found.map! { |cmd| "no #{cmd}" if cmd[/^?\n?vrf context/] }
-  test_set(agent, found.compact.join(' ; '))
+  # The following logic handles both output styles.
+  found = test_get(agent, "incl 'vrf context' | excl management")
+  found.gsub!(/\\n/, ' ')
+  vrfs = found.scan(/(vrf context \S+)/)
+  return if vrfs.empty?
+  vrfs.flatten!.map! { |cmd| "no #{cmd}" if cmd[/^?\n?vrf context/] }
+  test_set(agent, vrfs.compact.join(' ; '))
 end
 
 # Return yum patch version from host
