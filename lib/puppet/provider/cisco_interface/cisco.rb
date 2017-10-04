@@ -207,7 +207,7 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     Cisco::Interface.interfaces.each do |interface_name, nu_obj|
       begin
         # Not allowed to create an interface for mgmt0 or MgmtEth0/*
-        next if interface_name.match(/mgmt/i)
+        next if interface_name.match(/mgmt|vlan1/i)
         interfaces << properties_get(interface_name, nu_obj)
       end
     end
@@ -223,7 +223,10 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
   end # self.prefetch
 
   def exists?
-    return false if @nu.name[/ethernet/] && @nu.default?
+    # @nu.state_default returns true if @nu is a physical interface and it's
+    # in a default state.  Physical interfaces are treated as resources
+    # that don't exist if they are in a default state.
+    return false unless @nu.nil? || !@nu.state_default
     (@property_hash[:ensure] == :present)
   end
 
@@ -362,7 +365,7 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
         new_interface = true
         @nu = Cisco::Interface.new(@resource[:interface])
       end
-      new_interface = true if @nu.name[/ethernet/] && @nu.default?
+      new_interface = true if @nu.state_default
       properties_set(new_interface)
     end
   end
