@@ -223,6 +223,7 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
   end # self.prefetch
 
   def exists?
+    return false if @nu.name[/ethernet/] && @nu.default?
     (@property_hash[:ensure] == :present)
   end
 
@@ -361,6 +362,7 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
         new_interface = true
         @nu = Cisco::Interface.new(@resource[:interface])
       end
+      new_interface = true if @nu.name[/ethernet/] && @nu.default?
       properties_set(new_interface)
     end
   end
