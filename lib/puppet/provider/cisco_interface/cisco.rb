@@ -207,7 +207,7 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     Cisco::Interface.interfaces.each do |interface_name, nu_obj|
       begin
         # Not allowed to create an interface for mgmt0 or MgmtEth0/*
-        next if interface_name.match(/mgmt|vlan1/i)
+        next if interface_name.match(/mgmt/i)
         interfaces << properties_get(interface_name, nu_obj)
       end
     end
