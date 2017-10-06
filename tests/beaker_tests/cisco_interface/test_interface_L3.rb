@@ -44,11 +44,11 @@ dot1q = intf + '.1'
 tests[:default] = {
   desc:               '1.1 Default Properties',
   title_pattern:      intf,
-  code:               [0],
+  code:               [0, 2],
   sys_def_switchport: false,
   manifest_props:     {
+    description:                      'Verify default L3 properties',
     bfd_echo:                         'default',
-    description:                      'default',
     duplex:                           'default',
     ipv4_forwarding:                  'default',
     ipv4_pim_sparse_mode:             'default',
@@ -68,6 +68,7 @@ tests[:default] = {
     vrf:                              'default',
   },
   resource:           {
+    description:                      'Verify default L3 properties',
     duplex:                           'auto',
     ipv4_forwarding:                  'false',
     ipv4_pim_sparse_mode:             'false',
@@ -131,6 +132,7 @@ tests[:acl] = {
   operating_system:   'nexus',
   sys_def_switchport: false,
   manifest_props:     {
+    description:     'default',
     switchport_mode: 'disabled',
     ipv4_acl_in:     'v4_in',
     ipv4_acl_out:    'v4_out',
