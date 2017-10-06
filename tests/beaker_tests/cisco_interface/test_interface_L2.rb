@@ -54,11 +54,13 @@ tests[:default_access] = {
   sys_def_switchport: true,
   sys_def_sw_shut:    true,
   manifest_props:     {
+    description:                  'testing default access properties',
     shutdown:                     'default',
     switchport_autostate_exclude: 'default',
     switchport_mode:              'access',
   },
   resource:           {
+    description:                  'testing default access properties',
     shutdown:                     'true',
     switchport_autostate_exclude: 'false',
     switchport_mode:              'access',
@@ -85,6 +87,7 @@ tests[:default_trunk] = {
   sys_def_switchport: true,
   sys_def_sw_shut:    true,
   manifest_props:     {
+    description:                   'testing default trunk properties',
     shutdown:                      'default',
     load_interval_counter_1_delay: 'default',
     load_interval_counter_2_delay: 'default',
@@ -99,6 +102,7 @@ tests[:default_trunk] = {
 
   },
   resource:           {
+    description:                   'testing default trunk properties',
     shutdown:                      'true',
     load_interval_counter_1_delay: '30',
     load_interval_counter_2_delay: '300',
@@ -141,6 +145,9 @@ tests[:purge] = {
   manifest_props: {
     purge_config: 'true'
   },
+  resource:       {
+    ensure: 'absent'
+  },
 }
 
 def unsupported_properties(_tests, _id)
@@ -172,7 +179,8 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2.3 Purge_config Testing")
-  test_harness_run(tests, :purge)
+  skip_idempotence_check = true
+  test_harness_run(tests, :purge, skip_idempotence_check)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
