@@ -46,10 +46,12 @@ tests[:default_mgmt] = {
   desc:           "1.1 Default 'mgmt'",
   title_pattern:  intf,
   manifest_props: {
-    svi_management: 'default'
+    description:    'Test default properties',
+    svi_management: 'default',
   },
   resource:       {
-    svi_management: 'false'
+    description:    'Test default properties',
+    svi_management: 'false',
   },
 }
 
