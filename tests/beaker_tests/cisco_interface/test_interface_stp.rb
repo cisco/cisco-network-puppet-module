@@ -46,8 +46,9 @@ intf = find_interface(tests)
 tests[:default] = {
   desc:           '1.1 Default Properties',
   title_pattern:  intf,
-  code:           [0],
+  code:           [0, 2],
   manifest_props: {
+    description:            'Test default properties',
     stp_bpdufilter:         'default',
     stp_bpduguard:          'default',
     stp_cost:               'default',
@@ -61,6 +62,7 @@ tests[:default] = {
     stp_vlan_port_priority: 'default',
   },
   resource:       {
+    'description'       => 'Test default properties',
     'stp_bpdufilter'    => 'false',
     'stp_bpduguard'     => 'false',
     'stp_cost'          => 'auto',
