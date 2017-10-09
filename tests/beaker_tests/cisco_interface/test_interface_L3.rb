@@ -132,7 +132,6 @@ tests[:acl] = {
   operating_system:   'nexus',
   sys_def_switchport: false,
   manifest_props:     {
-    description:     'default',
     switchport_mode: 'disabled',
     ipv4_acl_in:     'v4_in',
     ipv4_acl_out:    'v4_out',
