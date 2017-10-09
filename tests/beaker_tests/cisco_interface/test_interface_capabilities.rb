@@ -50,6 +50,7 @@ tests[:default] = {
   title_pattern:  intf,
   code:           [0, 2],
   manifest_props: {
+    description:     'Testing default properties',
     switchport_mode: 'disabled',
     # interface_pre_check() will define add'l properties
   },
