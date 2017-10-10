@@ -178,7 +178,7 @@ end
 # Reserved keys
 # tests[id][:log_desc] - the final form of the log description
 #
-def test_harness_common(tests, id, skip_idempotence_check)
+def test_harness_common(tests, id, skip_idempotence_check=false)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:state] = false if tests[id][:state].nil?
   tests[id][:desc] = '' if tests[id][:desc].nil?
