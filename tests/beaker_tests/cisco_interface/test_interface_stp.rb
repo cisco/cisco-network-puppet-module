@@ -49,6 +49,7 @@ tests[:default] = {
   code:           [0, 2],
   manifest_props: {
     description:            'Test default properties',
+    switchport_mode:        'access',
     stp_bpdufilter:         'default',
     stp_bpduguard:          'default',
     stp_cost:               'default',
