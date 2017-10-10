@@ -137,7 +137,7 @@ end
 
 # Full command string for puppet agent
 def puppet_agent_cmd
-  PUPPET_BINPATH + 'agent -t'
+  PUPPET_BINPATH + 'agent -t --trace'
 end
 
 # Auto generation of properties for manifests
