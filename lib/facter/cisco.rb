@@ -28,7 +28,6 @@ Facter.add(:cisco) do
     hash['hardware']['cpu'] = Platform.cpu
     hash['hardware']['memory'] = Platform.memory
     hash['hardware']['board'] = Platform.board
-    hash['hardware']['uptime'] = Platform.uptime
     hash['hardware']['last_reset'] = Platform.last_reset
     hash['hardware']['reset_reason'] = Platform.reset_reason
 
@@ -49,6 +48,7 @@ Facter.add(:cisco) do
     hash['feature_compatible_module_iflist'] = {}
     interface_list = Feature.compatible_interfaces('fabricpath')
     hash['feature_compatible_module_iflist']['fabricpath'] = interface_list
+    hash['hardware']['uptime'] = Platform.uptime
 
     hash
   end
