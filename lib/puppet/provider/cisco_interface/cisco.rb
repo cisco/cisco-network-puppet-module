@@ -361,11 +361,10 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
       @nu = nil
     else
       # Create/Update
-      if @nu.nil?
+      if @nu.nil? || @nu.state_default
         new_interface = true
         @nu = Cisco::Interface.new(@resource[:interface])
       end
-      new_interface = true if @nu.state_default
       properties_set(new_interface)
     end
   end
