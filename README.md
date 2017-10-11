@@ -2063,7 +2063,7 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | `load_interval_counter_2_delay`       | Minimum puppet module version 1.6.0 |
 | `load_interval_counter_3_delay`       | Minimum puppet module version 1.6.0 |
 | `purge_config`                        | Minimum puppet module version 1.7.0 |
-| Ensure absent for ethernet ints       | Minimum puppet module version 1.8.0 |
+| Ensure absent for ethernet interfaces | Minimum puppet module version 1.8.0 |
 
 #### Parameters
 
@@ -2076,8 +2076,7 @@ are 'present' and 'absent'.
 Version `1.8.0` of the module allows physical ethernet interfaces to be managed as ensurable resources.
 
 Notes about `ensure => present` and `ensure => absent` on physical ethernet interfaces:
-* `ensure => present` by itself with no other managed interface properties will result in an action that is not idempotent.
-* Setting all interface properties to default values in the manifest will result in an action that is not idempotent.
+* `ensure => present` Will put the interface into a non-default state by setting `description` to `Managed by Puppet`.
 * `ensure => absent` will put the interface into a default state.
 * Physical interfaces will be displayed as `ensure => absent` by the `puppet resource` command when they are in a default state.
 
