@@ -358,6 +358,10 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
   end
 
   def flush
+    if @resource['name'][/nve/]
+      msg = 'Use the cisco_vxlan_vtep type to manage nve interfaces'
+      fail msg
+    end
     if @property_flush[:ensure] == :absent
       @nu.destroy
       @nu = nil
