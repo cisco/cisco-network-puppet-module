@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - `cisco_interface` Refactored to allow physical ethernet interfaces to be managed as ensurable resources.
   - `ensure => absent` for physical interfaces will put the interface into a default state.
+  - `ensure => absent` for logical interfaces will cause them to be destroyed.
 
 ### Removed
 
