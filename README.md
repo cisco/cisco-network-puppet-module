@@ -2076,7 +2076,7 @@ are 'present' and 'absent'.
 Version `1.8.0` of the module allows physical ethernet interfaces to be managed as ensurable resources.
 
 Notes about `ensure => present` and `ensure => absent` on physical ethernet interfaces:
-* `ensure => present` Will put the interface into a non-default state by setting `description` to `Managed by Puppet`.
+* `ensure => present` along with non-default property values will put the interface into a non-default state.
 * `ensure => absent` will put the interface into a default state.
 * Physical interfaces will be displayed as `ensure => absent` by the `puppet resource` command when they are in a default state.
 
