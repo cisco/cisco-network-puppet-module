@@ -36,7 +36,7 @@ tests = {
 # Test hash test cases
 tests[:default] = {
   desc:           '1.1 Default Properties',
-  code:           [0],
+  code:           [0, 2],
   title_pattern:  'default',
   manifest_props: {
     aaa_user_cache_timeout: 'default',
