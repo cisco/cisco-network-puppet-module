@@ -1062,6 +1062,8 @@ Manages configuration of a BGP instance.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| N9k-f    | 7.3(0)F3(2)        | 1.8.0                  |
+
 
 #### <a name="cisco_bgp-caveats">Caveats</a>
 
@@ -1069,10 +1071,8 @@ Manages configuration of a BGP instance.
 |:--------|:-------------|
 | `disable_policy_batching_ipv4` | Not supported on N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
 | `disable_policy_batching_ipv6` | Not supported on N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
-| `event_history_errors        ` | supported on N3|9k on 7.0(3)I5(1) and later images |
-| `event_history_events        ` | default value is 'large' for N3|9k on 7.0(3)I5(1) and later images |
-| `event_history_objstore      ` | supported on N3|9k on 7.0(3)I5(1) and later images |
-| `event_history_periodic      ` | default value is 'false' for N3|9k on 7.0(3)I5(1) and later images |
+| `event_history_errors        ` | Supported in OS Version 8.0.1 and later on N7k <br> Supported in OS Version 7.0(3)I5(1) and later on N3|9k |
+| `event_history_objstore      ` | Supported in OS Version 8.0.1 and later on N7k <br> Supported in OS Version 7.0(3)I5(1) and later on N3|9k |
 | `neighbor_down_fib_accelerate` | Not supported on N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
 | `reconnect_interval`           | Not supported on N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
 | `suppress_fib_pending`         | Idempotence supported only on 7.0(3)I5(1) and later images N3|9k |
@@ -1133,22 +1133,22 @@ Enable/Disable the batching evaluation of prefix advertisements to all peers wit
 Enable/Disable enforces the neighbor autonomous system to be the first AS number listed in the AS path attribute for eBGP. Valid values are 'true', 'false', and 'default'. On NX-OS, this property is only supported in the global BGP context.
 
 ##### `event_history_cli`
-Enable/Disable/specify size of cli event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
+Enable/Disable/specify size of cli event history buffer. Valid values are false', 'size_small', 'size_medium', 'size_large', 'size_disable'. Size can also be specified in bytes. Please Note: 'default' and 'true' values are deprecated in 1.8.0 versions and idempotency is not guranteed for this property due to platform differences.
 
 ##### `event_history_detail`
-Enable/Disable/specify size of detail event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
+Enable/Disable/specify size of detail event history buffer. Valid values are 'false', 'size_small', 'size_medium', 'size_large', 'size_disable'. Size can also be specified in bytes. Please Note: 'default' and 'true' values are deprecated in 1.8.0 versions and idempotency is not guranteed for this property due to platform differences.
 
 ##### `event_history_errors`
-Enable/Disable/specify size of error history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
+Enable/Disable/specify size of error history buffer. Valid values are 'false', 'size_small', 'size_medium', 'size_large', 'size_disable'. Size can also be specified in bytes. Please Note: 'default' and 'true' values are deprecated in 1.8.0 versions and idempotency is not guranteed for this property due to platform differences.
 
 ##### `event_history_events`
-Enable/Disable/specify size of event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
+Enable/Disable/specify size of event history buffer. Valid values are 'false', 'size_small', 'size_medium', 'size_large', 'size_disable'. Size can also be specified in bytes. Please Note: 'default' and 'true' values are deprecated in 1.8.0 versions and idempotency is not guranteed for this property due to platform differences.
 
 ##### `event_history_objstore`
-Enable/Disable/specify size of objstore history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
+Enable/Disable/specify size of objstore history buffer. Valid values are 'false', 'size_small', 'size_medium', 'size_large', 'size_disable'. Size can also be specified in bytes. Please Note: 'default' and 'true' values are deprecated in 1.8.0 versions and idempotency is not guranteed for this property due to platform differences.
 
 ##### `event_history_periodic`
-Enable/Disable/specify size of periodic event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
+Enable/Disable/specify size of periodic event history buffer. Valid values are 'false', 'size_small', 'size_medium', 'size_large', 'size_disable'. Size can also be specified in bytes. Please Note: 'default' and 'true' values are deprecated in 1.8.0 versions and idempotency is not guranteed for this property due to platform differences.
 
 ##### `fast_external_fallover`
 Enable/Disable immediately reset the session if the link to a directly connected BGP peer goes down. Valid values are 'true', 'false', and 'default'. On NX-OS, this property is only supported in the global BGP context.
