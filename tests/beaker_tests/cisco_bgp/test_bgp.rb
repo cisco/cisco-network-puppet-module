@@ -47,12 +47,6 @@ tests[:default] = {
     bestpath_med_non_deterministic:         'default',
     disable_policy_batching:                'default',
     enforce_first_as:                       'default',
-    event_history_cli:                      'default',
-    event_history_detail:                   'default',
-    event_history_errors:                   'default',
-    event_history_events:                   'default',
-    event_history_objstore:                 'default',
-    event_history_periodic:                 'default',
     fast_external_fallover:                 'default',
     flush_routes:                           'default',
     graceful_restart:                       'default',
@@ -81,12 +75,6 @@ tests[:default] = {
     'bestpath_med_non_deterministic'         => 'false',
     'disable_policy_batching'                => 'false',
     'enforce_first_as'                       => 'true',
-    'event_history_cli'                      => 'size_small',
-    'event_history_detail'                   => 'false',
-    'event_history_errors'                   => 'size_medium',
-    'event_history_events'                   => 'size_large',
-    'event_history_objstore'                 => 'false',
-    'event_history_periodic'                 => 'false',
     'fast_external_fallover'                 => 'true',
     'flush_routes'                           => 'false',
     'graceful_restart'                       => 'true',
@@ -107,17 +95,6 @@ tests[:default] = {
   },
 }
 
-# older_version default value
-resource = {
-  legacy: {
-    'event_history_events'   => 'size_small',
-    'event_history_periodic' => 'size_small',
-  }
-}
-
-tests[:default][:resource].merge!(resource[:legacy]) if
-  nexus_image[/I2|I3|I4/] || platform[/n5|n6|n7|n9k-f/]
-
 # Non-default Tests. NOTE: [:resource] = [:manifest_props] for all non-default
 tests[:non_default] = {
   desc:           '2.1 Non Defaults',
@@ -135,11 +112,11 @@ tests[:non_default] = {
     confederation_peers:                    ['200.1', '23.4', '55', '88'],
     disable_policy_batching:                'true',
     enforce_first_as:                       'false',
-    event_history_cli:                      'size_medium',
+    event_history_cli:                      'size_large',
     event_history_detail:                   'size_large',
-    event_history_errors:                   'size_small',
+    event_history_errors:                   'size_large',
     event_history_events:                   'size_medium',
-    event_history_objstore:                 'size_large',
+    event_history_objstore:                 'size_medium',
     event_history_periodic:                 '100000',
     fast_external_fallover:                 'false',
     flush_routes:                           'true',
@@ -187,6 +164,8 @@ def unsupp_prop_xr(tests, id)
     :event_history_cli <<
     :event_history_detail <<
     :event_history_events <<
+    :event_history_errors <<
+    :event_history_objstore <<
     :event_history_periodic <<
     :flush_routes <<
     :graceful_restart_helper <<
@@ -228,7 +207,7 @@ def unsupported_properties(tests, id)
 
     unprops <<
       :event_history_errors <<
-      :event_history_objstore if platform[/n5|n6|n7|n9k-f/]
+      :event_history_objstore if platform[/n5|n6/]
 
     if vrf != 'default'
       # NX-OS does not support these properties under a non-default vrf
@@ -265,9 +244,14 @@ def version_unsupported_properties(_tests, _id)
     unprops[:disable_policy_batching_ipv6] = '8.1.1'
     unprops[:neighbor_down_fib_accelerate] = '8.1.1'
     unprops[:reconnect_interval] = '8.1.1'
+    unprops[:event_history_errors] = '8.0'
+    unprops[:event_history_objstore] = '8.0'
   elsif platform[/n3k|n9k$/]
     unprops[:event_history_errors] = '7.0.3.I5.1'
     unprops[:event_history_objstore] = '7.0.3.I5.1'
+  elsif platform[/n9k-f/]
+    unprops[:event_history_errors] = '7.0.3.F3.2'
+    unprops[:event_history_objstore] = '7.0.3.F3.2'
   end
   unprops
 end
