@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2016 Cisco and/or its affiliates.
+# Copyright (c) 2016-2017 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -49,9 +49,10 @@ intf = find_interface(tests)
 tests[:default] = {
   desc:               '1.1 Default Properties',
   title_pattern:      intf,
-  code:               [0],
+  code:               [0, 2],
   sys_def_switchport: true,
   manifest_props:     {
+    description:                         'Test default private vlan properties',
     switchport_pvlan_host:               'default',
     switchport_pvlan_host_association:   'default',
     switchport_pvlan_mapping:            'default',
@@ -64,6 +65,7 @@ tests[:default] = {
     switchport_pvlan_trunk_secondary:    'default',
   },
   resource:           {
+    description:                         'Test default private vlan properties',
     switchport_pvlan_host:               'false',
     # switchport_pvlan_host_association:  nil,
     # switchport_pvlan_mapping:           nil,

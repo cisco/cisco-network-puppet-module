@@ -2063,6 +2063,7 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | `load_interval_counter_2_delay`       | Minimum puppet module version 1.6.0 |
 | `load_interval_counter_3_delay`       | Minimum puppet module version 1.6.0 |
 | `purge_config`                        | Minimum puppet module version 1.7.0 |
+| Ensure absent for ethernet interfaces | Minimum puppet module version 1.8.0 |
 
 #### Parameters
 
@@ -2071,6 +2072,13 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 ###### `ensure`
 Determine whether the interface config should be present or not. Valid values
 are 'present' and 'absent'.
+
+Version `1.8.0` of the module allows physical ethernet interfaces to be managed as ensurable resources.
+
+Notes about `ensure => present` and `ensure => absent` on physical ethernet interfaces:
+* `ensure => present` along with non-default property values will put the interface into a non-default state.
+* `ensure => absent` will put the interface into a default state.
+* Physical interfaces will be displayed as `ensure => absent` by the `puppet resource` command when they are in a default state.
 
 ###### `interface`
 Name of the interface on the network element. Valid value is a string.
@@ -5536,7 +5544,7 @@ Yum       | <https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified><br><http
 ## License
 
 ~~~text
-Copyright (c) 2014-2016 Cisco and/or its affiliates.
+Copyright (c) 2014-2017 Cisco and/or its affiliates.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

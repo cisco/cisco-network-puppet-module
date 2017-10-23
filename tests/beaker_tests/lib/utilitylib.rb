@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2014-2016 Cisco and/or its affiliates.
+# Copyright (c) 2014-2017 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -137,7 +137,7 @@ end
 
 # Full command string for puppet agent
 def puppet_agent_cmd
-  PUPPET_BINPATH + 'agent -t'
+  PUPPET_BINPATH + 'agent -t --trace'
 end
 
 # Auto generation of properties for manifests
@@ -178,7 +178,7 @@ end
 # Reserved keys
 # tests[id][:log_desc] - the final form of the log description
 #
-def test_harness_common(tests, id)
+def test_harness_common(tests, id, skip_idempotence_check=false)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:state] = false if tests[id][:state].nil?
   tests[id][:desc] = '' if tests[id][:desc].nil?
@@ -187,7 +187,7 @@ def test_harness_common(tests, id)
 
   test_manifest(tests, id)
   test_resource(tests, id)
-  test_idempotence(tests, id)
+  test_idempotence(tests, id) unless skip_idempotence_check
   tests[id].delete(:log_desc)
 end
 
@@ -745,7 +745,7 @@ end
 # - Creates manifests
 # - Creates puppet resource title strings
 # - Cleans resource
-def test_harness_run(tests, id)
+def test_harness_run(tests, id, skip_idempotence_check=false)
   return unless platform_supports_test(tests, id)
   logger.info("\n  * Process test_harness_run")
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
@@ -763,7 +763,7 @@ def test_harness_run(tests, id)
   # Check for additional pre-requisites
   test_harness_dependencies(tests, id)
 
-  test_harness_common(tests, id)
+  test_harness_common(tests, id, skip_idempotence_check)
   tests[id][:ensure] = nil
 end
 
