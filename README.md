@@ -394,7 +394,7 @@ Platform | Description | Environments
 :--|:--|:--
 **N9k**   | Support includes all N9xxx models  | bash-shell, guestshell
 **N3k**   | Support includes N30xx and N31xx models only.<br>The N35xx model is not supported.   | bash-shell, guestshell
-**N3k-F** | Support includes all N95xx models running os version 7.0(3)Fx(x) | bash-shell, guestshell
+**N3k-F** | Support includes all N3xxx models running os version 7.0(3)Fx(x) | bash-shell, guestshell
 **N5k**   | Support includes N56xx models only.<br>The N50xx and N55xx models are not supported at this time. | Open Agent Container (OAC)
 **N6k**   | Support includes all N6xxx models  | Open Agent Container (OAC)
 **N7k**   | Support includes all N7xxx models  | Open Agent Container (OAC)
