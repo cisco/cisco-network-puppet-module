@@ -120,7 +120,7 @@ tests[:non_default][:manifest_props].merge!(manifest[:n56k]) if platform[/n(5|6)
 
 def unsupported_properties(_tests, _id)
   unprops = []
-  if platform[/n3k/]
+  if platform[/n3k$/]
     unprops <<
       :ipv4_src_addr_hsrp
   elsif platform[/n(5|6)k/]
@@ -133,7 +133,7 @@ def unsupported_properties(_tests, _id)
     unprops <<
       :ipv4_sub_option_circuit_id_custom <<
       :ipv4_sub_option_circuit_id_string
-  elsif platform[/n9k-f/]
+  elsif platform[/n(3|9)k-f/]
     unprops <<
       :ipv4_src_addr_hsrp <<
       :ipv4_sub_option_circuit_id_custom <<

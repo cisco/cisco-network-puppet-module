@@ -75,7 +75,7 @@ tests[:non_default] = {
 
 def unsupported_properties(_tests, _id)
   unprops = []
-  if platform[/n3k/]
+  if platform[/n3k$/]
     unprops <<
       :anycast_gateway_mac <<
       :dup_host_ip_addr_detection_host_moves <<
@@ -86,7 +86,7 @@ end
 
 def version_unsupported_properties(_tests, _id)
   unprops = {}
-  if platform[/n3k/]
+  if platform[/n3k$/]
     unprops[:dup_host_mac_detection_host_moves] = '7.0.3.I6.1'
     unprops[:dup_host_mac_detection_timeout] = '7.0.3.I6.1'
   end

@@ -90,7 +90,7 @@ resource = {
   }
 }
 
-tests[:default][:resource].merge!(resource[:n3k]) if platform[/n3k/]
+tests[:default][:resource].merge!(resource[:n3k]) if platform[/n3k$/]
 
 # Non-default Tests. NOTE: [:resource] = [:manifest_props] for all non-default
 

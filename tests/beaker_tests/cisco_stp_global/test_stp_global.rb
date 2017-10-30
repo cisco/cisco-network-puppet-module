@@ -222,14 +222,14 @@ end
 
 def unsupported_properties(_tests, _id)
   unprops = []
-  unprops << :domain if platform[/n9k-f/]
+  unprops << :domain if platform[/n(3|9)k-f/]
   unprops << :fcoe if platform[/n(3|5|6|7)k/]
   unprops
 end
 
 def version_unsupported_properties(_tests, _id)
   unprops = {}
-  unprops[:domain] = '7.0.3.I6.1' if platform[/n3k/]
+  unprops[:domain] = '7.0.3.I6.1' if platform[/n3k$/]
   unprops[:domain] = '7.0.3.I6.1' if platform[/n9k$/]
   unprops
 end

@@ -246,10 +246,10 @@ def version_unsupported_properties(_tests, _id)
     unprops[:reconnect_interval] = '8.1.1'
     unprops[:event_history_errors] = '8.0'
     unprops[:event_history_objstore] = '8.0'
-  elsif platform[/n3k|n9k$/]
+  elsif platform[/n3k$|n9k$/]
     unprops[:event_history_errors] = '7.0.3.I5.1'
     unprops[:event_history_objstore] = '7.0.3.I5.1'
-  elsif platform[/n9k-f/]
+  elsif platform[/n(3|9)k-f/]
     unprops[:event_history_errors] = '7.0.3.F3.2'
     unprops[:event_history_objstore] = '7.0.3.F3.2'
   end

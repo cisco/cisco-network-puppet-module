@@ -33,7 +33,7 @@ module Puppet
         case pi
         when /Nexus\s?3\d\d\d/
           if function_platform_fretta([])
-            cisco_hardware = 'n9k-f'
+            cisco_hardware = 'n3k-f'
           else
             cisco_hardware = 'n3k'
           end

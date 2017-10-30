@@ -61,7 +61,7 @@ tests[:non_default] = {
 
 def unsupported_properties(_tests, _id)
   unprops = []
-  unprops << :bfd_all_intf if platform[/n3k/]
+  unprops << :bfd_all_intf if platform[/n3k$/]
   unprops
 end
 
