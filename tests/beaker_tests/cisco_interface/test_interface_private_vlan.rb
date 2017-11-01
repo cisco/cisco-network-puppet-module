@@ -163,7 +163,7 @@ tests[:svi_mapping] = {
 # This method overrides utilitylib.rb:unsupported_properties()
 def unsupported_properties(_tests, _id)
   unprops = []
-  if platform[/n3k/]
+  if platform[/n3k$/]
     unprops <<
       :switchport_pvlan_mapping_trunk <<
       :switchport_pvlan_trunk_association <<

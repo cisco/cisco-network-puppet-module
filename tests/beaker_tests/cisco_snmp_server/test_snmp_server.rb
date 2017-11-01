@@ -31,14 +31,14 @@ tests = {
   resource_name: 'cisco_snmp_server',
 }
 
-# Add an anchor to the platform regexp below so that
-# it only matches non-fretta n9k platforms.
-@def_pkt_size = platform[/n(3|9)k$/] ? '1500' : '0'
+# for fretta running F3.2 or later, this is fixed
+# it will fail if older versions are run
+@def_pkt_size = platform[/n(3|9)k/] ? '1500' : '0'
 
 # Test hash test cases
 tests[:default] = {
   desc:           '1.1 Default Properties',
-  code:           [0],
+  code:           [0, 2],
   title_pattern:  'default',
   manifest_props: {
     aaa_user_cache_timeout: 'default',

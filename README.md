@@ -394,6 +394,7 @@ Platform | Description | Environments
 :--|:--|:--
 **N9k**   | Support includes all N9xxx models  | bash-shell, guestshell
 **N3k**   | Support includes N30xx and N31xx models only.<br>The N35xx model is not supported.   | bash-shell, guestshell
+**N3k-F** | Support includes all N3xxx models running os version 7.0(3)Fx(x) | bash-shell, guestshell
 **N5k**   | Support includes N56xx models only.<br>The N50xx and N55xx models are not supported at this time. | Open Agent Container (OAC)
 **N6k**   | Support includes all N6xxx models  | Open Agent Container (OAC)
 **N7k**   | Support includes all N7xxx models  | Open Agent Container (OAC)
@@ -410,96 +411,96 @@ Symbol | Meaning | Description
 
 **Support Matrix**
 
-| ✅ = Supported <br> ➖ = Not Applicable | N9k | N3k | N5k | N6k | N7k | N9k-F | Caveats |
-|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| [cisco_aaa_<br>authentication_login](#type-cisco_aaa_authentication_login)                 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_aaa_<br>authorization_login_cfg_svc](#type-cisco_aaa_authorization_login_cfg_svc)   | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_aaa_<br>authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs)     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
-| [cisco_acl](#type-cisco_acl)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
-| [cisco_ace](#type-cisco_ace)                               | ✅  | ✅  | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_ace-caveats) |
-| [cisco_bfd_global](#type-cisco_bfd_global)                 | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_bfd_global-caveats) |
-| [cisco_command_config](#type-cisco_command_config)         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
-| [cisco_bgp](#type-cisco_bgp)                               | ✅  | ✅  | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_bgp-caveats) |
-| [cisco_bgp_af](#type-cisco_bgp_af)                         | ✅* | ✅* | ✅  | ✅* | ✅  | ✅ | \*[caveats](#cisco_bgp_af-caveats) |
-| [cisco_bgp_af_aa](#type-cisco_bgp_af_aa)                   | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
-| [cisco_bgp_neighbor](#type-cisco_bgp_neighbor)             | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
-| [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af)       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
-| [cisco_bridge_domain](#type-cisco_bridge_domain)           | ➖ | ➖ | ➖ | ➖ | ✅ | ➖ |
-| [cisco_bridge_domain_vni](#type-cisco_bridge_domain_vni)   | ➖ | ➖ | ➖ | ➖ | ✅ | ➖ |
-| [cisco_dhcp_relay_global](#type-cisco_dhcp_relay_global)   | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_dhcp_relay_global-caveats)
-| [cisco_encapsulation](#type-cisco_encapsulation)           | ➖ | ➖ | ➖ | ➖ | ✅ | ➖ |
-| [cisco_evpn_vni](#type-cisco_evpn_vni)                     | ✅ | ➖ | ✅ | ✅ | ✅ | ✅ | \*[caveats](#cisco_evpn_vni-caveats) |
-| [cisco_fabricpath_global](#type-cisco_fabricpath_global)     | ➖ | ➖ | ✅ | ✅ | ✅* | ➖ | \*[caveats](#cisco_fabricpath_global-caveats) |
-| [cisco_fabricpath_topology](#type-cisco_fabricpath_topology) | ➖ | ➖ | ✅ | ✅ | ✅  | ➖ |
-| [cisco_hsrp_global](#type-cisco_hsrp_global)                         | ✅  | ✅* | ✅  | ✅  | ✅  | ✅  | \*[caveats](#cisco_hsrp_global-caveats) |
-| [cisco_interface](#type-cisco_interface)                             | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_interface-caveats) |
-| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | \*[caveats](#cisco_interface_channel_group-caveats) |
-| [cisco_interface_hsrp_group](#type-cisco_interface_hsrp_group)       | ✅  | ✅ | ➖ | ➖ | ✅* | ✅ | \*[caveats](#cisco_interface_hsrp_group-caveats) |
-| [cisco_interface_ospf](#type-cisco_interface_ospf)                   | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
-| [cisco_interface_portchannel](#type-cisco_interface_portchannel)     | ✅* | ✅* | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_interface_portchannel-caveats) |
-| [cisco_interface_service_vni](#type-cisco_interface_service_vni) | ➖ | ➖ | ➖ | ➖ | ✅ | ➖ |
-| [cisco_itd_device_group](#type-cisco_itd_device_group)           | ✅ | ➖ | ➖ | ➖ | ✅ | ➖ |
-| [cisco_itd_device_group_node](#type-cisco_itd_device_group_node) | ✅ | ➖ | ➖ | ➖ | ✅ | ➖ |
-| [cisco_itd_service](#type-cisco_itd_service)                     | ✅ | ➖ | ➖ | ➖ | ✅ | ➖ | \*[caveats](#cisco_itd_service-caveats) |
-| [cisco_object_group](#type-cisco_object_group)             | ✅  | ✅  | ➖ | ➖  | ✅ | ✅ |
-| [cisco_object_group_entry](#type-cisco_object_group_entry) | ✅  | ✅  | ➖ | ➖  | ✅ | ✅ |
-| [cisco_ospf](#type-cisco_ospf)                             | ✅  | ✅  | ✅ | ✅  | ✅ | ✅ |
-| [cisco_ospf_vrf](#type-cisco_ospf_vrf)                     | ✅  | ✅  | ✅ | ✅  | ✅ | ✅ |
-| ✅ = Supported <br> ➖ = Not Applicable | N9k | N3k | N5k | N6k | N7k | N9k-F | Caveats |
-| [cisco_overlay_global](#type-cisco_overlay_global)         | ✅  | ✅* | ✅  | ✅  | ✅  | ✅ | \*[caveats](#cisco_overlay_global-caveats) |
-| [cisco_pim](#type-cisco_pim)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | \*[caveats](#cisco_pim-caveats) |
-| [cisco_pim_rp_address](#type-cisco_pim_rp_address)         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
-| [cisco_pim_grouplist](#type-cisco_pim_grouplist)           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
-| [cisco_portchannel_global](#type-cisco_portchannel_global) | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_portchannel_global-caveats) |
-| [cisco_route_map](#type-cisco_route_map)                   | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_route_map-caveats) |
-| [cisco_stp_global](#type-cisco_stp_global)                 | ✅* | ✅* | ✅* | ✅* | ✅ | ✅ | \*[caveats](#cisco_stp_global-caveats) |
-| [cisco_snmp_community](#type-cisco_snmp_community)         | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
-| [cisco_snmp_group](#type-cisco_snmp_group)                 | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
-| [cisco_snmp_server](#type-cisco_snmp_server)               | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
-| [cisco_snmp_user](#type-cisco_snmp_user)                   | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
-| [cisco_tacacs_server](#type-cisco_tacacs_server)           | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
-| [cisco_tacacs_server_host](#type-cisco_tacacs_server_host) | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
-| [cisco_upgrade](type-cisco_upgrade)                        | ✅* | ✅* | ➖ | ➖ | ➖ | ✅* | \*[caveats](#cisco_upgrade-caveats) |
-| [cisco_vdc](#type-cisco_vdc)                               | ➖ | ➖ | ➖ | ➖ | ✅ | ➖ |
-| [cisco_vlan](#type-cisco_vlan)                             | ✅* | ✅* | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_vlan-caveats) |
+| ✅ = Supported <br> ➖ = Not Applicable | N9k | N3k | N5k | N6k | N7k | N9k-F | N3k-F | Caveats |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| [cisco_aaa_<br>authentication_login](#type-cisco_aaa_authentication_login)                 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_aaa_<br>authorization_login_cfg_svc](#type-cisco_aaa_authorization_login_cfg_svc)   | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_aaa_<br>authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs)     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_acl](#type-cisco_acl)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_ace](#type-cisco_ace)                               | ✅  | ✅  | ✅* | ✅* | ✅* | ✅ | ✅ | \*[caveats](#cisco_ace-caveats) |
+| [cisco_bfd_global](#type-cisco_bfd_global)                 | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_bfd_global-caveats) |
+| [cisco_command_config](#type-cisco_command_config)         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_bgp](#type-cisco_bgp)                               | ✅  | ✅  | ✅* | ✅* | ✅* | ✅ | ✅ | \*[caveats](#cisco_bgp-caveats) |
+| [cisco_bgp_af](#type-cisco_bgp_af)                         | ✅* | ✅* | ✅  | ✅* | ✅  | ✅ | ✅ | \*[caveats](#cisco_bgp_af-caveats) |
+| [cisco_bgp_af_aa](#type-cisco_bgp_af_aa)                   | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_bgp_neighbor](#type-cisco_bgp_neighbor)             | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_bgp_neighbor_af](#type-cisco_bgp_neighbor_af)       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_bridge_domain](#type-cisco_bridge_domain)           | ➖ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ |
+| [cisco_bridge_domain_vni](#type-cisco_bridge_domain_vni)   | ➖ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ |
+| [cisco_dhcp_relay_global](#type-cisco_dhcp_relay_global)   | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_dhcp_relay_global-caveats)
+| [cisco_encapsulation](#type-cisco_encapsulation)           | ➖ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ |
+| [cisco_evpn_vni](#type-cisco_evpn_vni)                     | ✅ | ➖ | ✅ | ✅ | ✅ | ✅ | ✅ | \*[caveats](#cisco_evpn_vni-caveats) |
+| [cisco_fabricpath_global](#type-cisco_fabricpath_global)     | ➖ | ➖ | ✅ | ✅ | ✅* | ➖ | ➖ | \*[caveats](#cisco_fabricpath_global-caveats) |
+| [cisco_fabricpath_topology](#type-cisco_fabricpath_topology) | ➖ | ➖ | ✅ | ✅ | ✅  | ➖ | ➖ |
+| [cisco_hsrp_global](#type-cisco_hsrp_global)                         | ✅  | ✅* | ✅  | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_hsrp_global-caveats) |
+| [cisco_interface](#type-cisco_interface)                             | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_interface-caveats) |
+| [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_interface_channel_group-caveats) |
+| [cisco_interface_hsrp_group](#type-cisco_interface_hsrp_group)       | ✅  | ✅ | ➖ | ➖ | ✅* | ✅ | ✅ | \*[caveats](#cisco_interface_hsrp_group-caveats) |
+| [cisco_interface_ospf](#type-cisco_interface_ospf)                   | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_interface_portchannel](#type-cisco_interface_portchannel)     | ✅* | ✅* | ✅* | ✅* | ✅* | ✅ | ✅ | \*[caveats](#cisco_interface_portchannel-caveats) |
+| [cisco_interface_service_vni](#type-cisco_interface_service_vni) | ➖ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ |
+| [cisco_itd_device_group](#type-cisco_itd_device_group)           | ✅ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ |
+| [cisco_itd_device_group_node](#type-cisco_itd_device_group_node) | ✅ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ |
+| [cisco_itd_service](#type-cisco_itd_service)                     | ✅ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ | \*[caveats](#cisco_itd_service-caveats) |
+| [cisco_object_group](#type-cisco_object_group)             | ✅  | ✅  | ➖ | ➖  | ✅ | ✅ | ✅ |
+| [cisco_object_group_entry](#type-cisco_object_group_entry) | ✅  | ✅  | ➖ | ➖  | ✅ | ✅ | ✅ |
+| [cisco_ospf](#type-cisco_ospf)                             | ✅  | ✅  | ✅ | ✅  | ✅ | ✅ | ✅ |
+| [cisco_ospf_vrf](#type-cisco_ospf_vrf)                     | ✅  | ✅  | ✅ | ✅  | ✅ | ✅ | ✅ |
+| ✅ = Supported <br> ➖ = Not Applicable | N9k | N3k | N5k | N6k | N7k | N9k-F | N3k-F | Caveats |
+| [cisco_overlay_global](#type-cisco_overlay_global)         | ✅  | ✅* | ✅  | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_overlay_global-caveats) |
+| [cisco_pim](#type-cisco_pim)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_pim-caveats) |
+| [cisco_pim_rp_address](#type-cisco_pim_rp_address)         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_pim_grouplist](#type-cisco_pim_grouplist)           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_portchannel_global](#type-cisco_portchannel_global) | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_portchannel_global-caveats) |
+| [cisco_route_map](#type-cisco_route_map)                   | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_route_map-caveats) |
+| [cisco_stp_global](#type-cisco_stp_global)                 | ✅* | ✅* | ✅* | ✅* | ✅ | ✅ | ✅ | \*[caveats](#cisco_stp_global-caveats) |
+| [cisco_snmp_community](#type-cisco_snmp_community)         | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ | ✅ |
+| [cisco_snmp_group](#type-cisco_snmp_group)                 | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ | ✅ |
+| [cisco_snmp_server](#type-cisco_snmp_server)               | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ | ✅ |
+| [cisco_snmp_user](#type-cisco_snmp_user)                   | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ | ✅ |
+| [cisco_tacacs_server](#type-cisco_tacacs_server)           | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ | ✅ |
+| [cisco_tacacs_server_host](#type-cisco_tacacs_server_host) | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ | ✅ |
+| [cisco_upgrade](type-cisco_upgrade)                        | ✅* | ✅* | ➖ | ➖ | ➖ | ✅* | ✅* | \*[caveats](#cisco_upgrade-caveats) |
+| [cisco_vdc](#type-cisco_vdc)                               | ➖ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ | ➖ |
+| [cisco_vlan](#type-cisco_vlan)                             | ✅* | ✅* | ✅  | ✅  | ✅ | ✅ | ✅ | \*[caveats](#cisco_vlan-caveats) |
 | [cisco_vpc_domain](#type-cisco_vpc_domain)                 | ✅* | ✅* | ✅* | ✅* | ✅* | ➖ | \*[caveats](#cisco_vpc_domain-caveats) |
-| [cisco_vrf](#type-cisco_vrf)                               | ✅  | ✅* | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_vrf-caveats) |
-| [cisco_vrf_af](#type-cisco_vrf_af)                         | ✅  | ✅* | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_vrf_af-caveats) |
-| [cisco_vtp](#type-cisco_vtp)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ |
-| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep)                 | ✅  | ➖ | ✅  | ✅  | ✅* | ✅ | \*[caveats](#cisco_vxlan_vtep-caveats) |
-| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni)         | ✅  | ➖ | ✅  | ✅  | ✅  | ✅ | \*[caveats](#cisco_vxlan_vtep_vni-caveats) |
+| [cisco_vrf](#type-cisco_vrf)                               | ✅  | ✅* | ✅  | ✅  | ✅ | ✅ | ✅ | \*[caveats](#cisco_vrf-caveats) |
+| [cisco_vrf_af](#type-cisco_vrf_af)                         | ✅  | ✅* | ✅* | ✅* | ✅* | ✅ | ✅ | \*[caveats](#cisco_vrf_af-caveats) |
+| [cisco_vtp](#type-cisco_vtp)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_vxlan_vtep](#type-cisco_vxlan_vtep)                 | ✅  | ➖ | ✅  | ✅  | ✅* | ✅ | ✅ | \*[caveats](#cisco_vxlan_vtep-caveats) |
+| [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni)         | ✅  | ➖ | ✅  | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_vxlan_vtep_vni-caveats) |
 
 ##### NetDev Providers
 
-| ✅ = Supported <br> ➖ = Not Applicable | N9k | N3k | N5k | N6k | N7k | N9k-F | Caveats |
-|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| [domain_name](#type-domain_name)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [name_server](#type-name_server)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [network_dns](#type-network_dns)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [network_interface](#type-network_interface)               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [network_snmp](#type-network_snmp)                         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [network_trunk](#type-network_trunk)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [network_vlan](#type-network_vlan)                         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [ntp_auth_key](#type-ntp_auth_key)                         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [ntp_config](#type-ntp_config)                             | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | \*[caveats](#ntp_config-caveats)
-| [ntp_server](#type-ntp_server)                             | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | \*[caveats](#ntp_server-caveats)
-| [port_channel](#type-port_channel)                         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [radius](#type-radius)                                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [radius_global](#type-radius_global)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [radius_server_group](#type-tacacs_server_group)           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [radius_server](#type-radius_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [search_domain](#type-search_domain)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [snmp_community](#type-snmp_community)                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [snmp_notification](#type-snmp_notification)               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [snmp_notification_receiver](#type-snmp_notification_receiver) | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [snmp_user](#type-snmp_user)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [syslog_server](#type-syslog_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [syslog_setting](#type-syslog_setting)                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [tacacs](#type-tacacs)                                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [tacacs_global](#type-tacacs_global)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [tacacs_server](#type-tacacs_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [tacacs_server_group](#type-tacacs_server_group)           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| ✅ = Supported <br> ➖ = Not Applicable | N9k | N3k | N5k | N6k | N7k | N9k-F | N3k-F | Caveats |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| [domain_name](#type-domain_name)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [name_server](#type-name_server)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_dns](#type-network_dns)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_interface](#type-network_interface)               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_snmp](#type-network_snmp)                         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_trunk](#type-network_trunk)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_vlan](#type-network_vlan)                         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [ntp_auth_key](#type-ntp_auth_key)                         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [ntp_config](#type-ntp_config)                             | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | \*[caveats](#ntp_config-caveats)
+| [ntp_server](#type-ntp_server)                             | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | \*[caveats](#ntp_server-caveats)
+| [port_channel](#type-port_channel)                         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [radius](#type-radius)                                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [radius_global](#type-radius_global)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [radius_server_group](#type-tacacs_server_group)           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [radius_server](#type-radius_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [search_domain](#type-search_domain)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [snmp_community](#type-snmp_community)                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [snmp_notification](#type-snmp_notification)               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [snmp_notification_receiver](#type-snmp_notification_receiver) | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [snmp_user](#type-snmp_user)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [syslog_server](#type-syslog_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [syslog_setting](#type-syslog_setting)                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [tacacs](#type-tacacs)                                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [tacacs_global](#type-tacacs_global)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [tacacs_server](#type-tacacs_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [tacacs_server_group](#type-tacacs_server_group)           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 
 --
 ### Cisco Resource Type Details
@@ -519,6 +520,7 @@ Allows execution of configuration commands.
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### Parameters
 
@@ -551,6 +553,7 @@ Manages AAA Authentication Login configuration.
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### Parameters
 
@@ -585,6 +588,7 @@ Manages configuration for Authorization Login Config Service.
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### Parameters
 
@@ -613,6 +617,7 @@ Manages configuration for Authorization Login Exec Service.
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### Parameters
 
@@ -641,6 +646,7 @@ Manages configuration for a TACACS+ server group.
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### Parameters
 
@@ -977,15 +983,16 @@ Manages configuration of a BFD (Bidirectional Forwarding Detection) instance.
 | N6k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.4.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### <a name="cisco_bfd_global-caveats">Caveats</a>
 
 | Property | Caveat Description |
 |:--------|:-------------|
 | `echo_rx_interval`      | Not supported on N5k, N6k        |
-| `fabricpath_interval`   | Not supported on N3k, N9k-F, N9k |
-| `fabricpath_slow_timer` | Not supported on N3k, N9k-F, N9k |
-| `fabricpath_vlan`       | Not supported on N3k, N9k-F, N9k |
+| `fabricpath_interval`   | Not supported on N3k, N3k-F, N9k-F, N9k |
+| `fabricpath_slow_timer` | Not supported on N3k, N3k-F, N9k-F, N9k |
+| `fabricpath_vlan`       | Not supported on N3k, N3k-F, N9k-F, N9k |
 | `interval`              | Supported on N3k, N5k, N6k, N7k <br> Supported in OS Version 7.0(3)F2(1) and later on N9k-F <br> Supported in OS Version 7.0(3)I6(1) and later on N9k |
 | `ipv4_echo_rx_interval` | Not supported on N5k, N6k        |
 | `ipv4_interval`         | Not supported on N5k, N6k        |
@@ -1062,6 +1069,9 @@ Manages configuration of a BGP instance.
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
+| N9k-f    | 7.3(0)F3(2)        | 1.8.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### <a name="cisco_bgp-caveats">Caveats</a>
 
@@ -1069,10 +1079,8 @@ Manages configuration of a BGP instance.
 |:--------|:-------------|
 | `disable_policy_batching_ipv4` | Not supported on N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
 | `disable_policy_batching_ipv6` | Not supported on N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
-| `event_history_errors        ` | supported on N3|9k on 7.0(3)I5(1) and later images |
-| `event_history_events        ` | default value is 'large' for N3|9k on 7.0(3)I5(1) and later images |
-| `event_history_objstore      ` | supported on N3|9k on 7.0(3)I5(1) and later images |
-| `event_history_periodic      ` | default value is 'false' for N3|9k on 7.0(3)I5(1) and later images |
+| `event_history_errors        ` | Supported in OS Version 8.0.1 and later on N7k <br> Supported in OS Version 7.0(3)I5(1) and later on N3|9k |
+| `event_history_objstore      ` | Supported in OS Version 8.0.1 and later on N7k <br> Supported in OS Version 7.0(3)I5(1) and later on N3|9k |
 | `neighbor_down_fib_accelerate` | Not supported on N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
 | `reconnect_interval`           | Not supported on N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
 | `suppress_fib_pending`         | Idempotence supported only on 7.0(3)I5(1) and later images N3|9k |
@@ -1133,22 +1141,22 @@ Enable/Disable the batching evaluation of prefix advertisements to all peers wit
 Enable/Disable enforces the neighbor autonomous system to be the first AS number listed in the AS path attribute for eBGP. Valid values are 'true', 'false', and 'default'. On NX-OS, this property is only supported in the global BGP context.
 
 ##### `event_history_cli`
-Enable/Disable/specify size of cli event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
+Enable/Disable/specify size of cli event history buffer. Valid values are false', 'size_small', 'size_medium', 'size_large', 'size_disable'. Size can also be specified in bytes. Please Note: Setting this value to 'default' or 'true' has been deprecated in module version 1.8.0. This property is only used for BGP debugging purposes and idempotency is not guaranteed.
 
 ##### `event_history_detail`
-Enable/Disable/specify size of detail event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
+Enable/Disable/specify size of detail event history buffer. Valid values are 'false', 'size_small', 'size_medium', 'size_large', 'size_disable'. Size can also be specified in bytes. Please Note: Setting this value to 'default' or 'true' has been deprecated in module version 1.8.0. This property is only used for BGP debugging purposes and idempotency is not guaranteed.
 
 ##### `event_history_errors`
-Enable/Disable/specify size of error history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
+Enable/Disable/specify size of error history buffer. Valid values are 'false', 'size_small', 'size_medium', 'size_large', 'size_disable'. Size can also be specified in bytes. Please Note: Setting this value to 'default' or 'true' has been deprecated in module version 1.8.0. This property is only used for BGP debugging purposes and idempotency is not guaranteed.
 
 ##### `event_history_events`
-Enable/Disable/specify size of event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
+Enable/Disable/specify size of event history buffer. Valid values are 'false', 'size_small', 'size_medium', 'size_large', 'size_disable'. Size can also be specified in bytes. Please Note: Setting this value to 'default' or 'true' has been deprecated in module version 1.8.0. This property is only used for BGP debugging purposes and idempotency is not guaranteed.
 
 ##### `event_history_objstore`
-Enable/Disable/specify size of objstore history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
+Enable/Disable/specify size of objstore history buffer. Valid values are 'false', 'size_small', 'size_medium', 'size_large', 'size_disable'. Size can also be specified in bytes. Please Note: Setting this value to 'default' or 'true' has been deprecated in module version 1.8.0. This property is only used for BGP debugging purposes and idempotency is not guaranteed.
 
 ##### `event_history_periodic`
-Enable/Disable/specify size of periodic event history buffer. Valid values are 'true', 'false', 'size_small', 'size_medium', 'size_large', 'size_disable' and 'default'. Size can also be specified in bytes.
+Enable/Disable/specify size of periodic event history buffer. Valid values are 'false', 'size_small', 'size_medium', 'size_large', 'size_disable'. Size can also be specified in bytes. Please Note: Setting this value to 'default' or 'true' has been deprecated in module version 1.8.0. This property is only used for BGP debugging purposes and idempotency is not guaranteed.
 
 ##### `fast_external_fallover`
 Enable/Disable immediately reset the session if the link to a directly connected BGP peer goes down. Valid values are 'true', 'false', and 'default'. On NX-OS, this property is only supported in the global BGP context.
@@ -1231,12 +1239,13 @@ Manages configuration of a BGP Address-family instance.
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### <a name="cisco_bgp_af-caveats">Caveats</a>
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `additional_paths_install`  | Not supported on N3k, N9k-F, N9k                                                           |
+| `additional_paths_install`  | Not supported on N3k, N3k-F, N9k-F, N9k                                                           |
 | `advertise_l2vpn_evpn`      | Not supported on N3k, N6k                                                                  |
 | address-family `l2vpn/evpn` | Module Minimum Version 1.3.2 <br> OS Minimum Version 7.0(3)I3(1) <br> Not supported on N3k |
 
@@ -1411,6 +1420,7 @@ Manages configuration of a BGP Address-family Aggregate-address instance.
 | N6k      | 7.3(0)N1(1)        | 1.7.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.7.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.7.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### Parameters
 
@@ -1463,6 +1473,7 @@ Manages configuration of a BGP Neighbor.
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### <a name="cisco_bgp_neighbor-caveats">Caveats</a>
 
@@ -1565,6 +1576,7 @@ Manages configuration of a BGP Neighbor Address-family instance.
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### <a name="cisco_bgp_neighbor_af-caveats">Caveats</a>
 
@@ -1691,6 +1703,7 @@ Manages a cisco Bridge-Domain
 | N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | not applicable     | not applicable         |
+| N3k-F    | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -1721,6 +1734,7 @@ Creates a Virtual Network Identifier member (VNI) mapping for cisco Bridge-Domai
 | N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | not applicable     | not applicable         |
+| N3k-F    | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -1746,6 +1760,7 @@ Manages configuration of a DHCP relay global configuration.
 | N6k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.4.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### <a name="cisco_dhcp_relay_global-caveats">Caveats</a>
 
@@ -1753,8 +1768,8 @@ Manages configuration of a DHCP relay global configuration.
 |:--------|:-------------|
 | `ipv4_information_option_trust`     | Not supported on N5k, N6k        |
 | `ipv4_information_trust_all`        | Not supported on N5k, N6k        |
-| `ipv4_src_addr_hsrp`                | Not supported on N3k, N9k, N9k-F |
-| `ipv4_sub_option_circuit_id_custom` | Not supported on N7k, N9k-F(TBD) and supported on N3k and N9k running os version 7.0(3)I3.1 and later |
+| `ipv4_src_addr_hsrp`                | Not supported on N3k, N3k-F, N9k, N9k-F |
+| `ipv4_sub_option_circuit_id_custom` | Not supported on N7k, N3k-F, N9k-F(TBD) and supported on N3k and N9k running os version 7.0(3)I3.1 and later |
 | `ipv4_sub_option_circuit_id_string` | Supported on N3k <br> Supported in OS Version 7.0(3)I6(1) and later on N9k |
 | `ipv6_option_cisco`                 | Not supported on N5k, N6k      |
 
@@ -1817,6 +1832,7 @@ Manages a Global VNI Encapsulation profile
 | N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | not applicable     | not applicable         |
+| N3k-F    | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -1844,6 +1860,7 @@ Manages Cisco Ethernet Virtual Private Network (EVPN) VXLAN Network Identifier (
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### <a name="cisco_evpn_vni-caveats">Caveats</a>
 
@@ -1974,6 +1991,7 @@ Manages a Cisco fabricpath Topology
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | not applicable     | not applicable         |
+| N3k-F    | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -2000,6 +2018,7 @@ Manages Cisco Hot Standby Router Protocol (HSRP) global parameters.
 | N6k      | 7.3(0)N1(1)        | 1.5.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.5.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### <a name="cisco_hsrp_global-caveats">Caveats</a>
 
@@ -2029,26 +2048,27 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### <a name="cisco_interface-caveats">Caveats</a>
 
 | Property | Caveat Description |
 |:---------|:-------------|
 | `ipv4_dhcp_relay_info_trust`          | Not supported on N5k,N6k        |
-| `ipv4_dhcp_relay_src_addr_hsrp`       | Not supported on N3k,N9k-F,N9k  |
+| `ipv4_dhcp_relay_src_addr_hsrp`       | Not supported on N3k,N3k-F,N9k-F,N9k  |
 | `storm_control_broadcast`             | Not supported on N7k            |
 | `storm_control_multicast`             | Not supported on N7k            |
-| `pvlan_mapping`                       | Not supported on N9k-F          |
-| `switchport_pvlan_host`               | Not supported on N9k-F          |
-| `switchport_pvlan_host_association`   | Not supported on N9k-F          |
-| `switchport_pvlan_mapping`            | Not supported on N9k-F          |
-| `switchport_pvlan_mapping_trunk`      | Not supported on N3k,N9k-F      |
-| `switchport_pvlan_promiscuous`        | Not supported on N9k-F          |
-| `switchport_pvlan_trunk_allowed_vlan` | Not supported on N9k-F          |
-| `switchport_pvlan_trunk_association`  | Not supported on N3k,N9k-F      |
-| `switchport_pvlan_trunk_native_vlan`  | Not supported on N9k-F          |
-| `switchport_pvlan_trunk_promiscuous`  | Not supported on N3k,N9k-F      |
-| `switchport_pvlan_trunk_secondary`    | Not supported on N3k,N9k-F      |
+| `pvlan_mapping`                       | Not supported on N3k-F,N9k-F          |
+| `switchport_pvlan_host`               | Not supported on N3k-F,N9k-F          |
+| `switchport_pvlan_host_association`   | Not supported on N3k-F,N9k-F          |
+| `switchport_pvlan_mapping`            | Not supported on N3k-F,N9k-F          |
+| `switchport_pvlan_mapping_trunk`      | Not supported on N3k,N3k-F,N9k-F      |
+| `switchport_pvlan_promiscuous`        | Not supported on N3k-F,N9k-F          |
+| `switchport_pvlan_trunk_allowed_vlan` | Not supported on N3k-F,N9k-F          |
+| `switchport_pvlan_trunk_association`  | Not supported on N3k,N3k-F,N9k-F      |
+| `switchport_pvlan_trunk_native_vlan`  | Not supported on N3k-F,N9k-F          |
+| `switchport_pvlan_trunk_promiscuous`  | Not supported on N3k,N3k-F,N9k-F      |
+| `switchport_pvlan_trunk_secondary`    | Not supported on N3k,N3k-F,N9k-F      |
 | `svi_autostate`                       | Only supported on N3k,N7k,N9k   |
 | `vlan_mapping`                        | Only supported on N7k           |
 | `vlan_mapping_enable`                 | Only supported on N7k           |
@@ -2410,6 +2430,7 @@ Manages a Cisco Network Interface Channel-group.
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### <a name="cisco_interface_channel_group-caveats">Caveats</a>
 
@@ -2454,6 +2475,7 @@ Manages a Cisco Network Interface HSRP group.
 | N6k      | not applicable     | not applicable         |
 | N7k      | 8.0                | 1.5.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### <a name="cisco_interface_hsrp_group-caveats">Caveats</a>
 
@@ -2550,6 +2572,7 @@ Manages a Cisco Network Interface Service VNI.
 | N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N9k-F    | not applicable     | not applicable         |
+| N3k-F    | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -2584,6 +2607,7 @@ Manages configuration of an OSPF interface instance.
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### Parameters
 
@@ -2717,6 +2741,7 @@ Manages configuration of ITD (Intelligent Traffic Director) device group
 | N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | not applicable     | not applicable         |
+| N3k-F    | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -2760,6 +2785,7 @@ Manages configuration of ITD (Intelligent Traffic Director) device group node
 | N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | not applicable     | not applicable         |
+| N3k-F    | not applicable     | not applicable         |
 
 #### Parameters
 
@@ -2894,6 +2920,7 @@ Manages configuration of an ObjectGroup instance. This has no properties and it 
 | N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.8.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.8.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### Parameters
 
@@ -2929,6 +2956,7 @@ Manages configuration of an ObjectGroupEntry instance.
 | N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.8.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.8.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### Example Usage
 
@@ -3013,6 +3041,7 @@ Manages configuration of an ospf instance.
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### Parameters
 
@@ -3036,6 +3065,7 @@ Manages an area for an OSPF router.
 | N6k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.4.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### Example Usage
 
@@ -3144,6 +3174,7 @@ Manages an area virtual link for an OSPF router.
 | N6k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.4.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### Example Usage
 
@@ -3225,6 +3256,7 @@ Manages a VRF for an OSPF router.
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### Parameters
 
@@ -3294,6 +3326,7 @@ Also configures anycast gateway MAC of the switch.
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### <a name="cisco_overlay_global-caveats">Caveats</a>
 
@@ -3337,6 +3370,7 @@ Manages configuration of an Protocol Independent Multicast (PIM) instance.
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### <a name="cisco_pim-caveats">Caveats</a>
 
@@ -3372,6 +3406,7 @@ Manages configuration of an Protocol Independent Multicast (PIM) static route pr
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### Parameters
 
@@ -3399,6 +3434,7 @@ Manages configuration of an Protocol Independent Multicast (PIM) static route pr
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
 #### Parameters
 
@@ -3423,6 +3459,8 @@ Manages configuration of a portchannel global parameters
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### <a name="cisco_portchannel_global-caveats">Caveats</a>
 
@@ -3435,7 +3473,7 @@ Manages configuration of a portchannel global parameters
 | `concatenation`             | Supported only on N9k             |
 | `hash_poly`                 | Supported only on N5k, N6k        |
 | `resilient` <br> `symmetry` | Supported only on N3k, N9k        |
-| `rotate`                    | Supported only on N7k, N9k-F, N9k |
+| `rotate`                    | Supported only on N3k-F, N7k, N9k-F, N9k |
 
 #### Parameters
 
@@ -3482,46 +3520,48 @@ Manages a Cisco Route Map.
 | N6k      | 7.3(0)N1(1)        | 1.6.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.6.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.6.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### <a name="cisco_route_map-caveats">Caveats</a>
 
 | Property | Caveat Description |
 |:---------|:-------------|
-| `match_evpn_route_type_1`                | Not supported on N3k,N9k-F,N9k  |
-| `match_evpn_route_type_2_all`            | Not supported on N3k,N9k-F,N9k  |
-| `match_evpn_route_type_2_mac_ip`         | Not supported on N3k,N9k-F,N9k  |
-| `match_evpn_route_type_2_mac_only`       | Not supported on N3k,N9k-F,N9k  |
-| `match_evpn_route_type_3`                | Not supported on N3k,N9k-F,N9k  |
-| `match_evpn_route_type_4`                | Not supported on N3k,N9k-F,N9k  |
-| `match_evpn_route_type_5`                | Not supported on N3k,N9k-F,N9k  |
-| `match_evpn_route_type_6`                | Not supported on N3k,N9k-F,N9k  |
-| `match_evpn_route_type_all`              | Not supported on N3k,N9k-F,N9k  |
-| `match_length`                           | Not supported on N3k,N9k-F,N9k  |
-| `match_mac_list`                         | Not supported on N3k,N9k-F,N9k  |
+| `match_evpn_route_type_1`                | Not supported on N3k,N3k-F,N9k-F,N9k  |
+| `match_evpn_route_type_2_all`            | Not supported on N3k,N3k-F,N9k-F,N9k  |
+| `match_evpn_route_type_2_mac_ip`         | Not supported on N3k,N3k-F,N9k-F,N9k  |
+| `match_evpn_route_type_2_mac_only`       | Not supported on N3k,N3k-F,N9k-F,N9k  |
+| `match_evpn_route_type_3`                | Not supported on N3k,N3k-F,N9k-F,N9k  |
+| `match_evpn_route_type_4`                | Not supported on N3k,N3k-F,N9k-F,N9k  |
+| `match_evpn_route_type_5`                | Not supported on N3k,N3k-F,N9k-F,N9k  |
+| `match_evpn_route_type_6`                | Not supported on N3k,N3k-F,N9k-F,N9k  |
+| `match_evpn_route_type_all`              | Not supported on N3k,N3k-F,N9k-F,N9k  |
+| `match_length`                           | Not supported on N3k,N3k-F,N9k-F,N9k  |
+| `match_mac_list`                         | Not supported on N3k,N3k-F,N9k-F,N9k  |
 | `match_metric`                           | Supported in OS Version 7.0(3)F2(1) and later on N9k-F |
-| `match_ospf_area`                        | Not supported on N5k,N6k,N7k,N9k-F <br> Supported in OS version 7.0(3)I5.1 and later on N3k, N9k  |
-| `match_vlan`                             | Not supported on N3k,N9k-F,N9k  |
+| `match_ospf_area`                        | Not supported on N5k,N6k,N7k,N3k-F,N9k-F <br> Supported in OS version 7.0(3)I5.1 and later on N3k, N9k  |
+| `match_vlan`                             | Not supported on N3k,N3k-F,N9k-F,N9k  |
 | `set_extcommunity_4bytes_additive`       | Supported in OS Version 7.0(3)F2(1) and later on N9k-F |
 | `set_extcommunity_4bytes_non_transitive` | Supported in OS Version 7.0(3)F2(1) and later on N9k-F |
 | `set_extcommunity_4bytes_transitive`     | Supported in OS Version 7.0(3)F2(1) and later on N9k-F |
-| `set_extcommunity_cost_igp`              | Not supported on N9k-F          |
-| `set_extcommunity_cost_pre_bestpath`     | Not supported on N9k-F          |
-| `set_extcommunity_rt_additive`           | Not supported on N9k-F          |
-| `set_extcommunity_rt_asn`                | Not supported on N9k-F,N9k      |
-| `set_forwarding_addr`                    | Not supported on N9k-F          |
-| `set_ipv4_default_next_hop`              | Not supported on N5k,N6k,N9k-F,N9k  |
-| `set_ipv4_default_next_hop_load_share`   | Not supported on N5k,N6k,N9k-F,N9k  |
-| `set_ipv4_next_hop`                      | Not supported on N9k-F          |
+| `set_extcommunity_cost_igp`              | Not supported on N3k-F,N9k-F          |
+| `set_extcommunity_cost_pre_bestpath`     | Not supported on N3k-F,N9k-F          |
+| `set_extcommunity_rt_additive`           | Not supported on N3k-F,N9k-F          |
+| `set_extcommunity_rt_asn`                | Not supported on N3k-F,N9k-F,N9k      |
+| `set_forwarding_addr`                    | Not supported on N3k-F,N9k-F          |
+| `set_ipv4_default_next_hop`              | Not supported on N5k,N6k,N3k-F,N9k-F,N9k  |
+| `set_ipv4_default_next_hop_load_share`   | Not supported on N5k,N6k,N3k-F,N9k-F,N9k  |
+| `set_ipv4_next_hop`                      | Not supported on N3k-F,N9k-F          |
 | `set_ipv4_next_hop_load_share`           | Not supported on N5k,N6k <br> Supported in OS Version 7.0(3)I5.1 and later on N9k <br> Supported in OS Version 7.0(3)F2(1) and later on N9k-F |
-| `set_ipv4_next_hop_redist`               | Supported on N5k,N6k,N7k,N9k-F <br> Supported in OS Version 7.0(3)I5.1 and later on N3k,N9k  |
-| `set_ipv4_precedence`                    | Not supported on N9k-F          |
-| `set_ipv4_prefix`                        | Not supported on N5k,N6k,N9k-F  |
-| `set_ipv6_default_next_hop`              | Not supported on N5k,N6k,N9k-F,N9k  |
-| `set_ipv6_default_next_hop_load_share`   | Not supported on N5k,N6k,N9k-F,N9k  |
-| `set_ipv6_next_hop`                      | Not supported on N9k-F          |
+| `set_ipv4_next_hop_redist`               | Supported on N5k,N6k,N7k,N3k-F,N9k-F <br> Supported in OS Version 7.0(3)I5.1 and later on N3k,N9k  |
+| `set_ipv4_precedence`                    | Not supported on N3k-F,N9k-F          |
+| `set_ipv4_prefix`                        | Not supported on N5k,N6k,N3k-F,N9k-F  |
+| `set_ipv6_default_next_hop`              | Not supported on N5k,N6k,N3k-F,N9k-F,N9k  |
+| `set_ipv6_default_next_hop_load_share`   | Not supported on N5k,N6k,N3k-F,N9k-F,N9k  |
+| `set_ipv6_next_hop`                      | Not supported on N3k-F,N9k-F          |
 | `set_ipv6_next_hop_load_share`           | Not supported on N5k,N6k <br> Supported in OS Version 7.0(3)I5.1 and later on N9k <br> Supported in OS Version 7.0(3)F2(1) and later on N9k-F |
-| `set_ipv6_next_hop_redist`               | Supported on N5k,N6k,N7k,N9k-F <br> Supported in OS Version 7.0(3)I5.1 and later on N3k,N9k  |
-| `set_ipv6_prefix`                        | Not supported on N5k,N6k,N9k-F  |
+| `set_ipv6_next_hop_redist`               | Supported on N5k,N6k,N7k,N3k-F,N9k-F <br> Supported in OS Version 7.0(3)I5.1 and later on N3k,N9k  |
+| `set_ipv6_prefix`                        | Not supported on N5k,N6k,N3k-F,N9k-F  |
 | `set_vrf`                                | Supported on N7k                |
 
 
@@ -4018,6 +4058,8 @@ Manages an SNMP community on a Cisco SNMP server.
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -4052,6 +4094,8 @@ of group; thus this provider utility does not create snmp groups and only report
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -4075,6 +4119,8 @@ cisco_snmp_server.
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -4120,6 +4166,8 @@ Manages an SNMP user on an cisco SNMP server.
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -4169,6 +4217,8 @@ instance of the cisco_tacacs_server.
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -4212,6 +4262,8 @@ Configures Cisco TACACS+ server hosts.
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -4249,10 +4301,12 @@ Manages the upgrade of a Cisco device.
 | N6k      | not applicable     | not applicable         |
 | N7k      | not applicable     | not applicable         |
 | N9k-F    | 7.0(3)F1(1)        | 1.6.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### <a name="cisco_upgrade-caveats">Caveats</a>
 
-The `cisco_upgrade` is only supported on *simplex* N3k, N9k and N9k-F devices. HA devices are currently not supported.
+The `cisco_upgrade` is only supported on *simplex* N3k, N3k-F, N9k and N9k-F devices. HA devices are currently not supported.
 
 | Property | Caveat Description |
 |:--------|:-------------|
@@ -4291,6 +4345,8 @@ Manages a Cisco VDC (Virtual Device Context).
 | N6k      | not applicable     | not applicable         |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N9k-F    | not applicable     | not applicable         |
+| N3k-F    | not applicable     | not applicable         |
+
 
 #### Parameters
 
@@ -4325,8 +4381,8 @@ Manages a Cisco VLAN.
 |:--------|:-------------|
 | `fabric_control`    | Only supported on N7k (support added in ciscopuppet 1.3.0) |
 | `mode`              | Only supported on N5k,N6k,N7k |
-| `pvlan_type`        | Not supported on N9k-F        |
-| `pvlan_association` | Not supported on N9k-F        |
+| `pvlan_type`        | Not supported on N3k-F,N9k-F        |
+| `pvlan_association` | Not supported on N3k-F,N9k-F        |
 
 #### Parameters
 
@@ -4382,6 +4438,8 @@ Manages the virtual Port Channel (vPC) domain configuration of a Cisco device.
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### <a name="cisco_vpc_domain-caveats">Caveats</a>
 
@@ -4494,6 +4552,8 @@ device.
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### <a name="cisco_vrf-caveats">Caveats</a>
 
@@ -4564,6 +4624,8 @@ Manages Cisco Virtual Routing and Forwarding (VRF) Address-Family configuration.
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### <a name="cisco_vrf_af-caveats">Caveats</a>
 
@@ -4647,6 +4709,8 @@ There can only be one instance of the cisco_vtp.
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -4681,6 +4745,8 @@ Creates a VXLAN Network Virtualization Endpoint (NVE) overlay interface that ter
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### <a name="cisco_vxlan_vtep-caveats">Caveats</a>
 
@@ -4720,6 +4786,8 @@ Creates a Virtual Network Identifier member (VNI) for an NVE overlay interface.
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### <a name="cisco_vxlan_vtep_vni-caveats">Caveats</a>
 
@@ -4727,7 +4795,7 @@ Creates a Virtual Network Identifier member (VNI) for an NVE overlay interface.
 |---------------------------------|--------------------------------------|
 | ingress_replication             | Not supported on N3k, N5k, N6k, N7k  |
 | peer_list                       | Not supported on N3k, N5k, N6k, N7k  |
-| suppress_uuc                    | Not supported on N3k, N9k, N9k-F <br> Supported in OS Version 8.1.1 and later on N7k |
+| suppress_uuc                    | Not supported on N3k, N3k-F, N9k, N9k-F <br> Supported in OS Version 8.1.1 and later on N7k |
 
 #### Parameters
 
@@ -4777,6 +4845,8 @@ Configure the domain name of the device
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -4797,6 +4867,8 @@ Domain name of the device. Valid value is a string.
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -4817,6 +4889,8 @@ Hostname or address of the DNS server.  Valid value is a string.
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -4848,6 +4922,8 @@ Manages a puppet netdev_stdlib Network Interface. Any resource dependency should
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -4880,6 +4956,8 @@ interface. Valid value is an integer.
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -4908,6 +4986,8 @@ Manages a puppet netdev_stdlib Network Trunk. It should be noted that while the 
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -4944,6 +5024,8 @@ Manages a puppet netdev_stdlib Network Vlan.
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -4970,6 +5052,8 @@ The name of the VLAN.  Valid value is a string.
 | N6k      | 7.3(0)N1(1)        | 1.7.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.7.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.7.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -4996,6 +5080,8 @@ Authentication password.  Valid value is a string.
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### <a name="ntp_config-caveats">Caveats</a>
 
@@ -5029,6 +5115,8 @@ Trusted key for the NTP server.  Valid value is integer.
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### <a name="ntp_server-caveats">Caveats</a>
 
@@ -5070,6 +5158,8 @@ Name of the vrf.  Valid value is a string.
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -5099,6 +5189,8 @@ Name of the port channel. eg port-channel100. Valid value is a string.
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -5119,6 +5211,8 @@ Enable or disable radius functionality.  Valid values are 'true' or 'false'.
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -5196,6 +5290,8 @@ Encryption key format [0-7].  Valid value is an integer.
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -5215,6 +5311,8 @@ Configure the search domain of the device. Note that this type is functionally e
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -5237,6 +5335,8 @@ Manages an SNMP community on a Cisco SNMP server.
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -5265,6 +5365,8 @@ Manages an SNMP notification on a Cisco SNMP server.
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -5285,6 +5387,8 @@ Manages an SNMP notification receiver on an cisco SNMP server.
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -5329,6 +5433,8 @@ Manages an SNMP user on an cisco SNMP server.
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -5373,6 +5479,8 @@ format (in case of true) or cleartext (in case of false). Valid values are 'true
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -5399,6 +5507,8 @@ Interface to send syslog data from, e.g. "management".  Valid value is a string.
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -5419,6 +5529,8 @@ The unit of measurement for log time values.  Valid values are 'seconds' and 'mi
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -5436,6 +5548,8 @@ Enable or disable radius functionality [true|false]
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 
@@ -5462,6 +5576,8 @@ Number of seconds before the timeout period ends
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 ##### `ensure`
 Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
@@ -5492,6 +5608,8 @@ Number of seconds before the timeout period ends
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
+
 
 #### Parameters
 

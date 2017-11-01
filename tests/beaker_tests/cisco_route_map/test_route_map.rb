@@ -527,7 +527,7 @@ def unsupp_n9kf
 end
 
 def unsupported_properties(_tests, _id)
-  if platform[/n3k/]
+  if platform[/n3k$/]
     unsupp_n3k
   elsif platform[/n(5|6)k/]
     unsupp_n56k
@@ -535,21 +535,21 @@ def unsupported_properties(_tests, _id)
     unsupp_n7k
   elsif platform[/n9k$/]
     unsupp_n9k
-  elsif platform[/n9k-f/]
+  elsif platform[/n(3|9)k-f/]
     unsupp_n9kf
   end
 end
 
 def version_unsupported_properties(_tests, _id)
   unprops = {}
-  if platform[/n9k-f/]
+  if platform[/n(3|9)k-f/]
     unprops[:match_metric] = '7.0.3.F2.1'
     unprops[:set_extcommunity_4bytes_additive] = '7.0.3.F2.1'
     unprops[:set_extcommunity_4bytes_non_transitive] = '7.0.3.F2.1'
     unprops[:set_extcommunity_4bytes_transitive] = '7.0.3.F2.1'
     unprops[:set_ipv4_next_hop_load_share] = '7.0.3.F2.1'
     unprops[:set_ipv6_next_hop_load_share] = '7.0.3.F2.1'
-  elsif platform[/n9k$/]
+  elsif platform[/n9k/]
     unprops[:match_ospf_area] = '7.0.3.I5.1'
     unprops[:set_ipv4_next_hop_load_share] = '7.0.3.I5.1'
     unprops[:set_ipv6_next_hop_load_share] = '7.0.3.I5.1'

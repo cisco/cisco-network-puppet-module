@@ -17,7 +17,7 @@
 class ciscopuppet::cisco::demo_acl {
 
   $fragments = platform_get() ? {
-    /(n3k|n7k|n9k-f|n9k)/  => 'permit',
+    /(n3k|n7k|n3k-f|n9k-f|n9k)/  => 'permit',
     default                => undef
   }
 
@@ -38,32 +38,32 @@ class ciscopuppet::cisco::demo_acl {
   }
 
   $http_method = platform_get() ? {
-    /(n3k|n9k-f|n9k)/  => 'post',
+    /(n3k|n3k-f|n9k-f|n9k)/  => 'post',
     default            => undef
   }
 
   $packet_length = platform_get() ? {
-    /(n3k|n7k|n9k-f|n9k)/  => 'range 80 1000',
+    /(n3k|n7k|n3k-f|n9k-f|n9k)/  => 'range 80 1000',
     default                => undef
   }
 
   $redirect = platform_get() ? {
-    /(n3k|n9k-f|n9k)/  => 'Ethernet1/1,Ethernet1/2,port-channel1',
+    /(n3k|n3k-f|n9k-f|n9k)/  => 'Ethernet1/1,Ethernet1/2,port-channel1',
     default            => undef
   }
 
   $tcp_option_length = platform_get() ? {
-    /(n3k|n9k-f|n9k)/  => '20',
+    /(n3k|n3k-f|n9k-f|n9k)/  => '20',
     default            => undef
   }
 
   $time_range = platform_get() ? {
-    /(n3k|n7k|n9k-f|n9k)/  => 'my_range',
+    /(n3k|n7k|n3k-f|n9k-f|n9k)/  => 'my_range',
     default                => undef
   }
 
   $ttl = platform_get() ? {
-    /(n3k|n9k-f|n9k)/  => '153', 
+    /(n3k|n3k-f|n9k-f|n9k)/  => '153', 
     default            => undef
   }
 

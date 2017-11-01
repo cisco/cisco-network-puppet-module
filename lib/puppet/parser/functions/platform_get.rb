@@ -32,7 +32,11 @@ module Puppet
         # - NX-OSv Chassis
         case pi
         when /Nexus\s?3\d\d\d/
-          cisco_hardware = 'n3k'
+          if function_platform_fretta([])
+            cisco_hardware = 'n3k-f'
+          else
+            cisco_hardware = 'n3k'
+          end
         when /Nexus\s?5\d\d\d/
           cisco_hardware = 'n5k'
         when /Nexus\s?6\d\d\d/

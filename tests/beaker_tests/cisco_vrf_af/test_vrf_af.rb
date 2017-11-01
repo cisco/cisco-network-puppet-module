@@ -100,7 +100,7 @@ def unsupported_properties(_tests, _id)
       :route_target_export_stitching <<
       :route_target_import_stitching
 
-    if platform[/n3k/]
+    if platform[/n3k$/]
       unprops <<
         :route_target_both_auto <<
         :route_target_both_auto_evpn <<

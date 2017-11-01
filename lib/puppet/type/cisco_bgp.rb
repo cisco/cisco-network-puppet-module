@@ -51,12 +51,12 @@ Puppet::Type.newtype(:cisco_bgp) do
       disable_policy_batching_ipv4           => 'xx',
       disable_policy_batching_ipv6           => 'yy',
       enforce_first_as                       => true,
-      event_history_cli                      => 'true',
-      event_history_detail                   => 'small',
-      event_history_errors                   => 'large',
-      event_history_events                   => 'large',
-      event_history_objstore                 => 'medium',
-      event_history_periodic                 => 'disable',
+      event_history_cli                      => 'size_large',
+      event_history_detail                   => 'size_large',
+      event_history_errors                   => 'size_large',
+      event_history_events                   => 'size_large',
+      event_history_objstore                 => 'size_medium',
+      event_history_periodic                 => '100000',
       fast_external_fallover                 => true,
       flush_routes                           => false,
       isolate                                => false,
@@ -348,46 +348,43 @@ Puppet::Type.newtype(:cisco_bgp) do
   end # property enforce_first_as
 
   newproperty(:event_history_cli) do
-    desc "event_history_cli state. Valid values are True, False, size_small,
-          size_medium, size_large, size_disable, size in bytes or 'default'"
+    desc "event_history_cli state. Valid values are False, size_small,
+          size_medium, size_large, size_disable, size in bytes"
   end # property event_history_cli
 
   newproperty(:event_history_detail) do
-    desc "event_history_detail state. Valid values are True, False, size_small,
-          size_medium, size_large, size_disable, size in bytes or 'default'"
+    desc "event_history_detail state. Valid values are False, size_small,
+          size_medium, size_large, size_disable, size in bytes"
   end # property event_history_detail
 
   newproperty(:event_history_errors) do
-    desc "event_history_errors state. Valid values are True, False, size_small,
-          size_medium, size_large, size_disable, size in bytes or 'default'"
+    desc "event_history_errors state. Valid values are False, size_small,
+          size_medium, size_large, size_disable, size in bytes"
 
     munge do |value|
-      value = 'size_medium' if value == 'true'
-      value = 'false' if value == 'size_disable'
       value = value.to_sym unless value =~ /\A\d+\z/
       value
     end
   end # property event_history_errors
 
   newproperty(:event_history_events) do
-    desc "event_history_events state. Valid values are True, False, size_small,
-          size_medium, size_large, size_disable, size in bytes or 'default'"
+    desc "event_history_events state. Valid values are False, size_small,
+          size_medium, size_large, size_disable, size in bytes"
   end # property event_history_events
 
   newproperty(:event_history_objstore) do
-    desc "event_history_objstore state. Valid values are True, False, size_small,
-          size_medium, size_large, size_disable, size in bytes or 'default'"
+    desc "event_history_objstore state. Valid values are False, size_small,
+          size_medium, size_large, size_disable, size in bytes"
 
     munge do |value|
-      value = 'false' if value == 'size_disable'
       value = value.to_sym unless value =~ /\A\d+\z/
       value
     end
   end # property event_history_objstore
 
   newproperty(:event_history_periodic) do
-    desc "event_history_periodic state. Valid values are True, False, size_small,
-          size_medium, size_large, size_disable, size in bytes or 'default'"
+    desc "event_history_periodic state. Valid values are False, size_small,
+          size_medium, size_large, size_disable, size in bytes"
   end # property event_history_periodic
 
   newproperty(:fast_external_fallover) do

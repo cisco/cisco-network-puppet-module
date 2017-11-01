@@ -102,7 +102,7 @@ tests[:non_default_extended] = {
 # State cannot be modified for extended vlans on N5k and N6k platforms.
 tests[:non_default_extended][:manifest_props].delete(:state) if platform[/n(5|6)k/]
 
-if platform[/n3k/]
+if platform[/n3k$/]
   tests[:vn_segment_unsupported] =
     resource_probe(agent,
                    'cisco_vlan 128 mapped_vni=128000',

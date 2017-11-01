@@ -1114,7 +1114,7 @@ def platform
   # - Cisco XRv9K Virtual Router
   case pi
   when /Nexus\s?3\d\d\d/
-    @cisco_hardware = 'n3k'
+    @cisco_hardware = image?[/7.0.3.F/] ? 'n3k-f' : 'n3k'
   when /Nexus\s?5\d\d\d/
     @cisco_hardware = 'n5k'
   when /Nexus\s?6\d\d\d/
@@ -1145,6 +1145,11 @@ def nexus_image
   facter_opt = '-p cisco.images.full_version'
   image_regexp = /(\S+)/
   data = on(agent, facter_cmd(facter_opt)).output
+  darr = data.split("\n")
+  darr.each do |line|
+    next if line.include?('stty') || line.include?('WARN')
+    data = line
+  end
   @image ||= image_regexp.match(data)[1]
 end
 
