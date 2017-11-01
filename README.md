@@ -412,7 +412,7 @@ Symbol | Meaning | Description
 **Support Matrix**
 
 | ✅ = Supported <br> ➖ = Not Applicable | N9k | N3k | N5k | N6k | N7k | N9k-F | N3k-F | Caveats |
-|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | [cisco_aaa_<br>authentication_login](#type-cisco_aaa_authentication_login)                 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [cisco_aaa_<br>authorization_login_cfg_svc](#type-cisco_aaa_authorization_login_cfg_svc)   | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [cisco_aaa_<br>authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
@@ -474,7 +474,7 @@ Symbol | Meaning | Description
 ##### NetDev Providers
 
 | ✅ = Supported <br> ➖ = Not Applicable | N9k | N3k | N5k | N6k | N7k | N9k-F | N3k-F | Caveats |
-|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | [domain_name](#type-domain_name)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [name_server](#type-name_server)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [network_dns](#type-network_dns)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
