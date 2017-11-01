@@ -59,7 +59,7 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 tests = {
   master:        master,
   agent:         agent,
-  platform:      'n(5|6|7|9)k',
+  platform:      'n(3k-f|5k|6k|7k|9k)',
   resource_name: 'cisco_vxlan_vtep_vni',
 }
 
