@@ -1136,7 +1136,7 @@ end
 @cached_img = nil
 def image?(reset_cache=false)
   return @cached_img unless @cached_img.nil? || reset_cache
-  on(agent, facter_cmd('-p cisco.images.system_image'))
+  on(agent, facter_cmd('-p cisco.images.full_version'))
   @cached_img = stdout.nil? ? '' : stdout
 end
 
