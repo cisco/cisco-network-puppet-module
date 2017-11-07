@@ -103,7 +103,7 @@ test_name "TestCase :: #{testheader}" do
                                false, self, logger)
       search_pattern_in_output(stdout, { 'monitor' => '1' },
                                false, self, logger)
-      search_pattern_in_output(stdout, { 'source_interface' => "'#{intf}'" },
+      search_pattern_in_output(stdout, { 'source_interface' => "['#{intf}']" },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'time_stamp_units' => 'milliseconds' },
                                false, self, logger)
@@ -134,7 +134,7 @@ test_name "TestCase :: #{testheader}" do
                                false, self, logger)
       search_pattern_in_output(stdout, { 'monitor' => 'unset' },
                                false, self, logger)
-      search_pattern_in_output(stdout, { 'source_interface' => 'unset' },
+      search_pattern_in_output(stdout, { 'source_interface' => "['unset']" },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'time_stamp_units' => 'seconds' },
                                false, self, logger)

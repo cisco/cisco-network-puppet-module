@@ -31,12 +31,20 @@ Puppet::Type.type(:syslog_settings).provide(:cisco) do
 
   mk_resource_methods
 
+  SYSLOG_SETTINGS_ARRAY_PROPS = [
+    :source_interface
+  ]
+
   SYSLOG_SETTINGS_NON_BOOL_PROPS = [
     :console,
     :monitor,
-    :source_interface,
     :time_stamp_units,
   ]
+
+  SYSLOG_CONFIG_PROPS = SYSLOG_SETTINGS_ARRAY_PROPS + SYSLOG_SETTINGS_NON_BOOL_PROPS
+
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:array_flat, self, '@syslogsetting',
+                                            SYSLOG_SETTINGS_ARRAY_PROPS)
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@syslogsetting',
                                             SYSLOG_SETTINGS_NON_BOOL_PROPS)
@@ -55,6 +63,11 @@ Puppet::Type.type(:syslog_settings).provide(:cisco) do
       name:   'default',
       ensure: :present,
     }
+
+    SYSLOG_SETTINGS_ARRAY_PROPS.each do |prop|
+      val = v.send(prop)
+      current_state[prop] = val ? [val] : ['unset']
+    end
 
     SYSLOG_SETTINGS_NON_BOOL_PROPS.each do |prop|
       val = v.send(prop)
@@ -100,9 +113,11 @@ Puppet::Type.type(:syslog_settings).provide(:cisco) do
   def flush
     validate
 
-    SYSLOG_SETTINGS_NON_BOOL_PROPS.each do |prop|
+    SYSLOG_CONFIG_PROPS.each do |prop|
       next unless @resource[prop]
       next if @property_flush[prop].nil?
+      # Other platforms require array for some types - Nexus does not
+      @property_flush[prop] = @property_flush[prop][0] if @property_flush[prop].is_a?(Array)
       # Call the AutoGen setters for the @syslogsetting node_utils object.
       @property_flush[prop] = nil if @property_flush[prop] == 'unset'
       @syslogsetting.send("#{prop}=", @property_flush[prop]) if

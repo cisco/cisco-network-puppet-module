@@ -87,7 +87,7 @@ test_name "TestCase :: #{testheader}" do
                              false, self, logger)
     search_pattern_in_output(output, { 'retransmit_count' => '1' },
                              false, self, logger)
-    search_pattern_in_output(output, { 'source_interface' => 'unset' },
+    search_pattern_in_output(output, { 'source_interface' => "['unset']" },
                              false, self, logger)
     search_pattern_in_output(output, { 'timeout' => '5' },
                              false, self, logger)

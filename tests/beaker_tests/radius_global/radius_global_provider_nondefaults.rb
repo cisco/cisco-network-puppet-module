@@ -106,7 +106,7 @@ test_name "TestCase :: #{testheader}" do
                              false, self, logger)
     search_pattern_in_output(output, { 'retransmit_count' => '4' },
                              false, self, logger)
-    search_pattern_in_output(output, { 'source_interface' => 'loopback0' },
+    search_pattern_in_output(output, { 'source_interface' => "['loopback0']" },
                              false, self, logger)
     search_pattern_in_output(output, { 'timeout' => '2' },
                              false, self, logger)
@@ -139,7 +139,7 @@ test_name "TestCase :: #{testheader}" do
                              false, self, logger)
     search_pattern_in_output(output, { 'retransmit_count' => '2' },
                              false, self, logger)
-    search_pattern_in_output(output, { 'source_interface' => 'loopback1' },
+    search_pattern_in_output(output, { 'source_interface' => "['loopback1']" },
                              false, self, logger)
     search_pattern_in_output(output, { 'timeout' => '2' },
                              false, self, logger)
@@ -170,7 +170,7 @@ test_name "TestCase :: #{testheader}" do
                              false, self, logger)
     search_pattern_in_output(output, { 'retransmit_count' => '1' },
                              false, self, logger)
-    search_pattern_in_output(output, { 'source_interface' => 'unset' },
+    search_pattern_in_output(output, { 'source_interface' => "['unset']" },
                              false, self, logger)
     search_pattern_in_output(output, { 'timeout' => '5' },
                              false, self, logger)

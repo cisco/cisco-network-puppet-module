@@ -38,12 +38,21 @@ Puppet::Type.type(:radius_global).provide(:cisco) do
 
   RADIUS_GLOBAL_SET_PROPS = [
     :retransmit_count,
-    :source_interface,
     :timeout,
+  ]
+
+  RADIUS_GLOBAL_ARRAY_PROPS = [
+    :source_interface
   ]
 
   RADIUS_GLOBAL_NON_BOOL_PROPS = RADIUS_GLOBAL_GET_PROPS +
                                  RADIUS_GLOBAL_SET_PROPS
+
+  RADIUS_GLOBAL_CONFIG_PROPS = RADIUS_GLOBAL_SET_PROPS +
+                               RADIUS_GLOBAL_ARRAY_PROPS
+
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:array_flat, self, '@radius_global',
+                                            RADIUS_GLOBAL_ARRAY_PROPS)
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@radius_global',
                                             RADIUS_GLOBAL_NON_BOOL_PROPS)
@@ -66,7 +75,7 @@ Puppet::Type.type(:radius_global).provide(:cisco) do
       key:              v.key ? v.key : 'unset',
       # Only return the key format if there is a key configured
       key_format:       v.key.nil? || v.key.empty? ? nil : v.key_format,
-      source_interface: v.source_interface.nil? || v.source_interface.empty? ? 'unset' : v.source_interface,
+      source_interface: v.source_interface.nil? || v.source_interface.empty? ? ['unset'] : [v.source_interface],
     }
 
     new(current_state)
@@ -134,9 +143,11 @@ Puppet::Type.type(:radius_global).provide(:cisco) do
   def flush
     validate
 
-    RADIUS_GLOBAL_SET_PROPS.each do |prop|
+    RADIUS_GLOBAL_CONFIG_PROPS.each do |prop|
       next unless @resource[prop]
       next if @property_flush[prop].nil?
+      # Other platforms require array for some types - Nexus does not
+      @property_flush[prop] = @property_flush[prop][0] if @property_flush[prop].is_a?(Array)
       # Call the AutoGen setters for the @radius_global node_utils object.
       @property_flush[prop] = nil if @property_flush[prop] == 'unset'
       @radius_global.send("#{prop}=", @property_flush[prop]) if
