@@ -484,7 +484,7 @@ Puppet::Type.type(:cisco_route_map).provide(:cisco) do
 
   def legacy_image?
     fd = Facter.value('cisco')
-    image = fd['images']['system_image']
+    image = fd['images']['full_version']
     image[/7.0.3.I2|I3|I4/]
   end
 
