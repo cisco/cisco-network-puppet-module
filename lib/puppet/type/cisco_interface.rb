@@ -141,12 +141,6 @@ Puppet::Type.newtype(:cisco_interface) do
   newparam(:interface, namevar: :true) do
     desc 'Name of the interface on the network element. Valid values are string.'
 
-    validate do |name|
-      if name[/mgmt/i]
-        fail('Stay away from the management port.')
-      end # if
-    end
-
     munge(&:downcase)
   end # param name
 
