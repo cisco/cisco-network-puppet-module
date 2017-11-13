@@ -1,4 +1,4 @@
-# November, 2014
+# September, 2017
 #
 # Copyright (c) 2014-2016 Cisco and/or its affiliates.
 #
@@ -31,6 +31,12 @@ Puppet::Type.type(:syslog_server).provide(:cisco) do
 
   mk_resource_methods
 
+  SYSLOG_SERVER_ALL_PROPS = [
+    :severity_level,
+    :port,
+    :vrf,
+  ]
+
   def initialize(value={})
     super(value)
     @syslogserver = Cisco::SyslogServer.syslogservers[@property_hash[:name]]
@@ -44,7 +50,8 @@ Puppet::Type.type(:syslog_server).provide(:cisco) do
     current_state = {
       ensure:         :present,
       name:           syslogserver_name,
-      severity_level: v.level,
+      severity_level: v.severity_level,
+      port:           v.port,
       vrf:            v.vrf,
     }
 
@@ -92,7 +99,18 @@ Puppet::Type.type(:syslog_server).provide(:cisco) do
       @syslogserver.destroy
       @syslogserver = nil
     else
-      @syslogserver = Cisco::SyslogServer.new(@resource[:name], @resource[:severity_level], @resource[:vrf])
+      # Create new instance with configured options
+      opts = { 'name' => @resource[:name] }
+      SYSLOG_SERVER_ALL_PROPS.each do |prop|
+        next unless @resource[prop]
+        opts[prop.to_s] = @resource[prop].to_s
+      end
+
+      begin
+        @ntpserver = Cisco::SyslogServer.new(opts)
+      rescue Cisco::CliError => e
+        error "Unable to set new values: #{e.message}"
+      end
     end
   end
 end # Puppet::Type
