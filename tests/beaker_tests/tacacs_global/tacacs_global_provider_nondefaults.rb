@@ -15,7 +15,7 @@
 ###############################################################################
 # TestCase Name:
 # -------------
-# TacacsGlobal-Provider-Defaults.rb
+# TacacsGlobal-Provider-NonDefaults.rb
 #
 # TestCase Prerequisites:
 # -----------------------
@@ -29,7 +29,7 @@
 #
 # TestCase:
 # ---------
-# This is a tacacs_global resource test that tests default attribute of
+# This is a tacacs_global resource test that tests non-default attribute of
 # tacacs_global resource.
 #
 # There are 2 sections to the testcase: Setup, group of teststeps.
@@ -56,7 +56,14 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 require File.expand_path('../tacacs_globallib.rb', __FILE__)
 
 result = 'PASS'
-testheader = 'tacacs_global Resource :: All Attributes Defaults'
+testheader = 'tacacs_global Resource :: All Attributes Non-Defaults'
+
+tests = {
+  agent:         agent,
+  master:        master,
+  intf_type:     'ethernet',
+  resource_name: 'tacacs_global',
+}
 
 def cleanup
   logger.info('Testcase Cleanup:')
@@ -67,6 +74,40 @@ end
 test_name "TestCase :: #{testheader}" do
   cleanup
   teardown { cleanup }
+
+  # Find an available test interface on this device
+  intf = find_interface(tests)
+
+  # @step [Step] Requests manifest from the master server to the agent.
+  step 'TestStep :: Get resource present (with changes) manifest from master' do
+    # Expected exit_code is 0 since this is a bash shell cmd.
+    on(master, TacacsGlobalLib.create_tacacs_global_non_default(intf))
+
+    # Expected exit_code is 2 since this is a puppet agent cmd with change.
+    cmd_str = PUPPET_BINPATH + 'agent -t'
+    on(agent, cmd_str, acceptable_exit_codes: [2])
+
+    logger.info("Get resource present manifest from master :: #{result}")
+  end
+
+  # @step [Step] Checks tacacs_global resource on agent using resource cmd.
+  step 'TestStep :: Check tacacs_global resource presence on agent' do
+    # Expected exit_code is 0 since this is a puppet resource cmd.
+    # Flag is set to false to check for presence of RegExp pattern in stdout.
+    cmd_str = PUPPET_BINPATH + 'resource tacacs_global default'
+    on(agent, cmd_str)
+    output = stdout
+    search_pattern_in_output(output, { 'key' => add_quotes('44444444') },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'key_format' => '7' },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'source_interface' => "['#{intf}']" },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'timeout' => '1' },
+                             false, self, logger)
+
+    logger.info("Check tacacs_global resource presence on agent :: #{result}")
+  end
 
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource present manifest from master' do

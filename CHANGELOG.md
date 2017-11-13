@@ -16,6 +16,21 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `ensure => absent` for physical interfaces will put the interface into a default state.
   - `ensure => absent` for logical interfaces will cause them to be destroyed.
 
+- Extend `syslog_server` with attribute:
+ - `port`
+
+- Extend `syslog_settings` with attributes:
+ - `console`
+ - `monitor`
+ - `source_interface`
+ - `vrf`
+
+- Extend `radius_global` with attribute:
+ - `source_interface`
+
+- Extend `tacacs_global` with attribute:
+ - `source_interface`
+
 ### Removed
 
 ### Resolved Issues

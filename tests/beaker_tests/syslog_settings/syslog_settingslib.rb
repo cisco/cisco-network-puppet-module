@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2014-2017 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -40,29 +40,50 @@ module SyslogSettingLib
 
   # A. Methods to create manifests for syslog_setting Puppet provider test cases.
 
-  # Method to create a manifest for syslog_setting resource attribute 'ensure'
-  # where 'ensure' is set to present.
+  # Method to create a manifest for syslog_setting with default attributes
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_syslog_settings_manifest_milliseconds
+  def self.create_syslog_settings_manifest_default
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
-  syslog_settings {'default':
-    time_stamp_units => 'milliseconds',
-  }
+    syslog_settings {'default':
+      console          => '2',
+      monitor          => '5',
+      source_interface => 'unset',
+      time_stamp_units => 'seconds',
+    }
 }
 EOF"
     manifest_str
   end
 
-  # Method to create a manifest for syslog_setting resource attribute 'ensure'
-  # where 'ensure' is set to absent.
-  # @param none [None] No input parameters exist.
+  # Method to create a manifest for syslog_setting with non-default attributes
+  # @param intf [String] source_interface
   # @result none [None] Returns no object.
-  def self.create_syslog_settings_manifest_seconds
+  def self.create_syslog_settings_manifest_nondefault(intf)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     syslog_settings {'default':
+      console          => '1',
+      monitor          => '1',
+      source_interface => '#{intf}',
+      time_stamp_units => 'milliseconds',
+    }
+}
+EOF"
+    manifest_str
+  end
+
+  # Method to create a manifest for syslog_setting with unset attributes
+  # @param none [None] No input parameters exist.
+  # @result none [None] Returns no object.
+  def self.create_syslog_settings_manifest_unset
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+    syslog_settings {'default':
+      console          => 'unset',
+      monitor          => 'unset',
+      source_interface => 'unset',
       time_stamp_units => 'seconds',
     }
 }

@@ -1,6 +1,6 @@
-# November, 2014
+# September, 2017
 #
-# Copyright (c) 2014-2016 Cisco and/or its affiliates.
+# Copyright (c) 2014-2017 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,9 +31,23 @@ Puppet::Type.type(:syslog_settings).provide(:cisco) do
 
   mk_resource_methods
 
-  SYSLOG_SETTINGS_PROPS = {
-    time_stamp_units: :timestamp
-  }
+  SYSLOG_SETTINGS_ARRAY_PROPS = [
+    :source_interface
+  ]
+
+  SYSLOG_SETTINGS_NON_BOOL_PROPS = [
+    :console,
+    :monitor,
+    :time_stamp_units,
+  ]
+
+  SYSLOG_CONFIG_PROPS = SYSLOG_SETTINGS_ARRAY_PROPS + SYSLOG_SETTINGS_NON_BOOL_PROPS
+
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:array_flat, self, '@syslogsetting',
+                                            SYSLOG_SETTINGS_ARRAY_PROPS)
+
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@syslogsetting',
+                                            SYSLOG_SETTINGS_NON_BOOL_PROPS)
 
   def initialize(value={})
     super(value)
@@ -46,10 +60,19 @@ Puppet::Type.type(:syslog_settings).provide(:cisco) do
     debug "Checking instance, SyslogSetting #{syslogsetting_name}"
 
     current_state = {
-      name:             'default',
-      time_stamp_units: v.timestamp,
-      ensure:           :present,
+      name:   'default',
+      ensure: :present,
     }
+
+    SYSLOG_SETTINGS_ARRAY_PROPS.each do |prop|
+      val = v.send(prop)
+      current_state[prop] = val ? [val] : ['unset']
+    end
+
+    SYSLOG_SETTINGS_NON_BOOL_PROPS.each do |prop|
+      val = v.send(prop)
+      current_state[prop] = val ? val : 'unset'
+    end
 
     new(current_state)
   end # self.properties_get
@@ -73,7 +96,7 @@ Puppet::Type.type(:syslog_settings).provide(:cisco) do
   end # self.prefetch
 
   def exists?
-    true
+    @property_hash[:ensure] == :present
   end
 
   def validate
@@ -83,26 +106,22 @@ Puppet::Type.type(:syslog_settings).provide(:cisco) do
     fail ArgumentError,
          "This provider does not support the 'enable' property. "\
          'Syslog servers are enabled implicitly when using the syslog_server resource.' if @resource[:enable]
-  end
-
-  def munge_flush(val)
-    if val.is_a?(String) && val.eql?('unset')
-      nil
-    elsif val.is_a?(Symbol)
-      val.to_s
-    else
-      val
-    end
+    fail ArgumentError,
+         "This provider does not support the 'vrf' property. " if @resource[:vrf]
   end
 
   def flush
     validate
 
-    SYSLOG_SETTINGS_PROPS.each do |puppet_prop, cisco_prop|
-      if @resource[puppet_prop]
-        @syslogsetting.send("#{cisco_prop}=", munge_flush(@resource[puppet_prop])) \
-          if @syslogsetting.respond_to?("#{cisco_prop}=")
-      end
+    SYSLOG_CONFIG_PROPS.each do |prop|
+      next unless @resource[prop]
+      next if @property_flush[prop].nil?
+      # Other platforms require array for some types - Nexus does not
+      @property_flush[prop] = @property_flush[prop][0] if @property_flush[prop].is_a?(Array)
+      # Call the AutoGen setters for the @syslogsetting node_utils object.
+      @property_flush[prop] = nil if @property_flush[prop] == 'unset'
+      @syslogsetting.send("#{prop}=", @property_flush[prop]) if
+        @syslogsetting.respond_to?("#{prop}=")
     end
   end
 end # Puppet::Type

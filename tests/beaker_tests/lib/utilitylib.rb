@@ -1253,6 +1253,11 @@ def find_interface(tests, id=nil, skipcheck=true)
     # Skip the first interface we find in case it's our access interface.
     # TODO: check the interface IP address like we do in node_utils
     intf = all.grep(%r{ethernet\d+/\d+$})[1]
+
+  when /mgmt/i
+    all = get_current_resource_instances(tests[:agent], 'network_interface')
+    # TODO: check the interface IP address like we do in node_utils
+    intf = all.grep(/mgmt\d+$/)[0]
   end
 
   if skipcheck && intf.nil?
