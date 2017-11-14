@@ -39,7 +39,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
       rpm('--version')
       yum('--version')
       python('--version')
-    rescue Puppet::ExecutionFailure
+    rescue Puppet::ExecutionFailure, Puppet::MissingCommand
       commands_present = false
     end
     confine true: commands_present
