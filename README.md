@@ -6,6 +6,7 @@
 1. [Setup](#setup)
    * [Puppet Master](#setup-puppet-master)
    * [Puppet Agent](#setup-puppet-agent)
+   * [Puppet Agent Authentication](#setup-agent-auth)
 1. [Example Manifests](#example-manifests)
 1. [Resource Reference](#resource-reference)
    * [Resource Type Catalog (by Technology)](#resource-by-tech)
@@ -95,6 +96,44 @@ node 'default' {
 Once installed, the GEM will remain persistent across system reloads within the Guestshell or OAC environments; however, the bash-shell environment does not share this persistent behavior, in which case the `ciscopuppet::install` helper class automatically downloads and re-installs the gem after each system reload.
 
 See [General Documentation](#general-documentation) for information on Guestshell and OAC.
+
+### <a name="setup-agent-auth">Puppet Agent Authentication<a>
+  
+Puppet makes use of the nxos `admin` user by default for all types in this module.  If a different user is required for puppet agent runs then the following procedure can be used to override `admin` with the desired user.
+
+**NOTE:** The user you select must already be configured on your device with the role `network-admin`.
+
+First create a different user with the role `network-admin`.
+
+~~~
+config term
+  username puppetuser password puppet role network-admin
+end
+~~~
+
+Next create a file called `cisco_node_utils.yaml` under the `cisco-network-puppet-module` files directory and add a cookie `puppetuser:local` under the `default:` yaml key.
+
+```bash
+puppetserver:> cat /etc/puppetlabs/code/environments/production/modules/ciscopuppet/files/cisco_node_utils.yaml
+default:
+  cookie: 'puppetuser:local'
+puppetserver:>
+```
+
+Now create and apply the following manifest on your nxos devices.
+
+~~~puppet
+  $cookie_src = "puppet:///modules/ciscopuppet/cisco_node_utils.yaml"
+  $cookie_tgt = "/${::identity['user']}/cisco_node_utils.yaml"
+
+  file { $cookie_tgt :
+    ensure => file,
+    source => $cookie_src,
+    owner  => 'root',
+    group  => 'root',
+    mode   => 'ug+rwx',
+  }
+~~~
 
 ## <a href='example-manifests'>Example Manifests</a>
 
