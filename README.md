@@ -4,6 +4,8 @@
 
 1. [Module Description](#module-description)
 1. [Setup](#setup)
+   * [Puppet Master](#setup-puppet-master)
+   * [Puppet Agent](#setup-puppet-agent)
 1. [Example Manifests](#example-manifests)
 1. [Resource Reference](#resource-reference)
    * [Resource Type Catalog (by Technology)](#resource-by-tech)
@@ -29,7 +31,7 @@ Contributions to the `ciscopuppet` module are welcome. See [CONTRIBUTING.md][DEV
 
 ## <a href='setup'>Setup</a>
 
-#### Puppet Master
+### <a name="setup-puppet-master">Puppet Master<a>
 
 The `ciscopuppet` module must be installed on the Puppet Master server.
 
@@ -43,7 +45,7 @@ For more information on Puppet module installation see [Puppet Labs: Installing 
 
 PuppetLabs provides NetDev resource support for Cisco Nexus devices with their [`puppetlabs-netdev-stdlib`](https://forge.puppet.com/puppetlabs/netdev_stdlib) module. Installing the `ciscopuppet` module automatically installs both the `ciscopuppet` and `netdev_stdlib` modules.
 
-#### Puppet Agent
+### <a name="setup-puppet-agent">Puppet Agent<a>
 
 The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md][USER-1] document for detailed instructions on agent installation and configuration on Cisco Nexus devices.
 
