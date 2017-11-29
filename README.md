@@ -4,6 +4,9 @@
 
 1. [Module Description](#module-description)
 1. [Setup](#setup)
+   * [Puppet Master](#setup-puppet-master)
+   * [Puppet Agent](#setup-puppet-agent)
+   * [Puppet Agent Authentication](#setup-agent-auth)
 1. [Example Manifests](#example-manifests)
 1. [Resource Reference](#resource-reference)
    * [Resource Type Catalog (by Technology)](#resource-by-tech)
@@ -29,7 +32,7 @@ Contributions to the `ciscopuppet` module are welcome. See [CONTRIBUTING.md][DEV
 
 ## <a href='setup'>Setup</a>
 
-#### Puppet Master
+### <a name="setup-puppet-master">Puppet Master<a>
 
 The `ciscopuppet` module must be installed on the Puppet Master server.
 
@@ -43,7 +46,7 @@ For more information on Puppet module installation see [Puppet Labs: Installing 
 
 PuppetLabs provides NetDev resource support for Cisco Nexus devices with their [`puppetlabs-netdev-stdlib`](https://forge.puppet.com/puppetlabs/netdev_stdlib) module. Installing the `ciscopuppet` module automatically installs both the `ciscopuppet` and `netdev_stdlib` modules.
 
-#### Puppet Agent
+### <a name="setup-puppet-agent">Puppet Agent<a>
 
 The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md][USER-1] document for detailed instructions on agent installation and configuration on Cisco Nexus devices.
 
@@ -93,6 +96,44 @@ node 'default' {
 Once installed, the GEM will remain persistent across system reloads within the Guestshell or OAC environments; however, the bash-shell environment does not share this persistent behavior, in which case the `ciscopuppet::install` helper class automatically downloads and re-installs the gem after each system reload.
 
 See [General Documentation](#general-documentation) for information on Guestshell and OAC.
+
+### <a name="setup-agent-auth">Puppet Agent Authentication<a>
+  
+Puppet makes use of the nxos `admin` user by default for all types in this module.  If a different user is required for puppet agent runs then the following procedure can be used to override `admin` with the desired user.
+
+**NOTE:** The user you select must already be configured on your device with the role `network-admin`.
+
+First create a different user with the role `network-admin`.
+
+~~~
+config term
+  username puppetuser password puppet role network-admin
+end
+~~~
+
+Next create a file called `cisco_node_utils.yaml` under the `modules/ciscopuppet/files` directory on the puppet server and add a cookie `puppetuser:local` under the `default:` yaml key.
+
+```bash
+puppetserver:> cat /etc/puppetlabs/code/environments/production/modules/ciscopuppet/files/cisco_node_utils.yaml
+default:
+  cookie: 'puppetuser:local'
+puppetserver:>
+```
+
+Now create and apply the following manifest on your nxos devices.
+
+~~~puppet
+  $cookie_src = "puppet:///modules/ciscopuppet/cisco_node_utils.yaml"
+  $cookie_tgt = "/${::identity['user']}/cisco_node_utils.yaml"
+
+  file { $cookie_tgt :
+    ensure => file,
+    source => $cookie_src,
+    owner  => 'root',
+    group  => 'root',
+    mode   => 'ug+rwx',
+  }
+~~~
 
 ## <a href='example-manifests'>Example Manifests</a>
 
