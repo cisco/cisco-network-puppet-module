@@ -111,7 +111,7 @@ config term
 end
 ~~~
 
-Next create a file called `cisco_node_utils.yaml` under the `cisco-network-puppet-module` files directory and add a cookie `puppetuser:local` under the `default:` yaml key.
+Next create a file called `cisco_node_utils.yaml` under the `modules/ciscopuppet/files` directory on the puppet server and add a cookie `puppetuser:local` under the `default:` yaml key.
 
 ```bash
 puppetserver:> cat /etc/puppetlabs/code/environments/production/modules/ciscopuppet/files/cisco_node_utils.yaml
