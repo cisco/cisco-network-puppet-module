@@ -178,6 +178,13 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
     newvalues(:true, :false, :default)
   end
 
+  newproperty(:multisite_ingress_replication) do
+    desc "Set multisite ingress replication for the VNI. Valid values are true,
+          or false"
+    defaultto(:false)
+    newvalues(:true, :false)
+  end
+
   # Multicast-group and ingress-replication are mutually exclusive properties.
   validate do
     fail 'Only one of multicast-group or ingress-replication can be configured, '\

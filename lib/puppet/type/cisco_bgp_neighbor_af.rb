@@ -487,6 +487,12 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
     end
   end
 
+  newproperty(:rewrite_rt_asn) do
+    desc 'rewrite_rt_Asn state. ' \
+         "Valid values are true, false or 'default'."
+    newvalues(:true, :false, :default)
+  end
+
   validate do
     fail("The 'asn' parameter must be set in the manifest.") if self[:asn].nil?
     fail("The 'vrf' parameter must be set in the manifest.") if self[:vrf].nil?

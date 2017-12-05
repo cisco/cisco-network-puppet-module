@@ -393,6 +393,12 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
     end
   end
 
+  newproperty(:peer_type) do
+    desc "Specify the peer type. Valid value are 'fabric-border-leaf' or
+          'fabric-external'."
+    newvalues(:"fabric-border-leaf", :"fabric-external")
+  end
+
   validate do
     fail("The 'asn' parameter must be set in the manifest.") if self[:asn].nil?
     fail("The 'vrf' parameter must be set in the manifest.") if self[:vrf].nil?

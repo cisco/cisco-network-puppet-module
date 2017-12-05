@@ -105,6 +105,19 @@ Puppet::Type.newtype(:cisco_vxlan_vtep) do
     end
   end
 
+  newproperty(:multisite_border_gateway_interface) do
+    desc "Specify loopback interface to be used as VxLAN Multisite
+          Border-gateway interface. Valid values are string."
+
+    validate do |value|
+      fail("Interface name must be a string") unless value.is_a? String
+    end
+
+    munge do |value|
+      value =  value.gsub(/\s+/, '').downcase
+    end
+  end
+
   newproperty(:source_interface_hold_down_time) do
     desc "Suppress advertisement of the NVE loopback address until the overlay
           has converged. Valid values are Integer, keyword 'default'."
