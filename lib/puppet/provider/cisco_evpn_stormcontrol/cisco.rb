@@ -44,23 +44,22 @@ Puppet::Type.type(:cisco_evpn_stormcontrol).provide(:cisco) do
     @property_flush = {}
   end # initialize
 
-  def self.properties_get(type, nu_obj)
+  def self.properties_get(type, level)
     debug "Checking instance, type #{type}"
     current_state = {
+      name:   level,
       packet_type:    type,
       ensure: :present,
+      level: level,
     }
-
-    # Call node_utils getter for each property
-    EVPN_STORMCONTROL_ALL_PROPS.each { |prop| current_state[prop] = nu_obj.send(prop) }
 
     new(current_state)
   end # self.properties_get
 
   def self.instances
     stormcontrol = []
-    Cisco::EvpnStormcontrol.stormcontrol.each do |type, nu_obj|
-      stormcontrol << properties_get(type, nu_obj)
+    Cisco::EvpnStormcontrol.stormcontrol.each do |type, level|
+      stormcontrol << properties_get(type, level) unless level.nil?
     end
     stormcontrol
   end # self.instances
