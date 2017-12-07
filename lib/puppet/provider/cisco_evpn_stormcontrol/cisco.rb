@@ -47,8 +47,7 @@ Puppet::Type.type(:cisco_evpn_stormcontrol).provide(:cisco) do
   def self.properties_get(type, level)
     debug "Checking instance, type #{type}"
     current_state = {
-      name:   level,
-      packet_type:    type,
+      name:   type,
       ensure: :present,
       level: level,
     }
