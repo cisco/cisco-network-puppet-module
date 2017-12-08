@@ -44,30 +44,28 @@ Puppet::Type.type(:cisco_evpn_stormcontrol).provide(:cisco) do
     @property_flush = {}
   end # initialize
 
-  def self.properties_get(type, level)
+  def self.properties_get(type, nu_obj)
     debug "Checking instance, type #{type}"
     current_state = {
       name:   type,
       ensure: :present,
-      level: level,
+      level: nu_obj.level,
     }
-
     new(current_state)
   end # self.properties_get
 
   def self.instances
     stormcontrol = []
-    Cisco::EvpnStormcontrol.stormcontrol.each do |type, level|
-      stormcontrol << properties_get(type, level) unless level.nil?
+    Cisco::EvpnStormcontrol.stormcontrol.each do |type, nu_obj|
+      stormcontrol << properties_get(type, nu_obj) unless nu_obj.nil?
     end
     stormcontrol
   end # self.instances
 
   def self.prefetch(resources)
     stormcontrol = instances
-
     resources.keys.each do |id|
-      provider = stormcontrol.find { |type| type.instance_name == id }
+      provider = stormcontrol.find { |type| type.name == id }
       resources[id].provider = provider unless provider.nil?
     end
   end
@@ -82,10 +80,6 @@ Puppet::Type.type(:cisco_evpn_stormcontrol).provide(:cisco) do
 
   def destroy
     @property_flush[:ensure] = :absent
-  end
-
-  def instance_name
-    type
   end
 
   def properties_set(new_stormcontrol=false)
@@ -107,7 +101,7 @@ Puppet::Type.type(:cisco_evpn_stormcontrol).provide(:cisco) do
       # Create/Update
       if @nu.nil?
         new_stormcontrol = true
-        @nu = Cisco::EvpnStormcontrol.new(@resource[:type])
+        @nu = Cisco::EvpnStormcontrol.new(@resource[:packet_type],@resource[:level])
       end
       properties_set(new_stormcontrol)
     end
