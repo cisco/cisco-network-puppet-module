@@ -1,4 +1,4 @@
-# September, 2017
+# December, 2017
 #
 # Copyright (c) 2014-2017 Cisco and/or its affiliates.
 #
@@ -69,7 +69,7 @@ Puppet::Type.type(:tacacs_global).provide(:cisco) do
     current_state = {
       ensure:           :present,
       name:             v.name,
-      timeout:          v.timeout ? v.timeout : -1,
+      timeout:          v.timeout,
       key:              v.key.nil? || v.key.empty? ? 'unset' : v.key,
       # Only return the key format if there is a key configured
       key_format:       v.key.nil? || v.key.empty? ? nil : v.key_format,

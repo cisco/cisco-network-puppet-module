@@ -5604,7 +5604,7 @@ Encryption key (plaintext or in hash form depending on key_format)
 Encryption key format [0-7]
 
 ##### `timeout`
-Number of seconds before the timeout period ends
+Number of seconds before the timeout period ends.  Also supports [undef](https://puppet.com/docs/puppet/5.3/lang_data_undef.html)
 
 --
 ### Type: tacacs_server
