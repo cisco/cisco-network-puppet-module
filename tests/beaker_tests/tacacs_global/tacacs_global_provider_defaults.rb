@@ -68,6 +68,22 @@ test_name "TestCase :: #{testheader}" do
   cleanup
   teardown { cleanup }
 
+  # @step [Step] Checks tacacs_global resource on agent using resource cmd.
+  step 'TestStep :: Check tacacs_global resource unconfigured' do
+    # Expected exit_code is 0 since this is a puppet resource cmd.
+    # Flag is set to false to check for presence of RegExp pattern in stdout.
+    cmd_str = PUPPET_BINPATH + 'resource tacacs_global default'
+    on(agent, cmd_str)
+    output = stdout
+    search_pattern_in_output(output, { 'key' => 'unset' },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'source_interface' => "['unset']" },
+                             false, self, logger)
+    search_pattern_in_output(output, [/timeout/], true, self, logger)
+
+    logger.info("Check tacacs_global resource unconfigured :: #{result}")
+  end
+
   # @step [Step] Requests manifest from the master server to the agent.
   step 'TestStep :: Get resource present manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
