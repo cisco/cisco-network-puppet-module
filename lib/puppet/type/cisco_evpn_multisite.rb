@@ -45,14 +45,15 @@ Puppet::Type.newtype(:cisco_evpn_multisite) do
   ensurable
 
   newproperty(:delay_restore) do
-    desc "Delay restore time in seconds. Valid values are Integer."
+    desc "Delay restore time in seconds. Valid values are Integer or default."
 
     munge do |value|
       begin
-        value = Integer(value)
+        value = Integer(value) unless value == 'default'
       rescue
         raise 'delay_restore must be an Integer.'
       end # rescue
+      value = :default if value == 'default'
       value
     end
   end # property delay_restore

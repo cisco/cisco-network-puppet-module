@@ -97,7 +97,8 @@ Puppet::Type.type(:cisco_evpn_multisite).provide(:cisco) do
       @nu = nil
     else
       # Create/Update
-      if @nu.nil?
+      if @nu.nil? or @nu.multisite != @resource[:multisite]
+        @nu.destroy unless @nu.nil?
         new_multisite = true
         @nu = Cisco::EvpnMultisite.new(@resource[:multisite])
       end
