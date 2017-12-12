@@ -36,6 +36,7 @@ Puppet::Type.type(:cisco_vxlan_vtep).provide(:cisco) do
     :host_reachability,
     :source_interface,
     :source_interface_hold_down_time,
+    :multisite_border_gateway_interface,
   ]
 
   VXLAN_VTEP_BOOL_PROPS = [
