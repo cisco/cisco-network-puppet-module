@@ -60,11 +60,6 @@ Puppet::Type.newtype(:cisco_interface_evpn_multisite) do
 
   newproperty(:tracking) do
     desc "The type of tracking to use with multisite interface.
-          Valid values are String or default"
-
-    munge do |value|
-      value = :default if value == 'default'
-      value
-    end
+          Valid values are String."
   end # property tracking
 end # Puppet::Type.newtype
