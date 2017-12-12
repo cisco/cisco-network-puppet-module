@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.8.0] - 2017-11-09
+## [1.8.0] - 2017-12-12
 
 ### New feature support
 #### Cisco Resources
