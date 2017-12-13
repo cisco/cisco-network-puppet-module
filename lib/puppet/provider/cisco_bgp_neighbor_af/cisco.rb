@@ -63,7 +63,7 @@ Puppet::Type.type(:cisco_bgp_neighbor_af).provide(:cisco) do
     :next_hop_third_party,
     :route_reflector_client,
     :suppress_inactive,
-    :rewrite_rt_asn,
+    :rewrite_evpn_rt_asn,
   ]
 
   BGP_NBR_AF_ALL_PROPS = BGP_NBR_AF_NON_BOOL_PROPS + BGP_NBR_AF_BOOL_PROPS
