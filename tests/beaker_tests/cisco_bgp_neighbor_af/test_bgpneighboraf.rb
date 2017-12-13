@@ -32,7 +32,9 @@ tests = {
 
 # Overridden to properly handle unsupported properties.
 def unsupported_properties(_, _)
-  return [] if operating_system == 'nexus'
+  unsupported_list = []
+  unsupported_list << :rewrite_rt_asn unless platform[/ex/]
+  return unsupported_list if operating_system == 'nexus'
 
   [
     :additional_paths_receive,
@@ -46,6 +48,7 @@ def unsupported_properties(_, _)
     :prefix_list_out,
     :suppress_inactive,
     :unsuppress_map,
+    :rewrite_rt_asn,
   ]
 end
 
@@ -125,6 +128,7 @@ tests[:default] = {
     suppress_inactive:           'default',
     unsuppress_map:              'default',
     weight:                      'default',
+    rewrite_rt_asn:              'default',
   },
   resource:       {
     'additional_paths_receive' => 'inherit',
@@ -140,6 +144,7 @@ tests[:default] = {
     'send_community'           => 'none',
     'soft_reconfiguration_in'  => 'inherit',
     'suppress_inactive'        => 'false',
+    'rewrite_rt_asn'           => 'false',
   },
 }
 
@@ -200,6 +205,14 @@ tests[:non_def_N] = {
   manifest_props: {
     next_hop_self:        'true',
     next_hop_third_party: 'false',
+  },
+}
+
+tests[:non_def_R] = {
+  desc:           'Non Default (R) rewrite-rt-asn',
+  title_pattern:  '2 blue 1.1.1.1 ipv4 unicast',
+  manifest_props: {
+    rewrite_rt_asn:        'true',
   },
 }
 
@@ -345,6 +358,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
     :non_def_D2,
     :non_def_M,
     :non_def_N,
+    :non_def_R,
     :non_def_S1,
     :non_def_S3,
     :non_def_S4,

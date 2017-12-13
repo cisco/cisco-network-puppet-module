@@ -488,7 +488,7 @@ Puppet::Type.newtype(:cisco_bgp_neighbor_af) do
   end
 
   newproperty(:rewrite_rt_asn) do
-    desc 'rewrite_rt_Asn state. ' \
+    desc 'rewrite_rt_asn state. ' \
          "Valid values are true, false or 'default'."
     newvalues(:true, :false, :default)
   end
