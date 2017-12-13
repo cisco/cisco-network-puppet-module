@@ -39,11 +39,12 @@ skip_unless_supported(tests)
 tests[:default] = {
   title_pattern:  'nve1',
   manifest_props: {
-    description:                     'default',
-    host_reachability:               'default',
-    shutdown:                        'default',
-    source_interface:                'default',
-    source_interface_hold_down_time: 'default',
+    description:                        'default',
+    host_reachability:                  'default',
+    shutdown:                           'default',
+    source_interface:                   'default',
+    source_interface_hold_down_time:    'default',
+    multisite_border_gateway_interface: 'default',
   },
   resource:       {
     'host_reachability' => 'flood',
@@ -54,17 +55,19 @@ tests[:default] = {
 tests[:non_default] = {
   title_pattern:  'nve1',
   manifest_props: {
-    description:                     'Puppet test',
-    host_reachability:               'evpn',
-    shutdown:                        'false',
-    source_interface:                'loopback55',
-    source_interface_hold_down_time: '100',
+    description:                        'Puppet test',
+    host_reachability:                  'evpn',
+    shutdown:                           'false',
+    source_interface:                   'loopback55',
+    source_interface_hold_down_time:    '100',
+    multisite_border_gateway_interface: 'loopback5',
   },
 }
 
 def unsupported_properties(*)
   unprops = []
   unprops << :source_interface_hold_down_time if platform[/n(5|6)k/]
+  unprops << :multisite_border_gateway_interface unless platform[/ex/]
   unprops
 end
 
