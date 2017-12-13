@@ -80,6 +80,7 @@ tests[:non_default] = {
     timers_keepalive:       '90',
     timers_holdtime:        '270',
     update_source:          'loopback151',
+    peer_type:              'fabric-external',
   },
 }
 
@@ -131,6 +132,7 @@ def unsupported_properties(_tests, _id)
 
   else
     unprops << :log_neighbor_changes if platform[/n(5|6)/]
+    unprops << :peer_type unless platform[/ex/]
   end
 
   unprops
