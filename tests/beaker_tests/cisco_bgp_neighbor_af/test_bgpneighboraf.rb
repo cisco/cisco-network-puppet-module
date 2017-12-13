@@ -1,4 +1,6 @@
-###############################################################################
+##############################################################################
+    :non_def_R,
+
 # Copyright (c) 2015-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -128,7 +130,6 @@ tests[:default] = {
     suppress_inactive:           'default',
     unsuppress_map:              'default',
     weight:                      'default',
-    rewrite_evpn_rt_asn:         'default',
   },
   resource:       {
     'additional_paths_receive' => 'inherit',
@@ -144,7 +145,6 @@ tests[:default] = {
     'send_community'           => 'none',
     'soft_reconfiguration_in'  => 'inherit',
     'suppress_inactive'        => 'false',
-    'rewrite_evpn_rt_asn'      => 'false',
   },
 }
 
@@ -205,14 +205,6 @@ tests[:non_def_N] = {
   manifest_props: {
     next_hop_self:        'true',
     next_hop_third_party: 'false',
-  },
-}
-
-tests[:non_def_R] = {
-  desc:           'Non Default (R) rewrite-rt-asn',
-  title_pattern:  '2 blue 1.1.1.1 ipv4 unicast',
-  manifest_props: {
-    rewrite_evpn_rt_asn:    'true',
   },
 }
 
@@ -282,6 +274,14 @@ tests[:non_def_ebgp_only] = {
   title_pattern:  '2 yellow 3.3.3.3 ipv4 unicast',
   remote_as:      3,
   manifest_props: { as_override: 'true' },
+}
+
+tests[:non_def_ebgp_evpn] = {
+  desc:           'Non Default: (ebgp-only) rewrite-evpn-rt-asn',
+  preclean:       'cisco_bgp',
+  title_pattern:  '2 yellow 3.3.3.3 l2vpn evpn',
+  remote_as:      3,
+  manifest_props: { rewrite_evpn_rt_asn: 'true'},
 }
 
 tests[:non_def_ibgp_only] = {
@@ -358,7 +358,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
     :non_def_D2,
     :non_def_M,
     :non_def_N,
-    :non_def_R,
     :non_def_S1,
     :non_def_S3,
     :non_def_S4,
@@ -373,6 +372,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   end
 
   test_harness_run(tests, :non_def_ebgp_only)
+  test_harness_run(tests, :non_def_ebgp_evpn)
   test_harness_run(tests, :non_def_ibgp_only)
 
   # -------------------------------------------------------------------
