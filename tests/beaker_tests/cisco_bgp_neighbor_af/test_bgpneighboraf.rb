@@ -370,7 +370,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   end
 
   test_harness_run(tests, :non_def_ebgp_only)
-  test_harness_run(tests, :non_def_ebgp_evpn)
   test_harness_run(tests, :non_def_ibgp_only)
 
   # -------------------------------------------------------------------
@@ -384,6 +383,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
       :non_def_M,
       :non_def_S1,
       :non_def_misc_maps_1,
+      :non_def_ebgp_evpn,
     ]
     array << :non_def_S3 if operating_system == 'ios_xr'
 
