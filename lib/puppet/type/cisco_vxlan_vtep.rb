@@ -107,14 +107,15 @@ Puppet::Type.newtype(:cisco_vxlan_vtep) do
 
   newproperty(:multisite_border_gateway_interface) do
     desc "Specify loopback interface to be used as VxLAN Multisite
-          Border-gateway interface. Valid values are string."
+          Border-gateway interface. Valid values are string,
+          and keyword 'default'."
 
     validate do |value|
       fail("Interface name must be a string") unless value.is_a? String
     end
 
     munge do |value|
-      value =  value.gsub(/\s+/, '').downcase
+      value == 'default' ? :default : value.gsub(/\s+/, '').downcase
     end
   end
 
