@@ -1,6 +1,4 @@
 ##############################################################################
-    :non_def_R,
-
 # Copyright (c) 2015-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
