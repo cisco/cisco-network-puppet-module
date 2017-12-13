@@ -33,7 +33,7 @@ tests = {
 # Overridden to properly handle unsupported properties.
 def unsupported_properties(_, _)
   unsupported_list = []
-  unsupported_list << :rewrite_rt_asn unless platform[/ex/]
+  unsupported_list << :rewrite_evpn_rt_asn unless platform[/ex/]
   return unsupported_list if operating_system == 'nexus'
 
   [
@@ -48,7 +48,7 @@ def unsupported_properties(_, _)
     :prefix_list_out,
     :suppress_inactive,
     :unsuppress_map,
-    :rewrite_rt_asn,
+    :rewrite_evpn_rt_asn,
   ]
 end
 
@@ -128,7 +128,7 @@ tests[:default] = {
     suppress_inactive:           'default',
     unsuppress_map:              'default',
     weight:                      'default',
-    rewrite_rt_asn:              'default',
+    rewrite_evpn_rt_asn:         'default',
   },
   resource:       {
     'additional_paths_receive' => 'inherit',
@@ -144,7 +144,7 @@ tests[:default] = {
     'send_community'           => 'none',
     'soft_reconfiguration_in'  => 'inherit',
     'suppress_inactive'        => 'false',
-    'rewrite_rt_asn'           => 'false',
+    'rewrite_evpn_rt_asn'      => 'false',
   },
 }
 
@@ -212,7 +212,7 @@ tests[:non_def_R] = {
   desc:           'Non Default (R) rewrite-rt-asn',
   title_pattern:  '2 blue 1.1.1.1 ipv4 unicast',
   manifest_props: {
-    rewrite_rt_asn:        'true',
+    rewrite_evpn_rt_asn:    'true',
   },
 }
 
