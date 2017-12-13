@@ -207,9 +207,8 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     Cisco::Interface.interfaces.each do |interface_name, nu_obj|
       begin
         # Some interfaces cannot or should not be managed by this type.
-        # - Management Interface
         # - NVE Interfaces (managed by cisco_vxlan_vtep type)
-        next if interface_name.match(/mgmt|nve/i)
+        next if interface_name.match(/nve/i)
         interfaces << properties_get(interface_name, nu_obj)
       end
     end
@@ -358,7 +357,11 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
   end
 
   def flush
-    if @resource['name'][/nve/]
+    if @resource['name'][/mgmt/i]
+      msg = 'Management interfaces can be displayed but not configured'
+      fail msg
+    end
+    if @resource['name'][/nve/i]
       msg = 'Use the cisco_vxlan_vtep type to manage nve interfaces'
       fail msg
     end
