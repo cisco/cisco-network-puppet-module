@@ -72,7 +72,7 @@ class ciscopuppet::cisco::demo_route_map {
   }
 
   $match_ospf_area = platform_get() ? {
-    /(n3k|n9k$)/ => $facts['cisco']['images']['system_image'] ? {
+    /(n3k$|n9k$)/ => $facts['cisco']['images']['system_image'] ? {
       /(I2|I3|I4)/ => undef,
       default => ['10', '7', '222']
     },
@@ -95,7 +95,7 @@ class ciscopuppet::cisco::demo_route_map {
   }
 
   $set_ipv4_next_hop_load_share = platform_get() ? {
-    /(n3k|n9k$)/ => $facts['cisco']['images']['system_image'] ? {
+    /(n3k$|n9k$)/ => $facts['cisco']['images']['system_image'] ? {
       /(I2|I3|I4)/ => undef,
       default => true
     },
@@ -119,7 +119,7 @@ class ciscopuppet::cisco::demo_route_map {
   }
 
   $set_ipv4_next_hop_redist = platform_get() ? {
-    /(n3k|n9k$)/ => $facts['cisco']['images']['system_image'] ? {
+    /(n3k$|n9k$)/ => $facts['cisco']['images']['system_image'] ? {
       /(I2|I3|I4)/ => undef,
       default => true
     },
@@ -127,7 +127,7 @@ class ciscopuppet::cisco::demo_route_map {
   }
 
   $set_ipv6_next_hop_redist = platform_get() ? {
-    /(n3k|n9k$)/ => $facts['cisco']['images']['system_image'] ? {
+    /(n3k$|n9k$)/ => $facts['cisco']['images']['system_image'] ? {
       /(I2|I3|I4)/ => undef,
       default => true
     },
@@ -135,7 +135,7 @@ class ciscopuppet::cisco::demo_route_map {
   }
 
   $set_ipv6_next_hop_load_share = platform_get() ? {
-    /(n3k|n9k$)/ => $facts['cisco']['images']['system_image'] ? {
+    /(n3k$|n9k$)/ => $facts['cisco']['images']['system_image'] ? {
       /(I2|I3|I4)/ => undef,
       default => true
     },
@@ -261,7 +261,7 @@ class ciscopuppet::cisco::demo_route_map {
     }
   }
 
-  if platform_get() =~ /n9k-f/ {
+  if platform_get() =~ /n(3|9)k-f/ {
     cisco_route_map {'MyRouteMap1 123 permit':
       ensure                                 => 'present',
       description                            => 'Testing',

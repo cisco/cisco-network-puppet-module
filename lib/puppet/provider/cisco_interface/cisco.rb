@@ -1,6 +1,6 @@
 # May 2015
 #
-# Copyright (c) 2015-2016 Cisco and/or its affiliates.
+# Copyright (c) 2015-2017 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -206,8 +206,9 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     interfaces = []
     Cisco::Interface.interfaces.each do |interface_name, nu_obj|
       begin
-        # Not allowed to create an interface for mgmt0 or MgmtEth0/*
-        next if interface_name.match(/mgmt/i)
+        # Some interfaces cannot or should not be managed by this type.
+        # - NVE Interfaces (managed by cisco_vxlan_vtep type)
+        next if interface_name.match(/nve/i)
         interfaces << properties_get(interface_name, nu_obj)
       end
     end
@@ -223,6 +224,10 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
   end # self.prefetch
 
   def exists?
+    # @nu.state_default returns true if @nu is a physical interface and it's
+    # in a default state.  Physical interfaces are treated as resources
+    # that don't exist if they are in a default state.
+    return false unless @nu.nil? || !@nu.state_default
     (@property_hash[:ensure] == :present)
   end
 
@@ -352,12 +357,20 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
   end
 
   def flush
+    if @resource['name'][/mgmt/i]
+      msg = 'Management interfaces can be displayed but not configured'
+      fail msg
+    end
+    if @resource['name'][/nve/i]
+      msg = 'Use the cisco_vxlan_vtep type to manage nve interfaces'
+      fail msg
+    end
     if @property_flush[:ensure] == :absent
       @nu.destroy
       @nu = nil
     else
       # Create/Update
-      if @nu.nil?
+      if @nu.nil? || @nu.state_default
         new_interface = true
         @nu = Cisco::Interface.new(@resource[:interface])
       end

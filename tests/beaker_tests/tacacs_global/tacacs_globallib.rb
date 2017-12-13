@@ -43,13 +43,13 @@ module TacacsGlobalLib
   # Method to create a manifest for tacacs_global
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
-  def self.create_tacacs_global_manifest
+  def self.create_tacacs_global_default
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   tacacs_global { 'default':
-    key                 => '44444444',
-    key_format          => '7',
-    timeout             => '2',
+    key               => 'unset',
+    source_interface  => 'unset',
+    timeout           => '5',
   }
 }
 EOF"
@@ -58,14 +58,15 @@ EOF"
 
   # Method to create a manifest for tacacs_global resource
   # with a few changes made from above.
-  # @param none [None] No input parameters exist.
+  # @param intf [String] source_interface
   # @result none [None] Returns no object.
-  def self.create_tacacs_global_manifest_change
+  def self.create_tacacs_global_non_default(intf)
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   tacacs_global { 'default':
     key                 => '44444444',
     key_format          => '7',
+    source_interface    => '#{intf}',
     timeout             => '1',
   }
 }

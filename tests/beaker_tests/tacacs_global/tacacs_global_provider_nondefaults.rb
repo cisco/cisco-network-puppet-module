@@ -15,11 +15,11 @@
 ###############################################################################
 # TestCase Name:
 # -------------
-# RadiusGlobal-Provider-Defaults.rb
+# TacacsGlobal-Provider-NonDefaults.rb
 #
 # TestCase Prerequisites:
 # -----------------------
-# This is a radius_global resource testcase for Puppet Agent on Nexus devices.
+# This is a tacacs_global resource testcase for Puppet Agent on Nexus devices.
 # The test case assumes the following prerequisites are already satisfied:
 # A. Populating the HOSTS configuration file with the agent and master
 # information.
@@ -29,12 +29,12 @@
 #
 # TestCase:
 # ---------
-# This is a radius_global resource test that tests default attributes of
+# This is a tacacs_global resource test that tests non-default attribute of
 # tacacs_global resource.
 #
 # There are 2 sections to the testcase: Setup, group of teststeps.
 # The 1st step is the Setup teststep that cleans up the switch state.
-# Steps 2+ deal with radius_global and its
+# Steps 2+ deal with tacacs_global and its
 # verification using Puppet Agent and the switch running-config.
 #
 # The testcode checks for exit_codes from Puppet Agent, Vegas shell and
@@ -53,46 +53,89 @@
 
 # Require UtilityLib.rb and SnmpGroupLib.rb paths.
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-require File.expand_path('../radius_globallib.rb', __FILE__)
+require File.expand_path('../tacacs_globallib.rb', __FILE__)
 
 result = 'PASS'
-testheader = 'radius_global Resource :: All Attributes Defaults'
+testheader = 'tacacs_global Resource :: All Attributes Non-Defaults'
+
+tests = {
+  agent:         agent,
+  master:        master,
+  intf_type:     'ethernet',
+  resource_name: 'tacacs_global',
+}
 
 def cleanup
   logger.info('Testcase Cleanup:')
-
-  command_config(agent, 'radius-server timeout 5')
-  command_config(agent, 'radius-server retransmit 1')
-  command_config(agent, 'no ip radius source-interface')
-
-  # To remove a configured key we have ot know the key value
-  on(agent, get_vshell_cmd('show running-config radius | include key'))
-  key = stdout.match('^radius-server key (\d+)\s+(.*)')
-  command_config(agent, "no radius-server key #{key[1]} #{key[2]}", "removing key #{key[2]}") if key
+  command_config(agent, 'no feature tacacs+')
 end
 
-# @test_name [TestCase] Executes defaults testcase for radius_global Resource.
+# @test_name [TestCase] Executes defaults testcase for tacacs_global Resource.
 test_name "TestCase :: #{testheader}" do
   cleanup
   teardown { cleanup }
 
-  # @step [Step] Checks radius_global resource on agent using resource cmd.
-  step 'TestStep :: Check radius_global resource presence on agent' do
+  # Find an available test interface on this device
+  intf = find_interface(tests)
+
+  # @step [Step] Requests manifest from the master server to the agent.
+  step 'TestStep :: Get resource present (with changes) manifest from master' do
+    # Expected exit_code is 0 since this is a bash shell cmd.
+    on(master, TacacsGlobalLib.create_tacacs_global_non_default(intf))
+
+    # Expected exit_code is 2 since this is a puppet agent cmd with change.
+    cmd_str = PUPPET_BINPATH + 'agent -t'
+    on(agent, cmd_str, acceptable_exit_codes: [2])
+
+    logger.info("Get resource present manifest from master :: #{result}")
+  end
+
+  # @step [Step] Checks tacacs_global resource on agent using resource cmd.
+  step 'TestStep :: Check tacacs_global resource presence on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
-    cmd_str = PUPPET_BINPATH + 'resource radius_global default'
+    cmd_str = PUPPET_BINPATH + 'resource tacacs_global default'
+    on(agent, cmd_str)
+    output = stdout
+    search_pattern_in_output(output, { 'key' => add_quotes('44444444') },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'key_format' => '7' },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'source_interface' => "['#{intf}']" },
+                             false, self, logger)
+    search_pattern_in_output(output, { 'timeout' => '1' },
+                             false, self, logger)
+
+    logger.info("Check tacacs_global resource presence on agent :: #{result}")
+  end
+
+  # @step [Step] Requests manifest from the master server to the agent.
+  step 'TestStep :: Get resource present manifest from master' do
+    # Expected exit_code is 0 since this is a bash shell cmd.
+    on(master, TacacsGlobalLib.create_tacacs_global_default)
+
+    # Expected exit_code is 0 or 2 depending on the state of the device.
+    cmd_str = PUPPET_BINPATH + 'agent -t'
+    on(agent, cmd_str, acceptable_exit_codes: [0, 2])
+
+    logger.info("Get resource present manifest from master :: #{result}")
+  end
+
+  # @step [Step] Checks tacacs_global resource on agent using resource cmd.
+  step 'TestStep :: Check tacacs_global resource presence on agent' do
+    # Expected exit_code is 0 since this is a puppet resource cmd.
+    # Flag is set to false to check for presence of RegExp pattern in stdout.
+    cmd_str = PUPPET_BINPATH + 'resource tacacs_global default'
     on(agent, cmd_str)
     output = stdout
     search_pattern_in_output(output, { 'key' => 'unset' },
                              false, self, logger)
-    search_pattern_in_output(output, { 'retransmit_count' => '1' },
+    search_pattern_in_output(output, { 'timeout' => '5' },
                              false, self, logger)
     search_pattern_in_output(output, { 'source_interface' => "['unset']" },
                              false, self, logger)
-    search_pattern_in_output(output, { 'timeout' => '5' },
-                             false, self, logger)
 
-    logger.info("Check radius_global resource presence on agent :: #{result}")
+    logger.info("Check tacacs_global resource presence on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.

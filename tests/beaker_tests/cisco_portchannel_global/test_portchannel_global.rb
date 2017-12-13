@@ -111,9 +111,9 @@ manifest_non = {
   },
 }
 
-tests[:non_default][:manifest_props].merge!(manifest_non[:n3k]) if platform[/n3k/]
+tests[:non_default][:manifest_props].merge!(manifest_non[:n3k]) if platform[/n3k$/]
 tests[:non_default][:manifest_props].merge!(manifest_non[:n56k]) if platform[/n(5|6)k/]
-tests[:non_default][:manifest_props].merge!(manifest_non[:n9kf]) if platform[/n9k-f/]
+tests[:non_default][:manifest_props].merge!(manifest_non[:n9kf]) if platform[/n(3|9)k-f/]
 tests[:non_default][:manifest_props].merge!(manifest_non[:n9k]) if platform[/n9k$/]
 
 def unsupported_properties(tests, _id)
@@ -133,15 +133,7 @@ def unsupported_properties(tests, _id)
       :resilient <<
       :rotate <<
       :symmetry
-  elsif platform[/n3k/]
-    unprops <<
-      :asymmetric <<
-      :concatenation <<
-      :hash_distribution <<
-      :hash_poly <<
-      :load_defer <<
-      :rotate
-  elsif platform[/n9k-f/]
+  elsif platform[/n(3|9)k-f/]
     unprops <<
       :asymmetric <<
       :concatenation <<
@@ -150,6 +142,14 @@ def unsupported_properties(tests, _id)
       :load_defer <<
       :resilient <<
       :symmetry
+  elsif platform[/n3k/]
+    unprops <<
+      :asymmetric <<
+      :concatenation <<
+      :hash_distribution <<
+      :hash_poly <<
+      :load_defer <<
+      :rotate
   elsif platform[/n9k/]
     unprops <<
       :asymmetric <<
@@ -162,7 +162,7 @@ def unsupported_properties(tests, _id)
   unprops
 end
 
-if platform[/n3k/]
+if platform[/n3k$/]
   tests[:resilient_unsupported] =
     resource_probe(agent,
                    'cisco_portchannel_global default resilient=true',
@@ -254,6 +254,24 @@ test_name "TestCase :: #{tests[:resource_name]}" do
     test_harness_run(tests, id)
 
   elsif device == 'n9k-f'
+    tests[id][:desc] = '2.2 Non Defaults'
+    mhash[:bundle_hash] = rhash[:bundle_hash] = 'ip-l4port-vlan'
+    test_harness_run(tests, id)
+
+    tests[id][:desc] = '2.3 Non Defaults'
+    mhash[:bundle_hash] = rhash[:bundle_hash] = 'ip-vlan'
+    test_harness_run(tests, id)
+
+    tests[id][:desc] = '2.4 Non Defaults'
+    mhash[:bundle_hash] = rhash[:bundle_hash] = 'l4port'
+    test_harness_run(tests, id)
+
+    tests[id][:desc] = '2.5 Non Defaults'
+    mhash[:bundle_hash] = rhash[:bundle_hash] = 'mac'
+    mhash[:bundle_select] = rhash[:bundle_select] = 'src'
+    test_harness_run(tests, id)
+
+  elsif device == 'n3k-f'
     tests[id][:desc] = '2.2 Non Defaults'
     mhash[:bundle_hash] = rhash[:bundle_hash] = 'ip-l4port-vlan'
     test_harness_run(tests, id)

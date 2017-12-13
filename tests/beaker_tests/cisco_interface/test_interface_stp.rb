@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2016 Cisco and/or its affiliates.
+# Copyright (c) 2016-2017 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -46,8 +46,10 @@ intf = find_interface(tests)
 tests[:default] = {
   desc:           '1.1 Default Properties',
   title_pattern:  intf,
-  code:           [0],
+  code:           [0, 2],
   manifest_props: {
+    description:            'Test default properties',
+    switchport_mode:        'access',
     stp_bpdufilter:         'default',
     stp_bpduguard:          'default',
     stp_cost:               'default',
@@ -61,6 +63,7 @@ tests[:default] = {
     stp_vlan_port_priority: 'default',
   },
   resource:       {
+    'description'       => 'Test default properties',
     'stp_bpdufilter'    => 'false',
     'stp_bpduguard'     => 'false',
     'stp_cost'          => 'auto',

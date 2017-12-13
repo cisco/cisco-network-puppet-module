@@ -242,7 +242,7 @@ module PuppetX
         data = Facter.value('cisco')
         case data['inventory']['chassis']['pid']
         when /N3/
-          tag = 'n3k'
+          tag = data['images']['full_version'][/7.0.3.F/] ? 'n3k-f' : 'n3k'
         when /N5/
           tag = 'n5k'
         when /N6/
@@ -250,7 +250,7 @@ module PuppetX
         when /N7/
           tag = 'n7k'
         when /N9/
-          tag = data['images']['system_image'][/7.0.3.F/] ? 'n9k-f' : 'n9k'
+          tag = data['images']['full_version'][/7.0.3.F/] ? 'n9k-f' : 'n9k'
         else
           fail "Unrecognized product_id: #{data['inventory']['chassis']['pid']}"
         end

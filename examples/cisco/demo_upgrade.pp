@@ -19,13 +19,13 @@ class ciscopuppet::cisco::demo_upgrade {
   # To use this manifest, make sure the gem and bin file are in the files directory under your
   # puppet module on the puppet master.
 
-  # agent-lab9-pm:files:2009> cd /etc/puppetlabs/code/environments/production/modules/ciscopuppet/files/
-  # agent-lab9-pm:files:2010> ls -lh
+  # puppetmaster:files:2009> cd /etc/puppetlabs/code/environments/production/modules/ciscopuppet/files/
+  # puppetmaster:files:2010> ls -lh
   # total 1.3G
-  # -rw-r--r-- 1 root root 431K Mar  2 14:19 cisco_node_utils-1.5.0.gem
+  # -rw-r--r-- 1 root root 431K Mar  2 14:19 cisco_node_utils-1.6.0.gem
   # -rwxr-xr-- 1 root root 530M Mar  2 15:46 nxos.7.0.3.I2.5.bin
   # -rwxr-xr-- 1 root root 723M Mar  2 15:25 nxos.7.0.3.I5.1.bin
-  # agent-lab9-pm:files:2011>
+  # puppetmaster:files:2011>
 
   node default {
     $gem = 'cisco_node_utils-1.6.0.gem'

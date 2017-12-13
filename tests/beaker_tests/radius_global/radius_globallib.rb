@@ -40,6 +40,23 @@ module RadiusGlobalLib
 
   # A. Methods to create manifests for radius_global Puppet provider test cases.
 
+  # Method to create a default manifest for radius_global
+  # @param none [None] No input parameters exist.
+  # @result none [None] Returns no object.
+  def self.create_radius_global_default
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+  radius_global { 'default':
+    key                 => 'unset',
+    retransmit_count    => '1',
+    source_interface    => 'unset',
+    timeout             => '5',
+  }
+}
+EOF"
+    manifest_str
+  end
+
   # Method to create a manifest for radius_global
   # @param none [None] No input parameters exist.
   # @result none [None] Returns no object.
@@ -50,6 +67,7 @@ node default {
     key                 => '44444444',
     key_format          => '7',
     retransmit_count    => '4',
+    source_interface    => 'loopback0',
     timeout             => '2',
   }
 }
@@ -65,25 +83,11 @@ EOF"
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
   radius_global { 'default':
-    key                 => '44444444',
+    key                 => '55555555',
     key_format          => '7',
-    retransmit_count    => '3',
-    timeout             => '1',
-  }
-}
-EOF"
-    manifest_str
-  end
-
-  # Method to create a manifest for radius_global resource
-  # with a few properties removed made from above.
-  # @param none [None] No input parameters exist.
-  # @result none [None] Returns no object.
-  def self.create_radius_global_manifest_change_removed
-    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
-node default {
-  radius_global { 'default':
-    key                 => 'unset',
+    retransmit_count    => '2',
+    source_interface    => 'loopback1',
+    timeout             => '2',
   }
 }
 EOF"

@@ -59,7 +59,7 @@ class ciscopuppet::cisco::demo_bgp {
   }
 
   $event_history_errors = platform_get() ? {
-    /(n3k|n9k$)/ => $facts['cisco']['images']['system_image'] ? {
+    /(n3k$|n9k$)/ => $facts['cisco']['images']['system_image'] ? {
       /(I2|I3|I4)/ => undef,
       default => 'size_small'
     },
@@ -67,7 +67,7 @@ class ciscopuppet::cisco::demo_bgp {
   }
 
   $event_history_objstore = platform_get() ? {
-    /(n3k|n9k$)/ => $facts['cisco']['images']['system_image'] ? {
+    /(n3k$|n9k$)/ => $facts['cisco']['images']['system_image'] ? {
       /(I2|I3|I4)/ => undef,
       default => 'size_small'
     },

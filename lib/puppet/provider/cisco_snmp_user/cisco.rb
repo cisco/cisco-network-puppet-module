@@ -214,13 +214,19 @@ Puppet::Type.type(:cisco_snmp_user).provide(:cisco) do
   end
 
   def unconfigure_snmp_user
-    @snmp_user.destroy
+    # admin user is always present on the device and it
+    # cannot be removed by using 'no' cmd or else
+    # errors will be thrown
+    @snmp_user.destroy unless @resource[:user] == 'admin'
     @snmp_user = nil
     @property_hash[:ensure] = :absent
   end
 
   def flush
     if @property_flush[:ensure] == :absent
+      fail ArgumentError,
+           'The admin account cannot be deactivated on this platform. ' \
+            if @resource[:user] == 'admin'
       unconfigure_snmp_user
     elsif @property_flush[:ensure] == :present
       configure_snmp_user

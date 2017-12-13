@@ -24,6 +24,14 @@
 
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
+# In I7 match_src_proto order is not maintained in running config.
+# This behavior is currently observed only on the N9K.
+if platform[/n9k/] && image_version.to_s.strip[/I7/]
+  @src_proto = %w(udp igmp tcp)
+else
+  @src_proto = %w(tcp udp igmp)
+end
+
 # Test hash top-level keys
 tests = {
   master:           master,
@@ -290,7 +298,6 @@ tests[:non_default_1] = {
     match_route_type_nssa_external:         'true',
     match_route_type_type_1:                'true',
     match_route_type_type_2:                'true',
-    match_src_proto:                        %w(tcp udp igmp),
     match_tag:                              %w(5 342 28 3221),
     match_vlan:                             '32, 45-200, 300-399, 402',
     set_as_path_prepend:                    ['55.77', '12', '45.3'],
@@ -406,6 +413,17 @@ tests[:non_default_5] = {
   },
 }
 
+tests[:non_default_6] = {
+  desc:           '2.6 Non Defaults 6',
+  title_pattern:  'rm6 321 permit',
+  manifest_props: {
+    match_src_proto: %w(tcp udp igmp)
+  },
+  resource:       {
+    match_src_proto: @src_proto
+  },
+}
+
 def unsupp_n3k
   unprops = []
   unprops <<
@@ -509,7 +527,7 @@ def unsupp_n9kf
 end
 
 def unsupported_properties(_tests, _id)
-  if platform[/n3k/]
+  if platform[/n3k$/]
     unsupp_n3k
   elsif platform[/n(5|6)k/]
     unsupp_n56k
@@ -517,21 +535,21 @@ def unsupported_properties(_tests, _id)
     unsupp_n7k
   elsif platform[/n9k$/]
     unsupp_n9k
-  elsif platform[/n9k-f/]
+  elsif platform[/n(3|9)k-f/]
     unsupp_n9kf
   end
 end
 
 def version_unsupported_properties(_tests, _id)
   unprops = {}
-  if platform[/n9k-f/]
+  if platform[/n(3|9)k-f/]
     unprops[:match_metric] = '7.0.3.F2.1'
     unprops[:set_extcommunity_4bytes_additive] = '7.0.3.F2.1'
     unprops[:set_extcommunity_4bytes_non_transitive] = '7.0.3.F2.1'
     unprops[:set_extcommunity_4bytes_transitive] = '7.0.3.F2.1'
     unprops[:set_ipv4_next_hop_load_share] = '7.0.3.F2.1'
     unprops[:set_ipv6_next_hop_load_share] = '7.0.3.F2.1'
-  elsif platform[/n9k$/]
+  elsif platform[/n9k/]
     unprops[:match_ospf_area] = '7.0.3.I5.1'
     unprops[:set_ipv4_next_hop_load_share] = '7.0.3.I5.1'
     unprops[:set_ipv6_next_hop_load_share] = '7.0.3.I5.1'
@@ -573,6 +591,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :non_default_3)
   test_harness_run(tests, :non_default_4)
   test_harness_run(tests, :non_default_5)
+  test_harness_run(tests, :non_default_6)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

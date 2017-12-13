@@ -15,7 +15,7 @@
 ###############################################################################
 # TestCase Name:
 # -------------
-# SyslogSetting-Provider-Defaults.rb
+# SyslogSetting-Provider-NonDefaults.rb
 #
 # TestCase Prerequisites:
 # -----------------------
@@ -29,8 +29,8 @@
 #
 # TestCase:
 # ---------
-# This is a syslog_settings resource test that tests for default values for the
-# syslog_settings resource.
+# This is a syslog_settings resource test that tests for nondefault values for
+# the syslog_settings resource.
 #
 # There are 2 sections to the testcase: Setup, group of teststeps.
 # The 1st step is the Setup teststep that cleans up the switch state.
@@ -56,11 +56,20 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 require File.expand_path('../syslog_settingslib.rb', __FILE__)
 
 result = 'PASS'
-testheader = 'syslog_settings Resource :: All Attributes Defaults'
+testheader = 'syslog_settings Resource :: All Attributes Non-Defaults'
+
+tests = {
+  agent:         agent,
+  master:        master,
+  intf_type:     'mgmt',
+  resource_name: 'syslog_settings',
+}
 
 # @test_name [TestCase] Executes defaults testcase for syslog_settings Resource.
 test_name "TestCase :: #{testheader}" do
   raise_skip_exception('Not supported on IOS XR', self) if operating_system == 'ios_xr'
+  # Find an available test interface on this device
+  intf = find_interface(tests)
 
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider' do
@@ -72,17 +81,66 @@ test_name "TestCase :: #{testheader}" do
     logger.info('Setup switch for provider')
   end
 
+  # @step [Step] Requests manifest from the master server to the agent.
+  step 'TestStep :: Get resource non-default manifest from master' do
+    # Expected exit_code is 0 since this is a bash shell cmd.
+    on(master, SyslogSettingLib.create_syslog_settings_manifest_nondefault(intf))
+
+    # Expected exit_code is 2 since this is a puppet agent cmd with change.
+    cmd_str = PUPPET_BINPATH + 'agent -t'
+    on(agent, cmd_str, acceptable_exit_codes: [2])
+
+    logger.info("Get resource non-default manifest from master :: #{result}")
+  end
+
   # @step [Step] Checks syslog_settings resource on agent using resource cmd.
-  step 'TestStep :: Check syslog_settings resource presence on agent' do
+  step 'TestStep :: Check syslog_settings non-default on agent' do
     # Expected exit_code is 0 since this is a puppet resource cmd.
     # Flag is set to false to check for presence of RegExp pattern in stdout.
     cmd_str = PUPPET_BINPATH + 'resource syslog_settings default'
     on(agent, cmd_str) do
+      search_pattern_in_output(stdout, { 'console' => '1' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'monitor' => '1' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'source_interface' => "['#{intf}']" },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'time_stamp_units' => 'milliseconds' },
+                               false, self, logger)
+    end
+
+    logger.info("Check syslog_settings non-default on agent :: #{result}")
+  end
+
+  # @step [Step] Requests manifest from the master server to the agent.
+  step 'TestStep :: Get resource unset manifest from master' do
+    # Expected exit_code is 0 since this is a bash shell cmd.
+    on(master, SyslogSettingLib.create_syslog_settings_manifest_unset)
+
+    # Expected exit_code is 2 since this is a puppet agent cmd with change.
+    cmd_str = PUPPET_BINPATH + 'agent -t'
+    on(agent, cmd_str, acceptable_exit_codes: [2])
+
+    logger.info("Get resource non-default manifest from master :: #{result}")
+  end
+
+  # @step [Step] Checks syslog_settings resource on agent using resource cmd.
+  step 'TestStep :: Check syslog_settings unset on agent' do
+    # Expected exit_code is 0 since this is a puppet resource cmd.
+    # Flag is set to false to check for presence of RegExp pattern in stdout.
+    cmd_str = PUPPET_BINPATH + 'resource syslog_settings default'
+    on(agent, cmd_str) do
+      search_pattern_in_output(stdout, { 'console' => 'unset' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'monitor' => 'unset' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'source_interface' => "['unset']" },
+                               false, self, logger)
       search_pattern_in_output(stdout, { 'time_stamp_units' => 'seconds' },
                                false, self, logger)
     end
 
-    logger.info("Check syslog_settings resource presence on agent :: #{result}")
+    logger.info("Check syslog_settings unset on agent :: #{result}")
   end
 
   # @raise [PassTest/FailTest] Raises PassTest/FailTest exception using result.

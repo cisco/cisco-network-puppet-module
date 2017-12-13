@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2014-2016 Cisco and/or its affiliates.
+# Copyright (c) 2014-2017 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -73,6 +73,9 @@ def hash_to_patterns(hash)
     # Becomes:
     #   \[\['192.168.5.0\/24', 'nrtemap1'\], \['192.168.6.0\/32'\]\]
     if /^\[.*\]$/.match(value)
+      # Handle Puppet 5 line wrap issue
+      value.gsub!(/^[\[]/, '[\n? *').gsub!(', [', ',\n? +?[')
+      # END Handle Puppet 5 line wrap issue
       value.gsub!(/[\[\]]/) { |s| '\\' + "#{s}" }.gsub!(/\"/) { |_s| '\'' }
     end
     value.gsub!(/[\(\)]/) { |s| '\\' + "#{s}" } if /\(.*\)/.match(value)
@@ -134,7 +137,7 @@ end
 
 # Full command string for puppet agent
 def puppet_agent_cmd
-  PUPPET_BINPATH + 'agent -t'
+  PUPPET_BINPATH + 'agent -t --trace'
 end
 
 # Auto generation of properties for manifests
@@ -175,7 +178,7 @@ end
 # Reserved keys
 # tests[id][:log_desc] - the final form of the log description
 #
-def test_harness_common(tests, id)
+def test_harness_common(tests, id, skip_idempotence_check=false)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:state] = false if tests[id][:state].nil?
   tests[id][:desc] = '' if tests[id][:desc].nil?
@@ -184,7 +187,7 @@ def test_harness_common(tests, id)
 
   test_manifest(tests, id)
   test_resource(tests, id)
-  test_idempotence(tests, id)
+  test_idempotence(tests, id) unless skip_idempotence_check
   tests[id].delete(:log_desc)
 end
 
@@ -742,7 +745,7 @@ end
 # - Creates manifests
 # - Creates puppet resource title strings
 # - Cleans resource
-def test_harness_run(tests, id)
+def test_harness_run(tests, id, skip_idempotence_check=false)
   return unless platform_supports_test(tests, id)
   logger.info("\n  * Process test_harness_run")
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
@@ -760,7 +763,7 @@ def test_harness_run(tests, id)
   # Check for additional pre-requisites
   test_harness_dependencies(tests, id)
 
-  test_harness_common(tests, id)
+  test_harness_common(tests, id, skip_idempotence_check)
   tests[id][:ensure] = nil
 end
 
@@ -1111,7 +1114,7 @@ def platform
   # - Cisco XRv9K Virtual Router
   case pi
   when /Nexus\s?3\d\d\d/
-    @cisco_hardware = 'n3k'
+    @cisco_hardware = image?[/7.0.3.F/] ? 'n3k-f' : 'n3k'
   when /Nexus\s?5\d\d\d/
     @cisco_hardware = 'n5k'
   when /Nexus\s?6\d\d\d/
@@ -1133,15 +1136,20 @@ end
 @cached_img = nil
 def image?(reset_cache=false)
   return @cached_img unless @cached_img.nil? || reset_cache
-  on(agent, facter_cmd('-p cisco.images.system_image'))
+  on(agent, facter_cmd('-p cisco.images.full_version'))
   @cached_img = stdout.nil? ? '' : stdout
 end
 
 @image = nil # Cache the lookup result
 def nexus_image
-  facter_opt = '-p cisco.images.system_image'
-  image_regexp = /.*\.(\S+\.\S+)\.bin/
+  facter_opt = '-p cisco.images.full_version'
+  image_regexp = /(\S+)/
   data = on(agent, facter_cmd(facter_opt)).output
+  darr = data.split("\n")
+  darr.each do |line|
+    next if line.include?('stty') || line.include?('WARN')
+    data = line
+  end
   @image ||= image_regexp.match(data)[1]
 end
 
@@ -1245,6 +1253,11 @@ def find_interface(tests, id=nil, skipcheck=true)
     # Skip the first interface we find in case it's our access interface.
     # TODO: check the interface IP address like we do in node_utils
     intf = all.grep(%r{ethernet\d+/\d+$})[1]
+
+  when /mgmt/i
+    all = get_current_resource_instances(tests[:agent], 'network_interface')
+    # TODO: check the interface IP address like we do in node_utils
+    intf = all.grep(/mgmt\d+$/)[0]
   end
 
   if skipcheck && intf.nil?
@@ -1460,9 +1473,24 @@ def remove_all_vlans(agent, stepinfo='Remove all vlans & bridge-domains')
 end
 
 def remove_all_vrfs(agent)
-  found = test_get(agent, "incl 'vrf context' | excl management").split("\n")
-  found.map! { |cmd| "no #{cmd}" if cmd[/^vrf context/] }
-  test_set(agent, found.compact.join(' ; '))
+  # The output of test_get has changed in Puppet5 and newer versions of Puppet.
+  # Old output:
+  # cisco_command_config { 'cc':
+  #   test_get => '
+  # vrf context blue
+  # ',
+  # }
+  # New output:
+  # cisco_command_config { 'cc':
+  #   test_get => "\nvrf context blue\n",
+  # }
+  # The following logic handles both output styles.
+  found = test_get(agent, "incl 'vrf context' | excl management")
+  found.gsub!(/\\n/, ' ')
+  vrfs = found.scan(/(vrf context \S+)/)
+  return if vrfs.empty?
+  vrfs.flatten!.map! { |cmd| "no #{cmd}" if cmd[/^?\n?vrf context/] }
+  test_set(agent, vrfs.compact.join(' ; '))
 end
 
 # Return yum patch version from host

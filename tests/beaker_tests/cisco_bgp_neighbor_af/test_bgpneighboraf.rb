@@ -362,7 +362,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :non_def_ibgp_only)
 
   # -------------------------------------------------------------------
-  unless platform[/n3k/]
+  unless platform[/n3k$/]
     logger.info("\n#{'-' * 60}\nSection 3. L2VPN Property Testing")
     resource_absent_cleanup(agent, 'cisco_bgp', 'BGP CLEAN :: ')
     title = '2 default 1.1.1.1 l2vpn evpn'
