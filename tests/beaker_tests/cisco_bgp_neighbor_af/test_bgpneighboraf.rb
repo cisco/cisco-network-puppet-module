@@ -279,7 +279,7 @@ tests[:non_def_ebgp_evpn] = {
   preclean:       'cisco_bgp',
   title_pattern:  '2 yellow 3.3.3.3 l2vpn evpn',
   remote_as:      3,
-  manifest_props: { rewrite_evpn_rt_asn: 'true'},
+  manifest_props: { rewrite_evpn_rt_asn: 'true' },
 }
 
 tests[:non_def_ibgp_only] = {

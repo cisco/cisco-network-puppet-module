@@ -49,10 +49,10 @@ tests[:non_default] = {
   desc:           '2.1 Non Default Properties',
   title_pattern:  '110',
   manifest_props: {
-    delay_restore: '45',
+    delay_restore: '45'
   },
   resource:       {
-    delay_restore: '45',
+    delay_restore: '45'
   },
 }
 

@@ -38,7 +38,7 @@ Puppet::Type.newtype(:cisco_evpn_stormcontrol) do
     desc "The packet type to apply stormcontol on. Valid values are 'unicast',
           'multicast' or 'broadcast'"
     validate do |packet_type|
-      packet_type_list = ['unicast', 'broadcast', 'multicast']
+      packet_type_list = %w(unicast broadcast multicast)
       fail 'only unicast, broadcast and multicast packets support
             stormcontrol' unless packet_type_list.include?(packet_type)
     end
@@ -51,7 +51,7 @@ Puppet::Type.newtype(:cisco_evpn_stormcontrol) do
   ensurable
 
   newproperty(:level) do
-    desc "Stormcontrol level. Valid values are Integer."
+    desc 'Stormcontrol level. Valid values are Integer.'
 
     munge do |value|
       begin

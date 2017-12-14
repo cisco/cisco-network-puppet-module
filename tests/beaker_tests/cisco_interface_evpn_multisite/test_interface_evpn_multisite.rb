@@ -53,20 +53,17 @@ tests[:non_default] = {
   title_pattern:  "#{intf}",
   preclean_intf:  true,
   manifest_props: {
-    tracking:     'fabric-tracking',
+    tracking: 'fabric-tracking'
   },
   resource:       {
-    tracking:     'fabric-tracking'
+    tracking: 'fabric-tracking'
   },
-  code:               [0, 2],
+  code:           [0, 2],
 }
 
-def test_harness_dependencies(tests, id)
+def test_harness_dependencies(_tests, id)
   return unless id == :default
   test_set(agent, 'evpn multisite border 150')
-  # System-level switchport dependencies
-  #config_system_default_switchport?(tests, id)
-  #config_system_default_switchport_shutdown?(tests, id)
 end
 
 def cleanup(agent, intf)

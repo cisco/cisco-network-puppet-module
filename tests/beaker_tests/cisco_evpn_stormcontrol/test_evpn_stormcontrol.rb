@@ -39,21 +39,21 @@ tests[:unicast] = {
   desc:           '1.1 Test unicast stormcontrol',
   title_pattern:  'unicast',
   manifest_props: {
-    level: '30',
+    level: '30'
   },
   resource:       {
-    level: '30',
-  }
+    level: '30'
+  },
 }
 
 tests[:broadcast] = {
   desc:           '2.1 Test broadcast stormcontrol',
   title_pattern:  'broadcast',
   manifest_props: {
-    level: '40',
+    level: '40'
   },
   resource:       {
-    level: '40',
+    level: '40'
   },
 }
 
@@ -61,10 +61,10 @@ tests[:multicast] = {
   desc:           '2.1 Test multicast stormcontrol',
   title_pattern:  'multicast',
   manifest_props: {
-    level: '50',
+    level: '50'
   },
   resource:       {
-    level: '50',
+    level: '50'
   },
 }
 

@@ -49,7 +49,7 @@ Puppet::Type.type(:cisco_evpn_stormcontrol).provide(:cisco) do
     current_state = {
       name:   type,
       ensure: :present,
-      level: nu_obj.level,
+      level:  nu_obj.level,
     }
     new(current_state)
   end # self.properties_get
@@ -101,7 +101,7 @@ Puppet::Type.type(:cisco_evpn_stormcontrol).provide(:cisco) do
       # Create/Update
       if @nu.nil?
         new_stormcontrol = true
-        @nu = Cisco::EvpnStormcontrol.new(@resource[:packet_type],@resource[:level])
+        @nu = Cisco::EvpnStormcontrol.new(@resource[:packet_type], @resource[:level])
       end
       properties_set(new_stormcontrol)
     end

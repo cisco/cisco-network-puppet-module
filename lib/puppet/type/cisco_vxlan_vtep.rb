@@ -111,7 +111,7 @@ Puppet::Type.newtype(:cisco_vxlan_vtep) do
           and keyword 'default'."
 
     validate do |value|
-      fail("Interface name must be a string") unless value.is_a? String
+      fail('Interface name must be a string') unless value.is_a? String
     end
 
     munge do |value|

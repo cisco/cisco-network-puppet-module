@@ -32,7 +32,7 @@ Puppet::Type.type(:cisco_interface_evpn_multisite).provide(:cisco) do
   mk_resource_methods
 
   INTF_EVPN_MS_NON_BOOL_PROPS = [
-    :tracking,
+    :tracking
   ]
 
   INTF_EVPN_MS_ALL_PROPS = INTF_EVPN_MS_NON_BOOL_PROPS

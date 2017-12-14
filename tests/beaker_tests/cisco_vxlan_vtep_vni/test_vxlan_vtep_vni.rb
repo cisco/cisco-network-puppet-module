@@ -79,7 +79,7 @@ tests[:default_properties_ingress_replication] = {
   code:           [0, 2],
   resource:       {
     suppress_arp:                  'false',
-    multisite_ingress_replication: 'false'
+    multisite_ingress_replication: 'false',
   },
 }
 
