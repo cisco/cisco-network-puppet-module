@@ -5,6 +5,18 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 ### New feature support
+
+### Added
+
+### Changed
+
+### Removed
+
+### Resolved Issues
+
+## [1.8.0] - 2017-12-12
+
+### New feature support
 #### Cisco Resources
 - `cisco_object_group` type and provider.
 - `cisco_object_group_entry` type and provider.
@@ -442,6 +454,7 @@ This version was never released.
 - Please note: 0.9.0 is an EFT pre-release for a limited audience with access to NX-OS 7.0(3)I2(1). Additional code changes may occur in 0.9.x prior to the final 1.0.0 release.
 
 [Unreleased]: https://github.com/cisco/cisco-network-puppet-module/compare/master...develop
+[1.8.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.4.1...v1.5.0
