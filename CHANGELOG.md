@@ -5,8 +5,20 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 ### New feature support
+#### Cisco Resources
+- `cisco_evpn_multisite` type and provider.
+- `cisco_evpn_stormcontrol` type and provider.
+- `cisco_interface_evpn_multisite` type and provider.
 
 ### Added
+- Extend `cisco_bgp_neighbor` with attribute:
+  - `peer_type`
+- Extend `cisco_bgp_neighbor_af` with attribute:
+  - `rewrite_evpn_rt_asn`
+- Extend `cisco_vxlan_vtep` with attribute:
+  - `multisite_border_gateway_interface`
+- Extend `cisco_vxlan_vtep_vni` with attribute:
+  - `multisite_ingress_replication`
 
 ### Changed
 
