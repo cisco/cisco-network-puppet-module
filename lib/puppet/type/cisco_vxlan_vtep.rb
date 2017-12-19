@@ -110,10 +110,6 @@ Puppet::Type.newtype(:cisco_vxlan_vtep) do
           Border-gateway interface. Valid values are string,
           and keyword 'default'."
 
-    validate do |value|
-      fail('Interface name must be a string') unless value.is_a? String
-    end
-
     munge do |value|
       value == 'default' ? :default : value.gsub(/\s+/, '').downcase
     end
