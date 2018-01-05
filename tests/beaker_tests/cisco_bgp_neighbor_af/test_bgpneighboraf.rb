@@ -128,6 +128,7 @@ tests[:default] = {
     suppress_inactive:           'default',
     unsuppress_map:              'default',
     weight:                      'default',
+    rewrite_evpn_rt_asn:         'default', 
   },
   resource:       {
     'additional_paths_receive' => 'inherit',

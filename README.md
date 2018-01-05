@@ -225,6 +225,11 @@ The following resources include cisco types and providers along with cisco provi
   * [`network_dns (netdev_stdlib)`](#type-network_dns)
   * [`search_domain (netdev_stdlib)`](#type-search_domain)
 
+* EVPN Multisite Types
+  * [`cisco_evpn_multisite`](#type-cisco_evpn_multisite)
+  * [`cisco_evpn_stormcontrol`](#type-cisco_evpn_stormcontrol)
+  * [`cisco_interface_evpn_multisite`](#type-cisco_interface_evpn_multisite)
+
 * Fabricpath Types
   * [`cisco_fabricpath_global`](#type-cisco_fabricpath_global)
   * [`cisco_fabricpath_topology`](#type-cisco_fabricpath_topology)
@@ -250,11 +255,6 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_pim`](#type-cisco_pim)
   * [`cisco_pim_grouplist`](#type-cisco_pim_grouplist)
   * [`cisco_pim_rp_address`](#type-cisco_pim_rp_address)
-
-* Multisite Types
-  * [`cisco_evpn_multisite`](#type-cisco_evpn_multisite)
-  * [`cisco_evpn_stormcontrol`](#type-cisco_evpn_stormcontrol)
-  * [`cisco_interface_evpn_multisite`](#type-cisco_interface_evpn_multisite)
 
 * NTP Types
   * [`ntp_auth_key (netdev_stdlib)`](#type-ntp_auth_key)
@@ -1939,7 +1939,7 @@ The EVPN Multisite identifier. Valid values are Integer.
 
 ##### `delay_restore`
 
-Delay restore time in seconds. Valid values are Integer or default.
+Delay restore time in seconds. Valid values are Integer or keyword default.
 
 --
 ### Type: cisco_evpn_stormcontrol
@@ -4640,7 +4640,7 @@ Delay (in secs) after peer link is restored to bring up Interface VLANs or Inter
 Interface VLANs or BDs to exclude from suspension when dual-active. Valid values are Integer or keyword 'default'.
 
 ##### `fabricpath_emulated_switch_id`
-Configure a fabricpath switch_Id to enable vPC+ mode. This is also known as the Emulated switch-id. Valid values are Integer or keyword 'default'.
+Configure a fabricpath switch_id to enable vPC+ mode. This is also known as the Emulated switch-id. Valid values are Integer or keyword 'default'.
 
 ##### `fabricpath_multicast_load_balance`
 In vPC+ mode, enable or disable the fabricpath multicast load balance. This loadbalances the Designated Forwarder selection for multicast traffic. Valid values are true, false or default

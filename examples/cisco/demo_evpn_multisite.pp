@@ -22,6 +22,17 @@ class ciscopuppet::cisco::demo_evpn_multisite {
       ensure          => present,
       delay_restore   => 50,
     }
+
+    cisco_evpn_stormcontrol { 'unicast':
+      ensure  => present,
+      level   => 50,
+    }
+
+    cisco_interface_evpn_multisite { 'Ethernet1/1':
+      ensure          => present,
+      tracking        => 'dci-tracking',
+    }
+
   } else {
     notify{'SKIP: This platform does not support cisco_evpn_multisite': }
   }
