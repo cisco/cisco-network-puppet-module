@@ -62,4 +62,12 @@ Puppet::Type.newtype(:cisco_evpn_stormcontrol) do
       value
     end
   end # property level
+
+  # VALIDATIONS
+  validate do
+    if self[:ensure] == :present
+      fail('`level` is a required property when trying to configure
+            stormcontrol.') if self[:level].nil?
+    end
+  end
 end # Puppet::Type.newtype
