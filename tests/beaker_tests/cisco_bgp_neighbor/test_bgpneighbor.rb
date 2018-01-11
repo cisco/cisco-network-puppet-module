@@ -44,6 +44,7 @@ tests[:default] = {
     suppress_4_byte_as: 'default',
     timers_keepalive:   'default',
     timers_holdtime:    'default',
+    peer_type:          'default',
   },
   resource:       {
     'bfd'                    => 'false',
