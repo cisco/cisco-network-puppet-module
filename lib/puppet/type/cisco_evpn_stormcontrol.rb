@@ -26,7 +26,7 @@ Puppet::Type.newtype(:cisco_evpn_stormcontrol) do
 
   Example:
     cisco_evpn_stormcontrol {'broadcast':
-      ensure              => present,
+      ensure      => present,
       level       => '50',
     }
   )

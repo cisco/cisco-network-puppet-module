@@ -394,9 +394,9 @@ Puppet::Type.newtype(:cisco_bgp_neighbor) do
   end
 
   newproperty(:peer_type) do
-    desc "Specify the peer type. Valid value are 'fabric-border-leaf' or
-          'fabric-external'."
-    newvalues(:"fabric-border-leaf", :"fabric-external")
+    desc "Specify the peer type. Valid value are 'fabric-border-leaf',
+          'fabric-external' or keyword default."
+    newvalues(:"fabric-border-leaf", :"fabric-external", :default)
   end
 
   validate do
