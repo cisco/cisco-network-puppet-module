@@ -1534,7 +1534,7 @@ Manages configuration of a BGP Neighbor.
 | `log_neighbor_changes` | Not supported on N5k, N6k <br> Minimum puppet module version 1.7.0 for N7k <br> Supported in OS Version 8.1.1 and later on N7k |
 | `bfd` | (ciscopuppet v1.4.0) BFD support added for all platforms |
 | `bfd` on IPv6 | Not supported on N5k, N6k |
-| `peer_type` | Only supported on N9K-EX and N9K-FX devices. For eg: N9K-C93180YC-EX. Minimum OS version 7.0(3)I7(2) and minimum Module Version 1.9.0 |
+| `peer_type` | Only supported on N9K-EX and N9K-FX devices. For eg: N9K-C93180YC-EX. Minimum OS version 7.0(3)I7(1) and minimum Module Version 1.9.0 |
 
 #### Parameters
 
@@ -1638,7 +1638,7 @@ Manages configuration of a BGP Neighbor Address-family instance.
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| rewrite_evpn_rt_asn | Only supported on N9K-EX and N9K-FX devices. For eg: N9K-C93180YC-EX. Minimum OS version 7.0(3)I7(2) and minimum Module Version 1.9.0 |
+| rewrite_evpn_rt_asn | Only supported on N9K-EX and N9K-FX devices. For eg: N9K-C93180YC-EX. Minimum OS version 7.0(3)I7(1) and minimum Module Version 1.9.0 |
 
 #### Parameters
 
@@ -1914,7 +1914,7 @@ Manages Cisco Ethernet Virtual Private Network (EVPN) Multisite configurations o
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I7(2)        | 1.9.0                  |
+| N9k      | 7.0(3)I7(1)        | 1.9.0                  |
 | N3k      | not applicable     | not applicable         |
 | N5k      | not applicable     | not applicable         |
 | N6k      | not applicable     | not applicable         |
@@ -1948,7 +1948,7 @@ Manages Cisco Ethernet Virtual Private Network (EVPN) stormcontrol configuration
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I7(2)        | 1.9.0                  |
+| N9k      | 7.0(3)I7(1)        | 1.9.0                  |
 | N3k      | not applicable     | not applicable         |
 | N5k      | not applicable     | not applicable         |
 | N6k      | not applicable     | not applicable         |
@@ -2597,7 +2597,7 @@ Manages Cisco Interface Ethernet Virtual Private Network (EVPN) Multisite config
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I7(2)        | 1.9.0                  |
+| N9k      | 7.0(3)I7(1)        | 1.9.0                  |
 | N3k      | not applicable     | not applicable         |
 | N5k      | not applicable     | not applicable         |
 | N6k      | not applicable     | not applicable         |
@@ -4915,7 +4915,7 @@ Creates a VXLAN Network Virtualization Endpoint (NVE) overlay interface that ter
 | Property                        | Caveat Description                   |
 |---------------------------------|--------------------------------------|
 | source_interface_hold_down_time | Not supported on N3k, N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
-| multisite_border_gateway_interface | Only supported on N9K-EX and N9K-FX devices. For eg: N9K-C93180YC-EX. Minimum OS version 7.0(3)I7(2) and minimum Module Version 1.9.0 |
+| multisite_border_gateway_interface | Only supported on N9K-EX and N9K-FX devices. For eg: N9K-C93180YC-EX. Minimum OS version 7.0(3)I7(1) and minimum Module Version 1.9.0 |
 
 #### Parameters
 
@@ -4962,7 +4962,7 @@ Creates a Virtual Network Identifier member (VNI) for an NVE overlay interface.
 | ingress_replication             | Not supported on N3k, N5k, N6k, N7k  |
 | peer_list                       | Not supported on N3k, N5k, N6k, N7k  |
 | suppress_uuc                    | Not supported on N3k, N3k-F, N9k, N9k-F <br> Supported in OS Version 8.1.1 and later on N7k |
-| multisite_ingress_replication | Only supported on N9K-EX and N9K-FX devices. For eg: N9K-C93180YC-EX. Minimum OS version 7.0(3)I7(2) and minimum Module Version 1.9.0 |
+| multisite_ingress_replication | Only supported on N9K-EX and N9K-FX devices. For eg: N9K-C93180YC-EX. Minimum OS version 7.0(3)I7(1) and minimum Module Version 1.9.0 |
 
 #### Parameters
 
