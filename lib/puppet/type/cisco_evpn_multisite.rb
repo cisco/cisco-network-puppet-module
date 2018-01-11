@@ -36,6 +36,15 @@ Puppet::Type.newtype(:cisco_evpn_multisite) do
   ##############
   newparam(:multisite, namevar: true) do
     desc 'The Evpn Multisite id. Valid values are integer.'
+
+    munge do |value|
+      begin
+        value = Integer(value)
+      rescue
+        raise 'multisite id must be an integer.'
+      end
+      value
+    end
   end
 
   ##############
