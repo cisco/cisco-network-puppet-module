@@ -98,7 +98,7 @@ Once installed, the GEM will remain persistent across system reloads within the 
 See [General Documentation](#general-documentation) for information on Guestshell and OAC.
 
 ### <a name="setup-agent-auth">Puppet Agent Authentication<a>
-  
+
 Puppet makes use of the nxos `admin` user by default for all types in this module.  If a different user is required for puppet agent runs then the following procedure can be used to override `admin` with the desired user.
 
 **NOTE:** The user you select must already be configured on your device with the role `network-admin`.
@@ -224,6 +224,11 @@ The following resources include cisco types and providers along with cisco provi
   * [`name_server (netdev_stdlib)`](#type-name_server)
   * [`network_dns (netdev_stdlib)`](#type-network_dns)
   * [`search_domain (netdev_stdlib)`](#type-search_domain)
+
+* EVPN Multisite Types
+  * [`cisco_evpn_multisite`](#type-cisco_evpn_multisite)
+  * [`cisco_evpn_stormcontrol`](#type-cisco_evpn_stormcontrol)
+  * [`cisco_interface_evpn_multisite`](#type-cisco_interface_evpn_multisite)
 
 * Fabricpath Types
   * [`cisco_fabricpath_global`](#type-cisco_fabricpath_global)
@@ -353,12 +358,15 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_bridge_domain_vni`](#type-cisco_bridge_domain_vni)
 * [`cisco_dhcp_relay_global`](#type-cisco_dhcp_relay_global)
 * [`cisco_encapsulation`](#type-cisco_encapsulation)
+* [`cisco_evpn_multisite`](#type-cisco_evpn_multisite)
+* [`cisco_evpn_stormcontrol`](#type-cisco_evpn_stormcontrol)
 * [`cisco_evpn_vni`](#type-cisco_evpn_vni)
 * [`cisco_fabricpath_global`](#type-cisco_fabricpath_global)
 * [`cisco_fabricpath_topology`](#type-cisco_fabricpath_topology)
 * [`cisco_hsrp_global`](#type-cisco_hsrp_global)
 * [`cisco_interface`](#type-cisco_interface)
 * [`cisco_interface_channel_group`](#type-cisco_interface_channel_group)
+* [`cisco_interface_evpn_multisite`](#type-cisco_interface_evpn_multisite)
 * [`cisco_interface_hsrp_group`](#type-cisco_interface_hsrp_group)
 * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 * [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
@@ -471,12 +479,15 @@ Symbol | Meaning | Description
 | [cisco_bridge_domain_vni](#type-cisco_bridge_domain_vni)   | ➖ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ |
 | [cisco_dhcp_relay_global](#type-cisco_dhcp_relay_global)   | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_dhcp_relay_global-caveats)
 | [cisco_encapsulation](#type-cisco_encapsulation)           | ➖ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ |
+| [cisco_evpn_multisite](#type-cisco_evpn_multisite)         | ✅* | ➖| ➖ | ➖ |   | ➖ | ➖ | \*[caveats](#cisco_evpn_multisite-caveats) |
+| [cisco_evpn_stormcontrol](#type-cisco_evpn_stormcontrol)   | ✅* | ➖| ➖ | ➖ |   | ➖ | ➖ | \*[caveats](#cisco_evpn_stormcontrol-caveats) |
 | [cisco_evpn_vni](#type-cisco_evpn_vni)                     | ✅ | ➖ | ✅ | ✅ | ✅ | ✅ | ✅ | \*[caveats](#cisco_evpn_vni-caveats) |
 | [cisco_fabricpath_global](#type-cisco_fabricpath_global)     | ➖ | ➖ | ✅ | ✅ | ✅* | ➖ | ➖ | \*[caveats](#cisco_fabricpath_global-caveats) |
 | [cisco_fabricpath_topology](#type-cisco_fabricpath_topology) | ➖ | ➖ | ✅ | ✅ | ✅  | ➖ | ➖ |
 | [cisco_hsrp_global](#type-cisco_hsrp_global)                         | ✅  | ✅* | ✅  | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_hsrp_global-caveats) |
 | [cisco_interface](#type-cisco_interface)                             | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_interface-caveats) |
 | [cisco_interface_channel_group](#type-cisco_interface_channel_group) | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_interface_channel_group-caveats) |
+| [cisco_interface_evpn_multisite](#type-cisco_interface_evpn_multisite) | ✅* | ➖| ➖ | ➖ |   | ➖ | ➖ | \*[caveats](#cisco_interface_evpn_multisite-caveats) |
 | [cisco_interface_hsrp_group](#type-cisco_interface_hsrp_group)       | ✅  | ✅ | ➖ | ➖ | ✅* | ✅ | ✅ | \*[caveats](#cisco_interface_hsrp_group-caveats) |
 | [cisco_interface_ospf](#type-cisco_interface_ospf)                   | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
 | [cisco_interface_portchannel](#type-cisco_interface_portchannel)     | ✅* | ✅* | ✅* | ✅* | ✅* | ✅ | ✅ | \*[caveats](#cisco_interface_portchannel-caveats) |
@@ -1523,6 +1534,7 @@ Manages configuration of a BGP Neighbor.
 | `log_neighbor_changes` | Not supported on N5k, N6k <br> Minimum puppet module version 1.7.0 for N7k <br> Supported in OS Version 8.1.1 and later on N7k |
 | `bfd` | (ciscopuppet v1.4.0) BFD support added for all platforms |
 | `bfd` on IPv6 | Not supported on N5k, N6k |
+| `peer_type` | Only supported on N9K-EX and N9K-FX devices. For eg: N9K-C93180YC-EX. Minimum OS version 7.0(3)I7(1) and minimum Module Version 1.9.0 |
 
 #### Parameters
 
@@ -1576,6 +1588,9 @@ Specify the password for neighbor. Valid value is string.
 ##### `password_type`
 Specify the encryption type the password will use. Valid values for Nexus are 'cleartext', '3des' or 'cisco_type_7' encryption, and 'default', which defaults to 'cleartext'.
 
+##### `peer_type`
+Specify the peer type for EVPN multisite. Valid value are 'fabric-border-leaf' or 'fabric-external'.
+
 ##### `remote_as`
 Specify Autonomous System Number of the neighbor. Valid values are String or Integer in ASPLAIN or ASDOT notation, or 'default', which means not to configure it.
 
@@ -1623,6 +1638,7 @@ Manages configuration of a BGP Neighbor Address-family instance.
 
 | Property | Caveat Description |
 |:--------|:-------------|
+| rewrite_evpn_rt_asn | Only supported on N9K-EX and N9K-FX devices. For eg: N9K-C93180YC-EX. Minimum OS version 7.0(3)I7(1) and minimum Module Version 1.9.0 |
 
 #### Parameters
 
@@ -1704,6 +1720,9 @@ Valid values are a string defining a prefix-list name, or 'default'.
 
 ##### `prefix_list_out`
 Valid values are a string defining a prefix-list name, or 'default'.
+
+##### `rewrite_evpn_rt_asn`
+`rewrite_evpn_rt_asn` state. Valid values are True, False or 'default'.
 
 ##### `route_map_in`
 Valid values are a string defining a [route-map](#cisco-os-differences) name, or 'default'.
@@ -1887,6 +1906,74 @@ Profile name of the Encapsulation. Valid values are String only.
 
 ##### `dot1q_map`
 The encapsulation profile dot1q vlan-to-vni mapping. Valid values are an array of [vlans, vnis] pairs.
+
+--
+### Type: cisco_evpn_multisite
+
+Manages Cisco Ethernet Virtual Private Network (EVPN) Multisite configurations of a Cisco device.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I7(1)        | 1.9.0                  |
+| N3k      | not applicable     | not applicable         |
+| N5k      | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
+| N7k      | not applicable     | not applicable         |
+| N9k-F    | not applicable     | not applicable         |
+| N3k-F    | not applicable     | not applicable         |
+
+
+#### <a name="cisco_evpn_multisite-caveats">Caveats</a>
+
+The `cisco_evpn_multisite` is only supported on N9K-EX and N9K-FX devices. For eg: N9K-C93180YC-EX.
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'. Default value is 'present'.
+
+##### `multisite`
+The EVPN Multisite identifier. Valid values are Integer.
+
+#### Properties
+
+##### `delay_restore`
+
+Delay restore time in seconds. Valid values are Integer or keyword default.
+
+--
+### Type: cisco_evpn_stormcontrol
+
+Manages Cisco Ethernet Virtual Private Network (EVPN) stormcontrol configurations of a Cisco device.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I7(1)        | 1.9.0                  |
+| N3k      | not applicable     | not applicable         |
+| N5k      | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
+| N7k      | not applicable     | not applicable         |
+| N9k-F    | not applicable     | not applicable         |
+| N3k-F    | not applicable     | not applicable         |
+
+
+#### <a name="cisco_evpn_stormcontrol-caveats">Caveats</a>
+
+The `cisco_evpn_stormcontrol` is only supported on N9K-EX and N9K-FX devices. For eg: N9K-C93180YC-EX.
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'. Default value is 'present'.
+
+##### `packet_type`
+The packet type to apply stormcontol on. Valid values are 'unicast', 'multicast' or 'broadcast'.
+
+#### Properties
+
+##### `level`
+
+Stormcontrol level. Valid values are Integer.
 
 --
 ### Type: cisco_evpn_vni
@@ -2502,6 +2589,40 @@ Description of the interface. Valid values are a string or the keyword 'default'
 
 ###### `shutdown`
 Shutdown state of the interface. Valid values are 'true', 'false', and 'default'.
+
+--
+### Type: cisco_interface_evpn_multisite
+
+Manages Cisco Interface Ethernet Virtual Private Network (EVPN) Multisite configurations of a Cisco device.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I7(1)        | 1.9.0                  |
+| N3k      | not applicable     | not applicable         |
+| N5k      | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
+| N7k      | not applicable     | not applicable         |
+| N9k-F    | not applicable     | not applicable         |
+| N3k-F    | not applicable     | not applicable         |
+
+
+#### <a name="cisco_interface_evpn_multisite-caveats">Caveats</a>
+
+The `cisco_interface_evpn_multisite` is only supported on N9K-EX and N9K-FX devices. For eg: N9K-C93180YC-EX.
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'. Default value is 'present'.
+
+##### `interface`
+Name of the interface on the network element. Valid value is a string.
+
+#### Properties
+
+##### `tracking`
+
+The type of tracking to use with multisite interface. Valid values are String.
 
 --
 ### Type: cisco_interface_hsrp_group
@@ -4519,7 +4640,7 @@ Delay (in secs) after peer link is restored to bring up Interface VLANs or Inter
 Interface VLANs or BDs to exclude from suspension when dual-active. Valid values are Integer or keyword 'default'.
 
 ##### `fabricpath_emulated_switch_id`
-Configure a fabricpath switch_Id to enable vPC+ mode. This is also known as the Emulated switch-id. Valid values are Integer or keyword 'default'. 
+Configure a fabricpath switch_id to enable vPC+ mode. This is also known as the Emulated switch-id. Valid values are Integer or keyword 'default'.
 
 ##### `fabricpath_multicast_load_balance`
 In vPC+ mode, enable or disable the fabricpath multicast load balance. This loadbalances the Designated Forwarder selection for multicast traffic. Valid values are true, false or default
@@ -4794,6 +4915,7 @@ Creates a VXLAN Network Virtualization Endpoint (NVE) overlay interface that ter
 | Property                        | Caveat Description                   |
 |---------------------------------|--------------------------------------|
 | source_interface_hold_down_time | Not supported on N3k, N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
+| multisite_border_gateway_interface | Only supported on N9K-EX and N9K-FX devices. For eg: N9K-C93180YC-EX. Minimum OS version 7.0(3)I7(1) and minimum Module Version 1.9.0 |
 
 #### Parameters
 
@@ -4805,6 +4927,9 @@ Description of the NVE interface.  Valid values are string, or keyword 'default'
 
 ##### `host_reachability`
 Specify mechanism for host reachability advertisement. Valid values are 'evpn', 'flood' or keyword 'default'.
+
+##### `multisite_border_gateway_interface`
+Specify loopback interface to be used as VxLAN Multisite Border-gateway interface. Valid values are string, and keyword 'default'.
 
 ##### `shutdown`
 Administratively shutdown the NVE interface. Valid values are true, false or keyword 'default'.
@@ -4837,6 +4962,7 @@ Creates a Virtual Network Identifier member (VNI) for an NVE overlay interface.
 | ingress_replication             | Not supported on N3k, N5k, N6k, N7k  |
 | peer_list                       | Not supported on N3k, N5k, N6k, N7k  |
 | suppress_uuc                    | Not supported on N3k, N3k-F, N9k, N9k-F <br> Supported in OS Version 8.1.1 and later on N7k |
+| multisite_ingress_replication | Only supported on N9K-EX and N9K-FX devices. For eg: N9K-C93180YC-EX. Minimum OS version 7.0(3)I7(1) and minimum Module Version 1.9.0 |
 
 #### Parameters
 
@@ -4857,6 +4983,9 @@ Specifies mechanism for host reachability advertisement. Valid values are 'bgp',
 
 ##### `multicast_group`
 The multicast group (range) of the VNI. Valid values are string and keyword 'default'.
+
+##### `multisite_ingress_replication`
+Set multisite ingress replication for the VNI. Valid values are true, false, or 'default'
 
 ##### `peer_list`
 Set the ingress-replication static peer list. Valid values are an Array, a space-separated String of ip addresses, or the keyword 'default'.

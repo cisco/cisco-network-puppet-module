@@ -1,4 +1,4 @@
-###############################################################################
+##############################################################################
 # Copyright (c) 2015-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,7 +32,9 @@ tests = {
 
 # Overridden to properly handle unsupported properties.
 def unsupported_properties(_, _)
-  return [] if operating_system == 'nexus'
+  unsupported_list = []
+  unsupported_list << :rewrite_evpn_rt_asn unless platform[/ex/]
+  return unsupported_list if operating_system == 'nexus'
 
   [
     :additional_paths_receive,
@@ -46,6 +48,7 @@ def unsupported_properties(_, _)
     :prefix_list_out,
     :suppress_inactive,
     :unsuppress_map,
+    :rewrite_evpn_rt_asn,
   ]
 end
 
@@ -125,6 +128,7 @@ tests[:default] = {
     suppress_inactive:           'default',
     unsuppress_map:              'default',
     weight:                      'default',
+    rewrite_evpn_rt_asn:         'default',
   },
   resource:       {
     'additional_paths_receive' => 'inherit',
@@ -271,6 +275,14 @@ tests[:non_def_ebgp_only] = {
   manifest_props: { as_override: 'true' },
 }
 
+tests[:non_def_ebgp_evpn] = {
+  desc:           'Non Default: (ebgp-only) rewrite-evpn-rt-asn',
+  preclean:       'cisco_bgp',
+  title_pattern:  '2 yellow 3.3.3.3 l2vpn evpn',
+  remote_as:      3,
+  manifest_props: { rewrite_evpn_rt_asn: 'true' },
+}
+
 tests[:non_def_ibgp_only] = {
   desc:           'Non Default: (ibgp-only) route-reflector-client',
   preclean:       'cisco_bgp',
@@ -372,6 +384,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
       :non_def_M,
       :non_def_S1,
       :non_def_misc_maps_1,
+      :non_def_ebgp_evpn,
     ]
     array << :non_def_S3 if operating_system == 'ios_xr'
 

@@ -43,6 +43,8 @@ module Puppet
           cisco_hardware = 'n6k'
         when /Nexus\s?7\d\d\d/
           cisco_hardware = 'n7k'
+        when /Nexus\s?9\d+\s\S+-EX/
+          cisco_hardware = 'n9k-ex'
         when /(Nexus\s?9\d\d\d|NX-OSv Chassis)/
           if function_platform_fretta([])
             cisco_hardware = 'n9k-f'

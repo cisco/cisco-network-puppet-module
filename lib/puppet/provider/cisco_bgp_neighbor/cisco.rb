@@ -48,6 +48,7 @@ Puppet::Type.type(:cisco_bgp_neighbor).provide(:cisco) do
     :timers_holdtime,
     :transport_passive_mode,
     :update_source,
+    :peer_type,
   ]
   BGP_NBR_BOOL_PROPS = [
     :bfd,
