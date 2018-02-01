@@ -25,22 +25,19 @@ Puppet::Type.type(:cisco_evpn_multicast).provide(:cisco) do
 
   def initialize(value={})
     super(value)
-    @nu = Cisco::EvpnMulticast.new
     @property_flush = {}
   end # initialize
 
-  def self.properties_get(nu_obj)
-    current_state = {
-      name:          'default',
-      ensure:        :present,
-    }
-    new(current_state)
+  def self.properties_get
+    new(
+      ensure: :present,
+      name:   'default')
   end # self.properties_get
 
   def self.instances
     inst = []
-    evpn_multicast = Cisco::EvpnMulticast.new
-    inst << properties_get(evpn_multicast)
+    evpn_multicast = Cisco::EvpnMulticast.multicast
+    inst << properties_get unless evpn_multicast == ''
     inst
   end # self.instances
 
@@ -62,10 +59,11 @@ Puppet::Type.type(:cisco_evpn_multicast).provide(:cisco) do
 
   def flush
     if @property_flush[:ensure] == :absent
+      @nu = Cisco::EvpnMulticast.new
       @nu.destroy
       @nu = nil
     else
-        @nu = Cisco::EvpnMulticast.new
+      @nu = Cisco::EvpnMulticast.new
     end
   end
 end # Puppet::Type
