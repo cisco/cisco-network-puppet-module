@@ -117,7 +117,7 @@ def unsupported_properties(_tests, _id)
         :route_target_import_evpn
     end
 
-    if platform[/n9k$/]
+    if platform[/n9k(-ex)?$/]
       if image?[/I[2-6]/]
         unprops <<
           :route_target_both_auto_mvpn <<
