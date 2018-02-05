@@ -37,22 +37,28 @@ tests[:default] = {
   manifest_props: {
     route_target_both_auto:      'default',
     route_target_both_auto_evpn: 'default',
+    route_target_both_auto_mvpn: 'default',
     route_target_import:         'default',
     route_target_import_evpn:    'default',
+    route_target_import_mvpn:    'default',
     route_target_export:         'default',
     route_target_export_evpn:    'default',
+    route_target_export_mvpn:    'default',
   },
   resource:       {
     'route_target_both_auto'      => 'false',
     'route_target_both_auto_evpn' => 'false',
+    'route_target_both_auto_mvpn' => 'false',
   },
 }
 
 routetargetimport          = ['1.1.1.1:55', '1:33']
 routetargetimportevpn      = ['2.2.2.2:55', '2:33']
+routetargetimportmvpn      = ['7.7.7.7:55', '7:33']
 routetargetimportstitching = ['5.5.5.5:55', '5:33']
 routetargetexport          = ['3.3.3.3:55', '3:33']
 routetargetexportevpn      = ['4.4.4.4:55', '4:33']
+routetargetexportmvpn      = ['8.8.8.8:55', '8:33']
 routetargetexportstitching = ['6.6.6.6:55', '6:33']
 tests[:non_default] = {
   desc:           'Non Default Properties, vrf-af',
@@ -62,11 +68,14 @@ tests[:non_default] = {
     route_policy_import:           'abc',
     route_target_both_auto:        true,
     route_target_both_auto_evpn:   true,
+    route_target_both_auto_mvpn:   true,
     route_target_import:           routetargetimport,
     route_target_import_evpn:      routetargetimportevpn,
+    route_target_import_mvpn:      routetargetimportmvpn,
     route_target_import_stitching: routetargetimportstitching,
     route_target_export:           routetargetexport,
     route_target_export_evpn:      routetargetexportevpn,
+    route_target_export_mvpn:      routetargetexportmvpn,
     route_target_export_stitching: routetargetexportstitching,
   },
 }
@@ -106,6 +115,20 @@ def unsupported_properties(_tests, _id)
         :route_target_both_auto_evpn <<
         :route_target_export_evpn <<
         :route_target_import_evpn
+    end
+
+    if platform[/n9k$/]
+      if image?[/I[2-6]/]
+        unprops <<
+          :route_target_both_auto_mvpn <<
+          :route_target_export_mvpn <<
+          :route_target_import_mvpn
+      end
+    else
+      unprops <<
+        :route_target_both_auto_mvpn <<
+        :route_target_export_mvpn <<
+        :route_target_import_mvpn
     end
 
   else
