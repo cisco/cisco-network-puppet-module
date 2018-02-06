@@ -483,9 +483,9 @@ Symbol | Meaning | Description
 | [cisco_bridge_domain_vni](#type-cisco_bridge_domain_vni)   | ➖ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ |
 | [cisco_dhcp_relay_global](#type-cisco_dhcp_relay_global)   | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_dhcp_relay_global-caveats)
 | [cisco_encapsulation](#type-cisco_encapsulation)           | ➖ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ |
-| [cisco_evpn_multicast](#type-cisco_evpn_multicast)         | ✅* | ➖| ➖ | ➖ |   | ➖ | ➖ |
-| [cisco_evpn_multisite](#type-cisco_evpn_multisite)         | ✅* | ➖| ➖ | ➖ |   | ➖ | ➖ | \*[caveats](#cisco_evpn_multisite-caveats) |
-| [cisco_evpn_stormcontrol](#type-cisco_evpn_stormcontrol)   | ✅* | ➖| ➖ | ➖ |   | ➖ | ➖ | \*[caveats](#cisco_evpn_stormcontrol-caveats) |
+| [cisco_evpn_multicast](#type-cisco_evpn_multicast)         | ✅* | ➖| ➖ | ➖ | ➖  | ➖ | ➖ |
+| [cisco_evpn_multisite](#type-cisco_evpn_multisite)         | ✅* | ➖| ➖ | ➖ | ➖  | ➖ | ➖ | \*[caveats](#cisco_evpn_multisite-caveats) |
+| [cisco_evpn_stormcontrol](#type-cisco_evpn_stormcontrol)   | ✅* | ➖| ➖ | ➖ | ➖  | ➖ | ➖ | \*[caveats](#cisco_evpn_stormcontrol-caveats) |
 | [cisco_evpn_vni](#type-cisco_evpn_vni)                     | ✅ | ➖ | ✅ | ✅ | ✅ | ✅ | ✅ | \*[caveats](#cisco_evpn_vni-caveats) |
 | [cisco_fabricpath_global](#type-cisco_fabricpath_global)     | ➖ | ➖ | ✅ | ✅ | ✅* | ➖ | ➖ | \*[caveats](#cisco_fabricpath_global-caveats) |
 | [cisco_fabricpath_topology](#type-cisco_fabricpath_topology) | ➖ | ➖ | ✅ | ✅ | ✅  | ➖ | ➖ |
