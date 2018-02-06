@@ -51,6 +51,7 @@ class ciscopuppet::demo_all_cisco {
   include ciscopuppet::cisco::demo_stp_vlan
   include ciscopuppet::cisco::demo_tacacs_server
   include ciscopuppet::cisco::demo_tacacs_server_host
+  include ciscopuppet::cisco::demo_trm
   # include ciscopuppet::cisco::demo_upgrade
   include ciscopuppet::cisco::demo_vlan
   include ciscopuppet::cisco::demo_vpc_domain
