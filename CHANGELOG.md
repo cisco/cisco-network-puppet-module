@@ -9,6 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `cisco_evpn_multisite` type and provider.
 - `cisco_evpn_stormcontrol` type and provider.
 - `cisco_interface_evpn_multisite` type and provider.
+- `cisco_evpn_multicast` type and provider.
 
 ### Added
 - Extend `cisco_bgp_neighbor` with attribute:
@@ -19,6 +20,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - `multisite_border_gateway_interface`
 - Extend `cisco_vxlan_vtep_vni` with attribute:
   - `multisite_ingress_replication`
+- Extend `cisco_vrf_af` with attributes:
+  - `route_target_both_auto_mvpn`
+  - `route_target_import_mvpn`
+  - `route_target_export_mvpn`
 
 ### Changed
 
