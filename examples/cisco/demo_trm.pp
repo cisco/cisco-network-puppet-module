@@ -16,38 +16,42 @@
 
 class ciscopuppet::cisco::demo_trm {
 
-  if platform_get() =~ /n9k/ {
+  if platform_get() =~ /n9k(-ex)?$/ {
 
-    $mvpn_support = prop_supported('route_target_import_mvpn')
+    if image_supports_trm() {
 
-    $rt_both_mvpn = $mvpn_support ? {
-      true    => true,
-      default => undef
+      $mvpn_support = prop_supported('route_target_import_mvpn')
+
+      $rt_both_mvpn = $mvpn_support ? {
+        true    => true,
+        default => undef
+      }
+
+      $rt_import_mvpn = $mvpn_support ? {
+        true    => ['12:13', '14:15'],
+        default => undef
+      }
+
+      $rt_export_mvpn = $mvpn_support ? {
+        true    => ['16:17', '18:19'],
+        default => undef
+      }
+
+      cisco_evpn_multicast { 'default':
+        ensure          => present,
+      }
+
+      cisco_vrf_af { 'red ipv4 unicast':
+        ensure                        => present,
+        route_policy_export           => 'abc',
+        route_policy_import           => 'abc',
+        route_target_import_mvpn      => $rt_import_mvpn,
+        route_target_export_mvpn      => $rt_export_mvpn,
+        route_target_both_auto_mvpn   => $rt_both_mvpn,
+      }
+    } else {
+      notify{'SKIP: This image does not support TRM': }
     }
-
-    $rt_import_mvpn = $mvpn_support ? {
-      true    => ['12:13', '14:15'],
-      default => undef
-    }
-
-    $rt_export_mvpn = $mvpn_support ? { 
-      true    => ['16:17', '18:19'],
-      default => undef
-    }
-
-    cisco_evpn_multicast { 'default':
-      ensure          => present,
-    }
-    
-    cisco_vrf_af { 'red ipv4 unicast':
-      ensure                        => present,
-      route_policy_export           => 'abc',
-      route_policy_import           => 'abc',
-      route_target_import_mvpn      => $rt_import_mvpn,
-      route_target_export_mvpn      => $rt_export_mvpn,
-      route_target_both_auto_mvpn   => $rt_both_mvpn,
-    }
-
   } else {
     notify{'SKIP: This platform does not support TRM': }
   }
