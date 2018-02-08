@@ -29,6 +29,10 @@ module Puppet
                 :route_target_import_evpn,
                 :route_target_export_evpn,
                ]
+        mvpn = [:route_target_both_auto_mvpn,
+                :route_target_import_mvpn,
+                :route_target_export_mvpn,
+               ]
         rt = [:route_target_both_auto,
               :route_target_import,
               :route_target_export,
@@ -41,6 +45,8 @@ module Puppet
              :route_distinguisher
           return true if plat[/n7k/] && function_find_linecard(['N7K-F3'])
           return true if plat[/n9k/]
+        when *mvpn
+          return true if plat[/n9k(-ex)?$/]
         end
         false
       end

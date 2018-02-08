@@ -314,6 +314,9 @@ The following resources include cisco types and providers along with cisco provi
   * [`tacacs_server (netdev_stdlib)`](#type-tacacs_server)
   * [`tacacs_server_group (netdev_stdlib)`](#type-tacacs_server_group)
 
+* TRM Types
+  * [`cisco_evpn_multicast`](#type-cisco_evpn_multicast)
+
 * VLAN Types
   * [`cisco_vlan`](#type-cisco_vlan)
   * [`cisco_vtp`](#type-cisco_vtp)
@@ -358,6 +361,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_bridge_domain_vni`](#type-cisco_bridge_domain_vni)
 * [`cisco_dhcp_relay_global`](#type-cisco_dhcp_relay_global)
 * [`cisco_encapsulation`](#type-cisco_encapsulation)
+* [`cisco_evpn_multicast`](#type-cisco_evpn_multicast)
 * [`cisco_evpn_multisite`](#type-cisco_evpn_multisite)
 * [`cisco_evpn_stormcontrol`](#type-cisco_evpn_stormcontrol)
 * [`cisco_evpn_vni`](#type-cisco_evpn_vni)
@@ -479,8 +483,9 @@ Symbol | Meaning | Description
 | [cisco_bridge_domain_vni](#type-cisco_bridge_domain_vni)   | ➖ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ |
 | [cisco_dhcp_relay_global](#type-cisco_dhcp_relay_global)   | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_dhcp_relay_global-caveats)
 | [cisco_encapsulation](#type-cisco_encapsulation)           | ➖ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ |
-| [cisco_evpn_multisite](#type-cisco_evpn_multisite)         | ✅* | ➖| ➖ | ➖ |   | ➖ | ➖ | \*[caveats](#cisco_evpn_multisite-caveats) |
-| [cisco_evpn_stormcontrol](#type-cisco_evpn_stormcontrol)   | ✅* | ➖| ➖ | ➖ |   | ➖ | ➖ | \*[caveats](#cisco_evpn_stormcontrol-caveats) |
+| [cisco_evpn_multicast](#type-cisco_evpn_multicast)         | ✅* | ➖| ➖ | ➖ | ➖  | ➖ | ➖ |
+| [cisco_evpn_multisite](#type-cisco_evpn_multisite)         | ✅* | ➖| ➖ | ➖ | ➖  | ➖ | ➖ | \*[caveats](#cisco_evpn_multisite-caveats) |
+| [cisco_evpn_stormcontrol](#type-cisco_evpn_stormcontrol)   | ✅* | ➖| ➖ | ➖ | ➖  | ➖ | ➖ | \*[caveats](#cisco_evpn_stormcontrol-caveats) |
 | [cisco_evpn_vni](#type-cisco_evpn_vni)                     | ✅ | ➖ | ✅ | ✅ | ✅ | ✅ | ✅ | \*[caveats](#cisco_evpn_vni-caveats) |
 | [cisco_fabricpath_global](#type-cisco_fabricpath_global)     | ➖ | ➖ | ✅ | ✅ | ✅* | ➖ | ➖ | \*[caveats](#cisco_fabricpath_global-caveats) |
 | [cisco_fabricpath_topology](#type-cisco_fabricpath_topology) | ➖ | ➖ | ✅ | ✅ | ✅  | ➖ | ➖ |
@@ -1906,6 +1911,29 @@ Profile name of the Encapsulation. Valid values are String only.
 
 ##### `dot1q_map`
 The encapsulation profile dot1q vlan-to-vni mapping. Valid values are an array of [vlans, vnis] pairs.
+
+--
+### Type: cisco_evpn_multicast
+
+Manages `advertise evpn multicast` configurations of a Cisco device.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I7(1)        | 1.9.0                  |
+| N3k      | not applicable     | not applicable         |
+| N5k      | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
+| N7k      | not applicable     | not applicable         |
+| N9k-F    | not applicable     | not applicable         |
+| N3k-F    | not applicable     | not applicable         |
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'. Default value is 'present'.
+
+##### `name`
+The EVPN Multicast identifier. Valid values are 'default' only.
 
 --
 ### Type: cisco_evpn_multisite
@@ -4799,6 +4827,9 @@ Manages Cisco Virtual Routing and Forwarding (VRF) Address-Family configuration.
 | route_target_export_stitching | Not supported on Nexus               |
 | route_target_import_evpn      | Not supported on N3k                 |
 | route_target_import_stitching | Not supported on Nexus               |
+| route_target_both_auto_mvpn   | Only supported on N9K 7.0(3)I7(1) and later |
+| route_target_import_mvpn      | Only supported on N9K 7.0(3)I7(1) and later |
+| route_target_export_mvpn      | Only supported on N9K 7.0(3)I7(1) and later |
 
 #### Parameters
 
@@ -4831,6 +4862,9 @@ Enable/Disable the route-target 'auto' setting for both import and export target
 ##### `route target both auto evpn`
 (EVPN only) Enable/Disable the EVPN route-target 'auto' setting for both import and export target communities. Valid values are true, false, or 'default'.
 
+##### `route_target_both_auto_mvpn`
+(MVPN only) Enable/Disable the MVPN route-target 'auto' setting for both import and export target communities. Valid values are true, false, or 'default'.
+
 ##### `route_target_import`
 Sets the route-target import extended communities. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
 
@@ -4845,6 +4879,9 @@ route_target_export_evpn => '5:5'
 ##### `route_target_import_evpn`
 (EVPN only) Sets the route-target import extended communities for EVPN. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
 
+##### `route_target_import_mvpn`
+(MVPN only) Sets the route-target import extended communities for MVPN. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
 ##### `route_target_import_stitching`
 (Stitching only) Sets the route-target import extended communities for stitching. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
 
@@ -4853,6 +4890,9 @@ Sets the route-target export extended communities. Valid values are an Array or 
 
 ##### `route_target_export_evpn`
 (EVPN only) Sets the route-target export extended communities for EVPN. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
+
+##### `route_target_export_mvpn`
+(MVPN only) Sets the route-target export extended communities for MVPN. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.
 
 ##### `route_target_export_stitching`
 (Stitching only) Sets the route-target export extended communities for stitching. Valid values are an Array or space-separated String of extended communities, or the keyword 'default'.

@@ -33,9 +33,11 @@ Puppet::Type.type(:cisco_vrf_af).provide(:cisco) do
   VRF_AF_ARRAY_FLAT_PROPS = [
     :route_target_import,
     :route_target_import_evpn,
+    :route_target_import_mvpn,
     :route_target_import_stitching,
     :route_target_export,
     :route_target_export_evpn,
+    :route_target_export_mvpn,
     :route_target_export_stitching,
   ]
   VRF_AF_NON_BOOL_PROPS = [
@@ -45,6 +47,7 @@ Puppet::Type.type(:cisco_vrf_af).provide(:cisco) do
   VRF_AF_BOOL_PROPS = [
     :route_target_both_auto,
     :route_target_both_auto_evpn,
+    :route_target_both_auto_mvpn,
   ]
   VRF_AF_ALL_PROPS =
     VRF_AF_ARRAY_FLAT_PROPS + VRF_AF_NON_BOOL_PROPS + VRF_AF_BOOL_PROPS

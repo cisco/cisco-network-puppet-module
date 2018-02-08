@@ -35,10 +35,13 @@ Puppet::Type.newtype(:cisco_vrf_af) do
       #safi                        => 'unicast',
       route_target_both_auto       => 'true',
       route_target_both_auto_evpn  => 'false',
+      route_target_both_auto_mvpn  => 'false',
       route_target_export          => ['1.2.3.4:55', '8:9'],
       route_target_export_evpn     => ['1:1', '2:2', '3:3'],
+      route_target_export_mvpn     => ['4:4'],
       route_target_import          => ['5:6'],
       route_target_import_evpn     => ['7:7'],
+      route_target_import_mvpn     => ['8:8'],
     }
 
     (ios_xr)
@@ -180,6 +183,14 @@ Puppet::Type.newtype(:cisco_vrf_af) do
     newvalues(:true, :false, :default)
   end # property route_target_both_auto_evpn
 
+  newproperty(:route_target_both_auto_mvpn) do
+    desc "(MVPN only) Enable/Disable route-target 'auto' for both import and "\
+         'export target MVPN communities. Valid values are true, false, or '\
+         "'default'."
+
+    newvalues(:true, :false, :default)
+  end # property route_target_both_auto_mvpn
+
   newproperty(:route_target_import, array_matching: :all) do
     desc 'Set the route-target import extended communities. Valid values are '\
          'an Array, a space-separated String of extended communities, or the '\
@@ -225,6 +236,29 @@ Puppet::Type.newtype(:cisco_vrf_af) do
       (is.size == should.flatten.size && is.sort == should.flatten.sort)
     end
   end # route_target_import_evpn
+
+  newproperty(:route_target_import_mvpn, array_matching: :all) do
+    desc '(MVPN only) Set the route-target import extended communities. '\
+         'Valid values are an Array, a space-separated String of extended '\
+         "communities, or the keyword 'default'."
+
+    match_error = 'must be specified in AS:nn or IPv4:nn notation'
+    validate do |community|
+      community.split.each do |value|
+        fail "Confederation peer value '#{value}' #{match_error}" unless
+          /^(?:\d+\.\d+\.\d+\.)?\d+:\d+$/.match(value) ||
+          value == 'default' || value == :default
+      end
+    end
+
+    munge do |community|
+      community == 'default' ? :default : community.split
+    end
+
+    def insync?(is)
+      (is.size == should.flatten.size && is.sort == should.flatten.sort)
+    end
+  end # route_target_import_mvpn
 
   newproperty(:route_target_import_stitching, array_matching: :all) do
     desc '(stitching only) Set the route-target import stitching communities. '\
@@ -294,6 +328,29 @@ Puppet::Type.newtype(:cisco_vrf_af) do
       (is.size == should.flatten.size && is.sort == should.flatten.sort)
     end
   end # route_target_export_evpn
+
+  newproperty(:route_target_export_mvpn, array_matching: :all) do
+    desc '(MVPN only) Set the route-target export extended communities. '\
+         'Valid values are an Array, a space-separated String of extended '\
+         "communities, or the keyword 'default'."
+
+    match_error = 'must be specified in AS:nn or IPv4:nn notation'
+    validate do |community|
+      community.split.each do |value|
+        fail "Route target stitching peer value '#{value}' #{match_error}" unless
+          /^(?:\d+\.\d+\.\d+\.)?\d+:\d+$/.match(value) ||
+          value == 'default' || value == :default
+      end
+    end
+
+    munge do |community|
+      community == 'default' ? :default : community.split
+    end
+
+    def insync?(is)
+      (is.size == should.flatten.size && is.sort == should.flatten.sort)
+    end
+  end # route_target_export_mvpn
 
   newproperty(:route_target_export_stitching, array_matching: :all) do
     desc '(stitching only) Set the route-target export stitching communities. '\
