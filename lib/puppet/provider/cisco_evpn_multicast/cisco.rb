@@ -58,12 +58,13 @@ Puppet::Type.type(:cisco_evpn_multicast).provide(:cisco) do
   end
 
   def flush
-    if @property_flush[:ensure] == :absent
-      @nu = Cisco::EvpnMulticast.new
-      @nu.destroy
-      @nu = nil
-    else
-      @nu = Cisco::EvpnMulticast.new
-    end
+    # Create a NU instance to get a handle to use the instance methods
+    # for ensure => 'present' evpn_multicast is configured
+    # for ensure => 'absent' the instance is just used to access the
+    # destroy method
+    @nu = Cisco::EvpnMulticast.new
+    return unless @property_flush[:ensure] == :absent
+    @nu.destroy
+    @nu = nil
   end
 end # Puppet::Type
