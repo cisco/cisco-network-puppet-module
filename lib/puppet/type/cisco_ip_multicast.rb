@@ -37,18 +37,18 @@ Puppet::Type.newtype(:cisco_ip_multicast) do
   # Parse out the title to fill in the attributes in these patterns. These
   # attributes can be overwritten later.
   def self.title_patterns
-    identity = ->(x) { x } 
+    identity = ->(x) { x }
     patterns = []
 
     # Below pattern matches both parts of the full composite name.
     patterns << [
       /^(\S+)$/,
-      [   
+      [
         [:name, identity]
-      ],  
-    ]   
+      ],
+    ]
     patterns
-  end 
+  end
 
   ##############
   # Parameters #
@@ -61,8 +61,8 @@ Puppet::Type.newtype(:cisco_ip_multicast) do
     validate do |name|
       if name != 'default'
         error "only 'default' is accepted as a valid ip_multicast resource name"
-      end 
-    end 
+      end
+    end
   end # param name
 
   ##############
