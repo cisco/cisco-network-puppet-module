@@ -41,7 +41,7 @@ Puppet::Type.type(:cisco_ip_multicast).provide(:cisco) do
 
   def initialize(value={})
     super(value)
-    @nu = Cisco::IpMulticast.new
+    @nu = Cisco::IpMulticast.new(False)
     @property_flush = {}
   end # initialize
 
@@ -57,10 +57,8 @@ Puppet::Type.type(:cisco_ip_multicast).provide(:cisco) do
 
   def self.instances
     inst = []
-    ip_mc = Cisco::IpMulticast.new
-    dr = ip_mc.overlay_distributed_dr
-    spt = ip_mc.overlay_spt_only
-    inst << properties_get(ip_mc) if dr || spt
+    ip_mc = Cisco::IpMulticast.new(False)
+    inst << properties_get(ip_mc) if ip_mc.ip_multicast
     inst
   end # self.instances
 
@@ -97,7 +95,7 @@ Puppet::Type.type(:cisco_ip_multicast).provide(:cisco) do
       @nu = nil
     else
       # Create/Update
-      @nu = Cisco::IpMulticast.new if @nu.nil?
+      @nu = Cisco::IpMulticast.new if @nu.nil? || !@nu.ip_multicast
       properties_set
     end
   end
