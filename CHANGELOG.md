@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `cisco_evpn_stormcontrol` type and provider.
 - `cisco_interface_evpn_multisite` type and provider.
 - `cisco_evpn_multicast` type and provider.
+- `cisco_ip_multicast` type and provider
 
 ### Added
 - Extend `cisco_bgp_neighbor` with attribute:

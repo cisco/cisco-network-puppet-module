@@ -316,6 +316,7 @@ The following resources include cisco types and providers along with cisco provi
 
 * TRM Types
   * [`cisco_evpn_multicast`](#type-cisco_evpn_multicast)
+  * [`cisco_ip_multicast`](#type-cisco_ip_multicast)
 
 * VLAN Types
   * [`cisco_vlan`](#type-cisco_vlan)
@@ -375,6 +376,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`cisco_interface_ospf`](#type-cisco_interface_ospf)
 * [`cisco_interface_portchannel`](#type-cisco_interface_portchannel)
 * [`cisco_interface_service_vni`](#type-cisco_interface_service_vni)
+* [`cisco_ip_multicast`](#type-cisco_ip_multicast)
 * [`cisco_itd_device_group`](#type-cisco_itd_device_group)
 * [`cisco_itd_device_group_node`](#type-cisco_itd_device_group_node)
 * [`cisco_itd_service`](#type-cisco_itd_service)
@@ -497,6 +499,7 @@ Symbol | Meaning | Description
 | [cisco_interface_ospf](#type-cisco_interface_ospf)                   | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
 | [cisco_interface_portchannel](#type-cisco_interface_portchannel)     | ✅* | ✅* | ✅* | ✅* | ✅* | ✅ | ✅ | \*[caveats](#cisco_interface_portchannel-caveats) |
 | [cisco_interface_service_vni](#type-cisco_interface_service_vni) | ➖ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ |
+| [cisco_ip_multicast](#type-cisco_ip_multicast)         | ✅ * | ➖ | ➖  | ➖  | ➖   | ➖  | ➖  |
 | [cisco_itd_device_group](#type-cisco_itd_device_group)           | ✅ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ |
 | [cisco_itd_device_group_node](#type-cisco_itd_device_group_node) | ✅ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ |
 | [cisco_itd_service](#type-cisco_itd_service)                     | ✅ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ | \*[caveats](#cisco_itd_service-caveats) |
@@ -2917,6 +2920,37 @@ port-channel per port hash-distribution. Valid values are 'adaptive', 'fixed' or
 
 ##### `port_load_defer`
 port-channel per port load-defer. Valid values are true, false or 'default'. This property is not supported on (Nexus 5|6k)
+
+--
+### Type: cisco_ip_multicast
+
+Manages `ip multicast` configurations of a Cisco device.
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I7(1)        | 1.9.0                  |
+| N3k      | not applicable     | not applicable         |
+| N5k      | not applicable     | not applicable         |
+| N6k      | not applicable     | not applicable         |
+| N7k      | not applicable     | not applicable         |
+| N9k-F    | not applicable     | not applicable         |
+| N3k-F    | not applicable     | not applicable         |
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'. Default value is 'present'.
+
+##### `name`
+The IP Multicast resource identifier. Valid values are 'default' only.
+
+#### Properties
+
+##### `overlay_distributed_dr`
+Configure node as Distributed-DR. Valid values are true, false or keyword `default`.
+
+##### `overlay_spt_only`
+Enable L3-overlay shortest path tree only. Valid values are true, false or keyword `default`.
 
 --
 ### Type: cisco_itd_device_group
