@@ -72,14 +72,14 @@ Puppet::Type.newtype(:cisco_ip_multicast) do
   ensurable
 
   newproperty(:overlay_distributed_dr) do
-    desc 'Configure node as Distributed-DR. Valid values are true, false or
-          keyword 'default'.'
+    desc "Configure node as Distributed-DR. Valid values are true, false or
+          keyword 'default'"
     newvalues(:true, :false, :default)
   end # property overlay_distributed_dr
 
   newproperty(:overlay_spt_only) do
-    desc 'Enable L3-overlay shortest path tree only. Valid values are true,
-          false or keyword 'default''
+    desc "Enable L3-overlay shortest path tree only. Valid values are true,
+          false or keyword 'default'"
     newvalues(:true, :false, :default)
   end # property overlay_spt_only
 end # Puppet::Type.newtype
