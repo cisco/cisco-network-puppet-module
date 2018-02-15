@@ -60,7 +60,8 @@ Puppet::Type.newtype(:cisco_ip_multicast) do
 
     validate do |name|
       if name != 'default'
-        error "only 'default' is accepted as a valid ip_multicast resource name"
+        error "only 'default' is accepted as a valid cisco_ip_multicast
+               resource name"
       end
     end
   end # param name

@@ -45,7 +45,10 @@ tests[:default] = {
     overlay_distributed_dr: 'default',
     overlay_spt_only:       'default',
   },
-  resource:       {}, # no output expected when all defaults
+  resource:       {
+    overlay_distributed_dr: 'false',
+    overlay_spt_only:       'false',
+  },
 }
 
 #
