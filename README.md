@@ -499,7 +499,7 @@ Symbol | Meaning | Description
 | [cisco_interface_ospf](#type-cisco_interface_ospf)                   | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
 | [cisco_interface_portchannel](#type-cisco_interface_portchannel)     | ✅* | ✅* | ✅* | ✅* | ✅* | ✅ | ✅ | \*[caveats](#cisco_interface_portchannel-caveats) |
 | [cisco_interface_service_vni](#type-cisco_interface_service_vni) | ➖ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ |
-| [cisco_ip_multicast](#type-cisco_ip_multicast)         | ✅ * | ➖ | ➖  | ➖  | ➖   | ➖  | ➖  |
+| [cisco_ip_multicast](#type-cisco_ip_multicast)         | ✅ * | ➖ | ➖  | ➖  | ➖   | ➖  | ➖  | \*[caveats](#cisco_ip_multicast-caveats) |
 | [cisco_itd_device_group](#type-cisco_itd_device_group)           | ✅ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ |
 | [cisco_itd_device_group_node](#type-cisco_itd_device_group_node) | ✅ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ |
 | [cisco_itd_service](#type-cisco_itd_service)                     | ✅ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ | \*[caveats](#cisco_itd_service-caveats) |
@@ -2935,6 +2935,12 @@ Manages `ip multicast` configurations of a Cisco device.
 | N7k      | not applicable     | not applicable         |
 | N9k-F    | not applicable     | not applicable         |
 | N3k-F    | not applicable     | not applicable         |
+
+#### <a name="cisco_ip_multicast-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `ensure` | **WARNING** Setting `ensure` to `absent` disables the feature `ngmvpn`.|
 
 #### Parameters
 
