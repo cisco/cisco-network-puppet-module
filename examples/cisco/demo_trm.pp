@@ -49,6 +49,12 @@ class ciscopuppet::cisco::demo_trm {
         route_target_export_mvpn      => $rt_export_mvpn,
         route_target_both_auto_mvpn   => $rt_both_mvpn,
       }
+
+      cisco_ip_multicast { 'default':
+        ensure =>                 present,
+        overlay_distributed_dr => 'true',
+        overlay_spt_only =>       'true',
+      }
     } else {
       notify{'SKIP: This image does not support TRM': }
     }
