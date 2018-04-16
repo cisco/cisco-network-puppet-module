@@ -574,8 +574,8 @@ Allows execution of configuration commands.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
-| N3k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N9k      | 7.0(3)I2(5)        | 1.0.1                  |
+| N3k      | 7.0(3)I2(5)        | 1.0.1                  |
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
@@ -607,8 +607,8 @@ Manages AAA Authentication Login configuration.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -642,8 +642,8 @@ Manages configuration for Authorization Login Config Service.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -671,8 +671,8 @@ Manages configuration for Authorization Login Exec Service.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -700,8 +700,8 @@ Manages configuration for a TACACS+ server group.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -735,8 +735,8 @@ Manages configuration of a Access Control List (ACL) instance.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -771,8 +771,8 @@ Manages configuration of an Access Control List (ACL) Access Control Entry (ACE)
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -1037,8 +1037,8 @@ Manages configuration of a BFD (Bidirectional Forwarding Detection) instance.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.4.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.4.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.4.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.4.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.4.0                  |
@@ -1124,8 +1124,8 @@ Manages configuration of a BGP instance.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.1.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
@@ -1293,8 +1293,8 @@ Manages configuration of a BGP Address-family instance.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.1.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
@@ -1527,8 +1527,8 @@ Manages configuration of a BGP Neighbor.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.1.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
@@ -1634,8 +1634,8 @@ Manages configuration of a BGP Neighbor Address-family instance.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.1.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
@@ -2171,8 +2171,8 @@ Manages Cisco Hot Standby Router Protocol (HSRP) global parameters.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.5.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.5.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.5.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.5.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.5.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.5.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.5.0                  |
@@ -2201,8 +2201,8 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
-| N3k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N9k      | 7.0(3)I2(5)        | 1.0.1                  |
+| N3k      | 7.0(3)I2(5)        | 1.0.1                  |
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
@@ -2583,8 +2583,8 @@ Manages a Cisco Network Interface Channel-group.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -2662,8 +2662,8 @@ Manages a Cisco Network Interface HSRP group.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.5.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.5.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.5.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.5.0                  |
 | N5k      | not applicable     | not applicable         |
 | N6k      | not applicable     | not applicable         |
 | N7k      | 8.0                | 1.5.0                  |
@@ -2794,8 +2794,8 @@ Manages configuration of an OSPF interface instance.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
@@ -2882,8 +2882,8 @@ Manages configuration of a portchannel interface instance.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
@@ -3265,8 +3265,8 @@ Manages configuration of an ospf instance.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
-| N3k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N9k      | 7.0(3)I2(5)        | 1.0.1                  |
+| N3k      | 7.0(3)I2(5)        | 1.0.1                  |
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
@@ -3289,8 +3289,8 @@ Manages an area for an OSPF router.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.4.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.4.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.4.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.4.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.4.0                  |
@@ -3398,8 +3398,8 @@ Manages an area virtual link for an OSPF router.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.4.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.4.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.4.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.4.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.4.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.4.0                  |
@@ -3480,8 +3480,8 @@ Manages a VRF for an OSPF router.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
-| N3k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N9k      | 7.0(3)I2(5)        | 1.0.1                  |
+| N3k      | 7.0(3)I2(5)        | 1.0.1                  |
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
@@ -3550,7 +3550,7 @@ Also configures anycast gateway MAC of the switch.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N3k      | 7.0(3)I6(1)        | 1.7.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
@@ -3594,8 +3594,8 @@ Manages configuration of an Protocol Independent Multicast (PIM) instance.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
@@ -3630,8 +3630,8 @@ Manages configuration of an Protocol Independent Multicast (PIM) static route pr
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
@@ -3658,8 +3658,8 @@ Manages configuration of an Protocol Independent Multicast (PIM) static route pr
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
@@ -3683,8 +3683,8 @@ Manages configuration of a portchannel global parameters
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.3.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.3.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
@@ -3744,8 +3744,8 @@ Manages a Cisco Route Map.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.6.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.6.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.6.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.6.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.6.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.6.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.6.0                  |
@@ -4168,8 +4168,8 @@ Manages spanning tree global parameters
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.3.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.3.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.3.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.3.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -4282,8 +4282,8 @@ Manages an SNMP community on a Cisco SNMP server.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
-| N3k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N9k      | 7.0(3)I2(5)        | 1.0.1                  |
+| N3k      | 7.0(3)I2(5)        | 1.0.1                  |
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
@@ -4318,8 +4318,8 @@ of group; thus this provider utility does not create snmp groups and only report
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
-| N3k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N9k      | 7.0(3)I2(5)        | 1.0.1                  |
+| N3k      | 7.0(3)I2(5)        | 1.0.1                  |
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
@@ -4343,8 +4343,8 @@ cisco_snmp_server.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
-| N3k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N9k      | 7.0(3)I2(5)        | 1.0.1                  |
+| N3k      | 7.0(3)I2(5)        | 1.0.1                  |
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
@@ -4390,8 +4390,8 @@ Manages an SNMP user on an cisco SNMP server.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
-| N3k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N9k      | 7.0(3)I2(5)        | 1.0.1                  |
+| N3k      | 7.0(3)I2(5)        | 1.0.1                  |
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
@@ -4441,8 +4441,8 @@ instance of the cisco_tacacs_server.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
-| N3k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N9k      | 7.0(3)I2(5)        | 1.0.1                  |
+| N3k      | 7.0(3)I2(5)        | 1.0.1                  |
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
@@ -4486,8 +4486,8 @@ Configures Cisco TACACS+ server hosts.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
-| N3k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N9k      | 7.0(3)I2(5)        | 1.0.1                  |
+| N3k      | 7.0(3)I2(5)        | 1.0.1                  |
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
@@ -4599,8 +4599,8 @@ Manages a Cisco VLAN.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
-| N3k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N9k      | 7.0(3)I2(5)        | 1.0.1                  |
+| N3k      | 7.0(3)I2(5)        | 1.0.1                  |
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
@@ -4662,8 +4662,8 @@ Manages the virtual Port Channel (vPC) domain configuration of a Cisco device.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
@@ -4776,8 +4776,8 @@ device.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -4848,8 +4848,8 @@ Manages Cisco Virtual Routing and Forwarding (VRF) Address-Family configuration.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.2.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.2.0                  |
@@ -4945,8 +4945,8 @@ There can only be one instance of the cisco_vtp.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.0.1                  |
-| N3k      | 7.0(3)I2(1)        | 1.0.1                  |
+| N9k      | 7.0(3)I2(5)        | 1.0.1                  |
+| N3k      | 7.0(3)I2(5)        | 1.0.1                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -4981,7 +4981,7 @@ Creates a VXLAN Network Virtualization Endpoint (NVE) overlay interface that ter
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N3k      | not applicable     | not applicable         |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
@@ -5026,7 +5026,7 @@ Creates a Virtual Network Identifier member (VNI) for an NVE overlay interface.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N3k      | not applicable     | not applicable         |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
@@ -5089,8 +5089,8 @@ Configure the domain name of the device
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.1.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -5111,8 +5111,8 @@ Domain name of the device. Valid value is a string.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -5133,8 +5133,8 @@ Hostname or address of the DNS server.  Valid value is a string.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.1.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -5166,8 +5166,8 @@ Manages a puppet netdev_stdlib Network Interface. Any resource dependency should
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -5200,8 +5200,8 @@ interface. Valid value is an integer.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.1.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -5230,8 +5230,8 @@ Manages a puppet netdev_stdlib Network Trunk. It should be noted that while the 
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -5268,8 +5268,8 @@ Manages a puppet netdev_stdlib Network Vlan.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -5296,8 +5296,8 @@ The name of the VLAN.  Valid value is a string.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.7.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.7.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.7.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.7.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.7.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.7.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.7.0                  |
@@ -5324,8 +5324,8 @@ Authentication password.  Valid value is a string.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.1.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -5359,8 +5359,8 @@ Trusted key for the NTP server.  Valid value is integer.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.1.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -5402,8 +5402,8 @@ Name of the vrf.  Valid value is a string.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -5433,8 +5433,8 @@ Name of the port channel. eg port-channel100. Valid value is a string.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.1.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -5455,8 +5455,8 @@ Enable or disable radius functionality.  Valid values are 'true' or 'false'.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.1.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -5486,8 +5486,8 @@ Encryption key format [0-7].  Valid value is an integer.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.1.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -5534,8 +5534,8 @@ Encryption key format [0-7].  Valid value is an integer.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -5555,8 +5555,8 @@ Configure the search domain of the device. Note that this type is functionally e
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -5579,8 +5579,8 @@ Manages an SNMP community on a Cisco SNMP server.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -5609,8 +5609,8 @@ Manages an SNMP notification on a Cisco SNMP server.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -5631,8 +5631,8 @@ Manages an SNMP notification receiver on an cisco SNMP server.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -5677,8 +5677,8 @@ Manages an SNMP user on an cisco SNMP server.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -5723,8 +5723,8 @@ format (in case of true) or cleartext (in case of false). Valid values are 'true
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.1.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -5751,8 +5751,8 @@ Interface to send syslog data from, e.g. "management".  Valid value is a string.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.1.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.1.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.1.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.1.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -5773,8 +5773,8 @@ The unit of measurement for log time values.  Valid values are 'seconds' and 'mi
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -5792,8 +5792,8 @@ Enable or disable radius functionality [true|false]
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -5820,8 +5820,8 @@ Number of seconds before the timeout period ends.  Also supports [undef](https:/
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
@@ -5852,8 +5852,8 @@ Number of seconds before the timeout period ends
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
-| N9k      | 7.0(3)I2(1)        | 1.2.0                  |
-| N3k      | 7.0(3)I2(1)        | 1.2.0                  |
+| N9k      | 7.0(3)I2(5)        | 1.2.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.2.0                  |
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
