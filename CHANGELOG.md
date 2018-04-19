@@ -2,6 +2,36 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.9.0] - 2018-04-19
+
+### New feature support
+#### Cisco Resources
+- `cisco_evpn_multisite` type and provider.
+- `cisco_evpn_stormcontrol` type and provider.
+- `cisco_interface_evpn_multisite` type and provider.
+- `cisco_evpn_multicast` type and provider.
+- `cisco_ip_multicast` type and provider
+
+### Added
+- Extend `cisco_bgp_neighbor` with attribute:
+  - `peer_type`
+- Extend `cisco_bgp_neighbor_af` with attribute:
+  - `rewrite_evpn_rt_asn`
+- Extend `cisco_vxlan_vtep` with attribute:
+  - `multisite_border_gateway_interface`
+- Extend `cisco_vxlan_vtep_vni` with attribute:
+  - `multisite_ingress_replication`
+- Extend `cisco_vrf_af` with attributes:
+  - `route_target_both_auto_mvpn`
+  - `route_target_import_mvpn`
+  - `route_target_export_mvpn`
+
+### Changed
+
+### Removed
+
+### Resolved Issues
+
 ## [1.8.0] - 2017-12-12
 
 ### New feature support
@@ -441,6 +471,7 @@ This version was never released.
 - Initial release of puppetlabs-ciscopuppet module, supporting Cisco NX-OS software release 7.0(3)I2(1) on Cisco Nexus switch platforms: N95xx, N93xx, N30xx and N31xx.
 - Please note: 0.9.0 is an EFT pre-release for a limited audience with access to NX-OS 7.0(3)I2(1). Additional code changes may occur in 0.9.x prior to the final 1.0.0 release.
 
+[1.9.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.5.0...v1.6.0

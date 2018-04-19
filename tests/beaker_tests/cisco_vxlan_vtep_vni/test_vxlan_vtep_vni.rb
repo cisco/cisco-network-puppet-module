@@ -72,12 +72,14 @@ tests[:default_properties_ingress_replication] = {
   title_pattern:  'nve1 10000',
   platform:       'n(3k-f|9k)',
   manifest_props: {
-    ingress_replication: 'default',
-    suppress_arp:        'default',
+    ingress_replication:           'default',
+    suppress_arp:                  'default',
+    multisite_ingress_replication: 'default',
   },
   code:           [0, 2],
   resource:       {
-    suppress_arp: 'false'
+    suppress_arp:                  'false',
+    multisite_ingress_replication: 'false',
   },
 }
 
@@ -219,11 +221,36 @@ tests[:suppress_uuc_false] = {
   code:           [0, 2],
 }
 
+tests[:multisite_ingress_replication_true] = {
+  desc:           '2.11 Multisite Ingress Replication True',
+  title_pattern:  'nve1 10000',
+  manifest_props: {
+    multisite_ingress_replication: 'true'
+  },
+  resource:       {
+    multisite_ingress_replication: 'true'
+  },
+  code:           [0, 2],
+}
+
+tests[:multisite_ingress_replication_false] = {
+  desc:           '2.12 Multisite Ingress Replication False',
+  title_pattern:  'nve1 10000',
+  manifest_props: {
+    multisite_ingress_replication: 'false'
+  },
+  resource:       {
+    multisite_ingress_replication: 'false'
+  },
+  code:           [0, 2],
+}
+
 # Note: In the current implementation assciate-vrf is a namevar.
 # It will be changed to a property in future. A correspoding test
 # will be added here.
 
 def test_harness_dependencies(*)
+  test_set(agent, 'evpn multisite border 150') if platform[/ex/]
   return unless platform[/n(5|6)k/]
   skip_if_nv_overlay_rejected(agent)
 end
@@ -249,6 +276,7 @@ def unsupported_properties(_tests, _id)
     unprops <<
       :suppress_uuc
   end
+  unprops << :multisite_ingress_replication unless platform[/ex/]
   unprops
 end
 
@@ -263,9 +291,11 @@ end
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
   teardown do
+    test_set(agent, 'no evpn multisite border 150')
     resource_absent_cleanup(agent, 'cisco_vxlan_vtep_vni')
     vdc_limit_f3_no_intf_needed(:clear)
   end
+  test_set(agent, 'no evpn multisite border 150')
   resource_absent_cleanup(agent, 'cisco_vxlan_vtep_vni')
   vdc_limit_f3_no_intf_needed(:set)
 
@@ -300,6 +330,8 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   test_harness_run(tests, :suppress_uuc_true)
   test_harness_run(tests, :suppress_uuc_false)
+  test_harness_run(tests, :multisite_ingress_replication_true)
+  test_harness_run(tests, :multisite_ingress_replication_false)
 
   # -------------------------------------------------------------------
   skipped_tests_summary(tests)

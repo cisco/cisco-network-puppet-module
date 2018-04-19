@@ -68,6 +68,18 @@ when /7.0.3.I6.1/
   name = 'nxos.sample-n9k_ALL'
   filename = 'nxos.sample-n9k_ALL-1.0.0-7.0.3.I6.1.lib32_n9000.rpm'
   version =  '1.0.0-7.0.3.I6.1'
+when /7.0.3.I7.1/
+  name = 'nxos.sample-n9k_ALL'
+  filename = 'nxos.sample-n9k_ALL-1.0.0-7.0.3.I7.1.lib32_n9000.rpm'
+  version =  '1.0.0-7.0.3.I7.1'
+when /7.0.3.I7.2/
+  name = 'nxos.sample-n9k_ALL'
+  filename = 'nxos.sample-n9k_ALL-1.0.0-7.0.3.I7.2.lib32_n9000.rpm'
+  version =  '1.0.0-7.0.3.I7.2'
+when /7.0.3.I7.3/
+  name = 'nxos.sample-n9k_ALL'
+  filename = 'nxos.sample-n9k_ALL-1.0.0-7.0.3.I7.3.lib32_n9000.rpm'
+  version =  '1.0.0-7.0.3.I7.3'
 when /7.0.3.F1/
   name = 'nxos.sample-n8k_EOR'
   filename = 'nxos.sample-n8k_EOR-1.0.0-7.0.3.F1.1.lib32_nxos.rpm'

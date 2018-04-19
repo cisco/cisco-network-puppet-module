@@ -533,7 +533,7 @@ def unsupported_properties(_tests, _id)
     unsupp_n56k
   elsif platform[/n7k/]
     unsupp_n7k
-  elsif platform[/n9k$/]
+  elsif platform[/n9k$|n9k-ex/]
     unsupp_n9k
   elsif platform[/n(3|9)k-f/]
     unsupp_n9kf

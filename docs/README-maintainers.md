@@ -29,7 +29,13 @@ When we are considering publishing a new release, all of the following steps mus
      * Fix All Bugs.
      * Make sure proper test case skips are in place for unsupported platforms.
      * Ensure that tests have been executed against released Gem versions (release a new version if necessary!) and do not have dependencies on unreleased Gem code.
-
+     * Make sure to update [test_package_patch.rb](../tests/beaker_tests/file_service_package/test_package_patch.rb) for all versions that need to be validated.
+       ```diff
+       +when /7.0.3.I7.3/
+       +  name = 'nxos.sample-n9k_ALL'
+       +  filename = 'nxos.sample-n9k_ALL-1.0.0-7.0.3.I7.3.lib32_n9000.rpm'
+       +  version =  '1.0.0-7.0.3.I7.3'
+       ```
 
 1. Update [changelog.](https://github.com/cisco/cisco-network-puppet-module/blob/develop/CHANGELOG.md)
      * Make sure CHANGELOG.md accurately reflects all changes since the last release.

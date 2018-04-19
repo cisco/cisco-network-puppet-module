@@ -1,6 +1,6 @@
 {
   "name": "puppetlabs-ciscopuppet",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "author": "cisco",
   "summary": "Cisco Puppet providers and types for NX-OS devices",
   "license": "Apache-2.0",

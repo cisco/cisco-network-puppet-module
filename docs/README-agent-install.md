@@ -39,8 +39,8 @@ Puppet Enterprise 2015.2 |
 
 Supported Platforms | OS    | OS Version           |
 :-------------------|-------|----------------------|
-Cisco Nexus N9k <br>*[How to get a virtual Nexus N9k](#VIRT_9K)* | NX-OS  | 7.0(3)I2(1) and later
-Cisco Nexus N3k    | NX-OS  | 7.0(3)I2(1) and later
+Cisco Nexus N9k <br>*[How to get a virtual Nexus N9k](#VIRT_9K)* | NX-OS  | 7.0(3)I2(5) and later
+Cisco Nexus N3k    | NX-OS  | 7.0(3)I2(5) and later
 Cisco Nexus N5k    | NX-OS  | 7.3(0)N1(1) and later
 Cisco Nexus N6k    | NX-OS  | 7.3(0)N1(1) and later
 Cisco Nexus N7k    | NX-OS  | 7.3(0)D1(1) and later
@@ -536,7 +536,7 @@ A virtual Nexus N9k may be helpful for development and testing. To obtain a virt
 ## License
 
 ~~~
-Copyright (c) 2014-2017 Cisco and/or its affiliates.
+Copyright (c) 2014-2018 Cisco and/or its affiliates.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

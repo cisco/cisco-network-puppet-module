@@ -44,6 +44,7 @@ tests[:default] = {
     suppress_4_byte_as: 'default',
     timers_keepalive:   'default',
     timers_holdtime:    'default',
+    peer_type:          'default',
   },
   resource:       {
     'bfd'                    => 'false',
@@ -80,6 +81,31 @@ tests[:non_default] = {
     timers_keepalive:       '90',
     timers_holdtime:        '270',
     update_source:          'loopback151',
+    peer_type:              'fabric-external',
+  },
+}
+
+tests[:non_default_peer_type] = {
+  desc:           '2.1 Non Default',
+  preclean:       'cisco_bgp_neighbor',
+  title_pattern:  '2 default 1.1.1.1',
+  manifest_props: {
+    description:            'tested by beaker',
+    bfd:                    'true',
+    connected_check:        'true',
+    capability_negotiation: 'true',
+    dynamic_capability:     'true',
+    ebgp_multihop:          '2',
+    log_neighbor_changes:   'enable',
+    low_memory_exempt:      'true',
+    remote_as:              '12.1',
+    remove_private_as:      'all',
+    shutdown:               'true',
+    suppress_4_byte_as:     'true',
+    timers_keepalive:       '90',
+    timers_holdtime:        '270',
+    update_source:          'loopback151',
+    peer_type:              'fabric-border-leaf',
   },
 }
 
@@ -131,6 +157,7 @@ def unsupported_properties(_tests, _id)
 
   else
     unprops << :log_neighbor_changes if platform[/n(5|6)/]
+    unprops << :peer_type unless platform[/ex/]
   end
 
   unprops
@@ -176,6 +203,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :non_default)
   tests[:non_default][:desc] = '2.1.a. Non Default Properties (vrf blue)'
   test_harness_bgp_vrf(tests, :non_default, 'blue')
+  test_harness_bgp_vrf(tests, :non_default_peer_type, 'blue')
 
   test_harness_run(tests, :non_def_local_remote_as)
   test_harness_bgp_vrf(tests, :non_def_local_remote_as, 'blue')

@@ -33,6 +33,7 @@ class ciscopuppet::demo_all_cisco {
   include ciscopuppet::cisco::demo_command_config
   include ciscopuppet::cisco::demo_dhcp_relay_global
   include ciscopuppet::cisco::demo_evpn
+  include ciscopuppet::cisco::demo_evpn_multisite
   include ciscopuppet::cisco::demo_fabricpath
   include ciscopuppet::cisco::demo_hsrp
   include ciscopuppet::cisco::demo_interface
@@ -50,6 +51,7 @@ class ciscopuppet::demo_all_cisco {
   include ciscopuppet::cisco::demo_stp_vlan
   include ciscopuppet::cisco::demo_tacacs_server
   include ciscopuppet::cisco::demo_tacacs_server_host
+  include ciscopuppet::cisco::demo_trm
   # include ciscopuppet::cisco::demo_upgrade
   include ciscopuppet::cisco::demo_vlan
   include ciscopuppet::cisco::demo_vpc_domain
