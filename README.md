@@ -3691,6 +3691,7 @@ Manages configuration of a portchannel global parameters
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 | N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
+`cisco_portchannel_global` is not currently supported on N9K-EX and N9K-FX devices.
 
 #### <a name="cisco_portchannel_global-caveats">Caveats</a>
 
@@ -4175,6 +4176,8 @@ Manages spanning tree global parameters
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
 
 #### <a name="cisco_stp_global-caveats">Caveats</a>
+
+`cisco_stp_global` is not currently supported on N9K-EX and N9K-FX devices.
 
 | Property | Caveat Description |
 |:--------|:-------------|
