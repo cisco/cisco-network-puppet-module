@@ -269,6 +269,16 @@ def unsupported_properties(_tests, _id)
   unprops
 end
 
+# Overridden to properly handle dependencies for this test file.
+def dependency_manifest(_tests, _id)
+  "
+    cisco_vxlan_vtep {'nve1':
+      ensure => present,
+      shutdown           => 'false',
+    }
+  "
+end
+
 def version_unsupported_properties(_tests, _id)
   unprops = {}
   unprops[:suppress_uuc] = '8.1.1' if platform[/n7k/]
