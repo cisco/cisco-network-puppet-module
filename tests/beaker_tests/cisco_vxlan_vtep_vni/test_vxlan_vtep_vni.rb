@@ -255,17 +255,6 @@ def test_harness_dependencies(*)
   skip_if_nv_overlay_rejected(agent)
 end
 
-# Overridden to properly handle dependencies for this test file.
-def dependency_manifest(_tests, _id)
-  "
-    cisco_vxlan_vtep {'nve1':
-      ensure => present,
-      host_reachability  => 'flood',
-      shutdown           => 'false',
-    }
-  "
-end
-
 def unsupported_properties(_tests, _id)
   unprops = []
   if platform[/n(5|6|7)k/]
@@ -278,6 +267,16 @@ def unsupported_properties(_tests, _id)
   end
   unprops << :multisite_ingress_replication unless platform[/ex/]
   unprops
+end
+
+# Overridden to properly handle dependencies for this test file.
+def dependency_manifest(_tests, _id)
+  "
+    cisco_vxlan_vtep {'nve1':
+      ensure => present,
+      shutdown           => 'false',
+    }
+  "
 end
 
 def version_unsupported_properties(_tests, _id)
