@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 
 ### Resolved Issues
+* https://tickets.puppetlabs.com/browse/CISCO-66
 
 ## [1.9.0] - 2018-04-19
 
