@@ -1,6 +1,6 @@
 # Manages a Cisco Network Interface.
 #
-# May 2013
+# June 2018
 #
 # Copyright (c) 2013-2018 Cisco and/or its affiliates.
 #
@@ -149,6 +149,7 @@ Puppet::Type.newtype(:cisco_interface) do
   # Basic / L2 Configuration Attributes #
   #######################################
 
+  apply_to_all
   ensurable
 
   newproperty(:bfd_echo) do

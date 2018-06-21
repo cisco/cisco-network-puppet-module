@@ -1,5 +1,5 @@
 #
-# December 2017
+# June 2018
 #
 # Copyright (c) 2017-2018 Cisco and/or its affiliates.
 #
@@ -48,6 +48,7 @@ Puppet::Type.newtype(:cisco_evpn_stormcontrol) do
   # Attributes #
   ##############
 
+  apply_to_all
   ensurable
 
   newproperty(:level) do

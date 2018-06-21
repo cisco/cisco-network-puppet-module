@@ -1,8 +1,8 @@
 # Manages the Cisco Spanning-tree Global configuration resource.
 #
-# September 2016
+# June 2018
 #
-# Copyright (c) 2016 Cisco and/or its affiliates.
+# Copyright (c) 2016-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -43,6 +43,9 @@ Puppet::Type.newtype(:cisco_dhcp_relay_global) do
       ipv6_src_intf                     => 'vlan2',
     }
   "
+
+  apply_to_all
+
   ###################
   # Resource Naming #
   ###################
