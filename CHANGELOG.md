@@ -8,6 +8,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 #### Cisco Resources
 
 ### Added
+* Extend syslog_server with attribute:
+   * `facility`
 
 ### Changed
 
