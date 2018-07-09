@@ -57,6 +57,8 @@ Disk   | **400 MB** | Minimum free space before installing Puppet agent |
 
 #### *Step 2. Choose an environment for running Puppet Agent*
 
+**NOTE:** Starting in release `9.2(1)` and later, installing the Puppet Agent into the `bash-shell` hosting environment is no longer supported.
+
 NX-OS Environment | Supported Platforms | |
 :--|:--:|:--|
 `bash-shell` | N3k, N9k | This is the native WRL Linux environment underlying NX-OS. It is disabled by default on NX-OS. |
