@@ -57,7 +57,7 @@ Disk   | **400 MB** | Minimum free space before installing Puppet agent |
 
 #### *Step 2. Choose an environment for running Puppet Agent*
 
-**NOTE:** Starting in release `9.2(1)` and later, installing the Puppet Agent into the `bash-shell` hosting environment is no longer supported.
+**NOTE:** Starting in release `9.2(1)` and later, installing the Puppet Agent into the `bash-shell` hosting environment is no longer supported.  Instead the puppet agent software should be installed into the [`guestshell` hosting environment](#env-gs).
 
 NX-OS Environment | Supported Platforms | |
 :--|:--:|:--|
@@ -96,7 +96,7 @@ end
 
 ## <a name="env-bs">Agent Environment Setup: bash-shell</a>
 
-**NOTE:** Starting in release `9.2(1)` and later, installing the Puppet Agent into the `bash-shell` hosting environment is no longer supported.
+**NOTE:** Starting in release `9.2(1)` and later, installing the Puppet Agent into the `bash-shell` hosting environment is no longer supported.  Instead the puppet agent software should be installed into the [`guestshell` hosting environment](#env-gs).
 
 This section is only required when running Puppet from the `bash-shell`.
 
