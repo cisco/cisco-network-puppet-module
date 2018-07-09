@@ -96,6 +96,8 @@ end
 
 ## <a name="env-bs">Agent Environment Setup: bash-shell</a>
 
+**NOTE:** Starting in release `9.2(1)` and later, installing the Puppet Agent into the `bash-shell` hosting environment is no longer supported.
+
 This section is only required when running Puppet from the `bash-shell`.
 
 #### *Step 1. Enable the bash-shell*
