@@ -133,7 +133,17 @@ _A Note on Persistence_: The current NX-OS bash-shell implementation does not au
 
 This section is only required when running Puppet from the `guestshell`.
 
-#### *Step 1. Enable the guestshell*
+#### *Step 1a. Enable the guestshell on low footprint N3ks*
+
+**NOTE:** Skip down to Step 1b if the target system is not a low footprint N3k.
+
+Nexus 3xxx switches with 4 GB RAM and 1.6 GB bootflash are advised to use compacted images to reduce the storage resources consumed by the image. As part of the compaction process, the `guestshell.ova` is removed from the system image.  To make use of the guestshell on these systems, the guestshell.ova may be downloaded and used to install the guestshell.
+
+Starting in release `9.2(1)` and later, the .ova file can be copied to the `volatile:` directory which frees up more space on `bootflash:`.
+
+
+
+#### *Step 1b. Enable the guestshell*
 
 The `guestshell` container environment is enabled by default on most platforms; however, the default disk and memory resources allotted to guestshell are typically too small to support Puppet agent requirements. The resource limits may be increased with the NX-OS CLI `guestshell resize` commands as shown below.
 
