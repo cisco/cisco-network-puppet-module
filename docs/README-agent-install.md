@@ -135,12 +135,26 @@ This section is only required when running Puppet from the `guestshell`.
 
 #### *Step 1a. Enable the guestshell on low footprint N3ks*
 
-**NOTE:** Skip down to Step 1b if the target system is not a low footprint N3k.
+**NOTE:** Skip down to **Step 1b** if the target system is not a low footprint N3k.
 
 Nexus 3xxx switches with 4 GB RAM and 1.6 GB bootflash are advised to use compacted images to reduce the storage resources consumed by the image. As part of the compaction process, the `guestshell.ova` is removed from the system image.  To make use of the guestshell on these systems, the guestshell.ova may be downloaded and used to install the guestshell.
 
 Starting in release `9.2(1)` and later, the .ova file can be copied to the `volatile:` directory which frees up more space on `bootflash:`.
 
+Copy the `guestshell.ova` file to `volatile:` if supported, otherwise copy it to `bootflash:`
+
+```
+n3xxx# copy scp://admin@1.2.3.4/guestshell.ova volatile: vrf management
+guestshell.ova 100% 55MB 10.9MB/s 00:05 
+Copy complete, now saving to disk (please wait)...
+Copy complete.
+```
+
+Use the `guestshell enable` command to install and enable guestshell.
+
+```
+n3xxx# guestshell enable package volatile:guestshell.ova
+```
 
 
 #### *Step 1b. Enable the guestshell*
