@@ -57,7 +57,7 @@ Disk   | **400 MB** | Minimum free space before installing Puppet agent |
 
 #### *Step 2. Choose an environment for running Puppet Agent*
 
-**NOTE:** Starting in release `9.2(1)` and later, installing the Puppet Agent into the `bash-shell` hosting environment is no longer supported.  Instead the puppet agent software should be installed into the [`guestshell` hosting environment](#env-gs).
+**NOTE:** Starting in release `9.2(1)` and onward, installing the Puppet Agent into the `bash-shell` hosting environment is no longer supported.  Instead the puppet agent software should be installed into the [`guestshell` hosting environment](#env-gs).
 
 NX-OS Environment | Supported Platforms | |
 :--|:--:|:--|
@@ -96,7 +96,7 @@ end
 
 ## <a name="env-bs">Agent Environment Setup: bash-shell</a>
 
-**NOTE:** Starting in release `9.2(1)` and later, installing the Puppet Agent into the `bash-shell` hosting environment is no longer supported.  Instead the puppet agent software should be installed into the [`guestshell` hosting environment](#env-gs).
+**NOTE:** Starting in release `9.2(1)` and onward, installing the Puppet Agent into the `bash-shell` hosting environment is no longer supported.  Instead the puppet agent software should be installed into the [`guestshell` hosting environment](#env-gs).
 
 This section is only required when running Puppet from the `bash-shell`.
 
@@ -139,7 +139,7 @@ This section is only required when running Puppet from the `guestshell`.
 
 Nexus 3xxx switches with 4 GB RAM and 1.6 GB bootflash are advised to use compacted images to reduce the storage resources consumed by the image. As part of the compaction process, the `guestshell.ova` is removed from the system image.  To make use of the guestshell on these systems, the guestshell.ova may be downloaded and used to install the guestshell.
 
-Starting in release `9.2(1)` and later, the .ova file can be copied to the `volatile:` directory which frees up more space on `bootflash:`.
+Starting in release `9.2(1)` and onward, the .ova file can be copied to the `volatile:` directory which frees up more space on `bootflash:`.
 
 Copy the `guestshell.ova` file to `volatile:` if supported, otherwise copy it to `bootflash:`
 
