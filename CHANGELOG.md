@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-**NOTE:** Starting in release `9.2(1)` and later, installing the Puppet Agent into the `bash-shell` hosting environment is no longer supported.
+**NOTE:** Starting in release `9.2(1)` and onward, installing the Puppet Agent into the `bash-shell` hosting environment is no longer supported.
 
 The puppet agent software must be installed on a Cisco Nexus platform in the `Guestshell` (the Linux container environment running CentOS). This provides a secure, open execution environment that is decoupled from the host.
 
