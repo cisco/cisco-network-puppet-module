@@ -157,5 +157,9 @@ Puppet::Type.newtype(:cisco_tacacs_server) do
        self[:encryption_type] != :none
       fail("The encryption_password must be present in the manifest if encryption_type is present and not 'none'.")
     end
+    if !self[:encryption_password].nil? &&
+       (self[:encryption_type].nil? || self[:encryption_type] == :none)
+      fail("The encryption_type must be present and not 'none' in the manifest if encryption_password is present.")
+    end
   end
 end # Puppet::Type.newtype
