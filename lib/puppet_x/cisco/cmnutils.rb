@@ -2,7 +2,7 @@
 #
 # November 2015
 #
-# Copyright (c) 2015-2016 Cisco and/or its affiliates.
+# Copyright (c) 2015-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,6 +17,12 @@
 # limitations under the License.
 
 module PuppetX
+  # PuppetX::NUConst - Constants defined in cisco_node_utils for namespace
+  module NUConst
+    TACACS_SERVER_ENC_UNKNOWN = Cisco::TACACS_SERVER_ENC_UNKNOWN
+    TACACS_SERVER_ENC_NONE = Cisco::TACACS_SERVER_ENC_NONE
+    TACACS_SERVER_ENC_CISCO_TYPE_7 = Cisco::TACACS_SERVER_ENC_CISCO_TYPE_7
+  end
   module Cisco
     # PuppetX::Cisco::Utils: - Common helper methods shared by any Type/Provider
     # rubocop:disable Metrics/ClassLength
@@ -255,6 +261,30 @@ module PuppetX
           fail "Unrecognized product_id: #{data['inventory']['chassis']['pid']}"
         end
         tag
+      end
+
+      # Convert encryption type to symbol
+      def self.enc_type_to_sym(type)
+        case type
+        when NUConst::TACACS_SERVER_ENC_UNKNOWN
+          :none
+        when NUConst::TACACS_SERVER_ENC_NONE
+          :clear
+        when NUConst::TACACS_SERVER_ENC_CISCO_TYPE_7
+          :encrypted
+        end
+      end
+
+      # Convert encryption symbol to type
+      def self.enc_sym_to_type(sym)
+        case sym
+        when :none
+          NUConst::TACACS_SERVER_ENC_UNKNOWN
+        when :clear, :default
+          NUConst::TACACS_SERVER_ENC_NONE
+        when :encrypted
+          NUConst::TACACS_SERVER_ENC_CISCO_TYPE_7
+        end
       end
     end # class Utils
     # rubocop:enable Metrics/ClassLength

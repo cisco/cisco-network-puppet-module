@@ -3,7 +3,7 @@
 #
 # March 2014
 #
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2014-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -117,7 +117,7 @@ Puppet::Type.newtype(:cisco_tacacs_server) do
   end
 
   # encryption type
-  newparam(:encryption_type) do
+  newproperty(:encryption_type) do
     desc 'Specifies the global preshared key type for TACACS+ servers.'
 
     munge do |value|

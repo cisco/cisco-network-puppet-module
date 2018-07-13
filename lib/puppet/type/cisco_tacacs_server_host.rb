@@ -2,7 +2,7 @@
 #
 # March 2014
 #
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2014-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -104,25 +104,18 @@ Puppet::Type.newtype(:cisco_tacacs_server_host) do
   end
 
   # encryption_type
-  newparam(:encryption_type) do
+  newproperty(:encryption_type) do
     desc "Specifies a preshared key for the host. keyword 'default'."
 
     munge do |value|
-      begin
-        value = case value
-                when 'clear' then 0
-                when 'encrypted' then 7
-                when 'none' then 8
-                when 'default' then :default
-
-                else
-                  fail "valid encryption types are 'none', 'clear',\
-                       'encrypted', or 'default'"
-                end
-      end
-      value
+      value = :default if value == 'default'
+      value.to_sym
     end
-    newvalues(:clear, :encrypted, :none, :default)
+
+    newvalues(:clear,
+              :encrypted,
+              :none,
+              :default)
   end
 
   # encryption_password
@@ -134,8 +127,12 @@ Puppet::Type.newtype(:cisco_tacacs_server_host) do
   # validation for encryption_type and encryption_password combination
   validate do
     if self[:encryption_password].nil? &&
-       !self[:encryption_type].nil? && self[:encryption_type] != 8
+       !self[:encryption_type].nil? && self[:encryption_type] != :none
       fail("The encryption_password must be present in the manifest if encryption_type is present and not 'none'.")
+    end
+    if !self[:encryption_password].nil? &&
+       (self[:encryption_type].nil? || self[:encryption_type] == :none)
+      fail("The encryption_type must be present and not 'none' in the manifest if encryption_password is present.")
     end
   end
 end
