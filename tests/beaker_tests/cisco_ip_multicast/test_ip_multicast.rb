@@ -37,6 +37,9 @@ skip_unless_supported(tests)
 # Skip -ALL- tests if feature is not supported by image version
 skip_nexus_image(/I[2-6]/, tests)
 
+# Default values changed between I7.3 and I7.4
+spt_default = nexus_image[/7\.0\(3\)I7\([1-3]\)/] ? false : true
+
 # Test hash test cases
 tests[:default] = {
   desc:           '1.1 Default Properties',
@@ -47,7 +50,7 @@ tests[:default] = {
   },
   resource:       {
     overlay_distributed_dr: 'false',
-    overlay_spt_only:       'false',
+    overlay_spt_only:       spt_default.to_s,
   },
 }
 
@@ -59,11 +62,11 @@ tests[:non_default] = {
   title_pattern:  'default',
   manifest_props: {
     overlay_distributed_dr: 'false',
-    overlay_spt_only:       'true',
+    overlay_spt_only:       (!spt_default).to_s,
   },
   resource:       {
     overlay_distributed_dr: 'false',
-    overlay_spt_only:       'true',
+    overlay_spt_only:       (!spt_default).to_s,
   },
 }
 
