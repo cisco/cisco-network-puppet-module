@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2014-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -155,6 +155,22 @@ node default {
     ensure              => present,
     encryption_type     => 'default',
     encryption_password => #{TacacsServerLib::ENCRYPPASSWD_NEGATIVE},
+  }
+}
+EOF"
+    manifest_str
+  end
+
+  # Method to create a manifest for TACACSSERVER attribute 'encryption_password'.
+  # without encryption_type
+  # @param none [None] No input parameters exist.
+  # @result none [None] Returns no object.
+  def self.create_tacacsserver_passwd_type_negative
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+  cisco_tacacs_server { 'test':
+    ensure              => present,
+    encryption_password => 'WXYZ12',
   }
 }
 EOF"
