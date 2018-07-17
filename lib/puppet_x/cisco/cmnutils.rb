@@ -17,17 +17,16 @@
 # limitations under the License.
 
 module PuppetX
-  # PuppetX::NUConst - Constants defined in cisco_node_utils for namespace
-  module NUConst
-    TACACS_SERVER_ENC_UNKNOWN = Cisco::TACACS_SERVER_ENC_UNKNOWN
-    TACACS_SERVER_ENC_NONE = Cisco::TACACS_SERVER_ENC_NONE
-    TACACS_SERVER_ENC_CISCO_TYPE_7 = Cisco::TACACS_SERVER_ENC_CISCO_TYPE_7
-  end
   module Cisco
     # PuppetX::Cisco::Utils: - Common helper methods shared by any Type/Provider
     # rubocop:disable Metrics/ClassLength
     class Utils
       require 'ipaddr'
+
+      TACACS_SERVER_ENC_NONE = 0
+      TACACS_SERVER_ENC_CISCO_TYPE_7 = 7
+      TACACS_SERVER_ENC_UNKNOWN = 8
+
       # Helper utility method for ip/prefix format networks.
       # For ip/prefix format '1.1.1.1/24' or '2000:123:38::34/64',
       # we need to mask the address using the prefix length so that they
@@ -266,11 +265,11 @@ module PuppetX
       # Convert encryption type to symbol
       def self.enc_type_to_sym(type)
         case type
-        when NUConst::TACACS_SERVER_ENC_UNKNOWN
+        when TACACS_SERVER_ENC_UNKNOWN
           :none
-        when NUConst::TACACS_SERVER_ENC_NONE
+        when TACACS_SERVER_ENC_NONE
           :clear
-        when NUConst::TACACS_SERVER_ENC_CISCO_TYPE_7
+        when TACACS_SERVER_ENC_CISCO_TYPE_7
           :encrypted
         end
       end
@@ -279,11 +278,11 @@ module PuppetX
       def self.enc_sym_to_type(sym)
         case sym
         when :none
-          NUConst::TACACS_SERVER_ENC_UNKNOWN
+          TACACS_SERVER_ENC_UNKNOWN
         when :clear, :default
-          NUConst::TACACS_SERVER_ENC_NONE
+          TACACS_SERVER_ENC_NONE
         when :encrypted
-          NUConst::TACACS_SERVER_ENC_CISCO_TYPE_7
+          TACACS_SERVER_ENC_CISCO_TYPE_7
         end
       end
     end # class Utils
