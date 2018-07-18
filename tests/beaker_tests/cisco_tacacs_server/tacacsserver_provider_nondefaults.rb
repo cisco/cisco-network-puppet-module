@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2014-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -101,6 +101,7 @@ test_name "TestCase :: #{testheader}" do
                                'timeout'             => '50',
                                'deadtime'            => '0',
                                'encryption_password' => add_quotes('WXYZ12'),
+                               'encryption_type'     => 'encrypted',
                                'directed_request'    => 'false',
                                'source_interface'    => 'Ethernet1/4' },
                              false, self, logger)

@@ -1,7 +1,7 @@
 ########################################################################
 # March 2015
 #
-# Copyright (c) 2015-2016 Cisco and/or its affiliates.
+# Copyright (c) 2015-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,6 +17,13 @@
 ########################################################################
 
 require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
+begin
+  require 'puppet_x/cisco/cmnutils'
+rescue LoadError # seen on master, not on agent
+  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..',
+                                     'puppet_x', 'cisco', 'cmnutils.rb'))
+end
 
 Puppet::Type.type(:cisco_tacacs_server_host).provide(:cisco) do
   desc 'The Cisco provider.'
@@ -42,7 +49,7 @@ Puppet::Type.type(:cisco_tacacs_server_host).provide(:cisco) do
         ensure:              :present,
         port:                tacacs_server_host.port,
         timeout:             tacacs_server_host.timeout,
-        encryption_type:     tacacs_server_host.encryption_type,
+        encryption_type:     PuppetX::Cisco::Utils.enc_type_to_sym(tacacs_server_host.encryption_type),
         encryption_password: tacacs_server_host.encryption_password)
     end
     tacacs_server_hosts
@@ -130,12 +137,12 @@ Puppet::Type.type(:cisco_tacacs_server_host).provide(:cisco) do
       if resource[:encryption_type] &&
          resource[:encryption_type] != @property_hash[:encryption_type]
         # If manifest has updated value and it is not default
-        encryption_type_value = @resource[:encryption_type]
+        encryption_type_value = PuppetX::Cisco::Utils.enc_sym_to_type(@resource[:encryption_type])
       else
         # If manifest doesn't have it or no change
         if @property_hash[:encryption_type]
           # If it is an update action
-          encryption_type_value = @property_hash[:encryption_type]
+          encryption_type_value = PuppetX::Cisco::Utils.enc_sym_to_type(@property_hash[:encryption_type])
         else
           # If it is a create action
           encryption_type_value =

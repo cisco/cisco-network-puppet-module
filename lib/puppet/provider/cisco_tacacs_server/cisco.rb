@@ -1,7 +1,7 @@
 ################################################
 # January, 2015
 #
-# Copyright (c) 2015-2016 Cisco and/or its affiliates.
+# Copyright (c) 2015-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,6 +17,13 @@
 #################################################
 
 require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
+begin
+  require 'puppet_x/cisco/cmnutils'
+rescue LoadError # seen on master, not on agent
+  # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
+  require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..',
+                                     'puppet_x', 'cisco', 'cmnutils.rb'))
+end
 
 Puppet::Type.type(:cisco_tacacs_server).provide(:cisco) do
   desc 'The Cisco provider.'
@@ -30,28 +37,6 @@ Puppet::Type.type(:cisco_tacacs_server).provide(:cisco) do
     super(value)
     @tacacs_server = Cisco::TacacsServer.new if Cisco::TacacsServer.enabled
     @property_flush = {}
-  end
-
-  def self.enc_type_to_sym(type)
-    case type
-    when Cisco::TACACS_SERVER_ENC_UNKNOWN
-      :none
-    when Cisco::TACACS_SERVER_ENC_NONE
-      :clear
-    when Cisco::TACACS_SERVER_ENC_CISCO_TYPE_7
-      :encrypted
-    end
-  end
-
-  def self.enc_sym_to_type(sym)
-    case sym
-    when :none
-      Cisco::TACACS_SERVER_ENC_UNKNOWN
-    when :clear, :default
-      Cisco::TACACS_SERVER_ENC_NONE
-    when :encrypted
-      Cisco::TACACS_SERVER_ENC_CISCO_TYPE_7
-    end
   end
 
   def self.instances
@@ -73,7 +58,7 @@ Puppet::Type.type(:cisco_tacacs_server).provide(:cisco) do
       timeout:             tacacs_server.timeout,
       directed_request:    tacacs_server.directed_request? ? :true : :false,
       deadtime:            tacacs_server.deadtime,
-      encryption_type:     enc_type_to_sym(tacacs_server.encryption_type),
+      encryption_type:     PuppetX::Cisco::Utils.enc_type_to_sym(tacacs_server.encryption_type),
       encryption_password: tacacs_server.encryption_password,
       source_interface:    src_intf)
     debug 'Found a tacacs server on the device.'
@@ -199,13 +184,13 @@ Puppet::Type.type(:cisco_tacacs_server).provide(:cisco) do
          resource[:encryption_type] != @property_hash[:encryption_type]
         # If manifest has updated value and it is not default
         encryption_type_value =
-          self.class.enc_sym_to_type(@resource[:encryption_type])
+          PuppetX::Cisco::Utils.enc_sym_to_type(@resource[:encryption_type])
       else
         # If manifest doesn't have it or no change
         if @property_hash[:encryption_type]
           # If it is an update action
           encryption_type_value =
-            self.class.enc_sym_to_type(@property_hash[:encryption_type])
+            PuppetX::Cisco::Utils.enc_sym_to_type(@property_hash[:encryption_type])
         else
           # If it is a create action
           encryption_type_value = Cisco::TacacsServer.default_encryption_type

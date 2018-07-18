@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2014-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -157,6 +157,18 @@ test_name "TestCase :: #{testheader}" do
   step 'TestStep :: Get negative test resource manifest from master' do
     # Expected exit_code is 0 since this is a bash shell cmd.
     on(master, TacacsServerLib.create_tacacsserver_passwd_negative)
+
+    # Expected exit_code is 1 since this is a puppet agent cmd with error.
+    cmd_str = PUPPET_BINPATH + 'agent -t'
+    on(agent, cmd_str, acceptable_exit_codes: [1])
+
+    logger.info("Get negative test resource manifest from master :: #{result}")
+  end
+
+  # @step [Step] Requests manifest from the master server to the agent.
+  step 'TestStep :: Get negative test resource manifest from master' do
+    # Expected exit_code is 1 since this an intended failure.
+    on(master, TacacsServerLib.create_tacacsserver_passwd_type_negative)
 
     # Expected exit_code is 1 since this is a puppet agent cmd with error.
     cmd_str = PUPPET_BINPATH + 'agent -t'
