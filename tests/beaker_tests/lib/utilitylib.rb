@@ -1088,6 +1088,8 @@ end
 def system_manager
   return @system_manager unless @system_manager.nil?
   system_manager = on(agent, 'ls -l /proc/1/exe').stdout.chomp
+  # On NXOS hosting environments the system_manager is either
+  # systemd or init.
   @system_manager = system_manager[/systemd/] ? 'systemd' : 'init'
   @system_manager
 end
