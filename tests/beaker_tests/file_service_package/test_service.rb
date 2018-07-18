@@ -30,7 +30,11 @@ tests = {
   resource_name: 'service',
 }
 
-os_service = 'puppet'
+if system_manager[/systemd/]
+  os_service = 'crond'
+else
+  os_service = 'puppet'
+end
 
 tests[:service_start] = {
   desc:           "1.1 Start Service '#{os_service}'",
