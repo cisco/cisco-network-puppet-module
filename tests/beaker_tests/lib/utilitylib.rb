@@ -1088,9 +1088,17 @@ end
 def system_manager
   return @system_manager unless @system_manager.nil?
   system_manager = on(agent, 'ls -l /proc/1/exe').stdout.chomp
-  # On NXOS hosting environments the system_manager is either
-  # systemd or init.
-  @system_manager = system_manager[/systemd/] ? 'systemd' : 'init'
+  # On NXOS hosting environments use different system_managers
+  # 1) Native bash-shell uses init
+  # 2) GuestShell uses systemd
+  # 3) OAC uses redhat
+  if system_manager[/systemd/]
+    @system_manager = 'systemd'
+  elsif platform[/n5k|n6k|n7k/]
+    @system_manager = 'redhat'
+  else
+    @system_manager = 'init'
+  end
   @system_manager
 end
 
