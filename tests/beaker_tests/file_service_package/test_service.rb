@@ -30,15 +30,17 @@ tests = {
   resource_name: 'service',
 }
 
-os_service = 'crond'
+os_service = 'puppet'
+os_service = 'crond' if system_manager[/systemd|redhat/]
 
 tests[:service_start] = {
   desc:           "1.1 Start Service '#{os_service}'",
   title_pattern:  os_service,
   manifest_props: {
-    name:   os_service,
-    ensure: 'running',
-    enable: 'true',
+    name:     os_service,
+    ensure:   'running',
+    enable:   'true',
+    provider: system_manager,
   },
   resource:       { 'ensure' => 'running' },
 }
@@ -47,9 +49,10 @@ tests[:service_stop] = {
   desc:           "1.2 Stop Service '#{os_service}'",
   title_pattern:  os_service,
   manifest_props: {
-    name:   os_service,
-    ensure: 'stopped',
-    enable: 'false',
+    name:     os_service,
+    ensure:   'stopped',
+    enable:   'false',
+    provider: system_manager,
   },
   resource:       { 'ensure' => 'stopped' },
 }
