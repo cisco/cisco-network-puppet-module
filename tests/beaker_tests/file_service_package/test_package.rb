@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2016 Cisco and/or its affiliates.
+# Copyright (c) 2016-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -66,12 +66,14 @@ def dependency_manifest(_tests, id)
       ensure => 'directory',
     }
     file { '/tmp/beaker-repo/demo-one-1.0-1.x86_64.rpm' :
-      ensure => present,
-      source => 'puppet:///modules/ciscopuppet/demo-one-1.0-1.x86_64.rpm',
+      ensure  => present,
+      source  => 'puppet:///modules/ciscopuppet/demo-one-1.0-1.x86_64.rpm',
+      require => File['/tmp/beaker-repo'],
     }
     exec { 'createrepo':
       command => '/usr/bin/createrepo /tmp/beaker-repo',
       unless  => '/bin/ls /tmp/beaker-repo/repodata 2>/dev/null',
+      require => File['/tmp/beaker-repo/demo-one-1.0-1.x86_64.rpm'],
     }
 
     yumrepo { 'beaker':
@@ -81,6 +83,8 @@ def dependency_manifest(_tests, id)
        enabled  => 1,
        gpgcheck => 0,
        cost     => 505,
+       require  => Exec['createrepo'],
+       before   => Package['#{os_family[/cisco-wrlinux/] ? 'demo-one' : 'dos2unix'}'],
     }
   )
   logger.info("\n  * dependency_manifest\n#{dep}")
