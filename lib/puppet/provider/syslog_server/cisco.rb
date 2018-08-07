@@ -1,6 +1,6 @@
-# September, 2017
+# June, 2018
 #
-# Copyright (c) 2014-2016 Cisco and/or its affiliates.
+# Copyright (c) 2014-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ Puppet::Type.type(:syslog_server).provide(:cisco) do
     :severity_level,
     :port,
     :vrf,
+    :facility,
   ]
 
   def initialize(value={})
@@ -53,6 +54,7 @@ Puppet::Type.type(:syslog_server).provide(:cisco) do
       severity_level: v.severity_level,
       port:           v.port,
       vrf:            v.vrf,
+      facility:       v.facility,
     }
 
     new(current_state)
