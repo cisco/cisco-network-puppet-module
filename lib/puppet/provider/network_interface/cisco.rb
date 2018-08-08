@@ -118,7 +118,7 @@ Puppet::Type.type(:network_interface).provide(:cisco) do
     when '1g' then 1000
     when '10g' then 10_000
     when '40g' then 40_000
-    when '100g' then 1_000_000
+    when '100g' then 100_000
     else type
     end
   end

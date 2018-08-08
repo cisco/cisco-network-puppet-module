@@ -2286,7 +2286,7 @@ cisco_interface { 'ethernet1/10':
 ```
 
 ###### `speed`
-Speed of the interface. Valid values are 100, 1000, 10000, 40000, 1000000, and 'auto'.
+Speed of the interface. Valid values are 100, 1000, 10000, 40000, 100000, and 'auto'.
 
 ###### `shutdown`
 Shutdown state of the interface. Valid values are 'true', 'false', and
