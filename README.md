@@ -304,7 +304,7 @@ The following resources include cisco types and providers along with cisco provi
 
 * SYSLOG Types
   * [`syslog_server (netdev_stdlib)`](#type-syslog_server)
-  * [`syslog_setting (netdev_stdlib)`](#type-syslog_setting)
+  * [`syslog_settings (netdev_stdlib)`](#type-syslog_settings)
 
 * TACACS Types
   * [`cisco_tacacs_server`](#type-cisco_tacacs_server)
@@ -433,7 +433,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`snmp_notification_receiver`](#type-snmp_notification_receiver)
 * [`snmp_user`](#type-snmp_user)
 * [`syslog_server`](#type-syslog_server)
-* [`syslog_setting`](#type-syslog_setting)
+* [`syslog_settings`](#type-syslog_settings)
 * [`tacacs`](#type-tacacs)
 * [`tacacs_global`](#type-tacacs_global)
 * [`tacacs_server_group`](#type-tacacs_server_group)
@@ -556,7 +556,7 @@ Symbol | Meaning | Description
 | [snmp_notification_receiver](#type-snmp_notification_receiver) | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [snmp_user](#type-snmp_user)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [syslog_server](#type-syslog_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [syslog_setting](#type-syslog_setting)                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [syslog_settings](#type-syslog_settings)                   | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [tacacs](#type-tacacs)                                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [tacacs_global](#type-tacacs_global)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [tacacs_server](#type-tacacs_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
@@ -5750,7 +5750,7 @@ Syslog severity level to log.  Valid value is an integer.
 Interface to send syslog data from, e.g. "management".  Valid value is a string.
 
 --
-### Type: syslog_setting
+### Type: syslog_settings
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
