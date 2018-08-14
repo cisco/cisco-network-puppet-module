@@ -183,7 +183,7 @@ Puppet::Type.newtype(:cisco_interface) do
   newproperty(:speed) do
     desc "Configure the speed between interfaces. Default value is 'auto'."
 
-    newvalues(:auto, 10, 100, 1000, 10_000, 1_000_000, 40_000, :default)
+    newvalues(:auto, 10, 100, 1000, 10_000, 100_000, 40_000, :default)
   end # property speed
 
   newproperty(:duplex) do
