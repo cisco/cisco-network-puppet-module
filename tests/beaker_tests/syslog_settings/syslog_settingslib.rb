@@ -64,10 +64,13 @@ EOF"
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     syslog_settings {'default':
-      console          => '1',
-      monitor          => '1',
-      source_interface => '#{intf}',
-      time_stamp_units => 'milliseconds',
+      console                => '1',
+      monitor                => '1',
+      source_interface       => '#{intf}',
+      time_stamp_units       => 'milliseconds',
+      logfile_name           => 'testlogfile',
+      logfile_severity_level => '3',
+      logfile_size           => '4098',
     }
 }
 EOF"
@@ -81,10 +84,12 @@ EOF"
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     syslog_settings {'default':
-      console          => 'unset',
-      monitor          => 'unset',
-      source_interface => 'unset',
-      time_stamp_units => 'seconds',
+      console                => 'unset',
+      monitor                => 'unset',
+      source_interface       => 'unset',
+      time_stamp_units       => 'seconds',
+      logfile_name           => 'testlogfile',
+      logfile_severity_level => 'unset',
     }
 }
 EOF"
