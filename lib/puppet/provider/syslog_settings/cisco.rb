@@ -39,6 +39,9 @@ Puppet::Type.type(:syslog_settings).provide(:cisco) do
     :console,
     :monitor,
     :time_stamp_units,
+    :logfile_severity_level,
+    :logfile_name,
+    :logfile_size,
   ]
 
   SYSLOG_CONFIG_PROPS = SYSLOG_SETTINGS_ARRAY_PROPS + SYSLOG_SETTINGS_NON_BOOL_PROPS
@@ -102,7 +105,13 @@ Puppet::Type.type(:syslog_settings).provide(:cisco) do
   def validate
     fail ArgumentError,
          "This provider only supports a namevar of 'default'" unless @resource[:name].to_s == 'default'
-
+    fail ArgumentError,
+         'This provider requires that a logfile_name and logfile_severity_level are both specified in order '\
+         'to set logfile settings.' if (@resource[:logfile_name] && !@resource[:logfile_severity_level]) ||
+                                       (@resource[:logfile_severity_level] && !@resource[:logfile_name])
+    fail ArgumentError,
+         'This provider requires that a logfile_name and logfile_severity_level are both specified in order '\
+         'to set logfile size.' if @resource[:logfile_size] && !@resource[:logfile_name] && !@resource[:logfile_severity_level]
     fail ArgumentError,
          "This provider does not support the 'enable' property. "\
          'Syslog servers are enabled implicitly when using the syslog_server resource.' if @resource[:enable]
@@ -110,8 +119,36 @@ Puppet::Type.type(:syslog_settings).provide(:cisco) do
          "This provider does not support the 'vrf' property. " if @resource[:vrf]
   end
 
+  def tidy_up_syslog_logfile
+    SYSLOG_CONFIG_PROPS.delete(:logfile_severity_level)
+    SYSLOG_CONFIG_PROPS.delete(:logfile_name)
+    SYSLOG_CONFIG_PROPS.delete(:logfile_size)
+
+    if @property_flush[:logfile_severity_level] == 'unset'
+      @property_flush[:logfile_severity_level] = nil
+      @property_flush[:logfile_name] = nil
+      @property_flush[:logfile_size] = nil
+    else
+      return unless @property_flush[:logfile_severity_level] && @property_flush[:logfile_name]
+    end
+
+    if @property_flush[:logfile_size]
+      @property_flush[:logfile_size] = "size #{@property_flush[:logfile_size]}"
+    else
+      @property_flush[:logfile_size] = ''
+    end
+
+    @syslogsetting.send("#{:logfile_name}=",
+                        @property_flush[:logfile_name],
+                        @property_flush[:logfile_severity_level],
+                        @property_flush[:logfile_size]) if
+        @syslogsetting.respond_to?("#{:logfile_name}=")
+  end
+
   def flush
     validate
+
+    tidy_up_syslog_logfile
 
     SYSLOG_CONFIG_PROPS.each do |prop|
       next unless @resource[prop]

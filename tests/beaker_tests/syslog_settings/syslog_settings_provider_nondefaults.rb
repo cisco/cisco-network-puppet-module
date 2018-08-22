@@ -65,7 +65,7 @@ tests = {
   resource_name: 'syslog_settings',
 }
 
-# @test_name [TestCase] Executes defaults testcase for syslog_settings Resource.
+# @test_name [TestCase] Executes nondefaults testcase for syslog_settings Resource.
 test_name "TestCase :: #{testheader}" do
   raise_skip_exception('Not supported on IOS XR', self) if operating_system == 'ios_xr'
   # Find an available test interface on this device
