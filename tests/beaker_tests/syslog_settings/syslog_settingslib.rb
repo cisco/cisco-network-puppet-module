@@ -64,10 +64,34 @@ EOF"
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     syslog_settings {'default':
-      console          => '1',
-      monitor          => '1',
-      source_interface => '#{intf}',
-      time_stamp_units => 'milliseconds',
+      console                => '1',
+      monitor                => '1',
+      source_interface       => '#{intf}',
+      time_stamp_units       => 'milliseconds',
+      logfile_name           => 'testlogfile',
+      logfile_severity_level => '3',
+      logfile_size           => '4098',
+    }
+}
+EOF"
+    manifest_str
+  end
+
+  # Method to create a manifest for syslog_setting with unset attribute
+  # for logfile_size
+  # @param none [None] No input parameters exist.
+  # @result none [None] Returns no object.
+  def self.create_syslog_settings_manifest_unset_logfile_size(intf)
+    manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+node default {
+    syslog_settings {'default':
+      console                => '1',
+      monitor                => '1',
+      source_interface       => '#{intf}',
+      time_stamp_units       => 'milliseconds',
+      logfile_name           => 'testlogfile',
+      logfile_severity_level => '3',
+      logfile_size           => 'unset',
     }
 }
 EOF"
@@ -81,10 +105,12 @@ EOF"
     manifest_str = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
 node default {
     syslog_settings {'default':
-      console          => 'unset',
-      monitor          => 'unset',
-      source_interface => 'unset',
-      time_stamp_units => 'seconds',
+      console                => 'unset',
+      monitor                => 'unset',
+      source_interface       => 'unset',
+      time_stamp_units       => 'seconds',
+      logfile_name           => 'unset',
+      logfile_size           => 'unset',
     }
 }
 EOF"
