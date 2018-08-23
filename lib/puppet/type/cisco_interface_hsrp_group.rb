@@ -1,8 +1,8 @@
-# Manages the Cisco OSPF area virtual-link configuration resource.
+# Manages the Cisco HSRP interface group configuration resource.
 #
-# November 2016
+# August 2018
 #
-# Copyright (c) 2016 Cisco and/or its affiliates.
+# Copyright (c) 2016-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -113,32 +113,26 @@ Puppet::Type.newtype(:cisco_interface_hsrp_group) do
   newproperty(:authentication_auth_type) do
     desc 'Authentication type'
 
-    newvalues(:cleartext, :md5, :default)
+    newvalues(:cleartext, :md5)
   end # property authentication_auth_type
 
   newproperty(:authentication_compatibility) do
     desc 'Operate in compatibility mode for MD5 type-7 authentication.
           Valid only for key-string'
 
-    newvalues(:true, :false, :default)
+    newvalues(:true, :false)
   end # property authentication_compatibility
 
   newproperty(:authentication_enc_type) do
     desc 'Scheme used for encrypting authentication key string.'
 
-    munge do |value|
-      value = '0' if value == 'clear'
-      value = '7' if value == 'encrypted'
-      value.to_sym
-    end
-
-    newvalues(:clear, :encrypted, :default)
+    newvalues(:clear, :encrypted)
   end # property authentication_enc_type
 
   newproperty(:authentication_key_type) do
     desc 'Authentication key type'
 
-    newvalues(:'key-chain', :'key-string', :default)
+    newvalues(:'key-chain', :'key-string')
   end # property authentication_key_type
 
   newproperty(:authentication_string) do
@@ -290,25 +284,20 @@ Puppet::Type.newtype(:cisco_interface_hsrp_group) do
 
   def my_atype
     self[:authentication_auth_type].nil? ||
-      self[:authentication_auth_type] == :default ||
       self[:authentication_auth_type] == :cleartext
   end
 
   def my_enc
     self[:authentication_enc_type].nil? ||
-      self[:authentication_enc_type] == :default ||
       self[:authentication_enc_type] == :'0'
   end
 
   def my_key
-    self[:authentication_key_type].nil? ||
-      self[:authentication_key_type] == :default ||
-      self[:authentication_key_type] == :'key-chain'
+    self[:authentication_key_type].nil?
   end
 
   def my_compat
     self[:authentication_compatibility].nil? ||
-      self[:authentication_compatibility] == :default ||
       self[:authentication_compatibility] == :false
   end
 
@@ -320,26 +309,29 @@ Puppet::Type.newtype(:cisco_interface_hsrp_group) do
 
   def my_timeout
     self[:authentication_timeout].nil? ||
-      self[:authentication_timeout] == :default ||
       self[:authentication_timeout].zero?
   end
 
   def check_auth_str
-    return unless my_str
-    fail ArgumentError, 'Authentication properties auth_type, enc_type, key_type, compatibility, timeout MUST be default when authentication_string is default' unless
-      my_atype && my_compat && my_enc && my_key && my_timeout
+    if self[:authentication_string].nil?
+      fail ArgumentError,
+           'Authentication properties auth_type, enc_type, key_type, compatibility, timeout MUST be default or undef when authentication_string is not set' unless
+        my_atype && my_compat && my_enc && my_key && my_timeout
+    else
+      fail ArgumentError, 'authentication_auth_type MUST be set when authentication_string is set' if self[:authentication_auth_type].nil?
+    end
   end
 
   def check_auth_type
-    return unless my_atype
-    fail ArgumentError, 'Authentication properties enc_type, key_type, compatibility, timeout MUST be default when authentication_auth_type is default' unless
-      my_compat && my_enc && my_key && my_timeout
+    fail ArgumentError,
+         'authentication_key_type and authentication_enc_type MUST be set when authentication_enc_type is md5' if !my_atype &&
+                                                                                                                  (my_key || self[:authentication_enc_type].nil?)
   end
 
   def check_auth_key
-    return unless my_key
-    fail ArgumentError, 'Authentication properties enc_type, compatibility, timeout MUST be default when authentication_key_type is default' unless
-      my_compat && my_enc && my_timeout
+    return if my_compat && my_timeout
+    fail ArgumentError, 'authentication_compatibility and authentication_timeout MUST be default or undef unless authentication_key_type is key-string' unless
+      self[:authentication_key_type].to_s == 'key-string'
   end
 
   def check_ipv4
@@ -353,7 +345,7 @@ Puppet::Type.newtype(:cisco_interface_hsrp_group) do
   def check_ipv6
     return if self[:iptype] == 'ipv6'
     auto = self[:ipv6_autoconfig].nil? || self[:ipv6_autoconfig] == :default || self[:ipv6_autoconfig] == :false
-    vip = self[:ipv6_vip].nil? || self[:ipv6_vip] == :default || self[:ipv6_vip].empty?
+    vip = self[:ipv6_vip].nil? || self[:ipv6_vip] == [:default] || self[:ipv6_vip].empty?
     fail ArgumentError, 'ipv6 parameters MUST be default for ipv4 type' if !auto || !vip
   end
 
