@@ -2,7 +2,7 @@
 #
 # May 2013
 #
-# Copyright (c) 2013-2018 Cisco and/or its affiliates.
+# Copyright (c) 2013-2016 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -64,7 +64,6 @@ Puppet::Type.newtype(:cisco_interface) do
      ipv4_dhcp_smart_relay          => true,
      ipv6_dhcp_relay_addr           => ['2000::11', '2001::22'],
      ipv6_dhcp_relay_src_intf       => 'ethernet 2/2',
-     ipv6_redirects                 => true,
      pim_bfd                        => true,
     }
     cisco_interface { 'ethernet1/17' :
@@ -462,13 +461,6 @@ Puppet::Type.newtype(:cisco_interface) do
       value
     end
   end # property ipv6_acl_out
-
-  newproperty(:ipv6_redirects) do
-    desc "<L3 attribute> Enables or disables sending of IPv6 redirect
-          messages."
-
-    newvalues(:true, :false, :default)
-  end # property ipv6_redirects
 
   # validate ipv4 address and mask combination
   validate do

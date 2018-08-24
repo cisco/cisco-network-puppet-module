@@ -2243,7 +2243,6 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | `load_interval_counter_3_delay`       | Minimum puppet module version 1.6.0 |
 | `purge_config`                        | Minimum puppet module version 1.7.0 |
 | Ensure absent for ethernet interfaces | Minimum puppet module version 1.8.0 |
-| `ipv6_redirects`                      | Minimum puppet module version 1.10.0 |
 
 #### Parameters
 
@@ -2475,9 +2474,6 @@ ipv6_dhcp_relay_addr => ['2000::11', '2001::22']
 ```
 ###### `ipv6_dhcp_relay_src_intf`
 Source interface for the DHCPV6 relay. Valid values are string, keyword 'default'.
-
-###### `ipv6_redirects`
-Enables or disables sending of IPv6 redirect messages. Valid values are 'true', 'false', and 'default'.
 
 ###### `pim_bfd`
 Enables PIM BFD on the interface. Valid values are 'true', 'false', and 'default'.
