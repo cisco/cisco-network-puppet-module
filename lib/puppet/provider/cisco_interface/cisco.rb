@@ -96,6 +96,7 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     :ipv4_dhcp_relay_src_addr_hsrp,
     :ipv4_dhcp_relay_subnet_broadcast,
     :ipv4_dhcp_smart_relay,
+    :ipv6_redirects,
     :negotiate_auto,
     :pim_bfd,
     :purge_config,
@@ -347,7 +348,8 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     l3_props = [
       :ipv4_proxy_arp, :ipv4_redirects,
       :ipv4_address, :ipv4_netmask_length,
-      :ipv4_address_secondary, :ipv4_netmask_length_secondary
+      :ipv4_address_secondary, :ipv4_netmask_length_secondary,
+      :ipv6_redirects
     ]
     l3_props.each do |prop|
       if @property_flush[prop].nil?
