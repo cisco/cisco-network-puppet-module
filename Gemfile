@@ -66,6 +66,7 @@ group :development, :unit_tests do
   gem 'rubocop', '= 0.35.1',     require: false
   gem 'simplecov',               require: false
   gem 'puppet-blacksmith', '~> 3.4', require: false
+  gem 'net-telnet', '~> 0.1.1', require: false
 end
 
 group :puppet_test_env do
