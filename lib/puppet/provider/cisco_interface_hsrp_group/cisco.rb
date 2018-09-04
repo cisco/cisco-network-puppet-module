@@ -1,6 +1,6 @@
-# November, 2016
+# August, 2018
 #
-# Copyright (c) 2016 Cisco and/or its affiliates.
+# Copyright (c) 2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -104,6 +104,10 @@ Puppet::Type.type(:cisco_interface_hsrp_group).provide(:cisco) do
     # Call node_utils getter for each property
     (INTERFACE_HSRP_GROUP_NON_BOOL_PROPS).each do |prop|
       current_state[prop] = nu_obj.send(prop)
+      if prop == :authentication_enc_type
+        current_state[prop] = 'clear' if current_state[prop] == '0'
+        current_state[prop] = 'encrypted' if current_state[prop] == '7'
+      end
     end
     INTERFACE_HSRP_GROUP_ARRAY_FLAT_PROPS.each do |prop|
       current_state[prop] = nu_obj.send(prop)
@@ -115,6 +119,11 @@ Puppet::Type.type(:cisco_interface_hsrp_group).provide(:cisco) do
       else
         current_state[prop] = val ? :true : :false
       end
+    end
+    # Do not return authentication attributes if authentication_string is not set
+    if current_state.include?(:authentication_string) && (current_state[:authentication_string] == '' || current_state[:authentication_string].nil?)
+      auth_attrs = [:authentication_auth_type, :authentication_enc_type, :authentication_key_type, :authentication_timeout, :authentication_compatibility]
+      auth_attrs.each { |k| current_state.delete k }
     end
     new(current_state)
   end # self.properties_get
@@ -155,10 +164,16 @@ Puppet::Type.type(:cisco_interface_hsrp_group).provide(:cisco) do
     @property_flush[:ensure] = :absent
   end
 
-  def properties_set(new_hg=false)
+  def properties_set(iptype, new_hg=false)
     INTERFACE_HSRP_GROUP_ALL_PROPS.each do |prop|
       next unless @resource[prop]
-      send("#{prop}=", @resource[prop]) if new_hg
+      if new_hg
+        if iptype == 'ipv4'
+          send("#{prop}=", @resource[prop]) unless prop == :ipv6_autoconfig
+        else
+          send("#{prop}=", @resource[prop])
+        end
+      end
       unless @property_flush[prop].nil?
         @nu.send("#{prop}=", @property_flush[prop]) if
           @nu.respond_to?("#{prop}=")
@@ -192,7 +207,9 @@ Puppet::Type.type(:cisco_interface_hsrp_group).provide(:cisco) do
         attrs[p] = PuppetX::Cisco::Utils.bool_sym_to_s(attrs[p])
       end
     end
-    @nu.authentication_set(attrs)
+    attrs[:authentication_enc_type] = '0' if attrs[:authentication_enc_type].to_s == 'clear'
+    attrs[:authentication_enc_type] = '7' if attrs[:authentication_enc_type].to_s == 'encrypted'
+    @nu.authentication_set(attrs) unless attrs[:authentication_string].nil? || attrs[:authentication_string] == ''
   end
 
   def ipv4_vip_set
@@ -237,7 +254,7 @@ Puppet::Type.type(:cisco_interface_hsrp_group).provide(:cisco) do
                                             @resource[:group],
                                             @resource[:iptype])
       end
-      properties_set(new_hg)
+      properties_set(@resource[:iptype], new_hg)
     end
   end
 end

@@ -24,6 +24,8 @@ The puppet agent software must be installed on a Cisco Nexus platform in the `Gu
 
 ### Resolved Issues
 * https://tickets.puppetlabs.com/browse/CISCO-66
+* https://tickets.puppetlabs.com/browse/CISCO-75
+* https://tickets.puppetlabs.com/browse/CISCO-76
 
 ## [1.9.0] - 2018-04-19
 
