@@ -1,6 +1,6 @@
-# January, 2015
+# August, 2018
 #
-# Copyright (c) 2015-2016 Cisco and/or its affiliates.
+# Copyright (c) 2015-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
   Cisco rpm installations from guestshell will utilize nxapi to install to host."
 
   confine feature: :cisco_node_utils
+  confine operatingsystem: :nexus
 
   # same features as yum plus :package_settings
   has_feature :install_options, :versionable, :virtual_packages, :package_settings
@@ -200,6 +201,7 @@ Puppet::Type.type(:package).provide :cisco, parent: :yum do
 
   # true if DSL defines "package_settings => {'target' => 'host'}"
   def target_host?
+    return unless @resource
     @resource[:package_settings] &&
       @resource[:package_settings]['target'] == 'host'
   end

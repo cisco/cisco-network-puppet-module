@@ -23,6 +23,7 @@ The puppet agent software must be installed on a Cisco Nexus platform in the `Gu
 * Support for Puppet Agent install into the `bash-shell` hosting environment. This is the native WRL Linux environment underlying NX-OS.
 
 ### Resolved Issues
+* https://tickets.puppetlabs.com/browse/CISCO-63
 * https://tickets.puppetlabs.com/browse/CISCO-66
 * https://tickets.puppetlabs.com/browse/CISCO-75
 * https://tickets.puppetlabs.com/browse/CISCO-76
