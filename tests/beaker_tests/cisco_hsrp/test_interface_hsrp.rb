@@ -56,12 +56,12 @@ tests[:default] = {
   },
   code:               [0, 2],
   resource:           {
-    hsrp_bfd:           'false',
     hsrp_delay_minimum: 0,
     hsrp_delay_reload:  0,
-    hsrp_mac_refresh:   'false',
-    hsrp_use_bia:       'false',
     hsrp_version:       1,
+    # hsrp_bfd is nil when set to default
+    # hsrp_mac_refresh is nil when set to default
+    # hsrp_use_bia is nil when set to defaul
   },
 }
 

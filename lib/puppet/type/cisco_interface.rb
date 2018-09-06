@@ -850,11 +850,11 @@ Puppet::Type.newtype(:cisco_interface) do
          'interface. ' + inputs
 
     validate do |value|
-      fail inputs unless value.delete(' ')[/^(default|[-,\d]+)$/]
+      fail inputs unless value.delete(' ')[/^(default|none|[-,\d]+)$/]
     end
 
     munge do |value|
-      if value.to_s[/default/]
+      if value.to_s[/default|none/]
         :default
       else
         PuppetX::Cisco::Utils.normalize_range_string(value)
