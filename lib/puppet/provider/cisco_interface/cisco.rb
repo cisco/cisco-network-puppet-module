@@ -384,7 +384,6 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
         new_interface = true
         @nu = Cisco::Interface.new(@resource[:interface])
       end
-      puts "#{@property_flush}"
       properties_set(new_interface)
     end
   end
