@@ -10,6 +10,7 @@ The puppet agent software must be installed on a Cisco Nexus platform in the `Gu
 
 ### New feature support
 #### Cisco Resources
+- `hostname` type and provider.
 
 ### Added
 * Extend syslog_server with attribute:

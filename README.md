@@ -189,6 +189,7 @@ The following resources include cisco types and providers along with cisco provi
   * [`cisco_command_config`](#type-cisco_command_config)
   * [`cisco_vdc`](#type-cisco_vdc)
   * [`cisco_upgrade`](#type-cisco_upgrade)
+  * [`hostname (netdev_stdlib)`](#type-hostname)
 
 * AAA Types
   * [`cisco_aaa_authentication_login`](#type-cisco_aaa_authentication_login)
@@ -413,6 +414,7 @@ The following resources include cisco types and providers along with cisco provi
 ### <a name="resource-by-name-netdev">NetDev StdLib Resource Type Catalog (by Name)<a>
 
 * [`domain_name`](#type-domain_name)
+* [`hostname`](#type-hostname)
 * [`name_server`](#type-name_server)
 * [`network_dns`](#type-network_dns)
 * [`network_interface`](#type-network_interface)
@@ -536,6 +538,7 @@ Symbol | Meaning | Description
 | ✅ = Supported <br> ➖ = Not Applicable | N9k | N3k | N5k | N6k | N7k | N9k-F | N3k-F | Caveats |
 |:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | [domain_name](#type-domain_name)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [hostname](#type-hostname)                                 | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | \*[caveats](#hostname-caveats)
 | [name_server](#type-name_server)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [network_dns](#type-network_dns)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [network_interface](#type-network_interface)               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
@@ -5112,6 +5115,35 @@ Determines whether or not the config should be present on the device. Valid valu
 
 ##### `name`
 Domain name of the device. Valid value is a string.
+
+--
+### Type: hostname
+
+Configure the domain name of the device
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(5)        | 1.10.0                  |
+| N3k      | 7.0(3)I2(5)        | 1.10.0                  |
+| N5k      | 7.3(0)N1(1)        | 1.10.0                  |
+| N6k      | 7.3(0)N1(1)        | 1.10.0                  |
+| N7k      | 7.3(0)D1(1)        | 1.10.0                  |
+| N9k-F    | 7.0(3)F1(1)        | 1.10.0                  |
+| N3k-F    | 7.0(3)F3(2)        | 1.10.0                  |
+
+#### <a name="hostname-caveats">Caveats</a>
+ | Property | Caveat Description |
+|:--------|:-------------|
+| `name`  | Minimum Module Version 1.10.0        |
+
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `name`
+The hostname of the device. Valid value is a string.
 
 --
 ### Type: name_server
