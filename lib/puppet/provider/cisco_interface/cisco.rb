@@ -244,6 +244,10 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     interface
   end
 
+  def check_methods(prop)
+    @nu.respond_to?("#{prop}=") && @nu.respond_to?("default_#{prop}")
+  end
+
   def properties_set(new_interface=false)
     INTF_ALL_PROPS.each do |prop|
       next unless @resource[prop]
@@ -251,6 +255,10 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
       unless @property_flush[prop].nil?
         @nu.send("#{prop}=", @property_flush[prop]) if
           @nu.respond_to?("#{prop}=")
+      end
+      if @resource[prop] == :default
+        @nu.send("#{prop}=", @nu.send("default_#{prop}")) if
+          check_methods(prop)
       end
     end
     ipv4_addr_mask_set
@@ -376,6 +384,7 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
         new_interface = true
         @nu = Cisco::Interface.new(@resource[:interface])
       end
+      puts "#{@property_flush}"
       properties_set(new_interface)
     end
   end
