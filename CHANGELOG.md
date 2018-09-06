@@ -9,13 +9,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 The puppet agent software must be installed on a Cisco Nexus platform in the `Guestshell` (the Linux container environment running CentOS). This provides a secure, open execution environment that is decoupled from the host.
 
 ### New feature support
-#### Cisco Resources
 
 ### Added
 * Extend syslog_server with attribute:
    * `facility`
 * Extend cisco_interface with attribute:
    * `ipv6_redirects`
+* Extend network_dns with attribute:
+   * `hostname`
 
 * Extend syslog_settings with attributes:
    * `logfile_name`

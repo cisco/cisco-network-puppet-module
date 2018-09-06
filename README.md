@@ -537,7 +537,7 @@ Symbol | Meaning | Description
 |:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | [domain_name](#type-domain_name)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [name_server](#type-name_server)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [network_dns](#type-network_dns)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_dns](#type-network_dns)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | \*[caveats](#network_dns-caveats)
 | [network_interface](#type-network_interface)               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [network_snmp](#type-network_snmp)                         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [network_trunk](#type-network_trunk)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
@@ -5180,6 +5180,11 @@ Hostname or address of the DNS server.  Valid value is a string.
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 | N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
+#### <a name="network_dns-caveats">Caveats</a>
+ | Property | Caveat Description |
+|:--------|:-------------|
+| `hostname`  | Minimum Module Version 1.10.0        |
+
 
 #### Parameters
 
@@ -5191,6 +5196,9 @@ Name, generally "settings", not used to manage the resource.  Valid value is a s
 
 ##### `domain`
 Default domain name to append to the device hostname.  Valid value is a string.
+
+##### `hostname`
+The hostname of the device. Valid value is a string.
 
 ##### `search`
 Array of DNS suffixes to search for FQDN entries.  Valid value is an array of strings.
