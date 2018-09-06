@@ -2,7 +2,7 @@
 #
 # January 2016
 #
-# Copyright (c) 2016 Cisco and/or its affiliates.
+# Copyright (c) 2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -66,6 +66,18 @@ Puppet::Type.newtype(:cisco_ace) do
         time_range                            => 'my_range',
         ttl                                   => '153',
         redirect                              => 'Ethernet1/1,Ethernet1/2,port-channel1',
+        log                                   => false,
+    }
+    cisco_ace { 'ipv4 my_icmp_acl 20':
+        action                                => 'permit',
+        proto                                 => 'icmp',
+        src_addr                              => 'any',
+        dst_addr                              => 'any',
+        dscp                                  => 'af11',
+        set_erspan_dscp                       => '3',
+        set_erspan_gre_proto                  => '300',
+        proto_option                          => 'time-exceeded',
+        vlan                                  => '2',
         log                                   => false,
     }
   ~~~
@@ -287,6 +299,26 @@ Puppet::Type.newtype(:cisco_ace) do
          'Ethernet1/2,port-channel1'
   end
 
+  newproperty(:proto_option) do
+    desc 'Any protocol option. Example: time-exceeded. Valid values are string.'\
+         'Currently this is valid only for icmp protocol.'
+  end
+
+  newproperty(:set_erspan_dscp) do
+    desc 'Set ERSPAN outer IP DSCP value. Valid values are bw 1 and 63'\
+         'Currently this is valid only for icmp protocol.'
+  end
+
+  newproperty(:set_erspan_gre_proto) do
+    desc 'Set ERSPAN GRE protocol. Valid values are bw 1 and 65535'\
+         'Currently this is valid only for icmp protocol.'
+  end
+
+  newproperty(:vlan) do
+    desc 'Configure match based on vlan. Valid values are bw 0 and 4095'\
+         'Currently this is valid only for icmp protocol.'
+  end
+
   newproperty(:log) do
     desc 'Log matches against this entry'
     newvalues(:true, :false)
@@ -295,8 +327,8 @@ Puppet::Type.newtype(:cisco_ace) do
   validate do
     unless self[:remark].nil?
       fail ArgumentError,
-           "'established' and 'log' properties should not be set for remark ace" unless
-        self[:log].nil? && self[:established].nil?
+           "'established', 'proto_option' and 'log' properties should not be set for remark ace" unless
+        self[:log].nil? && self[:established].nil? && self[:proto_option].nil?
     end
   end
 end
