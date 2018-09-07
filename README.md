@@ -789,9 +789,9 @@ Manages configuration of an Access Control List (ACL) Access Control Entry (ACE)
 | `ttl`                | Not supported on N5k, N6k, N7k |
 | `tcp_option_length`  | ipv4 only <br> Not supported on N5k, N6k, N7k |
 | `vlan             `  | Not supported on N5k, N6k, N7k. Minimum puppet module version 1.10.0 |
-| `set_erspan_gre_proto' | Not supported on N5k, N6k, N7k. Minimum puppet module version 1.10.0 |
-| `set_erspan_dscp'    | Not supported on N5k, N6k, N7k. Minimum puppet module version 1.10.0 |
-| `proto_option'       | Not supported on N5k, N6k. Minimum puppet module version 1.10.0 |
+| `set_erspan_gre_proto` | Not supported on N5k, N6k, N7k. Minimum puppet module version 1.10.0 |
+| `set_erspan_dscp`    | Not supported on N5k, N6k, N7k. Minimum puppet module version 1.10.0 |
+| `proto_option`       | Not supported on N5k, N6k. Minimum puppet module version 1.10.0 |
 
 #### Example Usage
 
