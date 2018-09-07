@@ -473,7 +473,7 @@ Symbol | Meaning | Description
 | [cisco_aaa_<br>authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs)     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
 | [cisco_acl](#type-cisco_acl)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
-| [cisco_ace](#type-cisco_ace)                               | ✅  | ✅  | ✅* | ✅* | ✅* | ✅ | ✅ | \*[caveats](#cisco_ace-caveats) |
+| [cisco_ace](#type-cisco_ace)                               | ✅* | ✅* | ✅* | ✅* | ✅* | ✅*| ✅*| \*[caveats](#cisco_ace-caveats) |
 | [cisco_bfd_global](#type-cisco_bfd_global)                 | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_bfd_global-caveats) |
 | [cisco_command_config](#type-cisco_command_config)         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
 | [cisco_bgp](#type-cisco_bgp)                               | ✅  | ✅  | ✅* | ✅* | ✅* | ✅ | ✅ | \*[caveats](#cisco_bgp-caveats) |
@@ -788,6 +788,10 @@ Manages configuration of an Access Control List (ACL) Access Control Entry (ACE)
 | `time_range`         | Not supported on N5k, N6k |
 | `ttl`                | Not supported on N5k, N6k, N7k |
 | `tcp_option_length`  | ipv4 only <br> Not supported on N5k, N6k, N7k |
+| `vlan             `  | Not supported on N5k, N6k, N7k. Minimum puppet module version 1.10.0 |
+| `set_erspan_gre_proto' | Not supported on N5k, N6k, N7k. Minimum puppet module version 1.10.0 |
+| `set_erspan_dscp'    | Not supported on N5k, N6k, N7k. Minimum puppet module version 1.10.0 |
+| `proto_option'       | Not supported on N5k, N6k. Minimum puppet module version 1.10.0 |
 
 #### Example Usage
 
@@ -952,6 +956,13 @@ The protocol to match against. Valid values are String or Integer. Examples are:
 |:--
 | `proto => 'tcp'`
 
+##### `proto_option`
+Any protocol option which is valid for that protocol. Valid values are string. Currently this is valid only for icmp protocol.
+
+| Example
+|:--
+| `proto_option => 'time-exceeded'`
+
 ##### `redirect`
 (ipv4 only) Allows for redirecting traffic to one or more interfaces. This property is only useful with VLAN ACL (VACL) applications. Valid values are a String containing a list of interface names.
 
@@ -966,6 +977,20 @@ This is a Remark description for the ACL or ACE. Valid values are string.
 | Example
 |:--
 | `remark => 'East Branch'`
+
+##### `set_erspan_dscp`
+Sets ERSPAN outer IP DSCP value. Valid values are beween 1 and 63. Currently this is valid only for icmp protocol.
+
+| Example
+|:--
+| `set_erspan_dscp => '3'`
+
+##### `set_erspan_gre_proto`
+Sets ERSPAN GRE protocol. Valid values are beween 1 and 65535. Currently this is valid only for icmp protocol.
+
+| Example
+|:--
+| `set_erspan_gre_proto => '300'`
 
 ##### `src_addr`
 The Source Address to match against. Valid values are type String, which must be one of the following forms:
@@ -1029,6 +1054,13 @@ Allows matching based on Time-To-Live (TTL) value. Valid values are type Integer
 | Example
 |:--
 | `ttl => '128'`
+
+##### `vlan`
+Configure match based on vlan. Valid values are between 0 and 4095. Currently this is valid only for icmp protocol.
+
+| Example
+|:--
+| `vlan => '100'`
 
 --
 ### Type: cisco_bfd_global
