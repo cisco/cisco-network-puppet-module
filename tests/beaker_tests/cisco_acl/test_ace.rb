@@ -104,7 +104,7 @@ tests[:seq_30_v4] = {
 
 tests[:seq_40_icmp_v4] = {
   desc:           'IPv4 Seq 40',
-  title_pattern:  'ipv4 beaker icmp 40',
+  title_pattern:  'ipv4 beaker 40',
   manifest_props: {
     action:               'deny',
     proto:                'icmp',
@@ -121,7 +121,7 @@ tests[:seq_40_icmp_v4] = {
 
 tests[:seq_50_icmp_v4] = {
   desc:           'IPv4 Seq 50',
-  title_pattern:  'ipv4 beaker icmp 50',
+  title_pattern:  'ipv4 beaker 50',
   manifest_props: {
     action:       'deny',
     proto:        'icmp',
