@@ -116,6 +116,7 @@ tests[:seq_40_icmp_v4] = {
     redirect:             'port-channel10',
     set_erspan_dscp:      '3',
     set_erspan_gre_proto: '300',
+    vlan:                 '100',
   },
 }
 
