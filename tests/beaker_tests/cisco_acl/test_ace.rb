@@ -153,7 +153,6 @@ def unsupported_properties(tests, id)
       unprops <<
         :proto_option <<
         :packet_length <<
-        :proto_option <<
         :time_range
     end
     if platform[/n(5|6|7)k/]
