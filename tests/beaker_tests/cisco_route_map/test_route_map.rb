@@ -26,7 +26,7 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 # In I7 match_src_proto order is not maintained in running config.
 # This behavior is currently observed only on the N9K.
-if platform[/n9k/] && image_version.to_s.strip[/I7/]
+if platform[/n9k/] && image_version.to_s.strip[/I(7|8|9)/]
   @src_proto = %w(udp igmp tcp)
 else
   @src_proto = %w(tcp udp igmp)

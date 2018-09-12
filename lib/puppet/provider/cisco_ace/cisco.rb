@@ -1,6 +1,6 @@
 # January 2016
 #
-# Copyright (c) 2016 Cisco and/or its affiliates.
+# Copyright (c) 2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -49,6 +49,10 @@ Puppet::Type.type(:cisco_ace).provide(:cisco) do
     :http_method,
     :tcp_option_length,
     :redirect,
+    :set_erspan_dscp,
+    :set_erspan_gre_proto,
+    :vlan,
+    :proto_option,
     :remark,
   ]
 
@@ -173,6 +177,10 @@ Puppet::Type.type(:cisco_ace).provide(:cisco) do
       :http_method,
       :tcp_option_length,
       :redirect,
+      :set_erspan_dscp,
+      :set_erspan_gre_proto,
+      :vlan,
+      :proto_option,
       :log,
     ]
     if vars.any? { |p| @property_flush.key?(p) }
