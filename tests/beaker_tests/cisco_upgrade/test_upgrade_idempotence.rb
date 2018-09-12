@@ -23,7 +23,11 @@
 ###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 @package = on(agent, facter_cmd('-p cisco.images.system_image')).stdout.chomp
-@version = image_version.to_s.strip
+if platform[/n9k/] && image_version.to_s.strip[/I9/]
+  @version = image_version.to_s.strip.split('I', 2)[0]
+else
+  @version = image_version.to_s.strip
+end
 # Test hash top-level keys
 tests = {
   master:           master,
