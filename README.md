@@ -556,7 +556,7 @@ Symbol | Meaning | Description
 | [snmp_notification_receiver](#type-snmp_notification_receiver) | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [snmp_user](#type-snmp_user)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [syslog_server](#type-syslog_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [syslog_settings](#type-syslog_settings)                   | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [syslog_settings](#type-syslog_settings)                   | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | \*[caveats](#syslog_settings-caveats)
 | [tacacs](#type-tacacs)                                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [tacacs_global](#type-tacacs_global)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [tacacs_server](#type-tacacs_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
@@ -5798,14 +5798,53 @@ Interface to send syslog data from, e.g. "management".  Valid value is a string.
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 | N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
+#### <a name="syslog_settings-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `logfile_severity_level`      | Minimum Module Version 1.10.0        |
+| `logfile_name`                | Minimum Module Version 1.10.0        |
+| `logfile_size`                | Minimum Module Version 1.10.0        |
+
+
 
 #### Parameters
 
-##### `name`
-Hostname or address of the Syslog server.  Valid value is a string.
+##### `enable`
+
+Enable or disable syslog logging [true|false].
+
+##### `console`
+
+Console logging severity level [0-7] or 'unset'.
+
+##### `monitor`
+
+Monitor (terminal) logging severity level [0-7] or 'unset'.
+
+##### `source_interface`
+
+Source interface to send syslog data from, for example, "ethernet 2/1" (array of strings for multiple).
 
 ##### `time_stamp_units`
+
 The unit of measurement for log time values.  Valid values are 'seconds' and 'milliseconds'.
+
+##### `vrf`
+
+The VRF associated with source_interface (array of strings for multiple).
+
+##### `logfile_severity_level`
+
+Logfile severity level [0-7] or 'unset'
+
+##### `logfile_name`
+
+Logfile file name to use or 'unset'
+
+##### `logfile_size`
+
+Logging file maximum size or 'unset'
 
 --
 ### Type: tacacs

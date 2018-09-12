@@ -17,6 +17,11 @@ The puppet agent software must be installed on a Cisco Nexus platform in the `Gu
 * Extend cisco_interface with attribute:
    * `ipv6_redirects`
 
+* Extend syslog_settings with attributes:
+   * `logfile_name`
+   * `logfile_severity_level`
+   * `logfile_size`
+
 ### Changed
 
 ### Removed
