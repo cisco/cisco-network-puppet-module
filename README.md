@@ -303,6 +303,7 @@ The following resources include cisco types and providers along with cisco provi
   * [`snmp_user (netdev_stdlib)`](#type-snmp_user)
 
 * SYSLOG Types
+  * [`syslog_facility (netdev_stdlib)`](#type-syslog_facility)
   * [`syslog_server (netdev_stdlib)`](#type-syslog_server)
   * [`syslog_settings (netdev_stdlib)`](#type-syslog_settings)
 
@@ -432,6 +433,7 @@ The following resources include cisco types and providers along with cisco provi
 * [`snmp_notification`](#type-snmp_notification)
 * [`snmp_notification_receiver`](#type-snmp_notification_receiver)
 * [`snmp_user`](#type-snmp_user)
+* [`syslog_facility`](#type-syslog_facility)
 * [`syslog_server`](#type-syslog_server)
 * [`syslog_settings`](#type-syslog_settings)
 * [`tacacs`](#type-tacacs)
@@ -555,6 +557,7 @@ Symbol | Meaning | Description
 | [snmp_notification](#type-snmp_notification)               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [snmp_notification_receiver](#type-snmp_notification_receiver) | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [snmp_user](#type-snmp_user)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [syslog_facility](#type-syslog_facility)                   | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [syslog_server](#type-syslog_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [syslog_settings](#type-syslog_settings)                   | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | \*[caveats](#syslog_settings-caveats)
 | [tacacs](#type-tacacs)                                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
@@ -5792,6 +5795,31 @@ Syslog severity level to log.  Valid value is an integer.
 
 ##### `vrf`
 Interface to send syslog data from, e.g. "management".  Valid value is a string.
+
+--
+### Type: syslog_facility
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(5)        | 1.10.0                 |
+| N3k      | 7.0(3)I2(5)        | 1.10.0                 |
+| N5k      | 7.3(0)N1(1)        | 1.10.0                 |
+| N6k      | 7.3(0)N1(1)        | 1.10.0                 |
+| N7k      | 7.3(0)D1(1)        | 1.10.0                 |
+| N9k-F    | 7.0(3)F1(1)        | 1.10.0                 |
+| N3k-F    | 7.0(3)F3(2)        | 1.10.0                 |
+
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `name`
+Global Syslog facility.  Valid value is a string.
+
+##### `level`
+Syslog severity level to log.  Valid value is an integer 0-7.
 
 --
 ### Type: syslog_settings
