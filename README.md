@@ -186,6 +186,7 @@ The following resources include cisco types and providers along with cisco provi
 ### <a name="resource-by-tech">Resource Type Catalog (by Technology)<a>
 
 * Miscellaneous Types
+  * [`banner`](#type-banner)
   * [`cisco_command_config`](#type-cisco_command_config)
   * [`cisco_vdc`](#type-cisco_vdc)
   * [`cisco_upgrade`](#type-cisco_upgrade)
@@ -413,6 +414,7 @@ The following resources include cisco types and providers along with cisco provi
 
 ### <a name="resource-by-name-netdev">NetDev StdLib Resource Type Catalog (by Name)<a>
 
+* [`banner`](#type-banner)
 * [`domain_name`](#type-domain_name)
 * [`name_server`](#type-name_server)
 * [`network_dns`](#type-network_dns)
@@ -537,6 +539,7 @@ Symbol | Meaning | Description
 
 | ✅ = Supported <br> ➖ = Not Applicable | N9k | N3k | N5k | N6k | N7k | N9k-F | N3k-F | Caveats |
 |:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| [banner](#type-banner)                                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | \*[caveats](#banner-caveats)
 | [domain_name](#type-domain_name)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [name_server](#type-name_server)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [network_dns](#type-network_dns)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | \*[caveats](#network_dns-caveats)
@@ -5125,6 +5128,36 @@ The following resources are listed alphabetically.
 
 --
 
+### Type: banner
+
+Configure the banner of the device
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(5)        | 1.10.0                 |
+| N3k      | 7.0(3)I2(5)        | 1.10.0                 |
+| N5k      | 7.3(0)N1(1)        | 1.10.0                 |
+| N6k      | 7.3(0)N1(1)        | 1.10.0                 |
+| N7k      | 7.3(0)D1(1)        | 1.10.0                 |
+| N9k-F    | 7.0(3)F1(1)        | 1.10.0                 |
+| N3k-F    | 7.0(3)F3(2)        | 1.10.0                 |
+
+
+#### <a name="banner-caveats">Caveats</a>
+
+| Property         | Caveat Description                                                        |
+|------------------|----------------------------------------------------------------------------------------------------------|
+| motd             | multiline banners are only supported on n9k and n3k platforms running `7.0(3)I7.4` / `9.2(1)` or higher  |
+
+#### Parameters
+
+##### `name`
+Resource name, not used to configure the device.  Should be 'default'.
+
+##### `motd`
+MOTD Banner. Valid value is a string.  Non-literal newlines will be escaped.
+
+--
 ### Type: domain_name
 
 Configure the domain name of the device
