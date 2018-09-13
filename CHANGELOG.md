@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [1.10.0] - 2018-09-18
 
 **NOTE:** Starting in release `9.2(1)` and onward, installing the Puppet Agent into the `bash-shell` hosting environment is no longer supported.
 
@@ -38,6 +38,7 @@ The puppet agent software must be installed on a Cisco Nexus platform in the `Gu
 ### Resolved Issues
 * https://tickets.puppetlabs.com/browse/CISCO-63
 * https://tickets.puppetlabs.com/browse/CISCO-66
+* https://tickets.puppetlabs.com/browse/CISCO-71
 * https://tickets.puppetlabs.com/browse/CISCO-73
 * https://tickets.puppetlabs.com/browse/CISCO-74
 * https://tickets.puppetlabs.com/browse/CISCO-75
@@ -512,7 +513,7 @@ This version was never released.
 - Initial release of puppetlabs-ciscopuppet module, supporting Cisco NX-OS software release 7.0(3)I2(1) on Cisco Nexus switch platforms: N95xx, N93xx, N30xx and N31xx.
 - Please note: 0.9.0 is an EFT pre-release for a limited audience with access to NX-OS 7.0(3)I2(1). Additional code changes may occur in 0.9.x prior to the final 1.0.0 release.
 
-[Unreleased]: https://github.com/cisco/cisco-network-puppet-module/compare/master...develop
+[1.10.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.9.0...v1.10.0
 [1.9.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.6.0...v1.7.0
