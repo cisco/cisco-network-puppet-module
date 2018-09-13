@@ -273,10 +273,15 @@ Puppet::Type.newtype(:cisco_interface) do
           downstream device. The vPC Peer switch must have an indentical
           configuration to the same downstream device. Valid values are in
           the range 1..4096'
-    range = *(1..4096)
-    validate do |id|
-      fail 'VPC ID must be in the range 1..4096' unless
-        range.include?(id.to_i)
+
+    munge do |value|
+      value = :default if value == 'default'
+      if value != :default
+        range = *(1..4096)
+        fail 'VPC ID must be in the range 1..4096' unless
+          range.include?(value.to_i)
+      end
+      value
     end
   end # property vpc_id
 
@@ -845,11 +850,11 @@ Puppet::Type.newtype(:cisco_interface) do
          'interface. ' + inputs
 
     validate do |value|
-      fail inputs unless value.delete(' ')[/^(default|[-,\d]+)$/]
+      fail inputs unless value.delete(' ')[/^(default|none|[-,\d]+)$/]
     end
 
     munge do |value|
-      if value.to_s[/default/]
+      if value.to_s[/default|none/]
         :default
       else
         PuppetX::Cisco::Utils.normalize_range_string(value)

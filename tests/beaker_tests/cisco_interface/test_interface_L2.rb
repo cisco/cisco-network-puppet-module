@@ -106,7 +106,7 @@ tests[:default_trunk] = {
     shutdown:                      'true',
     load_interval_counter_1_delay: '30',
     load_interval_counter_2_delay: '300',
-    load_interval_counter_3_delay: 'false',
+    # load_interval_counter_3_delay is nil when set to default
     storm_control_broadcast:       '100.00',
     storm_control_multicast:       '100.00',
     storm_control_unicast:         '100.00',

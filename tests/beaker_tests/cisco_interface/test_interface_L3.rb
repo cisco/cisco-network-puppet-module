@@ -77,14 +77,13 @@ tests[:default] = {
     ipv4_redirects:                   operating_system == 'nexus' ? 'true' : 'false',
     ipv4_dhcp_relay_info_trust:       'false',
     ipv4_dhcp_relay_src_addr_hsrp:    'false',
-    ipv4_dhcp_relay_src_intf:         'false',
     ipv4_dhcp_relay_subnet_broadcast: 'false',
     ipv4_dhcp_smart_relay:            'false',
-    ipv6_dhcp_relay_src_intf:         'false',
     ipv6_redirects:                   'true',
     pim_bfd:                          'false',
     mtu:                              operating_system == 'nexus' ? '1500' : '1514',
     shutdown:                         'false',
+    # (ipv4|ipv6)_dhcp_relay_src_intf is nil when set to default
   },
 }
 
