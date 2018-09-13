@@ -1,6 +1,6 @@
-# October, 2015
+# September, 2018
 #
-# Copyright (c) 2014-2016 Cisco and/or its affiliates.
+# Copyright (c) 2014-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ Puppet::Type.type(:network_dns).provide(:cisco) do
     @domain = Cisco::DomainName.domainnames || {}
     @searches = Cisco::DnsDomain.dnsdomains || {}
     @servers = Cisco::NameServer.nameservers || {}
+    @hostname = Cisco::HostName.hostname || {}
     @network_dns = value
     @property_flush = {}
   end
@@ -45,12 +46,14 @@ Puppet::Type.type(:network_dns).provide(:cisco) do
     domain = Cisco::DomainName.domainnames
     searches = Cisco::DnsDomain.dnsdomains || {}
     servers = Cisco::NameServer.nameservers || {}
+    hostname = Cisco::HostName.hostname || {}
     current_state = {
-      name:    vrf.nil? ? 'settings' : vrf,
-      ensure:  :present,
-      domain:  domain.keys.first,
-      search:  searches.keys.sort,
-      servers: servers.keys.sort,
+      name:     vrf.nil? ? 'settings' : vrf,
+      ensure:   :present,
+      domain:   domain.keys.first,
+      hostname: hostname.keys.first,
+      search:   searches.keys.sort,
+      servers:  servers.keys.sort,
     }
 
     new(current_state)
@@ -87,6 +90,11 @@ Puppet::Type.type(:network_dns).provide(:cisco) do
   def domain=(value)
     @domain[value].destroy if @domain[value]
     Cisco::DomainName.new(value)
+  end
+
+  def hostname=(value)
+    @hostname[value].destroy if @hostname[value]
+    Cisco::HostName.new(value)
   end
 
   def search=(value)
