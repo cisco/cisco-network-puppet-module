@@ -5873,7 +5873,7 @@ Syslog severity level to log.  Valid value is an integer 0-7.
 |:--------|:-------------|
 | `logfile_severity_level`      | Minimum Module Version 1.10.0        |
 | `logfile_name`                | Minimum Module Version 1.10.0        |
-| `logfile_size`                | Minimum Module Version 1.10.0        |
+| `logfile_size`                | Minimum Module Version 1.10.0 only supported on n9k and n3k platforms running `7.0(3)I7.4` / `9.2(1)` or higher         |
 
 
 
