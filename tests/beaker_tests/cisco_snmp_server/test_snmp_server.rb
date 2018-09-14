@@ -32,8 +32,9 @@ tests = {
 }
 
 # for fretta running F3.2 or later, this is fixed
+# for n7k running 8.3.1 or later, this is fixed
 # it will fail if older versions are run
-@def_pkt_size = platform[/n(3|9)k/] ? '1500' : '0'
+@def_pkt_size = platform[/n(3|7|9)k/] ? '1500' : '0'
 
 # Test hash test cases
 tests[:default] = {

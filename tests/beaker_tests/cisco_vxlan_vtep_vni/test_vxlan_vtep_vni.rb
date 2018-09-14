@@ -274,6 +274,7 @@ def dependency_manifest(_tests, _id)
   "
     cisco_vxlan_vtep {'nve1':
       ensure => present,
+      host_reachability => 'evpn',
       shutdown           => 'false',
     }
   "
