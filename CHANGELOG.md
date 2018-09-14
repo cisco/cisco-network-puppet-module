@@ -25,6 +25,8 @@ The puppet agent software must be installed on a Cisco Nexus platform in the `Gu
    * `logfile_severity_level`
    * `logfile_size`
 
+*note: due to bug in NXAPI logfile_size is only supported on n9k and n3k platforms running `7.0(3)I7.4` / `9.2(1)` or higher*
+
 * Added `banner` with attributes:
   * `motd`
 
