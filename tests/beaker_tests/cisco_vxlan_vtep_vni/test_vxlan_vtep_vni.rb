@@ -271,13 +271,22 @@ end
 
 # Overridden to properly handle dependencies for this test file.
 def dependency_manifest(_tests, _id)
-  "
-    cisco_vxlan_vtep {'nve1':
-      ensure => present,
-      host_reachability => 'evpn',
-      shutdown           => 'false',
-    }
-  "
+  if platform[/n7k/]
+    "
+      cisco_vxlan_vtep {'nve1':
+        ensure => present,
+        host_reachability => 'evpn',
+        shutdown           => 'false',
+      }
+    "
+  else
+    "
+      cisco_vxlan_vtep {'nve1':
+        ensure => present,
+        shutdown           => 'false',
+      }
+    "
+  end
 end
 
 def version_unsupported_properties(_tests, _id)
