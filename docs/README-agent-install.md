@@ -139,6 +139,8 @@ This section is only required when running Puppet from the `guestshell`.
 
 Nexus 3xxx switches with 4 GB RAM and 1.6 GB bootflash are advised to use compacted images to reduce the storage resources consumed by the image. As part of the compaction process, the `guestshell.ova` is removed from the system image.  To make use of the guestshell on these systems, the guestshell.ova may be downloaded and used to install the guestshell.
 
+[Guestshell OVA Download Link](https://software.cisco.com/download/home/283970187/type/282088129/release/9.2%25281%2529?catid=268438038)
+
 Starting in release `9.2(1)` and onward, the .ova file can be copied to the `volatile:` directory which frees up more space on `bootflash:`.
 
 Copy the `guestshell.ova` file to `volatile:` if supported, otherwise copy it to `bootflash:`
