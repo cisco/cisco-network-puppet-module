@@ -1,6 +1,6 @@
 {
   "name": "puppetlabs-ciscopuppet",
-  "version": "1.9.0",
+  "version": "1.10.0",
   "author": "cisco",
   "summary": "Cisco Puppet providers and types for NX-OS devices",
   "license": "Apache-2.0",
@@ -8,7 +8,7 @@
   "project_page": "https://github.com/cisco/cisco-network-puppet-module",
   "issues_url": "https://github.com/cisco/cisco-network-puppet-module/issues",
   "dependencies": [
-    { "name": "puppetlabs/netdev_stdlib", "version_requirement": ">=0.13.0" }
+    { "name": "puppetlabs/netdev_stdlib", "version_requirement": ">=0.16.0" }
   ],
   "requirements": [
     {
@@ -43,7 +43,9 @@
         "7.0(3)F3",
         "8.0(1)",
         "8.1(1)",
-        "8.2(1)"
+        "8.2(1)",
+        "8.3(1)",
+        "9.2(1)"
       ]
     }
   ]

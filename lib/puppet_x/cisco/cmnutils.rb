@@ -2,7 +2,7 @@
 #
 # November 2015
 #
-# Copyright (c) 2015-2016 Cisco and/or its affiliates.
+# Copyright (c) 2015-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,6 +22,11 @@ module PuppetX
     # rubocop:disable Metrics/ClassLength
     class Utils
       require 'ipaddr'
+
+      TACACS_SERVER_ENC_NONE = 0
+      TACACS_SERVER_ENC_CISCO_TYPE_7 = 7
+      TACACS_SERVER_ENC_UNKNOWN = 8
+
       # Helper utility method for ip/prefix format networks.
       # For ip/prefix format '1.1.1.1/24' or '2000:123:38::34/64',
       # we need to mask the address using the prefix length so that they
@@ -255,6 +260,30 @@ module PuppetX
           fail "Unrecognized product_id: #{data['inventory']['chassis']['pid']}"
         end
         tag
+      end
+
+      # Convert encryption type to symbol
+      def self.enc_type_to_sym(type)
+        case type
+        when TACACS_SERVER_ENC_UNKNOWN
+          :none
+        when TACACS_SERVER_ENC_NONE
+          :clear
+        when TACACS_SERVER_ENC_CISCO_TYPE_7
+          :encrypted
+        end
+      end
+
+      # Convert encryption symbol to type
+      def self.enc_sym_to_type(sym)
+        case sym
+        when :none
+          TACACS_SERVER_ENC_UNKNOWN
+        when :clear, :default
+          TACACS_SERVER_ENC_NONE
+        when :encrypted
+          TACACS_SERVER_ENC_CISCO_TYPE_7
+        end
       end
     end # class Utils
     # rubocop:enable Metrics/ClassLength

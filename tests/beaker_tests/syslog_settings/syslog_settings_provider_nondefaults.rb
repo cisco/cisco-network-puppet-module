@@ -65,7 +65,7 @@ tests = {
   resource_name: 'syslog_settings',
 }
 
-# @test_name [TestCase] Executes defaults testcase for syslog_settings Resource.
+# @test_name [TestCase] Executes nondefaults testcase for syslog_settings Resource.
 test_name "TestCase :: #{testheader}" do
   raise_skip_exception('Not supported on IOS XR', self) if operating_system == 'ios_xr'
   # Find an available test interface on this device
@@ -107,9 +107,52 @@ test_name "TestCase :: #{testheader}" do
                                false, self, logger)
       search_pattern_in_output(stdout, { 'time_stamp_units' => 'milliseconds' },
                                false, self, logger)
+      search_pattern_in_output(stdout, { 'logfile_name' => 'testlogfile' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'logfile_severity_level' => '3' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'logfile_size' => '4098' },
+                               false, self, logger)
     end
 
     logger.info("Check syslog_settings non-default on agent :: #{result}")
+  end
+
+  # @step [Step] Requests manifest from the master server to the agent.
+  step 'TestStep :: Get resource logfile_size unset manifest from master' do
+    # Expected exit_code is 0 since this is a bash shell cmd.
+    on(master, SyslogSettingLib.create_syslog_settings_manifest_unset_logfile_size(intf))
+
+    # Expected exit_code is 2 since this is a puppet agent cmd with change.
+    cmd_str = PUPPET_BINPATH + 'agent -t'
+    on(agent, cmd_str, acceptable_exit_codes: [2])
+
+    logger.info("Get resource non-default manifest from master :: #{result}")
+  end
+
+  # @step [Step] Checks syslog_settings resource on agent using resource cmd.
+  step 'TestStep :: Check syslog_settings logfile_size unset on agent' do
+    # Expected exit_code is 0 since this is a puppet resource cmd.
+    # Flag is set to false to check for presence of RegExp pattern in stdout.
+    cmd_str = PUPPET_BINPATH + 'resource syslog_settings default'
+    on(agent, cmd_str) do
+      search_pattern_in_output(stdout, { 'console' => '1' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'monitor' => '1' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'source_interface' => "['#{intf}']" },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'time_stamp_units' => 'milliseconds' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'logfile_name' => 'testlogfile' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'logfile_severity_level' => '3' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'logfile_size' => 'unset' },
+                               false, self, logger)
+    end
+
+    logger.info("Check syslog_settings unset on agent :: #{result}")
   end
 
   # @step [Step] Requests manifest from the master server to the agent.
@@ -137,6 +180,10 @@ test_name "TestCase :: #{testheader}" do
       search_pattern_in_output(stdout, { 'source_interface' => "['unset']" },
                                false, self, logger)
       search_pattern_in_output(stdout, { 'time_stamp_units' => 'seconds' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'logfile_name' => 'unset' },
+                               false, self, logger)
+      search_pattern_in_output(stdout, { 'logfile_size' => 'unset' },
                                false, self, logger)
     end
 

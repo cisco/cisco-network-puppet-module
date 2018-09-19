@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2016 Cisco and/or its affiliates.
+# Copyright (c) 2016-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -43,12 +43,7 @@ tests[:default_v4] = {
   title_pattern:      'port-channel100 500 ipv4',
   sys_def_switchport: false,
   manifest_props:     {
-    authentication_auth_type:      'default',
-    authentication_compatibility:  'default',
-    authentication_enc_type:       'default',
-    authentication_key_type:       'default',
-    authentication_string:         'default',
-    authentication_timeout:        'default',
+    authentication_compatibility:  'false',
     group_name:                    'default',
     ipv4_enable:                   'default',
     ipv4_vip:                      'default',
@@ -67,11 +62,7 @@ tests[:default_v4] = {
   },
   code:               [0, 2],
   resource:           {
-    authentication_auth_type:     'cleartext',
     authentication_compatibility: 'false',
-    authentication_enc_type:      '0',
-    authentication_key_type:      'key-chain',
-    authentication_timeout:       0,
     group_name:                   'false',
     ipv4_enable:                  'false',
     mac_addr:                     'false',
@@ -92,12 +83,7 @@ tests[:default_v6] = {
   title_pattern:      'port-channel200 510 ipv6',
   sys_def_switchport: false,
   manifest_props:     {
-    authentication_auth_type:      'default',
-    authentication_compatibility:  'default',
-    authentication_enc_type:       'default',
-    authentication_key_type:       'default',
-    authentication_string:         'default',
-    authentication_timeout:        'default',
+    authentication_compatibility:  'false',
     group_name:                    'default',
     ipv6_autoconfig:               'default',
     ipv6_vip:                      'default',
@@ -116,11 +102,7 @@ tests[:default_v6] = {
   },
   code:               [0, 2],
   resource:           {
-    authentication_auth_type:     'cleartext',
     authentication_compatibility: 'false',
-    authentication_enc_type:      '0',
-    authentication_key_type:      'key-chain',
-    authentication_timeout:       0,
     group_name:                   'false',
     ipv6_autoconfig:              'false',
     mac_addr:                     'false',
@@ -163,9 +145,6 @@ tests[:non_default_v4] = {
     timers_hold:                   1000,
     timers_hold_msec:              'true',
   },
-  resource:           {
-    authentication_enc_type: '7'
-  },
 }
 
 tests[:non_default_v6] = {
@@ -194,9 +173,6 @@ tests[:non_default_v6] = {
     timers_hello_msec:             'true',
     timers_hold:                   1000,
     timers_hold_msec:              'true',
-  },
-  resource:           {
-    authentication_enc_type: '7'
   },
 }
 

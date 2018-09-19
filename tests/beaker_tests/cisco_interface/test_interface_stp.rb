@@ -64,15 +64,15 @@ tests[:default] = {
   },
   resource:       {
     'description'       => 'Test default properties',
-    'stp_bpdufilter'    => 'false',
-    'stp_bpduguard'     => 'false',
     'stp_cost'          => 'auto',
-    'stp_guard'         => 'false',
     'stp_link_type'     => 'auto',
     'stp_port_priority' => '128',
-    'stp_port_type'     => 'false',
+    # 'stp_bpdufilter' is nil when default
+    # 'stp_bpduguard' is nil when default
+    # 'stp_guard' is nil when default
     # 'stp_mst_cost' is nil when default
     # 'stp_mst_port_priority' is nil when default
+    # 'stp_port_type' is nil when default
     # 'stp_vlan_cost' is nil when default
     # 'stp_vlan_port_priority' is nil when default
   },

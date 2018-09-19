@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2016 Cisco and/or its affiliates.
+# Copyright (c) 2017-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,68 +21,42 @@
 #  - A description of the 'tests' hash and its usage
 #
 ###############################################################################
-
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 # Test hash top-level keys
 tests = {
-  master:        master,
   agent:         agent,
-  intf_type:     'port-channel',
-  platform:      'n(3|7|9)k',
-  resource_name: 'cisco_interface',
+  master:        master,
+  resource_name: 'banner',
+  ensurable:     false,
 }
 
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
 skip_unless_supported(tests)
-skip_nexus_image('D1', tests)
-
-# Find a usable interface for this test
-@intf = 'port-channel100'
 
 # Test hash test cases
 tests[:default] = {
-  desc:               '1.1 Default properties',
-  title_pattern:      @intf,
-  sys_def_switchport: false,
-  manifest_props:     {
-    switchport_mode:    'disabled',
-    hsrp_bfd:           'default',
-    hsrp_delay_minimum: 'default',
-    hsrp_delay_reload:  'default',
-    hsrp_mac_refresh:   'default',
-    hsrp_use_bia:       'default',
-    hsrp_version:       'default',
+  desc:           '1.1 Default Properties',
+  title_pattern:  'default',
+  manifest_props: {
+    motd: 'default'
   },
-  code:               [0, 2],
-  resource:           {
-    hsrp_delay_minimum: 0,
-    hsrp_delay_reload:  0,
-    hsrp_version:       1,
-    # hsrp_bfd is nil when set to default
-    # hsrp_mac_refresh is nil when set to default
-    # hsrp_use_bia is nil when set to defaul
-  },
+  code:           [0, 2],
 }
 
+#
+# non_default_properties
+#
 tests[:non_default] = {
-  desc:           '2.1 Non Default properties',
-  title_pattern:  @intf,
+  desc:           '2.1 Non Default Properties',
+  title_pattern:  'default',
   manifest_props: {
-    switchport_mode:    'disabled',
-    hsrp_bfd:           'true',
-    hsrp_delay_minimum: 100,
-    hsrp_delay_reload:  200,
-    hsrp_mac_refresh:   350,
-    hsrp_use_bia:       'use_bia_intf',
-    hsrp_version:       2,
+    motd: 'Test MOTD banner!'
   },
 }
 
 def cleanup(agent)
-  cmd = 'no feature hsrp'
-  test_set(agent, cmd)
-  interface_cleanup(agent, @intf)
+  test_set(agent, 'no banner motd')
 end
 
 #################################################################
@@ -94,19 +68,10 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-
   test_harness_run(tests, :default)
-
-  id = :default
-  tests[id][:desc] = '1.2 Common Defaults (absent)'
-  tests[id][:ensure] = :absent
-  test_harness_run(tests, id)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-
   test_harness_run(tests, :non_default)
-  # -------------------------------------------------------------------
-  skipped_tests_summary(tests)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

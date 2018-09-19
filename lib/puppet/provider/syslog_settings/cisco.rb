@@ -1,6 +1,6 @@
-# September, 2017
+# August, 2018
 #
-# Copyright (c) 2014-2017 Cisco and/or its affiliates.
+# Copyright (c) 2014-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -39,6 +39,9 @@ Puppet::Type.type(:syslog_settings).provide(:cisco) do
     :console,
     :monitor,
     :time_stamp_units,
+    :logfile_severity_level,
+    :logfile_name,
+    :logfile_size,
   ]
 
   SYSLOG_CONFIG_PROPS = SYSLOG_SETTINGS_ARRAY_PROPS + SYSLOG_SETTINGS_NON_BOOL_PROPS
@@ -99,10 +102,27 @@ Puppet::Type.type(:syslog_settings).provide(:cisco) do
     @property_hash[:ensure] == :present
   end
 
+  def validate_syslog_logfile
+    fail ArgumentError,
+         'This provider requires that a logfile_name and logfile_severity_level are both specified in order '\
+         'to set logfile settings.' if @resource[:logfile_name].to_s != 'unset' &&
+                                       ((@resource[:logfile_name] && !@resource[:logfile_severity_level]) ||
+                                       (@resource[:logfile_severity_level] && !@resource[:logfile_name]))
+    fail ArgumentError,
+         'This provider requires that a logfile_name is unset in order to unset logfile_severity_level' if @resource[:logfile_name].to_s != 'unset' &&
+                                                                                                           @resource[:logfile_severity_level].to_s == 'unset'
+    fail ArgumentError,
+         'This provider does not support setting the logfile_severity_level when logfile_name is unset' if @resource[:logfile_name].to_s == 'unset' &&
+                                                                                                           (@resource[:logfile_severity_level] &&
+                                                                                                           @resource[:logfile_severity_level].to_s != 'unset')
+    fail ArgumentError,
+         'This provider requires that a logfile_name and logfile_severity_level are both specified in order '\
+         'to set logfile_size.' if @resource[:logfile_size] && !@resource[:logfile_name] && !@resource[:logfile_severity_level]
+  end
+
   def validate
     fail ArgumentError,
          "This provider only supports a namevar of 'default'" unless @resource[:name].to_s == 'default'
-
     fail ArgumentError,
          "This provider does not support the 'enable' property. "\
          'Syslog servers are enabled implicitly when using the syslog_server resource.' if @resource[:enable]
@@ -110,8 +130,45 @@ Puppet::Type.type(:syslog_settings).provide(:cisco) do
          "This provider does not support the 'vrf' property. " if @resource[:vrf]
   end
 
+  def tidy_up_syslog_logfile
+    SYSLOG_CONFIG_PROPS.delete(:logfile_severity_level)
+    SYSLOG_CONFIG_PROPS.delete(:logfile_name)
+    SYSLOG_CONFIG_PROPS.delete(:logfile_size)
+
+    unless @property_flush[:logfile_name]
+      @property_flush[:logfile_name] = @resource[:logfile_name]
+    end
+
+    if @property_flush[:logfile_name] == 'unset'
+      @property_flush[:logfile_severity_level] = nil
+      @property_flush[:logfile_name] = nil
+      @property_flush[:logfile_size] = nil
+    else
+      return unless (@property_flush[:logfile_severity_level] && @property_flush[:logfile_name]) ||
+                    (@resource[:logfile_severity_level] && @resource[:logfile_name])
+
+      unless @property_flush[:logfile_severity_level]
+        @property_flush[:logfile_severity_level] = @resource[:logfile_severity_level]
+      end
+    end
+
+    if @property_flush[:logfile_size] && @property_flush[:logfile_size] != 'unset'
+      @property_flush[:logfile_size] = "size #{@property_flush[:logfile_size]}"
+    else
+      @property_flush[:logfile_size] = ''
+    end
+
+    @syslogsetting.send("#{:logfile_name}=",
+                        @property_flush[:logfile_name],
+                        @property_flush[:logfile_severity_level],
+                        @property_flush[:logfile_size]) if
+        @syslogsetting.respond_to?("#{:logfile_name}=")
+  end
+
   def flush
     validate
+    validate_syslog_logfile
+    tidy_up_syslog_logfile
 
     SYSLOG_CONFIG_PROPS.each do |prop|
       next unless @resource[prop]

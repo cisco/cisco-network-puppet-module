@@ -57,6 +57,8 @@ Disk   | **400 MB** | Minimum free space before installing Puppet agent |
 
 #### *Step 2. Choose an environment for running Puppet Agent*
 
+**NOTE:** Starting in release `9.2(1)` and onward, installing the Puppet Agent into the `bash-shell` hosting environment is no longer supported.  Instead the puppet agent software should be installed into the [`guestshell` hosting environment](#env-gs).
+
 NX-OS Environment | Supported Platforms | |
 :--|:--:|:--|
 `bash-shell` | N3k, N9k | This is the native WRL Linux environment underlying NX-OS. It is disabled by default on NX-OS. |
@@ -94,6 +96,8 @@ end
 
 ## <a name="env-bs">Agent Environment Setup: bash-shell</a>
 
+**NOTE:** Starting in release `9.2(1)` and onward, installing the Puppet Agent into the `bash-shell` hosting environment is no longer supported.  Instead the puppet agent software should be installed into the [`guestshell` hosting environment](#env-gs).
+
 This section is only required when running Puppet from the `bash-shell`.
 
 #### *Step 1. Enable the bash-shell*
@@ -129,7 +133,33 @@ _A Note on Persistence_: The current NX-OS bash-shell implementation does not au
 
 This section is only required when running Puppet from the `guestshell`.
 
-#### *Step 1. Enable the guestshell*
+#### *Step 1a. Enable the guestshell on low footprint N3ks*
+
+**NOTE:** Skip down to **Step 1b** if the target system is not a low footprint N3k.
+
+Nexus 3xxx switches with 4 GB RAM and 1.6 GB bootflash are advised to use compacted images to reduce the storage resources consumed by the image. As part of the compaction process, the `guestshell.ova` is removed from the system image.  To make use of the guestshell on these systems, the guestshell.ova may be downloaded and used to install the guestshell.
+
+[Guestshell OVA Download Link](https://software.cisco.com/download/home/283970187/type/282088129/release/9.2%25281%2529?catid=268438038)
+
+Starting in release `9.2(1)` and onward, the .ova file can be copied to the `volatile:` directory which frees up more space on `bootflash:`.
+
+Copy the `guestshell.ova` file to `volatile:` if supported, otherwise copy it to `bootflash:`
+
+```
+n3xxx# copy scp://admin@1.2.3.4/guestshell.ova volatile: vrf management
+guestshell.ova 100% 55MB 10.9MB/s 00:05 
+Copy complete, now saving to disk (please wait)...
+Copy complete.
+```
+
+Use the `guestshell enable` command to install and enable guestshell.
+
+```
+n3xxx# guestshell enable package volatile:guestshell.ova
+```
+
+
+#### *Step 1b. Enable the guestshell*
 
 The `guestshell` container environment is enabled by default on most platforms; however, the default disk and memory resources allotted to guestshell are typically too small to support Puppet agent requirements. The resource limits may be increased with the NX-OS CLI `guestshell resize` commands as shown below.
 

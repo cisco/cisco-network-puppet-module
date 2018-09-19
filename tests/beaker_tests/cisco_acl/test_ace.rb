@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2016 Cisco and/or its affiliates.
+# Copyright (c) 2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -102,6 +102,39 @@ tests[:seq_30_v4] = {
   },
 }
 
+tests[:seq_40_icmp_v4] = {
+  desc:           'IPv4 Seq 40',
+  title_pattern:  'ipv4 beaker 40',
+  manifest_props: {
+    action:               'deny',
+    proto:                'icmp',
+    src_addr:             'any',
+    dst_addr:             'any',
+    proto_option:         'time-exceeded',
+    dscp:                 'af12',
+    log:                  'true',
+    redirect:             'port-channel10',
+    set_erspan_dscp:      '3',
+    set_erspan_gre_proto: '300',
+    vlan:                 '100',
+  },
+}
+
+tests[:seq_50_icmp_v4] = {
+  desc:           'IPv4 Seq 50',
+  title_pattern:  'ipv4 beaker 50',
+  manifest_props: {
+    action:       'deny',
+    proto:        'icmp',
+    src_addr:     'any',
+    dst_addr:     'any',
+    proto_option: 'fragments',
+    dscp:         'af11',
+    log:          'true',
+    ttl:          '10',
+    vlan:         '100',
+  },
+}
 # Overridden to properly handle unsupported properties for this test file.
 def unsupported_properties(tests, id)
   unprops = []
@@ -119,6 +152,7 @@ def unsupported_properties(tests, id)
     end
     if platform[/n(5|6)k/]
       unprops <<
+        :proto_option <<
         :packet_length <<
         :time_range
     end
@@ -126,7 +160,10 @@ def unsupported_properties(tests, id)
       unprops <<
         :http_method <<
         :redirect <<
+        :vlan <<
         :tcp_option_length <<
+        :set_erspan_dscp <<
+        :set_erspan_gre_proto <<
         :ttl
     end
   end
@@ -150,6 +187,8 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :seq_20_v4)
   test_harness_run(tests, :seq_20_v6)
   test_harness_run(tests, :seq_30_v4)
+  test_harness_run(tests, :seq_40_icmp_v4)
+  test_harness_run(tests, :seq_50_icmp_v4)
 
   # ---------------------------------------------------------
   skipped_tests_summary(tests)

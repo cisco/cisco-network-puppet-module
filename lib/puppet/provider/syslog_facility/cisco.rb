@@ -1,4 +1,4 @@
-# June, 2018
+# August, 2018
 #
 # Copyright (c) 2014-2018 Cisco and/or its affiliates.
 #
@@ -23,57 +23,51 @@ rescue LoadError # seen on master, not on agent
                                      'puppet_x', 'cisco', 'autogen.rb'))
 end
 
-Puppet::Type.type(:syslog_server).provide(:cisco) do
-  desc 'The Cisco provider for syslog_server.'
+Puppet::Type.type(:syslog_facility).provide(:cisco) do
+  desc 'The Cisco provider for syslog_facility.'
 
   confine feature: :cisco_node_utils
   defaultfor operatingsystem: :nexus
 
   mk_resource_methods
 
-  SYSLOG_SERVER_ALL_PROPS = [
-    :severity_level,
-    :port,
-    :vrf,
-    :facility,
+  SYSLOG_FACILITY_ALL_PROPS = [
+    :level
   ]
 
   def initialize(value={})
     super(value)
-    @syslogserver = Cisco::SyslogServer.syslogservers[@property_hash[:name]]
+    @syslogfacility = Cisco::SyslogFacility.facilities[@property_hash[:name]]
     @property_flush = {}
-    debug 'Created provider instance of syslog_server'
+    debug 'Created provider instance of syslog_facility'
   end
 
-  def self.properties_get(syslogserver_name, v)
-    debug "Checking instance, SyslogServer #{syslogserver_name}"
+  def self.properties_get(facility, v)
+    debug "Checking instance, syslog_facility #{facility}"
 
     current_state = {
-      ensure:         :present,
-      name:           syslogserver_name,
-      severity_level: v.severity_level,
-      port:           v.port,
-      vrf:            v.vrf,
-      facility:       v.facility,
+      ensure: :present,
+      name:   v.facility,
+      level:  v.level,
     }
 
     new(current_state)
   end # self.properties_get
 
   def self.instances
-    syslogservers = []
-    Cisco::SyslogServer.syslogservers.each do |syslogserver_name, v|
-      syslogservers << properties_get(syslogserver_name, v)
+    facilities = []
+    Cisco::SyslogFacility.facilities.each do |facility, v|
+      facilities << properties_get(facility, v)
     end
 
-    syslogservers
+    facilities
   end
 
   def self.prefetch(resources)
-    syslogservers = instances
+    facilities = instances
 
     resources.keys.each do |id|
-      provider = syslogservers.find { |syslogserver| syslogserver.name.to_s == id.to_s }
+      provider = facilities.find { |facility| facility.name.to_s == id.to_s }
       resources[id].provider = provider unless provider.nil?
     end
   end # self.prefetch
@@ -92,24 +86,24 @@ Puppet::Type.type(:syslog_server).provide(:cisco) do
 
   def validate
     fail ArgumentError,
-         "This provider does not support the 'source_interface' property. " if @resource[:source_interface]
+         'Severity level must be integer 0-7.' unless @resource[:level].between?(0, 7)
   end
 
   def flush
-    validate
     if @property_flush[:ensure] == :absent
-      @syslogserver.destroy
-      @syslogserver = nil
+      @syslogfacility.destroy
+      @syslogfacility = nil
     else
+      validate
       # Create new instance with configured options
-      opts = { 'name' => @resource[:name] }
-      SYSLOG_SERVER_ALL_PROPS.each do |prop|
+      opts = { 'facility' => @resource[:name] }
+      SYSLOG_FACILITY_ALL_PROPS.each do |prop|
         next unless @resource[prop]
         opts[prop.to_s] = @resource[prop].to_s
       end
 
       begin
-        @ntpserver = Cisco::SyslogServer.new(opts)
+        @syslogfacility = Cisco::SyslogFacility.new(opts)
       rescue Cisco::CliError => e
         error "Unable to set new values: #{e.message}"
       end

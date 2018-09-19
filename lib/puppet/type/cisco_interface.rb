@@ -2,7 +2,7 @@
 #
 # May 2013
 #
-# Copyright (c) 2013-2016 Cisco and/or its affiliates.
+# Copyright (c) 2013-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -64,6 +64,7 @@ Puppet::Type.newtype(:cisco_interface) do
      ipv4_dhcp_smart_relay          => true,
      ipv6_dhcp_relay_addr           => ['2000::11', '2001::22'],
      ipv6_dhcp_relay_src_intf       => 'ethernet 2/2',
+     ipv6_redirects                 => true,
      pim_bfd                        => true,
     }
     cisco_interface { 'ethernet1/17' :
@@ -183,7 +184,7 @@ Puppet::Type.newtype(:cisco_interface) do
   newproperty(:speed) do
     desc "Configure the speed between interfaces. Default value is 'auto'."
 
-    newvalues(:auto, 10, 100, 1000, 10_000, 1_000_000, 40_000, :default)
+    newvalues(:auto, 10, 100, 1000, 10_000, 100_000, 40_000, :default)
   end # property speed
 
   newproperty(:duplex) do
@@ -272,10 +273,15 @@ Puppet::Type.newtype(:cisco_interface) do
           downstream device. The vPC Peer switch must have an indentical
           configuration to the same downstream device. Valid values are in
           the range 1..4096'
-    range = *(1..4096)
-    validate do |id|
-      fail 'VPC ID must be in the range 1..4096' unless
-        range.include?(id.to_i)
+
+    munge do |value|
+      value = :default if value == 'default'
+      if value != :default
+        range = *(1..4096)
+        fail 'VPC ID must be in the range 1..4096' unless
+          range.include?(value.to_i)
+      end
+      value
     end
   end # property vpc_id
 
@@ -461,6 +467,13 @@ Puppet::Type.newtype(:cisco_interface) do
       value
     end
   end # property ipv6_acl_out
+
+  newproperty(:ipv6_redirects) do
+    desc "<L3 attribute> Enables or disables sending of IPv6 redirect
+          messages."
+
+    newvalues(:true, :false, :default)
+  end # property ipv6_redirects
 
   # validate ipv4 address and mask combination
   validate do
@@ -837,11 +850,11 @@ Puppet::Type.newtype(:cisco_interface) do
          'interface. ' + inputs
 
     validate do |value|
-      fail inputs unless value.delete(' ')[/^(default|[-,\d]+)$/]
+      fail inputs unless value.delete(' ')[/^(default|none|[-,\d]+)$/]
     end
 
     munge do |value|
-      if value.to_s[/default/]
+      if value.to_s[/default|none/]
         :default
       else
         PuppetX::Cisco::Utils.normalize_range_string(value)

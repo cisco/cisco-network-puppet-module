@@ -186,6 +186,7 @@ The following resources include cisco types and providers along with cisco provi
 ### <a name="resource-by-tech">Resource Type Catalog (by Technology)<a>
 
 * Miscellaneous Types
+  * [`banner`](#type-banner)
   * [`cisco_command_config`](#type-cisco_command_config)
   * [`cisco_vdc`](#type-cisco_vdc)
   * [`cisco_upgrade`](#type-cisco_upgrade)
@@ -303,8 +304,9 @@ The following resources include cisco types and providers along with cisco provi
   * [`snmp_user (netdev_stdlib)`](#type-snmp_user)
 
 * SYSLOG Types
+  * [`syslog_facility (netdev_stdlib)`](#type-syslog_facility)
   * [`syslog_server (netdev_stdlib)`](#type-syslog_server)
-  * [`syslog_setting (netdev_stdlib)`](#type-syslog_setting)
+  * [`syslog_settings (netdev_stdlib)`](#type-syslog_settings)
 
 * TACACS Types
   * [`cisco_tacacs_server`](#type-cisco_tacacs_server)
@@ -412,6 +414,7 @@ The following resources include cisco types and providers along with cisco provi
 
 ### <a name="resource-by-name-netdev">NetDev StdLib Resource Type Catalog (by Name)<a>
 
+* [`banner`](#type-banner)
 * [`domain_name`](#type-domain_name)
 * [`name_server`](#type-name_server)
 * [`network_dns`](#type-network_dns)
@@ -432,8 +435,9 @@ The following resources include cisco types and providers along with cisco provi
 * [`snmp_notification`](#type-snmp_notification)
 * [`snmp_notification_receiver`](#type-snmp_notification_receiver)
 * [`snmp_user`](#type-snmp_user)
+* [`syslog_facility`](#type-syslog_facility)
 * [`syslog_server`](#type-syslog_server)
-* [`syslog_setting`](#type-syslog_setting)
+* [`syslog_settings`](#type-syslog_settings)
 * [`tacacs`](#type-tacacs)
 * [`tacacs_global`](#type-tacacs_global)
 * [`tacacs_server_group`](#type-tacacs_server_group)
@@ -473,7 +477,7 @@ Symbol | Meaning | Description
 | [cisco_aaa_<br>authorization_login_exec_svc](#type-cisco_aaa_authorization_login_exec_svc) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [cisco_aaa_group_tacacs](#type-cisco_aaa_group_tacacs)     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
 | [cisco_acl](#type-cisco_acl)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
-| [cisco_ace](#type-cisco_ace)                               | ✅  | ✅  | ✅* | ✅* | ✅* | ✅ | ✅ | \*[caveats](#cisco_ace-caveats) |
+| [cisco_ace](#type-cisco_ace)                               | ✅* | ✅* | ✅* | ✅* | ✅* | ✅*| ✅*| \*[caveats](#cisco_ace-caveats) |
 | [cisco_bfd_global](#type-cisco_bfd_global)                 | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | ✅* | \*[caveats](#cisco_bfd_global-caveats) |
 | [cisco_command_config](#type-cisco_command_config)         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
 | [cisco_bgp](#type-cisco_bgp)                               | ✅  | ✅  | ✅* | ✅* | ✅* | ✅ | ✅ | \*[caveats](#cisco_bgp-caveats) |
@@ -535,9 +539,10 @@ Symbol | Meaning | Description
 
 | ✅ = Supported <br> ➖ = Not Applicable | N9k | N3k | N5k | N6k | N7k | N9k-F | N3k-F | Caveats |
 |:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| [banner](#type-banner)                                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | \*[caveats](#banner-caveats)
 | [domain_name](#type-domain_name)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [name_server](#type-name_server)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [network_dns](#type-network_dns)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [network_dns](#type-network_dns)                           | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | \*[caveats](#network_dns-caveats)
 | [network_interface](#type-network_interface)               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [network_snmp](#type-network_snmp)                         | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [network_trunk](#type-network_trunk)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
@@ -555,8 +560,9 @@ Symbol | Meaning | Description
 | [snmp_notification](#type-snmp_notification)               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [snmp_notification_receiver](#type-snmp_notification_receiver) | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [snmp_user](#type-snmp_user)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [syslog_facility](#type-syslog_facility)                   | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [syslog_server](#type-syslog_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
-| [syslog_setting](#type-syslog_setting)                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
+| [syslog_settings](#type-syslog_settings)                   | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | \*[caveats](#syslog_settings-caveats)
 | [tacacs](#type-tacacs)                                     | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [tacacs_global](#type-tacacs_global)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
 | [tacacs_server](#type-tacacs_server)                       | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  |
@@ -788,6 +794,10 @@ Manages configuration of an Access Control List (ACL) Access Control Entry (ACE)
 | `time_range`         | Not supported on N5k, N6k |
 | `ttl`                | Not supported on N5k, N6k, N7k |
 | `tcp_option_length`  | ipv4 only <br> Not supported on N5k, N6k, N7k |
+| `vlan             `  | Not supported on N5k, N6k, N7k. Minimum puppet module version 1.10.0 |
+| `set_erspan_gre_proto` | Not supported on N5k, N6k, N7k. Minimum puppet module version 1.10.0 |
+| `set_erspan_dscp`    | Not supported on N5k, N6k, N7k. Minimum puppet module version 1.10.0 |
+| `proto_option`       | Not supported on N5k, N6k. Minimum puppet module version 1.10.0 |
 
 #### Example Usage
 
@@ -952,6 +962,13 @@ The protocol to match against. Valid values are String or Integer. Examples are:
 |:--
 | `proto => 'tcp'`
 
+##### `proto_option`
+Any protocol option which is valid for that protocol. Valid values are string. Currently this is valid only for icmp protocol.
+
+| Example
+|:--
+| `proto_option => 'time-exceeded'`
+
 ##### `redirect`
 (ipv4 only) Allows for redirecting traffic to one or more interfaces. This property is only useful with VLAN ACL (VACL) applications. Valid values are a String containing a list of interface names.
 
@@ -966,6 +983,20 @@ This is a Remark description for the ACL or ACE. Valid values are string.
 | Example
 |:--
 | `remark => 'East Branch'`
+
+##### `set_erspan_dscp`
+Sets ERSPAN outer IP DSCP value. Valid values are beween 1 and 63. Currently this is valid only for icmp protocol.
+
+| Example
+|:--
+| `set_erspan_dscp => '3'`
+
+##### `set_erspan_gre_proto`
+Sets ERSPAN GRE protocol. Valid values are beween 1 and 65535. Currently this is valid only for icmp protocol.
+
+| Example
+|:--
+| `set_erspan_gre_proto => '300'`
 
 ##### `src_addr`
 The Source Address to match against. Valid values are type String, which must be one of the following forms:
@@ -1029,6 +1060,13 @@ Allows matching based on Time-To-Live (TTL) value. Valid values are type Integer
 | Example
 |:--
 | `ttl => '128'`
+
+##### `vlan`
+Configure match based on vlan. Valid values are between 0 and 4095. Currently this is valid only for icmp protocol.
+
+| Example
+|:--
+| `vlan => '100'`
 
 --
 ### Type: cisco_bfd_global
@@ -2243,6 +2281,7 @@ Manages a Cisco Network Interface. Any resource dependency should be run before 
 | `load_interval_counter_3_delay`       | Minimum puppet module version 1.6.0 |
 | `purge_config`                        | Minimum puppet module version 1.7.0 |
 | Ensure absent for ethernet interfaces | Minimum puppet module version 1.8.0 |
+| `ipv6_redirects`                      | Minimum puppet module version 1.10.0 |
 
 #### Parameters
 
@@ -2286,7 +2325,7 @@ cisco_interface { 'ethernet1/10':
 ```
 
 ###### `speed`
-Speed of the interface. Valid values are 100, 1000, 10000, 40000, 1000000, and 'auto'.
+Speed of the interface. Valid values are 100, 1000, 10000, 40000, 100000, and 'auto'.
 
 ###### `shutdown`
 Shutdown state of the interface. Valid values are 'true', 'false', and
@@ -2474,6 +2513,9 @@ ipv6_dhcp_relay_addr => ['2000::11', '2001::22']
 ```
 ###### `ipv6_dhcp_relay_src_intf`
 Source interface for the DHCPV6 relay. Valid values are string, keyword 'default'.
+
+###### `ipv6_redirects`
+Enables or disables sending of IPv6 redirect messages. Valid values are 'true', 'false', and 'default'.
 
 ###### `pim_bfd`
 Enables PIM BFD on the interface. Valid values are 'true', 'false', and 'default'.
@@ -5086,6 +5128,36 @@ The following resources are listed alphabetically.
 
 --
 
+### Type: banner
+
+Configure the banner of the device
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(5)        | 1.10.0                 |
+| N3k      | 7.0(3)I2(5)        | 1.10.0                 |
+| N5k      | 7.3(0)N1(1)        | 1.10.0                 |
+| N6k      | 7.3(0)N1(1)        | 1.10.0                 |
+| N7k      | 7.3(0)D1(1)        | 1.10.0                 |
+| N9k-F    | 7.0(3)F1(1)        | 1.10.0                 |
+| N3k-F    | 7.0(3)F3(2)        | 1.10.0                 |
+
+
+#### <a name="banner-caveats">Caveats</a>
+
+| Property         | Caveat Description                                                        |
+|------------------|----------------------------------------------------------------------------------------------------------|
+| motd             | multiline banners are only supported on n9k and n3k platforms running `7.0(3)I7.4` / `9.2(1)` or higher  |
+
+#### Parameters
+
+##### `name`
+Resource name, not used to configure the device.  Should be 'default'.
+
+##### `motd`
+MOTD Banner. Valid value is a string.  Non-literal newlines will be escaped.
+
+--
 ### Type: domain_name
 
 Configure the domain name of the device
@@ -5144,6 +5216,11 @@ Hostname or address of the DNS server.  Valid value is a string.
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 | N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
+#### <a name="network_dns-caveats">Caveats</a>
+ | Property | Caveat Description |
+|:--------|:-------------|
+| `hostname`  | Minimum Module Version 1.10.0        |
+
 
 #### Parameters
 
@@ -5155,6 +5232,9 @@ Name, generally "settings", not used to manage the resource.  Valid value is a s
 
 ##### `domain`
 Default domain name to append to the device hostname.  Valid value is a string.
+
+##### `hostname`
+The hostname of the device. Valid value is a string.
 
 ##### `search`
 Array of DNS suffixes to search for FQDN entries.  Valid value is an array of strings.
@@ -5750,7 +5830,32 @@ Syslog severity level to log.  Valid value is an integer.
 Interface to send syslog data from, e.g. "management".  Valid value is a string.
 
 --
-### Type: syslog_setting
+### Type: syslog_facility
+
+| Platform | OS Minimum Version | Module Minimum Version |
+|----------|:------------------:|:----------------------:|
+| N9k      | 7.0(3)I2(5)        | 1.10.0                 |
+| N3k      | 7.0(3)I2(5)        | 1.10.0                 |
+| N5k      | 7.3(0)N1(1)        | 1.10.0                 |
+| N6k      | 7.3(0)N1(1)        | 1.10.0                 |
+| N7k      | 7.3(0)D1(1)        | 1.10.0                 |
+| N9k-F    | 7.0(3)F1(1)        | 1.10.0                 |
+| N3k-F    | 7.0(3)F3(2)        | 1.10.0                 |
+
+
+#### Parameters
+
+##### `ensure`
+Determines whether or not the config should be present on the device. Valid values are 'present' and 'absent'.
+
+##### `name`
+Global Syslog facility.  Valid value is a string.
+
+##### `level`
+Syslog severity level to log.  Valid value is an integer 0-7.
+
+--
+### Type: syslog_settings
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
@@ -5762,14 +5867,53 @@ Interface to send syslog data from, e.g. "management".  Valid value is a string.
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 | N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
+#### <a name="syslog_settings-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:--------|:-------------|
+| `logfile_severity_level`      | Minimum Module Version 1.10.0        |
+| `logfile_name`                | Minimum Module Version 1.10.0        |
+| `logfile_size`                | Minimum Module Version 1.10.0 only supported on n9k and n3k platforms running `7.0(3)I7.4` / `9.2(1)` or higher         |
+
+
 
 #### Parameters
 
-##### `name`
-Hostname or address of the Syslog server.  Valid value is a string.
+##### `enable`
+
+Enable or disable syslog logging [true|false].
+
+##### `console`
+
+Console logging severity level [0-7] or 'unset'.
+
+##### `monitor`
+
+Monitor (terminal) logging severity level [0-7] or 'unset'.
+
+##### `source_interface`
+
+Source interface to send syslog data from, for example, "ethernet 2/1" (array of strings for multiple).
 
 ##### `time_stamp_units`
+
 The unit of measurement for log time values.  Valid values are 'seconds' and 'milliseconds'.
+
+##### `vrf`
+
+The VRF associated with source_interface (array of strings for multiple).
+
+##### `logfile_severity_level`
+
+Logfile severity level [0-7] or 'unset'
+
+##### `logfile_name`
+
+Logfile file name to use or 'unset'
+
+##### `logfile_size`
+
+Logging file maximum size or 'unset'
 
 --
 ### Type: tacacs

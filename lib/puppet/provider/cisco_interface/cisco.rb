@@ -1,6 +1,6 @@
 # May 2015
 #
-# Copyright (c) 2015-2017 Cisco and/or its affiliates.
+# Copyright (c) 2015-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -96,6 +96,7 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     :ipv4_dhcp_relay_src_addr_hsrp,
     :ipv4_dhcp_relay_subnet_broadcast,
     :ipv4_dhcp_smart_relay,
+    :ipv6_redirects,
     :negotiate_auto,
     :pim_bfd,
     :purge_config,
@@ -243,6 +244,10 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     interface
   end
 
+  def check_methods(prop)
+    @nu.respond_to?("#{prop}=") && @nu.respond_to?("default_#{prop}")
+  end
+
   def properties_set(new_interface=false)
     INTF_ALL_PROPS.each do |prop|
       next unless @resource[prop]
@@ -250,6 +255,10 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
       unless @property_flush[prop].nil?
         @nu.send("#{prop}=", @property_flush[prop]) if
           @nu.respond_to?("#{prop}=")
+      end
+      if @resource[prop] == :default
+        @nu.send("#{prop}=", @nu.send("default_#{prop}")) if
+          check_methods(prop)
       end
     end
     ipv4_addr_mask_set
@@ -347,7 +356,8 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     l3_props = [
       :ipv4_proxy_arp, :ipv4_redirects,
       :ipv4_address, :ipv4_netmask_length,
-      :ipv4_address_secondary, :ipv4_netmask_length_secondary
+      :ipv4_address_secondary, :ipv4_netmask_length_secondary,
+      :ipv6_redirects
     ]
     l3_props.each do |prop|
       if @property_flush[prop].nil?
