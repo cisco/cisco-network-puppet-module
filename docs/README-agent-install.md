@@ -55,9 +55,9 @@ Disk   | **400 MB** | Minimum free space before installing Puppet agent |
 
 <br>
 
-#### *Step 2. Choose an environment for running Puppet Agent*
+#### *Step 2. Choose an environment for running a Puppet agent*
 
-**NOTE:** Starting in release `9.2(1)` and onward, installing the Puppet Agent into the `bash-shell` hosting environment is no longer supported.  Instead the puppet agent software should be installed into the [`guestshell` hosting environment](#env-gs).
+**NOTE:** Starting in release `9.2(1)` and onward, installing a Puppet agent in the `bash-shell` hosting environment is no longer supported.  Instead, the Puppet agent software should be installed on the [`guestshell` hosting environment](#env-gs).
 
 NX-OS Environment | Supported Platforms | |
 :--|:--:|:--|
@@ -65,9 +65,9 @@ NX-OS Environment | Supported Platforms | |
 `guestshell` | N3k, N9k | This is a secure Linux container environment running CentOS. It is enabled by default in most platforms that support it. |
 `open agent`<br>`container (OAC)` | N5k, N6k, N7k | This is a 32-bit CentOS-based container created specifically for running Puppet Agent software. |
 
-* *OAC containers are created for specific platforms and must be downloaded from Cisco (see [OAC Download](#env-oac)). The OAC must be installed before the Puppet Agent can be installed.*
+* *OAC containers are created for specific platforms and must be downloaded from Cisco (see [OAC Download](#env-oac)). The OAC must be installed before a Puppet agent can be installed.*
 
-* *Running Puppet Agent from multiple environments simultaneously is not supported*
+* *Running a Puppet agent from multiple environments simultaneously is not supported*
 
 
 #### *Step 3. Network Connectivity*
@@ -96,7 +96,7 @@ end
 
 ## <a name="env-bs">Agent Environment Setup: bash-shell</a>
 
-**NOTE:** Starting in release `9.2(1)` and onward, installing the Puppet Agent into the `bash-shell` hosting environment is no longer supported.  Instead the puppet agent software should be installed into the [`guestshell` hosting environment](#env-gs).
+**NOTE:** Starting in release `9.2(1)` and onward, installing a Puppet agent in the `bash-shell` hosting environment is no longer supported.  Instead the Puppet agent software should be installed into the [`guestshell` hosting environment](#env-gs).
 
 This section is only required when running Puppet from the `bash-shell`.
 
