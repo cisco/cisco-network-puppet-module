@@ -8,23 +8,10 @@
   "project_page": "https://github.com/cisco/cisco-network-puppet-module",
   "issues_url": "https://github.com/cisco/cisco-network-puppet-module/issues",
   "dependencies": [
-    { "name": "puppetlabs/netdev_stdlib", "version_requirement": ">=0.16.0" }
-  ],
-  "requirements": [
     {
-      "name": "pe",
-      "version_requirement": "2015.2.x"
-    },
-    {
-      "name": "puppet",
-      "version_requirement": "4.x"
+      "name": "puppetlabs/netdev_stdlib",
+      "version_requirement": ">=0.16.0"
     }
-  ],
-  "tags": [
-    "cisco",
-    "nxos",
-    "nx-os",
-    "network"
   ],
   "operatingsystem_support": [
     {
@@ -48,5 +35,24 @@
         "9.2(1)"
       ]
     }
-  ]
+  ],
+  "requirements": [
+    {
+      "name": "pe",
+      "version_requirement": "2015.2.x"
+    },
+    {
+      "name": "puppet",
+      "version_requirement": "4.x"
+    }
+  ],
+  "tags": [
+    "cisco",
+    "nxos",
+    "nx-os",
+    "network"
+  ],
+  "pdk-version": "1.7.0",
+  "template-url": "file:///opt/puppetlabs/pdk/share/cache/pdk-templates.git",
+  "template-ref": "1.7.0-0-g57412ed"
 }
