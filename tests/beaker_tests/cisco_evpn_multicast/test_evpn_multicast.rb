@@ -27,7 +27,7 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 tests = {
   agent:         agent,
   master:        master,
-  platform:      'n9k',
+  platform:      'n9k$|n9k-ex',
   resource_name: 'cisco_evpn_multicast',
 }
 
