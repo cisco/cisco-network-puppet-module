@@ -243,6 +243,14 @@ module PuppetX
         ranges.join(',').gsub('..', '-')
       end
 
+      # fretta check
+      def self.check_slot_pid(inv)
+        inv.each do |_x, slot|
+          return true if slot['pid'][/-R/]
+        end
+        false
+      end
+
       def self.product_tag
         data = Facter.value('cisco')
         case data['inventory']['chassis']['pid']
@@ -255,7 +263,7 @@ module PuppetX
         when /N7/
           tag = 'n7k'
         when /N9/
-          tag = data['images']['full_version'][/7.0.3.F/] ? 'n9k-f' : 'n9k'
+          tag = check_slot_pid(data['inventory']) ? 'n9k-f' : 'n9k'
         else
           fail "Unrecognized product_id: #{data['inventory']['chassis']['pid']}"
         end

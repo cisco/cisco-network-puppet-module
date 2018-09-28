@@ -1142,7 +1142,7 @@ def platform
   when /Nexus\s?9\d+\s\S+-EX/
     @cisco_hardware = 'n9k-ex'
   when /(Nexus\s?9\d\d\d|NX-OSv Chassis)/
-    @cisco_hardware = image?[/7.0.3.F/] ? 'n9k-f' : 'n9k'
+    @cisco_hardware = fretta? ? 'n9k-f' : 'n9k'
   when /XRv9K/i
     @cisco_hardware = 'xrv9k'
   else
@@ -1150,6 +1150,18 @@ def platform
   end
   logger.info "\nFound Platform string: '#{pi}', Alias to: '#{@cisco_hardware}'"
   @cisco_hardware
+end
+
+# fretta check
+@fretta_slot = nil
+def fretta?(reset_cache=false)
+  return @fretta_slot unless @fretta_slot.nil? || reset_cache
+  data = on(agent, facter_cmd('-p cisco.inventory')).output.split("\n")
+  data.each do |line|
+    next unless line.include?('pid =>')
+    return true if line[/-R/]
+  end
+  false
 end
 
 # Check if image matches pattern
