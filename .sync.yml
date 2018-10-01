@@ -5,6 +5,7 @@ Gemfile:
       - gem: 'puppet-resource_api'
         git: 'https://github.com/puppetlabs/puppet-resource_api.git'
         ref: 'master'
+      - gem: 'net_http_unix'
     ':development, :unit_tests':
       - gem: 'cisco_node_utils'
         version: '~> 1.0'
