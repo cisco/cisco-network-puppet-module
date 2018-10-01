@@ -28,6 +28,10 @@ Gemfile:
 Rakefile:
   requires:
     - 'puppet-strings/tasks'
+  extra_disabled_lint_checks:
+    - 'autoloader_layout'
+    - 'variable_scope'
+    - 'variable_is_lowercase'
 .travis.yml:
   simplecov: true
   branches:

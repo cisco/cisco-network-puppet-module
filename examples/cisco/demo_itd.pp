@@ -133,7 +133,7 @@ class ciscopuppet::cisco::demo_itd {
     cisco_acl { 'ipv4 ial':
       ensure => present
     }
-  
+
     cisco_acl { 'ipv4 eal':
       ensure => present
     }
@@ -161,7 +161,7 @@ class ciscopuppet::cisco::demo_itd {
 
     $ingress_interface = [['vlan 2', '4.4.4.4'],
     ['ethernet 1/1', '6.6.6.6'], ['port-channel 100', '7.7.7.7']]
-  
+
     $virtual_ip = ['ip 3.3.3.3 255.0.0.0 tcp 500 advertise enable']
 
     cisco_itd_service {'myservice1':

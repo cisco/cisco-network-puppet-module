@@ -41,7 +41,7 @@ class ciscopuppet::cisco::demo_patching {
   # Sample rpm is only compatible with the following FCS release versions:
   # - 7.0(3)I2(1)
   # - 7.0(3)I3(1)
-  $image_ver = $::os['release']['full'] 
+  $image_ver = $::os['release']['full']
   case $image_ver {
     '7.0(3)I2(1)': {
       $ciscoPatchName = 'n9000_sample-1.0.0-7.0.3.x86_64.rpm'

@@ -38,7 +38,7 @@ class ciscopuppet::cisco::demo_vlan {
       pvlan_type        => 'primary',
       pvlan_association => ['334,336-339'],
     }
-  
+
   } else {
     warning('This platform does not support the private vlan feature')
   }

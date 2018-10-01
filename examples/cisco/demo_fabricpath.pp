@@ -46,7 +46,7 @@ class ciscopuppet::cisco::demo_fabricpath {
       $ttl_multicast                  = undef
       $ttl_unicast                    = undef
     }
-  
+
     cisco_fabricpath_global { 'default':
       ensure                         => present,
       allocate_delay                 => '30',
@@ -67,19 +67,19 @@ class ciscopuppet::cisco::demo_fabricpath {
       ttl_multicast                  => $ttl_multicast,
       ttl_unicast                    => $ttl_unicast,
     }
-  
+
     cisco_vlan { '10':
       ensure   => present,
       mode     => 'fabricpath',
       shutdown => false,
     }
-  
+
     cisco_fabricpath_topology { '10':
       ensure       => present,
       topo_name    => 'Topo-10',
       member_vlans => '10-20, 25, 27-30'
     }
-  
+
     cisco_interface { 'Ethernet1/1':
       ensure          => present,
       switchport_mode => 'fabricpath',

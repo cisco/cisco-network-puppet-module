@@ -16,11 +16,11 @@
 
 class ciscopuppet::cisco::demo_encapsulation {
   if platform_get() =~ /n7k/ {
-    cisco_encapsulation {"test_encap" :
-      ensure          => present,
-      dot1q_map       => ['101-102,151, 201-202', '5101-5104,5202'],
+    cisco_encapsulation {'test_encap' :
+      ensure    => present,
+      dot1q_map => ['101-102,151, 201-202', '5101-5104,5202'],
     }
   } else {
-     notify{'SKIP: This platform does not support cisco_encapsulation': }
+    notify{'SKIP: This platform does not support cisco_encapsulation': }
   }
 }
