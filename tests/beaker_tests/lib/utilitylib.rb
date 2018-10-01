@@ -1132,7 +1132,7 @@ def platform
   # - Cisco XRv9K Virtual Router
   case pi
   when /Nexus\s?3\d\d\d/
-    @cisco_hardware = image?[/7.0.3.F/] ? 'n3k-f' : 'n3k'
+    @cisco_hardware = fretta? ? 'n3k-f' : 'n3k'
   when /Nexus\s?5\d\d\d/
     @cisco_hardware = 'n5k'
   when /Nexus\s?6\d\d\d/

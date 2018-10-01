@@ -255,7 +255,7 @@ module PuppetX
         data = Facter.value('cisco')
         case data['inventory']['chassis']['pid']
         when /N3/
-          tag = data['images']['full_version'][/7.0.3.F/] ? 'n3k-f' : 'n3k'
+          tag = check_slot_pid(data['inventory']) ? 'n3k-f' : 'n3k'
         when /N5/
           tag = 'n5k'
         when /N6/
