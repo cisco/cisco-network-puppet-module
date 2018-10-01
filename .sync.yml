@@ -1,10 +1,11 @@
 ---
 Gemfile:
   optional:
-    ':development, :unit_tests':
+    ':development':
       - gem: 'puppet-resource_api'
         git: 'https://github.com/puppetlabs/puppet-resource_api.git'
         ref: 'master'
+    ':development, :unit_tests':
       - gem: 'cisco_node_utils'
         version: '~> 1.0'
       - gem: 'net-telnet'
@@ -39,3 +40,5 @@ Rakefile:
 .rubocop.yml:
   default_configs:
     inherit_from: .rubocop_todo.yml
+spec/spec_helper.rb:
+  mock_with: ':rspec'
