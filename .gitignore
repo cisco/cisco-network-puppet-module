@@ -14,6 +14,8 @@
 /junit/
 /log/
 /pkg/
+/spec/fixtures/acceptance-credentials.conf
+/spec/fixtures/acceptance-device.conf
 /spec/fixtures/manifests/
 /spec/fixtures/modules/
 /tmp/
