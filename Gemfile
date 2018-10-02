@@ -33,9 +33,10 @@ group :development do
   gem "puppet-module-posix-dev-r#{minor_version}",     require: false, platforms: [:ruby]
   gem "puppet-module-win-default-r#{minor_version}",   require: false, platforms: [:mswin, :mingw, :x64_mingw]
   gem "puppet-module-win-dev-r#{minor_version}",       require: false, platforms: [:mswin, :mingw, :x64_mingw]
+  gem "puppet-resource_api",                           require: false, git: 'https://github.com/puppetlabs/puppet-resource_api.git', ref: 'master'
+  gem "net_http_unix",                                 require: false
 end
 group :development, :unit_tests do
-  gem "puppet-resource_api",        require: false, git: 'https://github.com/puppetlabs/puppet-resource_api.git', ref: 'master'
   gem "cisco_node_utils", '~> 1.0', require: false
   gem "net-telnet", '~> 0.1.1',     require: false
 end

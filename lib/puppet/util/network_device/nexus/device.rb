@@ -2,7 +2,7 @@ require 'puppet/util/network_device/simple/device'
 require 'cisco_node_utils'
 
 module Puppet::Util::NetworkDevice::Nexus
-  # Main connection class for a Cisco Nexus device
+  # Translates from puppet's credential store to nodeutil's environment
   class Device < Puppet::Util::NetworkDevice::Simple::Device
     def initialize(url_or_config, _options={})
       super
