@@ -36,20 +36,20 @@ class ciscopuppet::cisco::demo_aaa {
     require          => Cisco_tacacs_server_host['1.1.1.1']
   }
   cisco_aaa_authentication_login { 'default':
-    ascii_authentication => 'true',
-    chap                 => 'false',
-    error_display        => 'true',
-    mschap               => 'false',
-    mschapv2             => 'false',
+    ascii_authentication => true,
+    chap                 => false,
+    error_display        => true,
+    mschap               => false,
+    mschapv2             => false,
   }
   cisco_aaa_authorization_login_cfg_svc { 'default':
     ensure => 'present',
-    groups => ["group1"],
+    groups => ['group1'],
     method => 'local',
   }
   cisco_aaa_authorization_login_exec_svc { 'default':
     ensure => 'present',
-    groups => ["group1"],
+    groups => ['group1'],
     method => 'local',
   }
 }

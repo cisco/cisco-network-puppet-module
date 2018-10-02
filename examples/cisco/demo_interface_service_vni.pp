@@ -22,27 +22,27 @@ class ciscopuppet::cisco::demo_interface_service_vni {
       notify{'## SKIP: This provider demo requires an N7K-F3 linecard': }
 
     } else {
-      $intf = "ethernet$slot/2"
+      $intf = "ethernet${slot}/2"
 
-      cisco_encapsulation {"vni_500_5000" :
-        ensure          => present,
-        dot1q_map       => ['500', '5000'],
+      cisco_encapsulation {'vni_500_5000' :
+        ensure    => present,
+        dot1q_map => ['500', '5000'],
       }
-      cisco_interface_service_vni { "$intf 344" :
-        encapsulation_profile_vni   => 'vni_500_5000',
-        shutdown                    => true,
+      cisco_interface_service_vni { "${intf} 344" :
+        encapsulation_profile_vni => 'vni_500_5000',
+        shutdown                  => true,
       }
 
-      cisco_encapsulation {"vni_600_6000" :
-        ensure          => present,
-        dot1q_map       => ['600', '6000'],
+      cisco_encapsulation {'vni_600_6000' :
+        ensure    => present,
+        dot1q_map => ['600', '6000'],
       }
-      cisco_interface_service_vni { "$intf 491" :
-        encapsulation_profile_vni   => 'vni_600_6000',
-        shutdown                    => 'default',
+      cisco_interface_service_vni { "${intf} 491" :
+        encapsulation_profile_vni => 'vni_600_6000',
+        shutdown                  => 'default',
       }
     }
   } else {
-     notify{'## SKIP: This platform does not support cisco_interface_service_vni': }
+    notify{'## SKIP: This platform does not support cisco_interface_service_vni': }
   }
 }

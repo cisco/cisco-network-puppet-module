@@ -53,13 +53,13 @@ class ciscopuppet::cisco::demo_vxlan {
     $suppress_uuc = platform_get() ? {
       /n(5|6)k/  => 'default',
       default    => undef,
-     }
+    }
 
     cisco_vxlan_vtep { 'nve1':
       ensure                          => present,
       description                     => 'Configured by puppet',
       host_reachability               => 'evpn',
-      shutdown                        => 'false',
+      shutdown                        => false,
       source_interface                => 'loopback55',
       source_interface_hold_down_time => $source_interface_hold_down_time,
     }
@@ -74,10 +74,10 @@ class ciscopuppet::cisco::demo_vxlan {
     }
 
     cisco_vxlan_vtep_vni {'nve1 20000':
-      ensure              => present,
-      assoc_vrf           => false,
-      multicast_group     => '224.1.1.1',
-      suppress_arp        => 'default',
+      ensure          => present,
+      assoc_vrf       => false,
+      multicast_group => '224.1.1.1',
+      suppress_arp    => 'default',
     }
 
     # TBD: Anycast gateway mode

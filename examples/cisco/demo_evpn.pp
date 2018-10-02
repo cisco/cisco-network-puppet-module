@@ -19,11 +19,11 @@ class ciscopuppet::cisco::demo_evpn {
   if platform_get() =~ /n(5|6|7|8|9)k/ {
 
     cisco_evpn_vni { '4096':
-      ensure                        => present,
-      route_distinguisher           => '1:1',
-      route_target_import           => ['10.0.0.1:1', '10:1'],
-      route_target_export           => ['10.0.0.2:2', '10:2'],
-      route_target_both             => ['10.0.0.3:3', '10:3']
+      ensure              => present,
+      route_distinguisher => '1:1',
+      route_target_import => ['10.0.0.1:1', '10:1'],
+      route_target_export => ['10.0.0.2:2', '10:2'],
+      route_target_both   => ['10.0.0.3:3', '10:3']
     }
 
   } else {

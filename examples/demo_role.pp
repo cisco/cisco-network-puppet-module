@@ -1,7 +1,7 @@
 # Demo Role Manifest
 #
 # Roles: (E) = Edge, (I) = Internal
-#  
+#
 #            +------------+
 #            | Role: (E)  |
 #            +------------+

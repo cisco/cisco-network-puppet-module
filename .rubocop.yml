@@ -1,88 +1,119 @@
-# Rubocop configuration
-
+---
+require: rubocop-rspec
 AllCops:
+  DisplayCopNames: true
+  TargetRubyVersion: '2.1'
+  Include:
+  - "./**/*.rb"
   Exclude:
-    - 'pkg/**/*'
-    - 'vendor/**/*'
-
-# Baseline code complexity metrics - we should try and reduce these over time
-Metrics/AbcSize:
-  Max: 47
-
-Metrics/CyclomaticComplexity:
-  Max: 16
-
+  - bin/*
+  - ".vendor/**/*"
+  - "**/Gemfile"
+  - "**/Rakefile"
+  - pkg/**/*
+  - spec/fixtures/**/*
+  - vendor/**/*
+  - "**/Puppetfile"
+  - "**/Vagrantfile"
+  - "**/Guardfile"
 Metrics/LineLength:
-  Max: 167
-
+  Description: People have wide screens, use them.
+  Max: 200
+RSpec/BeforeAfterAll:
+  Description: Beware of using after(:all) as it may cause state to leak between tests.
+    A necessary evil in acceptance testing.
+  Exclude:
+  - spec/acceptance/**/*.rb
+RSpec/HookArgument:
+  Description: Prefer explicit :each argument, matching existing module's style
+  EnforcedStyle: each
+Style/BlockDelimiters:
+  Description: Prefer braces for chaining. Mostly an aesthetical choice. Better to
+    be consistent then.
+  EnforcedStyle: braces_for_chaining
+Style/ClassAndModuleChildren:
+  Description: Compact style reduces the required amount of indentation.
+  EnforcedStyle: compact
+Style/EmptyElse:
+  Description: Enforce against empty else clauses, but allow `nil` for clarity.
+  EnforcedStyle: empty
+Style/FormatString:
+  Description: Following the main puppet project's style, prefer the % format format.
+  EnforcedStyle: percent
+Style/FormatStringToken:
+  Description: Following the main puppet project's style, prefer the simpler template
+    tokens over annotated ones.
+  EnforcedStyle: template
+Style/Lambda:
+  Description: Prefer the keyword for easier discoverability.
+  EnforcedStyle: literal
+Style/RegexpLiteral:
+  Description: Community preference. See https://github.com/voxpupuli/modulesync_config/issues/168
+  EnforcedStyle: percent_r
+Style/TernaryParentheses:
+  Description: Checks for use of parentheses around ternary conditions. Enforce parentheses
+    on complex expressions for better readability, but seriously consider breaking
+    it up.
+  EnforcedStyle: require_parentheses_when_complex
+Style/TrailingCommaInArguments:
+  Description: Prefer always trailing comma on multiline argument lists. This makes
+    diffs, and re-ordering nicer.
+  EnforcedStyleForMultiline: comma
+Style/TrailingCommaInLiteral:
+  Description: Prefer always trailing comma on multiline literals. This makes diffs,
+    and re-ordering nicer.
+  EnforcedStyleForMultiline: comma
+Style/SymbolArray:
+  Description: Using percent style obscures symbolic intent of array's contents.
+  EnforcedStyle: brackets
+inherit_from: ".rubocop_todo.yml"
+RSpec/MessageSpies:
+  EnforcedStyle: receive
+Style/Documentation:
+  Exclude:
+  - lib/puppet/parser/functions/**/*
+  - spec/**/*
+Style/WordArray:
+  EnforcedStyle: brackets
+Style/CollectionMethods:
+  Enabled: true
+Style/MethodCalledOnDoEndBlock:
+  Enabled: true
+Style/StringMethods:
+  Enabled: true
+Layout/EndOfLine:
+  Enabled: false
+Layout/IndentHeredoc:
+  Enabled: false
+Metrics/AbcSize:
+  Enabled: false
+Metrics/BlockLength:
+  Enabled: false
+Metrics/ClassLength:
+  Enabled: false
+Metrics/CyclomaticComplexity:
+  Enabled: false
 Metrics/MethodLength:
-  Max: 41
-
+  Enabled: false
 Metrics/ModuleLength:
   Enabled: false
-
-Metrics/PerceivedComplexity:
-  Max: 20
-
-
-# We like table alignment for readability
-Style/AlignHash:
-  EnforcedHashRocketStyle: table
-  EnforcedColonStyle: table
-
-# Template files have wildcard strings in class names
-Style/ClassAndModuleCamelCase:
-  Exclude:
-    - 'docs/*.rb'
-
-# Permit is_a? and kind_of? interchangeably
-Style/ClassCheck:
+Metrics/ParameterLists:
   Enabled: false
-
-# Template files have atypical file names on purpose
-Style/FileName:
-  Exclude:
-    - 'docs/*.rb'
-
-# As a team we like 'sprintf' rather than 'format'
-Style/FormatString:
-  EnforcedStyle: sprintf
-
-# The Beaker installer script uses a number of global variables.
-# This is OK for now since it's a standalone script.
-Style/GlobalVars:
-  Exclude:
-    - 'utilities/installer/install_puppet.rb'
-
-# Mixed keys are ugly. Use one or the other as needed
-Style/HashSyntax:
-  EnforcedStyle: ruby19_no_mixed_keys
-
-# Template files have wildcard strings in method names
-Style/MethodName:
-  Exclude:
-    - 'docs/*.rb'
-
-# To stop rubocop from complaining about overriding is_to_s
-Style/PredicateName:
-  NameWhitelist:
-    - is_a?
-    - is_to_s
-
-# "def foo(bar=baz)" not "def foo(bar = baz)"
-Style/SpaceAroundEqualsInParameterDefault:
-  EnforcedStyle: no_space
-
-# Template file has atypical variable name that rubocop doesn't like
-Style/SpaceAroundOperators:
-  Exclude:
-    - 'docs/template-__PROVIDER__-ensurabilitytest.rb'
-
-# Make it neater to extend multi-line arrays and hashes
-Style/TrailingComma:
-  EnforcedStyleForMultiline: comma
-
-# Template files have atypical variable names on purpose
-Style/VariableName:
-  Exclude:
-    - 'docs/*.rb'
+Metrics/PerceivedComplexity:
+  Enabled: false
+RSpec/DescribeClass:
+  Enabled: false
+RSpec/ExampleLength:
+  Enabled: false
+RSpec/MessageExpectation:
+  Enabled: false
+RSpec/MultipleExpectations:
+  Enabled: false
+RSpec/NestedGroups:
+  Enabled: false
+Style/AsciiComments:
+  Enabled: false
+Style/IfUnlessModifier:
+  Enabled: false
+Style/SymbolProc:
+  Enabled: false

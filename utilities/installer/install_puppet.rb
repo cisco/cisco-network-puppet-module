@@ -122,6 +122,9 @@
 #
 ################################################################################
 
+require 'beaker-pe'
+require 'beaker-puppet'
+
 USAGE = <<ENDUSAGE
 
 ** WARNING ** This script is not a standalone script and can only be executed

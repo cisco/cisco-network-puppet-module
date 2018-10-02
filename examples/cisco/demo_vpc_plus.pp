@@ -32,46 +32,46 @@ class ciscopuppet::cisco::demo_vpc_plus {
     cisco_fabricpath_global { 'default': ensure => present }
 
     cisco_vlan { '10' :
-      ensure                            => present,
-      mode                              => 'fabricpath',
-      shutdown                          => false,
+      ensure   => present,
+      mode     => 'fabricpath',
+      shutdown => false,
     }
 
     # Other than fabricpath_emulated_switch_id, only the peer_keepalive params
     # are mandatory to get the vPC+ domain up and running
     cisco_vpc_domain { '100' :
-      ensure                            => present,
-      fabricpath_emulated_switch_id     => 1001,
-      peer_keepalive_dest               => '1.1.1.1',
-      peer_keepalive_hold_timeout       => 5,
-      peer_keepalive_interval           => 1000,
-      peer_keepalive_interval_timeout   => 3,
-      peer_keepalive_precedence         => 5,
-      peer_keepalive_src                => '1.1.1.2',
-      peer_keepalive_udp_port           => 3200,
-      peer_keepalive_vrf                => 'management',
-      role_priority                     => 32000,
-      system_mac                        => '00:0c:0d:11:22:33',
-      system_priority                   => 32000,
+      ensure                          => present,
+      fabricpath_emulated_switch_id   => 1001,
+      peer_keepalive_dest             => '1.1.1.1',
+      peer_keepalive_hold_timeout     => 5,
+      peer_keepalive_interval         => 1000,
+      peer_keepalive_interval_timeout => 3,
+      peer_keepalive_precedence       => 5,
+      peer_keepalive_src              => '1.1.1.2',
+      peer_keepalive_udp_port         => 3200,
+      peer_keepalive_vrf              => 'management',
+      role_priority                   => 32000,
+      system_mac                      => '00:0c:0d:11:22:33',
+      system_priority                 => 32000,
     }
-  
+
     cisco_interface_channel_group { 'Ethernet1/1':
       require       => Cisco_vpc_domain['100'],
       channel_group => 10,
     }
-  
+
     cisco_interface { 'port-channel10' :
       switchport_mode => 'trunk',
       vpc_id          => 5,
       shutdown        => false,
       require         => Cisco_interface_channel_group['Ethernet1/1'],
     }
-  
+
     cisco_interface_channel_group { 'Ethernet1/2':
       require       => Cisco_vpc_domain['100'],
       channel_group => 100,
     }
-  
+
     # peer link should be in fabricpath mode for vPC+
     cisco_interface { 'port-channel100' :
       switchport_mode => 'fabricpath',

@@ -1,0 +1,41 @@
+---
+Gemfile:
+  optional:
+    ':development, :unit_tests':
+      - gem: 'puppet-resource_api'
+        git: 'https://github.com/puppetlabs/puppet-resource_api.git'
+        ref: 'master'
+      - gem: 'cisco_node_utils'
+        version: '~> 1.0'
+      - gem: 'net-telnet'
+        version: '~> 0.1.1'
+    ':system_tests':
+      - gem: 'puppet-module-posix-system-r#{minor_version}'
+        platforms: ruby
+      - gem: 'puppet-module-win-system-r#{minor_version}'
+        platforms:
+          - mswin
+          - mingw
+          - x64_mingw
+.gitignore:
+  paths:
+    - junit/
+    - hosts.cfg
+.pdkignore:
+  paths:
+    - junit/
+    - hosts.cfg
+Rakefile:
+  requires:
+    - 'puppet-strings/tasks'
+  extra_disabled_lint_checks:
+    - 'autoloader_layout'
+    - 'variable_scope'
+    - 'variable_is_lowercase'
+.travis.yml:
+  simplecov: true
+  branches:
+    - 'puppet6'
+.rubocop.yml:
+  default_configs:
+    inherit_from: .rubocop_todo.yml
