@@ -1157,11 +1157,12 @@ end
 def fretta?(reset_cache=false)
   return @fretta_slot unless @fretta_slot.nil? || reset_cache
   data = on(agent, facter_cmd('-p cisco.inventory')).output.split("\n")
+  @fretta_slot = false
   data.each do |line|
     next unless line.include?('pid =>')
-    return true if line[/-R/]
+    @fretta_slot = true if line[/-R/]
   end
-  false
+  @fretta_slot
 end
 
 # Check if image matches pattern
