@@ -531,7 +531,7 @@ Symbol | Meaning | Description
 | [cisco_vpc_domain](#type-cisco_vpc_domain)                 | ✅* | ✅* | ✅* | ✅* | ✅* | ➖ | \*[caveats](#cisco_vpc_domain-caveats) |
 | [cisco_vrf](#type-cisco_vrf)                               | ✅  | ✅* | ✅  | ✅  | ✅ | ✅ | ✅ | \*[caveats](#cisco_vrf-caveats) |
 | [cisco_vrf_af](#type-cisco_vrf_af)                         | ✅  | ✅* | ✅* | ✅* | ✅* | ✅ | ✅ | \*[caveats](#cisco_vrf_af-caveats) |
-| [cisco_vtp](#type-cisco_vtp)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_vtp](#type-cisco_vtp)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ➖ | ➖ |
 | [cisco_vxlan_vtep](#type-cisco_vxlan_vtep)                 | ✅  | ➖ | ✅  | ✅  | ✅* | ✅ | ✅ | \*[caveats](#cisco_vxlan_vtep-caveats) |
 | [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni)         | ✅  | ➖ | ✅  | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_vxlan_vtep_vni-caveats) |
 
@@ -746,12 +746,14 @@ Manages configuration of a Access Control List (ACL) instance.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N9k-F    | 9.2.1              | 1.10.0                 |
+| N3k-F    | 9.2.1              | 1.10.0                 |
 
 #### <a name="cisco_acl-caveats">Caveats</a>
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `fragments` | Not supported on N5k, N6k |
+| `fragments` | Not supported on N5k, N6k, N9k-F, N3k-F |
 
 #### Parameters
 
