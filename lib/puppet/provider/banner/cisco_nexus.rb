@@ -1,7 +1,7 @@
 module Puppet; end # rubocop:disable Style/Documentation
 module Puppet::ResourceApi
   # Implementation for the banner type using the Resource API.
-  class Puppet::Provider::Banner::Nexus
+  class Puppet::Provider::Banner::CiscoNexus
     def set(context, changes)
       changes.each do |name, change|
         is = change[:is]

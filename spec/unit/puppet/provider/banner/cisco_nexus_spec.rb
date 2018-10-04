@@ -2,9 +2,9 @@ require 'spec_helper'
 require 'cisco_node_utils'
 
 ensure_module_defined('Puppet::Provider::Banner')
-require 'puppet/provider/banner/nexus'
+require 'puppet/provider/banner/cisco_nexus'
 
-RSpec.describe Puppet::Provider::Banner::Nexus do
+RSpec.describe Puppet::Provider::Banner::CiscoNexus do
   let(:provider) { described_class.new }
   let(:context) { instance_double('Puppet::ResourceApi::BaseContext', 'context') }
   let(:device) { instance_double('Puppet::Util::NetworkDevice::Nexus::Device', 'device') }
