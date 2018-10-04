@@ -1,8 +1,8 @@
 require 'spec_helper'
-require 'puppet/util/network_device/nexus/device'
+require 'puppet/util/network_device/cisco_nexus/device'
 
-RSpec.describe Puppet::Util::NetworkDevice::Nexus do
-  describe Puppet::Util::NetworkDevice::Nexus::Device do
+RSpec.describe Puppet::Util::NetworkDevice::Cisco_nexus do
+  describe Puppet::Util::NetworkDevice::Cisco_nexus::Device do
     let(:device) { described_class.new(device_config) }
     let(:device_config) { { 'address' => 'www.example.com', 'user' => 'admin', 'password' => 'password' } }
     let(:cisco_platform) do
