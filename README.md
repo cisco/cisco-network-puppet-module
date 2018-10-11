@@ -5086,8 +5086,8 @@ Creates a Virtual Network Identifier member (VNI) for an NVE overlay interface.
 
 | Property                        | Caveat Description                   |
 |---------------------------------|--------------------------------------|
-| ingress_replication             | Not supported on N3k, N5k, N6k, N7k  |
-| peer_list                       | Not supported on N3k, N5k, N6k, N7k  |
+| ingress_replication             | Not supported on N3k, N5k, N6k, N7k, N3k-F, N9k-F  |
+| peer_list                       | Not supported on N3k, N5k, N6k, N7k, N3k-F, N9k-F  |
 | suppress_uuc                    | Not supported on N3k, N3k-F, N9k, N9k-F <br> Supported in OS Version 8.1.1 and later on N7k |
 | multisite_ingress_replication | Only supported on N9K-EX and N9K-FX devices. For eg: N9K-C93180YC-EX. Minimum OS version 7.0(3)I7(1) and minimum Module Version 1.9.0 |
 
