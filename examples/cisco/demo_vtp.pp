@@ -16,7 +16,7 @@
 
 class ciscopuppet::cisco::demo_vtp {
 
-  if platform_get() =~ /n(3|5|6|7|8|9)k$/ {
+  if platform_get() =~ /n(3|5|6|7|9)k$/ {
 
     cisco_vtp { 'default':
       ensure   => present,
