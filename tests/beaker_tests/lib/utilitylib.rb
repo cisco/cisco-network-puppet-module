@@ -1,5 +1,9 @@
+require 'puppet'
+require 'puppet/util/network_device/config'
+require 'cisco_node_utils'
+
 ###############################################################################
-# Copyright (c) 2014-2017 Cisco and/or its affiliates.
+# Copyright (c) 2014-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -42,9 +46,18 @@ PUPPET_BINPATH = '/opt/puppetlabs/bin/puppet '
 FACTER_BINPATH = '/opt/puppetlabs/bin/facter '
 # Location of the main Puppet manifest
 PUPPETMASTER_MANIFESTPATH = '/etc/puppetlabs/code/environments/production/manifests/site.pp'
+# Temporary manifest for agentless tests
+TEMP_AGENTLESS_MANIFEST_PREFIX = 'temp_test_apply'
+@temp_agentless_manifest = nil
 # Indicates that we want to ignore the value when matching (essentially
 # testing the presence of a key, regardless of value)
 IGNORE_VALUE = :ignore_value
+
+@nexus_host = nil
+
+def agent
+  find_host_with_role :agent
+end
 
 # These methods are defined outside of a module so that
 # they can access the Beaker DSL API's.
@@ -188,6 +201,7 @@ def test_harness_common(tests, id, skip_idempotence_check=false)
   test_manifest(tests, id)
   test_resource(tests, id)
   test_idempotence(tests, id) unless skip_idempotence_check
+  remove_temp_manifest
   tests[id].delete(:log_desc)
 end
 
@@ -207,16 +221,60 @@ def test_stderr(tests, id)
   end
 end
 
+# Function to remove the temporary manifest
+def remove_temp_manifest
+  return unless @temp_agentless_manifest
+  @temp_agentless_manifest.close
+  @temp_agentless_manifest.unlink
+  @temp_agentless_manifest = nil
+end
+
 # Wrapper for manifest tests
 # Pass code = [0], as an alternative to 'test_idempotence'
 def test_manifest(tests, id)
   stepinfo = format_stepinfo(tests, id, 'MANIFEST')
   step "TestStep :: #{stepinfo}" do
     logger.debug("test_manifest :: manifest:\n#{tests[id][:manifest]}")
-    on(tests[:master], tests[id][:manifest])
-    code = tests[id][:code] ? tests[id][:code] : [2]
-    logger.debug("test_manifest :: check puppet agent cmd (code: #{code})")
-    on(tests[:agent], puppet_agent_cmd, acceptable_exit_codes: code)
+    if tests[:master]
+      on(tests[:master], tests[id][:manifest])
+      code = (tests[id][:code]) ? tests[id][:code] : [2]
+      logger.debug("test_manifest :: check puppet agent cmd (code: #{code})")
+      on(tests[:agent], puppet_agent_cmd, acceptable_exit_codes: code)
+    else
+      raise 'Could not find default Nexus host' unless default && default.host_hash[:platform].match(%r{cisco_nexus.*})
+      @nexus_host = default
+
+      File.open('spec/fixtures/acceptance-credentials.conf', 'w') do |file|
+        file.puts <<CREDENTIALS
+address: #{@nexus_host.host_hash[:vmhostname]}
+username: #{@nexus_host.host_hash[:ssh][:user] || 'admin'}
+port: #{@nexus_host.host_hash[:ssh][:port] || '22'}
+password: #{@nexus_host.host_hash[:ssh][:password] || 'admin'}
+CREDENTIALS
+      end
+
+      File.open('spec/fixtures/acceptance-device.conf', 'w') do |file|
+        file.puts <<DEVICE
+[sut]
+type cisco_nexus
+url file://#{Dir.getwd}/spec/fixtures/acceptance-credentials.conf
+DEVICE
+      end
+
+      code = (tests[id][:code]) ? tests[id][:code] : [2]
+      logger.debug("test_manifest :: check puppet apply cmd (code: #{code})")
+      # system("bundle exec puppet device --verbose --trace --strict=error --modulepath spec/fixtures --target nexus --libdir lib/ --apply apply.pp")
+      # See https://tickets.puppetlabs.com/browse/PUP-9067 "`puppet device` should respect --detailed-exitcodes"
+      # if !code.include?($?.exitstatus)
+      #  raise 'Errored test'
+      # end
+      output = `bundle exec puppet device --verbose --trace --strict=error --modulepath spec/fixtures/modules --target sut --libdir lib/ --deviceconfig spec/fixtures/acceptance-device.conf \
+                --apply #{@temp_agentless_manifest.path}`
+      unless output.include? 'Applied catalog'
+        remove_temp_manifest
+        raise 'Errored test'
+      end
+    end
     test_stderr(tests, id) if tests[id][:stderr_pattern]
   end
   logger.info("#{stepinfo} :: PASS")
@@ -228,10 +286,19 @@ def test_resource(tests, id, state=false)
   stepinfo = format_stepinfo(tests, id, 'RESOURCE')
   step "TestStep :: #{stepinfo}" do
     logger.debug("test_resource :: cmd:\n#{tests[id][:resource_cmd]}")
-    on(tests[:agent], tests[id][:resource_cmd]) do
+    if tests[:agent]
+      on(tests[:agent], tests[id][:resource_cmd]) do
+        search_pattern_in_output(
+          stdout, supported_property_hash(tests, id, tests[id][:resource]),
+          state, self, logger
+        )
+      end
+    else
+      output = `#{tests[id][:resource_cmd]}`
       search_pattern_in_output(
-        stdout, supported_property_hash(tests, id, tests[id][:resource]),
-        state, self, logger)
+        output, supported_property_hash(tests, id, tests[id][:resource]),
+        state, self, logger
+      )
     end
     logger.info("#{stepinfo} :: PASS")
     tests[id].delete(:log_desc)
@@ -243,7 +310,20 @@ def test_idempotence(tests, id)
   stepinfo = format_stepinfo(tests, id, 'IDEMPOTENCE')
   step "TestStep :: #{stepinfo}" do
     logger.debug('test_idempotence :: BEGIN')
-    on(tests[:agent], puppet_agent_cmd, acceptable_exit_codes: [0])
+    if tests[:agent]
+      on(tests[:agent], puppet_agent_cmd, acceptable_exit_codes: [0])
+    else
+      # system("bundle exec puppet device --verbose --trace --strict=error --modulepath spec/fixtures --target nexus --libdir lib/ --apply apply.pp")
+      # See https://tickets.puppetlabs.com/browse/PUP-9067 "`puppet device` should respect --detailed-exitcodes"
+      # if !$?.exitstatus == 0
+      #   raise 'Errored idempotence test'
+      # end
+      output = `bundle exec puppet device --verbose --trace --strict=error --modulepath spec/fixtures/modules --target sut --libdir lib/ --deviceconfig spec/fixtures/acceptance-device.conf \
+                --apply #{@temp_agentless_manifest.path}`
+      if output.include? "#{tests[:resource_name]}[#{tests[id][:title_pattern]}]: Updating:"
+        raise 'Errored idempotence test'
+      end
+    end
     logger.info("#{stepinfo} :: PASS")
     tests[id].delete(:log_desc)
   end
@@ -563,7 +643,12 @@ def puppet_resource_cmd_from_params(tests, id)
       title_string = tests[id][:title_pattern]
     end
 
-    cmd = PUPPET_BINPATH + "resource #{tests[:resource_name]} '#{title_string}'"
+    cmd = if tests[:agent]
+            PUPPET_BINPATH + "resource #{tests[:resource_name]} '#{title_string}'"
+          else
+            "puppet device --target sut --resource #{tests[:resource_name]} '#{title_string}' --modulepath spec/fixtures/modules --trace --deviceconfig spec/fixtures/acceptance-device.conf \
+              --libdir lib/"
+          end
 
     logger.info("\ntitle_string: '#{title_string}'")
     tests[id][:resource_cmd] = cmd
@@ -626,12 +711,22 @@ def create_manifest_and_resource(tests, id)
     tests[id][:resource] = manifest_props unless tests[id][:resource]
   end
 
-  tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
-  \nnode default {
-  #{dependency_manifest(tests, id)}
-  #{tests[:resource_name]} { '#{tests[id][:title_pattern]}':
-    #{state}\n#{manifest}
-  }\n}\nEOF"
+  tests[id][:manifest] = if tests[:agent]
+
+                           "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+                         \nnode default {
+                         #{dependency_manifest(tests, id)}
+                         #{tests[:resource_name]} { '#{tests[id][:title_pattern]}':
+                           #{state}\n#{manifest}
+                         }\n}\nEOF"
+                         else
+                           @temp_agentless_manifest = Tempfile.new(TEMP_AGENTLESS_MANIFEST_PREFIX)
+                           @temp_agentless_manifest.write("#{dependency_manifest(tests, id)}
+                           #{tests[:resource_name]} { '#{tests[id][:title_pattern]}':
+                             #{state}\n#{manifest}
+                           }\n")
+                           @temp_agentless_manifest.rewind
+                         end
 
   true
 end
@@ -650,7 +745,6 @@ def create_package_manifest_resource(tests, id)
   manifest_props = tests[id][:manifest_props]
   manifest += prop_hash_to_manifest(manifest_props)
   tests[id][:resource] = manifest_props
-
   tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
   \nnode default {
   #{dependency_manifest(tests, id)}
@@ -923,8 +1017,18 @@ end
 def test_set(agent, cmd)
   return if cmd.empty?
   logger.info(cmd)
-  cmd_prefix = PUPPET_BINPATH + "resource cisco_command_config 'cc' "
-  on(agent, cmd_prefix + "test_set='#{cmd}'")
+  if !agent.nil?
+    cmd_prefix = PUPPET_BINPATH + "resource cisco_command_config 'cc' "
+    on(agent, cmd_prefix + "test_set='#{cmd}'")
+  else
+    raise 'Could not find default Nexus host' unless default && default.host_hash[:platform].match(%r{cisco_nexus.*})
+    @nexus_host = default
+
+    env = { host: @nexus_host[:vmhostname], port: 22, username: @nexus_host[:ssh][:user], password: @nexus_host[:ssh][:password], cookie: nil }
+    Cisco::Environment.add_env('remote', env)
+    test_client = Cisco::Client.create('remote')
+    test_client.set(values: cmd)
+  end
 end
 
 # Helper for command_config calls
@@ -1216,7 +1320,10 @@ def platform_supports_test(tests, id)
     logger.error("\n#{tests[id][:desc]} :: #{id} :: SKIP")
     logger.error("Platform type does not match testcase platform regexp: /#{plat}/")
   else
-    platform
+    unless agent.nil?
+      platform
+    end
+
     return true
   end
   tests[:skipped] ||= []
