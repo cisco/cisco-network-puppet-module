@@ -83,7 +83,7 @@ def unsupported_properties(_tests, _id)
     # unprops << TBD: XR Support
 
   else
-    unprops << :fragments if platform[/n(5|6)k/]
+    unprops << :fragments if platform[/n(3k-f|5k|6k|9k-f)/]
   end
 
   unprops

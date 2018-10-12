@@ -531,7 +531,7 @@ Symbol | Meaning | Description
 | [cisco_vpc_domain](#type-cisco_vpc_domain)                 | ✅* | ✅* | ✅* | ✅* | ✅* | ➖ | \*[caveats](#cisco_vpc_domain-caveats) |
 | [cisco_vrf](#type-cisco_vrf)                               | ✅  | ✅* | ✅  | ✅  | ✅ | ✅ | ✅ | \*[caveats](#cisco_vrf-caveats) |
 | [cisco_vrf_af](#type-cisco_vrf_af)                         | ✅  | ✅* | ✅* | ✅* | ✅* | ✅ | ✅ | \*[caveats](#cisco_vrf_af-caveats) |
-| [cisco_vtp](#type-cisco_vtp)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_vtp](#type-cisco_vtp)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ➖ | ➖ |
 | [cisco_vxlan_vtep](#type-cisco_vxlan_vtep)                 | ✅  | ➖ | ✅  | ✅  | ✅* | ✅ | ✅ | \*[caveats](#cisco_vxlan_vtep-caveats) |
 | [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni)         | ✅  | ➖ | ✅  | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_vxlan_vtep_vni-caveats) |
 
@@ -746,12 +746,14 @@ Manages configuration of a Access Control List (ACL) instance.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N9k-F    | 9.2.1              | 1.10.0                 |
+| N3k-F    | 9.2.1              | 1.10.0                 |
 
 #### <a name="cisco_acl-caveats">Caveats</a>
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `fragments` | Not supported on N5k, N6k |
+| `fragments` | Not supported on N5k, N6k, N9k-F, N3k-F |
 
 #### Parameters
 
@@ -5084,8 +5086,8 @@ Creates a Virtual Network Identifier member (VNI) for an NVE overlay interface.
 
 | Property                        | Caveat Description                   |
 |---------------------------------|--------------------------------------|
-| ingress_replication             | Not supported on N3k, N5k, N6k, N7k  |
-| peer_list                       | Not supported on N3k, N5k, N6k, N7k  |
+| ingress_replication             | Not supported on N3k, N5k, N6k, N7k, N3k-F, N9k-F  |
+| peer_list                       | Not supported on N3k, N5k, N6k, N7k, N3k-F, N9k-F  |
 | suppress_uuc                    | Not supported on N3k, N3k-F, N9k, N9k-F <br> Supported in OS Version 8.1.1 and later on N7k |
 | multisite_ingress_replication | Only supported on N9K-EX and N9K-FX devices. For eg: N9K-C93180YC-EX. Minimum OS version 7.0(3)I7(1) and minimum Module Version 1.9.0 |
 
