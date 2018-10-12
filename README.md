@@ -5394,13 +5394,13 @@ The name of the VLAN.  Valid value is a string.
 Authentication scheme.  Valid value is 'md5'.
 
 ##### `key`
-Authentication key number.  Valid value is a string.
+Authentication key number.  Valid value is a string, which needs to be in range 1-65535.
 
 ##### `mode`
 Authentication mode.  Valid values are '0' and '7'.
 
 ##### `password`
-Authentication password.  Valid value is a string.
+Authentication password.  Valid value is a string with a maximum length of 15.
 
 --
 ### Type: ntp_config
