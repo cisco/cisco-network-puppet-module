@@ -11,13 +11,13 @@ RSpec.describe Puppet::Provider::DomainName::CiscoNexus do
   let(:domain) { instance_double('Cisco::DomainName', 'domain') }
   let(:domain2) { instance_double('Cisco::DomainName', 'domain2') }
   let(:domain3) { instance_double('Cisco::DomainName', 'domain3') }
-  let(:domainnames) {
+  let(:domainnames) do
     {
       'test.puppet.com' => domain,
       'example.puppet.com' => domain2,
       'nexus.puppet.com' => domain3,
     }
-  }
+  end
 
   describe '#get(_context)' do
     it 'processes resources' do
