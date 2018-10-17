@@ -277,9 +277,10 @@ Puppet::Type.newtype(:cisco_interface) do
     munge do |value|
       value = :default if value == 'default'
       if value != :default
+        value = value.to_i
         range = *(1..4096)
         fail 'VPC ID must be in the range 1..4096' unless
-          range.include?(value.to_i)
+          range.include?(value)
       end
       value
     end
