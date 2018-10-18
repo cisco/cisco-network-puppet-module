@@ -1,7 +1,8 @@
 require 'puppet/resource_api/simple_provider'
 require 'cisco_node_utils'
 
-class Puppet::Provider::DomainName::CiscoNexus <  Puppet::ResourceApi::SimpleProvider
+# Implementation for the domain_name type using the Resource API.
+class Puppet::Provider::DomainName::CiscoNexus < Puppet::ResourceApi::SimpleProvider
   def get(_context)
     current_state = []
     @domains ||= Cisco::DomainName.domainnames
