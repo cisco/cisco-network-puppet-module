@@ -42,6 +42,8 @@ require 'cisco_node_utils'
 # Group of constants for use by the Beaker::TestCase instances.
 # Binary executable path for puppet on master and agent.
 PUPPET_BINPATH = '/opt/puppetlabs/bin/puppet '
+# Executable base command for puppet agentless
+AGENTLESS_COMMAND = 'bundle exec puppet device --verbose --trace --strict=error --modulepath spec/fixtures/modules --deviceconfig spec/fixtures/acceptance-device.conf --target sut --libdir lib/'
 # Binary executable path for facter on master and agent.
 FACTER_BINPATH = '/opt/puppetlabs/bin/facter '
 # Location of the main Puppet manifest
@@ -53,10 +55,59 @@ TEMP_AGENTLESS_MANIFEST_PREFIX = 'temp_test_apply'
 # testing the presence of a key, regardless of value)
 IGNORE_VALUE = :ignore_value
 
+# Current agentless nexus host
 @nexus_host = nil
 
+# Method to create agentless device.conf and
+# appropriate credentials.conf
+#
+# Assumes that the beaker configuration contains a Nexus host with role default
+# Raises an error if not the case.
+def create_agentless_device_conf
+  raise 'Could not find default Nexus host' unless default && default.host_hash[:platform].match(%r{cisco_nexus.*})
+  @nexus_host = default
+
+  credentials_file = 'spec/fixtures/acceptance-credentials.conf'
+  device_conf_file = 'spec/fixtures/acceptance-device.conf'
+
+  if File.exist?(credentials_file)
+    File.delete(credentials_file)
+  end
+  if File.exist?(device_conf_file)
+    File.delete(device_conf_file)
+  end
+
+  File.open(credentials_file, 'w') do |file|
+    file.puts <<CREDENTIALS
+address: #{@nexus_host.host_hash[:vmhostname]}
+username: #{@nexus_host.host_hash[:ssh][:user] || 'admin'}
+port: #{@nexus_host.host_hash[:ssh][:port] || '22'}
+password: #{@nexus_host.host_hash[:ssh][:password] || 'admin'}
+CREDENTIALS
+  end
+
+  File.open(device_conf_file, 'w') do |file|
+    file.puts <<DEVICE
+[sut]
+type cisco_nexus
+url file://#{Dir.getwd}/spec/fixtures/acceptance-credentials.conf
+DEVICE
+  end
+end
+
+# Method to return an agent
+# Otherwise, if running agentlessly, call the device configuration creation method
+# if not already called
 def agent
-  find_host_with_role :agent
+  agent_host = find_host_with_role :agent
+  if agent_host.nil?
+    if @nexus_host.nil?
+      create_agentless_device_conf
+    end
+    return nil
+  else
+    agent_host
+  end
 end
 
 # These methods are defined outside of a module so that
@@ -222,11 +273,10 @@ def test_stderr(tests, id)
 end
 
 # Function to remove the temporary manifest
-def remove_temp_manifest
-  return unless @temp_agentless_manifest
-  @temp_agentless_manifest.close
-  @temp_agentless_manifest.unlink
-  @temp_agentless_manifest = nil
+def remove_temp_manifest(manifest=@temp_agentless_manifest)
+  return unless manifest
+  manifest.close
+  manifest.unlink
 end
 
 # Wrapper for manifest tests
@@ -241,26 +291,6 @@ def test_manifest(tests, id)
       logger.debug("test_manifest :: check puppet agent cmd (code: #{code})")
       on(tests[:agent], puppet_agent_cmd, acceptable_exit_codes: code)
     else
-      raise 'Could not find default Nexus host' unless default && default.host_hash[:platform].match(%r{cisco_nexus.*})
-      @nexus_host = default
-
-      File.open('spec/fixtures/acceptance-credentials.conf', 'w') do |file|
-        file.puts <<CREDENTIALS
-address: #{@nexus_host.host_hash[:vmhostname]}
-username: #{@nexus_host.host_hash[:ssh][:user] || 'admin'}
-port: #{@nexus_host.host_hash[:ssh][:port] || '22'}
-password: #{@nexus_host.host_hash[:ssh][:password] || 'admin'}
-CREDENTIALS
-      end
-
-      File.open('spec/fixtures/acceptance-device.conf', 'w') do |file|
-        file.puts <<DEVICE
-[sut]
-type cisco_nexus
-url file://#{Dir.getwd}/spec/fixtures/acceptance-credentials.conf
-DEVICE
-      end
-
       code = (tests[id][:code]) ? tests[id][:code] : [2]
       logger.debug("test_manifest :: check puppet apply cmd (code: #{code})")
       # system("bundle exec puppet device --verbose --trace --strict=error --modulepath spec/fixtures --target nexus --libdir lib/ --apply apply.pp")
@@ -268,8 +298,7 @@ DEVICE
       # if !code.include?($?.exitstatus)
       #  raise 'Errored test'
       # end
-      output = `bundle exec puppet device --verbose --trace --strict=error --modulepath spec/fixtures/modules --target sut --libdir lib/ --deviceconfig spec/fixtures/acceptance-device.conf \
-                --apply #{@temp_agentless_manifest.path}`
+      output = `#{AGENTLESS_COMMAND} --apply #{@temp_agentless_manifest.path}`
       unless output.include? 'Applied catalog'
         remove_temp_manifest
         raise 'Errored test'
@@ -318,8 +347,7 @@ def test_idempotence(tests, id)
       # if !$?.exitstatus == 0
       #   raise 'Errored idempotence test'
       # end
-      output = `bundle exec puppet device --verbose --trace --strict=error --modulepath spec/fixtures/modules --target sut --libdir lib/ --deviceconfig spec/fixtures/acceptance-device.conf \
-                --apply #{@temp_agentless_manifest.path}`
+      output = `#{AGENTLESS_COMMAND} --apply #{@temp_agentless_manifest.path}`
       if output.include? "#{tests[:resource_name]}[#{tests[id][:title_pattern]}]: Updating:"
         raise 'Errored idempotence test'
       end
@@ -334,9 +362,14 @@ end
 # @param res_name [String] the resource to retrieve instances of
 # @return [Array] an array of string names of instances
 def get_current_resource_instances(agent, res_name)
-  cmd_str = PUPPET_BINPATH + "resource #{res_name}"
-  on(agent, cmd_str, acceptable_exit_codes: [0])
-  names = stdout.scan(/#{res_name} { '(.+)':/).flatten
+  if agent
+    cmd_str = PUPPET_BINPATH + "resource #{res_name}"
+    on(agent, cmd_str, acceptable_exit_codes: [0])
+    names = stdout.scan(/#{res_name} { '(.+)':/).flatten
+  else
+    output = `#{AGENTLESS_COMMAND} --resource #{res_name}`
+    names = output.scan(/#{res_name} { '(.+)':/).flatten
+  end
   names
 end
 
@@ -530,11 +563,20 @@ end
 def interface_cleanup(agent, intf, stepinfo='Interface Clean:')
   return if intf.empty?
   step "TestStep :: #{stepinfo}" do
-    cmd = "resource cisco_command_config 'interface_cleanup' "\
-          "command='default interface #{intf}'"
-    cmd = PUPPET_BINPATH + cmd
-    logger.info("  * #{stepinfo} Set '#{intf}' to default state")
-    on(agent, cmd, acceptable_exit_codes: [0, 2])
+    if !agent.nil?
+      cmd = "resource cisco_command_config 'interface_cleanup' "\
+            "command='default interface #{intf}'"
+      cmd = PUPPET_BINPATH + cmd
+      logger.info("  * #{stepinfo} Set '#{intf}' to default state")
+      on(agent, cmd, acceptable_exit_codes: [0, 2])
+    else
+      cmd = "default interface #{intf}"
+      logger.info("  * #{stepinfo} Set '#{intf}' to default state")
+      env = { host: @nexus_host[:vmhostname], port: 22, username: @nexus_host[:ssh][:user], password: @nexus_host[:ssh][:password], cookie: nil }
+      Cisco::Environment.add_env('remote', env)
+      test_client = Cisco::Client.create('remote')
+      test_client.set(values: cmd)
+    end
   end
 end
 
@@ -646,8 +688,7 @@ def puppet_resource_cmd_from_params(tests, id)
     cmd = if tests[:agent]
             PUPPET_BINPATH + "resource #{tests[:resource_name]} '#{title_string}'"
           else
-            "puppet device --target sut --resource #{tests[:resource_name]} '#{title_string}' --modulepath spec/fixtures/modules --trace --deviceconfig spec/fixtures/acceptance-device.conf \
-              --libdir lib/"
+            "#{AGENTLESS_COMMAND} --resource #{tests[:resource_name]} '#{title_string}'"
           end
 
     logger.info("\ntitle_string: '#{title_string}'")
@@ -1021,9 +1062,6 @@ def test_set(agent, cmd)
     cmd_prefix = PUPPET_BINPATH + "resource cisco_command_config 'cc' "
     on(agent, cmd_prefix + "test_set='#{cmd}'")
   else
-    raise 'Could not find default Nexus host' unless default && default.host_hash[:platform].match(%r{cisco_nexus.*})
-    @nexus_host = default
-
     env = { host: @nexus_host[:vmhostname], port: 22, username: @nexus_host[:ssh][:user], password: @nexus_host[:ssh][:password], cookie: nil }
     Cisco::Environment.add_env('remote', env)
     test_client = Cisco::Client.create('remote')
@@ -1034,9 +1072,16 @@ end
 # Helper for command_config calls
 def command_config(agent, cmd, msg='')
   logger.info("\n#{msg}")
-  cmd = "resource cisco_command_config 'cc' command='#{cmd}'"
-  cmd = PUPPET_BINPATH + cmd
-  on(agent, cmd, acceptable_exit_codes: [0, 2])
+  if !agent.nil?
+    cmd = "resource cisco_command_config 'cc' command='#{cmd}'"
+    cmd = PUPPET_BINPATH + cmd
+    on(agent, cmd, acceptable_exit_codes: [0, 2])
+  else
+    env = { host: @nexus_host[:vmhostname], port: 22, username: @nexus_host[:ssh][:user], password: @nexus_host[:ssh][:password], cookie: nil }
+    Cisco::Environment.add_env('remote', env)
+    test_client = Cisco::Client.create('remote')
+    test_client.set(values: cmd)
+  end
 end
 
 # Helper to set properties using the puppet resource command.
@@ -1173,7 +1218,13 @@ end
 # Use facter to return cisco operating system information
 def operating_system
   return @cisco_os unless @cisco_os.nil?
-  @cisco_os = on(agent, facter_cmd('os.name')).stdout.chomp
+  if agent
+    @cisco_os = on(agent, facter_cmd('os.name')).stdout.chomp
+  else
+    output = `#{AGENTLESS_COMMAND} --facts | grep operatingsystem`
+    @cisco_os = output.match(%r{"operatingsystem": "(.*)"})[1]
+  end
+  @cisco_os
 end
 
 @os_family = nil
@@ -1211,19 +1262,24 @@ end
 # Use facter to return cisco hardware type
 def platform
   return @cisco_hardware unless @cisco_hardware.nil?
-  pi = on(agent, facter_cmd('-p cisco.hardware.type')).stdout.chomp
-  if pi.empty?
-    logger.debug 'Unable to query Cisco hardware type using the ' \
-      "'cisco.hardware.type' custom factor key"
-    # Some platforms do not respond correctly to the first command;
-    # make another attempt using a broader search.
-    on(agent, facter_cmd('-p cisco | egrep -A1 hardware'))
-    # Sample output:
-    #   hardware => {
-    #     type => "NX-OSv Chassis",
-    pi = Regexp.last_match[1] if stdout[/type => "(.*)"/]
-    fail 'Unable to query Cisco hardware type using facter commands' if
-      pi.empty?
+  if agent
+    pi = on(agent, facter_cmd('-p cisco.hardware.type')).stdout.chomp
+    if pi.empty?
+      logger.debug 'Unable to query Cisco hardware type using the ' \
+        "'cisco.hardware.type' custom factor key"
+      # Some platforms do not respond correctly to the first command;
+      # make another attempt using a broader search.
+      on(agent, facter_cmd('-p cisco | egrep -A1 hardware'))
+      # Sample output:
+      #   hardware => {
+      #     type => "NX-OSv Chassis",
+      pi = Regexp.last_match[1] if stdout[/type => "(.*)"/]
+      fail 'Unable to query Cisco hardware type using facter commands' if
+        pi.empty?
+    end
+  else
+    output = `#{AGENTLESS_COMMAND} --facts | grep type`
+    pi = output.match(%r{"type": "(.*)"})[1]
   end
 
   # The following kind of string info is returned for Nexus.
@@ -1428,15 +1484,20 @@ end
 # appears to be 2s per hundred interfaces so it works better for now as an
 # on-demand method.
 def interface_capabilities(agent, intf)
-  cmd = PUPPET_BINPATH + "resource cisco_interface_capabilities '#{intf}'"
-  on(agent, cmd, pty: true)
+  if !agent.nil?
+    cmd = PUPPET_BINPATH + "resource cisco_interface_capabilities '#{intf}'"
+    on(agent, cmd, pty: true)
+    output = stdout
+  else
+    output = `#{AGENTLESS_COMMAND} --resource cisco_interface_capabilities '#{intf}'`
+  end
 
   # Sample raw output:
   # "cisco_interface_capabilities { 'ethernet9/1':\n  capabilities =>
   # ['Model: N7K-F312FQ-25', '', 'Type (SFP capable):    QSFP-40G-4SFP10G', '',
   # 'Speed: 10000,40000', '', 'Duplex: full', ''], }
 
-  str = stdout[/\[(.*)\]/]
+  str = output[/\[(.*)\]/]
   return {} if str.nil?
   str = str[1..-2]
   return {} if str.nil?
@@ -1474,6 +1535,22 @@ def netdev_speed(speed)
   end
 end
 
+def create_and_apply_test_manifest(type, title, property, value)
+  temp_manifest = Tempfile.new('temp_manifest')
+  unless value.match(/^(\d)+$/)
+    value = "'#{value}'"
+  end
+  temp_manifest.write("#{type} { '#{title}':
+                             #{property.to_s.downcase} => #{value},
+                           }\n")
+  temp_manifest.rewind
+
+  output = `#{AGENTLESS_COMMAND} --apply #{temp_manifest.path} 2>&1`
+
+  remove_temp_manifest(temp_manifest)
+  output
+end
+
 # 'interface_probe' tests reported capabilities. Why? Speed, duplex, and mtu
 # are somewhat unreliably reported (ie. some values still raise errors when
 # used) so this method tries each value to eliminate the ambiguity.
@@ -1500,7 +1577,7 @@ end
 #     probe_props: %w(Speed Duplex)
 #
 def interface_probe(tests, probe={})
-  agent = tests[:agent]
+  test_agent = tests[:agent]
 
   # Use tests[:probe] if caller does not supply a separate probe hash
   probe = tests[:probe] if probe.empty?
@@ -1513,10 +1590,15 @@ def interface_probe(tests, probe={})
 
   # Create the puppet resource command syntax
   fail 'interface_probe: resource command not found' if probe[:cmd].nil?
-  cmd = probe[:cmd] + " '#{intf}' "
+
+  if !test_agent.nil?
+    cmd = probe[:cmd] + " '#{intf}' "
+  else
+    cmd = "#{AGENTLESS_COMMAND} #{probe[:cmd].match(%r{.*\/puppet (.*)})} #{intf}"
+  end
 
   # Get the interface capabilities
-  probe[:caps] = interface_capabilities(agent, intf) if probe[:caps].nil?
+  probe[:caps] = interface_capabilities(test_agent, intf) if probe[:caps].nil?
   fail 'interface_probe: capabilities data not present' if probe[:caps].nil?
 
   debug_probe(probe, 'Probe Begin')
@@ -1524,9 +1606,17 @@ def interface_probe(tests, probe={})
     success = []
     probe[:caps][prop].to_s.split(',').each do |val|
       val = netdev_speed(val) if prop[/Speed/] && probe[:netdev_speed]
-      on(agent, cmd + "#{prop}=#{val}",
-         acceptable_exit_codes: [0, 2, 1], pty: true)
-      next if stdout[/error/i]
+      if !test_agent.nil?
+        on(test_agent, cmd + "#{prop}=#{val}",
+           acceptable_exit_codes: [0, 2, 1], pty: true)
+        output = stdout
+      else
+        output = create_and_apply_test_manifest(probe[:cmd].match(%r{.*\/puppet resource (.*) })[1], intf, prop, val)
+      end
+      next if output[/error/i]
+      if val.match(/^(\d)+$/)
+        val = val.to_i
+      end
       success << val
     end
     probe[:caps][prop] = success
