@@ -5469,10 +5469,10 @@ Determines whether or not the config should be present on the device. Valid valu
 Key id to be used while communicating to this NTP.  Valid value is an integer.
 
 ##### `maxpoll`
-Maximum interval to poll NTP server.  Valid value is an integer.
+Maximum interval to poll NTP server.  Valid value is an integer, within the range 4-16.
 
 ##### `minpoll`
-Minimum interval to poll NTP server.  Valid value is an integer.
+Minimum interval to poll NTP server.  Valid value is an integer, within the range 4-16.
 
 ##### `name`
 Hostname or IPv4/IPv6 address of the NTP server.  Valid value is a string.
