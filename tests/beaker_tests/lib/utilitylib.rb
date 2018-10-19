@@ -43,7 +43,7 @@ require 'cisco_node_utils'
 # Binary executable path for puppet on master and agent.
 PUPPET_BINPATH = '/opt/puppetlabs/bin/puppet '
 # Executable base command for puppet agentless
-AGENTLESS_COMMAND = 'bundle exec puppet device --verbose --trace --strict=error --modulepath spec/fixtures/modules --deviceconfig spec/fixtures/acceptance-device.conf --target sut --libdir lib/'
+AGENTLESS_COMMAND = 'bundle exec puppet device --verbose --trace --strict=error --modulepath spec/fixtures/modules --deviceconfig spec/fixtures/acceptance-device.conf --target sut --libdir lib/ '
 # Binary executable path for facter on master and agent.
 FACTER_BINPATH = '/opt/puppetlabs/bin/facter '
 # Location of the main Puppet manifest
@@ -700,6 +700,15 @@ def puppet_resource_cmd_from_params(tests, id)
   end
 end
 
+def create_agentless_manifest(tests, resource_name, id, state, manifest)
+  @temp_agentless_manifest = Tempfile.new(TEMP_AGENTLESS_MANIFEST_PREFIX)
+  @temp_agentless_manifest.write("#{dependency_manifest(tests, id)}
+                                 #{resource_name} { '#{tests[id][:title_pattern]}':
+                             #{state}\n#{manifest}
+                           }\n")
+  @temp_agentless_manifest.rewind
+end
+
 # Create manifest and resource command strings for a given test scenario.
 # Returns true if a valid/non-empty manifest was created, false otherwise.
 # Test hash keys used by this method:
@@ -757,7 +766,6 @@ def create_manifest_and_resource(tests, id, harness_class: nil)
   end
 
   tests[id][:manifest] = if tests[:agent]
-
                            "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
                          \nnode default {
                          #{dependency_manifest(tests, id)}
@@ -765,14 +773,8 @@ def create_manifest_and_resource(tests, id, harness_class: nil)
                            #{state}\n#{manifest}
                          }\n}\nEOF"
                          else
-                           @temp_agentless_manifest = Tempfile.new(TEMP_AGENTLESS_MANIFEST_PREFIX)
-                           @temp_agentless_manifest.write("#{dependency_manifest(tests, id)}
-                           #{tests[:resource_name]} { '#{tests[id][:title_pattern]}':
-                             #{state}\n#{manifest}
-                           }\n")
-                           @temp_agentless_manifest.rewind
+                           create_agentless_manifest(tests, tests[:resource_name], id, state, manifest)
                          end
-
   true
 end
 
@@ -1258,7 +1260,7 @@ def platform
     end
   else
     output = `#{AGENTLESS_COMMAND} --facts | grep type`
-    pi = output.match(%r{"type": "(.*)"})[1]
+    pi = output.nil? ? '' : output.match(%r{"type": "(.*)"})[1]
   end
 
   # The following kind of string info is returned for Nexus.
@@ -1295,8 +1297,13 @@ end
 @cached_img = nil
 def image?(reset_cache=false)
   return @cached_img unless @cached_img.nil? || reset_cache
-  on(agent, facter_cmd('-p cisco.images.full_version'))
-  @cached_img = stdout.nil? ? '' : stdout
+  if agent
+    on(agent, facter_cmd('-p cisco.images.full_version'))
+    @cached_img = stdout.nil? ? '' : stdout
+  else
+    output = `#{AGENTLESS_COMMAND} --facts | grep full_version`
+    @cached_img = output.nil? ? '' : output.match(%r{"full_version": "(.*)"})[1]
+  end
 end
 
 @image = nil # Cache the lookup result

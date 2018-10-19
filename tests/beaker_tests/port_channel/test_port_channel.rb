@@ -161,7 +161,12 @@ tests['non_default_properties'] = {
 
 # Full command string for puppet resource command
 def puppet_resource_cmd
-  PUPPET_BINPATH + 'resource port_channel port-channel100'
+  if agent
+    prefix = PUPPET_BINPATH
+  else
+    prefix = "#{AGENTLESS_COMMAND} --"
+  end
+  prefix + 'resource port_channel port-channel100'
 end
 
 def build_manifest_portchannel(tests, id)
@@ -170,7 +175,12 @@ def build_manifest_portchannel(tests, id)
     tests[id][:resource] = {}
   else
     state = 'ensure => present,'
-    manifest = tests[id][:manifest_props]
+    if !agent
+      # Resource PI performs strict validation, convert integer strings to integers
+      manifest = tests[id][:manifest_props].gsub(%r{'(?=\d)|(?<=\d)'}, '')
+    else
+      manifest = tests[id][:manifest_props]
+    end
     tests[id][:resource] = tests[id][:resource_props]
   end
 
@@ -178,20 +188,26 @@ def build_manifest_portchannel(tests, id)
   logger.debug(
     "build_manifest_portchannel :: title_pattern:\n" +
              tests[id][:title_pattern])
-  tests[id][:manifest] = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
-  node 'default' {
-    port_channel { 'port-channel100':
-      #{state}
-      #{manifest}
-    }
-  }
-EOF"
+  tests[id][:manifest] = if agent
+                           "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+                           end
+                             node 'default' {
+                               port_channel { 'port-channel100':
+                                 #{state}
+                                 #{manifest}
+                               }
+                             }
+                           EOF"
+                         else
+                           create_agentless_manifest(tests, 'port_channel', id, state, manifest)
+                         end
 end
 
 def test_harness_portchannel(tests, id)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:resource_cmd] = puppet_resource_cmd
   tests[id][:desc] += " [ensure => #{tests[id][:ensure]}]"
+  logger.info("\n--------\n#{tests[id][:log_desc]}")
 
   # Build the manifest for this test
   build_manifest_portchannel(tests, id)

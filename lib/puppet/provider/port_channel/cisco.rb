@@ -43,7 +43,6 @@ Puppet::Type.type(:port_channel).provide(:cisco, parent: Puppet::Type.type(:cisc
       end
       portchannel = {
         name:          port_channel,
-        interface:     port_channel,
         minimum_links: p.send(:lacp_min_links),
         id:            id_number,
         interfaces:    interfaces_in_port,
