@@ -5550,7 +5550,7 @@ Enable or disable radius functionality.  Valid values are 'true' or 'false'.
 #### Parameters
 
 ##### `name`
-Resource identifier, not used to manage the device.  Valid value is a string.
+Resource identifier, not used to manage the device.  Valid value is a string set to 'default'.
 
 ##### `timeout`
 Number of seconds before the timeout period ends.  Valid value is an integer.
@@ -5562,7 +5562,7 @@ Number of times to retransmit.  Valid value is an integer.
 Encryption key (plaintext or in hash form depending on key_format).  Valid value is a string.
 
 ##### `key_format`
-Encryption key format [0-7].  Valid value is an integer.
+Encryption key format [0-7].  Valid value is an integer. Must have set a `key` value.
 
 --
 ### Type: radius_server

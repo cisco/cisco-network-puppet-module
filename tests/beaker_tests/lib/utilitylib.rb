@@ -1039,16 +1039,24 @@ end
 # opt = :raw, return raw output from puppet resource command
 # opt = :array, return array of test_get property data only
 def test_get(agent, filter, opt=:raw)
-  cmd_prefix = PUPPET_BINPATH + "resource cisco_command_config 'cc' "
-  on(agent, cmd_prefix + "test_get=\"#{filter}\"")
+  if !agent.nil?
+    cmd_prefix = PUPPET_BINPATH + "resource cisco_command_config 'cc' "
+    on(agent, cmd_prefix + "test_get=\"#{filter}\"")
+    command = stdout
+  else
+    env = { host: @nexus_host[:vmhostname], port: 22, username: @nexus_host[:ssh][:user], password: @nexus_host[:ssh][:password], cookie: nil }
+    Cisco::Environment.add_env('remote', env)
+    test_client = Cisco::Client.create('remote')
+    command = test_client.get(data_fomat: :cli, command: filter)
+  end
   case opt
   when :raw
-    return stdout
+    return command
   when :array
     # clean up the output and return as array of commands
     # stdout: " cisco_command_config { 'cc':\n  test_get => '\n foo\n bar\n',\n}"
     # array:  [' foo', ' bar']
-    stdout.split("\n")[2..-3] if stdout
+    command.split("\n")[2..-3] if command
   end
 end
 
