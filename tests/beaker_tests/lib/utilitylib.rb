@@ -396,9 +396,13 @@ def resource_absent_cleanup(agent, res_name, stepinfo='absent clean')
       when /cisco_vrf/
         next if title[/management/]
       end
-      cmd_str = PUPPET_BINPATH + "resource #{res_name} '#{title}' ensure=absent"
       logger.info("  * #{stepinfo} Removing #{res_name} '#{title}'")
-      on(agent, cmd_str, acceptable_exit_codes: [0])
+      if agent
+        cmd_str = PUPPET_BINPATH + "resource #{res_name} '#{title}' ensure=absent"
+        on(agent, cmd_str, acceptable_exit_codes: [0])
+      else
+        create_and_apply_test_manifest(res_name, title, 'ensure', 'absent')
+      end
     end
   end
 end
