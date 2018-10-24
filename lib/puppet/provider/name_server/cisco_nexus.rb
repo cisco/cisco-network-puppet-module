@@ -1,9 +1,9 @@
 require 'puppet/resource_api/simple_provider'
-require 'cisco_node_utils'
 
 # Resource API provider for NameServer
 class Puppet::Provider::NameServer::CiscoNexus < Puppet::ResourceApi::SimpleProvider
   def get(_context)
+    require 'cisco_node_utils'
     nameserver_instances = []
     @name_servers = Cisco::NameServer.nameservers
     @name_servers.each_key do |id|

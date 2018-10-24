@@ -1,8 +1,9 @@
 require 'puppet/resource_api/simple_provider'
 
-# Implementation for the network_trunk type using the Resource API.
+# Implementation for the ntp_auth_key type using the Resource API.
 class Puppet::Provider::NtpAuthKey::CiscoNexus < Puppet::ResourceApi::SimpleProvider
   def get(_context, keys=nil)
+    require 'cisco_node_utils'
     current_states = []
     if keys.nil? || keys.empty?
       @ntpkeys ||= Cisco::NtpAuthKey.ntpkeys

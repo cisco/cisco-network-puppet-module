@@ -1,8 +1,7 @@
-require 'cisco_node_utils'
-
 # Implementation for the network_interface type using the Resource API.
 class Puppet::Provider::NetworkInterface::CiscoNexus
   def get(_context)
+    require 'cisco_node_utils'
     current_state = []
     @interfaces ||= Cisco::Interface.interfaces
     @interfaces.each do |interface_name, interface|

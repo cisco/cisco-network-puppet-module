@@ -14,9 +14,7 @@ module Puppet::ResourceApi
     end
 
     def get(_context)
-      # cause a hard error at runtime if the library is not installed yet
       require 'cisco_node_utils'
-
       @banner ||= Cisco::Banner.new('default')
 
       current_state = {
@@ -29,7 +27,6 @@ module Puppet::ResourceApi
 
     def update(context, name, should)
       validate_name(name)
-      require 'cisco_node_utils'
       context.notice("Updating '#{name}' with #{should.inspect}")
       @banner ||= Cisco::Banner.new('default')
       @banner.motd = should[:motd]

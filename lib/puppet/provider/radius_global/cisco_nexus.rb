@@ -1,10 +1,9 @@
-require 'cisco_node_utils'
-
 module Puppet; end # rubocop:disable Style/Documentation
 module Puppet::ResourceApi
   # Implementation for the radius_global type using the Resource API.
   class Puppet::Provider::RadiusGlobal::CiscoNexus
     def canonicalize(_contaxt, resources)
+      require 'cisco_node_utils'
       resources.each do |resource|
         resource[:key] = resource[:key].gsub(/\A"|"\Z/, '') if resource[:key]
       end
@@ -23,6 +22,7 @@ module Puppet::ResourceApi
     end
 
     def get(_context)
+      require 'cisco_node_utils'
       @radius_global ||= Cisco::RadiusGlobal.new('default')
 
       current_state = {
