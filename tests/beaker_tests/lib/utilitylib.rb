@@ -79,10 +79,10 @@ def create_agentless_device_conf
 
   File.open(credentials_file, 'w') do |file|
     file.puts <<CREDENTIALS
-address: #{@nexus_host.host_hash[:vmhostname]}
-username: #{@nexus_host.host_hash[:ssh][:user] || 'admin'}
-port: #{@nexus_host.host_hash[:ssh][:port] || '22'}
-password: #{@nexus_host.host_hash[:ssh][:password] || 'admin'}
+address: "#{@nexus_host.host_hash[:vmhostname]}"
+username: "#{@nexus_host.host_hash[:ssh][:user] || 'admin'}"
+port: "#{@nexus_host.host_hash[:ssh][:port] || '22'}"
+password: "#{@nexus_host.host_hash[:ssh][:password] || 'admin'}"
 CREDENTIALS
   end
 
