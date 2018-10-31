@@ -5801,6 +5801,8 @@ Privacy password for SNMP user. Valid value is a string.
 Specifies whether the passwords specified in manifest are in localized key
 format (in case of true) or cleartext (in case of false). Valid values are 'true', and 'false'.
 
+*NOTE: Applying a manifest with `localized_key` set to false/not supplied will hash `private_key` and `password` if they are present. It would be advisable to lift the hashed values and update manifest and set `localized_key` to true to ensure that the `private_key` and `password` remain intact.*
+
 --
 ### Type: syslog_server
 
