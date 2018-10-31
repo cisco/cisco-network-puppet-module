@@ -208,15 +208,17 @@ tests[:non_default_bd] = {
   },
 }
 
-# Overridden to properly handle dependencies for this test file.
-def test_harness_dependencies(_tests, id)
-  return unless platform == 'n7k'
-  if id == :default_bd || id == :non_default_bd
-    cmd = 'system bridge-domain all'
-    command_config(agent, cmd, cmd)
-  else
-    cmd = 'system bridge-domain all ; system bridge-domain none'
-    command_config(agent, cmd, cmd)
+# class to contain the test_harness_dependencies
+class TestStpGlobal
+  def self.test_harness_dependencies(_tests, id)
+    return unless platform == 'n7k'
+    if id == :default_bd || id == :non_default_bd
+      cmd = 'system bridge-domain all'
+      command_config(agent, cmd, cmd)
+    else
+      cmd = 'system bridge-domain all ; system bridge-domain none'
+      command_config(agent, cmd, cmd)
+    end
   end
 end
 
@@ -243,15 +245,15 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
-  test_harness_run(tests, :default)
-  test_harness_run(tests, :default_bd)
-  test_harness_run(tests, :default_mst)
+  test_harness_run(tests, :default, harness_class: TestStpGlobal)
+  test_harness_run(tests, :default_bd, harness_class: TestStpGlobal)
+  test_harness_run(tests, :default_mst, harness_class: TestStpGlobal)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
-  test_harness_run(tests, :non_default)
-  test_harness_run(tests, :non_default_bd)
+  test_harness_run(tests, :non_default, harness_class: TestStpGlobal)
+  test_harness_run(tests, :non_default_bd, harness_class: TestStpGlobal)
 
   # -------------------------------------------------------------------
   skipped_tests_summary(tests)

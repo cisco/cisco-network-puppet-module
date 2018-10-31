@@ -800,15 +800,6 @@ def create_package_manifest_resource(tests, id)
   true
 end
 
-# test_harness_dependencies
-#
-# This method is used for additional testbed setup beyond the basics
-# used by most tests.
-# Override this in a particular test file as needed.
-def test_harness_dependencies(tests, id)
-  # default is to do nothing
-end
-
 # dependency_manifest
 #
 # This method returns a string representation of a manifest that contains
@@ -884,7 +875,7 @@ end
 # - Creates manifests
 # - Creates puppet resource title strings
 # - Cleans resource
-def test_harness_run(tests, id, skip_idempotence_check=false)
+def test_harness_run(tests, id, harness_class: nil, skip_idempotence_check: false)
   return unless platform_supports_test(tests, id)
   logger.info("\n  * Process test_harness_run")
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
@@ -900,7 +891,7 @@ def test_harness_run(tests, id, skip_idempotence_check=false)
     tests[id][:preclean]
 
   # Check for additional pre-requisites
-  test_harness_dependencies(tests, id)
+  harness_class.test_harness_dependencies(tests, id) if harness_class
 
   test_harness_common(tests, id, skip_idempotence_check)
   tests[id][:ensure] = nil

@@ -130,10 +130,12 @@ tests[:non_default_udp] = {
   },
 }
 
-# Overridden to properly handle dependencies for this test file.
-def test_harness_dependencies(_tests, _id)
-  cmd = 'feature itd ; itd device-group icmpGroup ; itd device-group dnsGroup ; itd device-group tcpGroup ; itd device-group udpGroup'
-  command_config(agent, cmd, cmd)
+# class to contain the test_harness_dependencies
+class TestItdDeviceGroupNode
+  def self.test_harness_dependencies(_tests, _id)
+    cmd = 'feature itd ; itd device-group icmpGroup ; itd device-group dnsGroup ; itd device-group tcpGroup ; itd device-group udpGroup'
+    command_config(agent, cmd, cmd)
+  end
 end
 
 #################################################################
@@ -150,20 +152,20 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
-  test_harness_run(tests, :default)
+  test_harness_run(tests, :default, harness_class: TestItdDeviceGroupNode)
 
   id = :default
   tests[id][:ensure] = :absent
   tests[id].delete(:preclean)
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestItdDeviceGroupNode)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
-  test_harness_run(tests, :non_default_icmp)
-  test_harness_run(tests, :non_default_dns)
-  test_harness_run(tests, :non_default_tcp)
-  test_harness_run(tests, :non_default_udp)
+  test_harness_run(tests, :non_default_icmp, harness_class: TestItdDeviceGroupNode)
+  test_harness_run(tests, :non_default_dns, harness_class: TestItdDeviceGroupNode)
+  test_harness_run(tests, :non_default_tcp, harness_class: TestItdDeviceGroupNode)
+  test_harness_run(tests, :non_default_udp, harness_class: TestItdDeviceGroupNode)
 
   # -------------------------------------------------------------------
   skipped_tests_summary(tests)

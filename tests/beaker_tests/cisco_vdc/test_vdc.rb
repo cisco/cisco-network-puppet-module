@@ -46,11 +46,14 @@ tests[:non_default] = {
   manifest_props: { limit_resource_module_type: 'f3' },
 }
 
-def test_harness_dependencies(_tests, id)
-  return unless id == :non_default
+# class to contain the test_harness_dependencies
+class TestVdc
+  def self.test_harness_dependencies(_tests, id)
+    return unless id == :non_default
 
-  # Set module-type to default value
-  limit_resource_module_type_set(default_vdc_name, nil)
+    # Set module-type to default value
+    limit_resource_module_type_set(default_vdc_name, nil)
+  end
 end
 
 #################################################################
@@ -61,6 +64,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Non Default Property Testing")
-  test_harness_run(tests, :non_default)
+  test_harness_run(tests, :non_default, harness_class: TestVdc)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

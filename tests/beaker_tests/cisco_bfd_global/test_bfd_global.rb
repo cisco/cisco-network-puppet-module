@@ -149,11 +149,13 @@ def version_unsupported_properties(_tests, _id)
   unprops
 end
 
-# Overridden to properly handle dependencies for this test file.
-def test_harness_dependencies(_tests, id)
-  return unless id[/non_default/]
-  cmd = 'interface loopback 10'
-  command_config(agent, cmd, cmd)
+# class to contain the test_harness_dependencies
+class TestBfdGlobal
+  def self.test_harness_dependencies(_tests, id)
+    return unless id[/non_default/]
+    cmd = 'interface loopback 10'
+    command_config(agent, cmd, cmd)
+  end
 end
 
 def cleanup(agent)
@@ -169,10 +171,10 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  test_harness_run(tests, :default)
+  test_harness_run(tests, :default, harness_class: TestBfdGlobal)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  test_harness_run(tests, :non_default)
+  test_harness_run(tests, :non_default, harness_class: TestBfdGlobal)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

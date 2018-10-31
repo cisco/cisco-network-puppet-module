@@ -61,9 +61,12 @@ tests[:non_default] = {
   code:           [0, 2],
 }
 
-def test_harness_dependencies(_tests, id)
-  return unless id == :default
-  test_set(agent, 'evpn multisite border 150')
+# class to contain the test_harness_dependencies
+class TestInterfaceEvpnMultisite
+  def self.test_harness_dependencies(_tests, id)
+    return unless id == :default
+    test_set(agent, 'evpn multisite border 150')
+  end
 end
 
 def cleanup(agent, intf)
@@ -82,10 +85,10 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   id = :default
   tests[id][:ensure] = :absent
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestInterfaceEvpnMultisite)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  test_harness_run(tests, :non_default)
+  test_harness_run(tests, :non_default, harness_class: TestInterfaceEvpnMultisite)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

@@ -77,15 +77,17 @@ def version_unsupported_properties(_tests, _id)
   unprops
 end
 
-# Overridden to properly handle dependencies for this test file.
-def test_harness_dependencies(*)
-  test_set(agent, 'evpn multisite border 150') if platform[/ex/]
-  return unless platform[/n(5|6)k/]
-  skip_if_nv_overlay_rejected(agent)
+# class to contain the test_harness_dependencies
+class TestVxlanVtep
+  def self.test_harness_dependencies(*)
+    test_set(agent, 'evpn multisite border 150') if platform[/ex/]
+    return unless platform[/n(5|6)k/]
+    skip_if_nv_overlay_rejected(agent)
 
-  # Vxlan has a hard requirement to disable feature fabricpath on n5/6k
-  cmd = 'no feature-set fabricpath'
-  command_config(agent, cmd, cmd)
+    # Vxlan has a hard requirement to disable feature fabricpath on n5/6k
+    cmd = 'no feature-set fabricpath'
+    command_config(agent, cmd, cmd)
+  end
 end
 
 #################################################################
@@ -104,13 +106,13 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -----------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   id = :default
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestVxlanVtep)
 
   tests[id][:ensure] = :absent
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestVxlanVtep)
 
   # -----------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  test_harness_run(tests, :non_default)
+  test_harness_run(tests, :non_default, harness_class: TestVxlanVtep)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
