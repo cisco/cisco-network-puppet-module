@@ -2301,7 +2301,7 @@ Notes about `ensure => present` and `ensure => absent` on physical ethernet inte
 * Physical interfaces will be displayed as `ensure => absent` by the `puppet resource` command when they are in a default state.
 
 ###### `interface`
-Name of the interface on the network element. Valid value is a string.
+Name of the interface on the network element. No white space allowed in the name. Valid value is a string.
 
 #### Properties
 
