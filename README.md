@@ -1320,7 +1320,7 @@ Specify timeout for the first best path after a restart, in seconds. Valid value
 ##### `timer_bestpath_limit_always`
 Enable/Disable update-delay-always option. Valid values are 'true', 'false', and 'default'.
 
-##### `timer_bgp_hold`
+##### `timer_bgp_holdtime`
 Set bgp hold timer. Valid values are Integer, keyword 'default'.
 
 ##### `timer_bgp_keepalive`
