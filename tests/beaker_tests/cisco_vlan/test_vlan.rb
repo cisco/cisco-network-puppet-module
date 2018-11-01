@@ -109,15 +109,18 @@ if platform[/n3k$/]
                    'Hardware is not capable of supporting vn-segment-vlan-based feature')
 end
 
-def unsupported_properties(tests, _id)
-  unprops = []
+# class to contain the test_dependencies specific to this test case
+class TestVlan
+  def self.unsupported_properties(tests, _id)
+    unprops = []
 
-  unprops << :mapped_vni if platform[/n7k/] || tests[:vn_segment_unsupported]
+    unprops << :mapped_vni if platform[/n7k/] || tests[:vn_segment_unsupported]
 
-  unprops << :fabric_control unless platform[/n7k/]
+    unprops << :fabric_control unless platform[/n7k/]
 
-  logger.info("  unprops: #{unprops}") unless unprops.empty?
-  unprops
+    logger.info("  unprops: #{unprops}") unless unprops.empty?
+    unprops
+  end
 end
 
 #################################################################
@@ -132,13 +135,13 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   remove_all_vlans(agent)
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Property Testing")
-  test_harness_run(tests, :default_standard)
-  test_harness_run(tests, :non_default_standard)
+  test_harness_run(tests, :default_standard, harness_class: TestVlan)
+  test_harness_run(tests, :non_default_standard, harness_class: TestVlan)
 
   # Cleanup between standard and extended vlan tests.
   remove_all_vlans(agent)
-  test_harness_run(tests, :default_extended)
-  test_harness_run(tests, :non_default_extended)
+  test_harness_run(tests, :default_extended, harness_class: TestVlan)
+  test_harness_run(tests, :non_default_extended, harness_class: TestVlan)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

@@ -116,45 +116,45 @@ tests[:non_default] = {
   },
 }
 
-def unsupported_properties(_tests, _id)
-  unprops = []
-  if platform[/n(3|9)k/]
-    unprops <<
-      :fabricpath_interval <<
-      :fabricpath_slow_timer <<
-      :fabricpath_vlan
-
-  elsif platform[/n(5|6)k/]
-    unprops <<
-      :echo_rx_interval <<
-      :ipv4_echo_rx_interval <<
-      :ipv4_interval <<
-      :ipv4_slow_timer <<
-      :ipv6_echo_rx_interval <<
-      :ipv6_interval <<
-      :ipv6_slow_timer <<
-      :startup_timer
-
-  elsif platform[/n7k/]
-    unprops <<
-      :startup_timer
-  end
-  unprops
-end
-
-def version_unsupported_properties(_tests, _id)
-  unprops = {}
-  unprops[:interval] = '7.0.3.I6.1' if platform[/n9k$/]
-  unprops[:interval] = '7.0.3.F2.1' if platform[/n9k-f/]
-  unprops
-end
-
-# class to contain the test_harness_dependencies
+# class to contain the test_dependencies specific to this test case
 class TestBfdGlobal
   def self.test_harness_dependencies(_tests, id)
     return unless id[/non_default/]
     cmd = 'interface loopback 10'
     command_config(agent, cmd, cmd)
+  end
+
+  def self.unsupported_properties(_tests, _id)
+    unprops = []
+    if platform[/n(3|9)k/]
+      unprops <<
+        :fabricpath_interval <<
+        :fabricpath_slow_timer <<
+        :fabricpath_vlan
+
+    elsif platform[/n(5|6)k/]
+      unprops <<
+        :echo_rx_interval <<
+        :ipv4_echo_rx_interval <<
+        :ipv4_interval <<
+        :ipv4_slow_timer <<
+        :ipv6_echo_rx_interval <<
+        :ipv6_interval <<
+        :ipv6_slow_timer <<
+        :startup_timer
+
+    elsif platform[/n7k/]
+      unprops <<
+        :startup_timer
+    end
+    unprops
+  end
+
+  def self.version_unsupported_properties(_tests, _id)
+    unprops = {}
+    unprops[:interval] = '7.0.3.I6.1' if platform[/n9k$/]
+    unprops[:interval] = '7.0.3.F2.1' if platform[/n9k-f/]
+    unprops
   end
 end
 

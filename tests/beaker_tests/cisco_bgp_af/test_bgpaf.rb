@@ -235,48 +235,50 @@ def dependency_manifest(tests, id)
   extra_config
 end
 
-# Overridden to properly handle unsupported properties for this test file.
-def unsupported_properties(tests, id)
-  unprops = []
+# class to contain the test_dependencies specific to this test case
+class TestBgpAf
+  def self.unsupported_properties(tests, id)
+    unprops = []
 
-  vrf = vrf(tests[id])
-  if operating_system == 'ios_xr'
-    # IOS-XR does not support these properties
-    unprops <<
-      :additional_paths_install <<
-      :advertise_l2vpn_evpn <<
-      :dampen_igp_metric <<
-      :default_information_originate <<
-      :default_metric <<
-      :inject_map <<
-      :next_hop_route_map <<
-      :suppress_inactive <<
-      :table_map_filter
-
-    if vrf != 'default'
-      # IOS-XR does not support these properties under a non-default vrf
+    vrf = vrf(tests[id])
+    if operating_system == 'ios_xr'
+      # IOS-XR does not support these properties
       unprops <<
-        :client_to_client <<
-        :dampening_state <<
-        :dampening_half_time <<
-        :dampening_max_suppress_time <<
-        :dampening_reuse_time <<
-        :dampening_routemap <<
-        :dampening_suppress_time
-    end
-  else
-    unprops << :advertise_l2vpn_evpn if
-      vrf == 'default' || platform[/n(3|6)k$/]
+        :additional_paths_install <<
+        :advertise_l2vpn_evpn <<
+        :dampen_igp_metric <<
+        :default_information_originate <<
+        :default_metric <<
+        :inject_map <<
+        :next_hop_route_map <<
+        :suppress_inactive <<
+        :table_map_filter
 
-    unprops << :additional_paths_install if platform[/n(3|9)k/]
-    unprops << :additional_paths_selection if platform[/n9k$/] && nexus_image[/I5.3/]
-    unprops << :additional_paths_selection if platform[/n9k/] && nexus_image[/F2.1/]
+      if vrf != 'default'
+        # IOS-XR does not support these properties under a non-default vrf
+        unprops <<
+          :client_to_client <<
+          :dampening_state <<
+          :dampening_half_time <<
+          :dampening_max_suppress_time <<
+          :dampening_reuse_time <<
+          :dampening_routemap <<
+          :dampening_suppress_time
+      end
+    else
+      unprops << :advertise_l2vpn_evpn if
+        vrf == 'default' || platform[/n(3|6)k$/]
+
+      unprops << :additional_paths_install if platform[/n(3|9)k/]
+      unprops << :additional_paths_selection if platform[/n9k$/] && nexus_image[/I5.3/]
+      unprops << :additional_paths_selection if platform[/n9k/] && nexus_image[/F2.1/]
+    end
+    unprops
   end
-  unprops
 end
 
 def test_harness_bgp_af_run(tests, id)
-  test_harness_run(tests, id) # test in default vrf
+  test_harness_run(tests, id, harness_class: TestBgpAf) # test in default vrf
   test_harness_bgp_vrf(tests, id, 'blue') # test in non-default vrf
 end
 
@@ -298,11 +300,11 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -----------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   id = :default
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestBgpAf)
 
   tests[id][:ensure] = :absent
-  test_harness_run(tests, id)
-  test_harness_run(tests, :default_dampening_routemap)
+  test_harness_run(tests, id, harness_class: TestBgpAf)
+  test_harness_run(tests, :default_dampening_routemap, harness_class: TestBgpAf)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
@@ -314,9 +316,9 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
   cleanup(agent)
-  test_harness_run(tests, :title_patterns_1)
-  test_harness_run(tests, :title_patterns_2)
-  test_harness_run(tests, :title_patterns_3)
-  test_harness_run(tests, :l2vpn_evpn) unless nexus_image['I2']
+  test_harness_run(tests, :title_patterns_1, harness_class: TestBgpAf)
+  test_harness_run(tests, :title_patterns_2, harness_class: TestBgpAf)
+  test_harness_run(tests, :title_patterns_3, harness_class: TestBgpAf)
+  test_harness_run(tests, :l2vpn_evpn, harness_class: TestBgpAf) unless nexus_image['I2']
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

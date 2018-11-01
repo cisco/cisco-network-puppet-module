@@ -89,10 +89,13 @@ def cleanup(agent)
   test_set(agent, cmds)
 end
 
-def unsupported_properties(*)
-  unprops = []
-  unprops << :packet_size if image?[/7.0.3.I2|I3/] # CSCuz14217
-  unprops
+# class to contain the test_dependencies specific to this test case
+class TestSnmpServer
+  def self.unsupported_properties(*)
+    unprops = []
+    unprops << :packet_size if image?[/7.0.3.I2|I3/] # CSCuz14217
+    unprops
+  end
 end
 
 #################################################################
@@ -104,10 +107,10 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  test_harness_run(tests, :default)
+  test_harness_run(tests, :default, harness_class: TestSnmpServer)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  test_harness_run(tests, :non_default)
+  test_harness_run(tests, :non_default, harness_class: TestSnmpServer)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

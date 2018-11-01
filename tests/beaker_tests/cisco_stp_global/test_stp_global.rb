@@ -208,7 +208,7 @@ tests[:non_default_bd] = {
   },
 }
 
-# class to contain the test_harness_dependencies
+# class to contain the harness_dependencies specific to these tests
 class TestStpGlobal
   def self.test_harness_dependencies(_tests, id)
     return unless platform == 'n7k'
@@ -220,20 +220,20 @@ class TestStpGlobal
       command_config(agent, cmd, cmd)
     end
   end
-end
 
-def unsupported_properties(_tests, _id)
-  unprops = []
-  unprops << :domain if platform[/n(3|9)k-f/]
-  unprops << :fcoe if platform[/n(3|5|6|7)k/]
-  unprops
-end
+  def self.unsupported_properties(_tests, _id)
+    unprops = []
+    unprops << :domain if platform[/n(3|9)k-f/]
+    unprops << :fcoe if platform[/n(3|5|6|7)k/]
+    unprops
+  end
 
-def version_unsupported_properties(_tests, _id)
-  unprops = {}
-  unprops[:domain] = '7.0.3.I6.1' if platform[/n3k$/]
-  unprops[:domain] = '7.0.3.I6.1' if platform[/n9k$/]
-  unprops
+  def self.version_unsupported_properties(_tests, _id)
+    unprops = {}
+    unprops[:domain] = '7.0.3.I6.1' if platform[/n3k$/]
+    unprops[:domain] = '7.0.3.I6.1' if platform[/n9k$/]
+    unprops
+  end
 end
 
 #################################################################

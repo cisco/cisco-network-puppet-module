@@ -135,40 +135,43 @@ tests[:seq_50_icmp_v4] = {
     vlan:         '100',
   },
 }
-# Overridden to properly handle unsupported properties for this test file.
-def unsupported_properties(tests, id)
-  unprops = []
 
-  if operating_system == 'ios_xr'
-    # unprops << TBD: XR Support
+# class to contain the test_dependencies specific to this test case
+class TestAce
+  def self.unsupported_properties(tests, id)
+    unprops = []
 
-  else
-    if tests[id][:title_pattern][/ipv6/]
-      unprops <<
-        :http_method <<
-        :precedence <<
-        :redirect <<
-        :tcp_option_length
+    if operating_system == 'ios_xr'
+      # unprops << TBD: XR Support
+
+    else
+      if tests[id][:title_pattern][/ipv6/]
+        unprops <<
+          :http_method <<
+          :precedence <<
+          :redirect <<
+          :tcp_option_length
+      end
+      if platform[/n(5|6)k/]
+        unprops <<
+          :proto_option <<
+          :packet_length <<
+          :time_range
+      end
+      if platform[/n(5|6|7)k/]
+        unprops <<
+          :http_method <<
+          :redirect <<
+          :vlan <<
+          :tcp_option_length <<
+          :set_erspan_dscp <<
+          :set_erspan_gre_proto <<
+          :ttl
+      end
     end
-    if platform[/n(5|6)k/]
-      unprops <<
-        :proto_option <<
-        :packet_length <<
-        :time_range
-    end
-    if platform[/n(5|6|7)k/]
-      unprops <<
-        :http_method <<
-        :redirect <<
-        :vlan <<
-        :tcp_option_length <<
-        :set_erspan_dscp <<
-        :set_erspan_gre_proto <<
-        :ttl
-    end
+
+    unprops
   end
-
-  unprops
 end
 
 #################################################################
@@ -181,14 +184,14 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # ---------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. ACE Testing")
 
-  test_harness_run(tests, :seq_5_remark)
-  test_harness_run(tests, :seq_10_v4)
-  test_harness_run(tests, :seq_10_v6)
-  test_harness_run(tests, :seq_20_v4)
-  test_harness_run(tests, :seq_20_v6)
-  test_harness_run(tests, :seq_30_v4)
-  test_harness_run(tests, :seq_40_icmp_v4)
-  test_harness_run(tests, :seq_50_icmp_v4)
+  test_harness_run(tests, :seq_5_remark, harness_class: TestAce)
+  test_harness_run(tests, :seq_10_v4, harness_class: TestAce)
+  test_harness_run(tests, :seq_10_v6, harness_class: TestAce)
+  test_harness_run(tests, :seq_20_v4, harness_class: TestAce)
+  test_harness_run(tests, :seq_20_v6, harness_class: TestAce)
+  test_harness_run(tests, :seq_30_v4, harness_class: TestAce)
+  test_harness_run(tests, :seq_40_icmp_v4, harness_class: TestAce)
+  test_harness_run(tests, :seq_50_icmp_v4, harness_class: TestAce)
 
   # ---------------------------------------------------------
   skipped_tests_summary(tests)

@@ -526,42 +526,45 @@ def unsupp_n9kf
   unprops
 end
 
-def unsupported_properties(_tests, _id)
-  if platform[/n3k$/]
-    unsupp_n3k
-  elsif platform[/n(5|6)k/]
-    unsupp_n56k
-  elsif platform[/n7k/]
-    unsupp_n7k
-  elsif platform[/n9k$|n9k-ex/]
-    unsupp_n9k
-  elsif platform[/n(3|9)k-f/]
-    unsupp_n9kf
+# class to contain the test_dependencies specific to this test case
+class TestRouteMap
+  def self.unsupported_properties(_tests, _id)
+    if platform[/n3k$/]
+      unsupp_n3k
+    elsif platform[/n(5|6)k/]
+      unsupp_n56k
+    elsif platform[/n7k/]
+      unsupp_n7k
+    elsif platform[/n9k$|n9k-ex/]
+      unsupp_n9k
+    elsif platform[/n(3|9)k-f/]
+      unsupp_n9kf
+    end
   end
-end
 
-def version_unsupported_properties(_tests, _id)
-  unprops = {}
-  if platform[/n(3|9)k-f/]
-    unprops[:match_metric] = '7.0.3.F2.1'
-    unprops[:set_extcommunity_4bytes_additive] = '7.0.3.F2.1'
-    unprops[:set_extcommunity_4bytes_non_transitive] = '7.0.3.F2.1'
-    unprops[:set_extcommunity_4bytes_transitive] = '7.0.3.F2.1'
-    unprops[:set_ipv4_next_hop_load_share] = '7.0.3.F2.1'
-    unprops[:set_ipv6_next_hop_load_share] = '7.0.3.F2.1'
-  elsif platform[/n9k/]
-    unprops[:match_ospf_area] = '7.0.3.I5.1'
-    unprops[:set_ipv4_next_hop_load_share] = '7.0.3.I5.1'
-    unprops[:set_ipv6_next_hop_load_share] = '7.0.3.I5.1'
-    unprops[:set_ipv4_next_hop_redist] = '7.0.3.I5.1'
-    unprops[:set_ipv6_next_hop_redist] = '7.0.3.I5.1'
-    unprops[:set_community] = '7.0.3.I5.1'
-  elsif platform[/n3k/]
-    unprops[:match_ospf_area] = '7.0.3.I5.1'
-    unprops[:set_ipv4_next_hop_redist] = '7.0.3.I5.1'
-    unprops[:set_ipv6_next_hop_redist] = '7.0.3.I5.1'
+  def self.version_unsupported_properties(_tests, _id)
+    unprops = {}
+    if platform[/n(3|9)k-f/]
+      unprops[:match_metric] = '7.0.3.F2.1'
+      unprops[:set_extcommunity_4bytes_additive] = '7.0.3.F2.1'
+      unprops[:set_extcommunity_4bytes_non_transitive] = '7.0.3.F2.1'
+      unprops[:set_extcommunity_4bytes_transitive] = '7.0.3.F2.1'
+      unprops[:set_ipv4_next_hop_load_share] = '7.0.3.F2.1'
+      unprops[:set_ipv6_next_hop_load_share] = '7.0.3.F2.1'
+    elsif platform[/n9k/]
+      unprops[:match_ospf_area] = '7.0.3.I5.1'
+      unprops[:set_ipv4_next_hop_load_share] = '7.0.3.I5.1'
+      unprops[:set_ipv6_next_hop_load_share] = '7.0.3.I5.1'
+      unprops[:set_ipv4_next_hop_redist] = '7.0.3.I5.1'
+      unprops[:set_ipv6_next_hop_redist] = '7.0.3.I5.1'
+      unprops[:set_community] = '7.0.3.I5.1'
+    elsif platform[/n3k/]
+      unprops[:match_ospf_area] = '7.0.3.I5.1'
+      unprops[:set_ipv4_next_hop_redist] = '7.0.3.I5.1'
+      unprops[:set_ipv6_next_hop_redist] = '7.0.3.I5.1'
+    end
+    unprops
   end
-  unprops
 end
 
 def cleanup(agent)
@@ -577,21 +580,21 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  test_harness_run(tests, :default)
+  test_harness_run(tests, :default, harness_class: TestRouteMap)
 
   id = :default
   tests[id][:ensure] = :absent
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestRouteMap)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
-  test_harness_run(tests, :non_default_1)
-  test_harness_run(tests, :non_default_2)
-  test_harness_run(tests, :non_default_3)
-  test_harness_run(tests, :non_default_4)
-  test_harness_run(tests, :non_default_5)
-  test_harness_run(tests, :non_default_6)
+  test_harness_run(tests, :non_default_1, harness_class: TestRouteMap)
+  test_harness_run(tests, :non_default_2, harness_class: TestRouteMap)
+  test_harness_run(tests, :non_default_3, harness_class: TestRouteMap)
+  test_harness_run(tests, :non_default_4, harness_class: TestRouteMap)
+  test_harness_run(tests, :non_default_5, harness_class: TestRouteMap)
+  test_harness_run(tests, :non_default_6, harness_class: TestRouteMap)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

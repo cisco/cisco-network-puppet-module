@@ -256,20 +256,26 @@ class TestVxLanVtepVni
     return unless platform[/n(5|6)k/]
     skip_if_nv_overlay_rejected(agent)
   end
-end
 
-def unsupported_properties(_tests, _id)
-  unprops = []
-  if platform[/n(5|6|7)k/]
-    unprops <<
-      :ingress_replication <<
-      :peer_list
-  elsif platform[/n(3k-f|9k)/]
-    unprops <<
-      :suppress_uuc
+  def self.unsupported_properties(_tests, _id)
+    unprops = []
+    if platform[/n(5|6|7)k/]
+      unprops <<
+        :ingress_replication <<
+        :peer_list
+    elsif platform[/n(3k-f|9k)/]
+      unprops <<
+        :suppress_uuc
+    end
+    unprops << :multisite_ingress_replication unless platform[/ex/]
+    unprops
   end
-  unprops << :multisite_ingress_replication unless platform[/ex/]
-  unprops
+
+  def self.version_unsupported_properties(_tests, _id)
+    unprops = {}
+    unprops[:suppress_uuc] = '8.1.1' if platform[/n7k/]
+    unprops
+  end
 end
 
 # Overridden to properly handle dependencies for this test file.
@@ -290,12 +296,6 @@ def dependency_manifest(_tests, _id)
       }
     "
   end
-end
-
-def version_unsupported_properties(_tests, _id)
-  unprops = {}
-  unprops[:suppress_uuc] = '8.1.1' if platform[/n7k/]
-  unprops
 end
 
 #################################################################

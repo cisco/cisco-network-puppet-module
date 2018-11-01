@@ -102,44 +102,47 @@ tests[:title_patterns_3] = {
   resource:      { 'ensure' => 'present' },
 }
 
-def unsupported_properties(_tests, _id)
-  unprops = []
-  if operating_system == 'nexus'
-    unprops <<
-      :route_target_export_stitching <<
-      :route_target_import_stitching
-
-    if platform[/n3k$/]
+# class to contain the test_dependencies specific to this test case
+class TestVrfAf
+  def self.unsupported_properties(_tests, _id)
+    unprops = []
+    if operating_system == 'nexus'
       unprops <<
-        :route_target_both_auto <<
-        :route_target_both_auto_evpn <<
-        :route_target_export_evpn <<
-        :route_target_import_evpn
-    end
+        :route_target_export_stitching <<
+        :route_target_import_stitching
 
-    if platform[/n9k(-ex)?$/]
-      if image?[/I[2-6]/]
+      if platform[/n3k$/]
+        unprops <<
+          :route_target_both_auto <<
+          :route_target_both_auto_evpn <<
+          :route_target_export_evpn <<
+          :route_target_import_evpn
+      end
+
+      if platform[/n9k(-ex)?$/]
+        if image?[/I[2-6]/]
+          unprops <<
+            :route_target_both_auto_mvpn <<
+            :route_target_export_mvpn <<
+            :route_target_import_mvpn
+        end
+      else
         unprops <<
           :route_target_both_auto_mvpn <<
           :route_target_export_mvpn <<
           :route_target_import_mvpn
       end
+
     else
       unprops <<
-        :route_target_both_auto_mvpn <<
-        :route_target_export_mvpn <<
-        :route_target_import_mvpn
+        :route_target_both_auto <<
+        :route_target_both_auto_evpn <<
+        :route_target_export_evpn <<
+        :route_target_import_evpn
+
     end
-
-  else
-    unprops <<
-      :route_target_both_auto <<
-      :route_target_both_auto_evpn <<
-      :route_target_export_evpn <<
-      :route_target_import_evpn
-
+    unprops
   end
-  unprops
 end
 
 # Overridden to properly handle dependencies for this test file.
@@ -178,22 +181,22 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   id = :default
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestVrfAf)
 
   tests[id][:ensure] = :absent
   tests[id].delete(:preclean)
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestVrfAf)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  test_harness_run(tests, :non_default)
+  test_harness_run(tests, :non_default, harness_class: TestVrfAf)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
   remove_all_vrfs(agent)
-  test_harness_run(tests, :title_patterns_1)
-  test_harness_run(tests, :title_patterns_2)
-  test_harness_run(tests, :title_patterns_3)
+  test_harness_run(tests, :title_patterns_1, harness_class: TestVrfAf)
+  test_harness_run(tests, :title_patterns_2, harness_class: TestVrfAf)
+  test_harness_run(tests, :title_patterns_3, harness_class: TestVrfAf)
 
   # -----------------------------------
   skipped_tests_summary(tests)

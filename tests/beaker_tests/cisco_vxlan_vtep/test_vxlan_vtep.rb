@@ -64,19 +64,6 @@ tests[:non_default] = {
   },
 }
 
-def unsupported_properties(*)
-  unprops = []
-  unprops << :source_interface_hold_down_time if platform[/n(5|6)k/]
-  unprops << :multisite_border_gateway_interface unless platform[/ex/]
-  unprops
-end
-
-def version_unsupported_properties(_tests, _id)
-  unprops = {}
-  unprops[:source_interface_hold_down_time] = '8.1.1' if platform[/n7k/]
-  unprops
-end
-
 # class to contain the test_harness_dependencies
 class TestVxlanVtep
   def self.test_harness_dependencies(*)
@@ -87,6 +74,19 @@ class TestVxlanVtep
     # Vxlan has a hard requirement to disable feature fabricpath on n5/6k
     cmd = 'no feature-set fabricpath'
     command_config(agent, cmd, cmd)
+  end
+
+  def self.unsupported_properties(*)
+    unprops = []
+    unprops << :source_interface_hold_down_time if platform[/n(5|6)k/]
+    unprops << :multisite_border_gateway_interface unless platform[/ex/]
+    unprops
+  end
+
+  def self.version_unsupported_properties(_tests, _id)
+    unprops = {}
+    unprops[:source_interface_hold_down_time] = '8.1.1' if platform[/n7k/]
+    unprops
   end
 end
 

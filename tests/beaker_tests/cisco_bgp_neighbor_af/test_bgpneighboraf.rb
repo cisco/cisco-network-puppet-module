@@ -30,26 +30,28 @@ tests = {
   resource_name: 'cisco_bgp_neighbor_af',
 }
 
-# Overridden to properly handle unsupported properties.
-def unsupported_properties(_, _)
-  unsupported_list = []
-  unsupported_list << :rewrite_evpn_rt_asn unless platform[/ex/]
-  return unsupported_list if operating_system == 'nexus'
+# class to contain the test_dependencies specific to this test case
+class TestBgpNeighborAf
+  def self.unsupported_properties(_, _)
+    unsupported_list = []
+    unsupported_list << :rewrite_evpn_rt_asn unless platform[/ex/]
+    return unsupported_list if operating_system == 'nexus'
 
-  [
-    :additional_paths_receive,
-    :additional_paths_send,
-    :default_originate_route_map,
-    :disable_peer_as_check,
-    :filter_list_in,
-    :filter_list_out,
-    :next_hop_third_party,
-    :prefix_list_in,
-    :prefix_list_out,
-    :suppress_inactive,
-    :unsuppress_map,
-    :rewrite_evpn_rt_asn,
-  ]
+    [
+      :additional_paths_receive,
+      :additional_paths_send,
+      :default_originate_route_map,
+      :disable_peer_as_check,
+      :filter_list_in,
+      :filter_list_out,
+      :next_hop_third_party,
+      :prefix_list_in,
+      :prefix_list_out,
+      :suppress_inactive,
+      :unsuppress_map,
+      :rewrite_evpn_rt_asn,
+    ]
+  end
 end
 
 # Overridden to properly handle dependencies for this test file.
@@ -340,10 +342,10 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  test_harness_run(tests, :default)
+  test_harness_run(tests, :default, harness_class: TestBgpNeighborAf)
 
   tests[:default][:ensure] = :absent
-  test_harness_run(tests, :default)
+  test_harness_run(tests, :default, harness_class: TestBgpNeighborAf)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
@@ -367,11 +369,11 @@ test_name "TestCase :: #{tests[:resource_name]}" do
     :non_def_misc_maps_3,
   ].each do |id|
     tests[id][:title_pattern] = title
-    test_harness_run(tests, id)
+    test_harness_run(tests, id, harness_class: TestBgpNeighborAf)
   end
 
-  test_harness_run(tests, :non_def_ebgp_only)
-  test_harness_run(tests, :non_def_ibgp_only)
+  test_harness_run(tests, :non_def_ebgp_only, harness_class: TestBgpNeighborAf)
+  test_harness_run(tests, :non_def_ibgp_only, harness_class: TestBgpNeighborAf)
 
   # -------------------------------------------------------------------
   unless platform[/n3k$/]
@@ -390,19 +392,19 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
     array.each do |id|
       tests[id][:title_pattern] = title
-      test_harness_run(tests, id)
+      test_harness_run(tests, id, harness_class: TestBgpNeighborAf)
     end
 
     id = :non_def_ibgp_only
     tests[id][:title_pattern].gsub!(/ipv4 unicast/, 'l2vpn evpn')
-    test_harness_run(tests, id)
+    test_harness_run(tests, id, harness_class: TestBgpNeighborAf)
   end
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
-  test_harness_run(tests, :title_patterns_1)
-  test_harness_run(tests, :title_patterns_2)
-  test_harness_run(tests, :title_patterns_3)
-  test_harness_run(tests, :title_patterns_4)
+  test_harness_run(tests, :title_patterns_1, harness_class: TestBgpNeighborAf)
+  test_harness_run(tests, :title_patterns_2, harness_class: TestBgpNeighborAf)
+  test_harness_run(tests, :title_patterns_3, harness_class: TestBgpNeighborAf)
+  test_harness_run(tests, :title_patterns_4, harness_class: TestBgpNeighborAf)
 
   # -----------------------------------
   skipped_tests_summary(tests)
