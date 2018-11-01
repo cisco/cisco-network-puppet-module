@@ -35,7 +35,7 @@ RSpec.describe Puppet::Provider::NtpServer::CiscoNexus do
           {
             name:    '1.1.1.1',
             ensure:  'present',
-            key:     '1',
+            key:     1,
             prefer:  false,
             maxpoll: 10,
             minpoll: 5,
@@ -49,7 +49,7 @@ RSpec.describe Puppet::Provider::NtpServer::CiscoNexus do
         allow(Cisco::NtpServer).to receive(:ntpservers).and_return('1.1.1.1' => ntp_server,
                                                                    '2.2.2.2' => ntp_server,
                                                                    '3.3.3.3' => ntp_server)
-        allow(ntp_server).to receive(:key).and_return('1', '2', '3')
+        allow(ntp_server).to receive(:key).and_return('1', '1', '2', '2', '3', '3')
         allow(ntp_server).to receive(:maxpoll).and_return('10', '10', '7', '7', '6', '6')
         allow(ntp_server).to receive(:minpoll).and_return('7', '7', '6', '6', '5', '5')
         allow(ntp_server).to receive(:prefer).and_return(false, false, true)
@@ -58,7 +58,7 @@ RSpec.describe Puppet::Provider::NtpServer::CiscoNexus do
           {
             name:    '1.1.1.1',
             ensure:  'present',
-            key:     '1',
+            key:     1,
             prefer:  false,
             maxpoll: 10,
             minpoll: 7,
@@ -67,7 +67,7 @@ RSpec.describe Puppet::Provider::NtpServer::CiscoNexus do
           {
             name:    '2.2.2.2',
             ensure:  'present',
-            key:     '2',
+            key:     2,
             prefer:  false,
             maxpoll: 7,
             minpoll: 6,
@@ -76,7 +76,7 @@ RSpec.describe Puppet::Provider::NtpServer::CiscoNexus do
           {
             name:    '3.3.3.3',
             ensure:  'present',
-            key:     '3',
+            key:     3,
             prefer:  true,
             maxpoll: 6,
             minpoll: 5,
@@ -100,7 +100,7 @@ RSpec.describe Puppet::Provider::NtpServer::CiscoNexus do
       it 'still processes' do
         allow(Cisco::NtpServer).to receive(:ntpservers).and_return('1.1.1.1' => ntp_server,
                                                                    '2.2.2.2' => ntp_server)
-        allow(ntp_server).to receive(:key).and_return('1').once
+        allow(ntp_server).to receive(:key).and_return('1').twice
         allow(ntp_server).to receive(:maxpoll).and_return('10').twice
         allow(ntp_server).to receive(:minpoll).and_return('5').twice
         allow(ntp_server).to receive(:prefer).and_return(false).once
@@ -109,7 +109,7 @@ RSpec.describe Puppet::Provider::NtpServer::CiscoNexus do
           {
             name:    '1.1.1.1',
             ensure:  'present',
-            key:     '1',
+            key:     1,
             prefer:  false,
             maxpoll: 10,
             minpoll: 5,
@@ -126,7 +126,7 @@ RSpec.describe Puppet::Provider::NtpServer::CiscoNexus do
         {
           name:    '1.1.1.1',
           ensure:  'present',
-          key:     '1',
+          key:     1,
           prefer:  false,
           maxpoll: 10,
           minpoll: 5,
@@ -174,7 +174,7 @@ RSpec.describe Puppet::Provider::NtpServer::CiscoNexus do
         {
           name:    '1.1.1.1',
           ensure:  'present',
-          key:     '1',
+          key:     1,
           prefer:  false,
           maxpoll: 10,
           minpoll: 5,

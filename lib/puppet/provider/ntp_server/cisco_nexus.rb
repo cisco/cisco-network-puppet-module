@@ -4,38 +4,31 @@ require 'puppet/resource_api/simple_provider'
 class Puppet::Provider::NtpServer::CiscoNexus < Puppet::ResourceApi::SimpleProvider
   def get(_context, servers=nil)
     current_states = []
+    @ntpservers ||= Cisco::NtpServer.ntpservers
     if servers.nil? || servers.empty?
-      @ntpservers ||= Cisco::NtpServer.ntpservers
       @ntpservers.each do |server, instance|
-        server_result = {
-          name:    server,
-          ensure:  'present',
-          key:     instance.key,
-          prefer:  instance.prefer,
-          maxpoll: instance.maxpoll ? instance.maxpoll.to_i : instance.maxpoll,
-          minpoll: instance.minpoll ? instance.minpoll.to_i : instance.minpoll,
-          vrf:     instance.vrf,
-        }
-        current_states << server_result
+        current_states << get_current_state(server, instance)
       end
     else
       servers.each do |server|
-        @ntpservers ||= Cisco::NtpServer.ntpservers
         individual_server = @ntpservers[server]
         next if individual_server.nil?
-        server_result = {
-          name:    server,
-          ensure:  'present',
-          key:     individual_server.key,
-          prefer:  individual_server.prefer,
-          maxpoll: individual_server.maxpoll ? individual_server.maxpoll.to_i : individual_server.maxpoll,
-          minpoll: individual_server.minpoll ? individual_server.minpoll.to_i : individual_server.minpoll,
-          vrf:     individual_server.vrf,
-        }
-        current_states << server_result
+        current_states << get_current_state(server, individual_server)
       end
     end
     current_states
+  end
+
+  def get_current_state(name, instance)
+    {
+      name:    name,
+      ensure:  'present',
+      key:     instance.key ? instance.key.to_i : instance.key,
+      prefer:  instance.prefer,
+      maxpoll: instance.maxpoll ? instance.maxpoll.to_i : instance.maxpoll,
+      minpoll: instance.minpoll ? instance.minpoll.to_i : instance.minpoll,
+      vrf:     instance.vrf,
+    }
   end
 
   def delete(context, name)
