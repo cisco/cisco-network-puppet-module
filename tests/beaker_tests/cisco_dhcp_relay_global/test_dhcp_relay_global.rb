@@ -118,38 +118,41 @@ manifest = {
 
 tests[:non_default][:manifest_props].merge!(manifest[:n56k]) if platform[/n(5|6)k/]
 
-def unsupported_properties(_tests, _id)
-  unprops = []
-  if platform[/n3k$/]
-    unprops <<
-      :ipv4_src_addr_hsrp
-  elsif platform[/n(5|6)k/]
-    unprops <<
-      :ipv4_information_option_trust <<
-      :ipv4_information_trust_all <<
-      :ipv4_sub_option_circuit_id_string <<
-      :ipv6_option_cisco
-  elsif platform[/n7k/]
-    unprops <<
-      :ipv4_sub_option_circuit_id_custom <<
-      :ipv4_sub_option_circuit_id_string
-  elsif platform[/n(3|9)k-f/]
-    unprops <<
-      :ipv4_src_addr_hsrp <<
-      :ipv4_sub_option_circuit_id_custom <<
-      :ipv4_sub_option_circuit_id_string
-  elsif platform[/n9k/]
-    unprops <<
-      :ipv4_src_addr_hsrp
+# class to contain the test_dependencies specific to this test case
+class TestDhcpRelayGlobal
+  def self.unsupported_properties(_tests, _id)
+    unprops = []
+    if platform[/n3k$/]
+      unprops <<
+        :ipv4_src_addr_hsrp
+    elsif platform[/n(5|6)k/]
+      unprops <<
+        :ipv4_information_option_trust <<
+        :ipv4_information_trust_all <<
+        :ipv4_sub_option_circuit_id_string <<
+        :ipv6_option_cisco
+    elsif platform[/n7k/]
+      unprops <<
+        :ipv4_sub_option_circuit_id_custom <<
+        :ipv4_sub_option_circuit_id_string
+    elsif platform[/n(3|9)k-f/]
+      unprops <<
+        :ipv4_src_addr_hsrp <<
+        :ipv4_sub_option_circuit_id_custom <<
+        :ipv4_sub_option_circuit_id_string
+    elsif platform[/n9k/]
+      unprops <<
+        :ipv4_src_addr_hsrp
+    end
+    unprops << :ipv4_sub_option_circuit_id_custom if nexus_image['I2']
+    unprops
   end
-  unprops << :ipv4_sub_option_circuit_id_custom if nexus_image['I2']
-  unprops
-end
 
-def version_unsupported_properties(_tests, _id)
-  unprops = {}
-  unprops[:ipv4_sub_option_circuit_id_string] = '7.0.3.I6.1' if platform[/n9k$/]
-  unprops
+  def self.version_unsupported_properties(_tests, _id)
+    unprops = {}
+    unprops[:ipv4_sub_option_circuit_id_string] = '7.0.3.I6.1' if platform[/n9k$/]
+    unprops
+  end
 end
 
 def cleanup(agent)
@@ -165,13 +168,13 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  test_harness_run(tests, :default)
+  test_harness_run(tests, :default, harness_class: TestDhcpRelayGlobal)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
   cleanup(agent)
-  test_harness_run(tests, :non_default)
+  test_harness_run(tests, :non_default, harness_class: TestDhcpRelayGlobal)
 
   # -------------------------------------------------------------------
   skipped_tests_summary(tests)

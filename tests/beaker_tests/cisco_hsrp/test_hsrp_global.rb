@@ -59,10 +59,13 @@ tests[:non_default] = {
   },
 }
 
-def unsupported_properties(_tests, _id)
-  unprops = []
-  unprops << :bfd_all_intf if platform[/n3k$/]
-  unprops
+# class to contain the test_dependencies specific to this test case
+class TestHsrpGlobal
+  def self.unsupported_properties(_tests, _id)
+    unprops = []
+    unprops << :bfd_all_intf if platform[/n3k$/]
+    unprops
+  end
 end
 
 def cleanup(agent)
@@ -78,13 +81,13 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  test_harness_run(tests, :default)
+  test_harness_run(tests, :default, harness_class: TestHsrpGlobal)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
   cleanup(agent)
-  test_harness_run(tests, :non_default)
+  test_harness_run(tests, :non_default, harness_class: TestHsrpGlobal)
   # -------------------------------------------------------------------
 end
 

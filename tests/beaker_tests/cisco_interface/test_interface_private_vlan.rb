@@ -160,17 +160,19 @@ tests[:svi_mapping] = {
   },
 }
 
-# This method overrides utilitylib.rb:unsupported_properties()
-def unsupported_properties(_tests, _id)
-  unprops = []
-  if platform[/n3k$/]
-    unprops <<
-      :switchport_pvlan_mapping_trunk <<
-      :switchport_pvlan_trunk_association <<
-      :switchport_pvlan_trunk_promiscuous <<
-      :switchport_pvlan_trunk_secondary
+# class to contain the test_dependencies specific to this test case
+class TestInterfacePrivateVlan
+  def self.unsupported_properties(_tests, _id)
+    unprops = []
+    if platform[/n3k$/]
+      unprops <<
+        :switchport_pvlan_mapping_trunk <<
+        :switchport_pvlan_trunk_association <<
+        :switchport_pvlan_trunk_promiscuous <<
+        :switchport_pvlan_trunk_secondary
+    end
+    unprops
   end
-  unprops
 end
 
 def vtp_cleanup(agent)
@@ -208,22 +210,22 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Defaults")
-  test_harness_run(tests, :default)
+  test_harness_run(tests, :default, harness_class: TestInterfacePrivateVlan)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Port Mode")
-  test_harness_run(tests, :host)
-  test_harness_run(tests, :promiscuous)
+  test_harness_run(tests, :host, harness_class: TestInterfacePrivateVlan)
+  test_harness_run(tests, :promiscuous, harness_class: TestInterfacePrivateVlan)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Trunk Mode")
-  test_harness_run(tests, :trunk_secondary)
+  test_harness_run(tests, :trunk_secondary, harness_class: TestInterfacePrivateVlan)
   pvlan_assoc_cleanup(agent, intf)
-  test_harness_run(tests, :trunk_promiscuous)
+  test_harness_run(tests, :trunk_promiscuous, harness_class: TestInterfacePrivateVlan)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 4. SVI Mapping")
-  test_harness_run(tests, :svi_mapping)
+  test_harness_run(tests, :svi_mapping, harness_class: TestInterfacePrivateVlan)
 
   # -------------------------------------------------------------------
   skipped_tests_summary(tests)

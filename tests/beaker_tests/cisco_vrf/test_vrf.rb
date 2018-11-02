@@ -64,27 +64,30 @@ tests[:non_default] = {
   },
 }
 
-def unsupported_properties(_tests, _id)
-  unprops = []
-  if operating_system == 'nexus'
-    unprops <<
-      :mhost_ipv4_default_interface <<
-      :mhost_ipv6_default_interface <<
-      :remote_route_filtering <<
-      :vpn_id
+# class to contain the test_dependencies specific to this test case
+class TestVrf
+  def self.unsupported_properties(_tests, _id)
+    unprops = []
+    if operating_system == 'nexus'
+      unprops <<
+        :mhost_ipv4_default_interface <<
+        :mhost_ipv6_default_interface <<
+        :remote_route_filtering <<
+        :vpn_id
 
-    unprops << :vni unless platform[/n9k/]
-    unprops << :route_distinguisher if nexus_image['I2']
-    unprops << :description if image?[/7.3.0.D1.1|7.3.0.N1.1/] # CSCuy36637
+      unprops << :vni unless platform[/n9k/]
+      unprops << :route_distinguisher if nexus_image['I2']
+      unprops << :description if image?[/7.3.0.D1.1|7.3.0.N1.1/] # CSCuy36637
 
-  else
-    unprops <<
-      :route_distinguisher <<
-      :shutdown <<
-      :vni
+    else
+      unprops <<
+        :route_distinguisher <<
+        :shutdown <<
+        :vni
+    end
+    logger.info("  unprops: #{unprops}") unless unprops.empty?
+    unprops
   end
-  logger.info("  unprops: #{unprops}") unless unprops.empty?
-  unprops
 end
 
 # Overridden to properly handle dependencies for this test file.
@@ -109,14 +112,14 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   id = :default
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestVrf)
 
   tests[id][:ensure] = :absent
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestVrf)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   test_harness_run(tests, :non_default)
-  skipped_tests_summary(tests)
+  skipped_tests_summary(tests, harness_class: TestVrf)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

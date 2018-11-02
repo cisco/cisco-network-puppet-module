@@ -242,7 +242,7 @@ end
 # Reserved keys
 # tests[id][:log_desc] - the final form of the log description
 #
-def test_harness_common(tests, id, skip_idempotence_check=false)
+def test_harness_common(tests, id, harness_class: nil, skip_idempotence_check: false)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
   tests[id][:state] = false if tests[id][:state].nil?
   tests[id][:desc] = '' if tests[id][:desc].nil?
@@ -250,7 +250,7 @@ def test_harness_common(tests, id, skip_idempotence_check=false)
   logger.info("\n--------\n#{tests[id][:log_desc]}")
 
   test_manifest(tests, id)
-  test_resource(tests, id)
+  test_resource(tests, id, harness_class: harness_class)
   test_idempotence(tests, id) unless skip_idempotence_check
   remove_temp_manifest
   tests[id].delete(:log_desc)
@@ -311,21 +311,21 @@ def test_manifest(tests, id)
 end
 
 # Wrapper for 'puppet resource' command tests
-def test_resource(tests, id, state=false)
+def test_resource(tests, id, harness_class: nil, state: false)
   stepinfo = format_stepinfo(tests, id, 'RESOURCE')
   step "TestStep :: #{stepinfo}" do
     logger.debug("test_resource :: cmd:\n#{tests[id][:resource_cmd]}")
     if tests[:agent]
       on(tests[:agent], tests[id][:resource_cmd]) do
         search_pattern_in_output(
-          stdout, supported_property_hash(tests, id, tests[id][:resource]),
+          stdout, supported_property_hash(tests, id, tests[id][:resource], harness_class: harness_class),
           state, self, logger
         )
       end
     else
       output = `#{tests[id][:resource_cmd]}`
       search_pattern_in_output(
-        output, supported_property_hash(tests, id, tests[id][:resource]),
+        output, supported_property_hash(tests, id, tests[id][:resource], harness_class: harness_class),
         state, self, logger
       )
     end
@@ -715,7 +715,7 @@ end
 #   parameter keys in the manifest. When these are used the puppet resource
 #   command string becomes a combination of the title pattern and these params.
 #
-def create_manifest_and_resource(tests, id)
+def create_manifest_and_resource(tests, id, harness_class: nil)
   fail 'tests[:resource_name] is not defined' unless tests[:resource_name]
 
   tests[id][:title_pattern] = id if tests[id][:title_pattern].nil?
@@ -740,7 +740,7 @@ def create_manifest_and_resource(tests, id)
 
     manifest_props = tests[id][:manifest_props]
     if manifest_props
-      manifest_props = supported_property_hash(tests, id, manifest_props)
+      manifest_props = supported_property_hash(tests, id, manifest_props, harness_class: harness_class)
 
       # we shouldn't continue if all properties were removed
       return false if
@@ -800,15 +800,6 @@ def create_package_manifest_resource(tests, id)
   true
 end
 
-# test_harness_dependencies
-#
-# This method is used for additional testbed setup beyond the basics
-# used by most tests.
-# Override this in a particular test file as needed.
-def test_harness_dependencies(tests, id)
-  # default is to do nothing
-end
-
 # dependency_manifest
 #
 # This method returns a string representation of a manifest that contains
@@ -818,45 +809,21 @@ def dependency_manifest(_tests, _id)
   nil # indicates no manifest dependencies
 end
 
-# unsupported_properties
-#
-# Returns an array of properties that are not supported for
-# a particular operating_system or platform.
-# Override this in a particular test file as needed.
-def unsupported_properties(_tests, _id)
-  [] # defaults to no unsupported properties
-end
-
-# version_unsupported_properties
-#
-# Returns an array of properties that are not supported for
-# a particular operating_system or platform for a particular
-# software version.
-# Override this in a particular test file as needed.
-# Ex: If property 'ipv4_sub_option_circuit_id_string' is
-# supported on n9k only on version '7.0.3.I6.1' or higher
-# then add this line in the overridden method.
-# unprops[:ipv4_sub_option_circuit_id_string] = '7.0.3.I6.1' if
-#   platform[/n9k$/]
-def version_unsupported_properties(_tests, _id)
-  {} # defaults to no version_unsupported properties
-end
-
 # supported_property_hash
 #
 # This method creates a clone of the specified property
 # hash containing only the key/values of properties
 # that are supported for the specified test (based on
 # operating_system, platform, etc.).
-def supported_property_hash(tests, id, property_hash)
+def supported_property_hash(tests, id, property_hash, harness_class: nil)
   return nil if property_hash.nil?
   copy = property_hash.clone
-  unsupported_properties(tests, id).each do |prop_symbol|
+  harness_class.unsupported_properties(tests, id).each do |prop_symbol|
     copy.delete(prop_symbol)
     # because :resource hash currently uses strings for keys
     copy.delete(prop_symbol.to_s)
-  end
-  return copy if version_unsupported_properties(tests, id).empty?
+  end if harness_class && harness_class.respond_to?(:unsupported_properties)
+  return copy unless harness_class && harness_class.respond_to?(:version_unsupported_properties)
   lim = full_version.split[0].tr('(', '.').tr(')', '.').chomp('.')
   # due to a bug in Gem::Version, we need to append a letter
   # to the version field if the to be compared version
@@ -867,14 +834,14 @@ def supported_property_hash(tests, id, property_hash)
   # 7.0.3.I2.2e < 7.0.3.I2.2a is FALSE
   append_a = false
   append_a = true if lim[-1, 1] =~ /[[:alpha:]]/
-  version_unsupported_properties(tests, id).each do |key, val|
+  harness_class.version_unsupported_properties(tests, id).each do |key, val|
     val << 'a' if append_a
     append_a = false
     next unless Gem::Version.new(lim) < Gem::Version.new(val)
     copy.delete(key)
     # because :resource hash currently uses strings for keys
     copy.delete(key.to_s)
-  end
+  end if harness_class.respond_to?(:version_unsupported_properties)
   copy
 end
 
@@ -884,13 +851,13 @@ end
 # - Creates manifests
 # - Creates puppet resource title strings
 # - Cleans resource
-def test_harness_run(tests, id, skip_idempotence_check=false)
+def test_harness_run(tests, id, harness_class: nil, skip_idempotence_check: false)
   return unless platform_supports_test(tests, id)
   logger.info("\n  * Process test_harness_run")
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
 
   # Build the manifest for this test
-  unless create_manifest_and_resource(tests, id)
+  unless create_manifest_and_resource(tests, id, harness_class: harness_class)
     logger.error("\n#{tests[id][:desc]} :: #{id} :: SKIP")
     logger.error('No supported properties remain for this test.')
     return
@@ -900,9 +867,9 @@ def test_harness_run(tests, id, skip_idempotence_check=false)
     tests[id][:preclean]
 
   # Check for additional pre-requisites
-  test_harness_dependencies(tests, id)
+  harness_class.test_harness_dependencies(tests, id) if harness_class && harness_class.respond_to?(:test_harness_dependencies)
 
-  test_harness_common(tests, id, skip_idempotence_check)
+  test_harness_common(tests, id, harness_class: harness_class, skip_idempotence_check: skip_idempotence_check)
   tests[id][:ensure] = nil
 end
 

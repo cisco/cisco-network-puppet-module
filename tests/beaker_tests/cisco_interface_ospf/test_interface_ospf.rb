@@ -106,12 +106,15 @@ tests[:non_default] = {
   },
 }
 
-def test_harness_dependencies(tests, id)
-  return unless id == :default
-  test_set(agent, 'feature ospf ; router ospf Sample')
-  # System-level switchport dependencies
-  config_system_default_switchport?(tests, id)
-  config_system_default_switchport_shutdown?(tests, id)
+# class to contain the test_harness_dependencies
+class TestInterfaceOspf
+  def self.test_harness_dependencies(tests, id)
+    return unless id == :default
+    test_set(agent, 'feature ospf ; router ospf Sample')
+    # System-level switchport dependencies
+    config_system_default_switchport?(tests, id)
+    config_system_default_switchport_shutdown?(tests, id)
+  end
 end
 
 def cleanup(agent, intf)
@@ -128,14 +131,14 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  test_harness_run(tests, :default)
+  test_harness_run(tests, :default, harness_class: TestInterfaceOspf)
 
   id = :default
   tests[id][:ensure] = :absent
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestInterfaceOspf)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  test_harness_run(tests, :non_default)
+  test_harness_run(tests, :non_default, harness_class: TestInterfaceOspf)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

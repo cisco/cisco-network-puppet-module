@@ -159,39 +159,42 @@ tests[:ip_forwarding] = {
   manifest_props:     { ipv4_forwarding: true },
 }
 
-def unsupported_properties(_tests, id)
-  unprops = []
+# class to contain the test_dependencies specific to this test case
+class TestInterfaceL3
+  def self.unsupported_properties(_tests, id)
+    unprops = []
 
-  if operating_system == 'ios_xr'
-    unprops <<
-      :bfd_echo <<
-      :duplex <<
-      :ipv4_forwarding <<
-      :ipv4_pim_sparse_mode <<
-      :ipv4_dhcp_relay_addr <<
-      :ipv4_dhcp_relay_info_trust <<
-      :ipv4_dhcp_relay_src_addr_hsrp <<
-      :ipv4_dhcp_relay_src_intf <<
-      :ipv4_dhcp_relay_subnet_broadcast <<
-      :ipv4_dhcp_smart_relay <<
-      :ipv6_dhcp_relay_addr <<
-      :ipv6_dhcp_relay_src_intf <<
-      :pim_bfd <<
-      :switchport_mode
+    if operating_system == 'ios_xr'
+      unprops <<
+        :bfd_echo <<
+        :duplex <<
+        :ipv4_forwarding <<
+        :ipv4_pim_sparse_mode <<
+        :ipv4_dhcp_relay_addr <<
+        :ipv4_dhcp_relay_info_trust <<
+        :ipv4_dhcp_relay_src_addr_hsrp <<
+        :ipv4_dhcp_relay_src_intf <<
+        :ipv4_dhcp_relay_subnet_broadcast <<
+        :ipv4_dhcp_smart_relay <<
+        :ipv6_dhcp_relay_addr <<
+        :ipv6_dhcp_relay_src_intf <<
+        :pim_bfd <<
+        :switchport_mode
+    end
+
+    if platform[/n(3|9)k/]
+      unprops <<
+        :ipv4_dhcp_relay_src_addr_hsrp
+    elsif platform[/n(5|6)k/]
+      unprops <<
+        :ipv4_dhcp_relay_info_trust
+    end
+
+    # TBD: shutdown has unpredictable behavior. Needs investigation.
+    unprops << :shutdown if id == :default
+
+    unprops
   end
-
-  if platform[/n(3|9)k/]
-    unprops <<
-      :ipv4_dhcp_relay_src_addr_hsrp
-  elsif platform[/n(5|6)k/]
-    unprops <<
-      :ipv4_dhcp_relay_info_trust
-  end
-
-  # TBD: shutdown has unpredictable behavior. Needs investigation.
-  unprops << :shutdown if id == :default
-
-  unprops
 end
 
 # Overridden to properly handle dependencies for this test file.
@@ -221,16 +224,16 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  test_harness_run(tests, :default)
+  test_harness_run(tests, :default, harness_class: TestInterfaceL3)
 
   interface_cleanup(agent, dot1q)
-  test_harness_run(tests, :dot1q)
+  test_harness_run(tests, :dot1q, harness_class: TestInterfaceL3)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  test_harness_run(tests, :non_default)
-  test_harness_run(tests, :acl)
-  test_harness_run(tests, :ip_forwarding)
+  test_harness_run(tests, :non_default, harness_class: TestInterfaceL3)
+  test_harness_run(tests, :acl, harness_class: TestInterfaceL3)
+  test_harness_run(tests, :ip_forwarding, harness_class: TestInterfaceL3)
 
   # -------------------------------------------------------------------
   skipped_tests_summary(tests)

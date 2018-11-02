@@ -17,29 +17,30 @@
 ###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
-# This method overrides the method in utilitylib.rb to set up dependencies
-# for interface tests.
-def test_harness_dependencies(tests, id)
-  logger.info('  * Process test_harness_dependencies (interfacelib)')
+# class to contain the test_harness_dependencies
+class Interfacelib
+  def self.test_harness_dependencies(tests, id)
+    logger.info('  * Process test_harness_dependencies (interfacelib)')
 
-  # System-level switchport dependencies
-  if operating_system == 'nexus'
-    config_system_default_switchport?(tests, id)
-    config_system_default_switchport_shutdown?(tests, id)
-  end
+    # System-level switchport dependencies
+    if operating_system == 'nexus'
+      config_system_default_switchport?(tests, id)
+      config_system_default_switchport_shutdown?(tests, id)
+    end
 
-  # Misc dependencies
-  config_acl?(tests, id)
-  config_anycast_gateway_mac?(tests, id)
-  config_bridge_domain?(tests, id)
+    # Misc dependencies
+    config_acl?(tests, id)
+    config_anycast_gateway_mac?(tests, id)
+    config_bridge_domain?(tests, id)
 
-  # Various Cleanups
-  return unless tests[id][:preclean_intf]
-  intf = tests[id][:title_pattern]
-  if intf[/ethernet/i]
-    interface_cleanup(agent, intf)
-  else
-    remove_interface(agent, intf)
+    # Various Cleanups
+    return unless tests[id][:preclean_intf]
+    intf = tests[id][:title_pattern]
+    if intf[/ethernet/i]
+      interface_cleanup(agent, intf)
+    else
+      remove_interface(agent, intf)
+    end
   end
 end
 

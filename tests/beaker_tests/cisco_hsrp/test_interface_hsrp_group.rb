@@ -184,17 +184,19 @@ def cleanup(agent)
   test_set(agent, cmd)
 end
 
-# Overridden to properly handle dependencies for this test file.
-def test_harness_dependencies(_tests, _id)
-  cleanup(agent)
+# class to contain the test_harness_dependencies
+class TestInterfaceHsrpGroup
+  def self.test_harness_dependencies(_tests, _id)
+    cleanup(agent)
 
-  cmd = [
-    'feature hsrp',
-    'interface port-channel100 ; no switchport ; hsrp version 2',
-    'interface port-channel200 ; no switchport ; hsrp version 2',
-    'interface port-channel200 ; ipv6 address 2000::01/64',
-  ].join(' ; ')
-  test_set(agent, cmd)
+    cmd = [
+      'feature hsrp',
+      'interface port-channel100 ; no switchport ; hsrp version 2',
+      'interface port-channel200 ; no switchport ; hsrp version 2',
+      'interface port-channel200 ; ipv6 address 2000::01/64',
+    ].join(' ; ')
+    test_set(agent, cmd)
+  end
 end
 
 #################################################################
@@ -207,24 +209,24 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
-  test_harness_run(tests, :default_v4)
-  test_harness_run(tests, :default_v6)
+  test_harness_run(tests, :default_v4, harness_class: TestInterfaceHsrpGroup)
+  test_harness_run(tests, :default_v6, harness_class: TestInterfaceHsrpGroup)
 
   id = :default_v4
   tests[id][:desc] = '1.3 IPv4 Defaults (absent)'
   tests[id][:ensure] = :absent
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestInterfaceHsrpGroup)
 
   id = :default_v6
   tests[id][:desc] = '1.4 IPv6 Defaults (absent)'
   tests[id][:ensure] = :absent
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestInterfaceHsrpGroup)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
-  test_harness_run(tests, :non_default_v4)
-  test_harness_run(tests, :non_default_v6)
+  test_harness_run(tests, :non_default_v4, harness_class: TestInterfaceHsrpGroup)
+  test_harness_run(tests, :non_default_v6, harness_class: TestInterfaceHsrpGroup)
 
   # -------------------------------------------------------------------
   skipped_tests_summary(tests)
