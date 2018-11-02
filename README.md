@@ -5426,16 +5426,16 @@ Authentication password.  Valid value is a string with a maximum length of 15.
 #### Parameters
 
 ##### `authenticate`
-Enable authentication.  Valid values are 'true', 'false' and 'default'.
+Enable authentication.  Valid values are 'true', 'false'.
 
 ##### `name`
-Resource name, not used to configure the device.  Valid value is a string.
+Resource name, not used to configure the device.  Valid value is a string set to 'default'.
 
 ##### `source_interface`
 Source interface for the NTP server.  Valid value is a string.
 
 ##### `trusted_key`
-Trusted key for the NTP server.  Valid value is integer.
+Trusted key for the NTP server.  Valid value is an array of integers or strings.
 
 --
 ### Type: ntp_server
