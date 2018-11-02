@@ -27,9 +27,7 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 tests = {
   agent:            agent,
   master:           master,
-  ensurable:        false,
   intf_type:        'ethernet',
-  operating_system: 'nexus',
   resource_name:    'network_trunk',
 }
 
@@ -37,7 +35,7 @@ tests = {
 intf = find_interface(tests)
 
 # Test hash test cases
-tagged_manifest = [2, 3, 4, 6, 7, 8]
+tagged_manifest = ['2', '3', '4', '6', '7', '8']
 tagged_resource = %w(2 3 4 6 7 8)
 tests[:non_default] = {
   desc:           '2. Non Default',
