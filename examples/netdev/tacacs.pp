@@ -1,0 +1,3 @@
+tacacs {'default':
+  enable => true,
+}
