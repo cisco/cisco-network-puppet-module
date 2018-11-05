@@ -26,7 +26,7 @@ class Puppet::Provider::NetworkTrunk::CiscoNexus < Puppet::ResourceApi::SimplePr
 
   def get_interface(name, interface, current_states)
     return if interface.nil?
-    return unless interface.send(:switchport_mode) == :trunk 
+    return unless interface.send(:switchport_mode) == :trunk
     array_vlans = convert_allowed_vlan_to_array(interface.send(:switchport_trunk_allowed_vlan))
     current_states << {
       name:          name,
