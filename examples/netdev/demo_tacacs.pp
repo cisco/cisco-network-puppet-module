@@ -20,7 +20,6 @@ class ciscopuppet::netdev::demo_tacacs {
   }
 
   tacacs_global { 'default':
-    enable     => true,
     key        => '44444444',
     key_format => '7',
     timeout    => '2',
