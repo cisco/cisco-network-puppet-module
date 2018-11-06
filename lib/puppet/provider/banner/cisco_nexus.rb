@@ -2,6 +2,10 @@ module Puppet; end # rubocop:disable Style/Documentation
 module Puppet::ResourceApi
   # Implementation for the banner type using the Resource API.
   class Puppet::Provider::Banner::CiscoNexus
+    def canonicalize(_context, resources)
+      resources
+    end
+
     def set(context, changes)
       changes.each do |name, change|
         is = change[:is]
@@ -13,7 +17,7 @@ module Puppet::ResourceApi
       end
     end
 
-    def get(_context)
+    def get(_context, _names=nil)
       require 'cisco_node_utils'
       @banner ||= Cisco::Banner.new('default')
 

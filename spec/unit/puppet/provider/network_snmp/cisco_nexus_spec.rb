@@ -111,4 +111,6 @@ RSpec.describe Puppet::Provider::NetworkSnmp::CiscoNexus do
       expect { provider.delete(context, 'foo') }.to raise_error Puppet::ResourceError, %r{delete .* 'foo'}
     end
   end
+
+  it_behaves_like 'a noop canonicalizer'
 end

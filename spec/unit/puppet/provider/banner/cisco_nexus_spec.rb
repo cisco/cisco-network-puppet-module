@@ -92,4 +92,6 @@ RSpec.describe Puppet::Provider::Banner::CiscoNexus do
       it { expect { provider.validate_name('not `default`') }.to raise_error Puppet::ResourceError, %r{`name` must be `default`} }
     end
   end
+
+  it_behaves_like 'a noop canonicalizer'
 end

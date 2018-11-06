@@ -45,4 +45,6 @@ RSpec.describe Puppet::Provider::Radius::CiscoNexus do
       provider.delete(context, 'default')
     end
   end
+
+  it_behaves_like 'a noop canonicalizer'
 end

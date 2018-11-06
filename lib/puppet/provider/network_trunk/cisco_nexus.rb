@@ -3,6 +3,8 @@ require 'puppet/resource_api/simple_provider'
 # Implementation for the network_trunk type using the Resource API.
 class Puppet::Provider::NetworkTrunk::CiscoNexus < Puppet::ResourceApi::SimpleProvider
   def canonicalize(_context, resources)
+    require 'cisco_node_utils'
+
     resources.each do |resource|
       resource[:tagged_vlans] = resource[:tagged_vlans].sort_by(&:to_i) if resource[:tagged_vlans]
     end
@@ -10,6 +12,8 @@ class Puppet::Provider::NetworkTrunk::CiscoNexus < Puppet::ResourceApi::SimplePr
   end
 
   def get(_context, interface_names=nil)
+    require 'cisco_node_utils'
+
     current_states = []
     @interfaces ||= Cisco::Interface.interfaces
     if interface_names.nil? || interface_names.empty?

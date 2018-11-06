@@ -21,7 +21,7 @@ module Puppet::ResourceApi
       end
     end
 
-    def get(_context)
+    def get(_context, _names=nil)
       require 'cisco_node_utils'
       @radius_global ||= Cisco::RadiusGlobal.new('default')
 

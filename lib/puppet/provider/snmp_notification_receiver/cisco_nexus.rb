@@ -2,6 +2,10 @@ require 'puppet/resource_api/simple_provider'
 
 # Implementation for the snmp_notification_receiver type using the Resource API.
 class Puppet::Provider::SnmpNotificationReceiver::CiscoNexus < Puppet::ResourceApi::SimpleProvider
+  def canonicalize(_context, resources)
+    resources
+  end
+
   def get(_context, receivers=nil)
     require 'cisco_node_utils'
     current_states = []

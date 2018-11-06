@@ -1,20 +1,37 @@
 # Implementation for the network_interface type using the Resource API.
 class Puppet::Provider::NetworkInterface::CiscoNexus
-  def get(_context)
+  def canonicalize(_context, resources)
+    resources
+  end
+
+  def get(_context, interfaces=nil)
     require 'cisco_node_utils'
     current_state = []
     @interfaces ||= Cisco::Interface.interfaces
-    @interfaces.each do |interface_name, interface|
-      current_state << {
-        name:        interface_name,
-        description: interface.description,
-        mtu:         interface.mtu,
-        speed:       convert_speed_to_type(interface.speed),
-        duplex:      interface.duplex,
-        enable:      !interface.shutdown,
-      }
+
+    if interfaces.nil? || interfaces.empty?
+      @interfaces.each do |interface_name, interface|
+        current_state << get_current_state(interface_name, interface)
+      end
+    else
+      interfaces.each do |interface|
+        individual_interface = @interfaces[interface]
+        next if individual_interface.nil?
+        current_state << get_current_state(interface, individual_interface)
+      end
     end
     current_state
+  end
+
+  def get_current_state(name, interface)
+    {
+      name:        name,
+      description: interface.description,
+      mtu:         interface.mtu,
+      speed:       convert_speed_to_type(interface.speed),
+      duplex:      interface.duplex,
+      enable:      !interface.shutdown,
+    }
   end
 
   def set(context, changes)

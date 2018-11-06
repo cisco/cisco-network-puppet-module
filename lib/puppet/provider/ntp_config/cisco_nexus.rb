@@ -1,10 +1,10 @@
-require 'cisco_node_utils'
-
 module Puppet; end # rubocop:disable Style/Documentation
 module Puppet::ResourceApi
   # Implementation for the ntp_config type using the Resource API.
   class Puppet::Provider::NtpConfig::CiscoNexus
     def canonicalize(_context, resources)
+      require 'cisco_node_utils'
+
       resources.each do |resource|
         resource[:trusted_key] = resource[:trusted_key].sort_by(&:to_i).map(&:to_s) if resource[:trusted_key]
       end
@@ -22,7 +22,9 @@ module Puppet::ResourceApi
       end
     end
 
-    def get(_context)
+    def get(_context,_names=nil)
+      require 'cisco_node_utils'
+
       @ntp_config ||= Cisco::NtpConfig.ntpconfigs['default']
 
       current_state = {
@@ -34,6 +36,8 @@ module Puppet::ResourceApi
 
       [current_state]
     end
+
+
 
     def update(context, name, should)
       validate_should(should)

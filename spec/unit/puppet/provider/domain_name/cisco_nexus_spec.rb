@@ -38,6 +38,23 @@ RSpec.describe Puppet::Provider::DomainName::CiscoNexus do
         },
       ]
     end
+    context 'get filter used without matches' do
+      it 'still processes' do
+        allow(Cisco::DomainName).to receive(:domainnames).and_return(domainnames)
+        expect(provider.get(context, ['www.foo.com'])).to eq []
+      end
+    end
+    context 'get filter used with matches' do
+      it 'still processes' do
+        allow(Cisco::DomainName).to receive(:domainnames).and_return(domainnames)
+        expect(provider.get(context, ['example.puppet.com'])).to eq [
+          {
+            name:    'example.puppet.com',
+            ensure:  'present',
+          }
+        ]
+      end
+    end
   end
 
   describe '#create(_context, name, _should)' do
@@ -58,4 +75,6 @@ RSpec.describe Puppet::Provider::DomainName::CiscoNexus do
       provider.delete(context, 'example.puppet.com')
     end
   end
+
+  it_behaves_like 'a noop canonicalizer'
 end

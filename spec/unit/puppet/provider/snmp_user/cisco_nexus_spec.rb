@@ -221,4 +221,6 @@ RSpec.describe Puppet::Provider::SnmpUser::CiscoNexus do
       }.to raise_error Puppet::ResourceError, "The 'enforce_privacy' property is not supported by this provider"
     }
   end
+
+  it_behaves_like 'a noop canonicalizer'
 end

@@ -2,37 +2,37 @@ require 'puppet/resource_api/simple_provider'
 
 # Implementation for the ntp_auth_key type using the Resource API.
 class Puppet::Provider::NtpAuthKey::CiscoNexus < Puppet::ResourceApi::SimpleProvider
+  def canonicalize(_context, resources)
+    resources
+  end
+
   def get(_context, keys=nil)
     require 'cisco_node_utils'
     current_states = []
     if keys.nil? || keys.empty?
       @ntpkeys ||= Cisco::NtpAuthKey.ntpkeys
       @ntpkeys.each do |key, instance|
-        key = {
-          name:      key,
-          ensure:    'present',
-          algorithm: instance.algorithm,
-          mode:      instance.mode.to_i,
-          password:  instance.password,
-        }
-        current_states << key
+        current_states << get_current_state(key, instance)
       end
     else
       keys.each do |key|
         @ntpkeys ||= Cisco::NtpAuthKey.ntpkeys
-        key = @ntpkeys[key]
-        next if key.nil?
-        key_result = {
-          name:      key.name,
-          ensure:    'present',
-          algorithm: key.algorithm,
-          mode:      key.mode.to_i,
-          password:  key.password,
-        }
-        current_states << key_result
+        instance = @ntpkeys[key]
+        next if instance.nil?
+        current_states << get_current_state(instance.name, instance)
       end
     end
     current_states
+  end
+
+  def get_current_state(name, instance)
+    {
+      name:      name,
+      ensure:    'present',
+      algorithm: instance.algorithm,
+      mode:      instance.mode.to_i,
+      password:  instance.password,
+    }
   end
 
   def update(context, name, should)
