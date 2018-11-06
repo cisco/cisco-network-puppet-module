@@ -5952,9 +5952,6 @@ Enable or disable radius functionality [true|false]
 
 #### Parameters
 
-##### `enable`
-Enable or disable radius functionality [true|false]
-
 ##### `key`
 Encryption key (plaintext or in hash form depending on key_format)
 
@@ -5963,6 +5960,21 @@ Encryption key format [0-7]
 
 ##### `timeout`
 Number of seconds before the timeout period ends.  Also supports [undef](https://puppet.com/docs/puppet/5.3/lang_data_undef.html)
+
+##### `source_interface`
+The source interface used for TACACS packets (array of strings for multiple).
+
+**NOTE:** For `source_interface` the device will only accept the first element of the array.
+
+**NOTE:** The `enable` property should be managed through the `tacacs` type.
+
+~~~puppet
+node <devicetarget> {
+  tacacs {'default':
+    enable => true,
+  }
+}
+~~~
 
 --
 ### Type: tacacs_server
