@@ -159,4 +159,6 @@ RSpec.describe Puppet::Provider::SnmpCommunity::CiscoNexus do
       end
     end
   end
+
+  it_behaves_like 'a noop canonicalizer'
 end

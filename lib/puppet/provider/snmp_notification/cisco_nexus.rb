@@ -2,6 +2,10 @@ module Puppet; end # rubocop:disable Style/Documentation
 module Puppet::ResourceApi
   # Implementation for the snmp_notification type using the Resource API.
   class Puppet::Provider::SnmpNotification::CiscoNexus
+    def canonicalize(_context, resources)
+      resources
+    end
+
     def set(context, changes)
       changes.each do |name, change|
         is = if context.type.feature?('simple_get_filter')
@@ -24,24 +28,25 @@ module Puppet::ResourceApi
       current_states = []
       if notifications.nil? || notifications.empty?
         @snmp_notifications ||= Cisco::SnmpNotification.notifications
-        @snmp_notifications.each do |notification, instance|
-          current_states << {
-            name:   notification,
-            enable: instance.enable,
-          }
+        @snmp_notifications.each do |name, instance|
+          current_states << get_current_state(name, instance)
         end
       else
         notifications.each do |notification|
           @snmp_notifications ||= Cisco::SnmpNotification.notifications
           individual_notification = @snmp_notifications[notification]
           next if individual_notification.nil?
-          current_states << {
-            name:   notification,
-            enable: individual_notification.enable,
-          }
+          current_states << get_current_state(notification, individual_notification)
         end
       end
       current_states
+    end
+
+    def get_current_state(name, instance)
+      {
+        name:   name,
+        enable: instance.enable,
+      }
     end
 
     def update(context, name, should)

@@ -1,20 +1,36 @@
 require 'puppet/resource_api/simple_provider'
-require 'cisco_node_utils'
 
 # Implementation for the network_vlan type using the Resource API.
 class Puppet::Provider::NetworkVlan::CiscoNexus < Puppet::ResourceApi::SimpleProvider
-  def get(_context)
+  def canonicalize(_context, resources)
+    resources
+  end
+
+  def get(_context, vlans=nil)
+    require 'cisco_node_utils'
     vlan_instances = []
-    Cisco::Vlan.vlans.each do |vlan_id, v|
-      vlan = {
-        ensure:    'present',
-        id:        vlan_id,
-        vlan_name: v.send(:vlan_name),
-        shutdown:  v.send(:shutdown),
-      }
-      vlan_instances << vlan
+    @vlans ||= Cisco::Vlan.vlans
+    if vlans.nil? || vlans.empty?
+      @vlans.each do |vlan_id, v|
+        vlan_instances << get_current_state(vlan_id, v)
+      end
+    else
+      vlans.each do |vlan|
+        individual_vlan = @vlans[vlan]
+        next if individual_vlan.nil?
+        vlan_instances << get_current_state(vlan, individual_vlan)
+      end
     end
     vlan_instances
+  end
+
+  def get_current_state(name, instance)
+    {
+      ensure:    'present',
+      id:        name,
+      vlan_name: instance.send(:vlan_name),
+      shutdown:  instance.shutdown,
+    }
   end
 
   def create_update(name, should, create_bool)

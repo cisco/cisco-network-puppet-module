@@ -2,6 +2,10 @@ module Puppet; end # rubocop:disable Style/Documentation
 module Puppet::ResourceApi
   # Implementation for the banner type using the Resource API.
   class Puppet::Provider::Banner::CiscoNexus
+    def canonicalize(_context, resources)
+      resources
+    end
+
     def set(context, changes)
       changes.each do |name, change|
         is = change[:is]
@@ -13,10 +17,8 @@ module Puppet::ResourceApi
       end
     end
 
-    def get(_context)
-      # cause a hard error at runtime if the library is not installed yet
+    def get(_context, _names=nil)
       require 'cisco_node_utils'
-
       @banner ||= Cisco::Banner.new('default')
 
       current_state = {
@@ -29,7 +31,6 @@ module Puppet::ResourceApi
 
     def update(context, name, should)
       validate_name(name)
-      require 'cisco_node_utils'
       context.notice("Updating '#{name}' with #{should.inspect}")
       @banner ||= Cisco::Banner.new('default')
       @banner.motd = should[:motd]

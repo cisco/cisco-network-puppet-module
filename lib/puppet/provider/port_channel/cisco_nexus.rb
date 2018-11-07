@@ -1,39 +1,62 @@
 require 'puppet/resource_api/simple_provider'
-require 'cisco_node_utils'
+
 
 # Implementation for the port_channel type using the Resource API.
 class Puppet::Provider::PortChannel::CiscoNexus < Puppet::ResourceApi::SimpleProvider
-  def get(_context)
+  def canonicalize(_context, resources)
+    resources
+  end
+
+  def get(_context, channels=nil)
+    require 'cisco_node_utils'
+
     interfaces = []
-    Cisco::InterfaceChannelGroup.interfaces.each do |interface_name, i|
+    @interfaces ||= Cisco::InterfaceChannelGroup.interfaces
+    @interfaces.each do |interface_name, i|
       interface = {
         interface:     interface_name,
         channel_group: i.send(:channel_group),
       }
       interfaces.push(interface) if i.send(:channel_group)
     end
-    portchannels = []
-    Cisco::InterfacePortChannel.interfaces.each do |port_channel, p|
-      id_number = port_channel[/\d+/].to_i
-      interfaces_in_port = []
 
-      interfaces.each do |interface|
-        if interface[:channel_group] == id_number
-          interfaces_in_port.push(interface[:interface])
-        end
+    portchannels = []
+    @channels ||=  Cisco::InterfacePortChannel.interfaces
+    if channels.nil? || channels.empty?
+      @channels.each do |port_channel, port|
+        portchannels << get_current_state(port_channel, port, interfaces)
       end
-      portchannel = {
-        name:          port_channel,
-        minimum_links: p.send(:lacp_min_links),
-        id:            id_number,
-        ensure:        'present',
-      }
-      if !interfaces_in_port.empty?
-        portchannel[:interfaces] = interfaces_in_port
+    else
+      channels.each do |channel|
+        individual_channel = @channels[channel]
+        next if individual_channel.nil?
+        portchannels << get_current_state(channel, individual_channel, interfaces)
       end
-      portchannels << portchannel
     end
     portchannels
+  end
+
+  def get_current_state(name, instance, interfaces)
+    id_number = name[/\d+/].to_i
+    interfaces_in_port = []
+
+    interfaces.each do |interface|
+      if interface[:channel_group] == id_number
+        interfaces_in_port.push(interface[:interface])
+      end
+    end
+
+    channel = {
+      name:          name,
+      minimum_links: instance.send(:lacp_min_links),
+      id:            id_number,
+      ensure:        'present',
+    }
+    if !interfaces_in_port.empty?
+      channel[:interfaces] = interfaces_in_port
+    end
+
+    channel
   end
 
   def create_update(name, should, create_bool)

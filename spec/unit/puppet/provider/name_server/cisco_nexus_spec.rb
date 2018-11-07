@@ -6,50 +6,65 @@ require 'puppet/provider/name_server/cisco_nexus'
 
 RSpec.describe Puppet::Provider::NameServer::CiscoNexus do
   subject(:provider) { described_class.new }
-
-  name_server_ips = ['1.2.3.4', '4.3.2.1', '8.8.8.8']
-
   let(:context) { instance_double('Puppet::ResourceApi::BaseContext', 'context') }
-  let(:nameserver) { instance_double('Cisco::NameServer', 'nameserver') }
-
-  let(:nameservers) do
-    nameservers_hash = {}
-    name_server_ips.each do |name_server|
-      nameservers_hash["#{name_server}"] = nameserver
-    end
-    nameservers_hash
-  end
+  let(:nameserver1) { instance_double('Cisco::NameServer', 'nameserver1') }
+  let(:nameserver2) { instance_double('Cisco::NameServer', 'nameserver2') }
+  let(:nameserver_rtn) {
+    {
+      '1.2.3.4' => nameserver1,
+      '4.3.2.1' => nameserver2
+    }
+  }
 
   describe '#get' do
     it 'gets resources' do
-      allow(Cisco::NameServer).to receive(:nameservers).and_return(nameservers)
-
-      expect_array = []
-      name_server_ips.each do |name_server|
-        new_name_hash = { name: name_server, ensure: 'present' }
-        expect_array << new_name_hash
+      allow(Cisco::NameServer).to receive(:nameservers).and_return(nameserver_rtn)
+      expect(provider.get(context)).to eq [
+        {
+          name: '1.2.3.4',
+          ensure: 'present',
+        },
+        {
+          name: '4.3.2.1',
+          ensure: 'present',
+        },
+      ]
+    end
+    context 'get filter used without matches' do
+      it 'still processes' do
+        allow(Cisco::NameServer).to receive(:nameservers).and_return(nameserver_rtn)
+        expect(provider.get(context, ['2.2.2.2'])).to eq []
       end
-      expect(provider.get(context)).to eq expect_array
+    end
+    context 'get filter used with matches' do
+      it 'still processes' do
+        allow(Cisco::NameServer).to receive(:nameservers).and_return(nameserver_rtn)
+        expect(provider.get(context, ['1.2.3.4'])).to eq [
+          {
+            name: '1.2.3.4',
+            ensure: 'present',
+          }
+        ]
+      end
     end
   end
 
   describe 'create(_context, name, _should)' do
     it 'creates the resource' do
-      name_server_ips.each do |name_server|
-        expect(context).to receive :notice
-        expect(Cisco::NameServer).to receive(:new).with(name_server)
-        provider.create(context, name_server, name: name_server, ensure: 'present')
-      end
+      expect(context).to receive :notice
+      expect(Cisco::NameServer).to receive(:new).with('1.1.1.1')
+      provider.create(context, '1.1.1.1', name: '1.1.1.1', ensure: 'present')
     end
   end
   describe 'delete(context, name)' do
-    name_server_ips.each do |name_server_name|
-      it 'deletes the resource' do
-        expect(context).to receive :notice
-        expect(Cisco::NameServer).to receive(:nameservers).and_return(nameservers)
-        expect(nameserver).to receive(:destroy)
-        provider.delete(context, name_server_name)
-      end
+    it 'deletes the resource' do
+      expect(context).to receive :notice
+      expect(Cisco::NameServer).to receive(:nameservers).and_return(nameserver_rtn)
+      expect(nameserver1).not_to receive(:destroy)
+      expect(nameserver2).to receive(:destroy)
+      provider.delete(context, '4.3.2.1')
     end
   end
+
+  it_behaves_like 'a noop canonicalizer'
 end

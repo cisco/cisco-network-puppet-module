@@ -45,6 +45,12 @@ RSpec.describe Puppet::Provider::PortChannel::CiscoNexus do
         expect(provider.get(context)).to eq(state)
       end
     end
+
+    before(:each) do
+      allow(interface1).to receive(:channel_group).and_return(42).twice
+      allow(interface2).to receive(:channel_group).and_return(42).twice
+    end
+
     context 'when there are portchannels' do
       let(:state) do
         [
@@ -66,13 +72,33 @@ RSpec.describe Puppet::Provider::PortChannel::CiscoNexus do
 
       it 'correctly returns the portchannels' do
         allow(Cisco::InterfaceChannelGroup).to receive(:interfaces).and_return(interfaces)
-        expect(interface1).to receive(:channel_group).and_return(42).twice
-        expect(interface2).to receive(:channel_group).and_return(42).twice
         allow(Cisco::InterfacePortChannel).to receive(:interfaces).and_return(portchannelinterfaces)
         expect(portchannel42).to receive(:lacp_min_links).and_return(24)
         expect(portchannel43).to receive(:lacp_min_links).and_return(25)
 
         expect(provider.get(context)).to eq(state)
+      end
+    end
+    context 'get filter used without matches' do
+      it 'still processes' do
+        allow(Cisco::InterfaceChannelGroup).to receive(:interfaces).and_return(interfaces)
+        allow(Cisco::InterfacePortChannel).to receive(:interfaces).and_return(portchannelinterfaces)
+        expect(provider.get(context, ['port-channel4'])).to eq []
+      end
+    end
+    context 'get filter used with matches' do
+      it 'still processes' do
+        allow(Cisco::InterfaceChannelGroup).to receive(:interfaces).and_return(interfaces)
+        allow(Cisco::InterfacePortChannel).to receive(:interfaces).and_return(portchannelinterfaces)
+        expect(portchannel43).to receive(:lacp_min_links).and_return(25)
+        expect(provider.get(context, ['port-channel43'])).to eq [
+          {
+            name: 'port-channel43',
+            minimum_links: 25,
+            id: 43,
+            ensure: 'present',
+          }
+        ]
       end
     end
   end
@@ -133,4 +159,6 @@ RSpec.describe Puppet::Provider::PortChannel::CiscoNexus do
       end
     end
   end
+
+  it_behaves_like 'a noop canonicalizer'
 end

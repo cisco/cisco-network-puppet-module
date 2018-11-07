@@ -227,4 +227,6 @@ RSpec.describe Puppet::Provider::NtpServer::CiscoNexus do
       end
     end
   end
+
+  it_behaves_like 'a noop canonicalizer'
 end

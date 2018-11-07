@@ -66,6 +66,32 @@ RSpec.describe Puppet::Provider::NetworkInterface::CiscoNexus do
         expect(provider.get(context)).to eq(state)
       end
     end
+    context 'get filter used without matches' do
+      it 'still processes' do
+        allow(Cisco::Interface).to receive(:interfaces).and_return(interfaces)
+        expect(provider.get(context, ['ethernet1/3'])).to eq []
+      end
+    end
+    context 'get filter used with matches' do
+      it 'still processes' do
+        allow(Cisco::Interface).to receive(:interfaces).and_return(interfaces)
+        expect(interface2).to receive(:description).and_return('eth2/desc')
+        expect(interface2).to receive(:mtu).and_return(321)
+        expect(interface2).to receive(:speed).and_return(40_000)
+        expect(interface2).to receive(:duplex).and_return('half')
+        expect(interface2).to receive(:shutdown).and_return(true)
+        expect(provider.get(context, ['ethernet1/2'])).to eq [
+          {
+            name: 'ethernet1/2',
+            description: 'eth2/desc',
+            mtu: 321,
+            speed: '40g',
+            duplex: 'half',
+            enable: false,
+          }
+        ]
+      end
+    end
   end
 
   describe '#set(context, changes)' do
@@ -259,4 +285,6 @@ RSpec.describe Puppet::Provider::NetworkInterface::CiscoNexus do
       expect(provider.convert_speed_to_type('something')).to eq 'something'
     }
   end
+
+  it_behaves_like 'a noop canonicalizer'
 end

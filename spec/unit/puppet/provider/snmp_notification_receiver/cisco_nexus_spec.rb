@@ -228,4 +228,6 @@ RSpec.describe Puppet::Provider::SnmpNotificationReceiver::CiscoNexus do
     }
     it { expect { provider.validate_should(username: 'foo', type: 'traps', version: 'v3', security: 'auth') }.not_to raise_error }
   end
+
+  it_behaves_like 'a noop canonicalizer'
 end

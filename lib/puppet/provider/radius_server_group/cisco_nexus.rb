@@ -2,19 +2,36 @@ require 'puppet/resource_api/simple_provider'
 
 # Implementation for the radius_server_group type using the Resource API.
 class Puppet::Provider::RadiusServerGroup::CiscoNexus < Puppet::ResourceApi::SimpleProvider
-  def get(_context)
+  def canonicalize(_context, resources)
+    resources
+  end
+
+  def get(_context, groups=nil)
     require 'cisco_node_utils'
 
     radius_server_groups = []
-    Cisco::RadiusServerGroup.radius_server_groups.each_value do |v|
-      radius_server_groups << {
-        ensure:  'present',
-        name:    v.name,
-        servers: v.servers.empty? ? ['unset'] : v.servers,
-      }
-    end
+    @radiusgroups ||= Cisco::RadiusServerGroup.radius_server_groups
 
+    if groups.nil? || groups.empty?
+      @radiusgroups.each_value do |v|
+        radius_server_groups << get_current_state(v.name, v)
+      end
+    else
+      groups.each do |group|
+        individual_group = @radiusgroups[group]
+        next if individual_group.nil?
+        radius_server_groups << get_current_state(individual_group.name, individual_group)
+      end
+    end
     radius_server_groups
+  end
+
+  def get_current_state(name, instance)
+    {
+      ensure:  'present',
+      name:    name,
+      servers: instance.servers.empty? ? ['unset'] : instance.servers,
+    }
   end
 
   def munge(val)

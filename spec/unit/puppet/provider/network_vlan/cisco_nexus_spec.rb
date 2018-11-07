@@ -10,11 +10,12 @@ RSpec.describe Puppet::Provider::NetworkVlan::CiscoNexus do
   let(:device) { instance_double('Puppet::Util::NetworkDevice::Nexus::Device', 'device') }
   let(:networkvlan) { instance_double('Cisco::NetworkVlan', 'networkvlan') }
 
-  let(:vlan) { instance_double('Cisco::Vlan', 'vlan') }
+  let(:vlan1) { instance_double('Cisco::Vlan', 'vlan1') }
+  let(:vlan2) { instance_double('Cisco::Vlan', 'vlan2') }
   let(:vlans) do
     {
-      '1' => vlan,
-      '2' => vlan,
+      '1' => vlan1,
+      '2' => vlan2,
     }
   end
   let(:should_values) do
@@ -35,8 +36,10 @@ RSpec.describe Puppet::Provider::NetworkVlan::CiscoNexus do
     it 'processes resources' do
       allow(Cisco::Vlan).to receive(:vlans).and_return(vlans)
 
-      expect(vlan).to receive(:vlan_name).and_return('test1', 'test2')
-      expect(vlan).to receive(:shutdown).and_return(false, true)
+      expect(vlan1).to receive(:vlan_name).and_return('test1')
+      expect(vlan1).to receive(:shutdown).and_return(false)
+      expect(vlan2).to receive(:vlan_name).and_return('test2')
+      expect(vlan2).to receive(:shutdown).and_return(true)
 
       expect(provider.get(context)).to eq [
         {
@@ -53,6 +56,27 @@ RSpec.describe Puppet::Provider::NetworkVlan::CiscoNexus do
         },
       ]
     end
+    context 'get filter used without matches' do
+      it 'still processes' do
+        allow(Cisco::Vlan).to receive(:vlans).and_return(vlans)
+        expect(provider.get(context, ['3'])).to eq []
+      end
+    end
+    context 'get filter used with matches' do
+      it 'still processes' do
+        allow(Cisco::Vlan).to receive(:vlans).and_return(vlans)
+        expect(vlan2).to receive(:vlan_name).and_return('test2')
+        expect(vlan2).to receive(:shutdown).and_return(true)
+        expect(provider.get(context, ['2'])).to eq [
+          {
+            id: '2',
+            ensure: 'present',
+            shutdown: true,
+            vlan_name: 'test2',
+          }
+        ]
+      end
+    end
   end
 
   describe '#set' do
@@ -65,11 +89,11 @@ RSpec.describe Puppet::Provider::NetworkVlan::CiscoNexus do
       end
 
       it 'calls create_update to create' do
-        expect(Cisco::Vlan).to receive(:new).with('42', true).and_return(vlan)
-        expect(vlan).to receive(:shutdown).and_return(false)
-        expect(vlan).to receive(:shutdown=).with(true)
-        expect(vlan).to receive(:vlan_name).and_return('')
-        expect(vlan).to receive(:vlan_name=).with('vlan_42')
+        expect(Cisco::Vlan).to receive(:new).with('42', true).and_return(vlan1)
+        expect(vlan1).to receive(:shutdown).and_return(false)
+        expect(vlan1).to receive(:shutdown=).with(true)
+        expect(vlan1).to receive(:vlan_name).and_return('')
+        expect(vlan1).to receive(:vlan_name=).with('vlan_42')
         provider.create_update('42', should_values, true)
       end
     end
@@ -83,11 +107,11 @@ RSpec.describe Puppet::Provider::NetworkVlan::CiscoNexus do
       end
 
       it 'calls create_update to update' do
-        expect(Cisco::Vlan).to receive(:new).with('42', false).and_return(vlan)
-        expect(vlan).to receive(:shutdown).and_return(false)
-        expect(vlan).to receive(:shutdown=).with(true)
-        expect(vlan).to receive(:vlan_name).and_return('')
-        expect(vlan).to receive(:vlan_name=).with('vlan_42')
+        expect(Cisco::Vlan).to receive(:new).with('42', false).and_return(vlan1)
+        expect(vlan1).to receive(:shutdown).and_return(false)
+        expect(vlan1).to receive(:shutdown=).with(true)
+        expect(vlan1).to receive(:vlan_name).and_return('')
+        expect(vlan1).to receive(:vlan_name=).with('vlan_42')
         provider.create_update('42', should_values, false)
       end
     end
@@ -95,10 +119,12 @@ RSpec.describe Puppet::Provider::NetworkVlan::CiscoNexus do
     context 'delete' do
       it 'deletes resources' do
         expect(context).to receive(:notice).with("Deleting '42'")
-        expect(Cisco::Vlan).to receive(:new).with('42', false).and_return(vlan)
-        expect(vlan).to receive(:destroy)
+        expect(Cisco::Vlan).to receive(:new).with('42', false).and_return(vlan1)
+        expect(vlan1).to receive(:destroy)
         provider.delete(context, '42')
       end
     end
   end
+
+  it_behaves_like 'a noop canonicalizer'
 end

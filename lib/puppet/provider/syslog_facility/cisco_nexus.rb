@@ -2,6 +2,10 @@ require 'puppet/resource_api/simple_provider'
 
 # Implementation for the syslog_facility type using the Resource API.
 class Puppet::Provider::SyslogFacility::CiscoNexus < Puppet::ResourceApi::SimpleProvider
+  def canonicalize(_context, resources)
+    resources
+  end
+
   def get(_context, facilities=nil)
     require 'cisco_node_utils'
     current_states = []

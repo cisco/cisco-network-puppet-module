@@ -2,7 +2,12 @@ require 'puppet/resource_api/simple_provider'
 
 # Implementation for the ntp_server type using the Resource API.
 class Puppet::Provider::NtpServer::CiscoNexus < Puppet::ResourceApi::SimpleProvider
+  def canonicalize(_context, resources)
+    resources
+  end
+
   def get(_context, servers=nil)
+    require 'cisco_node_utils'
     current_states = []
     @ntpservers ||= Cisco::NtpServer.ntpservers
     if servers.nil? || servers.empty?

@@ -1,8 +1,12 @@
-require 'cisco_node_utils'
-
 # Implementation for the network_snmp type using the Resource API.
 class Puppet::Provider::NetworkSnmp::CiscoNexus
-  def get(_context)
+  def canonicalize(_context, resources)
+    resources
+  end
+
+  def get(_context, _names=nil)
+    require 'cisco_node_utils'
+
     @network_snmp ||= Cisco::SnmpServer.new
 
     current_state = {

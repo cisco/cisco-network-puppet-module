@@ -130,4 +130,6 @@ RSpec.describe Puppet::Provider::SyslogFacility::CiscoNexus do
       end
     end
   end
+
+  it_behaves_like 'a noop canonicalizer'
 end

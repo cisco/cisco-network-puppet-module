@@ -3,6 +3,7 @@ require 'puppet/resource_api/simple_provider'
 # Implementation for the network_dns type using the Resource API.
 class Puppet::Provider::NetworkDns::CiscoNexus < Puppet::ResourceApi::SimpleProvider
   def canonicalize(_context, resources)
+    require 'cisco_node_utils'
     resources.each do |resource|
       resource[:search] = resource[:search].sort if resource[:search]
       resource[:servers] = resource[:servers].sort if resource[:servers]
@@ -11,6 +12,7 @@ class Puppet::Provider::NetworkDns::CiscoNexus < Puppet::ResourceApi::SimpleProv
   end
 
   def get(_context, vrf=nil)
+    require 'cisco_node_utils'
     @domain ||= Cisco::DomainName.domainnames
     @searches ||= Cisco::DnsDomain.dnsdomains || {}
     @servers ||= Cisco::NameServer.nameservers || {}
