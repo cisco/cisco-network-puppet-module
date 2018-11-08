@@ -22,7 +22,7 @@ module Puppet::ResourceApi
       end
     end
 
-    def get(_context,_names=nil)
+    def get(_context, _names=nil)
       require 'cisco_node_utils'
 
       @ntp_config ||= Cisco::NtpConfig.ntpconfigs['default']
@@ -36,8 +36,6 @@ module Puppet::ResourceApi
 
       [current_state]
     end
-
-
 
     def update(context, name, should)
       validate_should(should)

@@ -12,16 +12,16 @@ RSpec.describe Puppet::Provider::NetworkSnmp::CiscoNexus do
   let(:snmp_server) { instance_double('Cisco::SnmpServer', 'snmp_server') }
   let(:changes) do
     {
-        'default' =>
-            {
-                is: {
-                    name: 'default',
-                    enable: true,
-                    contact: 'Mr Tayto',
-                    location: 'Tayto Castle',
-                },
-                should: should_values
-            }
+      'default' =>
+          {
+            is: {
+              name: 'default',
+              enable: true,
+              contact: 'Mr Tayto',
+              location: 'Tayto Castle',
+            },
+            should: should_values
+          }
     }
   end
 
@@ -32,21 +32,19 @@ RSpec.describe Puppet::Provider::NetworkSnmp::CiscoNexus do
     allow(Cisco::SnmpServer).to receive(:new).and_return(snmp_server).once
   end
 
-
   describe '#set(context, changes)' do
     context 'there are changes' do
       let(:should_values) do
         {
-            name: 'default',
-            enable: true,
-            contact: 'Purple Monster',
-            location: 'Monster Munch Caves',
+          name: 'default',
+          enable: true,
+          contact: 'Purple Monster',
+          location: 'Monster Munch Caves',
         }
       end
 
       it 'calls update' do
-        expect(context).to receive(:updating).with('default').and_yield
-        expect(provider).to receive(:update).with(context, 'default', changes['default'][:should]).once
+        expect(context).to receive(:updating).with('default')
 
         provider.set(context, changes)
       end

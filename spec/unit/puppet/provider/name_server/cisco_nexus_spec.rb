@@ -6,15 +6,16 @@ require 'puppet/provider/name_server/cisco_nexus'
 
 RSpec.describe Puppet::Provider::NameServer::CiscoNexus do
   subject(:provider) { described_class.new }
+
   let(:context) { instance_double('Puppet::ResourceApi::BaseContext', 'context') }
   let(:nameserver1) { instance_double('Cisco::NameServer', 'nameserver1') }
   let(:nameserver2) { instance_double('Cisco::NameServer', 'nameserver2') }
-  let(:nameserver_rtn) {
+  let(:nameserver_rtn) do
     {
       '1.2.3.4' => nameserver1,
       '4.3.2.1' => nameserver2
     }
-  }
+  end
 
   describe '#get' do
     it 'gets resources' do

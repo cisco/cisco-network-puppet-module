@@ -12,7 +12,7 @@ class Puppet::Provider::NameServer::CiscoNexus < Puppet::ResourceApi::SimpleProv
     @name_servers ||= Cisco::NameServer.nameservers
     if servers.nil? || servers.empty?
       @name_servers.each do |server, instance|
-        nameserver_instances <<  get_current_state(server, instance)
+        nameserver_instances << get_current_state(server, instance)
       end
     else
       servers.each do |server|

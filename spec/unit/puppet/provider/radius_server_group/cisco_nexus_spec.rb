@@ -56,7 +56,7 @@ RSpec.describe Puppet::Provider::RadiusServerGroup::CiscoNexus do
       it 'still processes' do
         expect(Cisco::RadiusServerGroup).to receive(:radius_server_groups).and_return('a' => radius_server_group_instance,
                                                                                       'b' => radius_server_group_instance2,
-            )
+                                                                                     )
         expect(radius_server_group_instance).not_to receive(:name)
         expect(radius_server_group_instance).not_to receive(:servers)
         expect(radius_server_group_instance2).to receive(:name).and_return('test_radius_b')
