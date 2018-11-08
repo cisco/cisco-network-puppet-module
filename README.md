@@ -5831,6 +5831,9 @@ Syslog severity level to log.  Valid value is an integer.
 ##### `vrf`
 Interface to send syslog data from, e.g. "management".  Valid value is a string.
 
+##### `facility`
+Logging facility to use, e.g. "mail", "local[0-7]", "cron" etc. Valid value is a string.
+
 --
 ### Type: syslog_facility
 
