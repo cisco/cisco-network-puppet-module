@@ -18,7 +18,7 @@
 
 class ciscopuppet::cisco::demo_vxlan {
 
-  if platform_get() =~ /n(5|6|7|8|9)k/ {
+  if platform_get() =~ /n(5|6|7|9)k/ {
 
     if platform_get() =~ /n7k/ {
       cisco_vdc { 'default':
@@ -36,17 +36,17 @@ class ciscopuppet::cisco::demo_vxlan {
     }
 
     $source_interface_hold_down_time = platform_get() ? {
-      /n(8|9)k/  => '50',
+      /n9k/  => '50',
       default    => undef,
     }
 
     $ingress_replication = platform_get() ? {
-      /n(8|9)k/  => 'static',
+      /n9k$/  => 'static',
       default    => undef,
     }
 
     $peer_list = platform_get() ? {
-      /n(8|9)k/  => ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
+      /n9k$/  => ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
       default    => undef,
     }
 
