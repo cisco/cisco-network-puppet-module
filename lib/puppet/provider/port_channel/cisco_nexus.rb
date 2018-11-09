@@ -1,6 +1,5 @@
 require 'puppet/resource_api/simple_provider'
 
-
 # Implementation for the port_channel type using the Resource API.
 class Puppet::Provider::PortChannel::CiscoNexus < Puppet::ResourceApi::SimpleProvider
   def canonicalize(_context, resources)
@@ -52,7 +51,7 @@ class Puppet::Provider::PortChannel::CiscoNexus < Puppet::ResourceApi::SimplePro
       id:            id_number,
       ensure:        'present',
     }
-    if !interfaces_in_port.empty?
+    unless interfaces_in_port.empty?
       channel[:interfaces] = interfaces_in_port
     end
 

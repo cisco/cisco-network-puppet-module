@@ -25,11 +25,11 @@ RSpec.describe Puppet::Provider::PortChannel::CiscoNexus do
   let(:portchannel43) { instance_double('Cisco::InterfacePortChannel', 'portchannel43') }
   let(:should_hash) do
     {
-        name: 'port-channel42',
-        minimum_links: 24,
-        id: 42,
-        interfaces: ['ethernet1/1', 'ethernet1/2'],
-        ensure: 'present',
+      name: 'port-channel42',
+      minimum_links: 24,
+      id: 42,
+      interfaces: ['ethernet1/1', 'ethernet1/2'],
+      ensure: 'present',
     }
   end
 
