@@ -23,7 +23,8 @@ class ciscopuppet::cisco::demo_vtp {
       domain   => 'cisco1234',
       password => 'test1234',
       version  => 2,
-      filename => 'bootflash:/vlan.dat'
+      filename => 'bootflash:/vlan.dat',
+    }
   } else {
     notify{'SKIP: This platform does not support vtp': }
   }
