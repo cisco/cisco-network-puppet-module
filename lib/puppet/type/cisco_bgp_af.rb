@@ -1,7 +1,9 @@
 #
 # Manages BGP Address-Family configuration.
 #
-# Copyright (c) 2015-2016 Cisco and/or its affiliates.
+# June 2018
+#
+# Copyright (c) 2015-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -168,6 +170,7 @@ Puppet::Type.newtype(:cisco_bgp_af) do
   # Parameters #
   ##############
 
+  apply_to_all
   ensurable
 
   # Overwrites the name method which by default returns only

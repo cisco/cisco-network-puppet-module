@@ -1,8 +1,8 @@
 # Manages a Cisco VPC domain object
 #
-# January 2016
+# June 2018
 #
-# Copyright (c) 2013-2017 Cisco and/or its affiliates.
+# Copyright (c) 2013-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -103,6 +103,7 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
   # Attributes #
   ##############
 
+  apply_to_all
   ensurable
 
   newproperty(:auto_recovery) do

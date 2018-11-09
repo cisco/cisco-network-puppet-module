@@ -1,7 +1,7 @@
 ##############################################
 # Manages configuration for an TACACS server.
 #
-# March 2014
+# June 2018
 #
 # Copyright (c) 2014-2018 Cisco and/or its affiliates.
 #
@@ -63,6 +63,7 @@ Puppet::Type.newtype(:cisco_tacacs_server) do
   # Attributes #
   ##############
 
+  apply_to_all
   ensurable
 
   newparam(:name, namevar: :true) do

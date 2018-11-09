@@ -56,6 +56,7 @@ Puppet::Type.newtype(:cisco_interface_hsrp_group) do
     }
   "
 
+  apply_to_all
   ensurable
 
   ###################

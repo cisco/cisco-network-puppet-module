@@ -1,8 +1,8 @@
 # Manages a VRF for OSPF.
 #
-# March 2014
+# June 2018
 #
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2014-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ Puppet::Type.newtype(:cisco_ospf_vrf) do
       auto_cost                => 40000,
   }"
 
+  apply_to_all
   ensurable
 
   ###################

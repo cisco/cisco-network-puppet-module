@@ -1,6 +1,7 @@
 #
-# Copyright (c) 2016 Cisco and/or its affiliates.
+# Copyright (c) 2016-2018 Cisco and/or its affiliates.
 #
+# June 2018
 # April 2016, Chris Van Heuveln
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,6 +31,8 @@ end
 
 Puppet::Type.newtype(:cisco_interface_capabilities) do
   @doc = 'Interface capabilities utility. This is a test-only resource.'
+
+  apply_to_all
 
   newparam(:name, namevar: :true) do
     munge(&:downcase)
