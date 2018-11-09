@@ -15,11 +15,17 @@
 # limitations under the License.
 
 class ciscopuppet::cisco::demo_vtp {
-  cisco_vtp { 'default':
-    ensure   => present,
-    domain   => 'cisco1234',
-    password => 'test1234',
-    version  => 2,
-    filename => 'bootflash:/vlan.dat'
+
+  if platform_get() =~ /n(3|5|6|7|9)k$/ {
+
+    cisco_vtp { 'default':
+      ensure   => present,
+      domain   => 'cisco1234',
+      password => 'test1234',
+      version  => 2,
+      filename => 'bootflash:/vlan.dat',
+    }
+  } else {
+    notify{'SKIP: This platform does not support vtp': }
   }
 }

@@ -17,7 +17,7 @@
 class ciscopuppet::cisco::demo_acl {
 
   $fragments = platform_get() ? {
-    /(n3k|n7k|n3k-f|n9k-f|n9k)/  => 'permit',
+    /(n3|n7|n9)k$/  => 'permit',
     default                => undef
   }
 

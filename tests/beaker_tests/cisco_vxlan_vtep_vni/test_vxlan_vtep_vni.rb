@@ -70,7 +70,7 @@ skip_unless_supported(tests)
 tests[:default_properties_ingress_replication] = {
   desc:           '1.1 Default Properties Ingress replication',
   title_pattern:  'nve1 10000',
-  platform:       'n(3k-f|9k)',
+  platform:       'n9k$',
   manifest_props: {
     ingress_replication:           'default',
     suppress_arp:                  'default',
@@ -101,7 +101,7 @@ tests[:default_properties_multicast_group] = {
 tests[:ingress_replication_static_peer_list_empty] = {
   desc:           '2.1 Ingress Replication Static Peer List Empty',
   title_pattern:  'nve1 10000',
-  platform:       'n(3k-f|9k)',
+  platform:       'n9k$',
   manifest_props: {
     ingress_replication: 'static',
     peer_list:           [],
@@ -116,7 +116,7 @@ tests[:ingress_replication_static_peer_list_empty] = {
 tests[:peer_list] = {
   desc:           '2.2 Peer List',
   title_pattern:  'nve1 10000',
-  platform:       'n(3k-f|9k)',
+  platform:       'n9k$',
   manifest_props: {
     ingress_replication: 'static',
     peer_list:           ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
@@ -131,7 +131,7 @@ tests[:peer_list] = {
 tests[:peer_list_change_add] = {
   desc:           '2.3 Peer List Change Add',
   title_pattern:  'nve1 10000',
-  platform:       'n(3k-f|9k)',
+  platform:       'n9k$',
   manifest_props: {
     ingress_replication: 'static',
     peer_list:           ['1.1.1.1', '6.6.6.6', '3.3.3.3', '4.4.4.4'],
@@ -146,7 +146,7 @@ tests[:peer_list_change_add] = {
 tests[:peer_list_default] = {
   desc:           '2.4 Peer List Default',
   title_pattern:  'nve1 10000',
-  platform:       'n(3k-f|9k)',
+  platform:       'n9k$',
   manifest_props: {
     ingress_replication: 'static',
     peer_list:           'default',
@@ -161,7 +161,7 @@ tests[:peer_list_default] = {
 tests[:ingress_replication_bgp] = {
   desc:           '2.5 Ingress replication BGP',
   title_pattern:  'nve1 10000',
-  platform:       'n(3k-f|9k)',
+  platform:       'n9k$',
   manifest_props: {
     ingress_replication: 'bgp',
     suppress_arp:        'default',
@@ -257,13 +257,14 @@ class TestVxLanVtepVni
     skip_if_nv_overlay_rejected(agent)
   end
 
-  def self.unsupported_properties(_tests, _id)
+  def unsupported_properties(_tests, _id)
     unprops = []
-    if platform[/n(5|6|7)k/]
+    if platform[/n(3k-f|5k|6k|7k|9k-f)/]
       unprops <<
         :ingress_replication <<
         :peer_list
-    elsif platform[/n(3k-f|9k)/]
+    end
+    if platform[/n(3k-f|9k)/]
       unprops <<
         :suppress_uuc
     end

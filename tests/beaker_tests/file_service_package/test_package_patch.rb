@@ -52,6 +52,9 @@ when /7.0.3.I4.5/
 when /7.0.3.I4.6/
   filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I4.6.lib32_n9000.rpm'
   version =  '1.0.0-7.0.3.I4.6'
+when /7.0.3.I4.8/
+  filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I4.8.lib32_n9000.rpm'
+  version =  '1.0.0-7.0.3.I4.8'
 when /7.0.3.I5.1/
   name = 'nxos.sample-n9k_ALL'
   filename = 'nxos.sample-n9k_ALL-1.0.0-7.0.3.I5.1.lib32_n9000.rpm'

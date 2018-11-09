@@ -1273,7 +1273,7 @@ def platform
   # - Cisco XRv9K Virtual Router
   case pi
   when /Nexus\s?3\d\d\d/
-    @cisco_hardware = image?[/7.0.3.F/] ? 'n3k-f' : 'n3k'
+    @cisco_hardware = fretta? ? 'n3k-f' : 'n3k'
   when /Nexus\s?5\d\d\d/
     @cisco_hardware = 'n5k'
   when /Nexus\s?6\d\d\d/
@@ -1283,7 +1283,7 @@ def platform
   when /Nexus\s?9\d+\s\S+-EX/
     @cisco_hardware = 'n9k-ex'
   when /(Nexus\s?9\d\d\d|NX-OSv Chassis)/
-    @cisco_hardware = image?[/7.0.3.F/] ? 'n9k-f' : 'n9k'
+    @cisco_hardware = fretta? ? 'n9k-f' : 'n9k'
   when /XRv9K/i
     @cisco_hardware = 'xrv9k'
   else
@@ -1291,6 +1291,19 @@ def platform
   end
   logger.info "\nFound Platform string: '#{pi}', Alias to: '#{@cisco_hardware}'"
   @cisco_hardware
+end
+
+# fretta check
+@fretta_slot = nil
+def fretta?(reset_cache=false)
+  return @fretta_slot unless @fretta_slot.nil? || reset_cache
+  data = on(agent, facter_cmd('-p cisco.inventory')).output.split("\n")
+  @fretta_slot = false
+  data.each do |line|
+    next unless line.include?('pid =>')
+    @fretta_slot = true if line[/-R/]
+  end
+  @fretta_slot
 end
 
 # Check if image matches pattern

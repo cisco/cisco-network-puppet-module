@@ -25,11 +25,13 @@ module Puppet
     #
     module Functions
       newfunction(:platform_fretta, type: :rvalue) do |_args|
-        data = lookupvar('os')
+        data = lookupvar('cisco')
         return '' if data.nil?
 
-        pat = '7.0\(3\)F'
-        data['release']['full'].match(pat) ? true : false
+        data['inventory'].each do |_x, slot|
+          return true if slot['pid'][/-R/]
+        end
+        false
       end
     end
   end
