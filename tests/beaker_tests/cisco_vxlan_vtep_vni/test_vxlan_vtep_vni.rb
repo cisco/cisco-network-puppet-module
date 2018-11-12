@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2015 Cisco and/or its affiliates.
+# Copyright (c) 2015-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -304,11 +304,11 @@ end
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
   teardown do
-    test_set(agent, 'no evpn multisite border 150')
+    test_set(agent, 'no evpn multisite border 150') if platform[/ex/]
     resource_absent_cleanup(agent, 'cisco_vxlan_vtep_vni')
     vdc_limit_f3_no_intf_needed(:clear)
   end
-  test_set(agent, 'no evpn multisite border 150')
+  test_set(agent, 'no evpn multisite border 150') if platform[/ex/]
   resource_absent_cleanup(agent, 'cisco_vxlan_vtep_vni')
   vdc_limit_f3_no_intf_needed(:set)
 
