@@ -1130,7 +1130,7 @@ DEVICE
   def skip_if_nv_overlay_rejected(agent)
     logger.info('Check for nv overlay support')
     cmd = get_vshell_cmd('config t ; feature nv overlay')
-    on(agent, cmd, pty: true)
+    test_set(agent, cmd)
     # Failure message taken from 6001
     msg = 'NVE Feature NOT supported on this Platform'
     banner = '#' * msg.length
@@ -1337,7 +1337,13 @@ DEVICE
   @fretta_slot = nil
   def fretta?(reset_cache=false)
     return @fretta_slot unless @fretta_slot.nil? || reset_cache
-    data = on(agent, facter_cmd('-p cisco.inventory')).output.split("\n")
+    if agent
+      data = on(agent, facter_cmd('-p cisco.inventory')).output.split("\n")
+    else
+      data = `#{AGENTLESS_COMMAND} --facts`
+      inventory_facts = data.match(%r{inventory.*(\n.*)*?(?=virtual_service)})
+      data = inventory_facts.to_s.split("\n")
+    end
     @fretta_slot = false
     data.each do |line|
       next unless line.include?('pid =>')
