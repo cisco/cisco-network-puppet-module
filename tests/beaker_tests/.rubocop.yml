@@ -1,6 +1,0 @@
-# Rubocop configuration
-
-inherit_from: ../../.rubocop.yml
-
-Metrics/MethodLength:
-  Max: 60
