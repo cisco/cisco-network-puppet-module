@@ -74,10 +74,11 @@ class ciscopuppet::cisco::demo_vxlan {
     }
 
     cisco_vxlan_vtep_vni {'nve1 20000':
-      ensure              => present,
-      assoc_vrf           => false,
-      multicast_group     => '224.1.1.1',
-      suppress_arp        => 'default',
+      ensure               => present,
+      assoc_vrf            => false,
+      multicast_group      => '224.1.1.1',
+      suppress_arp         => 'default',
+      suppress_arp_disable => 'default',
     }
 
     # TBD: Anycast gateway mode

@@ -43,6 +43,7 @@ Puppet::Type.type(:cisco_vxlan_vtep_vni).provide(:cisco) do
 
   VXLAN_VTEP_VNI_BOOL_PROPS = [
     :suppress_arp,
+    :suppress_arp_disable,
     :suppress_uuc,
     :multisite_ingress_replication,
   ]
