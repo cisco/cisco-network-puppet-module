@@ -65,19 +65,19 @@ tests[:non_default] = {
 }
 
 # class to contain the test_dependencies specific to this test case
-class TestVrf
-  def self.unsupported_properties(_tests, _id)
+class TestVrf < BaseHarness
+  def self.unsupported_properties(ctx, _tests, _id)
     unprops = []
-    if operating_system == 'nexus'
+    if ctx.operating_system == 'nexus'
       unprops <<
         :mhost_ipv4_default_interface <<
         :mhost_ipv6_default_interface <<
         :remote_route_filtering <<
         :vpn_id
 
-      unprops << :vni unless platform[/n9k/]
-      unprops << :route_distinguisher if nexus_image['I2']
-      unprops << :description if image?[/7.3.0.D1.1|7.3.0.N1.1/] # CSCuy36637
+      unprops << :vni unless ctx.platform[/n9k/]
+      unprops << :route_distinguisher if ctx.nexus_image['I2']
+      unprops << :description if ctx.image?[/7.3.0.D1.1|7.3.0.N1.1/] # CSCuy36637
 
     else
       unprops <<
@@ -88,14 +88,14 @@ class TestVrf
     logger.info("  unprops: #{unprops}") unless unprops.empty?
     unprops
   end
-end
 
-# Overridden to properly handle dependencies for this test file.
-def dependency_manifest(_tests, id)
-  return unless id[/non_default/]
-  dep = %( cisco_interface {'loopback100': ensure => 'present' } )
-  logger.info("\n  * dependency_manifest\n#{dep}")
-  dep
+  # Overridden to properly handle dependencies for this test file.
+  def self.dependency_manifest(ctx, _tests, id)
+    return unless id[/non_default/]
+    dep = %( cisco_interface {'loopback100': ensure => 'present' } )
+    ctx.logger.info("\n  * dependency_manifest\n#{dep}")
+    dep
+  end
 end
 
 #################################################################

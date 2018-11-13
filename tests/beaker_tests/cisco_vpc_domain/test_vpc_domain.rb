@@ -174,11 +174,11 @@ tests[:vpc_plus_non_default_properties_n7k] = {
 }
 
 # class to contain the test_dependencies specific to this test case
-class TestVpcDomain
-  def self.version_unsupported_properties(_tests, _id)
+class TestVpcDomain < BaseHarness
+  def self.version_unsupported_properties(ctx, _tests, _id)
     unprops = {}
-    unprops[:layer3_peer_routing] = '7.0.3.I6.1' if platform[/n(3|9)k$/]
-    unprops[:shutdown] = '7.0.3.I6.1' if platform[/n(3|9)k$/]
+    unprops[:layer3_peer_routing] = '7.0.3.I6.1' if ctx.platform[/n(3|9)k$/]
+    unprops[:shutdown] = '7.0.3.I6.1' if ctx.platform[/n(3|9)k$/]
     unprops
   end
 end

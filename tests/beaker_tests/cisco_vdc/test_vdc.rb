@@ -47,12 +47,12 @@ tests[:non_default] = {
 }
 
 # class to contain the test_harness_dependencies
-class TestVdc
-  def self.test_harness_dependencies(_tests, id)
+class TestVdc < BaseHarness
+  def self.test_harness_dependencies(ctx, _tests, id)
     return unless id == :non_default
 
     # Set module-type to default value
-    limit_resource_module_type_set(default_vdc_name, nil)
+    ctx.limit_resource_module_type_set(ctx.default_vdc_name, nil)
   end
 end
 

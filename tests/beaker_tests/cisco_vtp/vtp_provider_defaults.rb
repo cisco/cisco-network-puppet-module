@@ -63,8 +63,7 @@ testheader = 'VTP Resource :: All Attributes Defaults'
 
 # @test_name [TestCase] Executes defaults testcase for VTP Resource.
 test_name "TestCase :: #{testheader}" do
-  raise_skip_exception('Not supported on fretta', self) if
-    platform[/n(3|9)k-f/]
+  raise_skip_exception('Not supported on fretta', self) if platform[/n(3|9)k-f/]
   # @step [Step] Sets up switch for provider test.
   step 'TestStep :: Setup switch for provider test' do
     resource_absent_cleanup(agent, 'cisco_vtp', 'Setup for vtp test')

@@ -103,15 +103,15 @@ tests[:title_patterns_3] = {
 }
 
 # class to contain the test_dependencies specific to this test case
-class TestVrfAf
-  def self.unsupported_properties(_tests, _id)
+class TestVrfAf < BaseHarness
+  def self.unsupported_properties(ctx, _tests, _id)
     unprops = []
-    if operating_system == 'nexus'
+    if ctx.operating_system == 'nexus'
       unprops <<
         :route_target_export_stitching <<
         :route_target_import_stitching
 
-      if platform[/n3k$/]
+      if ctx.platform[/n3k$/]
         unprops <<
           :route_target_both_auto <<
           :route_target_both_auto_evpn <<
@@ -119,8 +119,8 @@ class TestVrfAf
           :route_target_import_evpn
       end
 
-      if platform[/n9k(-ex)?$/]
-        if image?[/I[2-6]/]
+      if ctx.platform[/n9k(-ex)?$/]
+        if ctx.image?[/I[2-6]/]
           unprops <<
             :route_target_both_auto_mvpn <<
             :route_target_export_mvpn <<
@@ -143,28 +143,27 @@ class TestVrfAf
     end
     unprops
   end
-end
 
-# Overridden to properly handle dependencies for this test file.
-def dependency_manifest(tests, id)
-  if operating_system == 'nexus'
-    return unless id[/non_default/]
-    dep = %(
-      cisco_command_config { 'policy_config':
-        command => 'route-map abc permit 10'
-      } )
-  else
-    t = puppet_resource_title_pattern_munge(tests, id)
-    dep = %(
-      cisco_vrf { '#{t[:vrf]}': ensure => present }
-      cisco_command_config { 'policy_config':
-        command => '
-          route-policy abc
-            end-policy'
-      } )
+  def self.dependency_manifest(ctx, tests, id)
+    if operating_system == 'nexus'
+      return unless id[/non_default/]
+      dep = %(
+        cisco_command_config { 'policy_config':
+          command => 'route-map abc permit 10'
+        } )
+    else
+      t = puppet_resource_title_pattern_munge(tests, id)
+      dep = %(
+        cisco_vrf { '#{t[:vrf]}': ensure => present }
+        cisco_command_config { 'policy_config':
+          command => '
+            route-policy abc
+              end-policy'
+        } )
+    end
+    ctx.logger.info("\n  * dependency_manifest\n#{dep}")
+    dep
   end
-  logger.info("\n  * dependency_manifest\n#{dep}")
-  dep
 end
 
 #################################################################

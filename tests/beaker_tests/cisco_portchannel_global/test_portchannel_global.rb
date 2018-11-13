@@ -117,16 +117,16 @@ tests[:non_default][:manifest_props].merge!(manifest_non[:n9kf]) if platform[/n(
 tests[:non_default][:manifest_props].merge!(manifest_non[:n9k]) if platform[/n9k$/]
 
 # class to contain the test_dependencies specific to this test case
-class TestPortChannelGlobal
-  def self.unsupported_properties(tests, _id)
+class TestPortChannelGlobal < BaseHarness
+  def self.unsupported_properties(ctx, tests, _id)
     unprops = []
-    if platform[/n7k/]
+    if ctx.platform[/n7k/]
       unprops <<
         :concatenation <<
         :hash_poly <<
         :resilient <<
         :symmetry
-    elsif platform[/n(5|6)k/]
+    elsif ctx.platform[/n(5|6)k/]
       unprops <<
         :asymmetric <<
         :concatenation <<
@@ -135,7 +135,7 @@ class TestPortChannelGlobal
         :resilient <<
         :rotate <<
         :symmetry
-    elsif platform[/n(3|9)k-f/]
+    elsif ctx.platform[/n(3|9)k-f/]
       unprops <<
         :asymmetric <<
         :concatenation <<
@@ -144,7 +144,7 @@ class TestPortChannelGlobal
         :load_defer <<
         :resilient <<
         :symmetry
-    elsif platform[/n3k/]
+    elsif ctx.platform[/n3k/]
       unprops <<
         :asymmetric <<
         :concatenation <<
@@ -152,15 +152,14 @@ class TestPortChannelGlobal
         :hash_poly <<
         :load_defer <<
         :rotate
-    elsif platform[/n9k/]
+    elsif ctx.platform[/n9k/]
       unprops <<
         :asymmetric <<
         :hash_distribution <<
         :hash_poly <<
         :load_defer
     end
-    unprops << :resilient << :symmetry if
-      tests[:resilient_unsupported]
+    unprops << :resilient << :symmetry if tests[:resilient_unsupported]
     unprops
   end
 end

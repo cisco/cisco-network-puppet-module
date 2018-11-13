@@ -70,20 +70,23 @@ tests[:non_default2] = {
   },
 }
 
-def dependency_manifest(_tests, _id)
-  "
-    cisco_bgp { '2 default':
-      ensure => present,
-    }
+# class to contain the test_dependencies specific to this test case
+class TestBgpAfAa < BaseHarness
+  def self.dependency_manifest(_ctx, _tests, _id)
+    "
+      cisco_bgp { '2 default':
+        ensure => present,
+      }
 
-    cisco_bgp_af { '2 default ipv4 unicast':
-      ensure => present,
-    }
+      cisco_bgp_af { '2 default ipv4 unicast':
+        ensure => present,
+      }
 
-    cisco_bgp_af { '2 red ipv6 multicast':
-      ensure => present,
-    }
-  "
+      cisco_bgp_af { '2 red ipv6 multicast':
+        ensure => present,
+      }
+    "
+  end
 end
 
 def cleanup(agent)
@@ -99,13 +102,13 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  test_harness_run(tests, :default)
+  test_harness_run(tests, :default, harness_class: TestBgpAfAa)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
-  test_harness_run(tests, :non_default1)
-  test_harness_run(tests, :non_default2)
+  test_harness_run(tests, :non_default1, harness_class: TestBgpAfAa)
+  test_harness_run(tests, :non_default2, harness_class: TestBgpAfAa)
 
   # -------------------------------------------------------------------
   skipped_tests_summary(tests)

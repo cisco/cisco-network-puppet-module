@@ -90,10 +90,10 @@ def cleanup(agent)
 end
 
 # class to contain the test_dependencies specific to this test case
-class TestSnmpServer
-  def self.unsupported_properties(*)
+class TestSnmpServer < BaseHarness
+  def self.unsupported_properties(ctx, _tests, _id)
     unprops = []
-    unprops << :packet_size if image?[/7.0.3.I2|I3/] # CSCuz14217
+    unprops << :packet_size if ctx.image?[/7.0.3.I2|I3/] # CSCuz14217
     unprops
   end
 end

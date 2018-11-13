@@ -131,10 +131,10 @@ tests[:non_default_udp] = {
 }
 
 # class to contain the test_harness_dependencies
-class TestItdDeviceGroupNode
-  def self.test_harness_dependencies(_tests, _id)
+class TestItdDeviceGroupNode < BaseHarness
+  def self.test_harness_dependencies(ctx, _tests, _id)
     cmd = 'feature itd ; itd device-group icmpGroup ; itd device-group dnsGroup ; itd device-group tcpGroup ; itd device-group udpGroup'
-    command_config(agent, cmd, cmd)
+    ctx.command_config(ctx.agent, cmd, cmd)
   end
 end
 

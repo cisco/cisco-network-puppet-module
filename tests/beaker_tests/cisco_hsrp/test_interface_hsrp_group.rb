@@ -176,18 +176,18 @@ tests[:non_default_v6] = {
   },
 }
 
-def cleanup(agent)
-  cmd = ['no interface port-channel 100',
-         'no interface port-channel 200',
-         'no feature hsrp',
-        ].join(' ; ')
-  test_set(agent, cmd)
-end
-
 # class to contain the test_harness_dependencies
-class TestInterfaceHsrpGroup
-  def self.test_harness_dependencies(_tests, _id)
-    cleanup(agent)
+class TestInterfaceHsrpGroup < BaseHarness
+  def self.cleanup(ctx)
+    cmd = ['no interface port-channel 100',
+           'no interface port-channel 200',
+           'no feature hsrp',
+          ].join(' ; ')
+    ctx.test_set(ctx.agent, cmd)
+  end
+
+  def self.test_harness_dependencies(ctx, _tests, _id)
+    cleanup(ctx)
 
     cmd = [
       'feature hsrp',
@@ -195,8 +195,13 @@ class TestInterfaceHsrpGroup
       'interface port-channel200 ; no switchport ; hsrp version 2',
       'interface port-channel200 ; ipv6 address 2000::01/64',
     ].join(' ; ')
-    test_set(agent, cmd)
+
+    ctx.test_set(ctx.agent, cmd)
   end
+end
+
+def cleanup
+  TestInterfaceHsrpGroup.cleanup(self)
 end
 
 #################################################################

@@ -65,27 +65,27 @@ tests[:non_default] = {
 }
 
 # class to contain the test_harness_dependencies
-class TestVxlanVtep
-  def self.test_harness_dependencies(*)
-    test_set(agent, 'evpn multisite border 150') if platform[/ex/]
-    return unless platform[/n(5|6)k/]
-    skip_if_nv_overlay_rejected(agent)
+class TestVxlanVtep < BaseHarness
+  def self.test_harness_dependencies(ctx, _tests, _id)
+    ctx.test_set(ctx.agent, 'evpn multisite border 150') if ctx.platform[/ex/]
+    return unless ctx.platform[/n(5|6)k/]
+    ctx.skip_if_nv_overlay_rejected(ctx.agent)
 
     # Vxlan has a hard requirement to disable feature fabricpath on n5/6k
     cmd = 'no feature-set fabricpath'
-    command_config(agent, cmd, cmd)
+    ctx.command_config(ctx.agent, cmd, cmd)
   end
 
-  def self.unsupported_properties(*)
+  def self.unsupported_properties(ctx, _tests, _id)
     unprops = []
-    unprops << :source_interface_hold_down_time if platform[/n(5|6)k/]
-    unprops << :multisite_border_gateway_interface unless platform[/ex/]
+    unprops << :source_interface_hold_down_time if ctx.platform[/n(5|6)k/]
+    unprops << :multisite_border_gateway_interface unless ctx.platform[/ex/]
     unprops
   end
 
-  def self.version_unsupported_properties(_tests, _id)
+  def self.version_unsupported_properties(ctx, _tests, _id)
     unprops = {}
-    unprops[:source_interface_hold_down_time] = '8.1.1' if platform[/n7k/]
+    unprops[:source_interface_hold_down_time] = '8.1.1' if ctx.platform[/n7k/]
     unprops
   end
 end

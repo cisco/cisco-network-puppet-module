@@ -250,52 +250,52 @@ tests[:multisite_ingress_replication_false] = {
 # will be added here.
 
 # class to contain the test_harness_dependencies
-class TestVxLanVtepVni
-  def self.test_harness_dependencies(*)
-    test_set(agent, 'evpn multisite border 150') if platform[/ex/]
-    return unless platform[/n(5|6)k/]
-    skip_if_nv_overlay_rejected(agent)
+class TestVxLanVtepVni < BaseHarness
+  def self.test_harness_dependencies(ctx, _tests, _id)
+    ctx.test_set(ctx.agent, 'evpn multisite border 150') if ctx.platform[/ex/]
+    return unless ctx.platform[/n(5|6)k/]
+    ctx.skip_if_nv_overlay_rejected(ctx.agent)
   end
 
-  def unsupported_properties(_tests, _id)
+  def self.unsupported_properties(ctx, _tests, _id)
     unprops = []
-    if platform[/n(3k-f|5k|6k|7k|9k-f)/]
+    if ctx.platform[/n(3k-f|5k|6k|7k|9k-f)/]
       unprops <<
         :ingress_replication <<
         :peer_list
     end
-    if platform[/n(3k-f|9k)/]
+    if ctx.platform[/n(3k-f|9k)/]
       unprops <<
         :suppress_uuc
     end
-    unprops << :multisite_ingress_replication unless platform[/ex/]
+    unprops << :multisite_ingress_replication unless ctx.platform[/ex/]
     unprops
   end
 
-  def self.version_unsupported_properties(_tests, _id)
+  def self.version_unsupported_properties(ctx, _tests, _id)
     unprops = {}
-    unprops[:suppress_uuc] = '8.1.1' if platform[/n7k/]
+    unprops[:suppress_uuc] = '8.1.1' if ctx.platform[/n7k/]
     unprops
   end
-end
 
-# Overridden to properly handle dependencies for this test file.
-def dependency_manifest(_tests, _id)
-  if platform[/n7k/]
-    "
-      cisco_vxlan_vtep {'nve1':
-        ensure => present,
-        host_reachability => 'evpn',
-        shutdown           => 'false',
-      }
-    "
-  else
-    "
-      cisco_vxlan_vtep {'nve1':
-        ensure => present,
-        shutdown           => 'false',
-      }
-    "
+  # Overridden to properly handle dependencies for this test file.
+  def self.dependency_manifest(ctx, _tests, _id)
+    if ctx.platform[/n7k/]
+      "
+        cisco_vxlan_vtep {'nve1':
+          ensure => present,
+          host_reachability => 'evpn',
+          shutdown           => 'false',
+        }
+      "
+    else
+      "
+        cisco_vxlan_vtep {'nve1':
+          ensure => present,
+          shutdown           => 'false',
+        }
+      "
+    end
   end
 end
 

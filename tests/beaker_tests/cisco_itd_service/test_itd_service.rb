@@ -220,8 +220,8 @@ def cleanup(agent)
 end
 
 # class to contain the test_harness_dependencies
-class TestItdService
-  def self.test_harness_dependencies(_tests, _id)
+class TestItdService < BaseHarness
+  def self.test_harness_dependencies(ctx, _tests, _id)
     cleanup(agent)
 
     cmd = [
@@ -233,7 +233,7 @@ class TestItdService
       'interface port-channel 100 ; no switchport',
       'itd device-group udpGroup ; node ip 1.1.1.1',
     ].join(' ; ')
-    test_set(agent, cmd)
+    ctx.test_set(ctx.agent, cmd)
   end
 end
 

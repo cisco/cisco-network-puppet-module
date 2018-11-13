@@ -58,37 +58,40 @@ tests[:native] = {
   resource:       { 'ensure' => '[0-9]+' },
 }
 
-def dependency_manifest(_tests, id)
-  return unless id == :native
-  dep = %(
-    # Create local repo files
-    file { '/tmp/beaker-repo' :
-      ensure => 'directory',
-    }
-    file { '/tmp/beaker-repo/demo-one-1.0-1.x86_64.rpm' :
-      ensure  => present,
-      source  => 'puppet:///modules/ciscopuppet/demo-one-1.0-1.x86_64.rpm',
-      require => File['/tmp/beaker-repo'],
-    }
-    exec { 'createrepo':
-      command => '/usr/bin/createrepo /tmp/beaker-repo',
-      unless  => '/bin/ls /tmp/beaker-repo/repodata 2>/dev/null',
-      require => File['/tmp/beaker-repo/demo-one-1.0-1.x86_64.rpm'],
-    }
+# class to contain the test_dependencies specific to this test case
+class TestAaaGroupTacacs < BaseHarness
+  def self.dependency_manifest(ctx, _tests, id)
+    return unless id == :native
+    dep = %(
+      # Create local repo files
+      file { '/tmp/beaker-repo' :
+        ensure => 'directory',
+      }
+      file { '/tmp/beaker-repo/demo-one-1.0-1.x86_64.rpm' :
+        ensure  => present,
+        source  => 'puppet:///modules/ciscopuppet/demo-one-1.0-1.x86_64.rpm',
+        require => File['/tmp/beaker-repo'],
+      }
+      exec { 'createrepo':
+        command => '/usr/bin/createrepo /tmp/beaker-repo',
+        unless  => '/bin/ls /tmp/beaker-repo/repodata 2>/dev/null',
+        require => File['/tmp/beaker-repo/demo-one-1.0-1.x86_64.rpm'],
+      }
 
-    yumrepo { 'beaker':
-       # Create beaker repo config on switch
-       baseurl  => 'file:///tmp/beaker-repo',
-       descr    => "Beaker test rpms",
-       enabled  => 1,
-       gpgcheck => 0,
-       cost     => 505,
-       require  => Exec['createrepo'],
-       before   => Package['#{os_family[/cisco-wrlinux/] ? 'demo-one' : 'dos2unix'}'],
-    }
-  )
-  logger.info("\n  * dependency_manifest\n#{dep}")
-  dep
+      yumrepo { 'beaker':
+         # Create beaker repo config on switch
+         baseurl  => 'file:///tmp/beaker-repo',
+         descr    => "Beaker test rpms",
+         enabled  => 1,
+         gpgcheck => 0,
+         cost     => 505,
+         require  => Exec['createrepo'],
+         before   => Package['#{os_family[/cisco-wrlinux/] ? 'demo-one' : 'dos2unix'}'],
+      }
+    )
+    ctx.logger.info("\n  * dependency_manifest\n#{dep}")
+    dep
+  end
 end
 
 def cleanup(tests, id)

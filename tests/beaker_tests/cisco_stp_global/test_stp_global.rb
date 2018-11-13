@@ -209,29 +209,29 @@ tests[:non_default_bd] = {
 }
 
 # class to contain the harness_dependencies specific to these tests
-class TestStpGlobal
-  def self.test_harness_dependencies(_tests, id)
-    return unless platform == 'n7k'
+class TestStpGlobal < BaseHarness
+  def self.test_harness_dependencies(ctx, _tests, id)
+    return unless ctx.platform == 'n7k'
     if id == :default_bd || id == :non_default_bd
       cmd = 'system bridge-domain all'
-      command_config(agent, cmd, cmd)
+      ctx.command_config(ctx.agent, cmd, cmd)
     else
       cmd = 'system bridge-domain all ; system bridge-domain none'
-      command_config(agent, cmd, cmd)
+      ctx.command_config(ctx.agent, cmd, cmd)
     end
   end
 
-  def self.unsupported_properties(_tests, _id)
+  def self.unsupported_properties(ctx, _tests, _id)
     unprops = []
-    unprops << :domain if platform[/n(3|9)k-f/]
-    unprops << :fcoe if platform[/n(3|5|6|7)k/]
+    unprops << :domain if ctx.platform[/n(3|9)k-f/]
+    unprops << :fcoe if ctx.platform[/n(3|5|6|7)k/]
     unprops
   end
 
-  def self.version_unsupported_properties(_tests, _id)
+  def self.version_unsupported_properties(ctx, _tests, _id)
     unprops = {}
-    unprops[:domain] = '7.0.3.I6.1' if platform[/n3k$/]
-    unprops[:domain] = '7.0.3.I6.1' if platform[/n9k$/]
+    unprops[:domain] = '7.0.3.I6.1' if ctx.platform[/n3k$/]
+    unprops[:domain] = '7.0.3.I6.1' if ctx.platform[/n9k$/]
     unprops
   end
 end

@@ -160,11 +160,11 @@ tests[:ip_forwarding] = {
 }
 
 # class to contain the test_dependencies specific to this test case
-class TestInterfaceL3
-  def self.unsupported_properties(_tests, id)
+class TestInterfaceL3 < BaseHarness
+  def self.unsupported_properties(ctx, _tests, id)
     unprops = []
 
-    if operating_system == 'ios_xr'
+    if ctx.operating_system == 'ios_xr'
       unprops <<
         :bfd_echo <<
         :duplex <<
@@ -182,10 +182,10 @@ class TestInterfaceL3
         :switchport_mode
     end
 
-    if platform[/n(3|9)k/]
+    if ctx.platform[/n(3|9)k/]
       unprops <<
         :ipv4_dhcp_relay_src_addr_hsrp
-    elsif platform[/n(5|6)k/]
+    elsif ctx.platform[/n(5|6)k/]
       unprops <<
         :ipv4_dhcp_relay_info_trust
     end
@@ -195,17 +195,17 @@ class TestInterfaceL3
 
     unprops
   end
-end
 
-# Overridden to properly handle dependencies for this test file.
-def dependency_manifest(_tests, id)
-  return unless id == :non_default
-  # Though not required on most platforms, the test vrf context should be
-  # instantiated prior to configuring settings on a vrf interface. The new
-  # DME-based cli's (PIM, etc) may fail otherwise.
-  dep = %( cisco_vrf { 'test1': description => 'Puppet test vrf' } )
-  logger.info("\n  * dependency_manifest\n#{dep}")
-  dep
+  # Overridden to properly handle dependencies for this test file.
+  def self.dependency_manifest(ctx, _tests, id)
+    return unless id == :non_default
+    # Though not required on most platforms, the test vrf context should be
+    # instantiated prior to configuring settings on a vrf interface. The new
+    # DME-based cli's (PIM, etc) may fail otherwise.
+    dep = %( cisco_vrf { 'test1': description => 'Puppet test vrf' } )
+    ctx.logger.info("\n  * dependency_manifest\n#{dep}")
+    dep
+  end
 end
 
 def cleanup(agent, intf, dot1q)

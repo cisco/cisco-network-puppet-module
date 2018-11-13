@@ -151,12 +151,12 @@ tests[:purge] = {
 }
 
 # class to contain the test_dependencies specific to this test case
-class TestInterfaceL2
-  def self.unsupported_properties(_tests, _id)
+class TestInterfaceL2 < BaseHarness
+  def self.unsupported_properties(ctx, _tests, _id)
     unprops = []
     unprops <<
       :storm_control_broadcast <<
-      :storm_control_multicast if platform == 'n7k'
+      :storm_control_multicast if ctx.platform == 'n7k'
     unprops
   end
 end

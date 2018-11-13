@@ -110,13 +110,13 @@ if platform[/n3k$/]
 end
 
 # class to contain the test_dependencies specific to this test case
-class TestVlan
-  def self.unsupported_properties(tests, _id)
+class TestVlan < BaseHarness
+  def self.unsupported_properties(ctx, tests, _id)
     unprops = []
 
-    unprops << :mapped_vni if platform[/n7k/] || tests[:vn_segment_unsupported]
+    unprops << :mapped_vni if ctx.platform[/n7k/] || tests[:vn_segment_unsupported]
 
-    unprops << :fabric_control unless platform[/n7k/]
+    unprops << :fabric_control unless ctx.platform[/n7k/]
 
     logger.info("  unprops: #{unprops}") unless unprops.empty?
     unprops

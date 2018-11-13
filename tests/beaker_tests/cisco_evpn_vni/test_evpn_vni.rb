@@ -70,10 +70,10 @@ tests[:non_default] = {
 }
 
 # class to contain the test_dependencies specific to this test case
-class TestEvpnVni
-  def self.unsupported_properties(*)
+class TestEvpnVni < BaseHarness
+  def self.unsupported_properties(ctx, _tests, _id)
     unprops = []
-    unprops << :route_target_both if nexus_image['I2']
+    unprops << :route_target_both if ctx.nexus_image['I2']
     unprops
   end
 end
