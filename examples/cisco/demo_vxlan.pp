@@ -35,6 +35,11 @@ class ciscopuppet::cisco::demo_vxlan {
       dup_host_mac_detection_timeout        => '10',
     }
 
+    $suppress_arp_disable = platform_get() ? {
+      /n9k/  => 'default',
+      default    => undef,
+    }
+
     $source_interface_hold_down_time = platform_get() ? {
       /n9k/  => '50',
       default    => undef,
@@ -78,7 +83,7 @@ class ciscopuppet::cisco::demo_vxlan {
       assoc_vrf            => false,
       multicast_group      => '224.1.1.1',
       suppress_arp         => 'default',
-      suppress_arp_disable => 'default',
+      suppress_arp_disable => $suppress_arp_disable,
     }
 
     # TBD: Anycast gateway mode
