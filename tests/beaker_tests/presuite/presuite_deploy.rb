@@ -14,7 +14,8 @@
 # limitations under the License.
 ###############################################################################
 # This presuite takes several optional parameters through environment variables
-# to support different test scenarios:
+# to support different test scenarios for master/agent interactions. For agentless
+# testing, the usual .fixtures.yml and Gemfile control the versions used.
 #
 #   * NETDEV_STDLIB_URL, NETDEV_STDLIB_REF: the source git URL and git ref (branch)
 #     to load the netdev_stdlib module; if no NETDEV_STDLIB_URL is specified, the
