@@ -40,12 +40,16 @@ Puppet::Type.type(:cisco_vxlan_vtep).provide(:cisco) do
     :global_mcast_group_l3,
   ]
 
+  # Some of these bool properties have to be set
+  # after the non-bool properties defined above
   VXLAN_VTEP_BOOL_PROPS = [
     :shutdown,
     :global_ingress_replication_bgp,
     :global_suppress_arp,
   ]
 
+  # global_mcast_group_l2 is non-bool, but it needs to be
+  # set after the bool varibales so create a new grouping.
   VXLAN_VTEP_LAST_NON_BOOL_PROPS = [
     :global_mcast_group_l2
   ]
