@@ -76,9 +76,13 @@ tests[:non_default_1] = {
 tests[:non_default_2] = {
   title_pattern:  'nve1',
   manifest_props: {
-    description:           'Puppet test',
-    host_reachability:     'evpn',
-    global_mcast_group_l2: '225.1.1.1',
+    description:                    'Puppet test',
+    host_reachability:              'evpn',
+    global_ingress_replication_bgp: 'default',
+    global_mcast_group_l2:          '225.1.1.1',
+  },
+  resource:       {
+    'global_ingress_replication_bgp' => 'false'
   },
 }
 

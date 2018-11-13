@@ -153,7 +153,7 @@ Puppet::Type.newtype(:cisco_vxlan_vtep) do
           and keyword 'default'."
 
     munge do |value|
-      value == 'default' ? :false : value
+      value == 'default' ? false : value
     end
   end
 
@@ -162,7 +162,7 @@ Puppet::Type.newtype(:cisco_vxlan_vtep) do
           and keyword 'default'."
 
     munge do |value|
-      value == 'default' ? :false : value
+      value == 'default' ? false : value
     end
   end
 
@@ -172,7 +172,7 @@ Puppet::Type.newtype(:cisco_vxlan_vtep) do
          'is also used' if self[:source_interface_hold_down_time] &&
                            !self[:source_interface]
     fail 'Only one of global_ingress_replication_bgp or global_mcast_group_l2 '\
-        'can be configured not both' if self[:global_ingress_replication_bgp] &&
-                                        self[:global_mcast_group_l2] && self[:global_mcast_group_l2] != 'default'
+        'can be configured not both' if self[:global_ingress_replication_bgp] == :true &&
+                                        self[:global_mcast_group_l2]
   end
 end
