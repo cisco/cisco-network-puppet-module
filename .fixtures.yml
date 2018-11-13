@@ -4,4 +4,5 @@
 fixtures:
   repositories:
     netdev_stdlib:
-      repo: "https://github.com/puppetlabs/netdev_stdlib.git"    
+      repo: '#{ENV["NETDEV_STDLIB_URL"] || "https://github.com/puppetlabs/netdev_stdlib.git"}'
+      ref: '#{ENV["NETDEV_STDLIB_REF"] || "master"}'
