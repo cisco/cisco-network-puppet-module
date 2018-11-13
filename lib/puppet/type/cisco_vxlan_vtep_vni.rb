@@ -176,6 +176,10 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
     desc "Override the global ARP suppression config. Valid values are true,
           false, or 'default'"
 
+    munge do |value|
+      value = :false if value == 'default'
+      value.to_sym
+    end
     newvalues(:true, :false, :default)
   end
 
