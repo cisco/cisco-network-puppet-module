@@ -37,10 +37,14 @@ Puppet::Type.type(:cisco_vxlan_vtep).provide(:cisco) do
     :source_interface,
     :source_interface_hold_down_time,
     :multisite_border_gateway_interface,
+    :global_mcast_group_l2,
+    :global_mcast_group_l3,
   ]
 
   VXLAN_VTEP_BOOL_PROPS = [
-    :shutdown
+    :shutdown,
+    :global_ingress_replication_bgp,
+    :global_suppress_arp,
   ]
 
   VXLAN_VTEP_ALL_PROPS = VXLAN_VTEP_NON_BOOL_PROPS + VXLAN_VTEP_BOOL_PROPS

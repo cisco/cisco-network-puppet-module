@@ -45,14 +45,20 @@ tests[:default] = {
     source_interface:                   'default',
     source_interface_hold_down_time:    'default',
     multisite_border_gateway_interface: 'default',
+    global_ingress_replication_bgp:     'default',
+    global_mcast_group_l2:              'default',
+    global_mcast_group_l3:              'default',
+    global_suppress_arp:                'default',
   },
   resource:       {
-    'host_reachability' => 'flood',
-    'shutdown'          => 'true',
+    'host_reachability'              => 'flood',
+    'shutdown'                       => 'true',
+    'global_ingress_replication_bgp' => 'false',
+    'global_suppress_arp'            => 'false',
   },
 }
 
-tests[:non_default] = {
+tests[:non_default_1] = {
   title_pattern:  'nve1',
   manifest_props: {
     description:                        'Puppet test',
@@ -61,6 +67,18 @@ tests[:non_default] = {
     source_interface:                   'loopback55',
     source_interface_hold_down_time:    '100',
     multisite_border_gateway_interface: 'loopback5',
+    global_ingress_replication_bgp:     'true',
+    global_mcast_group_l3:              '225.1.1.2',
+    global_suppress_arp:                'true',
+  },
+}
+
+tests[:non_default_2] = {
+  title_pattern:  'nve1',
+  manifest_props: {
+    description:           'Puppet test',
+    host_reachability:     'evpn',
+    global_mcast_group_l2: '225.1.1.1',
   },
 }
 
@@ -68,12 +86,20 @@ def unsupported_properties(*)
   unprops = []
   unprops << :source_interface_hold_down_time if platform[/n(5|6)k/]
   unprops << :multisite_border_gateway_interface unless platform[/ex/]
+  unprops << :global_ingress_replication_bgp if platform[/n(3k-f|5k|6k|7k|9k-f)/]
+  unprops << :global_suppress_arp if platform[/n(3k-f|5k|6k|7k)/]
+  unprops << :global_mcast_group_l2 if platform[/n(3k-f|5k|6k|7k)/]
+  unprops << :global_mcast_group_l3 if platform[/n(3k-f|5k|6k|7k|9k-f)/]
   unprops
 end
 
 def version_unsupported_properties(_tests, _id)
   unprops = {}
   unprops[:source_interface_hold_down_time] = '8.1.1' if platform[/n7k/]
+  unprops[:global_ingress_replication_bgp] = '9.2' if platform[/n9k$/]
+  unprops[:global_mcast_group_l3] = '9.2' if platform[/n9k$/]
+  unprops[:global_suppress_arp] = '9.2' if platform[/n9k/]
+  unprops[:global_mcast_group_l2] = '9.2' if platform[/n9k/]
   unprops
 end
 
@@ -110,7 +136,11 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, id)
 
   # -----------------------------------
-  logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  test_harness_run(tests, :non_default)
+  logger.info("\n#{'-' * 60}\nSection 2. Non Default1 Property Testing")
+  test_harness_run(tests, :non_default_1)
+
+  # -----------------------------------
+  logger.info("\n#{'-' * 60}\nSection 2.1 Non Default2 Property Testing")
+  test_harness_run(tests, :non_default_2)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
