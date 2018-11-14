@@ -1020,7 +1020,7 @@ def test_get(agent, filter, opt=:raw)
     env = { host: @nexus_host[:vmhostname], port: 22, username: @nexus_host[:ssh][:user], password: @nexus_host[:ssh][:password], cookie: nil }
     Cisco::Environment.add_env('remote', env)
     test_client = Cisco::Client.create('remote')
-    command = test_client.get(data_fomat: :cli, command: filter)
+    command = test_client.get(data_fomat: :cli, command: "show running-config all | #{filter}")
   end
   case opt
   when :raw

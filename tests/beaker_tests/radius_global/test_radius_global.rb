@@ -66,7 +66,7 @@ def cleanup(agent)
   test_set(agent, 'no ip radius source-interface')
 
   # To remove a configured key we have ot know the key value
-  test_get(agent, 'show running-config radius | include key')
+  test_get(agent, 'include radius | include key')
   key = stdout.match('^radius-server key (\d+)\s+(.*)') if stdout
   command_config(agent, "no radius-server key #{key[1]} #{key[2]}", "removing key #{key[2]}") if key
 end
