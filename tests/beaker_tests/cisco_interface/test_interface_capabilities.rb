@@ -99,8 +99,7 @@ def interface_pre_check(tests, intf) # rubocop:disable Metrics/AbcSize
   dup = caps['Duplex']
   mtu = caps['MTU']
 
-  tests[:default][:manifest_props][:negotiate_auto] = 'true' unless
-    platform[/n7k/]
+  tests[:default][:manifest_props][:negotiate_auto] = 'true' unless platform[/n7k/]
   tests[:default][:manifest_props][:duplex] = 'auto' if dup.delete('auto')
   tests[:default][:manifest_props][:speed] = 'auto' if spd.delete('auto')
 
@@ -110,8 +109,7 @@ def interface_pre_check(tests, intf) # rubocop:disable Metrics/AbcSize
 
   # Cannot turn off auto-negotiate for speeds 10G+
   non_default_speed = tests[:non_default][:manifest_props][:speed]
-  tests[:non_default][:manifest_props][:negotiate_auto] = 'false' unless
-    platform[/n7k/] || non_default_speed.to_i >= 10_000
+  tests[:non_default][:manifest_props][:negotiate_auto] = 'false' unless platform[/n7k/] || non_default_speed.to_i >= 10_000
 
   logger.info("\n      Pre-Check :default hash: #{tests[:default]}"\
               "\n      Pre-Check :non_default hash: #{tests[:non_default]}")

@@ -161,10 +161,10 @@ tests[:svi_mapping] = {
 }
 
 # class to contain the test_dependencies specific to this test case
-class TestInterfacePrivateVlan
-  def self.unsupported_properties(_tests, _id)
+class TestInterfacePrivateVlan < BaseHarness
+  def self.unsupported_properties(ctx, _tests, _id)
     unprops = []
-    if platform[/n3k$/]
+    if ctx.platform[/n3k$/]
       unprops <<
         :switchport_pvlan_mapping_trunk <<
         :switchport_pvlan_trunk_association <<
@@ -172,6 +172,10 @@ class TestInterfacePrivateVlan
         :switchport_pvlan_trunk_secondary
     end
     unprops
+  end
+
+  def self.dependency_manifest(_ctx, tests, id)
+    tests[id][:dependency] if tests[id][:dependency]
   end
 end
 
@@ -186,11 +190,6 @@ end
 def pvlan_assoc_cleanup(agent, intf)
   logger.info("\n#{'-' * 60}\nPrivate-vlan cleanup")
   resource_set(agent, ['cisco_interface', intf, 'switchport_mode', 'disabled'])
-end
-
-# This method overrides utilitylib.rb:dependency_manifest()
-def dependency_manifest(tests, id)
-  tests[id][:dependency] if tests[id][:dependency]
 end
 
 #################################################################

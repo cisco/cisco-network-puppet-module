@@ -527,38 +527,38 @@ def unsupp_n9kf
 end
 
 # class to contain the test_dependencies specific to this test case
-class TestRouteMap
-  def self.unsupported_properties(_tests, _id)
-    if platform[/n3k$/]
+class TestRouteMap < BaseHarness
+  def self.unsupported_properties(ctx, _tests, _id)
+    if ctx.platform[/n3k$/]
       unsupp_n3k
-    elsif platform[/n(5|6)k/]
+    elsif ctx.platform[/n(5|6)k/]
       unsupp_n56k
-    elsif platform[/n7k/]
+    elsif ctx.platform[/n7k/]
       unsupp_n7k
-    elsif platform[/n9k$|n9k-ex/]
+    elsif ctx.platform[/n9k$|n9k-ex/]
       unsupp_n9k
-    elsif platform[/n(3|9)k-f/]
+    elsif ctx.platform[/n(3|9)k-f/]
       unsupp_n9kf
     end
   end
 
   def self.version_unsupported_properties(_tests, _id)
     unprops = {}
-    if platform[/n(3|9)k-f/]
+    if ctx.platform[/n(3|9)k-f/]
       unprops[:match_metric] = '7.0.3.F2.1'
       unprops[:set_extcommunity_4bytes_additive] = '7.0.3.F2.1'
       unprops[:set_extcommunity_4bytes_non_transitive] = '7.0.3.F2.1'
       unprops[:set_extcommunity_4bytes_transitive] = '7.0.3.F2.1'
       unprops[:set_ipv4_next_hop_load_share] = '7.0.3.F2.1'
       unprops[:set_ipv6_next_hop_load_share] = '7.0.3.F2.1'
-    elsif platform[/n9k/]
+    elsif ctx.platform[/n9k/]
       unprops[:match_ospf_area] = '7.0.3.I5.1'
       unprops[:set_ipv4_next_hop_load_share] = '7.0.3.I5.1'
       unprops[:set_ipv6_next_hop_load_share] = '7.0.3.I5.1'
       unprops[:set_ipv4_next_hop_redist] = '7.0.3.I5.1'
       unprops[:set_ipv6_next_hop_redist] = '7.0.3.I5.1'
       unprops[:set_community] = '7.0.3.I5.1'
-    elsif platform[/n3k/]
+    elsif ctx.platform[/n3k/]
       unprops[:match_ospf_area] = '7.0.3.I5.1'
       unprops[:set_ipv4_next_hop_redist] = '7.0.3.I5.1'
       unprops[:set_ipv6_next_hop_redist] = '7.0.3.I5.1'

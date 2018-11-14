@@ -141,11 +141,11 @@ tests[:title_patterns_3] = {
 }
 
 # class to contain the test_dependencies specific to this test case
-class TestBgpNeighbor
-  def self.unsupported_properties(_tests, _id)
+class TestBgpNeighbor < BaseHarness
+  def self.unsupported_properties(ctx, _tests, _id)
     unprops = []
 
-    if operating_system == 'ios_xr'
+    if ctx.operating_system == 'ios_xr'
       # IOS-XR does not support these properties
       unprops <<
         :bfd <<
@@ -157,16 +157,16 @@ class TestBgpNeighbor
         :remove_private_as
 
     else
-      unprops << :log_neighbor_changes if platform[/n(5|6)/]
-      unprops << :peer_type unless platform[/ex/]
+      unprops << :log_neighbor_changes if ctx.platform[/n(5|6)/]
+      unprops << :peer_type unless ctx.platform[/ex/]
     end
 
     unprops
   end
 
-  def self.version_unsupported_properties(_tests, _id)
+  def self.version_unsupported_properties(ctx, _tests, _id)
     unprops = {}
-    unprops[:log_neighbor_changes] = '8.1.1' if platform[/n7k/]
+    unprops[:log_neighbor_changes] = '8.1.1' if ctx.platform[/n7k/]
     unprops
   end
 end

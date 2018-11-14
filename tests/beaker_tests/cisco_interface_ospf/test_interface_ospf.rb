@@ -107,13 +107,13 @@ tests[:non_default] = {
 }
 
 # class to contain the test_harness_dependencies
-class TestInterfaceOspf
-  def self.test_harness_dependencies(tests, id)
+class TestInterfaceOspf < BaseHarness
+  def self.test_harness_dependencies(ctx, tests, id)
     return unless id == :default
-    test_set(agent, 'feature ospf ; router ospf Sample')
+    ctx.test_set(agent, 'feature ospf ; router ospf Sample')
     # System-level switchport dependencies
-    config_system_default_switchport?(tests, id)
-    config_system_default_switchport_shutdown?(tests, id)
+    ctx.config_system_default_switchport?(tests, id)
+    ctx.config_system_default_switchport_shutdown?(tests, id)
   end
 end
 

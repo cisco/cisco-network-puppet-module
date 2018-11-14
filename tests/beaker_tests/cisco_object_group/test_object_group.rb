@@ -64,20 +64,23 @@ tests[:seq_30_v4] = {
   },
 }
 
-def dependency_manifest(_tests, _id)
-  "
-    cisco_object_group { 'ipv4 address beaker':
-      ensure => present,
-    }
+# class to contain the test_dependencies specific to this test case
+class TestObjectGroup < BaseHarness
+  def self.dependency_manifest(_ctx, _tests, _id)
+    "
+      cisco_object_group { 'ipv4 address beaker':
+        ensure => present,
+      }
 
-    cisco_object_group { 'ipv6 address beaker6':
-      ensure => present,
-    }
+      cisco_object_group { 'ipv6 address beaker6':
+        ensure => present,
+      }
 
-    cisco_object_group { 'ipv4 port beakerp':
-      ensure => present,
-    }
-  "
+      cisco_object_group { 'ipv4 port beakerp':
+        ensure => present,
+      }
+    "
+  end
 end
 
 def cleanup

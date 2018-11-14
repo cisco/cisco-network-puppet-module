@@ -36,10 +36,10 @@ tests[:default] = {
   desc:           '1.1 Default tests',
   title_pattern:  'ipv4 beaker',
   manifest_props: {
-    fragments: 'default'
+    fragments: 'default',
   },
   resource:       {
-    'stats_per_entry' => 'false'
+    'stats_per_entry' => 'false',
   },
 }
 
@@ -76,18 +76,13 @@ tests[:title_patterns_3] = {
 }
 
 # class to contain the test_dependencies specific to this test case
-class TestAcl
-  def self.unsupported_properties(_tests, _id)
-    unprops = []
-
-    if operating_system == 'ios_xr'
-      # unprops << TBD: XR Support
-
+class TestAcl < BaseHarness
+  def self.unsupported_properties(ctx, _tests, _id)
+    if ctx.platform[%r{n(3k-f|5k|6k|9k-f)}]
+      [:fragments]
     else
-      unprops << :fragments if platform[/n(3k-f|5k|6k|9k-f)/]
+      []
     end
-
-    unprops
   end
 end
 

@@ -60,10 +60,10 @@ tests[:non_default] = {
 }
 
 # class to contain the test_dependencies specific to this test case
-class TestHsrpGlobal
-  def self.unsupported_properties(_tests, _id)
+class TestHsrpGlobal < BaseHarness
+  def self.unsupported_properties(ctx, _tests, _id)
     unprops = []
-    unprops << :bfd_all_intf if platform[/n3k$/]
+    unprops << :bfd_all_intf if ctx.platform[/n3k$/]
     unprops
   end
 end

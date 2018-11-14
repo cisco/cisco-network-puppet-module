@@ -137,40 +137,26 @@ tests[:seq_50_icmp_v4] = {
 }
 
 # class to contain the test_dependencies specific to this test case
-class TestAce
-  def self.unsupported_properties(tests, id)
-    unprops = []
-
-    if operating_system == 'ios_xr'
-      # unprops << TBD: XR Support
-
-    else
-      if tests[id][:title_pattern][/ipv6/]
-        unprops <<
-          :http_method <<
-          :precedence <<
-          :redirect <<
-          :tcp_option_length
-      end
-      if platform[/n(5|6)k/]
-        unprops <<
-          :proto_option <<
-          :packet_length <<
-          :time_range
-      end
-      if platform[/n(5|6|7)k/]
-        unprops <<
-          :http_method <<
-          :redirect <<
-          :vlan <<
-          :tcp_option_length <<
-          :set_erspan_dscp <<
-          :set_erspan_gre_proto <<
-          :ttl
-      end
+class TestAce < BaseHarness
+  def self.unsupported_properties(ctx, tests, id)
+    if tests[id][:title_pattern][/ipv6/]
+      [:http_method,
+       :precedence,
+       :redirect,
+       :tcp_option_length]
+    elsif ctx.platform[/n(5|6)k/]
+      [:proto_option,
+       :packet_length,
+       :time_range]
+    elsif ctx.platform[/n(5|6|7)k/]
+      [:http_method,
+       :redirect,
+       :vlan,
+       :tcp_option_length,
+       :set_erspan_dscp,
+       :set_erspan_gre_proto,
+       :ttl]
     end
-
-    unprops
   end
 end
 

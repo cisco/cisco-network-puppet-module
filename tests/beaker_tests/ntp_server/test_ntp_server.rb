@@ -65,8 +65,8 @@ tests[:non_default] = {
 }
 
 # class to properly handle unsupported properties for this test case
-class TestNtpServer
-  def self.unsupported_properties(*)
+class TestNtpServer < BaseHarness
+  def self.unsupported_properties(_ctx, _tests, _id)
     unprops = []
     unprops << :source_interface
     unprops

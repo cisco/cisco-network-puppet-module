@@ -31,11 +31,11 @@ tests = {
 }
 
 # class to contain the test_dependencies specific to this test case
-class TestBgpNeighborAf
-  def self.unsupported_properties(_, _)
+class TestBgpNeighborAf < BaseHarness
+  def self.unsupported_properties(ctx, _tests, _id)
     unsupported_list = []
-    unsupported_list << :rewrite_evpn_rt_asn unless platform[/ex/]
-    return unsupported_list if operating_system == 'nexus'
+    unsupported_list << :rewrite_evpn_rt_asn unless ctx.platform[/ex/]
+    return unsupported_list if ctx.operating_system == 'nexus'
 
     [
       :additional_paths_receive,
@@ -52,63 +52,63 @@ class TestBgpNeighborAf
       :rewrite_evpn_rt_asn,
     ]
   end
-end
 
-# Overridden to properly handle dependencies for this test file.
-def dependency_manifest(tests, id)
-  af = puppet_resource_title_pattern_munge(tests, id)
-  remote_as = tests[id][:remote_as]
-  remote_as = 1 if remote_as.nil? && operating_system == 'ios_xr'
+  # Overridden to properly handle dependencies for this test file.
+  def self.dependency_manifest(ctx, tests, id)
+    af = puppet_resource_title_pattern_munge(tests, id)
+    remote_as = tests[id][:remote_as]
+    remote_as = 1 if remote_as.nil? && operating_system == 'ios_xr'
 
-  extra_config = ''
-  if operating_system[/ios_xr/]
-    extra_config += "
-      cisco_command_config { 'policy_config':
-        command => '
-          route-policy rm_in
-            end-policy
-          route-policy rm_out
-            end-policy
-        '
-      }
-    "
-    # XR requires the following before a vrf AF can be configured:
-    #   1. a global router_id
-    #   2. a global address family
-    #   3. route_distinguisher configured on the vrf
-    #   4. remote-as is required for neighbor
-    if af[:vrf] != 'default'
-      global_afi = (af[:afi] == 'ipv6') ? 'vpnv6' : 'vpnv4'
+    extra_config = ''
+    if ctx.operating_system[/ios_xr/]
       extra_config += "
-        cisco_bgp { '#{af[:asn]}':
-          ensure              => present,
-          router_id           => '1.2.3.4',
+        cisco_command_config { 'policy_config':
+          command => '
+            route-policy rm_in
+              end-policy
+            route-policy rm_out
+              end-policy
+          '
         }
-        cisco_bgp_af { '#{af[:asn]} default #{global_afi} #{af[:safi]}':
-          ensure              => present,
+      "
+      # XR requires the following before a vrf AF can be configured:
+      #   1. a global router_id
+      #   2. a global address family
+      #   3. route_distinguisher configured on the vrf
+      #   4. remote-as is required for neighbor
+      if af[:vrf] != 'default'
+        global_afi = (af[:afi] == 'ipv6') ? 'vpnv6' : 'vpnv4'
+        extra_config += "
+          cisco_bgp { '#{af[:asn]}':
+            ensure              => present,
+            router_id           => '1.2.3.4',
+          }
+          cisco_bgp_af { '#{af[:asn]} default #{global_afi} #{af[:safi]}':
+            ensure              => present,
+          }
+          cisco_bgp { '#{af[:asn]} #{af[:vrf]}':
+            ensure              => present,
+            route_distinguisher => auto,
+          }
+        "
+      end
+      extra_config += "
+        cisco_bgp_af { '#{af[:asn]} #{af[:vrf]} #{af[:afi]} #{af[:safi]}':
+          ensure                => present,
         }
-        cisco_bgp { '#{af[:asn]} #{af[:vrf]}':
-          ensure              => present,
-          route_distinguisher => auto,
+      "
+    end # if ios_xr
+
+    if remote_as
+      extra_config += "
+        cisco_bgp_neighbor { '#{af[:asn]} #{af[:vrf]} #{af[:neighbor]}':
+          ensure               => present,
+          remote_as            => #{remote_as},
         }
       "
     end
-    extra_config += "
-      cisco_bgp_af { '#{af[:asn]} #{af[:vrf]} #{af[:afi]} #{af[:safi]}':
-        ensure                => present,
-      }
-    "
-  end # if ios_xr
-
-  if remote_as
-    extra_config += "
-      cisco_bgp_neighbor { '#{af[:asn]} #{af[:vrf]} #{af[:neighbor]}':
-        ensure               => present,
-        remote_as            => #{remote_as},
-      }
-    "
+    extra_config
   end
-  extra_config
 end
 
 tests[:default] = {

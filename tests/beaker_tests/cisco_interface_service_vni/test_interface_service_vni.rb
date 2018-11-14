@@ -66,18 +66,21 @@ tests[:non_default] = {
   },
 }
 
-def dependency_manifest(tests, id)
-  return unless id == :default
-  dep = %(
-    cisco_encapsulation {'vni_500_5000':
-      dot1q_map => ['500', '5000'],
-    }
-    cisco_interface{ '#{tests[:intf]}':
-      switchport_mode => 'disabled',
-    }
-  )
-  logger.info("\n  * dependency_manifest\n#{dep}")
-  dep
+# class to contain the test_dependencies specific to this test case
+class TestInterfaceServiceVni < BaseHarness
+  def self.dependency_manifest(ctx, tests, id)
+    return unless id == :default
+    dep = %(
+      cisco_encapsulation {'vni_500_5000':
+        dot1q_map => ['500', '5000'],
+      }
+      cisco_interface{ '#{tests[:intf]}':
+        switchport_mode => 'disabled',
+      }
+    )
+    ctx.logger.info("\n  * dependency_manifest\n#{dep}")
+    dep
+  end
 end
 
 #################################################################
@@ -94,7 +97,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  test_harness_run(tests, :default)
-  test_harness_run(tests, :non_default)
+  test_harness_run(tests, :default, harness_class: TestInterfaceServiceVni)
+  test_harness_run(tests, :non_default, harness_class: TestInterfaceServiceVni)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

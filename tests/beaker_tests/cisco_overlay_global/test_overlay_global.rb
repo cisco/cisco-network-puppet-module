@@ -74,10 +74,10 @@ tests[:non_default] = {
 }
 
 # class to contain the test_dependencies specific to this test case
-class TestOverlayGlobal
-  def self.unsupported_properties(_tests, _id)
+class TestOverlayGlobal < BaseHarness
+  def self.unsupported_properties(ctx, _tests, _id)
     unprops = []
-    if platform[/n3k$/]
+    if ctx.platform[/n3k$/]
       unprops <<
         :anycast_gateway_mac <<
         :dup_host_ip_addr_detection_host_moves <<
@@ -88,7 +88,7 @@ class TestOverlayGlobal
 
   def self.version_unsupported_properties(_tests, _id)
     unprops = {}
-    if platform[/n3k$/]
+    if ctx.platform[/n3k$/]
       unprops[:dup_host_mac_detection_host_moves] = '7.0.3.I6.1'
       unprops[:dup_host_mac_detection_timeout] = '7.0.3.I6.1'
     end
