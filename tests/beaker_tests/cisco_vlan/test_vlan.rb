@@ -118,7 +118,7 @@ class TestVlan < BaseHarness
 
     unprops << :fabric_control unless ctx.platform[/n7k/]
 
-    logger.info("  unprops: #{unprops}") unless unprops.empty?
+    ctx.logger.info("  unprops: #{unprops}") unless unprops.empty?
     unprops
   end
 end
