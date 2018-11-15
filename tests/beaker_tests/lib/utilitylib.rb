@@ -1729,8 +1729,8 @@ DEVICE
     #  test_set('no vlan <range> ; no bridge <range> ; system bridge-domain none')
     step "\n--------\n * TestStep :: #{stepinfo}" do
       resource_absent_cleanup(agent, 'cisco_bridge_domain', 'bridge domains')
-      cmd = 'system bridge-domain none'
-      command_config(agent, cmd, cmd)
+      # bridge_domain feature is available only on n7k
+      command_config(agent, 'system bridge-domain none', 'system bridge-domain none') if platform == 'n7k'
       test_set(agent, 'no feature interface-vlan')
       test_set(agent, 'no feature private-vlan')
       test_set(agent, 'no vlan 2-3967')
