@@ -1354,9 +1354,13 @@ DEVICE
 
   @image = nil # Cache the lookup result
   def nexus_image
-    facter_opt = '-p cisco.images.full_version'
     image_regexp = /(\S+)/
-    data = on(agent, facter_cmd(facter_opt)).output
+    if agent
+      data = on(agent, facter_cmd('-p cisco.images.full_version'))
+    else
+      output = `#{AGENTLESS_COMMAND} --facts | grep full_version`
+      data = output.nil? ? '' : output.match(%r{"full_version": "(.*)"})[1]
+    end
     darr = data.split("\n")
     darr.each do |line|
       next if line.include?('stty') || line.include?('WARN')
