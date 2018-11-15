@@ -1370,6 +1370,8 @@ DEVICE
   end
 
   # Gets the version of the image running on a device
+  # same as full_version - so might not be required anymore
+  # as full_version supports dual mode.
   @version = nil
   def image_version
     facter_opt = '-p os.release.full'
@@ -1395,6 +1397,19 @@ DEVICE
   def image?(reset_cache=false)
     return @cached_img unless @cached_img.nil? || reset_cache
     @cached_img = full_version
+  end
+
+  # Gets the package version running on a device
+  @package_info = nil
+  def package
+    if agent
+      facter_opt = '-p cisco.images.system_image'
+      data = on(agent, facter_cmd(facter_opt)).stdout.chomp
+    else
+      output = `#{AGENTLESS_COMMAND} --facts | grep system_image`
+      data = output.nil? ? '' : output.match(%r{"system_image": "(.*)"})[1]
+    end
+    @package_info ||= data.chomp
   end
 
   # On match will skip all testcases
