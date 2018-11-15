@@ -145,14 +145,14 @@ class TestVrfAf < BaseHarness
   end
 
   def self.dependency_manifest(ctx, tests, id)
-    if operating_system == 'nexus'
+    if ctx.operating_system == 'nexus'
       return unless id[/non_default/]
       dep = %(
         cisco_command_config { 'policy_config':
           command => 'route-map abc permit 10'
         } )
     else
-      t = puppet_resource_title_pattern_munge(tests, id)
+      t = ctx.puppet_resource_title_pattern_munge(tests, id)
       dep = %(
         cisco_vrf { '#{t[:vrf]}': ensure => present }
         cisco_command_config { 'policy_config':
