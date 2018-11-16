@@ -75,7 +75,7 @@ tests[:negative_port] = {
   },
   resource: {
   },
-  code: [1, 4],
+  code: [6],
 }
 
 tests[:negative_timeout] = {
@@ -87,7 +87,7 @@ tests[:negative_timeout] = {
   },
   resource: {
   },
-  code: [1, 4],
+  code: [6],
 }
 
 tests[:negative_password] = {
@@ -101,7 +101,7 @@ tests[:negative_password] = {
   },
   resource: {
   },
-  code: [1, 4],
+  code: [6],
 }
 
 def cleanup(agent)
@@ -117,7 +117,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   cleanup(agent)
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  test_harness_run(tests, :default)
+  test_harness_run(tests, :default, skip_idempotence_check: true)
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non-Default Property Testing")
   test_harness_run(tests, :non_default)

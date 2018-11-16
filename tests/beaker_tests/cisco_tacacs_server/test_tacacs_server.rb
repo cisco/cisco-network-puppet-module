@@ -83,7 +83,7 @@ tests[:negative_timeout] = {
   },
   resource: {
   },
-  code: [1, 4],
+  code: [4],
 }
 
 tests[:negative_deadtime] = {
@@ -94,7 +94,7 @@ tests[:negative_deadtime] = {
   },
   resource: {
   },
-  code: [1, 4],
+  code: [4],
 }
 
 #################################################################
@@ -103,7 +103,7 @@ tests[:negative_deadtime] = {
 test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  test_harness_run(tests, :default)
+  test_harness_run(tests, :default, skip_idempotence_check: true)
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non-Default Property Testing")
   test_harness_run(tests, :non_default)
