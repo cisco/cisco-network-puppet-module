@@ -1130,7 +1130,7 @@ DEVICE
   def skip_if_nv_overlay_rejected(agent)
     logger.info('Check for nv overlay support')
     cmd = get_vshell_cmd('config t ; feature nv overlay')
-    on(agent, cmd, pty: true)
+    test_set(agent, cmd)
     # Failure message taken from 6001
     msg = 'NVE Feature NOT supported on this Platform'
     banner = '#' * msg.length
@@ -1337,7 +1337,13 @@ DEVICE
   @fretta_slot = nil
   def fretta?(reset_cache=false)
     return @fretta_slot unless @fretta_slot.nil? || reset_cache
-    data = on(agent, facter_cmd('-p cisco.inventory')).output.split("\n")
+    if agent
+      data = on(agent, facter_cmd('-p cisco.inventory')).output.split("\n")
+    else
+      data = `#{AGENTLESS_COMMAND} --facts`
+      inventory_facts = data.match(%r{inventory.*(\n.*)*?(?=virtual_service)})
+      data = inventory_facts.to_s.split("\n")
+    end
     @fretta_slot = false
     data.each do |line|
       next unless line.include?('pid =>')
@@ -1348,9 +1354,13 @@ DEVICE
 
   @image = nil # Cache the lookup result
   def nexus_image
-    facter_opt = '-p cisco.images.full_version'
     image_regexp = /(\S+)/
-    data = on(agent, facter_cmd(facter_opt)).output
+    if agent
+      data = on(agent, facter_cmd('-p cisco.images.full_version'))
+    else
+      output = `#{AGENTLESS_COMMAND} --facts | grep full_version`
+      data = output.nil? ? '' : output.match(%r{"full_version": "(.*)"})[1]
+    end
     darr = data.split("\n")
     darr.each do |line|
       next if line.include?('stty') || line.include?('WARN')
@@ -1360,6 +1370,8 @@ DEVICE
   end
 
   # Gets the version of the image running on a device
+  # same as full_version - so might not be required anymore
+  # as full_version supports dual mode.
   @version = nil
   def image_version
     facter_opt = '-p os.release.full'
@@ -1385,6 +1397,19 @@ DEVICE
   def image?(reset_cache=false)
     return @cached_img unless @cached_img.nil? || reset_cache
     @cached_img = full_version
+  end
+
+  # Gets the package version running on a device
+  @package_info = nil
+  def package
+    if agent
+      facter_opt = '-p cisco.images.system_image'
+      data = on(agent, facter_cmd(facter_opt)).stdout.chomp
+    else
+      output = `#{AGENTLESS_COMMAND} --facts | grep system_image`
+      data = output.nil? ? '' : output.match(%r{"system_image": "(.*)"})[1]
+    end
+    @package_info ||= data.chomp
   end
 
   # On match will skip all testcases
@@ -1719,8 +1744,8 @@ DEVICE
     #  test_set('no vlan <range> ; no bridge <range> ; system bridge-domain none')
     step "\n--------\n * TestStep :: #{stepinfo}" do
       resource_absent_cleanup(agent, 'cisco_bridge_domain', 'bridge domains')
-      cmd = 'system bridge-domain none'
-      command_config(agent, cmd, cmd)
+      # bridge_domain feature is available only on n7k
+      command_config(agent, 'system bridge-domain none', 'system bridge-domain none') if platform == 'n7k'
       test_set(agent, 'no feature interface-vlan')
       test_set(agent, 'no feature private-vlan')
       test_set(agent, 'no vlan 2-3967')
@@ -1741,6 +1766,7 @@ DEVICE
     # }
     # The following logic handles both output styles.
     found = test_get(agent, "incl 'vrf context' | excl management")
+    return if found.nil?
     found.gsub!(/\\n/, ' ')
     vrfs = found.scan(/(vrf context \S+)/)
     return if vrfs.empty?

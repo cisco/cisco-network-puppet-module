@@ -85,7 +85,7 @@ class TestVrf < BaseHarness
         :shutdown <<
         :vni
     end
-    logger.info("  unprops: #{unprops}") unless unprops.empty?
+    ctx.logger.info("  unprops: #{unprops}") unless unprops.empty?
     unprops
   end
 
@@ -119,7 +119,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  test_harness_run(tests, :non_default)
-  skipped_tests_summary(tests, harness_class: TestVrf)
+  test_harness_run(tests, :non_default, harness_class: TestVrf)
+  skipped_tests_summary(tests)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
