@@ -288,7 +288,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   cleanup(agent)
   tests[id][:ensure] = :present
   tests[id][:desc] = '1.1.a. Default Properties (vrf blue)'
-  test_harness_bgp_vrf(tests, id, 'blue')
+  test_harness_bgp_vrf(tests, id, 'blue', harness_class: TestBgp)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
@@ -296,7 +296,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   id = :non_default
   test_harness_run(tests, id, harness_class: TestBgp)
   tests[id][:desc] = '2.1.a. Default Properties (vrf blue)'
-  test_harness_bgp_vrf(tests, id, 'blue')
+  test_harness_bgp_vrf(tests, id, 'blue', harness_class: TestBgp)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
