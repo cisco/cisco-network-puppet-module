@@ -858,11 +858,14 @@ DEVICE
   def supported_property_hash(tests, id, property_hash, harness_class: BaseHarness)
     return nil if property_hash.nil?
     copy = property_hash.clone
-    harness_class.unsupported_properties(self, tests, id).each do |prop_symbol|
-      next unless prop_symbol
-      copy.delete(prop_symbol)
-      # because :resource hash currently uses strings for keys
-      copy.delete(prop_symbol.to_s)
+    unsupported_properties = harness_class.unsupported_properties(self, tests, id)
+    unless unsupported_properties.nil?
+      unsupported_properties.each do |prop_symbol|
+        next unless prop_symbol
+        copy.delete(prop_symbol)
+        # because :resource hash currently uses strings for keys
+        copy.delete(prop_symbol.to_s)
+      end
     end
 
     lim = full_version.split[0].tr('(', '.').tr(')', '.').chomp('.')
@@ -875,14 +878,17 @@ DEVICE
     # 7.0.3.I2.2e < 7.0.3.I2.2a is FALSE
     append_a = false
     append_a = true if lim[-1, 1] =~ /[[:alpha:]]/
-    harness_class.version_unsupported_properties(self, tests, id).each do |key, val|
-      next unless key
-      val << 'a' if append_a
-      append_a = false
-      next unless Gem::Version.new(lim) < Gem::Version.new(val)
-      copy.delete(key)
-      # because :resource hash currently uses strings for keys
-      copy.delete(key.to_s)
+    version_unsupported_properties = harness_class.version_unsupported_properties(self, tests, id)
+    unless version_unsupported_properties.nil?
+      version_unsupported_properties.each do |key, val|
+        next unless key
+        val << 'a' if append_a
+        append_a = false
+        next unless Gem::Version.new(lim) < Gem::Version.new(val)
+        copy.delete(key)
+        # because :resource hash currently uses strings for keys
+        copy.delete(key.to_s)
+      end
     end
     copy
   end
