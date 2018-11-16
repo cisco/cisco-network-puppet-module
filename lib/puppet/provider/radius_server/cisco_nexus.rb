@@ -54,7 +54,7 @@ class Puppet::Provider::RadiusServer::CiscoNexus < Puppet::ResourceApi::SimplePr
 
   def validate(should)
     raise Puppet::ResourceError,
-         "This provider does not support the 'hostname' property. The namevar should be set to the IP of the Radius Server" \
+          "This provider does not support the 'hostname' property. The namevar should be set to the IP of the Radius Server" \
           if should[:hostname]
 
     invalid = []
@@ -65,10 +65,10 @@ class Puppet::Provider::RadiusServer::CiscoNexus < Puppet::ResourceApi::SimplePr
     raise Puppet::ResourceError, "This provider does not support the following properties: #{invalid}" unless invalid.empty?
 
     raise Puppet::ResourceError,
-         "The 'key' property must be set when specifying 'key_format'." if should[:key_format] && !should[:key]
+          "The 'key' property must be set when specifying 'key_format'." if should[:key_format] && !should[:key]
 
     raise Puppet::ResourceError,
-         "The 'accounting_only' and 'authentication_only' properties cannot both be set to false." if munge_flush(should[:accounting_only]) == false && \
+          "The 'accounting_only' and 'authentication_only' properties cannot both be set to false." if munge_flush(should[:accounting_only]) == false && \
                                                                                                       munge_flush(should[:authentication_only]) == false
   end
 

@@ -305,8 +305,13 @@ DEVICE
   end
 
   # helper to match stderr buffer against :stderr_pattern
-  def test_stderr(tests, id)
-    if stderr =~ tests[id][:stderr_pattern]
+  def test_stderr(tests, id, output=nil)
+    if output
+      test_output = output
+    else
+      test_output = stderr
+    end
+    if test_output =~ tests[id][:stderr_pattern]
       logger.debug("TestStep :: Match #{tests[id][:stderr_pattern]} :: PASS")
     else
       fail_test("TestStep :: Match #{tests[id][:stderr_pattern]} :: FAIL")
@@ -331,6 +336,7 @@ DEVICE
         code = (tests[id][:code]) ? tests[id][:code] : [2]
         logger.debug("test_manifest :: check puppet agent cmd (code: #{code})")
         on(tests[:agent], puppet_agent_cmd, acceptable_exit_codes: code)
+        output = nil
       else
         code = (tests[id][:code]) ? tests[id][:code] : [2]
         logger.debug("test_manifest :: check puppet apply cmd (code: #{code})")
@@ -339,13 +345,13 @@ DEVICE
         # if !code.include?($?.exitstatus)
         #  raise 'Errored test'
         # end
-        output = `#{AGENTLESS_COMMAND} --apply #{@temp_agentless_manifest.path}`
-        unless output.include? 'Applied catalog'
+        output = `#{AGENTLESS_COMMAND} --apply #{@temp_agentless_manifest.path} 2>&1`
+        if !(output.include? 'Applied catalog') && tests[id][:stderr_pattern].nil?
           remove_temp_manifest
           raise 'Errored test'
         end
       end
-      test_stderr(tests, id) if tests[id][:stderr_pattern]
+      test_stderr(tests, id, output) if tests[id][:stderr_pattern]
     end
     logger.info("#{stepinfo} :: PASS")
     tests[id].delete(:log_desc)
@@ -1340,19 +1346,6 @@ DEVICE
     @fretta_slot
   end
 
-  # Check if image matches pattern
-  @cached_img = nil
-  def image?(reset_cache=false)
-    return @cached_img unless @cached_img.nil? || reset_cache
-    if agent
-      on(agent, facter_cmd('-p cisco.images.full_version'))
-      @cached_img = stdout.nil? ? '' : stdout
-    else
-      output = `#{AGENTLESS_COMMAND} --facts | grep full_version`
-      @cached_img = output.nil? ? '' : output.match(%r{"full_version": "(.*)"})[1]
-    end
-  end
-
   @image = nil # Cache the lookup result
   def nexus_image
     facter_opt = '-p cisco.images.full_version'
@@ -1377,9 +1370,21 @@ DEVICE
   # Gets the full version of the image running on a device
   @full_ver = nil
   def full_version
-    facter_opt = '-p cisco.images.full_version'
-    data = on(agent, facter_cmd(facter_opt)).stdout.chomp
+    if agent
+      facter_opt = '-p cisco.images.full_version'
+      data = on(agent, facter_cmd(facter_opt)).stdout.chomp
+    else
+      full_version_output = `#{AGENTLESS_COMMAND} --facts | grep full_version`
+      data = full_version_output.nil? ? '' : full_version_output.match(%r{"full_version": "(.*)"})[1]
+    end
     @full_ver ||= data
+  end
+
+  # Check if image matches pattern
+  @cached_img = nil
+  def image?(reset_cache=false)
+    return @cached_img unless @cached_img.nil? || reset_cache
+    @cached_img = full_version
   end
 
   # On match will skip all testcases
