@@ -1367,7 +1367,7 @@ DEVICE
   def nexus_image
     image_regexp = /(\S+)/
     if agent
-      data = on(agent, facter_cmd('-p cisco.images.full_version'))
+      data = on(agent, facter_cmd('-p cisco.images.full_version')).output
     else
       output = `#{AGENTLESS_COMMAND} --facts | grep full_version`
       data = output.nil? ? '' : output.match(%r{"full_version": "(.*)"})[1]

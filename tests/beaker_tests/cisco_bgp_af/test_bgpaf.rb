@@ -224,7 +224,7 @@ class TestBgpAf < BaseHarness
       unprops << :advertise_l2vpn_evpn if vrf == 'default' || ctx.platform[/n(3|6)k$/]
 
       unprops << :additional_paths_install if ctx.platform[/n(3|9)k/]
-      unprops << :additional_paths_selection if ctx.platform[/n9k$/] && ctx.nexus_image[/I5.3/]
+      unprops << :additional_paths_selection if ctx.platform[/n9k$/] && (ctx.nexus_image[/I5.3/] || ctx.nexus_image[/I5.2/])
       unprops << :additional_paths_selection if ctx.platform[/n9k/] && ctx.nexus_image[/F2.1/]
     end
     unprops
@@ -308,9 +308,9 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   cleanup(agent)
-  test_harness_bgp_af_run(tests, :non_default, harness_class: TestBgpAf)
-  test_harness_bgp_af_run(tests, :non_default_arrays, harness_class: TestBgpAf)
-  test_harness_bgp_af_run(tests, :non_default_dampening_routemap, harness_class: TestBgpAf)
+  test_harness_bgp_af_run(tests, :non_default)
+  test_harness_bgp_af_run(tests, :non_default_arrays)
+  test_harness_bgp_af_run(tests, :non_default_dampening_routemap)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
