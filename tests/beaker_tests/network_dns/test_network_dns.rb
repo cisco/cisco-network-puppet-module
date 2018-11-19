@@ -30,22 +30,14 @@ tests = {
 }
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
 skip_unless_supported(tests)
-# Test hash test cases
-tests[:unset] = {
-  desc:           '1.1 Unset Properties',
-  title_pattern:  'settings',
-  manifest_props: {
-    hostname: '',
-    search: [],
-    servers: [],
-  },
-  code:           [0, 2],
-}
+
+original_hostname = hostname
+
 #
 # Set Properties
 #
 tests[:set] = {
-  desc:           '2.1 Set Properties',
+  desc:           '1.1 Set Properties',
   title_pattern:  'settings',
   manifest_props: {
     domain: 'foo.bar.com',
@@ -53,16 +45,20 @@ tests[:set] = {
     search: ['test.com'],
     servers: ['2001:4860:4860::8888', '8.8.8.8'],
   },
+  code: [0, 1, 2],
 }
+
+def cleanup(original_hostname)
+  create_and_apply_test_manifest('network_dns', 'settings', 'hostname', original_hostname)
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown { cleanup(original_hostname) }
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Set Property Testing")
   test_harness_run(tests, :set)
-  # # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 2. Unset Property Testing")
-  test_harness_run(tests, :unset)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

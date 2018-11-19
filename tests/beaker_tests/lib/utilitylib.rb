@@ -245,6 +245,11 @@ DEVICE
     PUPPET_BINPATH + 'agent -t --trace'
   end
 
+  # full command string for puppet resource commands
+  def puppet_resource_cmd(res_name, title, property, value)
+    PUPPET_BINPATH + "resource #{res_name} #{title} #{property}=#{value}"
+  end
+
   # Auto generation of properties for manifests
   # attributes: hash of property names and values
   # return: a manifest friendly string of property names / values
@@ -1375,6 +1380,17 @@ DEVICE
     @image ||= image_regexp.match(data)[1]
   end
 
+  @hostname = nil # Cache the lookup result
+  def hostname
+    if agent
+      data = on(agent, facter_cmd('-p hostname')).output
+    else
+      output = `#{AGENTLESS_COMMAND} --facts | grep hostname`
+      data = output.nil? ? '' : output.match(%r{"hostname": "(.*)"})[1]
+    end
+    @hostname ||= data
+  end
+
   # Gets the version of the image running on a device
   # same as full_version - so might not be required anymore
   # as full_version supports dual mode.
@@ -1614,7 +1630,11 @@ DEVICE
                              }\n")
     temp_manifest.rewind
 
-    output = `#{AGENTLESS_COMMAND} --apply #{temp_manifest.path} 2>&1`
+    if agent
+      on(agent, puppet_resource_cmd(type, title, property, value))
+    else
+      output = `#{AGENTLESS_COMMAND} --apply #{temp_manifest.path} 2>&1`
+    end
 
     remove_temp_manifest(temp_manifest)
     output
