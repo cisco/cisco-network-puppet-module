@@ -41,8 +41,8 @@ class Puppet::Provider::NetworkDns::CiscoNexus < Puppet::ResourceApi::SimpleProv
 
     handle_hostname(should[:hostname])
     handle_domain(should[:domain]) if should[:domain]
-    handle_servers(should[:servers])
-    handle_searches(should[:search])
+    handle_servers(should[:servers]) if should[:servers]
+    handle_searches(should[:search]) if should[:search]
   end
 
   def delete(_context, _name)
