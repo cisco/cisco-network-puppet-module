@@ -791,8 +791,13 @@ DEVICE
     # Setup the ensure state, manifest string, and resource command state
     state = ''
     if tests[id][:ensure] == :absent
-      state = 'ensure => absent,'
-      tests[id][:resource] = { 'ensure' => 'absent' }
+      if tests[id][:resource].include?(:ensure)
+        state = "ensure => #{tests[id][:resource][:ensure]},"
+        tests[id][:resource] = { 'ensure' => "#{tests[id][:resource][:ensure]}" }
+      else
+        state = 'ensure => absent,'
+        tests[id][:resource] = { 'ensure' => 'absent' }
+      end
     else
       state = 'ensure => present,' unless tests[:ensurable] == false
 
