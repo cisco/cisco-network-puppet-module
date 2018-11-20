@@ -483,8 +483,12 @@ Puppet::Type.type(:cisco_route_map).provide(:cisco) do
   end
 
   def legacy_image?
-    fd = Facter.value('cisco')
-    image = fd['images']['full_version']
+    if Puppet::Util::NetworkDevice.current.nil?
+      fd = Facter.value('cisco')
+      image = fd['images']['full_version']
+    else
+      image = Puppet::Util::NetworkDevice.current.facts['cisco']['images']['full_version']
+    end
     image[/7.0.3.I2|I3|I4/]
   end
 
