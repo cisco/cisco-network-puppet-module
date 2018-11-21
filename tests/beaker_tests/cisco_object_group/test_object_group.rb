@@ -99,10 +99,10 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # ---------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. ObjectGroup Testing")
 
-  test_harness_run(tests, :seq_10_v4)
-  test_harness_run(tests, :seq_10_v6)
-  test_harness_run(tests, :seq_20_v4)
-  test_harness_run(tests, :seq_30_v4)
+  test_harness_run(tests, :seq_10_v4, harness_class: TestObjectGroup)
+  test_harness_run(tests, :seq_10_v6, harness_class: TestObjectGroup)
+  test_harness_run(tests, :seq_20_v4, harness_class: TestObjectGroup)
+  test_harness_run(tests, :seq_30_v4, harness_class: TestObjectGroup)
 
   # ---------------------------------------------------------
   skipped_tests_summary(tests)
