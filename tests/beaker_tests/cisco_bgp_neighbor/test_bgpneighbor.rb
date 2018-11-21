@@ -198,17 +198,17 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   tests[:default][:desc] = '1.1.a. Default Properties (vrf blue)'
   tests[:default][:ensure] = :present
   tests[:default][:preclean] = 'cisco_bgp_neighbor'
-  test_harness_bgp_vrf(tests, :default, 'blue')
+  test_harness_bgp_vrf(tests, :default, 'blue', harness_class: TestBgpNeighbor)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   test_harness_run(tests, :non_default, harness_class: TestBgpNeighbor)
   tests[:non_default][:desc] = '2.1.a. Non Default Properties (vrf blue)'
-  test_harness_bgp_vrf(tests, :non_default, 'blue')
-  test_harness_bgp_vrf(tests, :non_default_peer_type, 'blue')
+  test_harness_bgp_vrf(tests, :non_default, 'blue', harness_class: TestBgpNeighbor)
+  test_harness_bgp_vrf(tests, :non_default_peer_type, 'blue', harness_class: TestBgpNeighbor)
 
   test_harness_run(tests, :non_def_local_remote_as, harness_class: TestBgpNeighbor)
-  test_harness_bgp_vrf(tests, :non_def_local_remote_as, 'blue')
+  test_harness_bgp_vrf(tests, :non_def_local_remote_as, 'blue', harness_class: TestBgpNeighbor)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
