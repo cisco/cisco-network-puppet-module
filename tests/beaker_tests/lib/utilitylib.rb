@@ -1049,7 +1049,13 @@ DEVICE
     find = [find] if find.is_a?(String)
     remove = []
     current = test_get(agent, filter)
-
+    # a fresh VM instance does not seem to have
+    # the filter in the running configuration,
+    # possibly an existing test has configured it
+    # and is only seen when running all the tests
+    # to make the test work independently, returning
+    # when there is no config for the filter
+    return unless current
     find.each do |cfg|
       remove << "no #{cfg}" if current.match(Regexp.new("^#{cfg}"))
     end
