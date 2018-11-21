@@ -178,7 +178,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   device = platform
   teardown do
-    test_manifest(tests, :default, harness_class: TestPortChannelGlobal)
+    test_harness_run(tests, :default, harness_class: TestPortChannelGlobal)
   end
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
