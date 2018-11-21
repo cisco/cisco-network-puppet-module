@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2015-2016 Cisco and/or its affiliates.
+# Copyright (c) 2015-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -86,7 +86,7 @@ class TestOverlayGlobal < BaseHarness
     unprops
   end
 
-  def self.version_unsupported_properties(_tests, _id)
+  def self.version_unsupported_properties(ctx, _tests, _id)
     unprops = {}
     if ctx.platform[/n3k$/]
       unprops[:dup_host_mac_detection_host_moves] = '7.0.3.I6.1'
