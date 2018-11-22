@@ -55,9 +55,9 @@ class TestBgpNeighborAf < BaseHarness
 
   # Overridden to properly handle dependencies for this test file.
   def self.dependency_manifest(ctx, tests, id)
-    af = puppet_resource_title_pattern_munge(tests, id)
+    af = ctx.puppet_resource_title_pattern_munge(tests, id)
     remote_as = tests[id][:remote_as]
-    remote_as = 1 if remote_as.nil? && operating_system == 'ios_xr'
+    remote_as = 1 if remote_as.nil? && ctx.operating_system == 'ios_xr'
 
     extra_config = ''
     if ctx.operating_system[/ios_xr/]
