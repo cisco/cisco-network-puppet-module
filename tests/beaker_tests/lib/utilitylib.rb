@@ -1073,7 +1073,7 @@ DEVICE
   #
   # opt = :raw, return raw output from puppet resource command
   # opt = :array, return array of test_get property data only
-  def test_get(agent, filter, opt=:raw)
+  def test_get(agent, filter, opt=:raw, is_a_running_config_command: true)
     if !agent.nil?
       cmd_prefix = PUPPET_BINPATH + "resource cisco_command_config 'cc' "
       on(agent, cmd_prefix + "test_get=\"#{filter}\"")
@@ -1082,7 +1082,11 @@ DEVICE
       env = { host: @nexus_host[:vmhostname], port: 22, username: @nexus_host[:ssh][:user], password: @nexus_host[:ssh][:password], cookie: nil }
       Cisco::Environment.add_env('remote', env)
       test_client = Cisco::Client.create('remote')
-      command = test_client.get(data_fomat: :cli, command: "show running-config all | #{filter}")
+      if is_a_running_config_command
+        command = test_client.get(data_fomat: :cli, command: "show running-config all | #{filter}")
+      else
+        command = test_client.get(data_fomat: :cli, command: filter)
+      end
     end
     case opt
     when :raw
