@@ -135,7 +135,7 @@ Puppet::Type.newtype(:cisco_vxlan_vtep) do
   end # source_interface_hold_down_time
 
   newproperty(:global_ingress_replication_bgp) do
-    desc "Configure ingress replication protocol to bgp. Valid values are true,
+    desc "Sets ingress replication protocol to bgp. Valid values are true,
           false, or 'default'"
 
     newvalues(:true, :false, :default)

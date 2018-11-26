@@ -5057,7 +5057,7 @@ Determines whether or not the config should be present on the device. Valid valu
 Description of the NVE interface.  Valid values are string, or keyword 'default'.
 
 ##### `global_ingress_replication_bgp`
-Configures ingress replication protocol to bgp for all VNIs. Valid values are true, false or keyword 'default'.
+Sets ingress replication protocol to bgp for all VNIs. Valid values are true, false or keyword 'default'.
 
 ##### `global_mcast_group_l2`
 NVE Multicast Group for all L2 VNIs. Valid values are string or keyword 'default'.
