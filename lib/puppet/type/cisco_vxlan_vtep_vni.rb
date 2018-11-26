@@ -3,7 +3,7 @@
 #
 # January 2016
 #
-# Copyright (c) 2013-2016 Cisco and/or its affiliates.
+# Copyright (c) 2013-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -42,14 +42,15 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
       assoc_vrf           => false,
       ingress_replication => 'static',
       peer_list           => ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
-      suppress-arp        => false,
+      suppress_arp        => false,
     }
 
     cisco_vxlan_vtep_vni {'nve1 20000':
-      ensure              => present,
-      assoc_vrf           => false,
-      multicast_group     => '224.1.1.1'
-      suppress-arp        => true,
+      ensure               => present,
+      assoc_vrf            => false,
+      multicast_group      => '224.1.1.1'
+      suppress_arp         => true,
+      suppress_arp_disable => default,
     }
 "
 
@@ -171,6 +172,17 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
     newvalues(:true, :false, :default)
   end
 
+  newproperty(:suppress_arp_disable) do
+    desc "Override the global ARP suppression config. Valid values are true,
+          false, or 'default'"
+
+    munge do |value|
+      value = :false if value == 'default'
+      value.to_sym
+    end
+    newvalues(:true, :false, :default)
+  end
+
   newproperty(:suppress_uuc) do
     desc "Suppress uuc under layer 2 VNI. Valid values are true,
           false, or 'default'"
@@ -186,6 +198,8 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
 
   # Multicast-group and ingress-replication are mutually exclusive properties.
   validate do
+    fail 'Only one of suppress_arp or suppress_arp_disable can be configured, '\
+        'not both' if self[:suppress_arp] && self[:suppress_arp_disable]
     fail 'Only one of multicast-group or ingress-replication can be configured, '\
         'not both' if self[:multicast_group] && self[:ingress_replication]
     # peer_list applies only when ingress_replication is static.
@@ -193,15 +207,16 @@ Puppet::Type.newtype(:cisco_vxlan_vtep_vni) do
         self[:peer_list] && self[:ingress_replication] != :static
 
     # If user configures assoc-vrf, ingress_replication, multicast_group,
-    # peer_list and suppress_arp should be off.
+    # peer_list, suppress_arp and suppress_arp_disable should be off.
     assoc_vrf_incompatible_props = self[:ingress_replication] ||
                                    self[:multicast_group] ||
                                    self[:suppress_arp] ||
+                                   self[:suppress_arp_disable] ||
                                    self[:suppress_uuc] ||
                                    self[:peer_list]
 
-    fail 'ingress_replication, multicast_group, peer_list & suppress_arp' \
-          ' cannot be set when assoc_vrf is true.' if
+    fail 'ingress_replication, multicast_group, peer_list, suppress_arp' \
+          ' & suppress_arp_disable cannot be set when assoc_vrf is true.' if
            self[:assoc_vrf] == :true && assoc_vrf_incompatible_props
   end
 end # Puppet::Type.newtype

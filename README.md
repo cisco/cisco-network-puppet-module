@@ -5043,6 +5043,10 @@ Creates a VXLAN Network Virtualization Endpoint (NVE) overlay interface that ter
 |---------------------------------|--------------------------------------|
 | source_interface_hold_down_time | Not supported on N3k, N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
 | multisite_border_gateway_interface | Only supported on N9K-EX and N9K-FX devices. For eg: N9K-C93180YC-EX. Minimum OS version 7.0(3)I7(1) and minimum Module Version 1.9.0 |
+| global_suppress_arp             | Only supported on N9K and N9K-F running OS Version 9.2 and later |
+| global_ingress_replication_bgp  | Only supported on N9K running OS Version 9.2 and later |
+| global_mcast_group_l2           | Only supported on N9K and N9K-F running OS Version 9.2 and later |
+| global_mcast_group_l3           | Only supported on N9K running OS Version 9.2 and later |
 
 #### Parameters
 
@@ -5051,6 +5055,18 @@ Determines whether or not the config should be present on the device. Valid valu
 
 ##### `description`
 Description of the NVE interface.  Valid values are string, or keyword 'default'.
+
+##### `global_ingress_replication_bgp`
+Sets ingress replication protocol to bgp for all VNIs. Valid values are true, false or keyword 'default'.
+
+##### `global_mcast_group_l2`
+NVE Multicast Group for all L2 VNIs. Valid values are string or keyword 'default'.
+
+##### `global_mcast_group_l3`
+NVE Multicast Group for all L3 VNIs. Valid values are string or keyword 'default'.
+
+##### `global_suppress_arp`
+Enables ARP suppression for all VNIs. Valid values are true, false or keyword 'default'.
 
 ##### `host_reachability`
 Specify mechanism for host reachability advertisement. Valid values are 'evpn', 'flood' or keyword 'default'.
@@ -5090,6 +5106,7 @@ Creates a Virtual Network Identifier member (VNI) for an NVE overlay interface.
 | peer_list                       | Not supported on N3k, N5k, N6k, N7k, N3k-F, N9k-F  |
 | suppress_uuc                    | Not supported on N3k, N3k-F, N9k, N9k-F <br> Supported in OS Version 8.1.1 and later on N7k |
 | multisite_ingress_replication | Only supported on N9K-EX and N9K-FX devices. For eg: N9K-C93180YC-EX. Minimum OS version 7.0(3)I7(1) and minimum Module Version 1.9.0 |
+| suppress_arp_disable            | Only supported on N9K and N9K-F running OS Version 9.2 and later |
 
 #### Parameters
 
@@ -5119,6 +5136,9 @@ Set the ingress-replication static peer list. Valid values are an Array, a space
 
 ##### `suppress_arp`
 Suppress arp under layer 2 VNI. Valid values are true, false, or 'default'.
+
+##### `suppress_arp_disable`
+Overrides the global ARP suppression config. Valid values are true, false, or 'default'.
 
 ##### `suppress_uuc`
 Suppress uuc under layer 2 VNI. Valid values are true, false, or 'default'.
