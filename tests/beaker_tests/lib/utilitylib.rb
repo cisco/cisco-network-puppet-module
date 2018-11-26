@@ -1129,17 +1129,20 @@ DEVICE
   end
 
   # Helper to set properties using the puppet resource command.
-  def resource_set(agent, resource, msg='')
+  def resource_set(_agent, resource, msg='')
     logger.info("\nresource_set: #{msg}")
     if resource.is_a?(Array)
-      cmd =
-        "resource %s '%s' %s='%s'" % resource # rubocop:disable Style/FormatString
+      type = resource[0]
+      title = resource[1]
+      property = resource[2]
+      value = resource[3]
     else
-      cmd = "resource #{resource[:name]} '#{resource[:title]}' "\
-            "#{resource[:property]}='#{resource[:value]}'"
+      type = resource[:name]
+      title = resource[:title]
+      property = resource[:property]
+      value = resource[:value]
     end
-    cmd = PUPPET_BINPATH + cmd
-    on(agent, cmd, acceptable_exit_codes: [0, 2])
+    create_and_apply_test_manifest(type, title, property, value)
   end
 
   # Helper to raise skip when prereqs are not met
