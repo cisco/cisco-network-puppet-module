@@ -160,7 +160,7 @@ tests[:ip_forwarding] = {
 }
 
 # class to contain the test_dependencies specific to this test case
-class TestInterfaceL3 < BaseHarness
+class TestInterfaceL3 < Interfacelib
   def self.unsupported_properties(ctx, _tests, id)
     unprops = []
 
@@ -208,9 +208,9 @@ class TestInterfaceL3 < BaseHarness
   end
 end
 
-def cleanup(agent, intf, dot1q)
+def cleanup(agent, intf, dot1q=nil)
   test_set(agent, 'no feature bfd ; no feature pim')
-  test_set(agent, "no interface #{dot1q}")
+  test_set(agent, "no interface #{dot1q}") if dot1q
   remove_all_vrfs(agent)
   interface_cleanup(agent, intf)
 end
@@ -220,13 +220,18 @@ end
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
   teardown { cleanup(agent, intf, dot1q) }
-  cleanup(agent, intf, dot1q)
+  # cannot clean up dot1q as most likely not been created yet
+  cleanup(agent, intf)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   test_harness_run(tests, :default, harness_class: TestInterfaceL3)
 
-  interface_cleanup(agent, dot1q)
+  interfaces = get_current_resource_instances(agent, 'cisco_interface')
+  interfaces.each do |interface|
+    next unless interface =~ /#{dot1q}/
+    interface_cleanup(agent, dot1q)
+  end
   test_harness_run(tests, :dot1q, harness_class: TestInterfaceL3)
 
   # -------------------------------------------------------------------

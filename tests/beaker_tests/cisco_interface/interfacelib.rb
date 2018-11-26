@@ -55,7 +55,6 @@ class Interfacelib < BaseHarness
       stdout = test_get(agent, 'show runn fabric forwarding', is_a_running_config_command: false)
     end
 
-
     return if stdout[/anycast-gateway-mac/]
     cmd = ['cisco_overlay_global', 'default', 'anycast_gateway_mac', '1.1.1']
     resource_set(agent, cmd, 'fabric forwarding anycast-gateway-mac 1.1.1')
