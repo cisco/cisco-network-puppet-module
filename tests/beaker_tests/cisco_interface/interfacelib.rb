@@ -30,7 +30,7 @@ class Interfacelib < BaseHarness
 
     # Misc dependencies
     ctx.config_acl?(tests, id)
-    config_anycast_gateway_mac?(tests, id)
+    config_anycast_gateway_mac?(ctx, tests, id)
     ctx.config_bridge_domain?(tests, id)
 
     # Various Cleanups
@@ -44,19 +44,14 @@ class Interfacelib < BaseHarness
   end
 
   # A global 'anycast gateway mac' is required for some SVI properties
-  def self.config_anycast_gateway_mac?(tests, id)
+  def self.config_anycast_gateway_mac?(ctx, tests, id)
     return unless tests[id].key?(:anycast_gateway_mac)
     agent = tests[:agent]
 
-    # TBD: Consider creating a resource_get to avoid vsh calls
-    if agent
-      stdout = on(agent, get_vshell_cmd('show runn fabric forwarding'), pty: true).output
-    else
-      stdout = test_get(agent, 'show runn fabric forwarding', is_a_running_config_command: false)
-    end
+    stdout = ctx.test_get(agent, "incl 'fabric forwarding'")
 
-    return if stdout[/anycast-gateway-mac/]
+    return if stdout && stdout[/anycast-gateway-mac/]
     cmd = ['cisco_overlay_global', 'default', 'anycast_gateway_mac', '1.1.1']
-    resource_set(agent, cmd, 'fabric forwarding anycast-gateway-mac 1.1.1')
+    ctx.resource_set(agent, cmd, 'fabric forwarding anycast-gateway-mac 1.1.1')
   end
 end
