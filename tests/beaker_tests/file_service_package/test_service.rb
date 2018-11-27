@@ -28,7 +28,11 @@ tests = {
   master:        master,
   ensurable:     false,
   resource_name: 'service',
+  agent_only:    true,
 }
+
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
 
 os_service = 'puppet'
 os_service = 'crond' if system_manager[/systemd|redhat/]

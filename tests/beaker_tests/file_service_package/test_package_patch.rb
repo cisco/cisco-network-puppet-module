@@ -23,6 +23,18 @@
 ###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
+tests = {
+  agent:         agent,
+  master:        master,
+  platform:      'n(3|9)k',
+  resource_name: 'package',
+  agent_only:    true,
+}
+
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
+skip_nexus_image(%w(I2 I3), tests)
+
 name = 'nxos.sample-n9k_EOR'
 case image?
 when /7.0.3.I2.1/
@@ -98,17 +110,6 @@ end
 unless resource_present?(agent, 'file', "/bootflash/#{filename}")
   raise_skip_exception("RPM file /bootflash/#{filename} not found", self)
 end
-
-tests = {
-  agent:         agent,
-  master:        master,
-  platform:      'n(3|9)k',
-  resource_name: 'package',
-}
-
-# Skip -ALL- tests if a top-level platform/os key exludes this platform
-skip_unless_supported(tests)
-skip_nexus_image(%w(I2 I3), tests)
 
 tests[:yum_patch_install] = {
   desc:           "1.1 Apply sample patch #{name} to image #{image?}",

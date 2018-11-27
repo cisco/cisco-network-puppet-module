@@ -1489,6 +1489,13 @@ DEVICE
   # tests[:resource_name] - provider name (e.g. 'cisco_vxlan_vtep')
   def skip_unless_supported(tests)
     pattern = tests[:platform]
+    agent_only = tests[:agent_only] | false
+    if agent_only && agent.nil?
+      msg = "Skipping all tests; '#{tests[:resource_name]}' "\
+          '(or test file) is not supported agentlessly'
+      banner = '#' * msg.length
+      raise_skip_exception("\n#{banner}\n#{msg}\n#{banner}\n", self)
+    end
     return false if pattern.nil? || platform.match(tests[:platform])
     msg = "Skipping all tests; '#{tests[:resource_name]}' "\
           '(or test file) is not supported on this node'
