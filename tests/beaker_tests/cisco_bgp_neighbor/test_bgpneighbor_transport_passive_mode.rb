@@ -71,7 +71,7 @@ test_name "TestCase :: #{tests[:resource_name]} - #{id}" do
   teardown { cleanup(agent) }
   cleanup(agent)
 
-  os = on(agent, facter_cmd('-p os.name')).stdout.chomp
+  os = operating_system
   vrf = 'red'
   neighbor = '1.1.1.1'
 
