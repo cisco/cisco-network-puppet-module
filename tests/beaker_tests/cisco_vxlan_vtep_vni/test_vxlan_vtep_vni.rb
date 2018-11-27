@@ -203,8 +203,26 @@ tests[:suppress_arp_false] = {
   code:           [0, 2],
 }
 
+tests[:suppress_arp_disable_true] = {
+  desc:           '2.9 Suppress ARP Disable True',
+  title_pattern:  'nve1 10000',
+  manifest_props: {
+    suppress_arp_disable: 'true'
+  },
+  code:           [0, 2],
+}
+
+tests[:suppress_arp_disable_false] = {
+  desc:           '2.10 Suppress ARP Disable False',
+  title_pattern:  'nve1 10000',
+  manifest_props: {
+    suppress_arp_disable: 'false'
+  },
+  code:           [0, 2],
+}
+
 tests[:suppress_uuc_true] = {
-  desc:           '2.9 Suppress UUC True',
+  desc:           '2.11 Suppress UUC True',
   title_pattern:  'nve1 10000',
   manifest_props: {
     suppress_uuc: 'true'
@@ -213,7 +231,7 @@ tests[:suppress_uuc_true] = {
 }
 
 tests[:suppress_uuc_false] = {
-  desc:           '2.10 Suppress UUC False',
+  desc:           '2.12 Suppress UUC False',
   title_pattern:  'nve1 10000',
   manifest_props: {
     suppress_uuc: 'false'
@@ -222,7 +240,7 @@ tests[:suppress_uuc_false] = {
 }
 
 tests[:multisite_ingress_replication_true] = {
-  desc:           '2.11 Multisite Ingress Replication True',
+  desc:           '2.13 Multisite Ingress Replication True',
   title_pattern:  'nve1 10000',
   manifest_props: {
     multisite_ingress_replication: 'true'
@@ -234,7 +252,7 @@ tests[:multisite_ingress_replication_true] = {
 }
 
 tests[:multisite_ingress_replication_false] = {
-  desc:           '2.12 Multisite Ingress Replication False',
+  desc:           '2.14 Multisite Ingress Replication False',
   title_pattern:  'nve1 10000',
   manifest_props: {
     multisite_ingress_replication: 'false'
@@ -269,12 +287,18 @@ class TestVxLanVtepVni < BaseHarness
         :suppress_uuc
     end
     unprops << :multisite_ingress_replication unless ctx.platform[/ex/]
+    if ctx.platform[/n(3k-f|5k|6k|7k)/]
+      unprops <<
+        :suppress_arp_disable
+    end
+    unprops << :multisite_ingress_replication unless ctx.platform[/ex/]
     unprops
   end
 
   def self.version_unsupported_properties(ctx, _tests, _id)
     unprops = {}
     unprops[:suppress_uuc] = '8.1.1' if ctx.platform[/n7k/]
+    unprops[:suppress_arp_disable] = '9.2' if ctx.platform[/n9k/]
     unprops
   end
 
@@ -340,6 +364,8 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # test_harness_run(tests, :suppress_arp_true)
   # test_harness_run(tests, :suppress_arp_false)
+  # test_harness_run(tests, :suppress_arp_disable_true)
+  # test_harness_run(tests, :suppress_arp_disable_false)
 
   test_harness_run(tests, :suppress_uuc_true, harness_class: TestVxLanVtepVni)
   test_harness_run(tests, :suppress_uuc_false, harness_class: TestVxLanVtepVni)

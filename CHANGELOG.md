@@ -2,6 +2,25 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.11.0] - TBD
+
+### New feature support
+
+### Added
+* Extended `vxlan_vtep_vni` with attribute:
+   * `suppress_arp_disable`
+* Extended `vxlan_vtep` with attribute:
+   * `global_suppress_arp`
+   * `global_mcast_group_l2`
+   * `global_mcast_group_l3`
+   * `global_ingress_replication_bgp`
+
+### Changed
+
+### Removed
+
+### Resolved Issues
+
 ## [1.10.0] - 2018-09-19
 
 **NOTE:** Starting in release `9.2(1)` and onward, installing the Puppet Agent into the `bash-shell` hosting environment is no longer supported.

@@ -37,7 +37,7 @@ group :development do
   gem "net_http_unix",                                 require: false
 end
 group :development, :unit_tests do
-  gem "cisco_node_utils", '~> 1.0', require: false
+  gem "cisco_node_utils", require: false, git: 'https://github.com/cisco/cisco-network-node-utils.git', ref: 'develop'
   gem "net-telnet", '~> 0.1.1',     require: false
 end
 group :system_tests do
