@@ -37,16 +37,29 @@ Puppet::Type.type(:cisco_vxlan_vtep).provide(:cisco) do
     :source_interface,
     :source_interface_hold_down_time,
     :multisite_border_gateway_interface,
+    :global_mcast_group_l3,
   ]
 
+  # Some of these bool properties have to be set
+  # after the non-bool properties defined above
   VXLAN_VTEP_BOOL_PROPS = [
-    :shutdown
+    :shutdown,
+    :global_ingress_replication_bgp,
+    :global_suppress_arp,
   ]
 
-  VXLAN_VTEP_ALL_PROPS = VXLAN_VTEP_NON_BOOL_PROPS + VXLAN_VTEP_BOOL_PROPS
+  # global_mcast_group_l2 is non-bool, but it needs to be
+  # set after the bool varibales so create a new grouping.
+  VXLAN_VTEP_LAST_NON_BOOL_PROPS = [
+    :global_mcast_group_l2
+  ]
+
+  VXLAN_VTEP_ALL_PROPS = VXLAN_VTEP_NON_BOOL_PROPS + VXLAN_VTEP_BOOL_PROPS + VXLAN_VTEP_LAST_NON_BOOL_PROPS
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@vtep_interface',
                                             VXLAN_VTEP_NON_BOOL_PROPS)
+  PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@vtep_interface',
+                                            VXLAN_VTEP_LAST_NON_BOOL_PROPS)
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@vtep_interface',
                                             VXLAN_VTEP_BOOL_PROPS)
 
@@ -65,6 +78,9 @@ Puppet::Type.type(:cisco_vxlan_vtep).provide(:cisco) do
     }
     # Call node_utils getter for each property
     VXLAN_VTEP_NON_BOOL_PROPS.each do |prop|
+      current_state[prop] = intf.send(prop)
+    end
+    VXLAN_VTEP_LAST_NON_BOOL_PROPS.each do |prop|
       current_state[prop] = intf.send(prop)
     end
     VXLAN_VTEP_BOOL_PROPS.each do |prop|

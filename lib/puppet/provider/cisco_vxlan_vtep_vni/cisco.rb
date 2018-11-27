@@ -1,6 +1,6 @@
 # December, 2015
 #
-# Copyright (c) 2014-2016 Cisco and/or its affiliates.
+# Copyright (c) 2014-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ Puppet::Type.type(:cisco_vxlan_vtep_vni).provide(:cisco) do
 
   VXLAN_VTEP_VNI_BOOL_PROPS = [
     :suppress_arp,
+    :suppress_arp_disable,
     :suppress_uuc,
     :multisite_ingress_replication,
   ]
