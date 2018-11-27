@@ -42,8 +42,6 @@ require 'cisco_node_utils'
 # Group of constants for use by the Beaker::TestCase instances.
 # Binary executable path for puppet on master and agent.
 PUPPET_BINPATH = '/opt/puppetlabs/bin/puppet '
-# Executable base command for puppet agentless
-AGENTLESS_COMMAND = 'bundle exec puppet device --verbose --trace --strict=error --modulepath spec/fixtures/modules --deviceconfig spec/fixtures/acceptance-device.conf --target sut --libdir lib/ '
 # Binary executable path for facter on master and agent.
 FACTER_BINPATH = '/opt/puppetlabs/bin/facter '
 # Location of the main Puppet manifest
@@ -99,6 +97,11 @@ class Beaker::TestCase
   # Current agentless nexus host
   @nexus_host = nil
 
+  # Executable base command for puppet agentless
+  def agentless_command
+    "bundle exec puppet device --verbose --trace --strict=error --modulepath spec/fixtures/modules --deviceconfig #{@device_conf_file.path} --target sut --libdir lib/ "
+  end
+
   # Method to create agentless device.conf and
   # appropriate credentials.conf
   #
@@ -108,32 +111,23 @@ class Beaker::TestCase
     raise 'Could not find default Nexus host' unless default && default.host_hash[:platform].match(%r{cisco_nexus.*})
     @nexus_host = default
 
-    credentials_file = 'spec/fixtures/acceptance-credentials.conf'
-    device_conf_file = 'spec/fixtures/acceptance-device.conf'
+    @credentials_file = Tempfile.new(['spec/fixtures/acceptance-credentials', '.conf'])
+    @device_conf_file = Tempfile.new(['spec/fixtures/acceptance-device', '.conf'])
 
-    if File.exist?(credentials_file)
-      File.delete(credentials_file)
-    end
-    if File.exist?(device_conf_file)
-      File.delete(device_conf_file)
-    end
-
-    File.open(credentials_file, 'w') do |file|
-      file.puts <<CREDENTIALS
+    @credentials_file.write <<CREDENTIALS
 address: "#{@nexus_host.host_hash[:vmhostname]}"
 username: "#{@nexus_host.host_hash[:ssh][:user] || 'admin'}"
 port: "#{@nexus_host.host_hash[:ssh][:port] || '22'}"
 password: "#{@nexus_host.host_hash[:ssh][:password] || 'admin'}"
 CREDENTIALS
-    end
+    @credentials_file.close
 
-    File.open(device_conf_file, 'w') do |file|
-      file.puts <<DEVICE
+    @device_conf_file.write <<DEVICE
 [sut]
 type cisco_nexus
-url file://#{Dir.getwd}/spec/fixtures/acceptance-credentials.conf
+url file://#{@credentials_file.path}
 DEVICE
-    end
+    @device_conf_file.close
   end
 
   # Method to return an agent
@@ -350,7 +344,7 @@ DEVICE
         # if !code.include?($?.exitstatus)
         #  raise 'Errored test'
         # end
-        output = `#{AGENTLESS_COMMAND} --apply #{@temp_agentless_manifest.path} 2>&1`
+        output = `#{agentless_command} --apply #{@temp_agentless_manifest.path} 2>&1`
         if !(output.include? 'Applied catalog') && tests[id][:stderr_pattern].nil?
           remove_temp_manifest
           raise 'Errored test'
@@ -399,7 +393,7 @@ DEVICE
         # if !$?.exitstatus == 0
         #   raise 'Errored idempotence test'
         # end
-        output = `#{AGENTLESS_COMMAND} --apply #{@temp_agentless_manifest.path}`
+        output = `#{agentless_command} --apply #{@temp_agentless_manifest.path}`
         if output.include? "#{tests[:resource_name]}[#{tests[id][:title_pattern]}]: Updating:"
           raise 'Errored idempotence test'
         end
@@ -419,7 +413,7 @@ DEVICE
       on(agent, cmd_str, acceptable_exit_codes: [0])
       names = stdout.scan(/#{res_name} { '(.+)':/).flatten
     else
-      output = `#{AGENTLESS_COMMAND} --resource #{res_name}`
+      output = `#{agentless_command} --resource #{res_name}`
       names = output.scan(/#{res_name} { '(.+)':/).flatten
     end
     names
@@ -741,7 +735,7 @@ DEVICE
       cmd = if tests[:agent]
               PUPPET_BINPATH + "resource #{tests[:resource_name]} '#{title_string}'"
             else
-              "#{AGENTLESS_COMMAND} --resource #{tests[:resource_name]} '#{title_string}'"
+              "#{agentless_command} --resource #{tests[:resource_name]} '#{title_string}'"
             end
 
       logger.info("\ntitle_string: '#{title_string}'")
@@ -1268,7 +1262,7 @@ DEVICE
     if agent
       @cisco_os = on(agent, facter_cmd('os.name')).stdout.chomp
     else
-      output = `#{AGENTLESS_COMMAND} --facts | grep operatingsystem`
+      output = `#{agentless_command} --facts | grep operatingsystem`
       @cisco_os = output.match(%r{"operatingsystem": "(.*)"})[1]
     end
     @cisco_os
@@ -1325,7 +1319,7 @@ DEVICE
           pi.empty?
       end
     else
-      output = `#{AGENTLESS_COMMAND} --facts | grep type`
+      output = `#{agentless_command} --facts | grep type`
       pi = output.nil? ? '' : output.match(%r{"type": "(.*)"})[1]
     end
 
@@ -1366,7 +1360,7 @@ DEVICE
     if agent
       data = on(agent, facter_cmd('-p cisco.inventory')).output.split("\n")
     else
-      data = `#{AGENTLESS_COMMAND} --facts`
+      data = `#{agentless_command} --facts`
       inventory_facts = data.match(%r{inventory.*(\n.*)*?(?=virtual_service)})
       data = inventory_facts.to_s.split("\n")
     end
@@ -1384,7 +1378,7 @@ DEVICE
     if agent
       data = on(agent, facter_cmd('-p cisco.images.full_version')).output
     else
-      output = `#{AGENTLESS_COMMAND} --facts | grep full_version`
+      output = `#{agentless_command} --facts | grep full_version`
       data = output.nil? ? '' : output.match(%r{"full_version": "(.*)"})[1]
     end
     darr = data.split("\n")
@@ -1400,7 +1394,7 @@ DEVICE
     if agent
       data = on(agent, facter_cmd('-p hostname')).output
     else
-      output = `#{AGENTLESS_COMMAND} --facts | grep hostname`
+      output = `#{agentless_command} --facts | grep hostname`
       data = output.nil? ? '' : output.match(%r{"hostname": "(.*)"})[1]
     end
     @hostname ||= data
@@ -1423,7 +1417,7 @@ DEVICE
       facter_opt = '-p cisco.images.full_version'
       data = on(agent, facter_cmd(facter_opt)).stdout.chomp
     else
-      full_version_output = `#{AGENTLESS_COMMAND} --facts | grep full_version`
+      full_version_output = `#{agentless_command} --facts | grep full_version`
       data = full_version_output.nil? ? '' : full_version_output.match(%r{"full_version": "(.*)"})[1]
     end
     @full_ver ||= data
@@ -1443,7 +1437,7 @@ DEVICE
       facter_opt = '-p cisco.images.system_image'
       data = on(agent, facter_cmd(facter_opt)).stdout.chomp
     else
-      output = `#{AGENTLESS_COMMAND} --facts | grep system_image`
+      output = `#{agentless_command} --facts | grep system_image`
       data = output.nil? ? '' : output.match(%r{"system_image": "(.*)"})[1]
     end
     @package_info ||= data.chomp
@@ -1596,7 +1590,7 @@ DEVICE
       on(agent, cmd, pty: true)
       output = stdout
     else
-      output = `#{AGENTLESS_COMMAND} --resource cisco_interface_capabilities '#{intf}'`
+      output = `#{agentless_command} --resource cisco_interface_capabilities '#{intf}'`
     end
 
     # Sample raw output:
@@ -1655,7 +1649,7 @@ DEVICE
     if agent
       on(agent, puppet_resource_cmd(type, title, property, value), acceptable_exit_codes: [0, 1, 2])
     else
-      output = `#{AGENTLESS_COMMAND} --apply #{temp_manifest.path} 2>&1`
+      output = `#{agentless_command} --apply #{temp_manifest.path} 2>&1`
     end
 
     remove_temp_manifest(temp_manifest)
@@ -1705,7 +1699,7 @@ DEVICE
     if !test_agent.nil?
       cmd = probe[:cmd] + " '#{intf}' "
     else
-      cmd = "#{AGENTLESS_COMMAND} #{probe[:cmd].match(%r{.*\/puppet (.*)})} #{intf}"
+      cmd = "#{agentless_command} #{probe[:cmd].match(%r{.*\/puppet (.*)})} #{intf}"
     end
 
     # Get the interface capabilities

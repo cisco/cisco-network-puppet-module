@@ -232,7 +232,7 @@ def test_harness_run_cc(tests, id, res_cmd)
   if agent
     tests[id][:resource_cmd] = PUPPET_BINPATH + 'resource ' + res_cmd
   else
-    tests[id][:resource_cmd] = "#{AGENTLESS_COMMAND} --resource #{res_cmd}"
+    tests[id][:resource_cmd] = "#{agentless_command} --resource #{res_cmd}"
   end
   test_resource(tests, id)
 end

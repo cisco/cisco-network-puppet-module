@@ -160,11 +160,11 @@ tests['non_default_properties'] = {
 #################################################################
 
 # Full command string for puppet resource command
-def puppet_resource_cmd
+def puppet_resource_cmd(ctx)
   if agent
     prefix = PUPPET_BINPATH
   else
-    prefix = "#{AGENTLESS_COMMAND} --"
+    prefix = "#{ctx.agentless_command} --"
   end
   prefix + 'resource port_channel port-channel100'
 end
@@ -203,9 +203,9 @@ def build_manifest_portchannel(tests, id)
                          end
 end
 
-def test_harness_portchannel(tests, id)
+def test_harness_portchannel(ctx, tests, id)
   tests[id][:ensure] = :present if tests[id][:ensure].nil?
-  tests[id][:resource_cmd] = puppet_resource_cmd
+  tests[id][:resource_cmd] = puppet_resource_cmd(ctx)
   tests[id][:desc] += " [ensure => #{tests[id][:ensure]}]"
   logger.info("\n--------\n#{tests[id][:log_desc]}")
 
@@ -234,21 +234,21 @@ test_name "TestCase :: #{testheader}" do
   id = 'default_properties'
 
   tests[id][:desc] = '1.1 Default Properties'
-  test_harness_portchannel(tests, id)
+  test_harness_portchannel(self, tests, id)
 
   tests[id][:desc] = '1.2 Default Properties'
   tests[id][:ensure] = :absent
-  test_harness_portchannel(tests, id)
+  test_harness_portchannel(self, tests, id)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   id = 'non_default_properties'
   tests[id][:desc] = '2.1 Non Default Properties'
-  test_harness_portchannel(tests, id)
+  test_harness_portchannel(self, tests, id)
 
   tests[id][:desc] = '2.2 Non Default Properties (absent)'
   tests[id][:ensure] = :absent
-  test_harness_portchannel(tests, id)
+  test_harness_portchannel(self, tests, id)
 end
 
 logger.info("TestCase :: #{testheader} :: End")
