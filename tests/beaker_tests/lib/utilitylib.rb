@@ -125,7 +125,7 @@ CREDENTIALS
     @device_conf_file.write <<DEVICE
 [sut]
 type cisco_nexus
-url file://#{Dir.getwd}/spec/fixtures/acceptance-credentials.conf
+url file://#{@credentials_file.path}
 DEVICE
     @device_conf_file.close
   end
