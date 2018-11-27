@@ -542,13 +542,10 @@ DEVICE
   end
 
   # Helper for creating / removing an ACL
-  def config_acl(agent, afi, acl, state, stepinfo='ACL:')
+  def config_acl(_agent, afi, acl, state, stepinfo='ACL:')
     step "TestStep :: #{stepinfo}" do
       state = state ? 'present' : 'absent'
-      cmd = "resource cisco_acl '#{afi} #{acl}' ensure=#{state}"
-      logger.info("Setup: puppet #{cmd}")
-      cmd = PUPPET_BINPATH + cmd
-      on(agent, cmd, acceptable_exit_codes: [0, 2])
+      create_and_apply_test_manifest('cisco_acl', "#{afi} #{acl}", 'ensure', state)
     end
   end
 
@@ -1073,16 +1070,20 @@ DEVICE
   #
   # opt = :raw, return raw output from puppet resource command
   # opt = :array, return array of test_get property data only
-  def test_get(agent, filter, opt=:raw)
+  def test_get(agent, filter, opt=:raw, is_a_running_config_command: true)
     if !agent.nil?
       cmd_prefix = PUPPET_BINPATH + "resource cisco_command_config 'cc' "
-      on(agent, cmd_prefix + "test_get=\"#{filter}\"")
+      on(agent, cmd_prefix + "test_get=\\\"#{filter}\\\"").output
       command = stdout
     else
       env = { host: @nexus_host[:vmhostname], port: 22, username: @nexus_host[:ssh][:user], password: @nexus_host[:ssh][:password], cookie: nil }
       Cisco::Environment.add_env('remote', env)
       test_client = Cisco::Client.create('remote')
-      command = test_client.get(data_fomat: :cli, command: "show running-config all | #{filter}")
+      if is_a_running_config_command
+        command = test_client.get(data_fomat: :cli, command: "show running-config all | #{filter}")
+      else
+        command = test_client.get(data_fomat: :cli, command: filter)
+      end
     end
     case opt
     when :raw
@@ -1116,7 +1117,7 @@ DEVICE
   def command_config(agent, cmd, msg='')
     logger.info("\n#{msg}")
     if !agent.nil?
-      cmd = "resource cisco_command_config 'cc' command='#{cmd}'"
+      cmd = "resource cisco_command_config 'cc' command=\\\"#{cmd}\\\""
       cmd = PUPPET_BINPATH + cmd
       on(agent, cmd, acceptable_exit_codes: [0, 2])
     else
@@ -1128,17 +1129,20 @@ DEVICE
   end
 
   # Helper to set properties using the puppet resource command.
-  def resource_set(agent, resource, msg='')
+  def resource_set(_agent, resource, msg='')
     logger.info("\nresource_set: #{msg}")
     if resource.is_a?(Array)
-      cmd =
-        "resource %s '%s' %s='%s'" % resource # rubocop:disable Style/FormatString
+      type = resource[0]
+      title = resource[1]
+      property = resource[2]
+      value = resource[3]
     else
-      cmd = "resource #{resource[:name]} '#{resource[:title]}' "\
-            "#{resource[:property]}='#{resource[:value]}'"
+      type = resource[:name]
+      title = resource[:title]
+      property = resource[:property]
+      value = resource[:value]
     end
-    cmd = PUPPET_BINPATH + cmd
-    on(agent, cmd, acceptable_exit_codes: [0, 2])
+    create_and_apply_test_manifest(type, title, property, value)
   end
 
   # Helper to raise skip when prereqs are not met
@@ -1649,7 +1653,7 @@ DEVICE
     temp_manifest.rewind
 
     if agent
-      on(agent, puppet_resource_cmd(type, title, property, value))
+      on(agent, puppet_resource_cmd(type, title, property, value), acceptable_exit_codes: [0, 1, 2])
     else
       output = `#{AGENTLESS_COMMAND} --apply #{temp_manifest.path} 2>&1`
     end

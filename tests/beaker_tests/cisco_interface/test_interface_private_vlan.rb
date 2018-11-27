@@ -205,7 +205,14 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   vtp_cleanup(agent)
   pvlan_assoc_cleanup(agent, intf)
   interface_cleanup(agent, intf)
-  remove_interface(agent, svi)
+  # remove_interface(agent, svi)
+  # this command fails on fresh VMs as
+  # the interface does not exist, possibly
+  # testbed environments were not cleaned
+  # down properly, or remnants of an existing
+  # test are left over - removing the step as
+  # the cleanup in teardown should remove
+  # the interface at end of the test
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Defaults")

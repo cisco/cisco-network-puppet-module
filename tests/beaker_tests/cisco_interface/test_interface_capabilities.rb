@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2016-2017 Cisco and/or its affiliates.
+# Copyright (c) 2016-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -117,8 +117,16 @@ def interface_pre_check(tests, intf) # rubocop:disable Metrics/AbcSize
   true
 end
 
-def parse_capabilities(agent, cmd)
-  on(agent, cmd)
+def parse_capabilities(agent, cmd, resource_command: false)
+  stdout = if resource_command && agent
+             on(agent, cmd).output
+           elsif resource_command
+             `#{cmd}`
+           elsif agent
+             on(agent, get_vshell_cmd(cmd)).output
+           else
+             test_get(agent, cmd, is_a_running_config_command: false)
+           end
   caps = {}
   caps['Speed'] = Regexp.last_match[1] if stdout[/Speed:\s+([\w,]+)/]
   caps['Duplex'] = Regexp.last_match[1] if stdout[%r{Duplex:\s+([\w/,-]+)}]
@@ -147,12 +155,16 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # Section 2 & 3 test the cisco_interface_capabilities provider itself.
   logger.info("\n#{'-' * 60}\nSection 2. Test puppet resource vs vsh results")
 
-  vsh_cmd = get_vshell_cmd("show interface #{intf} capabilities")
+  vsh_cmd = "show interface #{intf} capabilities"
   # Note: vsh output is 'raw' command output (as opposed to the processed hash)
   vsh_caps = parse_capabilities(agent, vsh_cmd)
 
-  resource_cmd = PUPPET_BINPATH + "resource cisco_interface_capabilities '#{intf}'"
-  resource_caps = parse_capabilities(agent, resource_cmd)
+  resource_cmd = if agent
+                   PUPPET_BINPATH + "resource cisco_interface_capabilities '#{intf}'"
+                 else
+                   AGENTLESS_COMMAND + "--resource cisco_interface_capabilities '#{intf}'"
+                 end
+  resource_caps = parse_capabilities(agent, resource_cmd, resource_command: true)
 
   unless vsh_caps == resource_caps
     logger.error("vsh_caps: #{vsh_caps}, resource_caps: #{resource_caps}")

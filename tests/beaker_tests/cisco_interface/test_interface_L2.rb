@@ -151,7 +151,7 @@ tests[:purge] = {
 }
 
 # class to contain the test_dependencies specific to this test case
-class TestInterfaceL2 < BaseHarness
+class TestInterfaceL2 < Interfacelib
   def self.unsupported_properties(ctx, _tests, _id)
     unprops = []
     unprops <<
@@ -161,19 +161,22 @@ class TestInterfaceL2 < BaseHarness
   end
 end
 
+def cleanup(agent, intf)
+  interface_cleanup(agent, intf)
+  system_default_switchport(agent, false)
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  teardown do
-    interface_cleanup(agent, intf)
-    system_default_switchport(agent, false)
-  end
+  teardown { cleanup(agent, intf) }
+  cleanup(agent, intf)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. 'access' Property Testing")
   test_harness_run(tests, :default_access, harness_class: TestInterfaceL2)
-  test_harness_run(tests, :non_default_access)
+  test_harness_run(tests, :non_default_access, harness_class: TestInterfaceL2)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. 'trunk' Property Testing")
