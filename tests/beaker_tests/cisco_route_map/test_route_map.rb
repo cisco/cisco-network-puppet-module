@@ -24,14 +24,6 @@
 
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
-# In I7 match_src_proto order is not maintained in running config.
-# This behavior is currently observed only on the N9K.
-if platform[/n9k/] && image_version.to_s.strip[/I(7|8|9)/]
-  @src_proto = %w(udp igmp tcp)
-else
-  @src_proto = %w(tcp udp igmp)
-end
-
 # Test hash top-level keys
 tests = {
   master:           master,
@@ -417,10 +409,7 @@ tests[:non_default_6] = {
   desc:           '2.6 Non Defaults 6',
   title_pattern:  'rm6 321 permit',
   manifest_props: {
-    match_src_proto: %w(tcp udp igmp)
-  },
-  resource:       {
-    match_src_proto: @src_proto
+    match_src_proto: %w(tcp udp igmp).sort
   },
 }
 
