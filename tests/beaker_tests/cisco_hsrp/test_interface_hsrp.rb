@@ -82,7 +82,12 @@ tests[:non_default] = {
 def cleanup(agent)
   cmd = 'no feature hsrp'
   test_set(agent, cmd)
-  interface_cleanup(agent, @intf)
+  interfaces = get_current_resource_instances(agent, 'cisco_interface')
+  interfaces.each do |interface|
+    if interface =~ %r{#{@intf}}
+      interface_cleanup(agent, @intf)
+    end
+  end
 end
 
 #################################################################
