@@ -111,8 +111,8 @@ class Beaker::TestCase
     raise 'Could not find default Nexus host' unless default && default.host_hash[:platform].match(%r{cisco_nexus.*})
     @nexus_host = default
 
-    @credentials_file = Tempfile.new(['spec/fixtures/acceptance-credentials', '.conf'])
-    @device_conf_file = Tempfile.new(['spec/fixtures/acceptance-device', '.conf'])
+    @credentials_file = Tempfile.new(['acceptance-credentials', '.conf'])
+    @device_conf_file = Tempfile.new(['acceptance-device', '.conf'])
 
     @credentials_file.write <<CREDENTIALS
 address: "#{@nexus_host.host_hash[:vmhostname]}"
