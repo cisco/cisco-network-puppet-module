@@ -43,7 +43,7 @@ RSpec.describe Puppet::Provider::RadiusServer::CiscoNexus do
           acct_port:        55,
           timeout:          42,
           retransmit_count: 43,
-          key:              '"12345678"',
+          key:              '12345678',
           key_format:       7,
           accounting_only:  false,
           authentication_only: true,
@@ -96,7 +96,7 @@ RSpec.describe Puppet::Provider::RadiusServer::CiscoNexus do
       expect(radius_server).to receive(:authentication=).with(false)
       expect(radius_server).to receive(:timeout=).with(2)
       expect(radius_server).to receive(:retransmit_count=).with(4)
-      expect(radius_server).to receive(:key_set).with('"12345678"', 7)
+      expect(radius_server).to receive(:key_set).with('12345678', 7)
 
       provider.create(context, '1.2.3.4', name:         '1.2.3.4',
                                           ensure:       'present',
@@ -104,7 +104,7 @@ RSpec.describe Puppet::Provider::RadiusServer::CiscoNexus do
                                           acct_port: 66,
                                           auth_port: 77,
                                           authentication_only: false,
-                                          key: '"12345678"',
+                                          key: '12345678',
                                           key_format: 7,
                                           retransmit_count: 4,
                                           timeout: 2)
@@ -137,7 +137,7 @@ RSpec.describe Puppet::Provider::RadiusServer::CiscoNexus do
       expect(radius_server).to receive(:authentication=).with(false)
       expect(radius_server).to receive(:timeout=).with(2)
       expect(radius_server).to receive(:retransmit_count=).with(4)
-      expect(radius_server).to receive(:key_set).with('"12345678"', 7)
+      expect(radius_server).to receive(:key_set).with('12345678', 7)
 
       provider.update(context, '1.2.3.4', name:         '1.2.3.4',
                                           ensure:       'present',
@@ -145,7 +145,7 @@ RSpec.describe Puppet::Provider::RadiusServer::CiscoNexus do
                                           acct_port: 66,
                                           auth_port: 77,
                                           authentication_only: false,
-                                          key: '"12345678"',
+                                          key: '12345678',
                                           key_format: 7,
                                           retransmit_count: 4,
                                           timeout: 2)
@@ -303,5 +303,69 @@ RSpec.describe Puppet::Provider::RadiusServer::CiscoNexus do
     end
   end
 
-  it_behaves_like 'a noop canonicalizer'
+  canonicalize_data = [
+    {
+      desc: '`resources` contains key surrounded in ""',
+      resources: [{
+        name:             'default',
+        timeout:          7,
+        retransmit_count: 3,
+        key:              '"444444"',
+        key_format:       7,
+        source_interface: ['foo'],
+      }],
+      results: [{
+        name:             'default',
+        timeout:          7,
+        retransmit_count: 3,
+        key:              '444444',
+        key_format:       7,
+        source_interface: ['foo'],
+      }],
+    },
+    {
+      desc: '`resources` contains " in the key',
+      resources: [{
+        name:             'default',
+        timeout:          7,
+        retransmit_count: 3,
+        key:              'foo"bar"444444',
+        key_format:       7,
+        source_interface: ['foo'],
+      }],
+      results: [{
+        name:             'default',
+        timeout:          7,
+        retransmit_count: 3,
+        key:              'foo"bar"444444',
+        key_format:       7,
+        source_interface: ['foo'],
+      }],
+    },
+    {
+      desc: '`resources` does not contain the key value',
+      resources: [{
+        name:             'default',
+        timeout:          7,
+        retransmit_count: 3,
+        source_interface: ['foo'],
+      }],
+      results: [{
+        name:             'default',
+        timeout:          7,
+        retransmit_count: 3,
+        source_interface: ['foo'],
+      }],
+    },
+  ]
+
+  describe '#canonicalize' do
+    canonicalize_data.each do |test|
+      context "#{test[:desc]}" do
+        it 'returns canonicalized value' do
+          expect(provider.canonicalize(context, test[:resources])).to eq(test[:results])
+        end
+      end
+    end
+  end
 end

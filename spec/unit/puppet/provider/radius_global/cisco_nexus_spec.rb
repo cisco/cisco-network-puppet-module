@@ -190,7 +190,7 @@ RSpec.describe Puppet::Provider::RadiusGlobal::CiscoNexus do
     },
   ]
 
-  describe '#munge' do
+  describe '#canonicalize' do
     canonicalize_data.each do |test|
       context "#{test[:desc]}" do
         it 'returns canonicalized value' do
