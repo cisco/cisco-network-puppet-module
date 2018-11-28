@@ -208,8 +208,8 @@ end
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  teardown { cleanup(agent) }
-  cleanup(agent)
+  teardown { cleanup }
+  cleanup
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")

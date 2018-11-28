@@ -42,6 +42,12 @@ result = 'PASS'
 testheader = 'Resource :: Presuite'
 puppetagentcert = nil
 
+if agent.nil?
+  msg = 'Skipping Presuite Certcheck tests as it is not supported agentlessly'
+  banner = '#' * msg.length
+  raise_skip_exception("\n#{banner}\n#{msg}\n#{banner}\n", self)
+end
+
 # @test_name [TestCase] Executes presuite testcase for provider resource.
 test_name "TestCase :: #{testheader}" do
   # @step [Setup] Checks for Puppet Agent Cert on master.
