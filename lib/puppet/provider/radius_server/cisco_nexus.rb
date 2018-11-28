@@ -4,6 +4,9 @@ require 'puppet_x/cisco/cmnutils'
 # Implementation for the radius_server type using the Resource API.
 class Puppet::Provider::RadiusServer::CiscoNexus < Puppet::ResourceApi::SimpleProvider
   def canonicalize(_context, resources)
+    resources.each do |resource|
+      resource[:key] = resource[:key].gsub(/\A"|"\Z/, '') if resource[:key]
+    end
     resources
   end
 
@@ -30,7 +33,7 @@ class Puppet::Provider::RadiusServer::CiscoNexus < Puppet::ResourceApi::SimplePr
         acct_port:            v.acct_port ? v.acct_port : nil,
         timeout:              v.timeout ? v.timeout : -1,
         retransmit_count:     v.retransmit_count ? v.retransmit_count : -1,
-        key:                  v.key ? v.key : 'unset',
+        key:                  v.key ? v.key.gsub(/\A"|"\Z/, '') : 'unset',
         key_format:           v.key_format ? v.key_format : -1,
         accounting_only:      v.accounting,
         authentication_only:  v.authentication
