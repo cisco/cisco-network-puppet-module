@@ -126,15 +126,15 @@ int_arr1 << find_ethernet_interface(tests, 1)
 tests['default_properties'] = {
   title_pattern:  'port-channel100',
   manifest_props: "
-    id            => '100',
+    id            => 100,
     interfaces    => #{int_arr1},
-    minimum_links => '1',
+    minimum_links => 1,
   ",
   code:           [0, 2],
   resource_props: {
-    'id'            => '100',
+    'id'            => 100,
     'interfaces'    => int_arr1,
-    'minimum_links' => '1',
+    'minimum_links' => 1,
   },
 }
 
@@ -144,14 +144,14 @@ int_arr2 << int_arr1[0] << find_ethernet_interface(tests, 2)
 tests['non_default_properties'] = {
   title_pattern:  'port-channel100',
   manifest_props: "
-    id            => '100',
+    id            => 100,
     interfaces    => #{int_arr2},
-    minimum_links => '3',
+    minimum_links => 3,
   ",
   resource_props: {
-    'id'            => '100',
+    'id'            => 100,
     'interfaces'    => int_arr2,
-    'minimum_links' => '3',
+    'minimum_links' => 3,
   },
 }
 
@@ -175,12 +175,7 @@ def build_manifest_portchannel(tests, id)
     tests[id][:resource] = {}
   else
     state = 'ensure => present,'
-    if !agent
-      # Resource PI performs strict validation, convert integer strings to integers
-      manifest = tests[id][:manifest_props].gsub(%r{'(?=\d)|(?<=\d)'}, '')
-    else
-      manifest = tests[id][:manifest_props]
-    end
+    manifest = tests[id][:manifest_props]
     tests[id][:resource] = tests[id][:resource_props]
   end
 
@@ -190,14 +185,13 @@ def build_manifest_portchannel(tests, id)
              tests[id][:title_pattern])
   tests[id][:manifest] = if agent
                            "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
-                           end
                              node 'default' {
                                port_channel { 'port-channel100':
                                  #{state}
                                  #{manifest}
                                }
                              }
-                           EOF"
+                           \nEOF"
                          else
                            create_agentless_manifest(tests, 'port_channel', id, state, manifest)
                          end
