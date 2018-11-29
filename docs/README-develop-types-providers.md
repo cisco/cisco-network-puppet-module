@@ -24,7 +24,28 @@
 
 This document is a guide for writing new Puppet resource types and providers for Cisco NX-OS.
 
-There are multiple components involved when creating new resources. This document focuses on the type and provider files:
+There are multiple components involved when creating new resources, it would be suggested to review [`custom resources`](https://puppet.com/docs/puppet/6.0/custom_resources.html) as it outlines the various ways a custom type and provider can be written for Puppet. This document mainly focuses on the low-level type and provider files, for historical context. 
+
+Any new types should follow the [`Resource API reference`](https://puppet.com/docs/puppet/6.0/about_the_resource_api.html#concept-8156), which is easy to get started with the [PDK](https://docs.puppet.com/pdk/) using `pdk new provider`:
+
+```bash
+pdk new provider foo
+```
+
+Make sure to edit the features of the newly generated type to support dual-mode:
+
+```ruby
+require 'puppet/resource_api'
+
+Puppet::ResourceApi.register_type(
+  name: 'foo',
+  ...
+  features: ['canonicalize','simple_get_filter'] + ( Puppet::Util::NetworkDevice.current.nil? ? [] : ['remote_resource'] ),
+  attributes: {
+    ...
+  },
+)
+```
 
 ![1](tp_files.png)
 
@@ -156,6 +177,7 @@ Puppet::Type.newtype(:cisco_tunnel) do
   "
 
   ensurable
+  apply_to_all
 
   newparam(:name, namevar: true) do
     desc 'Resource title. Valid values are string.'
