@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-module Puppet; end # rubocop:disable Style/Documentation
+module Puppet; end
 module Puppet::ResourceApi
   # Implementation for the radius_global type using the Resource API.
   class Puppet::Provider::RadiusGlobal::CiscoNexus
