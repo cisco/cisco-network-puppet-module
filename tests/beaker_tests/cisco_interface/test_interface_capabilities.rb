@@ -162,7 +162,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   resource_cmd = if agent
                    PUPPET_BINPATH + "resource cisco_interface_capabilities '#{intf}'"
                  else
-                   AGENTLESS_COMMAND + "--resource cisco_interface_capabilities '#{intf}'"
+                   agentless_command + "--resource cisco_interface_capabilities '#{intf}'"
                  end
   resource_caps = parse_capabilities(agent, resource_cmd, resource_command: true)
 
