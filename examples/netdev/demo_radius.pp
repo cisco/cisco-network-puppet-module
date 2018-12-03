@@ -32,21 +32,21 @@ class ciscopuppet::netdev::demo_radius {
 
   radius_global { 'default':
     key              => '44444444',
-    key_format       => '7',
-    retransmit_count => '3',
-    timeout          => '1',
+    key_format       => 7,
+    retransmit_count => 3,
+    timeout          => 1,
   }
 
   radius_server { '8.8.8.8':
     ensure              => 'present',
     accounting_only     => $accounting_only,
-    acct_port           => '66',
-    auth_port           => '77',
+    acct_port           => 66,
+    auth_port           => 77,
     authentication_only => $authentication_only,
     key                 => '44444444',
-    key_format          => '7',
-    retransmit_count    => '4',
-    timeout             => '2',
+    key_format          => 7,
+    retransmit_count    => 4,
+    timeout             => 2,
   }
 
 }

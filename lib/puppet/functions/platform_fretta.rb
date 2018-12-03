@@ -1,6 +1,7 @@
-# Manifest to demo cisco_interface provider
 #
-# Copyright (c) 2014-2016 Cisco and/or its affiliates.
+# Cisco platform_fretta puppet manifest function.
+#
+# Copyright (c) 2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,11 +15,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet::netdev::demo_port_channel {
-  port_channel { 'port-channel100':
-    ensure        => 'present',
-    id            => 100,
-    interfaces    => ['ethernet1/8', 'ethernet1/9'],
-    minimum_links => 3,
-  }
-}
+Puppet::Functions.create_function(:platform_fretta) do
+  def platform_fretta()
+    if Puppet::Util::NetworkDevice.current.nil?
+      data = Facter.value('cisco')
+    else
+      data = Puppet::Util::NetworkDevice.current.facts['cisco']
+    end
+    return '' if data.nil?
+
+    data['inventory'].each do |_x, slot|
+      return true if slot['pid'][/-R/]
+    end
+    false
+  end
+end

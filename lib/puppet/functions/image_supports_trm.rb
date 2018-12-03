@@ -1,6 +1,7 @@
-# Manifest to demo cisco_interface provider
 #
-# Copyright (c) 2014-2016 Cisco and/or its affiliates.
+# Cisco image_supports_trm puppet manifest function.
+#
+# Copyright (c) 2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,11 +15,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet::netdev::demo_port_channel {
-  port_channel { 'port-channel100':
-    ensure        => 'present',
-    id            => 100,
-    interfaces    => ['ethernet1/8', 'ethernet1/9'],
-    minimum_links => 3,
-  }
-}
+Puppet::Functions.create_function(:image_supports_trm) do
+  def image_supports_trm()
+    if Puppet::Util::NetworkDevice.current.nil?
+      data = Facter.value('os')['release']['full']
+    else
+      data = Puppet::Util::NetworkDevice.current.facts['cisco']['images']['full_version']
+    end
+    return '' if data.nil?
+
+    pat = /I[2-6]/
+    image = data
+    image[pat].nil? ? true : false
+  end
+end

@@ -40,8 +40,8 @@ class ciscopuppet::demo_all_cisco {
   #include ciscopuppet::cisco::demo_interface_service_vni
   include ciscopuppet::cisco::demo_itd
   include ciscopuppet::cisco::demo_object_group
-  include ciscopuppet::cisco::demo_ospf
-  include ciscopuppet::cisco::demo_patching
+  #include ciscopuppet::cisco::demo_ospf
+  #include ciscopuppet::cisco::demo_patching
   include ciscopuppet::cisco::demo_pim
   include ciscopuppet::cisco::demo_portchannel
   include ciscopuppet::cisco::demo_route_map
@@ -49,7 +49,7 @@ class ciscopuppet::demo_all_cisco {
   #stp_bd and stp_vlan are exclusive, so comment one of them
   #include ciscopuppet::cisco::demo_stp_bd
   include ciscopuppet::cisco::demo_stp_vlan
-  include ciscopuppet::cisco::demo_tacacs_server
+  #include ciscopuppet::cisco::demo_tacacs_server
   include ciscopuppet::cisco::demo_tacacs_server_host
   include ciscopuppet::cisco::demo_trm
   # include ciscopuppet::cisco::demo_upgrade
