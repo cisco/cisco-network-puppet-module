@@ -417,10 +417,7 @@ tests[:non_default_6] = {
   desc:           '2.6 Non Defaults 6',
   title_pattern:  'rm6 321 permit',
   manifest_props: {
-    match_src_proto: %w(tcp udp igmp)
-  },
-  resource:       {
-    match_src_proto: @src_proto
+    match_src_proto: %w(tcp udp igmp).sort
   },
 }
 

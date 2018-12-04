@@ -492,7 +492,7 @@ Symbol | Meaning | Description
 | [cisco_evpn_multicast](#type-cisco_evpn_multicast)         | ✅* | ➖| ➖ | ➖ | ➖  | ➖ | ➖ |
 | [cisco_evpn_multisite](#type-cisco_evpn_multisite)         | ✅* | ➖| ➖ | ➖ | ➖  | ➖ | ➖ | \*[caveats](#cisco_evpn_multisite-caveats) |
 | [cisco_evpn_stormcontrol](#type-cisco_evpn_stormcontrol)   | ✅* | ➖| ➖ | ➖ | ➖  | ➖ | ➖ | \*[caveats](#cisco_evpn_stormcontrol-caveats) |
-| [cisco_evpn_vni](#type-cisco_evpn_vni)                     | ✅ | ➖ | ✅ | ✅ | ✅ | ✅ | ✅ | \*[caveats](#cisco_evpn_vni-caveats) |
+| [cisco_evpn_vni](#type-cisco_evpn_vni)                     | ✅* | ➖ | ✅ | ✅ | ✅ | ✅* | ✅ | \*[caveats](#cisco_evpn_vni-caveats) |
 | [cisco_fabricpath_global](#type-cisco_fabricpath_global)     | ➖ | ➖ | ✅ | ✅ | ✅* | ➖ | ➖ | \*[caveats](#cisco_fabricpath_global-caveats) |
 | [cisco_fabricpath_topology](#type-cisco_fabricpath_topology) | ➖ | ➖ | ✅ | ✅ | ✅  | ➖ | ➖ |
 | [cisco_hsrp_global](#type-cisco_hsrp_global)                         | ✅  | ✅* | ✅  | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_hsrp_global-caveats) |
@@ -530,7 +530,7 @@ Symbol | Meaning | Description
 | [cisco_vlan](#type-cisco_vlan)                             | ✅* | ✅* | ✅  | ✅  | ✅ | ✅ | ✅ | \*[caveats](#cisco_vlan-caveats) |
 | [cisco_vpc_domain](#type-cisco_vpc_domain)                 | ✅* | ✅* | ✅* | ✅* | ✅* | ➖ | \*[caveats](#cisco_vpc_domain-caveats) |
 | [cisco_vrf](#type-cisco_vrf)                               | ✅  | ✅* | ✅  | ✅  | ✅ | ✅ | ✅ | \*[caveats](#cisco_vrf-caveats) |
-| [cisco_vrf_af](#type-cisco_vrf_af)                         | ✅  | ✅* | ✅* | ✅* | ✅* | ✅ | ✅ | \*[caveats](#cisco_vrf_af-caveats) |
+| [cisco_vrf_af](#type-cisco_vrf_af)                         | ✅*  | ✅* | ✅* | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_vrf_af-caveats) |
 | [cisco_vtp](#type-cisco_vtp)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ➖ | ➖ |
 | [cisco_vxlan_vtep](#type-cisco_vxlan_vtep)                 | ✅  | ➖ | ✅  | ✅  | ✅* | ✅ | ✅ | \*[caveats](#cisco_vxlan_vtep-caveats) |
 | [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni)         | ✅  | ➖ | ✅  | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_vxlan_vtep_vni-caveats) |
@@ -2049,7 +2049,7 @@ Stormcontrol level. Valid values are Integer.
 --
 ### Type: cisco_evpn_vni
 
-Manages Cisco Ethernet Virtual Private Network (EVPN) VXLAN Network Identifier (VNI) configurations of a Cisco device.
+Manages Cisco Ethernet Virtual Private Network (EVPN) VXLAN Network Identifier (VNI) configurations of a Cisco device. This provider is no longer needed for N9k and N9k-F running versions 9.2.1 or later.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
@@ -4908,13 +4908,13 @@ Manages Cisco Virtual Routing and Forwarding (VRF) Address-Family configuration.
 
 | Property                      | Caveat Description                   |
 |-------------------------------|--------------------------------------|
-| route_target_both_auto        | Not supported on N3k                 |
-| route_target_both_auto_evpn   | Not supported on N3k                 |
+| route_target_both_auto        | Not supported on N3k. Not needed on N9k and N9k-F 9.2.1 and later |
+| route_target_both_auto_evpn   | Not supported on N3k. Not needed on N9k and N9k-F 9.2.1 and later |
 | route_target_export_evpn      | Not supported on N3k                 |
 | route_target_export_stitching | Not supported on Nexus               |
 | route_target_import_evpn      | Not supported on N3k                 |
 | route_target_import_stitching | Not supported on Nexus               |
-| route_target_both_auto_mvpn   | Only supported on N9K 7.0(3)I7(1) and later |
+| route_target_both_auto_mvpn   | Only supported on N9K 7.0(3)I7(1) and later. Not needed on N9k and N9k-F 9.2.1 and later |
 | route_target_import_mvpn      | Only supported on N9K 7.0(3)I7(1) and later |
 | route_target_export_mvpn      | Only supported on N9K 7.0(3)I7(1) and later |
 
