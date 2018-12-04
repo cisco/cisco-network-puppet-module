@@ -5552,9 +5552,6 @@ Name of the port channel. eg port-channel100. Valid value is a string.
 ##### `name`
 Resource name, not used to manage the device.  Valid value is a string.
 
-##### `enable`
-Enable or disable radius functionality.  Valid values are 'true' or 'false'.
-
 --
 ### Type: radius_global
 

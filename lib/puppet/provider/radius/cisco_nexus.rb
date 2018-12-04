@@ -11,10 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-require 'puppet/resource_api/simple_provider'
 
 # Basic implementation for the radius type using the Resource API.
-class Puppet::Provider::Radius::CiscoNexus < Puppet::ResourceApi::SimpleProvider
+class Puppet::Provider::Radius::CiscoNexus
+  # radius does nothing on NX-OS as no option
+  # to enable the feature from this level
+  def set(context, _changes)
+    context.notice("No operations for managing 'radius', use 'radius_global'")
+  end
+
   def canonicalize(_context, resources)
     resources
   end
@@ -26,18 +31,5 @@ class Puppet::Provider::Radius::CiscoNexus < Puppet::ResourceApi::SimpleProvider
       name: 'default'
     }
     radius
-  end
-
-  # Does not create / update / delete
-  def create(context, name, should)
-    context.notice("No operation in creating '#{name}' with #{should.inspect}")
-  end
-
-  def update(context, name, should)
-    context.notice("No operation in updating '#{name}' with #{should.inspect}")
-  end
-
-  def delete(context, name)
-    context.notice("No operation in deleting '#{name}'")
   end
 end
