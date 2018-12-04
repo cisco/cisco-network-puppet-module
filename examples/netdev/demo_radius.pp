@@ -26,9 +26,7 @@ class ciscopuppet::netdev::demo_radius {
     default => undef
   }
 
-  radius { 'default':
-    enable => true,
-  }
+  radius {'default': }
 
   radius_global { 'default':
     key              => '44444444',
