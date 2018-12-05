@@ -160,11 +160,8 @@ test_name 'Prep Masters & Install Puppet' do
         on(switch, 'rm /etc/puppetlabs/puppet/puppet.conf')
         on(switch, 'touch /etc/puppetlabs/puppet/puppet.conf')
         on(switch, 'chmod a+w /etc/puppetlabs/puppet/puppet.conf')
-        on(switch, 'echo -e "[main]" >> /etc/puppetlabs/puppet/puppet.conf')
-        on(switch, "echo -e \"  server = #{master.hostname}\n\" >> /etc/puppetlabs/puppet/puppet.conf")
-        on(switch, 'echo -e "[agent]" >> /etc/puppetlabs/puppet/puppet.conf')
-        on(switch, 'echo -e "  pluginsync  = true" >> /etc/puppetlabs/puppet/puppet.conf')
-        on(switch, "/opt/puppetlabs/bin/puppet agent -t --server #{master.hostname}", acceptable_exit_codes: [1])
+        on(switch, "/opt/puppetlabs/bin/puppet config set server #{master.hostname}")
+        on(switch, '/opt/puppetlabs/bin/puppet agent -t', acceptable_exit_codes: [1])
         unless masters.empty?
           on(master, puppet('cert', 'sign', switch.to_s), acceptable_exit_codes: [0, 1])
         end
