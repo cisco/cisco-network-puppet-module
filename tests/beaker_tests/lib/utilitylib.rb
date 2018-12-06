@@ -241,7 +241,7 @@ DEVICE
 
   # full command string for puppet resource commands
   def puppet_resource_cmd(res_name, title, property, value)
-    PUPPET_BINPATH + "resource #{res_name} #{title} #{property}=#{value}"
+    PUPPET_BINPATH + "resource #{res_name} '#{title}' #{property}=#{value}"
   end
 
   # Auto generation of properties for manifests
@@ -347,7 +347,8 @@ DEVICE
         output = `#{agentless_command} --apply #{@temp_agentless_manifest.path} 2>&1`
         if !(output.include? 'Applied catalog') && tests[id][:stderr_pattern].nil?
           remove_temp_manifest
-          raise 'Errored test'
+          logger.info(output)
+          raise 'Errored test as the command result did not match applied catalog'
         end
       end
       test_stderr(tests, id, output) if tests[id][:stderr_pattern]
