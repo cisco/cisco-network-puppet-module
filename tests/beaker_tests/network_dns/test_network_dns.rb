@@ -59,6 +59,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   teardown { cleanup(original_hostname) }
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Set Property Testing")
-  test_harness_run(tests, :set)
+  test_harness_run(tests, :set, skip_idempotence_check: true)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

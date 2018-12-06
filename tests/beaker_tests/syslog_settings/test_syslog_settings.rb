@@ -46,6 +46,7 @@ tests[:defaults] = {
     source_interface: ['unset'],
     time_stamp_units: 'seconds',
   },
+  code: [0, 2],
 }
 
 # Test hash test cases
