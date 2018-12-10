@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2016 Cisco and/or its affiliates.
+# Copyright (c) 2014-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,6 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-class ciscopuppet {
-  class { 'ciscopuppet::install': }
+class ciscopuppet::proxy (String $repo = 'https://rubygems.org', String $proxy = '') {
+
+  include resource_api::agent
+
+  # Process proxy settings 
+  if $proxy == '' {
+    $opts = {}
+  }
+  else {
+    $opts = { '--http-proxy' => $proxy }
+  }
+
+  package { 'cisco_node_utils' :
+    ensure          => present,
+    provider        => 'puppet_gem',
+    source          => $repo,
+    install_options => $opts,
+  }
 }
