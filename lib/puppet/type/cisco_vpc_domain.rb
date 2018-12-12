@@ -60,6 +60,9 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
       shutdown                                         => 'false',
       system_mac                                       => '00:0c:0d:11:22:33',
       system_priority                                  => '32000',
+      peer_switch                                      => 'true',
+      arp_synchronize                                  => 'true',
+      nd_synchronize                                   => 'true',
 
       #vPC+ parameters
       fabricpath_emulated_switch_id                    => '100',
@@ -273,5 +276,23 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
   newproperty(:system_priority) do
     desc "VPC system priority. Valid values are Integer or keyword 'default'"
     munge { |value| value == 'default' ? :default : value.to_i }
+  end # property name
+
+  newproperty(:peer_switch) do
+    desc 'Enable or Disable peer switch on vPC pair switches.
+          Valid values are true/false or default'
+    newvalues(:true, :false, :default)
+  end # property name
+
+  newproperty(:arp_synchronize) do
+    desc 'Enable or Disable ip arp synchronization.
+          Valid values are true/false or default'
+    newvalues(:true, :false, :default)
+  end # property name
+
+  newproperty(:nd_synchronize) do
+    desc 'Enable or Disable ipv6 neighbor discovery synchronization.
+          Valid values are true/false or default'
+    newvalues(:true, :false, :default)
   end # property name
 end # Puppet::Type.newtype
