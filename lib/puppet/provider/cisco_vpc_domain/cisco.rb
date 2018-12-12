@@ -57,8 +57,8 @@ Puppet::Type.type(:cisco_vpc_domain).provide(:cisco) do
     :auto_recovery,
     :peer_gateway,
     :peer_switch,
-    :arp_synchronization,
-    :nd_synchronization,
+    :arp_synchronize,
+    :nd_synchronize,
   ]
   VPC_BOOL_PROPS2 = [
     :fabricpath_multicast_load_balance,
