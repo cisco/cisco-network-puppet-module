@@ -7,9 +7,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### New feature support
 
 ### Added
-* Extended `vxlan_vtep_vni` with attribute:
+* Extended `cisco_vpc_domain` with attributes:
+   * `peer_switch`
+   * `arp_synchronize`
+   * `nd_synchronize`
+* Extended `cisco_vxlan_vtep_vni` with attribute:
    * `suppress_arp_disable`
-* Extended `vxlan_vtep` with attribute:
+* Extended `cisco_vxlan_vtep` with attributes:
    * `global_suppress_arp`
    * `global_mcast_group_l2`
    * `global_mcast_group_l3`
