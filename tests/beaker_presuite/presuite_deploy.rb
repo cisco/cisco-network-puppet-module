@@ -47,10 +47,12 @@ test_name 'Prep Masters & Install Puppet' do
   # Get all hosts with role agent
   agents = select_hosts(roles: ['agent'])
 
-  unless masters.empty?
+  unless ENV['BEAKER_provision'] == 'no' || masters.empty?
     step 'install PE on masters' do
-      masters.each do |_node|
-        install_pe_on(masters, {})
+      masters.each do |node|
+        if node.options['provison']
+          install_pe_on(masters, {})
+        end
       end
     end
   end
@@ -66,6 +68,8 @@ test_name 'Prep Masters & Install Puppet' do
   unless masters.empty?
     step 'install Cisco Module on master' do
       masters.each do |node|
+        # Clear out the Puppetfile as we may be reusing a master
+        on(node, '> /root/Puppetfile')
         on(node, "echo #{Shellwords.escape(mod_line_from_env('puppetlabs-resource_api', 'RSAPI'))} >> /root/Puppetfile")
         on(node, "echo #{Shellwords.escape(mod_line_from_env('puppetlabs-puppetserver_gem', 'RSAPI'))} >> /root/Puppetfile")
         on(node, "echo #{Shellwords.escape(mod_line_from_env('puppetlabs-netdev_stdlib', 'NETDEV_STDLIB'))} >> /root/Puppetfile")
@@ -161,9 +165,28 @@ test_name 'Prep Masters & Install Puppet' do
         on(switch, 'touch /etc/puppetlabs/puppet/puppet.conf')
         on(switch, 'chmod a+w /etc/puppetlabs/puppet/puppet.conf')
         on(switch, "/opt/puppetlabs/bin/puppet config set server #{master.hostname}")
+        on(switch, "/opt/puppetlabs/bin/puppet config set certname #{switch}")
+        unless masters.empty?
+          # Purge existing node in case we are reusing a master
+          on(master, puppet('node', 'purge', switch.to_s), acceptable_exit_codes: [0, 1])
+        end
         on(switch, '/opt/puppetlabs/bin/puppet agent -t', acceptable_exit_codes: [1])
         unless masters.empty?
-          on(master, puppet('cert', 'sign', switch.to_s), acceptable_exit_codes: [0, 1])
+          # Puppet server changed the CA command starting in 2019.0.0
+          version = on(master, '/opt/puppetlabs/bin/puppetserver --version', acceptable_exit_codes: [0])
+          major = /(\d{4})/.match(version.output)
+          if major && major[0].to_i <= 2018
+            on(master, puppet('cert', 'sign', switch.to_s), acceptable_exit_codes: [0, 1])
+          elsif major
+            # Modify CA checking so we can use 5.x agents against 6.x masters - PUP-9291
+            scp_from master, '/etc/puppetlabs/puppet/ssl/ca/ca_crt.pem', '.'
+            scp_to switch, 'ca_crt.pem', '/etc/puppetlabs/puppet/ssl/certs/ca.pem'
+            on(switch, '/opt/puppetlabs/bin/puppet config set --section main certificate_revocation false')
+            on(master, "/opt/puppetlabs/bin/puppetserver ca sign --certname #{switch}", acceptable_exit_codes: [0, 1])
+          else
+            # We didn't find the major version, fallback to legacy command
+            on(master, puppet('cert', 'sign', switch.to_s), acceptable_exit_codes: [0, 1])
+          end
         end
         on(switch, '/opt/puppetlabs/bin/puppet agent -t --waitforcert 60', acceptable_exit_codes: [0, 2])
       end
