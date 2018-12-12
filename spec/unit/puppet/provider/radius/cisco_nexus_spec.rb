@@ -6,6 +6,7 @@ require 'puppet/provider/radius/cisco_nexus'
 
 RSpec.describe Puppet::Provider::Radius::CiscoNexus do
   subject(:provider) { described_class.new }
+
   let(:context) { instance_double('Puppet::ResourceApi::BaseContext', 'context') }
   let(:device) { instance_double('Puppet::Util::NetworkDevice::Nexus::Device', 'device') }
 
