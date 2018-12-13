@@ -16,6 +16,12 @@ module Puppet::ResourceApi
   # Implementation for the tacacs_global type using the Resource API.
   class Puppet::Provider::TacacsGlobal::CiscoNexus
     def canonicalize(_context, resources)
+      resources.each do |resource|
+        resource[:key] = resource[:key].gsub(/\A"|"\Z/, '') if resource[:key]
+        resource[:key] = 'unset' if resource[:key].nil?
+        resource[:timeout] = 'unset' if resource[:timeout].nil? || resource[:timeout] == (nil || -1)
+        resource[:key_format] = 'unset' if resource[:key_format].nil? || resource[:key_format] == (nil || -1)
+      end
       resources
     end
 
@@ -23,6 +29,8 @@ module Puppet::ResourceApi
       if value.nil?
         nil
       elsif value.is_a?(String) && value.eql?('unset')
+        nil
+      elsif value.is_a?(Integer) && value.eql?(-1)
         nil
       else
         value
@@ -47,10 +55,10 @@ module Puppet::ResourceApi
       @tacacs_global.each do |name, instance|
         current_states << {
           name:             name,
-          timeout:          instance.timeout,
+          timeout:          instance.timeout ? instance.timeout.to_i : 'unset',
           key:              instance.key.nil? || instance.key.empty? ? 'unset' : instance.key.gsub(/\A"|"\Z/, ''),
           # Only return the key format if there is a key configured
-          key_format:       instance.key.nil? || instance.key.empty? ? nil : instance.key_format,
+          key_format:       instance.key.nil? || instance.key.empty? ? 'unset' : instance.key_format,
           # source_interface for NXOS devices will be singular, type however is for an array
           source_interface: instance.source_interface.nil? || instance.source_interface.empty? ? ['unset'] : [instance.source_interface],
         }

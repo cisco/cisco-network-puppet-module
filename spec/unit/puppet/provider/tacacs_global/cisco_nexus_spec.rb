@@ -80,7 +80,7 @@ RSpec.describe Puppet::Provider::TacacsGlobal::CiscoNexus do
       it 'returns the results' do
         allow(Cisco::TacacsGlobal).to receive(:tacacs_global).and_return('default' => tacacs_global)
         expect(tacacs_global).to receive(:key).and_return('22222').exactly(5).times
-        expect(tacacs_global).to receive(:timeout).and_return(5)
+        expect(tacacs_global).to receive(:timeout).and_return(5, 5)
         expect(tacacs_global).to receive(:key_format).and_return(7)
         expect(tacacs_global).to receive(:source_interface).and_return('ethernet1/1').exactly(3).times
 
@@ -133,5 +133,147 @@ RSpec.describe Puppet::Provider::TacacsGlobal::CiscoNexus do
     it { expect(provider.munge('foo')).to eq('foo') }
   end
 
-  it_behaves_like 'a noop canonicalizer'
+  canonicalize_data = [
+    {
+      desc: '`resources` contains key surrounded in ""',
+      resources: [{
+        name:             'default',
+        timeout:          7,
+        key:              '"444444"',
+        key_format:       7,
+        source_interface: ['foo'],
+      }],
+      results: [{
+        name:             'default',
+        timeout:          7,
+        key:              '444444',
+        key_format:       7,
+        source_interface: ['foo'],
+      }],
+    },
+    {
+      desc: '`resources` contains " in the key',
+      resources: [{
+        name:             'default',
+        timeout:          7,
+        key:              'foo"bar"444444',
+        key_format:       7,
+        source_interface: ['foo'],
+      }],
+      results: [{
+        name:             'default',
+        timeout:          7,
+        key:              'foo"bar"444444',
+        key_format:       7,
+        source_interface: ['foo'],
+      }],
+    },
+    {
+      desc: '`resources` does not contain the key value',
+      resources: [{
+        name:             'default',
+        timeout:          7,
+        key_format:       7,
+        source_interface: ['foo'],
+      }],
+      results: [{
+        name:             'default',
+        timeout:          7,
+        key: 'unset',
+        key_format:       7,
+        source_interface: ['foo'],
+      }],
+    },
+    {
+      desc: '`resources` contains the "unset" key value',
+      resources: [{
+        name:             'default',
+        timeout:          7,
+        key: 'unset',
+        key_format:       7,
+        source_interface: ['foo'],
+      }],
+      results: [{
+        name:             'default',
+        timeout:          7,
+        key: 'unset',
+        key_format:       7,
+        source_interface: ['foo'],
+      }],
+    },
+    {
+      desc: '`resources` does not contain the timeout value',
+      resources: [{
+        name:             'default',
+        key: 'unset',
+        key_format:       7,
+        source_interface: ['foo'],
+      }],
+      results: [{
+        name:             'default',
+        timeout:          'unset',
+        key: 'unset',
+        key_format:       7,
+        source_interface: ['foo'],
+      }],
+    },
+    {
+      desc: '`resources` contains -1 timeout value',
+      resources: [{
+        name:             'default',
+        timeout: -1,
+        key: 'unset',
+        key_format:       7,
+        source_interface: ['foo'],
+      }],
+      results: [{
+        name:             'default',
+        timeout:          'unset',
+        key_format:       7,
+        key: 'unset',
+        source_interface: ['foo'],
+      }],
+    },
+    {
+      desc: '`resources` contains -1 values',
+      resources: [{
+        name:             'default',
+        timeout: -1,
+        key: 'unset',
+        key_format:       -1,
+        source_interface: ['foo'],
+      }],
+      results: [{
+        name:             'default',
+        timeout:          'unset',
+        key_format:       'unset',
+        key: 'unset',
+        source_interface: ['foo'],
+      }],
+    },
+    {
+      desc: '`resources` does not contain unsettable values',
+      resources: [{
+        name:             'default',
+        source_interface: ['foo'],
+      }],
+      results: [{
+        name:             'default',
+        timeout:          'unset',
+        key_format:       'unset',
+        key: 'unset',
+        source_interface: ['foo'],
+      }],
+    },
+  ]
+
+  describe '#canonicalize' do
+    canonicalize_data.each do |test|
+      context "#{test[:desc]}" do
+        it 'returns canonicalized value' do
+          expect(provider.canonicalize(context, test[:resources])).to eq(test[:results])
+        end
+      end
+    end
+  end
 end
