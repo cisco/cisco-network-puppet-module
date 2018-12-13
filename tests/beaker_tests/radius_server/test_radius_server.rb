@@ -65,6 +65,16 @@ tests[:manifest_present_change] = {
     retransmit_count: -1,
     timeout: -1,
   },
+  resource: {
+    ensure: 'present',
+    accounting_only: false,
+    acct_port: 44,
+    auth_port: 55,
+    authentication_only: true,
+    key: 'unset',
+    retransmit_count: 'unset',
+    timeout: 'unset',
+  },
   code:           [0, 2],
 }
 

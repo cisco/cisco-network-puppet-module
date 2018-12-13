@@ -76,10 +76,10 @@ RSpec.describe Puppet::Provider::RadiusServer::CiscoNexus do
           name:             '1.2.3.4',
           auth_port:        1812,
           acct_port:        1813,
-          timeout:          -1,
-          retransmit_count: -1,
+          timeout:          'unset',
+          retransmit_count: 'unset',
           key:              'unset',
-          key_format:       -1,
+          key_format:       'unset',
           accounting_only:  true,
           authentication_only: false,
         },
@@ -127,7 +127,7 @@ RSpec.describe Puppet::Provider::RadiusServer::CiscoNexus do
                                           timeout: -1)
     end
   end
-  #
+
   describe '#update' do
     it 'updates the resource' do
       expect(context).to receive(:notice).with(%r{\Updating '1.2.3.4'}).once
@@ -348,12 +348,105 @@ RSpec.describe Puppet::Provider::RadiusServer::CiscoNexus do
         name:             'default',
         timeout:          7,
         retransmit_count: 3,
+        key_format:       7,
         source_interface: ['foo'],
       }],
       results: [{
         name:             'default',
         timeout:          7,
         retransmit_count: 3,
+        key: 'unset',
+        key_format:       7,
+        source_interface: ['foo'],
+      }],
+    },
+    {
+      desc: '`resources` contains the "unset" key value',
+      resources: [{
+        name:             'default',
+        timeout:          7,
+        retransmit_count: 3,
+        key: 'unset',
+        key_format:       7,
+        source_interface: ['foo'],
+      }],
+      results: [{
+        name:             'default',
+        timeout:          7,
+        retransmit_count: 3,
+        key: 'unset',
+        key_format:       7,
+        source_interface: ['foo'],
+      }],
+    },
+    {
+      desc: '`resources` does not contain the timeout value',
+      resources: [{
+        name:             'default',
+        retransmit_count: 3,
+        key: 'unset',
+        key_format:       7,
+        source_interface: ['foo'],
+      }],
+      results: [{
+        name:             'default',
+        timeout:          'unset',
+        retransmit_count: 3,
+        key: 'unset',
+        key_format:       7,
+        source_interface: ['foo'],
+      }],
+    },
+    {
+      desc: '`resources` contains -1 timeout value',
+      resources: [{
+        name:             'default',
+        retransmit_count: 3,
+        timeout: -1,
+        key: 'unset',
+        key_format:       7,
+        source_interface: ['foo'],
+      }],
+      results: [{
+        name:             'default',
+        timeout:          'unset',
+        key_format:       7,
+        retransmit_count: 3,
+        key: 'unset',
+        source_interface: ['foo'],
+      }],
+    },
+    {
+      desc: '`resources` contains -1 values',
+      resources: [{
+        name:             'default',
+        retransmit_count: -1,
+        timeout: -1,
+        key: 'unset',
+        key_format:       -1,
+        source_interface: ['foo'],
+      }],
+      results: [{
+        name:             'default',
+        timeout:          'unset',
+        key_format:       'unset',
+        retransmit_count: 'unset',
+        key: 'unset',
+        source_interface: ['foo'],
+      }],
+    },
+    {
+      desc: '`resources` does not contain unsettable values',
+      resources: [{
+        name:             'default',
+        source_interface: ['foo'],
+      }],
+      results: [{
+        name:             'default',
+        timeout:          'unset',
+        key_format:       'unset',
+        retransmit_count: 'unset',
+        key: 'unset',
         source_interface: ['foo'],
       }],
     },
