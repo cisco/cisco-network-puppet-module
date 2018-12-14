@@ -38,6 +38,7 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
     Example:
     cisco_vpc_domain {"100":
       ensure                                           => 'present',
+      arp_synchronize                                  => 'true',
       auto_recovery                                    => 'true',
       auto_recovery_reload_delay                       => '300',
       delay_restore                                    => '250',
@@ -45,6 +46,7 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
       dual_active_exclude_interface_vlan_bridge_domain => '10-30,500',
       graceful_consistency_check                       => 'true',
       layer3_peer_routing                              => 'true',
+      nd_synchronize                                   => 'true',
       peer_keepalive_dest                              => '1.1.1.1',
       peer_keepalive_hold_timeout                      => 5,
       peer_keepalive_interval                          => 1000,
@@ -55,14 +57,12 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
       peer_keepalive_vrf                               => 'management',
       peer_gateway                                     => 'true',
       peer_gateway_exclude_vlan                        => '500-1000,1100,1120',
+      peer_switch                                      => 'true',
       role_priority                                    => '32000',
       self_isolation                                   => 'false',
       shutdown                                         => 'false',
       system_mac                                       => '00:0c:0d:11:22:33',
       system_priority                                  => '32000',
-      peer_switch                                      => 'true',
-      arp_synchronize                                  => 'true',
-      nd_synchronize                                   => 'true',
 
       #vPC+ parameters
       fabricpath_emulated_switch_id                    => '100',
@@ -107,6 +107,12 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
   ##############
 
   ensurable
+
+  newproperty(:arp_synchronize) do
+    desc 'Enable or Disable ip arp synchronization.
+          Valid values are true/false or default'
+    newvalues(:true, :false, :default)
+  end # property name
 
   newproperty(:auto_recovery) do
     desc 'Auto Recovery enable or disable if peer is non-operational.
@@ -161,6 +167,12 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
 
   newproperty(:layer3_peer_routing) do
     desc 'Enable or Disable Layer3 peer routing.
+          Valid values are true/false or default'
+    newvalues(:true, :false, :default)
+  end # property name
+
+  newproperty(:nd_synchronize) do
+    desc 'Enable or Disable ipv6 neighbor discovery synchronization.
           Valid values are true/false or default'
     newvalues(:true, :false, :default)
   end # property name
@@ -245,6 +257,12 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
     end
   end # property name
 
+  newproperty(:peer_switch) do
+    desc 'Enable or Disable peer switch on vPC pair switches.
+          Valid values are true/false or default'
+    newvalues(:true, :false, :default)
+  end # property name
+
   newproperty(:port_channel_limit) do
     desc 'In vPC+ mode, enable or disable the port channel scale limit of
           244 vPCs.  Valid values are true, false or default'
@@ -276,23 +294,5 @@ Puppet::Type.newtype(:cisco_vpc_domain) do
   newproperty(:system_priority) do
     desc "VPC system priority. Valid values are Integer or keyword 'default'"
     munge { |value| value == 'default' ? :default : value.to_i }
-  end # property name
-
-  newproperty(:peer_switch) do
-    desc 'Enable or Disable peer switch on vPC pair switches.
-          Valid values are true/false or default'
-    newvalues(:true, :false, :default)
-  end # property name
-
-  newproperty(:arp_synchronize) do
-    desc 'Enable or Disable ip arp synchronization.
-          Valid values are true/false or default'
-    newvalues(:true, :false, :default)
-  end # property name
-
-  newproperty(:nd_synchronize) do
-    desc 'Enable or Disable ipv6 neighbor discovery synchronization.
-          Valid values are true/false or default'
-    newvalues(:true, :false, :default)
   end # property name
 end # Puppet::Type.newtype

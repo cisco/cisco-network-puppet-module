@@ -45,6 +45,7 @@ class ciscopuppet::cisco::demo_vpc_domain {
 
     cisco_vpc_domain { '100' :
       ensure                                           => present,
+      arp_synchronize                                  => true,
       auto_recovery                                    => $auto_recovery,
       auto_recovery_reload_delay                       => 300,
       delay_restore                                    => 250,
@@ -52,6 +53,7 @@ class ciscopuppet::cisco::demo_vpc_domain {
       dual_active_exclude_interface_vlan_bridge_domain => '10-30, 500',
       graceful_consistency_check                       => true,
       layer3_peer_routing                              => $layer3_peer_routing,
+      nd_synchronize                                   => true,
       peer_keepalive_dest                              => '1.1.1.1',
       peer_keepalive_hold_timeout                      => 5,
       peer_keepalive_interval                          => 1000,
@@ -61,10 +63,8 @@ class ciscopuppet::cisco::demo_vpc_domain {
       peer_keepalive_udp_port                          => 3200,
       peer_keepalive_vrf                               => 'management',
       peer_gateway                                     => true,
-      peer_switch                                      => true,
-      arp_synchronize                                  => true,
-      nd_synchronize                                   => true,
       peer_gateway_exclude_vlan                        => $peer_gateway_excl_vlan,
+      peer_switch                                      => true,
       role_priority                                    => 32000,
       self_isolation                                   => $self_isolation,
       shutdown                                         => $shutdown,
