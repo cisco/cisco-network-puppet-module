@@ -8,9 +8,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 * Extended `cisco_vpc_domain` with attributes:
-   * `peer_switch`
    * `arp_synchronize`
    * `nd_synchronize`
+   * `peer_switch`
 * Extended `cisco_vxlan_vtep_vni` with attribute:
    * `suppress_arp_disable`
 * Extended `cisco_vxlan_vtep` with attributes:
