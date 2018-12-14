@@ -50,7 +50,7 @@ test_name 'Prep Masters & Install Puppet' do
   unless ENV['BEAKER_provision'] == 'no' || masters.empty?
     step 'install PE on masters' do
       masters.each do |node|
-        if node.options['provison']
+        if node.options['provision']
           install_pe_on(masters, {})
         end
       end
