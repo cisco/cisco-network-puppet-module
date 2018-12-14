@@ -115,7 +115,7 @@ class Beaker::TestCase
     @device_conf_file = Tempfile.new(['acceptance-device', '.conf'])
 
     @credentials_file.write <<CREDENTIALS
-address: "#{@nexus_host.host_hash[:vmhostname]}"
+address: "#{beaker_config_connection_address}"
 username: "#{@nexus_host.host_hash[:ssh][:user] || 'admin'}"
 port: "#{@nexus_host.host_hash[:ssh][:port] || '22'}"
 password: "#{@nexus_host.host_hash[:ssh][:password] || 'admin'}"
@@ -606,6 +606,31 @@ DEVICE
     end
   end
 
+  # Helper function to obtain the connection address
+  # from the hash obtained from the beaker config
+  # As per beaker SSH connection methods preference
+  # we try to find the following, in order:
+  # - ip
+  # - vmhostname
+  # - hostname
+  # If neither of these 3 values are found, log an error
+  # and return nil
+  #
+  # Otherwise return the first value found from the
+  # preference ordering
+  def beaker_config_connection_address
+    if @nexus_host[:ip]
+      @nexus_host[:ip]
+    elsif @nexus_host[:vmhostname]
+      @nexus_host[:vmhostname]
+    elsif @nexus_host[:hostname]
+      @nexus_host[:hostname]
+    else
+      logger.error("stdout:\n--\nip, vmhostname or hostname not found, check beaker hosts configuration\n--")
+      nil
+    end
+  end
+
   # Helper to nuke a single interface. This is needed to remove all
   # configurations from the interface.
   def interface_cleanup(agent, intf, stepinfo='Interface Clean:')
@@ -620,7 +645,7 @@ DEVICE
       else
         cmd = "default interface #{intf}"
         logger.info("  * #{stepinfo} Set '#{intf}' to default state")
-        env = { host: @nexus_host[:vmhostname], port: 22, username: @nexus_host[:ssh][:user], password: @nexus_host[:ssh][:password], cookie: nil }
+        env = { host: beaker_config_connection_address, port: 22, username: @nexus_host[:ssh][:user], password: @nexus_host[:ssh][:password], cookie: nil }
         Cisco::Environment.add_env('remote', env)
         test_client = Cisco::Client.create('remote')
         test_client.set(values: cmd)
@@ -1071,7 +1096,7 @@ DEVICE
       on(agent, cmd_prefix + "test_get=\\\"#{filter}\\\"").output
       command = stdout
     else
-      env = { host: @nexus_host[:vmhostname], port: 22, username: @nexus_host[:ssh][:user], password: @nexus_host[:ssh][:password], cookie: nil }
+      env = { host: beaker_config_connection_address, port: 22, username: @nexus_host[:ssh][:user], password: @nexus_host[:ssh][:password], cookie: nil }
       Cisco::Environment.add_env('remote', env)
       test_client = Cisco::Client.create('remote')
       if is_a_running_config_command
@@ -1101,7 +1126,7 @@ DEVICE
       cmd_prefix = PUPPET_BINPATH + "resource cisco_command_config 'cc' "
       on(agent, cmd_prefix + "test_set='#{cmd}'")
     else
-      env = { host: @nexus_host[:vmhostname], port: 22, username: @nexus_host[:ssh][:user], password: @nexus_host[:ssh][:password], cookie: nil }
+      env = { host: beaker_config_connection_address, port: 22, username: @nexus_host[:ssh][:user], password: @nexus_host[:ssh][:password], cookie: nil }
       Cisco::Environment.add_env('remote', env)
       test_client = Cisco::Client.create('remote')
       test_client.set(values: cmd)
@@ -1116,7 +1141,7 @@ DEVICE
       cmd = PUPPET_BINPATH + cmd
       on(agent, cmd, acceptable_exit_codes: [0, 2])
     else
-      env = { host: @nexus_host[:vmhostname], port: 22, username: @nexus_host[:ssh][:user], password: @nexus_host[:ssh][:password], cookie: nil }
+      env = { host: beaker_config_connection_address, port: 22, username: @nexus_host[:ssh][:user], password: @nexus_host[:ssh][:password], cookie: nil }
       Cisco::Environment.add_env('remote', env)
       test_client = Cisco::Client.create('remote')
       test_client.set(values: cmd)
