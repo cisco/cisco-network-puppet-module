@@ -19,7 +19,7 @@ class ciscopuppet::netdev::demo_network_trunk {
     ensure        => 'present',
     encapsulation => 'dot1q',
     mode          => 'trunk',
-    tagged_vlans  => [2, 3, 4, 6, 7, 8],
+    tagged_vlans  => ['2', '3', '4', '6', '7', '8'],
     untagged_vlan => 1,
   }
 }
