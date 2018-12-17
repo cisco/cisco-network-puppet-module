@@ -4723,10 +4723,13 @@ Manages the virtual Port Channel (vPC) domain configuration of a Cisco device.
 | Property | Caveat Description |
 |:--------|:-------------|
 | `auto_recovery`                     | Only supported on N3k, N7k, N9k |
+| `arp_synchronize`                   | Only supported on N3k, N7k, N9k <br> Minimum Module Version 1.11.0   |
 | `fabricpath_emulated_switch_id`     | Only supported on N7k           |
 | `fabricpath_multicast_load_balance` | Only supported on N7k           |
 | `layer3_peer_routing`               | Only supported on N5k, N6k, N7k <br> Supported in OS Version 7.0(3)I6(1) and later on N3k, N9k |
+| `nd_synchronize`                    | Only supported on N3k, N7k, N9k <br> Minimum Module Version 1.11.0   |
 | `peer_gateway_exclude_vlan`         | Only supported on N5k, N6k, N7k |
+| `peer_switch`                       | Only supported on N3k, N7k, N9k <br> Minimum Module Version 1.11.0   |
 | `port_channel_limit`                | Only supported on N7k           |
 | `self_isolation`                    | Only supported on N7k           |
 | `shutdown`                          | Only supported on N5k, N6k, N7k <br> Supported in OS Version 7.0(3)I6(1) and later on N3k, N9k |
@@ -4738,6 +4741,9 @@ Determines whether or not the config should be present on the device. Valid valu
 
 ##### `domain`
 vPC domain ID. Valid values are integer in the range 1-1000. There is no default value, this is a 'name' parameter.
+
+##### `arp_synchronize`
+Enable or Disable ip arp synchronization. Valid values are true/false or default. Default: false.
 
 ##### `auto_recovery`
 Auto Recovery enable or disable if peer is non-operational. Valid values are true, false or default. This parameter is available only on Nexus 7000 series. Default value: true.
@@ -4765,6 +4771,9 @@ Graceful conistency check . Valid values are true, false or default. Default val
 
 ##### `layer3_peer_routing`
 Enable or Disable Layer3 peer routing. Valid values are true/false or default. Default value: false.
+
+##### `nd_synchronize`
+Enable or Disable ipv6 neighbor discovery synchronization. Valid values are true/false or default. Default: false.
 
 ##### `peer_keepalive_dest`
 Destination IPV4 address of the peer where Peer Keep-alives are terminated. Valid values are IPV4 unicast address. There is no default value.
@@ -4795,6 +4804,9 @@ Enable or Disable Layer3 forwarding for packets with peer gateway-mac. Valid val
 
 ##### `peer_gateway_exclude_vlan`
 Interface vlans to exclude from peer gateway functionality. Valid value is a string of integer ranges from 1..4095. This parameter is available only in Nexus 5000, Nexus 6000 and Nexus 7000 series. There is no default value.
+
+##### `peer_switch`
+Enable or Disable peer switch on vPC pair switches. Valid values are true/false or default. Default: false.
 
 ##### `port_channel_limit`
 In vPC+ mode, enable or disable the port channel scale limit of

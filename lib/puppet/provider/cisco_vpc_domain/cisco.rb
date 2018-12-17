@@ -54,8 +54,11 @@ Puppet::Type.type(:cisco_vpc_domain).provide(:cisco) do
   # There are multiple BOOL arrays due to dependency requirements. The order of
   # these property arrays is important for proper processing by properties_set.
   VPC_BOOL_PROPS1 = [
+    :arp_synchronize,
     :auto_recovery,
+    :nd_synchronize,
     :peer_gateway,
+    :peer_switch,
   ]
   VPC_BOOL_PROPS2 = [
     :fabricpath_multicast_load_balance,
