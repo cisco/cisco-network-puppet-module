@@ -23,10 +23,14 @@ Gemfile:
   paths:
     - junit/
     - hosts.cfg
+    - /spec/fixtures/acceptance-credentials.conf
+    - /spec/fixtures/acceptance-device.conf
 .pdkignore:
   paths:
     - junit/
     - hosts.cfg
+    - /spec/fixtures/acceptance-credentials.conf
+    - /spec/fixtures/acceptance-device.conf
 Rakefile:
   requires:
     - 'puppet-strings/tasks'
