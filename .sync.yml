@@ -8,7 +8,8 @@ Gemfile:
       - gem: 'net_http_unix'
     ':development, :unit_tests':
       - gem: 'cisco_node_utils'
-        version: '~> 1.0'
+        git: 'https://github.com/cisco/cisco-network-node-utils.git'
+        ref: 'develop'
       - gem: 'net-telnet'
         version: '~> 0.1.1'
     ':system_tests':
