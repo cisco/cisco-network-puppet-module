@@ -19,23 +19,18 @@ Puppet::Functions.create_function(:prop_supported) do
   def prop_supported(prop)
     # Use catch-all arrays for common properties
     evpn = [:route_target_both_auto_evpn,
-      :route_target_import_evpn,
-      :route_target_export_evpn,
-     ]
+            :route_target_import_evpn,
+            :route_target_export_evpn,]
     mvpn = [:route_target_both_auto_mvpn,
-          :route_target_import_mvpn,
-          :route_target_export_mvpn,
-         ]
+            :route_target_import_mvpn,
+            :route_target_export_mvpn,]
     rt = [:route_target_both_auto,
-        :route_target_import,
-        :route_target_export,
-       ]
+          :route_target_import,
+          :route_target_export,]
 
     plat = call_function('platform_get')
     case prop.to_sym
-    when *evpn,
-         *rt,
-         :route_distinguisher
+    when :route_distinguisher, *evpn, *rt
       return true if plat[/n7k/] && call_function('find_linecard', 'N7K-F3')
       return true if plat[/n9k/]
     when *mvpn
