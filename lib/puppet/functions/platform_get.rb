@@ -17,7 +17,7 @@
 # limitations under the License.
 
 Puppet::Functions.create_function(:platform_get) do
-  def platform_get()
+  def platform_get
     if Puppet::Util::NetworkDevice.current.nil?
       data = Facter.value('cisco')
     else

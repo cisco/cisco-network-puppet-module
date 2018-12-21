@@ -10,7 +10,7 @@ cache:
 before_script:
   - bundle -v
   - rm Gemfile.lock || true
-  - gem update --system
+  - gem update --system $RUBYGEMS_VERSION
   - gem --version
   - bundle -v
   - bundle install --without system_tests --path vendor/bundle --jobs $(nproc)
@@ -22,6 +22,7 @@ parallel_spec-Ruby 2.1.9-Puppet ~> 4.0:
     - bundle exec rake parallel_spec
   variables:
     PUPPET_GEM_VERSION: '~> 4.0'
+    RUBYGEMS_VERSION: '2.7.8'
 
 syntax lint metadata_lint check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop-Ruby 2.4.4-Puppet ~> 5.5:
   stage: syntax
