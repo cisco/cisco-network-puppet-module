@@ -29,7 +29,7 @@ class Puppet::Provider::RadiusServer::CiscoNexus < Puppet::ResourceApi::SimplePr
     resources
   end
 
-  RADIUS_SERVER_PROPS = {
+  RADIUS_SERVER_PROPS ||= {
     auth_port:           :auth_port,
     acct_port:           :acct_port,
     timeout:             :timeout,
@@ -38,7 +38,7 @@ class Puppet::Provider::RadiusServer::CiscoNexus < Puppet::ResourceApi::SimplePr
     authentication_only: :authentication,
   }
 
-  UNSUPPORTED_PROPS = [:group, :deadtime, :vrf, :source_interface]
+  UNSUPPORTED_PROPS ||= [:group, :deadtime, :vrf, :source_interface]
 
   def get(context, _names=nil)
     require 'cisco_node_utils'

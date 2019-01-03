@@ -15,23 +15,23 @@ module Puppet; end
 module Puppet::ResourceApi
   # Implementation for the syslog_settings type using the Resource API.
   class Puppet::Provider::SyslogSettings::CiscoNexus
-    SYSLOG_SETTINGS_ARRAY_PROPS = [
+    SYSLOG_SETTINGS_ARRAY_PROPS ||= [
       :source_interface
     ]
 
-    SYSLOG_SETTINGS_NON_BOOL_PROPS = [
+    SYSLOG_SETTINGS_NON_BOOL_PROPS ||= [
       :time_stamp_units,
       :logfile_name,
     ]
 
-    SYSLOG_SETTINGS_INTEGER_PROPS = [
+    SYSLOG_SETTINGS_INTEGER_PROPS ||= [
       :console,
       :monitor,
       :logfile_severity_level,
       :logfile_size,
     ]
 
-    SYSLOG_CONFIG_PROPS = SYSLOG_SETTINGS_ARRAY_PROPS + SYSLOG_SETTINGS_NON_BOOL_PROPS + SYSLOG_SETTINGS_INTEGER_PROPS
+    SYSLOG_CONFIG_PROPS ||= SYSLOG_SETTINGS_ARRAY_PROPS + SYSLOG_SETTINGS_NON_BOOL_PROPS + SYSLOG_SETTINGS_INTEGER_PROPS
 
     def canonicalize(_context, resources)
       resources
