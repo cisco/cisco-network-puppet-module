@@ -22,7 +22,7 @@ class Puppet::Provider::NameServer::CiscoNexus < Puppet::ResourceApi::SimpleProv
   def get(_context, servers=nil)
     require 'cisco_node_utils'
     nameserver_instances = []
-    @name_servers ||= Cisco::NameServer.nameservers
+    @name_servers = Cisco::NameServer.nameservers
     if servers.nil? || servers.empty?
       @name_servers.each do |server, instance|
         nameserver_instances << get_current_state(server, instance)
@@ -51,7 +51,7 @@ class Puppet::Provider::NameServer::CiscoNexus < Puppet::ResourceApi::SimpleProv
 
   def delete(context, name)
     context.notice("Destroying '#{name}'")
-    @name_servers ||= Cisco::NameServer.nameservers
+    @name_servers = Cisco::NameServer.nameservers
     @name_servers[name].destroy
   end
 end

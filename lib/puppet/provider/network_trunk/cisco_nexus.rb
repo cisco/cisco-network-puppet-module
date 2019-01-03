@@ -28,7 +28,7 @@ class Puppet::Provider::NetworkTrunk::CiscoNexus < Puppet::ResourceApi::SimplePr
     require 'cisco_node_utils'
 
     current_states = []
-    @interfaces ||= Cisco::Interface.interfaces
+    @interfaces = Cisco::Interface.interfaces
     if interface_names.nil? || interface_names.empty?
       @interfaces.each do |interface_name, instance|
         get_interface(interface_name, instance, current_states)
@@ -57,7 +57,7 @@ class Puppet::Provider::NetworkTrunk::CiscoNexus < Puppet::ResourceApi::SimplePr
   def update(context, name, should)
     validate_should(should)
     context.notice("Updating '#{name}' with #{should.inspect}")
-    @interfaces ||= Cisco::Interface.interfaces
+    @interfaces = Cisco::Interface.interfaces
     @interfaces[name].switchport_mode = should[:mode].to_sym if should[:mode]
     @interfaces[name].switchport_trunk_native_vlan = should[:untagged_vlan] if should[:untagged_vlan]
     @interfaces[name].switchport_trunk_allowed_vlan = convert_array_to_allowed_vlan(should[:tagged_vlans]) if should[:tagged_vlans]
@@ -67,7 +67,7 @@ class Puppet::Provider::NetworkTrunk::CiscoNexus < Puppet::ResourceApi::SimplePr
 
   def delete(context, name)
     context.notice("Destroying '#{name}'")
-    @interfaces ||= Cisco::Interface.interfaces
+    @interfaces = Cisco::Interface.interfaces
     @interfaces[name].destroy
   end
 

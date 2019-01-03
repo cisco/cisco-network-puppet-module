@@ -38,7 +38,7 @@ module Puppet::ResourceApi
     def get(_context, _names=nil)
       require 'cisco_node_utils'
 
-      @ntp_config ||= Cisco::NtpConfig.ntpconfigs['default']
+      @ntp_config = Cisco::NtpConfig.ntpconfigs['default']
 
       current_state = {
         name:             'default',
@@ -53,14 +53,14 @@ module Puppet::ResourceApi
     def update(context, name, should)
       validate_should(should)
       context.notice("Updating '#{name}' with #{should.inspect}")
-      @ntp_config ||= Cisco::NtpConfig.ntpconfigs[name]
+      @ntp_config = Cisco::NtpConfig.ntpconfigs[name]
       @ntp_config.authenticate = should[:authenticate] unless should[:authenticate].nil?
       @ntp_config.source_interface = should[:source_interface] == 'unset' ? nil : should[:source_interface]
       handle_trusted_keys(should[:trusted_key]) if should[:trusted_key]
     end
 
     def handle_trusted_keys(should_trusted_keys)
-      @ntp_config ||= Cisco::NtpConfig.ntpconfigs['default']
+      @ntp_config = Cisco::NtpConfig.ntpconfigs['default']
       if should_trusted_keys == ['unset']
         remove = @ntp_config.trusted_key.map(&:to_s) if @ntp_config.trusted_key
       elsif @ntp_config.trusted_key

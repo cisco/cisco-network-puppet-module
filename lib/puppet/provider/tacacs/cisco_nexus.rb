@@ -43,13 +43,13 @@ module Puppet::ResourceApi
 
     def delete(context, name)
       context.notice("Disabling tacacs '#{name}' service")
-      @tacacs ||= Cisco::TacacsServer.new(false)
+      @tacacs = Cisco::TacacsServer.new(false)
       @tacacs.destroy
     end
 
     def update(context, name, should)
       context.notice("Enabling tacacs '#{name}' with #{should.inspect}")
-      @tacacs ||= Cisco::TacacsServer.new(false)
+      @tacacs = Cisco::TacacsServer.new(false)
       @tacacs.enable
     end
   end

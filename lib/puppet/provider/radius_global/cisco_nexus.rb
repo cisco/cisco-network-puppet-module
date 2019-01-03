@@ -36,7 +36,7 @@ module Puppet::ResourceApi
 
     def get(_context, _names=nil)
       require 'cisco_node_utils'
-      @radius_global ||= Cisco::RadiusGlobal.new('default')
+      @radius_global = Cisco::RadiusGlobal.new('default')
 
       current_state = {
         name:             'default',
@@ -54,7 +54,7 @@ module Puppet::ResourceApi
     def update(context, name, should)
       validate_should(should)
       context.notice("Updating '#{name}' with #{should.inspect}")
-      @radius_global ||= Cisco::RadiusGlobal.new('default')
+      @radius_global = Cisco::RadiusGlobal.new('default')
       [:retransmit_count, :source_interface, :timeout].each do |property|
         next unless should[property]
         # Other platforms require array for some types - Nexus does not

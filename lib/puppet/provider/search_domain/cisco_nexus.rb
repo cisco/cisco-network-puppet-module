@@ -23,13 +23,13 @@ class Puppet::Provider::SearchDomain::CiscoNexus < Puppet::ResourceApi::SimplePr
     require 'cisco_node_utils'
     current_states = []
     if domains.nil? || domains.empty?
-      @domainnames ||= Cisco::DomainName.domainnames
+      @domainnames = Cisco::DomainName.domainnames
       @domainnames.each do |name, instance|
         current_states << get_current_state(name, instance)
       end
     else
       domains.each do |domain|
-        @domainnames ||= Cisco::DomainName.domainnames
+        @domainnames = Cisco::DomainName.domainnames
         domainname = @domainnames[domain]
         next if domainname.nil?
         current_states << get_current_state(domain, domainname)
@@ -52,7 +52,7 @@ class Puppet::Provider::SearchDomain::CiscoNexus < Puppet::ResourceApi::SimplePr
 
   def delete(context, name)
     context.notice("Destroying '#{name}'")
-    @domainnames ||= Cisco::DomainName.domainnames
+    @domainnames = Cisco::DomainName.domainnames
     @domainnames[name].destroy
   end
 end

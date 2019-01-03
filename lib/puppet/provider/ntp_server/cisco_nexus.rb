@@ -22,7 +22,7 @@ class Puppet::Provider::NtpServer::CiscoNexus < Puppet::ResourceApi::SimpleProvi
   def get(_context, servers=nil)
     require 'cisco_node_utils'
     current_states = []
-    @ntpservers ||= Cisco::NtpServer.ntpservers
+    @ntpservers = Cisco::NtpServer.ntpservers
     if servers.nil? || servers.empty?
       @ntpservers.each do |server, instance|
         current_states << get_current_state(server, instance)
@@ -51,13 +51,13 @@ class Puppet::Provider::NtpServer::CiscoNexus < Puppet::ResourceApi::SimpleProvi
 
   def delete(context, name)
     context.notice("Destroying '#{name}'")
-    @ntpservers ||= Cisco::NtpServer.ntpservers
+    @ntpservers = Cisco::NtpServer.ntpservers
     @ntpservers[name].destroy
   end
 
   def update(context, name, should)
     context.notice("Setting '#{name}' with #{should.inspect}")
-    @ntpservers ||= Cisco::NtpServer.ntpservers
+    @ntpservers = Cisco::NtpServer.ntpservers
     @ntpservers[name].destroy unless @ntpservers[name].nil?
     options = { 'name' => name }
     [:key, :prefer, :maxpoll, :minpoll, :vrf].each do |option|

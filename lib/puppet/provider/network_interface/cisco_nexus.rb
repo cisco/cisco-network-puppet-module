@@ -20,7 +20,7 @@ class Puppet::Provider::NetworkInterface::CiscoNexus
   def get(_context, interfaces=nil)
     require 'cisco_node_utils'
     current_state = []
-    @interfaces ||= Cisco::Interface.interfaces
+    @interfaces = Cisco::Interface.interfaces
 
     if interfaces.nil? || interfaces.empty?
       @interfaces.each do |interface_name, interface|
@@ -54,7 +54,7 @@ class Puppet::Provider::NetworkInterface::CiscoNexus
   end
 
   def update(_context, name, should)
-    @interfaces ||= Cisco::Interface.interfaces
+    @interfaces = Cisco::Interface.interfaces
     interface = @interfaces[name]
 
     interface.shutdown = !should[:enable] if should.key? :enable

@@ -27,7 +27,7 @@ class Puppet::Provider::SnmpNotificationReceiver::CiscoNexus < Puppet::ResourceA
   def get(_context, receivers=nil)
     require 'cisco_node_utils'
     current_states = []
-    @snmp_notification_receivers ||= Cisco::SnmpNotificationReceiver.receivers
+    @snmp_notification_receivers = Cisco::SnmpNotificationReceiver.receivers
     if receivers.nil? || receivers.empty?
       @snmp_notification_receivers.each do |receiver, instance|
         current_states << get_current_state(receiver, instance)
@@ -59,7 +59,7 @@ class Puppet::Provider::SnmpNotificationReceiver::CiscoNexus < Puppet::ResourceA
   def update(context, name, should)
     validate_should(should)
     # existing receiver needs to be deleted before updating
-    @snmp_notification_receivers ||= Cisco::SnmpNotificationReceiver.receivers
+    @snmp_notification_receivers = Cisco::SnmpNotificationReceiver.receivers
     @snmp_notification_receivers[name].destroy if @snmp_notification_receivers[name]
     context.notice("Setting '#{name}' with #{should.inspect}")
     Cisco::SnmpNotificationReceiver.new(name,
@@ -99,7 +99,7 @@ class Puppet::Provider::SnmpNotificationReceiver::CiscoNexus < Puppet::ResourceA
 
   def delete(context, name)
     context.notice("Destroying '#{name}'")
-    @snmp_notification_receivers ||= Cisco::SnmpNotificationReceiver.receivers
+    @snmp_notification_receivers = Cisco::SnmpNotificationReceiver.receivers
     @snmp_notification_receivers[name].destroy if @snmp_notification_receivers[name]
   end
 end

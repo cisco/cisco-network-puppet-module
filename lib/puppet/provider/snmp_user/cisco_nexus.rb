@@ -22,7 +22,7 @@ class Puppet::Provider::SnmpUser::CiscoNexus < Puppet::ResourceApi::SimpleProvid
   def get(_context, users=nil)
     require 'cisco_node_utils'
     current_states = []
-    @snmpusers ||= Cisco::SnmpUser.users
+    @snmpusers = Cisco::SnmpUser.users
     if users.nil? || users.empty?
       @snmpusers.each do |user, instance|
         current_states << get_current_state(user, instance)
@@ -61,7 +61,7 @@ class Puppet::Provider::SnmpUser::CiscoNexus < Puppet::ResourceApi::SimpleProvid
   def delete(context, name)
     raise Puppet::ResourceError, 'The admin account cannot be deactivated on this platform.' if name == 'admin'
     context.notice("Destroying '#{name}'")
-    @snmpusers ||= Cisco::SnmpUser.users
+    @snmpusers = Cisco::SnmpUser.users
     @snmpusers[name].destroy if @snmpusers[name]
   end
 
