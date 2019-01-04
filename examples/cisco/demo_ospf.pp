@@ -51,6 +51,7 @@ class ciscopuppet::cisco::demo_ospf {
     bfd                      => true,
     default_metric           => '5',
     log_adjacency            => 'detail',
+    redistribute             => [['eigrp 1', 'rtmap_eigrp_1'], ['direct',  'rtmap_direct']]
     timer_throttle_lsa_hold  => '5500',
     timer_throttle_lsa_max   => '5600',
     timer_throttle_lsa_start => '5',
@@ -65,6 +66,7 @@ class ciscopuppet::cisco::demo_ospf {
     bfd                      => true,
     default_metric           => '10',
     log_adjacency            => 'log',
+    redistribute             => [['direct',  'rtmap_direct_2']]
     timer_throttle_lsa_hold  => '5600',
     timer_throttle_lsa_max   => '5800',
     timer_throttle_lsa_start => '8',
