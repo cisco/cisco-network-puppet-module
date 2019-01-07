@@ -506,7 +506,7 @@ Symbol | Meaning | Description
 | [cisco_ip_multicast](#type-cisco_ip_multicast)         | ✅ * | ➖ | ➖  | ➖  | ➖   | ➖  | ➖  | \*[caveats](#cisco_ip_multicast-caveats) |
 | [cisco_itd_device_group](#type-cisco_itd_device_group)           | ✅ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ |
 | [cisco_itd_device_group_node](#type-cisco_itd_device_group_node) | ✅ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ |
-| [cisco_itd_service](#type-cisco_itd_service)                     | ✅ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ |
+| [cisco_itd_service](#type-cisco_itd_service)                     | ✅ | ➖ | ➖ | ➖ | ✅ | ➖ | ➖ | \*[caveats](#cisco_itd_service-caveats) |
 | [cisco_object_group](#type-cisco_object_group)             | ✅  | ✅  | ➖ | ➖  | ✅ | ✅ | ✅ |
 | [cisco_object_group_entry](#type-cisco_object_group_entry) | ✅  | ✅  | ➖ | ➖  | ✅ | ✅ | ✅ |
 | [cisco_ospf](#type-cisco_ospf)                             | ✅  | ✅  | ✅ | ✅  | ✅ | ✅ | ✅ |
@@ -3536,7 +3536,7 @@ Manages a VRF for an OSPF router.
 
 | Property | Caveat Description |
 |:-------------------|:-------------|
-| `redistribute`  | Minimum Module Version 1.11.0<br>No support for `redistribute maximum-prefixes` |
+| `redistribute`  | Minimum Module Version 2.0.0<br>No support for `redistribute maximum-prefixes` |
 
 #### Parameters
 
