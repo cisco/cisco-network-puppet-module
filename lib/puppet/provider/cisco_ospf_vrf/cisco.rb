@@ -33,7 +33,7 @@ Puppet::Type.type(:cisco_ospf_vrf).provide(:cisco) do
 
   # Property symbol array for method auto-generation.
   OSPF_VRF_NON_BOOL_PROPS = [
-    :default_metric, :log_adjacency, :router_id,
+    :default_metric, :log_adjacency, :redistribute, :router_id,
     :timer_throttle_lsa_start, :timer_throttle_lsa_hold,
     :timer_throttle_lsa_max, :timer_throttle_spf_start,
     :timer_throttle_spf_hold, :timer_throttle_spf_max
@@ -79,6 +79,8 @@ Puppet::Type.type(:cisco_ospf_vrf).provide(:cisco) do
       end
     end
     # Special Cases
+    current_state[:redistribute] = vrf.redistribute
+
     # Display cost_value in MBPS
     cost_value, cost_type = vrf.auto_cost
     cost_value *= 1000 if
@@ -161,6 +163,22 @@ Puppet::Type.type(:cisco_ospf_vrf).provide(:cisco) do
       value = @resource[:auto_cost]
     end
     @vrf.auto_cost_set(value, Cisco::RouterOspfVrf::OSPF_AUTO_COST[:mbps])
+  end
+
+  # redistribute uses a nested array, thus requires special handling
+  def redistribute
+    return @property_hash[:redistribute] if @resource[:redistribute].nil?
+    if @resource[:redistribute][0] == :default &&
+       @property_hash[:redistribute] == @vrf.default_redistribute
+      return [:default]
+    else
+      @property_hash[:redistribute]
+    end
+  end
+
+  def redistribute=(should_list)
+    should_list = @vrf.default_redistribute if should_list[0] == :default
+    @property_flush[:redistribute] = should_list
   end
 
   def timer_throttle_lsa_set

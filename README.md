@@ -510,7 +510,7 @@ Symbol | Meaning | Description
 | [cisco_object_group](#type-cisco_object_group)             | ✅  | ✅  | ➖ | ➖  | ✅ | ✅ | ✅ |
 | [cisco_object_group_entry](#type-cisco_object_group_entry) | ✅  | ✅  | ➖ | ➖  | ✅ | ✅ | ✅ |
 | [cisco_ospf](#type-cisco_ospf)                             | ✅  | ✅  | ✅ | ✅  | ✅ | ✅ | ✅ |
-| [cisco_ospf_vrf](#type-cisco_ospf_vrf)                     | ✅  | ✅  | ✅ | ✅  | ✅ | ✅ | ✅ |
+| [cisco_ospf_vrf](#type-cisco_ospf_vrf)                     | ✅  | ✅  | ✅ | ✅  | ✅ | ✅ | ✅ | \*[caveats](#cisco_ospf_vrf-caveats) |
 | ✅ = Supported <br> ➖ = Not Applicable | N9k | N3k | N5k | N6k | N7k | N9k-F | N3k-F | Caveats |
 | [cisco_overlay_global](#type-cisco_overlay_global)         | ✅  | ✅* | ✅  | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_overlay_global-caveats) |
 | [cisco_pim](#type-cisco_pim)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_pim-caveats) |
@@ -3532,6 +3532,12 @@ Manages a VRF for an OSPF router.
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 | N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
+#### <a name="cisco_ospf_vrf-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:-------------------|:-------------|
+| `redistribute`  | Minimum Module Version 2.0.0<br>No support for `redistribute maximum-prefixes` |
+
 #### Parameters
 
 ##### `ensure`
@@ -3557,6 +3563,23 @@ Specify the default Metric value. Valid values are an  integer or the keyword
 ##### `log_adjacency`
 Controls the level of log messages generated whenever a neighbor changes state.
 Valid values are 'log', 'detail', 'none', and 'default'.
+
+##### `redistribute`
+A list of redistribute directives. Multiple redistribute entries are allowed. The list must be in the form of a nested array: the first entry of each array defines the source-protocol to redistribute from; the second entry defines a route-map name.
+
+Example:
+
+```ruby
+redistribute => [['direct',  'rm_direct'],
+                 ['lisp',    'rm_lisp'],
+                 ['static',  'rm_static'],
+                 ['eigrp 1', 'rm_eigrp'],
+                 ['isis 2',  'rm_isis'],
+                 ['ospf 3',  'rm_ospf'],
+                 ['rip 4',   'rm_rip']]
+```
+
+Note: `redistribute maximum-prefixes` is not currently supported for cisco_ospf_vrf.
 
 ##### `timer_throttle_lsa_start`
 Specify the start interval for rate-limiting Link-State Advertisement (LSA)

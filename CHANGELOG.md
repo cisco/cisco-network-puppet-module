@@ -7,6 +7,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### New feature support
 
 ### Added
+* Extended `cisco_ospf_vrf` with attribute:
+   * `redistribute`
 * Extended `cisco_vpc_domain` with attributes:
    * `arp_synchronize`
    * `nd_synchronize`
