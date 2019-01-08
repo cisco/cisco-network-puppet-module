@@ -125,7 +125,7 @@ def parse_capabilities(agent, cmd, resource_command: false)
            elsif agent
              on(agent, get_vshell_cmd(cmd)).output
            else
-             test_get(agent, cmd, is_a_running_config_command: false)
+             test_get(agent, cmd, show_run_cmd: false)
            end
   caps = {}
   caps['Speed'] = Regexp.last_match[1] if stdout[/Speed:\s+([\w,]+)/]

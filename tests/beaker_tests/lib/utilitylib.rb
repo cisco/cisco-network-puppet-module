@@ -636,19 +636,24 @@ DEVICE
   def interface_cleanup(agent, intf, stepinfo='Interface Clean:')
     return if intf.empty?
     step "TestStep :: #{stepinfo}" do
-      if !agent.nil?
-        cmd = "resource cisco_command_config 'interface_cleanup' "\
-              "command='default interface #{intf}'"
-        cmd = PUPPET_BINPATH + cmd
-        logger.info("  * #{stepinfo} Set '#{intf}' to default state")
-        on(agent, cmd, acceptable_exit_codes: [0, 2])
-      else
+      logger.info("  * #{stepinfo} Set '#{intf}' to default state")
+      if agent.nil?
         cmd = "default interface #{intf}"
-        logger.info("  * #{stepinfo} Set '#{intf}' to default state")
-        env = { host: beaker_config_connection_address, port: 22, username: @nexus_host[:ssh][:user], password: @nexus_host[:ssh][:password], cookie: nil }
+        env = {
+          host: beaker_config_connection_address,
+          port: 22,
+          username: @nexus_host[:ssh][:user],
+          password: @nexus_host[:ssh][:password],
+          cookie: nil
+        }
         Cisco::Environment.add_env('remote', env)
         test_client = Cisco::Client.create('remote')
         test_client.set(values: cmd)
+      else
+        cmd = "resource cisco_command_config 'interface_cleanup' "\
+              "command='default interface #{intf}'"
+        cmd = PUPPET_BINPATH + cmd
+        on(agent, cmd, acceptable_exit_codes: [0, 2])
       end
     end
   end
@@ -1083,6 +1088,26 @@ DEVICE
     test_set(agent, remove.join(' ; '))
   end
 
+  # Helper method to create nxapi client connection object (agentless)
+  def nxapi_test_client
+    env = {
+      host: beaker_config_connection_address,
+      port: 22,
+      username: @nexus_host[:ssh][:user],
+      password: @nexus_host[:ssh][:password],
+      cookie: nil
+    }
+    Cisco::Environment.add_env('remote', env)
+    Cisco::Client.create('remote')
+  end
+
+  # Helper method for nxapi client test_get (agentless)
+  def nxapi_test_get(filter, show_run_cmd)
+    filter = "show running-config all | #{filter}" if show_run_cmd
+    test_client = nxapi_test_client
+    test_client.get(data_format: :cli, command: filter)
+  end
+
   # Get raw configuration from the device using command_config's test_get.
   # test_get does a 'show runn' but requires a filter.
   # Example:
@@ -1090,20 +1115,13 @@ DEVICE
   #
   # opt = :raw, return raw output from puppet resource command
   # opt = :array, return array of test_get property data only
-  def test_get(agent, filter, opt=:raw, is_a_running_config_command: true)
-    if !agent.nil?
+  def test_get(agent, filter, opt=:raw, show_run_cmd: true)
+    if agent.nil?
+      command = nxapi_test_get(filter, show_run_cmd)
+    else
       cmd_prefix = PUPPET_BINPATH + "resource cisco_command_config 'cc' "
       on(agent, cmd_prefix + "test_get=\\\"#{filter}\\\"").output
       command = stdout
-    else
-      env = { host: beaker_config_connection_address, port: 22, username: @nexus_host[:ssh][:user], password: @nexus_host[:ssh][:password], cookie: nil }
-      Cisco::Environment.add_env('remote', env)
-      test_client = Cisco::Client.create('remote')
-      if is_a_running_config_command
-        command = test_client.get(data_fomat: :cli, command: "show running-config all | #{filter}")
-      else
-        command = test_client.get(data_fomat: :cli, command: filter)
-      end
     end
     case opt
     when :raw
@@ -1116,35 +1134,39 @@ DEVICE
     end
   end
 
+  # Helper method for nxapi client test_set (agentless)
+  def nxapi_test_set(cmd, ignore_errors=false)
+    test_client = nxapi_test_client
+    test_client.set(values: cmd)
+  rescue Cisco::CliError => e
+    # The cmd may generate an error on the switch that can be safely ignored.
+    raise unless ignore_errors
+    logger.info("nxapi_test_set: Cisco::CliError detected\n#{e}\nignore_errors: true")
+  end
+
   # Add arbitrary configurations using command_config's test_set property.
   # Example:
   #  test_set(agent, 'no feature foo ; no feature bar')
-  def test_set(agent, cmd)
+  def test_set(agent, cmd, ignore_errors=false)
     return if cmd.empty?
     logger.info(cmd)
-    if !agent.nil?
+    if agent.nil?
+      nxapi_test_set(cmd, ignore_errors)
+    else
       cmd_prefix = PUPPET_BINPATH + "resource cisco_command_config 'cc' "
       on(agent, cmd_prefix + "test_set='#{cmd}'")
-    else
-      env = { host: beaker_config_connection_address, port: 22, username: @nexus_host[:ssh][:user], password: @nexus_host[:ssh][:password], cookie: nil }
-      Cisco::Environment.add_env('remote', env)
-      test_client = Cisco::Client.create('remote')
-      test_client.set(values: cmd)
     end
   end
 
   # Helper for command_config calls
   def command_config(agent, cmd, msg='')
     logger.info("\n#{msg}")
-    if !agent.nil?
+    if agent.nil?
+      nxapi_test_set(cmd, ignore_errors: true)
+    else
       cmd = "resource cisco_command_config 'cc' command=\\\"#{cmd}\\\""
       cmd = PUPPET_BINPATH + cmd
       on(agent, cmd, acceptable_exit_codes: [0, 2])
-    else
-      env = { host: beaker_config_connection_address, port: 22, username: @nexus_host[:ssh][:user], password: @nexus_host[:ssh][:password], cookie: nil }
-      Cisco::Environment.add_env('remote', env)
-      test_client = Cisco::Client.create('remote')
-      test_client.set(values: cmd)
     end
   end
 
@@ -1187,8 +1209,13 @@ DEVICE
   # Return an interface name from the first MT-full compatible line module found
   def mt_full_interface
     # Search for F3 card on device, create an interface name if found
-    cmd = get_vshell_cmd('sh mod')
-    out = on(agent, cmd, pty: true).stdout[/^(\d+)\s.*N7[K7]-F3/]
+    pattern = %r{^(\d+)\s.*N7[K7]-F3}
+    if agent.nil?
+      out = nxapi_test_get('sh mod', false)[pattern]
+    else
+      cmd = get_vshell_cmd('sh mod')
+      out = on(agent, cmd, pty: true).stdout[pattern]
+    end
     slot = out.nil? ? nil : Regexp.last_match[1]
     "ethernet#{slot}/1" unless slot.nil?
   end
@@ -1206,8 +1233,14 @@ DEVICE
 
   # Return the default vdc name
   def default_vdc_name
-    cmd = get_vshell_cmd('sh run vdc')
-    out = on(agent, cmd, pty: true).stdout[/^vdc (\S+) id 1$/]
+    show_cmd = 'show run vdc'
+    pattern = %r{^vdc (\S+) id 1$}
+    if agent.nil?
+      out = nxapi_test_get(show_cmd, false)[pattern]
+    else
+      cmd = get_vshell_cmd(show_cmd)
+      out = on(agent, cmd, pty: true).stdout[pattern]
+    end
     out.nil? ? nil : Regexp.last_match[1]
   end
 
@@ -1611,12 +1644,12 @@ DEVICE
   # appears to be 2s per hundred interfaces so it works better for now as an
   # on-demand method.
   def interface_capabilities(agent, intf)
-    if !agent.nil?
+    if agent.nil?
+      output = `#{agentless_command} --resource cisco_interface_capabilities '#{intf}'`
+    else
       cmd = PUPPET_BINPATH + "resource cisco_interface_capabilities '#{intf}'"
       on(agent, cmd, pty: true)
       output = stdout
-    else
-      output = `#{agentless_command} --resource cisco_interface_capabilities '#{intf}'`
     end
 
     # Sample raw output:
@@ -1722,10 +1755,10 @@ DEVICE
     # Create the puppet resource command syntax
     fail 'interface_probe: resource command not found' if probe[:cmd].nil?
 
-    if !test_agent.nil?
-      cmd = probe[:cmd] + " '#{intf}' "
-    else
+    if test_agent.nil?
       cmd = "#{agentless_command} #{probe[:cmd].match(%r{.*\/puppet (.*)})} #{intf}"
+    else
+      cmd = probe[:cmd] + " '#{intf}' "
     end
 
     # Get the interface capabilities
@@ -1737,12 +1770,12 @@ DEVICE
       success = []
       probe[:caps][prop].to_s.split(',').each do |val|
         val = netdev_speed(val) if prop[/Speed/] && probe[:netdev_speed]
-        if !test_agent.nil?
+        if test_agent.nil?
+          output = create_and_apply_test_manifest(probe[:cmd].match(%r{.*\/puppet resource (.*) })[1], intf, prop, val)
+        else
           on(test_agent, cmd + "#{prop}=#{val}",
              acceptable_exit_codes: [0, 2, 1], pty: true)
           output = stdout
-        else
-          output = create_and_apply_test_manifest(probe[:cmd].match(%r{.*\/puppet resource (.*) })[1], intf, prop, val)
         end
         next if output[/error/i]
         if val.match(/^(\d)+$/)
@@ -1792,14 +1825,23 @@ DEVICE
     case action
     when :set
       #  limit_resource_module_type => 'f3',
-      cmd = PUPPET_BINPATH + "resource cisco_vdc '#{default_vdc_name}' "
-      out = on(agent, cmd, pty: true).stdout[/limit_resource.*'(f3)'/]
-      mods = out.nil? ? nil : Regexp.last_match[1]
-      return if mods == 'f3'
-      cmd += "limit_resource_module_type='f3'"
-      logger.info("\n* Setup VDC: #{cmd}")
-      on(agent, cmd, pty: true).stdout[/limit_resource.*'(f3)'/]
-
+      if agent.nil?
+        cmd = "#{agentless_command} --resource cisco_vdc '#{default_vdc_name}' "
+        out = `#{cmd}`[/limit_resource.*(f3)/]
+        mods = out.nil? ? nil : Regexp.last_match[1]
+        return if mods == 'f3'
+        cfg = "terminal dont-ask ; vdc #{default_vdc_name} ; limit-resource module-type f3"
+        nxapi_test_set(cfg, ignore_errors: false)
+        `#{cmd}`[/limit_resource.*(f3)/]
+      else
+        cmd = PUPPET_BINPATH + "resource cisco_vdc '#{default_vdc_name}' "
+        out = on(agent, cmd, pty: true).stdout[/limit_resource.*'(f3)'/]
+        mods = out.nil? ? nil : Regexp.last_match[1]
+        return if mods == 'f3'
+        cmd += "limit_resource_module_type='f3'"
+        logger.info("\n* Setup VDC: #{cmd}")
+        on(agent, cmd, pty: true).stdout[/limit_resource.*'(f3)'/]
+      end
     when :clear
       # Reset to default only if no physical F3 is present
       teardown_vdc
