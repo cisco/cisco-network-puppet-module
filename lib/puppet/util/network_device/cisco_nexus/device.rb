@@ -7,10 +7,12 @@ module Puppet::Util::NetworkDevice::Cisco_nexus # rubocop:disable Style/ClassAnd
     def initialize(url_or_config, _options={})
       super
       Cisco::Environment.add_env('default',
-                                 host:     config['address'],
-                                 port:     nil,
-                                 username: config['username'],
-                                 password: config['password'],
+                                 host:        config['address'],
+                                 port:        config['port'],
+                                 transport:   config['transport'],
+                                 verify_mode: config['verify_mode'],
+                                 username:    config['username'],
+                                 password:    config['password'],
                                 )
     end
 

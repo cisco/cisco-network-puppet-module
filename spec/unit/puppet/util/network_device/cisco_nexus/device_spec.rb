@@ -82,7 +82,7 @@ RSpec.describe Puppet::Util::NetworkDevice::Cisco_nexus do
         end
 
         it 'calls Cisco::Environment.add_env' do
-          expect(Cisco::Environment).to receive(:add_env).with('default', host: 'www.example.com', password: 'password', port: nil, username: nil).once
+          expect(Cisco::Environment).to receive(:add_env).with('default', host: 'www.example.com', password: 'password', port: nil, username: nil, verify_mode: nil, transport: nil).once
           device
         end
       end
