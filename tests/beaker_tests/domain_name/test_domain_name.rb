@@ -56,7 +56,7 @@ tests[:delete] = {
 }
 
 def cleanup(agent)
-  test_set(agent, 'no ip domain-name test.xyz')
+  test_set(agent, 'no ip domain-name test.xyz', ignore_errors: true)
 end
 
 #################################################################

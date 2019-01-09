@@ -55,8 +55,8 @@ tests[:non_default] = {
   code:           [0, 2],
 }
 
-def cleanup(agent)
-  test_set(agent, 'no snmp-server community default group network-admin')
+def cleanup(agent, ignore_errors=false)
+  test_set(agent, 'no snmp-server community default group network-admin', ignore_errors)
 end
 
 #################################################################
@@ -64,7 +64,7 @@ end
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
   teardown { cleanup(agent) }
-  cleanup(agent)
+  cleanup(agent, ignore_errors: true)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
