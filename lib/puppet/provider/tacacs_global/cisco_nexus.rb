@@ -50,7 +50,7 @@ module Puppet::ResourceApi
 
     def get(_context, _tacacs=nil)
       require 'cisco_node_utils'
-      @tacacs_global ||= Cisco::TacacsGlobal.tacacs_global
+      @tacacs_global = Cisco::TacacsGlobal.tacacs_global
       current_states = []
       @tacacs_global.each do |name, instance|
         current_states << {
@@ -74,7 +74,7 @@ module Puppet::ResourceApi
     def update(context, name, should)
       validate_should(should)
       context.notice("Updating '#{name}' with #{should.inspect}")
-      @tacacs_global ||= Cisco::TacacsGlobal.tacacs_global
+      @tacacs_global = Cisco::TacacsGlobal.tacacs_global
       [:timeout, :source_interface].each do |property|
         next unless should[property]
         should[property] = munge(should[property][0]) if should[property].is_a?(Array)

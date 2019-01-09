@@ -23,7 +23,7 @@ class Puppet::Provider::RadiusServerGroup::CiscoNexus < Puppet::ResourceApi::Sim
     require 'cisco_node_utils'
 
     radius_server_groups = []
-    @radiusgroups ||= Cisco::RadiusServerGroup.radius_server_groups
+    @radiusgroups = Cisco::RadiusServerGroup.radius_server_groups
 
     if groups.nil? || groups.empty?
       @radiusgroups.each_value do |v|

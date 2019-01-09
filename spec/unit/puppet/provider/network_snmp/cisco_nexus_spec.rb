@@ -29,8 +29,7 @@ RSpec.describe Puppet::Provider::NetworkSnmp::CiscoNexus do
   before(:each) do
     allow(context).to receive(:device).and_return(device)
     allow(device).to receive(:facts).and_return('operatingsystem' => 'nexus')
-    # this specifies `once`, because the provider should cache the SnmpServer instance
-    allow(Cisco::SnmpServer).to receive(:new).and_return(snmp_server).once
+    allow(Cisco::SnmpServer).to receive(:new).and_return(snmp_server)
   end
 
   describe '#set(context, changes)' do

@@ -22,7 +22,7 @@ class Puppet::Provider::NetworkVlan::CiscoNexus < Puppet::ResourceApi::SimplePro
   def get(_context, vlans=nil)
     require 'cisco_node_utils'
     vlan_instances = []
-    @vlans ||= Cisco::Vlan.vlans
+    @vlans = Cisco::Vlan.vlans
     if vlans.nil? || vlans.empty?
       @vlans.each do |vlan_id, v|
         vlan_instances << get_current_state(vlan_id, v)

@@ -23,13 +23,13 @@ class Puppet::Provider::SnmpCommunity::CiscoNexus < Puppet::ResourceApi::SimpleP
     require 'cisco_node_utils'
     current_states = []
     if communities.nil? || communities.empty?
-      @snmp_communities ||= Cisco::SnmpCommunity.communities
+      @snmp_communities = Cisco::SnmpCommunity.communities
       @snmp_communities.each do |community, instance|
         current_states << get_current_state(community, instance)
       end
     else
       communities.each do |community|
-        @snmp_communities ||= Cisco::SnmpCommunity.communities
+        @snmp_communities = Cisco::SnmpCommunity.communities
         individual_community = @snmp_communities[community]
         next if individual_community.nil?
         current_states << get_current_state(community, individual_community)
@@ -49,13 +49,13 @@ class Puppet::Provider::SnmpCommunity::CiscoNexus < Puppet::ResourceApi::SimpleP
 
   def delete(context, name)
     context.notice("Destroying '#{name}'")
-    @snmp_communities ||= Cisco::SnmpCommunity.communities
+    @snmp_communities = Cisco::SnmpCommunity.communities
     @snmp_communities[name].destroy
   end
 
   def update(context, name, should)
     context.notice("Updating '#{name}' with #{should.inspect}")
-    @snmp_communities ||= Cisco::SnmpCommunity.communities
+    @snmp_communities = Cisco::SnmpCommunity.communities
     snmp_community = @snmp_communities[name]
     should_apply(snmp_community, should)
   end

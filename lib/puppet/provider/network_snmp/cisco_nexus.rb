@@ -20,7 +20,7 @@ class Puppet::Provider::NetworkSnmp::CiscoNexus
   def get(_context, _names=nil)
     require 'cisco_node_utils'
 
-    @network_snmp ||= Cisco::SnmpServer.new
+    @network_snmp = Cisco::SnmpServer.new
 
     current_state = {
       name:     'default',
@@ -47,7 +47,7 @@ class Puppet::Provider::NetworkSnmp::CiscoNexus
 
   def update(context, name, should)
     context.notice("Updating '#{name}' with #{should.inspect}")
-    @network_snmp ||= Cisco::SnmpServer.new
+    @network_snmp = Cisco::SnmpServer.new
     if should[:contact]
       @network_snmp.contact = should[:contact] == 'unset' ? '' : should[:contact]
     end

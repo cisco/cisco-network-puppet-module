@@ -26,10 +26,10 @@ class Puppet::Provider::NetworkDns::CiscoNexus < Puppet::ResourceApi::SimpleProv
 
   def get(_context, vrf=nil)
     require 'cisco_node_utils'
-    @domain ||= Cisco::DomainName.domainnames
-    @searches ||= Cisco::DnsDomain.dnsdomains || {}
-    @servers ||= Cisco::NameServer.nameservers || {}
-    @hostname ||= Cisco::HostName.hostname || {}
+    @domain = Cisco::DomainName.domainnames
+    @searches = Cisco::DnsDomain.dnsdomains || {}
+    @servers = Cisco::NameServer.nameservers || {}
+    @hostname = Cisco::HostName.hostname || {}
 
     current_state = {
       name:     (vrf.nil? || vrf.empty?) ? 'settings' : vrf.first,
@@ -47,10 +47,10 @@ class Puppet::Provider::NetworkDns::CiscoNexus < Puppet::ResourceApi::SimpleProv
     validate_name(name)
 
     context.notice("Updating '#{name}' with #{should.inspect}")
-    @domain ||= Cisco::DomainName.domainnames
-    @searches ||= Cisco::DnsDomain.dnsdomains || {}
-    @servers ||= Cisco::NameServer.nameservers || {}
-    @hostname ||= Cisco::HostName.hostname || {}
+    @domain = Cisco::DomainName.domainnames
+    @searches = Cisco::DnsDomain.dnsdomains || {}
+    @servers = Cisco::NameServer.nameservers || {}
+    @hostname = Cisco::HostName.hostname || {}
 
     handle_hostname(should[:hostname])
     handle_domain(should[:domain]) if should[:domain]
@@ -63,7 +63,7 @@ class Puppet::Provider::NetworkDns::CiscoNexus < Puppet::ResourceApi::SimpleProv
   end
 
   def handle_servers(values)
-    @servers ||= Cisco::NameServer.nameservers || {}
+    @servers = Cisco::NameServer.nameservers || {}
     to_remove = @servers.keys - values
     to_create = values - @servers.keys
     to_remove.each do |server|
@@ -75,7 +75,7 @@ class Puppet::Provider::NetworkDns::CiscoNexus < Puppet::ResourceApi::SimpleProv
   end
 
   def handle_searches(values)
-    @searches ||= Cisco::DnsDomain.dnsdomains || {}
+    @searches = Cisco::DnsDomain.dnsdomains || {}
     to_remove = @searches.keys - values
     to_create = values - @searches.keys
     to_remove.each do |search|
@@ -89,7 +89,7 @@ class Puppet::Provider::NetworkDns::CiscoNexus < Puppet::ResourceApi::SimpleProv
   # handle the hostname, i.e. if '' then destroy
   # all hostnames and do not create one
   def handle_hostname(value)
-    @hostname ||= Cisco::HostName.hostname || {}
+    @hostname = Cisco::HostName.hostname || {}
     if value == ''
       @hostname[@hostname.keys.first].destroy if @hostname[@hostname.keys.first]
     else
@@ -101,7 +101,7 @@ class Puppet::Provider::NetworkDns::CiscoNexus < Puppet::ResourceApi::SimpleProv
   # handle the domain, i.e. if '' then destroy
   # all domains and do not create one
   def handle_domain(value)
-    @domain ||= Cisco::DomainName.domainnames
+    @domain = Cisco::DomainName.domainnames
     if value == ''
       @domain[@domain.keys.first].destroy if @domain[@domain.keys.first]
     else
