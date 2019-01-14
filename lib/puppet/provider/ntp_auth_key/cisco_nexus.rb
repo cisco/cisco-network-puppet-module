@@ -23,13 +23,13 @@ class Puppet::Provider::NtpAuthKey::CiscoNexus < Puppet::ResourceApi::SimpleProv
     require 'cisco_node_utils'
     current_states = []
     if keys.nil? || keys.empty?
-      @ntpkeys ||= Cisco::NtpAuthKey.ntpkeys
+      @ntpkeys = Cisco::NtpAuthKey.ntpkeys
       @ntpkeys.each do |key, instance|
         current_states << get_current_state(key, instance)
       end
     else
       keys.each do |key|
-        @ntpkeys ||= Cisco::NtpAuthKey.ntpkeys
+        @ntpkeys = Cisco::NtpAuthKey.ntpkeys
         instance = @ntpkeys[key]
         next if instance.nil?
         current_states << get_current_state(instance.name, instance)
@@ -62,7 +62,7 @@ class Puppet::Provider::NtpAuthKey::CiscoNexus < Puppet::ResourceApi::SimpleProv
 
   def delete(context, name)
     context.notice("Destroying '#{name}'")
-    @ntpkeys ||= Cisco::NtpAuthKey.ntpkeys
+    @ntpkeys = Cisco::NtpAuthKey.ntpkeys
     @ntpkeys[name].destroy
   end
 

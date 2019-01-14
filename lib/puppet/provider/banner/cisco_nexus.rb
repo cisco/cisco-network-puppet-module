@@ -32,7 +32,7 @@ module Puppet::ResourceApi
 
     def get(_context, _names=nil)
       require 'cisco_node_utils'
-      @banner ||= Cisco::Banner.new('default')
+      @banner = Cisco::Banner.new('default')
 
       current_state = {
         name:     'default',
@@ -45,7 +45,7 @@ module Puppet::ResourceApi
     def update(context, name, should)
       validate_name(name)
       context.notice("Updating '#{name}' with #{should.inspect}")
-      @banner ||= Cisco::Banner.new('default')
+      @banner = Cisco::Banner.new('default')
       @banner.motd = should[:motd]
     end
 

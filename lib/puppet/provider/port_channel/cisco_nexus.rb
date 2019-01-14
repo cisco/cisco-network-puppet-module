@@ -23,7 +23,7 @@ class Puppet::Provider::PortChannel::CiscoNexus < Puppet::ResourceApi::SimplePro
     require 'cisco_node_utils'
 
     interfaces = []
-    @interfaces ||= Cisco::InterfaceChannelGroup.interfaces
+    @interfaces = Cisco::InterfaceChannelGroup.interfaces
     @interfaces.each do |interface_name, i|
       interface = {
         interface:     interface_name,
@@ -33,7 +33,7 @@ class Puppet::Provider::PortChannel::CiscoNexus < Puppet::ResourceApi::SimplePro
     end
 
     portchannels = []
-    @channels ||=  Cisco::InterfacePortChannel.interfaces
+    @channels =  Cisco::InterfacePortChannel.interfaces
     if channels.nil? || channels.empty?
       @channels.each do |port_channel, port|
         portchannels << get_current_state(port_channel, port, interfaces)

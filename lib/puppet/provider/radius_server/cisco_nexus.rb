@@ -25,11 +25,15 @@ class Puppet::Provider::RadiusServer::CiscoNexus < Puppet::ResourceApi::SimplePr
   def canonicalize(_context, resources)
     resources.each do |resource|
       resource[:key] = resource[:key].gsub(/\A"|"\Z/, '') if resource[:key]
+      resource[:key] = 'unset' if resource[:key].nil?
+      resource[:timeout] = 'unset' if resource[:timeout].nil? || resource[:timeout] == (nil || -1)
+      resource[:key_format] = 'unset' if resource[:key_format].nil? || resource[:key_format] == (nil || -1)
+      resource[:retransmit_count] = 'unset' if resource[:retransmit_count].nil? || resource[:retransmit_count] == (nil || -1)
     end
     resources
   end
 
-  RADIUS_SERVER_PROPS = {
+  RADIUS_SERVER_PROPS ||= {
     auth_port:           :auth_port,
     acct_port:           :acct_port,
     timeout:             :timeout,
@@ -38,7 +42,7 @@ class Puppet::Provider::RadiusServer::CiscoNexus < Puppet::ResourceApi::SimplePr
     authentication_only: :authentication,
   }
 
-  UNSUPPORTED_PROPS = [:group, :deadtime, :vrf, :source_interface]
+  UNSUPPORTED_PROPS ||= [:group, :deadtime, :vrf, :source_interface]
 
   def get(context, _names=nil)
     require 'cisco_node_utils'
@@ -50,10 +54,10 @@ class Puppet::Provider::RadiusServer::CiscoNexus < Puppet::ResourceApi::SimplePr
         name:                 v.name,
         auth_port:            v.auth_port ? v.auth_port : nil,
         acct_port:            v.acct_port ? v.acct_port : nil,
-        timeout:              v.timeout ? v.timeout : -1,
-        retransmit_count:     v.retransmit_count ? v.retransmit_count : -1,
+        timeout:              v.timeout ? v.timeout : 'unset',
+        retransmit_count:     v.retransmit_count ? v.retransmit_count : 'unset',
         key:                  v.key ? v.key.gsub(/\A"|"\Z/, '') : 'unset',
-        key_format:           v.key_format ? v.key_format : -1,
+        key_format:           v.key_format ? v.key_format.to_i : 'unset',
         accounting_only:      v.accounting,
         authentication_only:  v.authentication
       }

@@ -22,7 +22,7 @@ class Puppet::Provider::DomainName::CiscoNexus < Puppet::ResourceApi::SimpleProv
   def get(_context, domains=nil)
     require 'cisco_node_utils'
     current_state = []
-    @domains ||= Cisco::DomainName.domainnames
+    @domains = Cisco::DomainName.domainnames
     if domains.nil? || domains.empty?
       @domains.each_key do |id|
         current_state << get_current_state(id)
@@ -48,7 +48,7 @@ class Puppet::Provider::DomainName::CiscoNexus < Puppet::ResourceApi::SimpleProv
   end
 
   def delete(_context, name)
-    @domains ||= Cisco::DomainName.domainnames
+    @domains = Cisco::DomainName.domainnames
     @domains[name].destroy
   end
 end

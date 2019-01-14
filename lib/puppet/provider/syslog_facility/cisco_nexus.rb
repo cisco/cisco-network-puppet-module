@@ -22,7 +22,7 @@ class Puppet::Provider::SyslogFacility::CiscoNexus < Puppet::ResourceApi::Simple
   def get(_context, facilities=nil)
     require 'cisco_node_utils'
     current_states = []
-    @syslog_facilities ||= Cisco::SyslogFacility.facilities
+    @syslog_facilities = Cisco::SyslogFacility.facilities
     if facilities.nil? || facilities.empty?
       @syslog_facilities.each do |facility, instance|
         current_states << get_current_state(facility, instance)
@@ -55,7 +55,7 @@ class Puppet::Provider::SyslogFacility::CiscoNexus < Puppet::ResourceApi::Simple
 
   def delete(context, name)
     context.notice("Destroying '#{name}'")
-    @syslog_facilities ||= Cisco::SyslogFacility.facilities
+    @syslog_facilities = Cisco::SyslogFacility.facilities
     @syslog_facilities[name].destroy if @syslog_facilities[name]
   end
 end

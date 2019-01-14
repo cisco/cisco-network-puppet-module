@@ -40,13 +40,13 @@ module Puppet::ResourceApi
       require 'cisco_node_utils'
       current_states = []
       if notifications.nil? || notifications.empty?
-        @snmp_notifications ||= Cisco::SnmpNotification.notifications
+        @snmp_notifications = Cisco::SnmpNotification.notifications
         @snmp_notifications.each do |name, instance|
           current_states << get_current_state(name, instance)
         end
       else
         notifications.each do |notification|
-          @snmp_notifications ||= Cisco::SnmpNotification.notifications
+          @snmp_notifications = Cisco::SnmpNotification.notifications
           individual_notification = @snmp_notifications[notification]
           next if individual_notification.nil?
           current_states << get_current_state(notification, individual_notification)
@@ -64,7 +64,7 @@ module Puppet::ResourceApi
 
     def update(context, name, should)
       context.notice("Updating '#{name}' with #{should.inspect}")
-      @snmp_notifications ||= Cisco::SnmpNotification.notifications
+      @snmp_notifications = Cisco::SnmpNotification.notifications
       snmp_notification = @snmp_notifications[name]
       snmp_notification = Cisco::SnmpNotification.new(name) if snmp_notification.nil?
       snmp_notification.enable = should[:enable] unless should[:enable].nil?

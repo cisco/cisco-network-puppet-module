@@ -22,7 +22,7 @@ class Puppet::Provider::SyslogServer::CiscoNexus < Puppet::ResourceApi::SimplePr
   def get(_context, servers=nil)
     require 'cisco_node_utils'
     current_states = []
-    @syslog_servers ||= Cisco::SyslogServer.syslogservers
+    @syslog_servers = Cisco::SyslogServer.syslogservers
     if servers.nil? || servers.empty?
       @syslog_servers.each do |server, instance|
         current_states << get_current_state(server, instance)
@@ -62,7 +62,7 @@ class Puppet::Provider::SyslogServer::CiscoNexus < Puppet::ResourceApi::SimplePr
 
   def delete(context, name)
     context.notice("Destroying '#{name}'")
-    @syslog_servers ||= Cisco::SyslogServer.syslogservers
+    @syslog_servers = Cisco::SyslogServer.syslogservers
     @syslog_servers[name].destroy if @syslog_servers[name]
   end
 end

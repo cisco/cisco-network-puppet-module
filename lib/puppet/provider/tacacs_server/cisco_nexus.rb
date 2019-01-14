@@ -52,7 +52,7 @@ class Puppet::Provider::TacacsServer::CiscoNexus < Puppet::ResourceApi::SimplePr
 
   def delete(context, name)
     context.notice("Destroying '#{name}'")
-    @tacacs_server ||= Cisco::TacacsServerHost.hosts
+    @tacacs_server = Cisco::TacacsServerHost.hosts
     @tacacs_server[name].destroy if @tacacs_server[name]
   end
 
