@@ -71,6 +71,21 @@ Style/SymbolArray:
   Description: Using percent style obscures symbolic intent of array's contents.
   EnforcedStyle: brackets
 inherit_from: ".rubocop_todo.yml"
+Metrics/AbcSize:
+  Description: Baseline code complexity metrics - we should try and reduce these over
+    time
+  Max: 47
+  Exclude:
+  - tests/beaker_tests/**/*.rb
+Metrics/CyclomaticComplexity:
+  Max: 16
+Metrics/MethodLength:
+  Max: 41
+  Exclude:
+  - tests/beaker_tests/**/*.rb
+Layout/AlignHash:
+  EnforcedHashRocketStyle: table
+  EnforcedColonStyle: table
 RSpec/MessageSpies:
   EnforcedStyle: receive
 Style/Documentation:
@@ -89,15 +104,9 @@ Layout/EndOfLine:
   Enabled: false
 Layout/IndentHeredoc:
   Enabled: false
-Metrics/AbcSize:
-  Enabled: false
 Metrics/BlockLength:
   Enabled: false
 Metrics/ClassLength:
-  Enabled: false
-Metrics/CyclomaticComplexity:
-  Enabled: false
-Metrics/MethodLength:
   Enabled: false
 Metrics/ModuleLength:
   Enabled: false
