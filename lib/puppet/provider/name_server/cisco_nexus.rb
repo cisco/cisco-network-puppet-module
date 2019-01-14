@@ -40,7 +40,7 @@ class Puppet::Provider::NameServer::CiscoNexus < Puppet::ResourceApi::SimpleProv
   def get_current_state(server, _instance)
     {
       ensure: 'present',
-      name: server,
+      name:   server,
     }
   end
 

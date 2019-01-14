@@ -37,7 +37,7 @@ skip_unless_supported(tests)
 tests[:default] = {
   title_pattern:  '1.2.3.4',
   manifest_props: {
-    vrf: 'default',
+    vrf:      'default',
     facility: 'local7',
   },
 }
@@ -47,9 +47,9 @@ tests[:non_default] = {
   title_pattern:  '4.3.2.1',
   manifest_props: {
     severity_level: 2,
-    port: 48,
-    vrf: 'default',
-    facility: 'mail',
+    port:           48,
+    vrf:            'default',
+    facility:       'mail',
   },
 }
 

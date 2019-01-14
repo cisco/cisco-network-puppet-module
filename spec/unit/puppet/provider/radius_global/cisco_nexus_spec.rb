@@ -13,17 +13,17 @@ RSpec.describe Puppet::Provider::RadiusGlobal::CiscoNexus do
   let(:changes) do
     {
       'default' =>
-      {
-        is: {
-          name:             'default',
-          timeout:          7,
-          retransmit_count: 3,
-          key:              '444444',
-          key_format:       7,
-          source_interface: ['foo'],
-        },
-        should: should_values
-      }
+                   {
+                     is:     {
+                       name:             'default',
+                       timeout:          7,
+                       retransmit_count: 3,
+                       key:              '444444',
+                       key_format:       7,
+                       source_interface: ['foo'],
+                     },
+                     should: should_values
+                   }
     }
   end
 
@@ -136,7 +136,7 @@ RSpec.describe Puppet::Provider::RadiusGlobal::CiscoNexus do
 
   canonicalize_data = [
     {
-      desc: '`resources` contains key surrounded in ""',
+      desc:      '`resources` contains key surrounded in ""',
       resources: [{
         name:             'default',
         timeout:          7,
@@ -145,7 +145,7 @@ RSpec.describe Puppet::Provider::RadiusGlobal::CiscoNexus do
         key_format:       7,
         source_interface: ['foo'],
       }],
-      results: [{
+      results:   [{
         name:             'default',
         timeout:          7,
         retransmit_count: 3,
@@ -155,7 +155,7 @@ RSpec.describe Puppet::Provider::RadiusGlobal::CiscoNexus do
       }],
     },
     {
-      desc: '`resources` contains " in the key',
+      desc:      '`resources` contains " in the key',
       resources: [{
         name:             'default',
         timeout:          7,
@@ -164,7 +164,7 @@ RSpec.describe Puppet::Provider::RadiusGlobal::CiscoNexus do
         key_format:       7,
         source_interface: ['foo'],
       }],
-      results: [{
+      results:   [{
         name:             'default',
         timeout:          7,
         retransmit_count: 3,
@@ -174,14 +174,14 @@ RSpec.describe Puppet::Provider::RadiusGlobal::CiscoNexus do
       }],
     },
     {
-      desc: '`resources` does not contain the key value',
+      desc:      '`resources` does not contain the key value',
       resources: [{
         name:             'default',
         timeout:          7,
         retransmit_count: 3,
         source_interface: ['foo'],
       }],
-      results: [{
+      results:   [{
         name:             'default',
         timeout:          7,
         retransmit_count: 3,
@@ -202,40 +202,40 @@ RSpec.describe Puppet::Provider::RadiusGlobal::CiscoNexus do
 
   validate_should_data = [
     {
-      desc: '`name` is not `default`',
-      issue: 'raise an error',
+      desc:   '`name` is not `default`',
+      issue:  'raise an error',
       expect: it { expect { provider.validate_should(name: 'foo') }.to raise_error Puppet::ResourceError, '`name` must be `default`' }
     },
     {
-      desc: '`name` is `default`',
-      issue: 'not raise an error',
+      desc:   '`name` is `default`',
+      issue:  'not raise an error',
       expect: it { expect { provider.validate_should(name: 'default') }.not_to raise_error }
     },
     {
-      desc: '`enable` is present',
-      issue: 'raise an error',
+      desc:   '`enable` is present',
+      issue:  'raise an error',
       expect: it { expect { provider.validate_should(name: 'default', enable: true) }.to raise_error Puppet::ResourceError, 'This provider does not support the `enable` property.' }
     },
     {
-      desc: '`vrf` is present',
-      issue: 'raise an error',
+      desc:   '`vrf` is present',
+      issue:  'raise an error',
       expect: it { expect { provider.validate_should(name: 'default', vrf: 'management') }.to raise_error Puppet::ResourceError, 'This provider does not support the `vrf` property.' }
     },
     {
-      desc: '`key_format` is present but `key` is not',
-      issue: 'raise an error',
+      desc:   '`key_format` is present but `key` is not',
+      issue:  'raise an error',
       expect: it { expect { provider.validate_should(name: 'default', key_format: 0) }.to raise_error Puppet::ResourceError, 'The `key` property must be set when specifying `key_format`.' }
     },
     {
-      desc: '`key_format` is present but `key` is set to `unset`',
-      issue: 'raise an error',
+      desc:   '`key_format` is present but `key` is set to `unset`',
+      issue:  'raise an error',
       expect: it {
         expect { provider.validate_should(name: 'default', key_format: 0, key: 'unset') }.to raise_error Puppet::ResourceError, 'The `key` property must be set when specifying `key_format`.'
       }
     },
     {
-      desc: '`key_format` is present and so is `key`',
-      issue: 'not raise an error',
+      desc:   '`key_format` is present and so is `key`',
+      issue:  'not raise an error',
       expect: it { expect { provider.validate_should(name: 'default', key_format: 0, key: '2222') }.not_to raise_error }
     },
   ]

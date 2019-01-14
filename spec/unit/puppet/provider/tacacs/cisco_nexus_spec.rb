@@ -14,13 +14,13 @@ RSpec.describe Puppet::Provider::Tacacs::CiscoNexus do
   let(:changes) do
     {
       'default' =>
-      {
-        is: {
-          name: 'default',
-          enable: true,
-        },
-        should: should_values
-      }
+                   {
+                     is:     {
+                       name:   'default',
+                       enable: true,
+                     },
+                     should: should_values
+                   }
     }
   end
 
@@ -34,7 +34,7 @@ RSpec.describe Puppet::Provider::Tacacs::CiscoNexus do
     context 'enable is set to false' do
       let(:should_values) do
         {
-          name: 'default',
+          name:   'default',
           enable: false,
         }
       end

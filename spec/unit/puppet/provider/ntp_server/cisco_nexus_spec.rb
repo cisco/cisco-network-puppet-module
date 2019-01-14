@@ -139,21 +139,21 @@ RSpec.describe Puppet::Provider::NtpServer::CiscoNexus do
         expect(context).to receive(:notice).with(%r{\ASetting '1.1.1.1'})
         allow(Cisco::NtpServer).to receive(:ntpservers).and_return('1.1.1.1' => ntp_server)
         expect(ntp_server).to receive(:destroy).once
-        expect(Cisco::NtpServer).to receive(:new).with('name' => '1.1.1.1',
-                                                       'key' => '1',
-                                                       'maxpoll' =>  '10',
-                                                       'minpoll' =>  '5',
-                                                       'vrf' =>  'default')
+        expect(Cisco::NtpServer).to receive(:new).with('name'    => '1.1.1.1',
+                                                       'key'     => '1',
+                                                       'maxpoll' => '10',
+                                                       'minpoll' => '5',
+                                                       'vrf'     => 'default')
         provider.update(context, '1.1.1.1', should_values)
       end
     end
     context 'update is called with few values' do
       let(:should_values) do
         {
-          name:    '1.1.1.1',
-          ensure:  'present',
-          prefer:  true,
-          vrf:     'default',
+          name:   '1.1.1.1',
+          ensure: 'present',
+          prefer: true,
+          vrf:    'default',
         }
       end
 
@@ -161,9 +161,9 @@ RSpec.describe Puppet::Provider::NtpServer::CiscoNexus do
         expect(context).to receive(:notice).with(%r{\ASetting '1.1.1.1'})
         allow(Cisco::NtpServer).to receive(:ntpservers).and_return('1.1.1.1' => ntp_server)
         expect(ntp_server).to receive(:destroy).once
-        expect(Cisco::NtpServer).to receive(:new).with('name' => '1.1.1.1',
+        expect(Cisco::NtpServer).to receive(:new).with('name'   => '1.1.1.1',
                                                        'prefer' => 'true',
-                                                       'vrf' =>  'default')
+                                                       'vrf'    => 'default')
         provider.update(context, '1.1.1.1', should_values)
       end
     end
@@ -187,21 +187,21 @@ RSpec.describe Puppet::Provider::NtpServer::CiscoNexus do
         expect(context).to receive(:notice).with(%r{\ASetting '1.1.1.1'})
         allow(Cisco::NtpServer).to receive(:ntpservers).and_return('2.2.2.2' => ntp_server)
         expect(ntp_server).to receive(:destroy).never
-        expect(Cisco::NtpServer).to receive(:new).with('name' => '1.1.1.1',
-                                                       'key' => '1',
-                                                       'maxpoll' =>  '10',
-                                                       'minpoll' =>  '5',
-                                                       'vrf' =>  'default')
+        expect(Cisco::NtpServer).to receive(:new).with('name'    => '1.1.1.1',
+                                                       'key'     => '1',
+                                                       'maxpoll' => '10',
+                                                       'minpoll' => '5',
+                                                       'vrf'     => 'default')
         provider.create(context, '1.1.1.1', should_values)
       end
     end
     context 'create is called with few values' do
       let(:should_values) do
         {
-          name:    '1.1.1.1',
-          ensure:  'present',
-          prefer:  true,
-          vrf:     'default',
+          name:   '1.1.1.1',
+          ensure: 'present',
+          prefer: true,
+          vrf:    'default',
         }
       end
 
@@ -209,9 +209,9 @@ RSpec.describe Puppet::Provider::NtpServer::CiscoNexus do
         expect(context).to receive(:notice).with(%r{\ASetting '1.1.1.1'})
         allow(Cisco::NtpServer).to receive(:ntpservers).and_return('2.2.2.2' => ntp_server)
         expect(ntp_server).to receive(:destroy).never
-        expect(Cisco::NtpServer).to receive(:new).with('name' => '1.1.1.1',
+        expect(Cisco::NtpServer).to receive(:new).with('name'   => '1.1.1.1',
                                                        'prefer' => 'true',
-                                                       'vrf' =>  'default')
+                                                       'vrf'    => 'default')
         provider.create(context, '1.1.1.1', should_values)
       end
     end

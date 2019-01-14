@@ -39,9 +39,9 @@ tests[:default] = {
   desc:           '1.1 Default Properties',
   title_pattern:  '1',
   manifest_props: {
-    password:   'test',
-    algorithm:  'md5',
-    mode:       7,
+    password:  'test',
+    algorithm: 'md5',
+    mode:      7,
   },
   code:           [0, 2],
 }
@@ -53,9 +53,9 @@ tests[:non_default] = {
   desc:           '2.1 Non Default Properties',
   title_pattern:  '1',
   manifest_props: {
-    password:   'thisPassword',
-    algorithm:  'md5',
-    mode:       7,
+    password:  'thisPassword',
+    algorithm: 'md5',
+    mode:      7,
   },
 }
 

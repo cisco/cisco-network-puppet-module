@@ -38,10 +38,10 @@ tests[:default] = {
   desc:           '1.1 Default Properties',
   title_pattern:  '8.8.8.8',
   manifest_props: {
-    port: 46,
-    timeout: 5,
+    port:       46,
+    timeout:    5,
     key_format: 7,
-    key: '6666',
+    key:        '6666',
   },
   code:           [0, 2],
 }
@@ -53,10 +53,10 @@ tests[:ipv6] = {
   desc:           '2.1 IPV6 Properties',
   title_pattern:  '2020::20',
   manifest_props: {
-    port: 48,
-    timeout: 5,
+    port:       48,
+    timeout:    5,
     key_format: 7,
-    key: '6666',
+    key:        '6666',
   },
 }
 

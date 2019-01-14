@@ -104,8 +104,8 @@ RSpec.describe Puppet::Provider::NetworkTrunk::CiscoNexus do
     end
     context 'get filter used with matches' do
       it 'still processes' do
-        allow(Cisco::Interface).to receive(:interfaces).and_return('ethernet1' => interface,
-                                                                   'ethernet2' => non_trunk,
+        allow(Cisco::Interface).to receive(:interfaces).and_return('ethernet1'  => interface,
+                                                                   'ethernet2'  => non_trunk,
                                                                    'ethernet23' => non_trunk)
         allow(interface).to receive(:send).with(:switchport_mode).and_return(:trunk)
         allow(non_trunk).to receive(:send).with(:switchport_mode).and_return(:trunk)
@@ -139,8 +139,8 @@ RSpec.describe Puppet::Provider::NetworkTrunk::CiscoNexus do
 
       it 'performs an update' do
         expect(context).to receive(:notice).with(%r{\AUpdating 'ethernet1'})
-        allow(Cisco::Interface).to receive(:interfaces).and_return('ethernet1' => interface,
-                                                                   'ethernet2' => non_trunk,
+        allow(Cisco::Interface).to receive(:interfaces).and_return('ethernet1'  => interface,
+                                                                   'ethernet2'  => non_trunk,
                                                                    'ethernet23' => non_trunk)
         allow(interface).to receive(:switchport_mode=).with(:trunk).and_return(interface)
         allow(interface).to receive(:switchport_trunk_allowed_vlan=).with('2-4,6-8').and_return(interface)
@@ -166,8 +166,8 @@ RSpec.describe Puppet::Provider::NetworkTrunk::CiscoNexus do
       it 'creates an interface' do
         expect(context).to receive(:notice).with(%r{\AUpdating 'ethernet1'})
         allow(Cisco::Interface).to receive(:new).with('ethernet1')
-        allow(Cisco::Interface).to receive(:interfaces).and_return('ethernet1' => interface,
-                                                                   'ethernet2' => non_trunk,
+        allow(Cisco::Interface).to receive(:interfaces).and_return('ethernet1'  => interface,
+                                                                   'ethernet2'  => non_trunk,
                                                                    'ethernet23' => non_trunk)
         allow(interface).to receive(:switchport_mode=).with(:trunk).and_return(interface)
         allow(interface).to receive(:switchport_trunk_allowed_vlan=).with('2-4,6-8').and_return(interface)
@@ -182,8 +182,8 @@ RSpec.describe Puppet::Provider::NetworkTrunk::CiscoNexus do
     context 'delete is called' do
       it 'destroys an interface' do
         expect(context).to receive(:notice).with(%r{\ADestroying 'ethernet1'})
-        allow(Cisco::Interface).to receive(:interfaces).and_return('ethernet1' => interface,
-                                                                   'ethernet2' => non_trunk,
+        allow(Cisco::Interface).to receive(:interfaces).and_return('ethernet1'  => interface,
+                                                                   'ethernet2'  => non_trunk,
                                                                    'ethernet23' => non_trunk)
         expect(interface).to receive(:destroy).and_return(interface).once
         expect(non_trunk).to receive(:destroy).and_return(interface).never
@@ -241,40 +241,40 @@ RSpec.describe Puppet::Provider::NetworkTrunk::CiscoNexus do
 
   canonicalize_data = [
     {
-      desc: '`resources` already sorted',
+      desc:      '`resources` already sorted',
       resources: [{
         name:         'ethernet1',
         ensure:       'present',
         tagged_vlans: ['1', '2', '3', '10'],
       }],
-      results: [{
+      results:   [{
         name:         'ethernet1',
         ensure:       'present',
         tagged_vlans: ['1', '2', '3', '10'],
       }],
     },
     {
-      desc: '`resources` requires sorting',
+      desc:      '`resources` requires sorting',
       resources: [{
         name:         'ethernet1',
         ensure:       'present',
         tagged_vlans: ['10', '2', '3', '1'],
       }],
-      results: [{
+      results:   [{
         name:         'ethernet1',
         ensure:       'present',
         tagged_vlans: ['1', '2', '3', '10'],
       }],
     },
     {
-      desc: '`resources` does not contain `tagged_vlans`',
+      desc:      '`resources` does not contain `tagged_vlans`',
       resources: [{
-        name:         'ethernet1',
-        ensure:       'present',
+        name:   'ethernet1',
+        ensure: 'present',
       }],
-      results: [{
-        name:         'ethernet1',
-        ensure:       'present',
+      results:   [{
+        name:   'ethernet1',
+        ensure: 'present',
       }],
     },
   ]

@@ -16,13 +16,13 @@ RSpec.describe Puppet::Provider::SnmpNotification::CiscoNexus do
   let(:changes) do
     {
       'foo' =>
-      {
-        is: {
-          name:   'foo',
-          enable: false,
-        },
-        should: should_values
-      }
+               {
+                 is:     {
+                   name:   'foo',
+                   enable: false,
+                 },
+                 should: should_values
+               }
     }
   end
 

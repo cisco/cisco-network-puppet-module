@@ -50,16 +50,16 @@ class Puppet::Provider::RadiusServer::CiscoNexus < Puppet::ResourceApi::SimplePr
     radius_servers = []
     Cisco::RadiusServer.radiusservers.each_value do |v|
       radius_servers << {
-        ensure:               'present',
-        name:                 v.name,
-        auth_port:            v.auth_port ? v.auth_port : nil,
-        acct_port:            v.acct_port ? v.acct_port : nil,
-        timeout:              v.timeout ? v.timeout : 'unset',
-        retransmit_count:     v.retransmit_count ? v.retransmit_count : 'unset',
-        key:                  v.key ? v.key.gsub(/\A"|"\Z/, '') : 'unset',
-        key_format:           v.key_format ? v.key_format.to_i : 'unset',
-        accounting_only:      v.accounting,
-        authentication_only:  v.authentication
+        ensure:              'present',
+        name:                v.name,
+        auth_port:           v.auth_port ? v.auth_port : nil,
+        acct_port:           v.acct_port ? v.acct_port : nil,
+        timeout:             v.timeout ? v.timeout : 'unset',
+        retransmit_count:    v.retransmit_count ? v.retransmit_count : 'unset',
+        key:                 v.key ? v.key.gsub(/\A"|"\Z/, '') : 'unset',
+        key_format:          v.key_format ? v.key_format.to_i : 'unset',
+        accounting_only:     v.accounting,
+        authentication_only: v.authentication
       }
     end
 

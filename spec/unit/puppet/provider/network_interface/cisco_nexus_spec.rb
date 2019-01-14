@@ -31,20 +31,20 @@ RSpec.describe Puppet::Provider::NetworkInterface::CiscoNexus do
       let(:state) do
         [
           {
-            name: 'ethernet1/1',
+            name:        'ethernet1/1',
             description: 'eth1/desc',
-            mtu: 123,
-            speed: '1g',
-            duplex: 'full',
-            enable: true,
+            mtu:         123,
+            speed:       '1g',
+            duplex:      'full',
+            enable:      true,
           },
           {
-            name: 'ethernet1/2',
+            name:        'ethernet1/2',
             description: 'eth2/desc',
-            mtu: 321,
-            speed: '40g',
-            duplex: 'half',
-            enable: false,
+            mtu:         321,
+            speed:       '40g',
+            duplex:      'half',
+            enable:      false,
           },
         ]
       end
@@ -83,12 +83,12 @@ RSpec.describe Puppet::Provider::NetworkInterface::CiscoNexus do
         expect(interface2).to receive(:shutdown).and_return(true)
         expect(provider.get(context, ['ethernet1/2'])).to eq [
           {
-            name: 'ethernet1/2',
+            name:        'ethernet1/2',
             description: 'eth2/desc',
-            mtu: 321,
-            speed: '40g',
-            duplex: 'half',
-            enable: false,
+            mtu:         321,
+            speed:       '40g',
+            duplex:      'half',
+            enable:      false,
           }
         ]
       end
@@ -99,7 +99,7 @@ RSpec.describe Puppet::Provider::NetworkInterface::CiscoNexus do
     let(:changes) do
       {
         'ethernet1/3' => {
-          is: is,
+          is:     is,
           should: should_hash,
         }
       }
@@ -108,12 +108,12 @@ RSpec.describe Puppet::Provider::NetworkInterface::CiscoNexus do
     context 'when there are no changes to be made' do
       let(:is) do
         {
-          name: 'ethernet1/3',
+          name:        'ethernet1/3',
           description: 'eth3/desc',
-          mtu: 123,
-          speed: '1g',
-          duplex: 'full',
-          enable: true,
+          mtu:         123,
+          speed:       '1g',
+          duplex:      'full',
+          enable:      true,
         }
       end
       let(:should_hash) { is }
@@ -126,22 +126,22 @@ RSpec.describe Puppet::Provider::NetworkInterface::CiscoNexus do
     context 'when there are changes to be made' do
       let(:is) do
         {
-          name: 'ethernet1/3',
+          name:        'ethernet1/3',
           description: 'eth1/desc',
-          mtu: 123,
-          speed: '1g',
-          duplex: 'full',
-          enable: true,
+          mtu:         123,
+          speed:       '1g',
+          duplex:      'full',
+          enable:      true,
         }
       end
       let(:should_hash) do
         {
-          name: 'ethernet1/3',
+          name:        'ethernet1/3',
           description: 'eth1/desc',
-          mtu: 123,
-          speed: '1g',
-          duplex: 'full',
-          enable: false,
+          mtu:         123,
+          speed:       '1g',
+          duplex:      'full',
+          enable:      false,
         }
       end
 
@@ -163,7 +163,7 @@ RSpec.describe Puppet::Provider::NetworkInterface::CiscoNexus do
     context 'when enable is false' do
       let(:should_hash) do
         {
-          name: if_name,
+          name:   if_name,
           enable: false,
         }
       end
@@ -177,7 +177,7 @@ RSpec.describe Puppet::Provider::NetworkInterface::CiscoNexus do
     context 'when enable is true' do
       let(:should_hash) do
         {
-          name: if_name,
+          name:   if_name,
           enable: true,
         }
       end
@@ -192,7 +192,7 @@ RSpec.describe Puppet::Provider::NetworkInterface::CiscoNexus do
       let(:should_hash) do
         {
           name: if_name,
-          mtu: 123,
+          mtu:  123,
         }
       end
 
@@ -205,7 +205,7 @@ RSpec.describe Puppet::Provider::NetworkInterface::CiscoNexus do
     context 'when description is present' do
       let(:should_hash) do
         {
-          name: if_name,
+          name:        if_name,
           description: 'desc',
         }
       end
@@ -219,7 +219,7 @@ RSpec.describe Puppet::Provider::NetworkInterface::CiscoNexus do
     context 'when speed is present' do
       let(:should_hash) do
         {
-          name: if_name,
+          name:  if_name,
           speed: '10g',
         }
       end
@@ -233,7 +233,7 @@ RSpec.describe Puppet::Provider::NetworkInterface::CiscoNexus do
     context 'when duplex is present' do
       let(:should_hash) do
         {
-          name: if_name,
+          name:   if_name,
           duplex: 'full',
         }
       end

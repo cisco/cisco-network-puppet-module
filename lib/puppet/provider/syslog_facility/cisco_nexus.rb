@@ -39,16 +39,16 @@ class Puppet::Provider::SyslogFacility::CiscoNexus < Puppet::ResourceApi::Simple
 
   def get_current_state(facility, instance)
     {
-      name:     facility,
-      ensure:   'present',
-      level:    instance.level,
+      name:   facility,
+      ensure: 'present',
+      level:  instance.level,
     }
   end
 
   def update(context, name, should)
     context.notice("Setting '#{name}' with #{should.inspect}")
     Cisco::SyslogFacility.new('facility' => name,
-                              'level' => should[:level].to_s)
+                              'level'    => should[:level].to_s)
   end
 
   alias create update

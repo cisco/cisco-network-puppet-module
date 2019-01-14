@@ -14,9 +14,9 @@ RSpec.describe Puppet::Provider::DomainName::CiscoNexus do
   let(:domain3) { instance_double('Cisco::DomainName', 'domain3') }
   let(:domainnames) do
     {
-      'test.puppet.com' => domain,
+      'test.puppet.com'    => domain,
       'example.puppet.com' => domain2,
-      'nexus.puppet.com' => domain3,
+      'nexus.puppet.com'   => domain3,
     }
   end
 
@@ -26,15 +26,15 @@ RSpec.describe Puppet::Provider::DomainName::CiscoNexus do
 
       expect(provider.get(context)).to eq [
         {
-          name: 'test.puppet.com',
+          name:   'test.puppet.com',
           ensure: 'present',
         },
         {
-          name: 'example.puppet.com',
+          name:   'example.puppet.com',
           ensure: 'present',
         },
         {
-          name: 'nexus.puppet.com',
+          name:   'nexus.puppet.com',
           ensure: 'present',
         },
       ]
@@ -50,8 +50,8 @@ RSpec.describe Puppet::Provider::DomainName::CiscoNexus do
         allow(Cisco::DomainName).to receive(:domainnames).and_return(domainnames)
         expect(provider.get(context, ['example.puppet.com'])).to eq [
           {
-            name:    'example.puppet.com',
-            ensure:  'present',
+            name:   'example.puppet.com',
+            ensure: 'present',
           }
         ]
       end

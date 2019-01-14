@@ -7,37 +7,37 @@ RSpec.describe Puppet::Util::NetworkDevice::Cisco_nexus do
     let(:device_config) { { 'address' => 'www.example.com', 'user' => 'admin', 'password' => 'password' } }
     let(:cisco_platform) do
       {
-        system_image: 'foo_img',
-        image_version: '7.0.1-bar',
-        packages: {},
-        hardware_type: 'NX-91',
-        cpu:           'bar',
-        memory:        {
+        system_image:     'foo_img',
+        image_version:    '7.0.1-bar',
+        packages:         {},
+        hardware_type:    'NX-91',
+        cpu:              'bar',
+        memory:           {
           total: '111k',
           used:  '83k',
         },
-        board: 'foo/bar',
-        last_reset: '1111',
-        reset_reason: 'foo',
-        chassis: {
+        board:            'foo/bar',
+        last_reset:       '1111',
+        reset_reason:     'foo',
+        chassis:          {
           desc: 'doo',
-          pid: 'NX-91-NXXZ',
-          vid: 'NXXZ',
+          pid:  'NX-91-NXXZ',
+          vid:  'NXXZ',
         },
-        slot_1: {
+        slot_1:           {
           desc: 'Ethernet One',
-          pid: 'NX-JKSSS',
+          pid:  'NX-JKSSS',
         },
-        power_supplies: {
+        power_supplies:   {
           power_supply_one: {
             desc: 'PS',
-            pid: '150w',
+            pid:  '150w',
           },
         },
-        fans: {
+        fans:             {
           fan_one: {
             desc: 'fan one',
-            pid: '30w',
+            pid:  '30w',
           },
         },
         virtual_services: {
@@ -45,33 +45,33 @@ RSpec.describe Puppet::Util::NetworkDevice::Cisco_nexus do
             name: 'foo',
           },
         },
-        uptime: '0 days, 20 hours, 27 minutes, 56 seconds',
+        uptime:           '0 days, 20 hours, 27 minutes, 56 seconds',
       }
     end
     let(:facts) do
-      { 'operatingsystem' => 'nexus',
-        'cisco_node_utils' => '1.10.0',
-        'cisco' =>
-         { 'images' => { 'system_image' => 'foo_img', 'full_version' => '7.0.1-bar', 'packages' => {} },
-           'hardware' =>
-           { 'type' => 'NX-91', 'cpu' => 'bar', 'memory' => { total: '111k', used: '83k' },
+      { 'operatingsystem'        => 'nexus',
+        'cisco_node_utils'       => '1.10.0',
+        'cisco'                  =>
+                                    { 'images'                           => { 'system_image' => 'foo_img', 'full_version' => '7.0.1-bar', 'packages' => {} },
+                                      'hardware'                         =>
+                                                                            { 'type' => 'NX-91', 'cpu' => 'bar', 'memory' => { total: '111k', used: '83k' },
              'board' => 'foo/bar',
              'last_reset' => '1111',
              'reset_reason' => 'foo',
              'uptime' => '0 days, 20 hours, 27 minutes, 56 seconds' },
-           'inventory' => {
-             'chassis' => {
-               desc: 'doo', pid: 'NX-91-NXXZ', vid: 'NXXZ'
-             },
+                                      'inventory'                        => {
+                                        'chassis' => {
+                                          desc: 'doo', pid: 'NX-91-NXXZ', vid: 'NXXZ'
+                                        },
              :desc => 'Ethernet One',
              :pid => 'NX-JKSSS',
              :power_supply_one => {
                desc: 'PS', pid: '150w'
              }, :fan_one => { desc: 'fan one', pid: '30w' }
-           },
-           'virtual_service' => { application: { name: 'foo' } },
-           'feature_compatible_module_iflist' => { 'fabricpath' => { fabricpath: {} } } },
-        'hostname' => 'bar',
+                                      },
+                                      'virtual_service'                  => { application: { name: 'foo' } },
+                                      'feature_compatible_module_iflist' => { 'fabricpath' => { fabricpath: {} } } },
+        'hostname'               => 'bar',
         'operatingsystemrelease' => '7.0.1-bar' }
     end
 

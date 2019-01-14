@@ -15,19 +15,19 @@ RSpec.describe Puppet::Provider::SyslogSettings::CiscoNexus do
   let(:changes) do
     {
       'default' =>
-      {
-        is: {
-          name: 'default',
-          console: 2,
-          monitor: 5,
-          source_interface: ['mgmt0'],
-          time_stamp_units: 'milliseconds',
-          logfile_name: 'testlogfile',
-          logfile_severity_level: 3,
-          logfile_size: 4098,
-        },
-        should: should_values
-      }
+                   {
+                     is:     {
+                       name:                   'default',
+                       console:                2,
+                       monitor:                5,
+                       source_interface:       ['mgmt0'],
+                       time_stamp_units:       'milliseconds',
+                       logfile_name:           'testlogfile',
+                       logfile_severity_level: 3,
+                       logfile_size:           4098,
+                     },
+                     should: should_values
+                   }
     }
   end
 
@@ -40,14 +40,14 @@ RSpec.describe Puppet::Provider::SyslogSettings::CiscoNexus do
     context 'should is different' do
       let(:should_values) do
         {
-          name: 'default',
-          console: 3,
-          monitor: 6,
-          source_interface: ['mgmt0'],
-          time_stamp_units: 'seconds',
-          logfile_name: 'testlogfile',
+          name:                   'default',
+          console:                3,
+          monitor:                6,
+          source_interface:       ['mgmt0'],
+          time_stamp_units:       'seconds',
+          logfile_name:           'testlogfile',
           logfile_severity_level: 3,
-          logfile_size: 4098,
+          logfile_size:           4098,
         }
       end
 
@@ -62,14 +62,14 @@ RSpec.describe Puppet::Provider::SyslogSettings::CiscoNexus do
     context 'should is the same' do
       let(:should_values) do
         {
-          name: 'default',
-          console: 2,
-          monitor: 5,
-          source_interface: ['mgmt0'],
-          time_stamp_units: 'milliseconds',
-          logfile_name: 'testlogfile',
+          name:                   'default',
+          console:                2,
+          monitor:                5,
+          source_interface:       ['mgmt0'],
+          time_stamp_units:       'milliseconds',
+          logfile_name:           'testlogfile',
           logfile_severity_level: 3,
-          logfile_size: 4098,
+          logfile_size:           4098,
         }
       end
 
@@ -95,14 +95,14 @@ RSpec.describe Puppet::Provider::SyslogSettings::CiscoNexus do
 
         expect(provider.get(context)).to eq [
           {
-            name: 'default',
-            console: 2,
-            monitor: 5,
-            source_interface: ['mgmt0'],
-            time_stamp_units: 'seconds',
-            logfile_name: 'testlogfile',
+            name:                   'default',
+            console:                2,
+            monitor:                5,
+            source_interface:       ['mgmt0'],
+            time_stamp_units:       'seconds',
+            logfile_name:           'testlogfile',
             logfile_severity_level: 3,
-            logfile_size: 4098,
+            logfile_size:           4098,
           }
         ]
       end
@@ -113,14 +113,14 @@ RSpec.describe Puppet::Provider::SyslogSettings::CiscoNexus do
     context 'syslog_settings is not empty' do
       let(:should_values) do
         {
-          name: 'default',
-          console: 2,
-          monitor: 5,
-          source_interface: ['mgmt0'],
-          time_stamp_units: 'milliseconds',
-          logfile_name: 'testlogfile',
+          name:                   'default',
+          console:                2,
+          monitor:                5,
+          source_interface:       ['mgmt0'],
+          time_stamp_units:       'milliseconds',
+          logfile_name:           'testlogfile',
           logfile_severity_level: 3,
-          logfile_size: 4098,
+          logfile_size:           4098,
         }
       end
 
@@ -140,14 +140,14 @@ RSpec.describe Puppet::Provider::SyslogSettings::CiscoNexus do
   describe '#validate_should' do
     let(:should_values) do
       {
-        name: 'default',
-        console: 2,
-        monitor: 5,
-        source_interface: ['mgmt0'],
-        time_stamp_units: 'milliseconds',
-        logfile_name: 'testlogfile',
+        name:                   'default',
+        console:                2,
+        monitor:                5,
+        source_interface:       ['mgmt0'],
+        time_stamp_units:       'milliseconds',
+        logfile_name:           'testlogfile',
         logfile_severity_level: 3,
-        logfile_size: 4098,
+        logfile_size:           4098,
       }
     end
 
@@ -214,9 +214,9 @@ RSpec.describe Puppet::Provider::SyslogSettings::CiscoNexus do
     context 'logfilename not supplied' do
       let(:should_values) do
         {
-          name: 'default',
+          name:                   'default',
           logfile_severity_level: 10,
-          logfile_size: 4096,
+          logfile_size:           4096,
         }
       end
 
@@ -230,7 +230,7 @@ RSpec.describe Puppet::Provider::SyslogSettings::CiscoNexus do
     context 'logfile_severity_level not supplied' do
       let(:should_values) do
         {
-          name: 'default',
+          name:         'default',
           logfile_name: 'bar',
           logfile_size: 4096,
         }
@@ -246,8 +246,8 @@ RSpec.describe Puppet::Provider::SyslogSettings::CiscoNexus do
     context 'logfile_size not supplied' do
       let(:should_values) do
         {
-          name: 'default',
-          logfile_name: 'bar',
+          name:                   'default',
+          logfile_name:           'bar',
           logfile_severity_level: 10,
         }
       end
@@ -262,10 +262,10 @@ RSpec.describe Puppet::Provider::SyslogSettings::CiscoNexus do
     context 'logfile_size set to -1' do
       let(:should_values) do
         {
-          name: 'default',
-          logfile_name: 'bar',
+          name:                   'default',
+          logfile_name:           'bar',
           logfile_severity_level: 10,
-          logfile_size: -1,
+          logfile_size:           -1,
         }
       end
 
@@ -279,10 +279,10 @@ RSpec.describe Puppet::Provider::SyslogSettings::CiscoNexus do
     context 'logfile_name set to unset' do
       let(:should_values) do
         {
-          name: 'default',
-          logfile_name: 'unset',
+          name:                   'default',
+          logfile_name:           'unset',
           logfile_severity_level: 10,
-          logfile_size: -1,
+          logfile_size:           -1,
         }
       end
 

@@ -30,7 +30,7 @@ RSpec.describe Puppet::Provider::SyslogFacility::CiscoNexus do
         expect(provider.get(context)).to eq [
           {
             name:   'aaa',
-            level:   7,
+            level:  7,
             ensure: 'present',
           }
         ]
@@ -44,12 +44,12 @@ RSpec.describe Puppet::Provider::SyslogFacility::CiscoNexus do
         expect(provider.get(context)).to eq [
           {
             name:   'aaa',
-            level:   7,
+            level:  7,
             ensure: 'present',
           },
           {
             name:   'bbb',
-            level:   3,
+            level:  3,
             ensure: 'present',
           }
         ]
@@ -83,16 +83,16 @@ RSpec.describe Puppet::Provider::SyslogFacility::CiscoNexus do
     context 'update is called' do
       let(:should_values) do
         {
-          name:     'aaa',
-          ensure:   'present',
-          level:    7,
+          name:   'aaa',
+          ensure: 'present',
+          level:  7,
         }
       end
 
       it 'performs the update' do
         expect(context).to receive(:notice).with(%r{\ASetting 'aaa'})
         expect(Cisco::SyslogFacility).to receive(:new).with('facility' => 'aaa',
-                                                            'level' => '7')
+                                                            'level'    => '7')
 
         provider.update(context, 'aaa', should_values)
       end
@@ -103,16 +103,16 @@ RSpec.describe Puppet::Provider::SyslogFacility::CiscoNexus do
     context 'create is called' do
       let(:should_values) do
         {
-          name:     'aaa',
-          ensure:   'present',
-          level:    7,
+          name:   'aaa',
+          ensure: 'present',
+          level:  7,
         }
       end
 
       it 'performs the creation' do
         expect(context).to receive(:notice).with(%r{\ASetting 'aaa'})
         expect(Cisco::SyslogFacility).to receive(:new).with('facility' => 'aaa',
-                                                            'level' => '7')
+                                                            'level'    => '7')
 
         provider.create(context, 'aaa', should_values)
       end

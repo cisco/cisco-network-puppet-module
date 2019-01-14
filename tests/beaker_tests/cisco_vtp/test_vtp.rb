@@ -38,10 +38,10 @@ skip_unless_supported(tests)
 tests[:default] = {
   title_pattern:  'default',
   manifest_props: {
-    domain: 'cisco1234',
+    domain:   'cisco1234',
     filename: 'default',
     password: 'default',
-    version: 'default',
+    version:  'default',
   },
   resource:       {
     'domain'   => 'cisco1234',
@@ -54,10 +54,10 @@ tests[:default] = {
 tests[:non_default] = {
   title_pattern:  'default',
   manifest_props: {
-    'domain'    => 'cisco1234',
-    'filename'  => 'vtp.dat',
-    'password'  => 'cisco12345$^&',
-    'version'   => '2',
+    'domain'   => 'cisco1234',
+    'filename' => 'vtp.dat',
+    'password' => 'cisco12345$^&',
+    'version'  => '2',
   },
   resource:       {
     'filename' => 'bootflash:\/vtp.dat',
@@ -69,12 +69,12 @@ tests[:non_default] = {
 # this test case might fail :(
 tests[:negatives] = {
   title_pattern:  'default',
-  platform: 'n(3|9)k-f',
+  platform:       'n(3|9)k-f',
   manifest_props: {
-    'domain'    => '',
-    'filename'  => '',
-    'password'  => '',
-    'version'   => '-1',
+    'domain'   => '',
+    'filename' => '',
+    'password' => '',
+    'version'  => '-1',
   },
   resource:       {
   },

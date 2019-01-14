@@ -34,12 +34,12 @@ RSpec.describe Puppet::Provider::TacacsServer::CiscoNexus do
         allow(tacacs_server_one).to receive(:encryption_password).and_return('"4444"')
         expect(provider.get(context)).to eq [
           {
-            name: '1.1.1.1',
-            ensure: 'present',
-            port: 48,
-            timeout: 5,
+            name:       '1.1.1.1',
+            ensure:     'present',
+            port:       48,
+            timeout:    5,
             key_format: 7,
-            key: '4444',
+            key:        '4444',
           }
         ]
       end
@@ -58,20 +58,20 @@ RSpec.describe Puppet::Provider::TacacsServer::CiscoNexus do
         allow(tacacs_server_two).to receive(:encryption_password).and_return('"6666"')
         expect(provider.get(context)).to eq [
           {
-            name: '1.1.1.1',
-            ensure: 'present',
-            port: 48,
-            timeout: 5,
+            name:       '1.1.1.1',
+            ensure:     'present',
+            port:       48,
+            timeout:    5,
             key_format: 7,
-            key: '4444',
+            key:        '4444',
           },
           {
-            name: '2.2.2.2',
-            ensure: 'present',
-            port: 80,
-            timeout: 5,
+            name:       '2.2.2.2',
+            ensure:     'present',
+            port:       80,
+            timeout:    5,
             key_format: 7,
-            key: '6666',
+            key:        '6666',
           }
         ]
       end
@@ -93,12 +93,12 @@ RSpec.describe Puppet::Provider::TacacsServer::CiscoNexus do
         allow(tacacs_server_two).to receive(:encryption_password).and_return('"6666"')
         expect(provider.get(context, ['2.2.2.2'])).to eq [
           {
-            name: '2.2.2.2',
-            ensure: 'present',
-            port: 80,
-            timeout: 5,
+            name:       '2.2.2.2',
+            ensure:     'present',
+            port:       80,
+            timeout:    5,
             key_format: 7,
-            key: '6666',
+            key:        '6666',
           }
         ]
       end
@@ -109,12 +109,12 @@ RSpec.describe Puppet::Provider::TacacsServer::CiscoNexus do
     context 'update is called' do
       let(:should_values) do
         {
-          name: '2.2.2.2',
-          ensure: 'present',
-          port: 80,
-          timeout: 5,
+          name:       '2.2.2.2',
+          ensure:     'present',
+          port:       80,
+          timeout:    5,
           key_format: 7,
-          key: '6666',
+          key:        '6666',
         }
       end
 
@@ -134,12 +134,12 @@ RSpec.describe Puppet::Provider::TacacsServer::CiscoNexus do
     context 'create is called' do
       let(:should_values) do
         {
-          name: '3.3.3.3',
-          ensure: 'present',
-          port: 80,
-          timeout: 5,
+          name:       '3.3.3.3',
+          ensure:     'present',
+          port:       80,
+          timeout:    5,
           key_format: 7,
-          key: '6666',
+          key:        '6666',
         }
       end
 
@@ -183,12 +183,12 @@ RSpec.describe Puppet::Provider::TacacsServer::CiscoNexus do
     context 'all values' do
       let(:should_values) do
         {
-          name: '2.2.2.2',
-          ensure: 'present',
-          port: 80,
-          timeout: 5,
+          name:       '2.2.2.2',
+          ensure:     'present',
+          port:       80,
+          timeout:    5,
           key_format: 7,
-          key: '6666',
+          key:        '6666',
         }
       end
 
@@ -204,11 +204,11 @@ RSpec.describe Puppet::Provider::TacacsServer::CiscoNexus do
     context 'no port values' do
       let(:should_values) do
         {
-          name: '2.2.2.2',
-          ensure: 'present',
-          timeout: 5,
+          name:       '2.2.2.2',
+          ensure:     'present',
+          timeout:    5,
           key_format: 7,
-          key: '6666',
+          key:        '6666',
         }
       end
 
@@ -224,10 +224,10 @@ RSpec.describe Puppet::Provider::TacacsServer::CiscoNexus do
     context 'no timeout values' do
       let(:should_values) do
         {
-          name: '2.2.2.2',
-          ensure: 'present',
+          name:       '2.2.2.2',
+          ensure:     'present',
           key_format: 7,
-          key: '6666',
+          key:        '6666',
         }
       end
 
@@ -243,8 +243,8 @@ RSpec.describe Puppet::Provider::TacacsServer::CiscoNexus do
     context 'no key values' do
       let(:should_values) do
         {
-          name: '2.2.2.2',
-          ensure: 'present',
+          name:       '2.2.2.2',
+          ensure:     'present',
           key_format: 7,
         }
       end

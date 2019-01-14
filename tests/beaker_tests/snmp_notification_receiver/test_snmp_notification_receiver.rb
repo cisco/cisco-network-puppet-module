@@ -43,11 +43,11 @@ tests[:default] = {
   title_pattern:  '2.2.2.2',
   manifest_props: {
     source_interface: intf,
-    port: 47,
-    type: 'traps',
-    username: 'admin',
-    version: 'v3',
-    security: 'priv',
+    port:             47,
+    type:             'traps',
+    username:         'admin',
+    version:          'v3',
+    security:         'priv',
   },
   code:           [0, 2],
 }
@@ -58,10 +58,10 @@ tests[:non_default] = {
   title_pattern:  '3.3.3.3',
   manifest_props: {
     source_interface: intf,
-    port: 48,
-    type: 'traps',
-    username: 'admin',
-    version: 'v1',
+    port:             48,
+    type:             'traps',
+    username:         'admin',
+    version:          'v1',
   },
   code:           [0, 2],
 }

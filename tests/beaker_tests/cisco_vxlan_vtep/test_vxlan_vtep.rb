@@ -25,10 +25,10 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 # Test hash top-level keys
 tests = {
-  agent:            agent,
-  master:           master,
-  platform:         'n(3k-f|5k|6k|7k|9k)',
-  resource_name:    'cisco_vxlan_vtep',
+  agent:         agent,
+  master:        master,
+  platform:      'n(3k-f|5k|6k|7k|9k)',
+  resource_name: 'cisco_vxlan_vtep',
 }
 
 # Skip -ALL- tests if a top-level platform/os key exludes this platform

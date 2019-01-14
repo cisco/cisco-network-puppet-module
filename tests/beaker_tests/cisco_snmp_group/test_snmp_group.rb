@@ -36,44 +36,44 @@ skip_unless_supported(tests)
 tests[:existing_role] = {
   desc:           '1.1 Default Present Properties',
   title_pattern:  'network-admin',
-  ensure: :present,
+  ensure:         :present,
   manifest_props: {
   },
   resource:       {
   },
-  code: [0],
+  code:           [0],
 }
 
 tests[:non_existing_role] = {
   desc:           '1.2 Default Absent Properties',
   title_pattern:  'foo',
-  ensure: :absent,
+  ensure:         :absent,
   manifest_props: {
   },
   resource:       {
   },
-  code: [0],
+  code:           [0],
 }
 
 tests[:negative_non_existing_role] = {
   desc:           '2.1 Negative Present Properties',
   title_pattern:  'foo-bar',
-  ensure: :present,
+  ensure:         :present,
   manifest_props: {
   },
-  code: [4],
+  code:           [4],
 }
 
 tests[:negative_existing_role] = {
   desc:           '2.2 Negative Absent Properties',
   title_pattern:  'network-operator',
-  ensure: :absent,
+  ensure:         :absent,
   manifest_props: {
   },
   resource:       {
     ensure: 'present',
   },
-  code: [0],
+  code:           [0],
 }
 
 #################################################################

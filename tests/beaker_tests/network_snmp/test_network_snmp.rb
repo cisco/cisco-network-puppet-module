@@ -39,8 +39,8 @@ tests[:unset] = {
   desc:           '1.1 Unset Properties',
   title_pattern:  'default',
   manifest_props: {
-    enable: true,
-    contact: 'unset',
+    enable:   true,
+    contact:  'unset',
     location: 'unset',
   },
   code:           [0, 2],
@@ -53,8 +53,8 @@ tests[:set] = {
   desc:           '2.1 Set Properties',
   title_pattern:  'default',
   manifest_props: {
-    enable: true,
-    contact: 'SysAdmin',
+    enable:   true,
+    contact:  'SysAdmin',
     location: 'UK',
   },
 }

@@ -21,22 +21,22 @@ RSpec.describe Puppet::Provider::NtpConfig::CiscoNexus do
     let(:changes) do
       {
         'default' =>
-        {
-          is: {
-            name: 'default',
-            authenticate:     false,
-            trusted_key:      ['unset'],
-            source_interface: 'unset',
-          },
-          should: should_values
-        }
+                     {
+                       is:     {
+                         name:             'default',
+                         authenticate:     false,
+                         trusted_key:      ['unset'],
+                         source_interface: 'unset',
+                       },
+                       should: should_values
+                     }
       }
     end
 
     context 'there are changes' do
       let(:should_values) do
         {
-          name: 'default',
+          name:             'default',
           authenticate:     false,
           trusted_key:      ['5', '10'],
           source_interface: 'ethernet1/1',
@@ -53,7 +53,7 @@ RSpec.describe Puppet::Provider::NtpConfig::CiscoNexus do
     context 'there are no changes' do
       let(:should_values) do
         {
-          name: 'default',
+          name:             'default',
           authenticate:     false,
           trusted_key:      ['unset'],
           source_interface: 'unset',
@@ -107,7 +107,7 @@ RSpec.describe Puppet::Provider::NtpConfig::CiscoNexus do
     context 'update is called' do
       let(:should_values) do
         {
-          name:     'default',
+          name:             'default',
           authenticate:     true,
           trusted_key:      [5, 10, 11],
           source_interface: 7,
@@ -210,56 +210,56 @@ RSpec.describe Puppet::Provider::NtpConfig::CiscoNexus do
 
   canonicalize_data = [
     {
-      desc: '`resources` with ints already sorted',
+      desc:      '`resources` with ints already sorted',
       resources: [{
         name:        'default',
         trusted_key: [1, 2, 3, 4],
       }],
-      results: [{
+      results:   [{
         name:        'default',
         trusted_key: ['1', '2', '3', '4'],
       }],
     },
     {
-      desc: '`resources` with strings already sorted',
+      desc:      '`resources` with strings already sorted',
       resources: [{
         name:        'default',
         trusted_key: ['1', '2', '3', '4'],
       }],
-      results: [{
+      results:   [{
         name:        'default',
         trusted_key: ['1', '2', '3', '4'],
       }],
     },
     {
-      desc: '`resources` with ints requires sorting',
+      desc:      '`resources` with ints requires sorting',
       resources: [{
         name:        'default',
         trusted_key: [10, 9, 1, 2, 3, 4],
       }],
-      results: [{
+      results:   [{
         name:        'default',
         trusted_key: ['1', '2', '3', '4', '9', '10'],
       }],
     },
     {
-      desc: '`resources` with strings requires sorting',
+      desc:      '`resources` with strings requires sorting',
       resources: [{
         name:        'default',
         trusted_key: ['10', '9', '1', '2', '4', '3'],
       }],
-      results: [{
+      results:   [{
         name:        'default',
         trusted_key: ['1', '2', '3', '4', '9', '10'],
       }],
     },
     {
-      desc: '`resources` does not contain `trusted_key`',
+      desc:      '`resources` does not contain `trusted_key`',
       resources: [{
-        name:        'default',
+        name: 'default',
       }],
-      results: [{
-        name:        'default',
+      results:   [{
+        name: 'default',
       }],
     },
   ]

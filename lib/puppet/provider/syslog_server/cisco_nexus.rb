@@ -39,12 +39,12 @@ class Puppet::Provider::SyslogServer::CiscoNexus < Puppet::ResourceApi::SimplePr
 
   def get_current_state(server, instance)
     {
-      name:             server,
-      ensure:           'present',
-      severity_level:   instance.severity_level.nil? ? instance.severity_level : instance.severity_level.to_i,
-      port:             instance.port.nil? ? instance.port : instance.port.to_i,
-      vrf:              instance.vrf,
-      facility:         instance.facility,
+      name:           server,
+      ensure:         'present',
+      severity_level: instance.severity_level.nil? ? instance.severity_level : instance.severity_level.to_i,
+      port:           instance.port.nil? ? instance.port : instance.port.to_i,
+      vrf:            instance.vrf,
+      facility:       instance.facility,
     }
   end
 

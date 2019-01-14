@@ -43,9 +43,9 @@ class Puppet::Provider::TacacsServerGroup::CiscoNexus < Puppet::ResourceApi::Sim
 
   def get_current_state(server, instance)
     {
-      name:     server,
-      ensure:   'present',
-      servers:  instance.servers.empty? ? ['unset'] : instance.servers.sort_by(&:to_i),
+      name:    server,
+      ensure:  'present',
+      servers: instance.servers.empty? ? ['unset'] : instance.servers.sort_by(&:to_i),
     }
   end
 

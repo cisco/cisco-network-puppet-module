@@ -23,11 +23,11 @@ RSpec.describe Puppet::Provider::NameServer::CiscoNexus do
       allow(Cisco::NameServer).to receive(:nameservers).and_return(nameserver_rtn)
       expect(provider.get(context)).to eq [
         {
-          name: '1.2.3.4',
+          name:   '1.2.3.4',
           ensure: 'present',
         },
         {
-          name: '4.3.2.1',
+          name:   '4.3.2.1',
           ensure: 'present',
         },
       ]
@@ -43,7 +43,7 @@ RSpec.describe Puppet::Provider::NameServer::CiscoNexus do
         allow(Cisco::NameServer).to receive(:nameservers).and_return(nameserver_rtn)
         expect(provider.get(context, ['1.2.3.4'])).to eq [
           {
-            name: '1.2.3.4',
+            name:   '1.2.3.4',
             ensure: 'present',
           }
         ]

@@ -26,11 +26,11 @@ RSpec.describe Puppet::Provider::PortChannel::CiscoNexus do
   let(:portchannel43) { instance_double('Cisco::InterfacePortChannel', 'portchannel43') }
   let(:should_hash) do
     {
-      name: 'port-channel42',
+      name:          'port-channel42',
       minimum_links: 24,
-      id: 42,
-      interfaces: ['ethernet1/1', 'ethernet1/2'],
-      ensure: 'present',
+      id:            42,
+      interfaces:    ['ethernet1/1', 'ethernet1/2'],
+      ensure:        'present',
     }
   end
 
@@ -56,17 +56,17 @@ RSpec.describe Puppet::Provider::PortChannel::CiscoNexus do
       let(:state) do
         [
           {
-            name: 'port-channel42',
+            name:          'port-channel42',
             minimum_links: 24,
-            id: 42,
-            interfaces: ['ethernet1/1', 'ethernet1/2'],
-            ensure: 'present',
+            id:            42,
+            interfaces:    ['ethernet1/1', 'ethernet1/2'],
+            ensure:        'present',
           },
           {
-            name: 'port-channel43',
+            name:          'port-channel43',
             minimum_links: 25,
-            id: 43,
-            ensure: 'present',
+            id:            43,
+            ensure:        'present',
           },
         ]
       end
@@ -94,10 +94,10 @@ RSpec.describe Puppet::Provider::PortChannel::CiscoNexus do
         expect(portchannel43).to receive(:lacp_min_links).and_return(25)
         expect(provider.get(context, ['port-channel43'])).to eq [
           {
-            name: 'port-channel43',
+            name:          'port-channel43',
             minimum_links: 25,
-            id: 43,
-            ensure: 'present',
+            id:            43,
+            ensure:        'present',
           }
         ]
       end
@@ -147,10 +147,10 @@ RSpec.describe Puppet::Provider::PortChannel::CiscoNexus do
     context 'create_update false with basic portchannel' do
       let(:should_hash) do
         {
-          name: 'port-channel42',
-          id: 42,
+          name:       'port-channel42',
+          id:         42,
           interfaces: [],
-          ensure: 'present',
+          ensure:     'present',
         }
       end
 

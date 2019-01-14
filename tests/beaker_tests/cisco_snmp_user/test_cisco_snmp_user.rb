@@ -39,14 +39,14 @@ tests[:default] = {
   desc:           '1.1 default properties',
   title_pattern:  'snmpuser1',
   manifest_props: {
-    'groups'                 => ['network-operator'],
-    'auth_protocol'          => 'md5',
-    'auth_password'          => 'XXWWPass0wrf',
-    'priv_protocol'          => 'aes128',
-    'priv_password'          => 'WWXXPaas0wrf',
-    'localized_key'          => false,
+    'groups'        => ['network-operator'],
+    'auth_protocol' => 'md5',
+    'auth_password' => 'XXWWPass0wrf',
+    'priv_protocol' => 'aes128',
+    'priv_password' => 'WWXXPaas0wrf',
+    'localized_key' => false,
   },
-  resource: {
+  resource:       {
     'auth_protocol' => 'md5',
     'auth_password' => '0x[0-9a-fA-F]*',
     'priv_protocol' => 'aes128',
@@ -58,14 +58,14 @@ tests[:non_default] = {
   desc:           '2.1 non-default properties',
   title_pattern:  'snmpuser1',
   manifest_props: {
-    'groups'                 => ['network-operator'],
-    'auth_protocol'          => 'sha',
-    'auth_password'          => 'XXWWPass0wrf',
-    'priv_protocol'          => 'des',
-    'priv_password'          => 'WWXXPaas0wrf',
-    'localized_key'          => false,
+    'groups'        => ['network-operator'],
+    'auth_protocol' => 'sha',
+    'auth_password' => 'XXWWPass0wrf',
+    'priv_protocol' => 'des',
+    'priv_password' => 'WWXXPaas0wrf',
+    'localized_key' => false,
   },
-  resource: {
+  resource:       {
     'auth_protocol' => 'sha',
     'auth_password' => '0x[0-9a-fA-F]*',
     'priv_protocol' => 'des',
@@ -77,19 +77,19 @@ tests[:negatives] = {
   desc:           '3.1 negatives properties',
   title_pattern:  'snmpuser1',
   manifest_props: {
-    'groups'                 => ['network-operator'],
-    'auth_protocol'          => 'unknown',
-    'auth_password'          => 'XXWWPass0wrf',
-    'priv_protocol'          => 'unknown',
-    'priv_password'          => 'WWXXPaas0wrf',
-    'localized_key'          => false,
+    'groups'        => ['network-operator'],
+    'auth_protocol' => 'unknown',
+    'auth_password' => 'XXWWPass0wrf',
+    'priv_protocol' => 'unknown',
+    'priv_password' => 'WWXXPaas0wrf',
+    'localized_key' => false,
   },
-  resource: {
+  resource:       {
     'auth_password' => '0x[0-9a-fA-F]*',
     'priv_password' => '0x[0-9a-fA-F]*',
   },
   stderr_pattern: /Invalid value \"unknown\". Valid values are/,
-  code: [1, 4],
+  code:           [1, 4],
 }
 
 #################################################################

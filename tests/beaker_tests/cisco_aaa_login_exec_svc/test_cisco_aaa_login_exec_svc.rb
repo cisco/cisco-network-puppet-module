@@ -44,7 +44,7 @@ def generate_default_test(tests, title)
       groups: 'default',
       method: 'default',
     },
-    resource: {
+    resource:       {
       ensure: 'present',
       method: 'local',
     },
@@ -59,7 +59,7 @@ def generate_default_test(tests, title)
     },
     # can't *actually* remove authorization, that would crater the box,
     # but check to see if defaults have been restored
-    resource: {
+    resource:       {
       ensure: 'present',
       method: 'local',
     },
@@ -76,7 +76,7 @@ def generate_default_symbols_test(tests, title)
       groups: :default,
       method: :default,
     },
-    resource: {
+    resource:       {
       ensure: 'present',
       method: 'local',
     },
