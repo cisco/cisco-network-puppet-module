@@ -1804,10 +1804,10 @@ DEVICE
     # Create the puppet resource command syntax
     fail 'interface_probe: resource command not found' if probe[:cmd].nil?
 
-    if test_agent.nil?
-      cmd = "#{agentless_command} #{probe[:cmd].match(%r{.*\/puppet (.*)})} #{intf}"
-    else
+    if test_agent
       cmd = probe[:cmd] + " '#{intf}' "
+    else
+      cmd = "#{agentless_command} #{probe[:cmd].match(%r{.*\/puppet (.*)})} #{intf}"
     end
 
     # Get the interface capabilities
@@ -1819,12 +1819,10 @@ DEVICE
       success = []
       probe[:caps][prop].to_s.split(',').each do |val|
         val = netdev_speed(val) if prop[/Speed/] && probe[:netdev_speed]
-        if test_agent.nil?
-          output = create_and_apply_test_manifest(probe[:cmd].match(%r{.*\/puppet resource (.*) })[1], intf, prop, val)
+        if test_agent
+          output = on(test_agent, cmd + "#{prop}=#{val}", acceptable_exit_codes: [0, 2, 1], pty: true).stdout
         else
-          on(test_agent, cmd + "#{prop}=#{val}",
-             acceptable_exit_codes: [0, 2, 1], pty: true)
-          output = stdout
+          output = create_and_apply_test_manifest(probe[:cmd].match(%r{.*\/puppet resource (.*) })[1], intf, prop, val)
         end
         next if output[/error/i]
         if val.match(/^(\d)+$/)
