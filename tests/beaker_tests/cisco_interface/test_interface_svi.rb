@@ -104,14 +104,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
     vdc_limit_f3_no_intf_needed(:clear)
     remove_interface(agent, intf)
   end
-  # remove_interface(agent, intf)
-  # this command fails on fresh VMs as
-  # the interface does not exist, possibly
-  # testbed environments were not cleaned
-  # down properly, or remnants of an existing
-  # test are left over - removing the step as
-  # the cleanup in teardown should remove
-  # the interface at end of the test
+  remove_interface(agent, intf)
   vdc_limit_f3_no_intf_needed(:set)
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Property Testing")

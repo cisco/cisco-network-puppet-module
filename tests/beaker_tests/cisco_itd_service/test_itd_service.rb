@@ -209,7 +209,7 @@ tests[:non_default_shut_4] = {
 
 # class to contain the test_harness_dependencies
 class TestItdService < BaseHarness
-  def self.cleanup(ctx, ignore_errors=false)
+  def self.cleanup(ctx, ignore_errors: false)
     cmds = ['no ip access-list iap',
             'no ip access-list eap',
             'no vlan 2',
@@ -217,7 +217,7 @@ class TestItdService < BaseHarness
             'no feature interface-vlan',
             'no feature itd',
            ].join(' ; ')
-    ctx.test_set(ctx.agent, cmds, ignore_errors)
+    ctx.test_set(ctx.agent, cmds, ignore_errors: ignore_errors)
     ctx.interface_cleanup(ctx.agent, ctx.instance_variable_get(:@ingress_eth_int))
   end
 
