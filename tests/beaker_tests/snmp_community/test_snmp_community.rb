@@ -55,8 +55,8 @@ tests[:non_default] = {
   code:           [0, 2],
 }
 
-def cleanup(agent, ignore_errors=false)
-  test_set(agent, 'no snmp-server community default group network-admin', ignore_errors)
+def cleanup(agent, ignore_errors: false)
+  test_set(agent, 'no snmp-server community default group network-admin', ignore_errors: ignore_errors)
 end
 
 #################################################################

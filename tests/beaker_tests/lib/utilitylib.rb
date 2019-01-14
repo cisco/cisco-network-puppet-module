@@ -1157,7 +1157,7 @@ DEVICE
   end
 
   # Helper method for nxapi client test_set (agentless)
-  def nxapi_test_set(cmd, ignore_errors=false)
+  def nxapi_test_set(cmd, ignore_errors: false)
     test_client = nxapi_test_client
     test_client.set(values: cmd)
   rescue Cisco::CliError => e
@@ -1169,26 +1169,26 @@ DEVICE
   # Add arbitrary configurations using command_config's test_set property.
   # Example:
   #  test_set(agent, 'no feature foo ; no feature bar')
-  def test_set(agent, cmd, ignore_errors=false)
+  def test_set(agent, cmd, ignore_errors: false)
     return if cmd.empty?
     logger.info(cmd)
     if agent
       cmd_prefix = PUPPET_BINPATH + "resource cisco_command_config 'cc' "
       on(agent, cmd_prefix + "test_set='#{cmd}'")
     else
-      nxapi_test_set(cmd, ignore_errors)
+      nxapi_test_set(cmd, ignore_errors: ignore_errors)
     end
   end
 
   # Helper for command_config calls
-  def command_config(agent, cmd, msg='', ignore_errors=false)
+  def command_config(agent, cmd, msg='', ignore_errors: false)
     logger.info("\n#{msg}")
     if agent
       cmd = "resource cisco_command_config 'cc' command=\\\"#{cmd}\\\""
       cmd = PUPPET_BINPATH + cmd
       on(agent, cmd, acceptable_exit_codes: [0, 2])
     else
-      nxapi_test_set(cmd, ignore_errors)
+      nxapi_test_set(cmd, ignore_errors: ignore_errors)
     end
   end
 

@@ -60,8 +60,8 @@ tests[:non_default] = {
   },
 }
 
-def cleanup(agent, ignore_errors=false)
-  test_set(agent, 'no feature tacacs+', ignore_errors)
+def cleanup(agent, ignore_errors: false)
+  test_set(agent, 'no feature tacacs+', ignore_errors: ignore_errors)
 end
 
 #################################################################
