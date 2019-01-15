@@ -71,6 +71,42 @@ RSpec.describe Puppet::Provider::RadiusGlobal::CiscoNexus do
         provider.set(context, changes)
       end
     end
+
+    context 'should is unset' do
+      let(:should_values) do
+        {
+          name:             'default',
+          timeout:          'unset',
+          retransmit_count: 'unset',
+          key:              'unset',
+          source_interface: ['unset'],
+        }
+      end
+
+      it 'calls update' do
+        expect(provider).to receive(:update).with(context, 'default', changes['default'][:should]).once
+
+        provider.set(context, changes)
+      end
+    end
+
+    context 'should is unset and -1' do
+      let(:should_values) do
+        {
+          name:             'default',
+          timeout:          -1,
+          retransmit_count: -1,
+          key:              'unset',
+          source_interface: ['unset'],
+        }
+      end
+
+      it 'calls update' do
+        expect(provider).to receive(:update).with(context, 'default', changes['default'][:should]).once
+
+        provider.set(context, changes)
+      end
+    end
   end
 
   describe '#get' do
@@ -186,6 +222,40 @@ RSpec.describe Puppet::Provider::RadiusGlobal::CiscoNexus do
         timeout:          7,
         retransmit_count: 3,
         source_interface: ['foo'],
+      }],
+    },
+    {
+      desc: '`resources` contains unset values and returns default values',
+      resources: [{
+        name:             'default',
+        timeout:          'unset',
+        retransmit_count: 'unset',
+        key:              'unset',
+        source_interface: ['unset'],
+      }],
+      results: [{
+        name:             'default',
+        timeout:          5,
+        retransmit_count: 1,
+        key:              'unset',
+        source_interface: ['unset'],
+      }],
+    },
+    {
+      desc: '`resources` contains -1 unset values and returns default values',
+      resources: [{
+        name:             'default',
+        timeout:          -1,
+        retransmit_count: -1,
+        key:              'unset',
+        source_interface: ['unset'],
+      }],
+      results: [{
+        name:             'default',
+        timeout:          5,
+        retransmit_count: 1,
+        key:              'unset',
+        source_interface: ['unset'],
       }],
     },
   ]

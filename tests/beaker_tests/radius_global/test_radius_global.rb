@@ -39,6 +39,12 @@ tests[:default] = {
   desc:           '1.1 Default Properties',
   title_pattern:  'default',
   manifest_props: {
+    timeout:          'unset',
+    retransmit_count: 'unset',
+    key:              'unset',
+    source_interface: ['unset'],
+  },
+  resource: {
     timeout:          5,
     retransmit_count: 1,
     key:              'unset',
@@ -49,11 +55,11 @@ tests[:default] = {
 
 # Test hash test cases
 tests[:non_default] = {
-  desc:           '1.1 Default Properties',
+  desc:           '1.1 Non Default Properties',
   title_pattern:  'default',
   manifest_props: {
-    timeout:          5,
-    retransmit_count: 1,
+    timeout:          6,
+    retransmit_count: 2,
     key:              '55555',
     source_interface: ['ethernet1/1'],
   },
