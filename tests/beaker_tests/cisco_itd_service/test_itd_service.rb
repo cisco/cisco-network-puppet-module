@@ -209,7 +209,7 @@ tests[:non_default_shut_4] = {
 
 # class to contain the test_harness_dependencies
 class TestItdService < BaseHarness
-  def self.cleanup(ctx)
+  def self.cleanup(ctx, ignore_errors: false)
     cmds = ['no ip access-list iap',
             'no ip access-list eap',
             'no vlan 2',
@@ -217,12 +217,12 @@ class TestItdService < BaseHarness
             'no feature interface-vlan',
             'no feature itd',
            ].join(' ; ')
-    ctx.test_set(ctx.agent, cmds)
+    ctx.test_set(ctx.agent, cmds, ignore_errors: ignore_errors)
     ctx.interface_cleanup(ctx.agent, ctx.instance_variable_get(:@ingress_eth_int))
   end
 
   def self.test_harness_dependencies(ctx, _tests, _id)
-    cleanup(ctx)
+    cleanup(ctx, ignore_errors: true)
 
     cmd = [
       'feature itd',
@@ -242,7 +242,7 @@ end
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
   teardown { TestItdService.cleanup(self) }
-  TestItdService.cleanup(self)
+  TestItdService.cleanup(self, ignore_errors: true)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")

@@ -59,7 +59,7 @@ tests[:delete] = {
 }
 
 def cleanup(agent)
-  test_set(agent, 'no ip name-server 7.7.7.7')
+  test_set(agent, 'no ip name-server 7.7.7.7', ignore_errors: true)
 end
 #################################################################
 # TEST CASE EXECUTION
@@ -70,7 +70,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Create Property Testing")
   test_harness_run(tests, :create)
-  # # -------------------------------------------------------------------
+  # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Delete Property Testing")
   test_harness_run(tests, :delete)
 end
