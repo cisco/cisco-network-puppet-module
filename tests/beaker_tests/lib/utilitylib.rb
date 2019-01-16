@@ -117,7 +117,7 @@ class Beaker::TestCase
     @credentials_file.write <<CREDENTIALS
 address: "#{beaker_config_connection_address}"
 username: "#{@nexus_host.host_hash[:ssh][:user] || 'admin'}"
-port: "#{@nexus_host.host_hash[:ssh][:port] || '22'}"
+port: "#{@nexus_host.host_hash[:ssh][:port] || '80'}"
 password: "#{@nexus_host.host_hash[:ssh][:password] || 'admin'}"
 CREDENTIALS
     @credentials_file.close
@@ -654,16 +654,7 @@ DEVICE
         cmd = PUPPET_BINPATH + "resource cisco_command_config 'interface_cleanup' command='#{cmd}'"
         on(agent, cmd, acceptable_exit_codes: [0, 2])
       else
-        env = {
-          host: beaker_config_connection_address,
-          port: 22,
-          username: @nexus_host[:ssh][:user],
-          password: @nexus_host[:ssh][:password],
-          cookie: nil
-        }
-        Cisco::Environment.add_env('remote', env)
-        test_client = Cisco::Client.create('remote')
-        test_client.set(values: cmd)
+        nxapi_test_set(cmd)
       end
     end
   end
@@ -1114,7 +1105,7 @@ DEVICE
   def nxapi_test_client
     env = {
       host: beaker_config_connection_address,
-      port: 22,
+      port: @nexus_host[:ssh][:port] || 80,
       username: @nexus_host[:ssh][:user],
       password: @nexus_host[:ssh][:password],
       cookie: nil
