@@ -19,6 +19,17 @@ module Puppet::ResourceApi
       require 'cisco_node_utils'
       resources.each do |resource|
         resource[:key] = resource[:key].gsub(/\A"|"\Z/, '') if resource[:key]
+        resource.each do |k, v|
+          unless k == :key_format
+            resource[k] = 'unset' if v.nil? || v == (nil || -1)
+          end
+          if k == :timeout && (v == 'unset' || v == -1)
+            resource[k] = 5
+          end
+          if k == :retransmit_count && (v == 'unset' || v == -1)
+            resource[k] = 1
+          end
+        end
       end
       resources
     end
@@ -40,8 +51,8 @@ module Puppet::ResourceApi
 
       current_state = {
         name:             'default',
-        timeout:          @radius_global.timeout ? @radius_global.timeout : -1,
-        retransmit_count: @radius_global.retransmit_count ? @radius_global.retransmit_count : -1,
+        timeout:          @radius_global.timeout ? @radius_global.timeout : 'unset',
+        retransmit_count: @radius_global.retransmit_count ? @radius_global.retransmit_count : 'unset',
         key:              @radius_global.key ? @radius_global.key.gsub(/\A"|"\Z/, '') : 'unset',
         # Only return the key format if there is a key configured
         key_format:       @radius_global.key.nil? || @radius_global.key.empty? ? nil : @radius_global.key_format,
