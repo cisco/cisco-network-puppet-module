@@ -1906,7 +1906,7 @@ DEVICE
       resource_absent_cleanup(agent, 'cisco_bridge_domain', 'bridge domains')
       # bridge_domain feature is available only on n7k
       command_config(agent, 'system bridge-domain none', 'system bridge-domain none',
-                     ignore_errors: false) if platform == 'n7k'
+                     ignore_errors: true) if platform == 'n7k'
       test_set(agent, 'no feature interface-vlan')
       test_set(agent, 'no feature private-vlan')
       test_set(agent, 'no vlan 2-3967')
