@@ -48,6 +48,21 @@ tests[:set] = {
   code: [0, 1, 2],
 }
 
+#
+# Set Properties without a hostname to
+# account for a bug that was raised where
+# it would attempt to delete an unmanaged hostname
+#
+tests[:no_hostname] = {
+  desc:           '1.2 Set without hostname',
+  title_pattern:  'settings',
+  manifest_props: {
+    domain: 'foo.bar.com',
+    search: ['test.com'],
+  },
+  code: [0, 1, 2],
+}
+
 def cleanup(original_hostname)
   create_and_apply_test_manifest('network_dns', 'settings', 'hostname', original_hostname)
 end
@@ -60,5 +75,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Set Property Testing")
   test_harness_run(tests, :set, skip_idempotence_check: true)
+  cleanup(original_hostname)
+  test_harness_run(tests, :no_hostname, skip_idempotence_check: true)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

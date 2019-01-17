@@ -81,6 +81,45 @@ RSpec.describe Puppet::Provider::NetworkDns::CiscoNexus do
         provider.update(context, 'settings', should_values)
       end
     end
+    context 'update is called without hostname' do
+      let(:should_values) do
+        {
+          name:     'settings',
+          ensure:   'present',
+          domain:   'foo',
+          search:   ['1.1.1.1'],
+          servers:  ['2.2.2.2'],
+        }
+      end
+
+      it 'performs an update' do
+        expect(Cisco::DomainName).to receive(:new).with('foo')
+        expect(Cisco::HostName).to receive(:new).with('bar').never
+        expect(Cisco::DnsDomain).to receive(:new).with('1.1.1.1')
+        expect(Cisco::NameServer).to receive(:new).with('2.2.2.2')
+        expect(context).to receive(:notice).with(%r{\AUpdating 'settings'})
+        provider.update(context, 'settings', should_values)
+      end
+    end
+    context 'update is called without domain' do
+      let(:should_values) do
+        {
+          name:     'settings',
+          ensure:   'present',
+          search:   ['1.1.1.1'],
+          servers:  ['2.2.2.2'],
+        }
+      end
+
+      it 'performs an update' do
+        expect(Cisco::DomainName).to receive(:new).with('foo').never
+        expect(Cisco::HostName).to receive(:new).with('bar').never
+        expect(Cisco::DnsDomain).to receive(:new).with('1.1.1.1')
+        expect(Cisco::NameServer).to receive(:new).with('2.2.2.2')
+        expect(context).to receive(:notice).with(%r{\AUpdating 'settings'})
+        provider.update(context, 'settings', should_values)
+      end
+    end
   end
 
   describe '#handle_servers' do
