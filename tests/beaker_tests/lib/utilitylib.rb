@@ -1981,7 +1981,7 @@ DEVICE
   # Returns: String with double quotes: (Example: '"foo"'
   #
   def add_quotes(string)
-    return string if image?[/7.3.0/]
+    return string if image?[/7.3/]
     string = "\"#{string}\""
     string
   end
