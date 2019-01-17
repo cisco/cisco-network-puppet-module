@@ -50,12 +50,6 @@ tests[:default] = {
   },
 }
 
-epass = 'test123'
-if platform[/n7k/] && full_version[/7\.3/]
-  epass_resource = epass
-else
-  epass_resource = add_quotes(epass)
-end
 tests[:non_default] = {
   desc:           '2.1 non-default properties',
   title_pattern:  'samplehost1',
@@ -63,12 +57,12 @@ tests[:non_default] = {
     'port'                => 90,
     'timeout'             => 39,
     'encryption_type'     => 'encrypted',
-    'encryption_password' => epass,
+    'encryption_password' => 'test123',
   },
   resource: {
     'port'                => '90',
     'timeout'             => '39',
-    'encryption_password' => epass_resource,
+    'encryption_password' => add_quotes('test123'),
   },
 }
 

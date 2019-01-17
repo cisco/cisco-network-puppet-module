@@ -54,12 +54,6 @@ tests[:default] = {
   },
 }
 
-epass = 'WXYZ12'
-if platform[/n7k/] && full_version[/7\.3/]
-  epass_resource = epass
-else
-  epass_resource = add_quotes(epass)
-end
 tests[:non_default] = {
   desc:           '2.1 non-default properties',
   title_pattern:  'default',
@@ -67,14 +61,14 @@ tests[:non_default] = {
     'timeout'             => 50,
     'deadtime'            => 'default',
     'encryption_type'     => 'encrypted',
-    'encryption_password' => epass,
+    'encryption_password' => 'WXYZ12',
     'directed_request'    => 'false',
     'source_interface'    => 'Ethernet1/4',
   },
   resource: {
     'timeout'             => '50',
     'deadtime'            => '0',
-    'encryption_password' => epass_resource,
+    'encryption_password' => add_quotes('WXYZ12'),
     'encryption_type'     => 'encrypted',
     'directed_request'    => 'false',
     'source_interface'    => 'Ethernet1/4',
