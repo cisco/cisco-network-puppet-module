@@ -28,7 +28,7 @@ tests = {
   master:        master,
   resource_name: 'cisco_ospf',
   # type is ensurable, but require control in testing `negatives`
-  ensurable: false,
+  ensurable:     false,
 }
 
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
@@ -37,7 +37,7 @@ skip_unless_supported(tests)
 tests[:ensurability] = {
   desc:           '1.1 Default Properties',
   title_pattern:  'green',
-  ensure: :present,
+  ensure:         :present,
   code:           [0, 2],
   manifest_props: {
   },
@@ -50,7 +50,7 @@ tests[:negative_values] = {
   manifest_props: {
     ensure: 'unknown',
   },
-  resource: {
+  resource:       {
   },
   stderr_pattern: /Invalid value \"unknown\". Valid values are present, absent./,
 }

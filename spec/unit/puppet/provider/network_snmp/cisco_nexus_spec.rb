@@ -14,15 +14,15 @@ RSpec.describe Puppet::Provider::NetworkSnmp::CiscoNexus do
   let(:changes) do
     {
       'default' =>
-          {
-            is: {
-              name: 'default',
-              enable: true,
-              contact: 'Mr Tayto',
-              location: 'Tayto Castle',
-            },
-            should: should_values
-          }
+                   {
+                     is:     {
+                       name:     'default',
+                       enable:   true,
+                       contact:  'Mr Tayto',
+                       location: 'Tayto Castle',
+                     },
+                     should: should_values
+                   }
     }
   end
 
@@ -36,9 +36,9 @@ RSpec.describe Puppet::Provider::NetworkSnmp::CiscoNexus do
     context 'there are changes' do
       let(:should_values) do
         {
-          name: 'default',
-          enable: true,
-          contact: 'Purple Monster',
+          name:     'default',
+          enable:   true,
+          contact:  'Purple Monster',
           location: 'Monster Munch Caves',
         }
       end
@@ -62,9 +62,9 @@ RSpec.describe Puppet::Provider::NetworkSnmp::CiscoNexus do
 
         expect(provider.get(context)).to eq [
           {
-            name: 'default',
-            enable: bool,
-            contact: 'some_contact',
+            name:     'default',
+            enable:   bool,
+            contact:  'some_contact',
             location: 'some_location',
           },
         ]
@@ -86,7 +86,7 @@ RSpec.describe Puppet::Provider::NetworkSnmp::CiscoNexus do
       expect(snmp_server).not_to receive(:location=)
 
       provider.update(context, 'default',
-                      name: 'default',
+                      name:   'default',
                       ensure: 'present')
     end
     it 'updates the resource with all optional fields' do
@@ -96,10 +96,10 @@ RSpec.describe Puppet::Provider::NetworkSnmp::CiscoNexus do
       expect(snmp_server).to receive(:location=).with('new location')
 
       provider.update(context, 'default',
-                      name: 'default',
-                      ensure: 'present',
-                      enable: true,
-                      contact: 'new contact',
+                      name:     'default',
+                      ensure:   'present',
+                      enable:   true,
+                      contact:  'new contact',
                       location: 'new location')
     end
   end

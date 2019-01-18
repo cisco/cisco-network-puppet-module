@@ -39,7 +39,7 @@ tests[:create_present] = {
   desc:           '1.1 Create Present',
   title_pattern:  'red',
   manifest_props: {
-    ensure: 'present',
+    ensure:  'present',
     servers: ['2.2.2.2', '3.3.3.3'],
   },
   code:           [0, 2],
@@ -49,7 +49,7 @@ tests[:update_servers] = {
   desc:           '2.1 Update Servers',
   title_pattern:  'red',
   manifest_props: {
-    ensure: 'present',
+    ensure:  'present',
     servers: ['2.2.2.2', '4.4.4.4'],
   },
 }
@@ -58,7 +58,7 @@ tests[:unset_servers] = {
   desc:           '3.1 Unset Servers',
   title_pattern:  'red',
   manifest_props: {
-    ensure: 'present',
+    ensure:  'present',
     servers: ['unset'],
   },
 }

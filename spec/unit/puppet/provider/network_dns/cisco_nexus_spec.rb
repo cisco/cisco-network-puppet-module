@@ -235,14 +235,14 @@ RSpec.describe Puppet::Provider::NetworkDns::CiscoNexus do
 
   canonicalize_data = [
     {
-      desc: '`resources` already sorted',
+      desc:      '`resources` already sorted',
       resources: [{
         name:    'settings',
         ensure:  'present',
         servers: ['2001:2008:2008::2000', '2010:2008:2008::2000'],
         search:  ['abc', 'bcd', 'cdf'],
       }],
-      results: [{
+      results:   [{
         name:    'settings',
         ensure:  'present',
         servers: ['2001:2008:2008::2000', '2010:2008:2008::2000'],
@@ -250,14 +250,14 @@ RSpec.describe Puppet::Provider::NetworkDns::CiscoNexus do
       }],
     },
     {
-      desc: '`resources` requires sorting',
+      desc:      '`resources` requires sorting',
       resources: [{
         name:    'settings',
         ensure:  'present',
         servers: ['2001:2008:2008::2000', '2010:2008:2008::2000', '2001:2008:2008::2348'],
         search:  ['abc', 'bcd', 'cdf'],
       }],
-      results: [{
+      results:   [{
         name:    'settings',
         ensure:  'present',
         servers: ['2001:2008:2008::2000', '2001:2008:2008::2348', '2010:2008:2008::2000'],
@@ -265,26 +265,26 @@ RSpec.describe Puppet::Provider::NetworkDns::CiscoNexus do
       }],
     },
     {
-      desc: '`resources` does not contain `servers`',
+      desc:      '`resources` does not contain `servers`',
       resources: [{
-        name:    'settings',
-        ensure:  'present',
-        search:  ['abc', 'bcd', 'cdf'],
+        name:   'settings',
+        ensure: 'present',
+        search: ['abc', 'bcd', 'cdf'],
       }],
-      results: [{
-        name:    'settings',
-        ensure:  'present',
-        search:  ['abc', 'bcd', 'cdf'],
+      results:   [{
+        name:   'settings',
+        ensure: 'present',
+        search: ['abc', 'bcd', 'cdf'],
       }],
     },
     {
-      desc: '`resources` does not contain `search`',
+      desc:      '`resources` does not contain `search`',
       resources: [{
         name:    'settings',
         ensure:  'present',
         servers: ['2001:2008:2008::2000', '2001:2008:2008::2348', '2010:2008:2008::2000'],
       }],
-      results: [{
+      results:   [{
         name:    'settings',
         ensure:  'present',
         servers: ['2001:2008:2008::2000', '2001:2008:2008::2348', '2010:2008:2008::2000'],

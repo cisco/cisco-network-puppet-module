@@ -46,7 +46,7 @@ tests[:default] = {
     'directed_request'    => 'false',
     'source_interface'    => 'default',
   },
-  resource: {
+  resource:       {
     'timeout'          => '5',
     'deadtime'         => '0',
     'directed_request' => 'false',
@@ -65,7 +65,7 @@ tests[:non_default] = {
     'directed_request'    => 'false',
     'source_interface'    => 'Ethernet1/4',
   },
-  resource: {
+  resource:       {
     'timeout'             => '50',
     'deadtime'            => '0',
     'encryption_password' => add_quotes('WXYZ12'),
@@ -81,9 +81,9 @@ tests[:negative_timeout] = {
   manifest_props: {
     'timeout' => '-1',
   },
-  resource: {
+  resource:       {
   },
-  code: [4],
+  code:           [4],
 }
 
 tests[:negative_deadtime] = {
@@ -92,9 +92,9 @@ tests[:negative_deadtime] = {
   manifest_props: {
     'deadtime' => '-1',
   },
-  resource: {
+  resource:       {
   },
-  code: [4],
+  code:           [4],
 }
 
 #################################################################

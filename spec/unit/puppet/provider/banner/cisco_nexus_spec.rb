@@ -13,13 +13,13 @@ RSpec.describe Puppet::Provider::Banner::CiscoNexus do
   let(:changes) do
     {
       'default' =>
-      {
-        is: {
-          name: 'default',
-          motd: 'This is a new MOTD.'
-        },
-        should: should_values
-      }
+                   {
+                     is:     {
+                       name: 'default',
+                       motd: 'This is a new MOTD.'
+                     },
+                     should: should_values
+                   }
     }
   end
 

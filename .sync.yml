@@ -44,7 +44,27 @@ Rakefile:
   branches:
     - 'puppet6'
 .rubocop.yml:
+  profiles:
+    strict:
+      enabled_cops:
+        Metrics/AbcSize:
+        Metrics/CyclomaticComplexity:
+        Metrics/MethodLength:
   default_configs:
     inherit_from: .rubocop_todo.yml
+    Metrics/AbcSize:
+      Description: Baseline code complexity metrics - we should try and reduce these over time
+      Max: 47
+      Exclude:
+        - 'tests/beaker_tests/**/*.rb'
+    Metrics/CyclomaticComplexity:
+      Max: 16
+    Metrics/MethodLength:
+      Max: 41
+      Exclude:
+        - 'tests/beaker_tests/**/*.rb'
+    Layout/AlignHash:
+      EnforcedHashRocketStyle: table
+      EnforcedColonStyle: table
 spec/spec_helper.rb:
   mock_with: ':rspec'

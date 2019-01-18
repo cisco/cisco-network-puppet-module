@@ -36,7 +36,7 @@ RSpec.describe Puppet::Provider::SearchDomain::CiscoNexus do
     end
     context 'with multiple domain searches' do
       it 'still processes' do
-        allow(Cisco::DomainName).to receive(:domainnames).and_return('foo.bar.com' => domainname,
+        allow(Cisco::DomainName).to receive(:domainnames).and_return('foo.bar.com'  => domainname,
                                                                      'fizz.bar.com' => domainname)
         expect(provider.get(context)).to eq [
           {
@@ -52,14 +52,14 @@ RSpec.describe Puppet::Provider::SearchDomain::CiscoNexus do
     end
     context 'get filter used without matches' do
       it 'still processes' do
-        allow(Cisco::DomainName).to receive(:domainnames).and_return('foo.bar.com' => domainname,
+        allow(Cisco::DomainName).to receive(:domainnames).and_return('foo.bar.com'  => domainname,
                                                                      'fizz.bar.com' => domainname)
         expect(provider.get(context, ['bar.fizz.com'])).to eq []
       end
     end
     context 'get filter used with matches' do
       it 'still processes' do
-        allow(Cisco::DomainName).to receive(:domainnames).and_return('foo.bar.com' => domainname,
+        allow(Cisco::DomainName).to receive(:domainnames).and_return('foo.bar.com'  => domainname,
                                                                      'fizz.bar.com' => domainname)
 
         allow(domainname).to receive(:name).and_return('fizz.bar.com')
@@ -77,8 +77,8 @@ RSpec.describe Puppet::Provider::SearchDomain::CiscoNexus do
     context 'create is called with all values' do
       let(:should_values) do
         {
-          name:    'foo.bar.com',
-          ensure:  'present',
+          name:   'foo.bar.com',
+          ensure: 'present',
         }
       end
 
@@ -94,7 +94,7 @@ RSpec.describe Puppet::Provider::SearchDomain::CiscoNexus do
     context 'delete is called' do
       it 'destroys the domain name' do
         expect(context).to receive(:notice).with(%r{\ADestroying 'foo.bar.com'})
-        allow(Cisco::DomainName).to receive(:domainnames).and_return('foo.bar.com' => domainname,
+        allow(Cisco::DomainName).to receive(:domainnames).and_return('foo.bar.com'  => domainname,
                                                                      'fizz.bar.com' => domainname)
         expect(domainname).to receive(:destroy).once
         provider.delete(context, 'foo.bar.com')

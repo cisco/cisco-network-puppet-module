@@ -39,14 +39,14 @@ class Puppet::Provider::SnmpUser::CiscoNexus < Puppet::ResourceApi::SimpleProvid
 
   def get_current_state(user, instance)
     {
-      name:           user,
-      ensure:         'present',
-      engine_id:      instance.engine_id,
-      roles:          instance.groups,
-      auth:           instance.auth_protocol.to_s == 'none' ? nil : instance.auth_protocol.to_s,
-      password:       instance.auth_password,
-      privacy:        instance.priv_protocol.to_s == 'none' ? nil : instance.priv_protocol.to_s,
-      private_key:    instance.priv_password,
+      name:          user,
+      ensure:        'present',
+      engine_id:     instance.engine_id,
+      roles:         instance.groups,
+      auth:          instance.auth_protocol.to_s == 'none' ? nil : instance.auth_protocol.to_s,
+      password:      instance.auth_password,
+      privacy:       instance.priv_protocol.to_s == 'none' ? nil : instance.priv_protocol.to_s,
+      private_key:   instance.priv_password,
       # FM-7548 - device has no ability to check localized_key
       # as localized_key is a flag to determine if the `private_key`
       # and/or `password` should be hashed, if it is `false` during
@@ -54,7 +54,7 @@ class Puppet::Provider::SnmpUser::CiscoNexus < Puppet::ResourceApi::SimpleProvid
       # which means on a `get` the `private_key` and `password` will
       # be in a hashed format - which is why we always return `true`
       # if the snmp_user has either a `password` and/or a `private_key`
-      localized_key:  instance.auth_password || instance.priv_password ? true : nil,
+      localized_key: instance.auth_password || instance.priv_password ? true : nil,
     }
   end
 

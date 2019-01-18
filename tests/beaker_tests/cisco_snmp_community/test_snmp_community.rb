@@ -39,9 +39,9 @@ tests[:defaults] = {
   title_pattern:  'test',
   manifest_props: {
     group: 'default',
-    acl: 'default',
+    acl:   'default',
   },
-  resource: {
+  resource:       {
     group: 'default',
   }
 }
@@ -51,7 +51,7 @@ tests[:non_defaults] = {
   title_pattern:  'test',
   manifest_props: {
     group: 'default',
-    acl: 'aclname',
+    acl:   'aclname',
   },
 }
 
@@ -60,13 +60,13 @@ tests[:negative_group] = {
   title_pattern:  'test',
   manifest_props: {
     group: '',
-    acl: 'aclname',
+    acl:   'aclname',
   },
-  resource: {
+  resource:       {
     group: 'default',
-    acl: 'aclname',
+    acl:   'aclname',
   },
-  code: [2, 4],
+  code:           [2, 4],
 }
 
 tests[:negative_acl] = {
@@ -74,12 +74,12 @@ tests[:negative_acl] = {
   title_pattern:  'test',
   manifest_props: {
     group: 'default',
-    acl: '',
+    acl:   '',
   },
-  resource: {
+  resource:       {
     group: 'default',
   },
-  code: [2, 4],
+  code:           [2, 4],
 }
 
 def cleanup(agent)

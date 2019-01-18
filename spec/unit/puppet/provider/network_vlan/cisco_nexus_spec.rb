@@ -21,10 +21,10 @@ RSpec.describe Puppet::Provider::NetworkVlan::CiscoNexus do
   end
   let(:should_values) do
     {
-      id: '42',
+      id:        '42',
       vlan_name: 'vlan_42',
-      ensure: 'present',
-      shutdown: true,
+      ensure:    'present',
+      shutdown:  true,
     }
   end
 
@@ -44,15 +44,15 @@ RSpec.describe Puppet::Provider::NetworkVlan::CiscoNexus do
 
       expect(provider.get(context)).to eq [
         {
-          id: '1',
-          ensure: 'present',
-          shutdown: false,
+          id:        '1',
+          ensure:    'present',
+          shutdown:  false,
           vlan_name: 'test1',
         },
         {
-          id: '2',
-          ensure: 'present',
-          shutdown: true,
+          id:        '2',
+          ensure:    'present',
+          shutdown:  true,
           vlan_name: 'test2',
         },
       ]
@@ -70,9 +70,9 @@ RSpec.describe Puppet::Provider::NetworkVlan::CiscoNexus do
         expect(vlan2).to receive(:shutdown).and_return(true)
         expect(provider.get(context, ['2'])).to eq [
           {
-            id: '2',
-            ensure: 'present',
-            shutdown: true,
+            id:        '2',
+            ensure:    'present',
+            shutdown:  true,
             vlan_name: 'test2',
           }
         ]

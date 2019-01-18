@@ -40,12 +40,12 @@ tests[:set] = {
   desc:           '1.1 Set Properties',
   title_pattern:  'settings',
   manifest_props: {
-    domain: 'foo.bar.com',
+    domain:   'foo.bar.com',
     hostname: 'foo',
-    search: ['test.com'],
-    servers: ['2001:4860:4860::8888', '8.8.8.8'],
+    search:   ['test.com'],
+    servers:  ['2001:4860:4860::8888', '8.8.8.8'],
   },
-  code: [0, 1, 2],
+  code:           [0, 1, 2],
 }
 
 #

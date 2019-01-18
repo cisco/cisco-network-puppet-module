@@ -26,9 +26,9 @@ RSpec.describe Puppet::Provider::RadiusServerGroup::CiscoNexus do
 
       expect(provider.get(context)).to eq [
         {
-          ensure:           'present',
-          name:             'test_radius',
-          servers:          ['1.1.1.1', '2.2.2.2'],
+          ensure:  'present',
+          name:    'test_radius',
+          servers: ['1.1.1.1', '2.2.2.2'],
         },
       ]
     end
@@ -39,9 +39,9 @@ RSpec.describe Puppet::Provider::RadiusServerGroup::CiscoNexus do
       expect(radius_server_group_instance).to receive(:servers).and_return([]).once
       expect(provider.get(context)).to eq [
         {
-          ensure:           'present',
-          name:             'test_radius',
-          servers:          ['unset'],
+          ensure:  'present',
+          name:    'test_radius',
+          servers: ['unset'],
         },
       ]
     end
@@ -64,9 +64,9 @@ RSpec.describe Puppet::Provider::RadiusServerGroup::CiscoNexus do
         expect(radius_server_group_instance2).to receive(:servers).and_return(['1.2.3.4', '4.3.2.1']).twice
         expect(provider.get(context, ['b'])).to eq [
           {
-            ensure:           'present',
-            name:             'test_radius_b',
-            servers:          ['1.2.3.4', '4.3.2.1'],
+            ensure:  'present',
+            name:    'test_radius_b',
+            servers: ['1.2.3.4', '4.3.2.1'],
           }
         ]
       end
@@ -78,18 +78,18 @@ RSpec.describe Puppet::Provider::RadiusServerGroup::CiscoNexus do
       expect(context).to receive(:notice).with(%r{\ACreating 'test_radius'}).once
       expect(radius_server_group_instance).to receive(:servers=).with(['1.1.1.1', '2.2.2.2'])
 
-      provider.create(context, 'test_radius', name:         'test_radius',
-                                              ensure:       'present',
-                                              servers:      ['1.1.1.1', '2.2.2.2'])
+      provider.create(context, 'test_radius', name:    'test_radius',
+                                              ensure:  'present',
+                                              servers: ['1.1.1.1', '2.2.2.2'])
     end
 
     it 'creates the resource with unset servers' do
       expect(context).to receive(:notice).with(%r{\ACreating 'test_radius'}).once
       expect(radius_server_group_instance).to receive(:servers=).with([])
 
-      provider.create(context, 'test_radius', name:         'test_radius',
-                                              ensure:       'present',
-                                              servers:      ['unset'])
+      provider.create(context, 'test_radius', name:    'test_radius',
+                                              ensure:  'present',
+                                              servers: ['unset'])
     end
   end
 
@@ -98,18 +98,18 @@ RSpec.describe Puppet::Provider::RadiusServerGroup::CiscoNexus do
       expect(context).to receive(:notice).with(%r{\AUpdating 'test_radius'}).once
       expect(radius_server_group_instance).to receive(:servers=).with(['1.1.1.1', '2.2.2.2'])
 
-      provider.update(context, 'test_radius', name:         'test_radius',
-                                              ensure:       'present',
-                                              servers:      ['1.1.1.1', '2.2.2.2'])
+      provider.update(context, 'test_radius', name:    'test_radius',
+                                              ensure:  'present',
+                                              servers: ['1.1.1.1', '2.2.2.2'])
     end
 
     it 'updates the resource with unset servers' do
       expect(context).to receive(:notice).with(%r{\AUpdating 'test_radius'}).once
       expect(radius_server_group_instance).to receive(:servers=).with([])
 
-      provider.update(context, 'test_radius', name:         'test_radius',
-                                              ensure:       'present',
-                                              servers:      ['unset'])
+      provider.update(context, 'test_radius', name:    'test_radius',
+                                              ensure:  'present',
+                                              servers: ['unset'])
     end
   end
 

@@ -35,8 +35,8 @@ module Puppet::ResourceApi
       @banner = Cisco::Banner.new('default')
 
       current_state = {
-        name:     'default',
-        motd:     "#{@banner.motd}",
+        name: 'default',
+        motd: "#{@banner.motd}",
       }
 
       [current_state]

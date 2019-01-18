@@ -53,10 +53,10 @@ tests[:non_default] = {
   desc:           '2.1 Non Default Properties',
   title_pattern:  'default',
   manifest_props: {
-    key: '3333',
-    key_format: 7,
+    key:              '3333',
+    key_format:       7,
     source_interface: ["#{intf}"],
-    timeout: 5,
+    timeout:          5,
   },
 }
 

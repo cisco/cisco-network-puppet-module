@@ -14,16 +14,16 @@ RSpec.describe Puppet::Provider::TacacsGlobal::CiscoNexus do
   let(:changes) do
     {
       'default' =>
-      {
-        is: {
-          name:             'default',
-          timeout:          5,
-          key:              '22222',
-          key_format:       7,
-          source_interface: ['ethernet1/1'],
-        },
-        should: should_values
-      }
+                   {
+                     is:     {
+                       name:             'default',
+                       timeout:          5,
+                       key:              '22222',
+                       key_format:       7,
+                       source_interface: ['ethernet1/1'],
+                     },
+                     should: should_values
+                   }
     }
   end
 
@@ -135,7 +135,7 @@ RSpec.describe Puppet::Provider::TacacsGlobal::CiscoNexus do
 
   canonicalize_data = [
     {
-      desc: '`resources` contains key surrounded in ""',
+      desc:      '`resources` contains key surrounded in ""',
       resources: [{
         name:             'default',
         timeout:          7,
@@ -143,7 +143,7 @@ RSpec.describe Puppet::Provider::TacacsGlobal::CiscoNexus do
         key_format:       7,
         source_interface: ['foo'],
       }],
-      results: [{
+      results:   [{
         name:             'default',
         timeout:          7,
         key:              '444444',
@@ -152,7 +152,7 @@ RSpec.describe Puppet::Provider::TacacsGlobal::CiscoNexus do
       }],
     },
     {
-      desc: '`resources` contains " in the key',
+      desc:      '`resources` contains " in the key',
       resources: [{
         name:             'default',
         timeout:          7,
@@ -160,7 +160,7 @@ RSpec.describe Puppet::Provider::TacacsGlobal::CiscoNexus do
         key_format:       7,
         source_interface: ['foo'],
       }],
-      results: [{
+      results:   [{
         name:             'default',
         timeout:          7,
         key:              'foo"bar"444444',
@@ -169,99 +169,99 @@ RSpec.describe Puppet::Provider::TacacsGlobal::CiscoNexus do
       }],
     },
     {
-      desc: '`resources` does not contain the key value',
+      desc:      '`resources` does not contain the key value',
       resources: [{
         name:             'default',
         timeout:          7,
         key_format:       7,
         source_interface: ['foo'],
       }],
-      results: [{
+      results:   [{
         name:             'default',
         timeout:          7,
-        key: 'unset',
+        key:              'unset',
         key_format:       7,
         source_interface: ['foo'],
       }],
     },
     {
-      desc: '`resources` contains the "unset" key value',
+      desc:      '`resources` contains the "unset" key value',
       resources: [{
         name:             'default',
         timeout:          7,
-        key: 'unset',
+        key:              'unset',
         key_format:       7,
         source_interface: ['foo'],
       }],
-      results: [{
+      results:   [{
         name:             'default',
         timeout:          7,
-        key: 'unset',
+        key:              'unset',
         key_format:       7,
         source_interface: ['foo'],
       }],
     },
     {
-      desc: '`resources` does not contain the timeout value',
+      desc:      '`resources` does not contain the timeout value',
       resources: [{
         name:             'default',
-        key: 'unset',
+        key:              'unset',
         key_format:       7,
         source_interface: ['foo'],
       }],
-      results: [{
+      results:   [{
         name:             'default',
         timeout:          'unset',
-        key: 'unset',
+        key:              'unset',
         key_format:       7,
         source_interface: ['foo'],
       }],
     },
     {
-      desc: '`resources` contains -1 timeout value',
+      desc:      '`resources` contains -1 timeout value',
       resources: [{
         name:             'default',
-        timeout: -1,
-        key: 'unset',
+        timeout:          -1,
+        key:              'unset',
         key_format:       7,
         source_interface: ['foo'],
       }],
-      results: [{
+      results:   [{
         name:             'default',
         timeout:          'unset',
         key_format:       7,
-        key: 'unset',
+        key:              'unset',
         source_interface: ['foo'],
       }],
     },
     {
-      desc: '`resources` contains -1 values',
+      desc:      '`resources` contains -1 values',
       resources: [{
         name:             'default',
-        timeout: -1,
-        key: 'unset',
+        timeout:          -1,
+        key:              'unset',
         key_format:       -1,
         source_interface: ['foo'],
       }],
-      results: [{
+      results:   [{
         name:             'default',
         timeout:          'unset',
         key_format:       'unset',
-        key: 'unset',
+        key:              'unset',
         source_interface: ['foo'],
       }],
     },
     {
-      desc: '`resources` does not contain unsettable values',
+      desc:      '`resources` does not contain unsettable values',
       resources: [{
         name:             'default',
         source_interface: ['foo'],
       }],
-      results: [{
+      results:   [{
         name:             'default',
         timeout:          'unset',
         key_format:       'unset',
-        key: 'unset',
+        key:              'unset',
         source_interface: ['foo'],
       }],
     },

@@ -37,15 +37,15 @@ RSpec.describe Puppet::Provider::RadiusServer::CiscoNexus do
 
       expect(provider.get(dummy_context)).to eq [
         {
-          ensure:           'present',
-          name:             '1.2.3.4',
-          auth_port:        44,
-          acct_port:        55,
-          timeout:          42,
-          retransmit_count: 43,
-          key:              '12345678',
-          key_format:       7,
-          accounting_only:  false,
+          ensure:              'present',
+          name:                '1.2.3.4',
+          auth_port:           44,
+          acct_port:           55,
+          timeout:             42,
+          retransmit_count:    43,
+          key:                 '12345678',
+          key_format:          7,
+          accounting_only:     false,
           authentication_only: true,
         },
       ]
@@ -72,15 +72,15 @@ RSpec.describe Puppet::Provider::RadiusServer::CiscoNexus do
 
       expect(provider.get(dummy_context)).to eq [
         {
-          ensure:           'present',
-          name:             '1.2.3.4',
-          auth_port:        1812,
-          acct_port:        1813,
-          timeout:          'unset',
-          retransmit_count: 'unset',
-          key:              'unset',
-          key_format:       'unset',
-          accounting_only:  true,
+          ensure:              'present',
+          name:                '1.2.3.4',
+          auth_port:           1812,
+          acct_port:           1813,
+          timeout:             'unset',
+          retransmit_count:    'unset',
+          key:                 'unset',
+          key_format:          'unset',
+          accounting_only:     true,
           authentication_only: false,
         },
       ]
@@ -98,16 +98,16 @@ RSpec.describe Puppet::Provider::RadiusServer::CiscoNexus do
       expect(radius_server).to receive(:retransmit_count=).with(4)
       expect(radius_server).to receive(:key_set).with('12345678', 7)
 
-      provider.create(context, '1.2.3.4', name:         '1.2.3.4',
-                                          ensure:       'present',
-                                          accounting_only: true,
-                                          acct_port: 66,
-                                          auth_port: 77,
+      provider.create(context, '1.2.3.4', name:                '1.2.3.4',
+                                          ensure:              'present',
+                                          accounting_only:     true,
+                                          acct_port:           66,
+                                          auth_port:           77,
                                           authentication_only: false,
-                                          key: '12345678',
-                                          key_format: 7,
-                                          retransmit_count: 4,
-                                          timeout: 2)
+                                          key:                 '12345678',
+                                          key_format:          7,
+                                          retransmit_count:    4,
+                                          timeout:             2)
     end
 
     it 'creates the resource with unset values' do
@@ -118,13 +118,13 @@ RSpec.describe Puppet::Provider::RadiusServer::CiscoNexus do
       expect(radius_server).to receive(:retransmit_count=).with(nil)
       expect(radius_server).to receive(:key_set).with(nil, nil)
 
-      provider.create(context, '1.2.3.4', name:         '1.2.3.4',
-                                          ensure:       'present',
-                                          accounting_only: false,
+      provider.create(context, '1.2.3.4', name:                '1.2.3.4',
+                                          ensure:              'present',
+                                          accounting_only:     false,
                                           authentication_only: true,
-                                          key: 'unset',
-                                          retransmit_count: -1,
-                                          timeout: -1)
+                                          key:                 'unset',
+                                          retransmit_count:    -1,
+                                          timeout:             -1)
     end
   end
 
@@ -139,16 +139,16 @@ RSpec.describe Puppet::Provider::RadiusServer::CiscoNexus do
       expect(radius_server).to receive(:retransmit_count=).with(4)
       expect(radius_server).to receive(:key_set).with('12345678', 7)
 
-      provider.update(context, '1.2.3.4', name:         '1.2.3.4',
-                                          ensure:       'present',
-                                          accounting_only: true,
-                                          acct_port: 66,
-                                          auth_port: 77,
+      provider.update(context, '1.2.3.4', name:                '1.2.3.4',
+                                          ensure:              'present',
+                                          accounting_only:     true,
+                                          acct_port:           66,
+                                          auth_port:           77,
                                           authentication_only: false,
-                                          key: '12345678',
-                                          key_format: 7,
-                                          retransmit_count: 4,
-                                          timeout: 2)
+                                          key:                 '12345678',
+                                          key_format:          7,
+                                          retransmit_count:    4,
+                                          timeout:             2)
     end
 
     it 'updates the resource with unset values' do
@@ -159,13 +159,13 @@ RSpec.describe Puppet::Provider::RadiusServer::CiscoNexus do
       expect(radius_server).to receive(:retransmit_count=).with(nil)
       expect(radius_server).to receive(:key_set).with(nil, nil)
 
-      provider.update(context, '1.2.3.4', name:         '1.2.3.4',
-                                          ensure:       'present',
-                                          accounting_only: false,
+      provider.update(context, '1.2.3.4', name:                '1.2.3.4',
+                                          ensure:              'present',
+                                          accounting_only:     false,
                                           authentication_only: true,
-                                          key: 'unset',
-                                          retransmit_count: -1,
-                                          timeout: -1)
+                                          key:                 'unset',
+                                          retransmit_count:    -1,
+                                          timeout:             -1)
     end
   end
 
@@ -224,16 +224,16 @@ RSpec.describe Puppet::Provider::RadiusServer::CiscoNexus do
   describe '#validate' do
     it 'fails on hostname value' do
       should_values = {
-        ensure:           'present',
-        hostname:         '1.2.3.4',
-        name:             '1.2.3.4',
-        auth_port:        1812,
-        acct_port:        1813,
-        timeout:          -1,
-        retransmit_count: -1,
-        key:              'unset',
-        key_format:       -1,
-        accounting_only:  true,
+        ensure:              'present',
+        hostname:            '1.2.3.4',
+        name:                '1.2.3.4',
+        auth_port:           1812,
+        acct_port:           1813,
+        timeout:             -1,
+        retransmit_count:    -1,
+        key:                 'unset',
+        key_format:          -1,
+        accounting_only:     true,
         authentication_only: false,
       }
 
@@ -244,19 +244,19 @@ RSpec.describe Puppet::Provider::RadiusServer::CiscoNexus do
 
     it 'fails on unsupported property' do
       should_values = {
-        ensure:           'present',
-        group:            'group4',
-        deadtime:         true,
-        vrf:              'default',
-        source_interface: 'ethernet1/10',
-        name:             '1.2.3.4',
-        auth_port:        1812,
-        acct_port:        1813,
-        timeout:          -1,
-        retransmit_count: -1,
-        key:              'unset',
-        key_format:       -1,
-        accounting_only:  true,
+        ensure:              'present',
+        group:               'group4',
+        deadtime:            true,
+        vrf:                 'default',
+        source_interface:    'ethernet1/10',
+        name:                '1.2.3.4',
+        auth_port:           1812,
+        acct_port:           1813,
+        timeout:             -1,
+        retransmit_count:    -1,
+        key:                 'unset',
+        key_format:          -1,
+        accounting_only:     true,
         authentication_only: false,
       }
 
@@ -267,14 +267,14 @@ RSpec.describe Puppet::Provider::RadiusServer::CiscoNexus do
 
     it 'fails on key with key_format not being set' do
       should_values = {
-        ensure:           'present',
-        name:             '1.2.3.4',
-        auth_port:        1812,
-        acct_port:        1813,
-        timeout:          -1,
-        retransmit_count: -1,
-        key_format:       7,
-        accounting_only:  true,
+        ensure:              'present',
+        name:                '1.2.3.4',
+        auth_port:           1812,
+        acct_port:           1813,
+        timeout:             -1,
+        retransmit_count:    -1,
+        key_format:          7,
+        accounting_only:     true,
         authentication_only: false,
       }
 
@@ -285,15 +285,15 @@ RSpec.describe Puppet::Provider::RadiusServer::CiscoNexus do
 
     it 'fails on accounting_only and authentication_only both set to false' do
       should_values = {
-        ensure:           'present',
-        name:             '1.2.3.4',
-        auth_port:        1812,
-        acct_port:        1813,
-        timeout:          -1,
-        retransmit_count: -1,
-        key:              '"12345678"',
-        key_format:       7,
-        accounting_only:  false,
+        ensure:              'present',
+        name:                '1.2.3.4',
+        auth_port:           1812,
+        acct_port:           1813,
+        timeout:             -1,
+        retransmit_count:    -1,
+        key:                 '"12345678"',
+        key_format:          7,
+        accounting_only:     false,
         authentication_only: false,
       }
 
@@ -305,7 +305,7 @@ RSpec.describe Puppet::Provider::RadiusServer::CiscoNexus do
 
   canonicalize_data = [
     {
-      desc: '`resources` contains key surrounded in ""',
+      desc:      '`resources` contains key surrounded in ""',
       resources: [{
         name:             'default',
         timeout:          7,
@@ -314,7 +314,7 @@ RSpec.describe Puppet::Provider::RadiusServer::CiscoNexus do
         key_format:       7,
         source_interface: ['foo'],
       }],
-      results: [{
+      results:   [{
         name:             'default',
         timeout:          7,
         retransmit_count: 3,
@@ -324,7 +324,7 @@ RSpec.describe Puppet::Provider::RadiusServer::CiscoNexus do
       }],
     },
     {
-      desc: '`resources` contains " in the key',
+      desc:      '`resources` contains " in the key',
       resources: [{
         name:             'default',
         timeout:          7,
@@ -333,7 +333,7 @@ RSpec.describe Puppet::Provider::RadiusServer::CiscoNexus do
         key_format:       7,
         source_interface: ['foo'],
       }],
-      results: [{
+      results:   [{
         name:             'default',
         timeout:          7,
         retransmit_count: 3,
@@ -343,7 +343,7 @@ RSpec.describe Puppet::Provider::RadiusServer::CiscoNexus do
       }],
     },
     {
-      desc: '`resources` does not contain the key value',
+      desc:      '`resources` does not contain the key value',
       resources: [{
         name:             'default',
         timeout:          7,
@@ -351,102 +351,102 @@ RSpec.describe Puppet::Provider::RadiusServer::CiscoNexus do
         key_format:       7,
         source_interface: ['foo'],
       }],
-      results: [{
+      results:   [{
         name:             'default',
         timeout:          7,
         retransmit_count: 3,
-        key: 'unset',
+        key:              'unset',
         key_format:       7,
         source_interface: ['foo'],
       }],
     },
     {
-      desc: '`resources` contains the "unset" key value',
+      desc:      '`resources` contains the "unset" key value',
       resources: [{
         name:             'default',
         timeout:          7,
         retransmit_count: 3,
-        key: 'unset',
+        key:              'unset',
         key_format:       7,
         source_interface: ['foo'],
       }],
-      results: [{
+      results:   [{
         name:             'default',
         timeout:          7,
         retransmit_count: 3,
-        key: 'unset',
+        key:              'unset',
         key_format:       7,
         source_interface: ['foo'],
       }],
     },
     {
-      desc: '`resources` does not contain the timeout value',
+      desc:      '`resources` does not contain the timeout value',
       resources: [{
         name:             'default',
         retransmit_count: 3,
-        key: 'unset',
+        key:              'unset',
         key_format:       7,
         source_interface: ['foo'],
       }],
-      results: [{
+      results:   [{
         name:             'default',
         timeout:          'unset',
         retransmit_count: 3,
-        key: 'unset',
+        key:              'unset',
         key_format:       7,
         source_interface: ['foo'],
       }],
     },
     {
-      desc: '`resources` contains -1 timeout value',
+      desc:      '`resources` contains -1 timeout value',
       resources: [{
         name:             'default',
         retransmit_count: 3,
-        timeout: -1,
-        key: 'unset',
+        timeout:          -1,
+        key:              'unset',
         key_format:       7,
         source_interface: ['foo'],
       }],
-      results: [{
+      results:   [{
         name:             'default',
         timeout:          'unset',
         key_format:       7,
         retransmit_count: 3,
-        key: 'unset',
+        key:              'unset',
         source_interface: ['foo'],
       }],
     },
     {
-      desc: '`resources` contains -1 values',
+      desc:      '`resources` contains -1 values',
       resources: [{
         name:             'default',
         retransmit_count: -1,
-        timeout: -1,
-        key: 'unset',
+        timeout:          -1,
+        key:              'unset',
         key_format:       -1,
         source_interface: ['foo'],
       }],
-      results: [{
+      results:   [{
         name:             'default',
         timeout:          'unset',
         key_format:       'unset',
         retransmit_count: 'unset',
-        key: 'unset',
+        key:              'unset',
         source_interface: ['foo'],
       }],
     },
     {
-      desc: '`resources` does not contain unsettable values',
+      desc:      '`resources` does not contain unsettable values',
       resources: [{
         name:             'default',
         source_interface: ['foo'],
       }],
-      results: [{
+      results:   [{
         name:             'default',
         timeout:          'unset',
         key_format:       'unset',
         retransmit_count: 'unset',
-        key: 'unset',
+        key:              'unset',
         source_interface: ['foo'],
       }],
     },

@@ -52,7 +52,7 @@ module Puppet::ResourceApi
       require 'cisco_node_utils'
       @syslog_settings = Cisco::SyslogSettings.syslogsettings['default']
       current_state = {
-        name:   'default',
+        name: 'default',
       }
 
       SYSLOG_SETTINGS_ARRAY_PROPS.each do |property|

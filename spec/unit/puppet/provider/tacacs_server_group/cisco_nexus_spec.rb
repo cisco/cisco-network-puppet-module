@@ -40,7 +40,7 @@ RSpec.describe Puppet::Provider::TacacsServerGroup::CiscoNexus do
     context 'with multiple servers' do
       it 'still processes' do
         allow(Cisco::TacacsServerGroup).to receive(:tacacs_server_groups).and_return('cool' => server_group_one,
-                                                                                     'foo' => server_group_two)
+                                                                                     'foo'  => server_group_two)
         allow(server_group_one).to receive(:servers).and_return(['2.2.2.2', '1.1.1.1']).twice
         allow(server_group_two).to receive(:servers).and_return([])
         expect(provider.get(context)).to eq [
@@ -60,14 +60,14 @@ RSpec.describe Puppet::Provider::TacacsServerGroup::CiscoNexus do
     context 'get filter used without matches' do
       it 'still processes' do
         allow(Cisco::TacacsServerGroup).to receive(:tacacs_server_groups).and_return('cool' => server_group_one,
-                                                                                     'foo' => server_group_two)
+                                                                                     'foo'  => server_group_two)
         expect(provider.get(context, ['moo'])).to eq []
       end
     end
     context 'get filter used with matches' do
       it 'still processes' do
         allow(Cisco::TacacsServerGroup).to receive(:tacacs_server_groups).and_return('cool' => server_group_one,
-                                                                                     'foo' => server_group_two)
+                                                                                     'foo'  => server_group_two)
         allow(server_group_two).to receive(:servers).and_return([])
         expect(provider.get(context, ['foo'])).to eq [
           {
@@ -84,8 +84,8 @@ RSpec.describe Puppet::Provider::TacacsServerGroup::CiscoNexus do
     context 'update is called' do
       let(:should_values) do
         {
-          name: 'foo',
-          ensure: 'present',
+          name:    'foo',
+          ensure:  'present',
           servers: ['1.1.1.1', '2.2.2.2', '3.3.3.3']
         }
       end
@@ -94,7 +94,7 @@ RSpec.describe Puppet::Provider::TacacsServerGroup::CiscoNexus do
         expect(context).to receive(:notice).with(%r{\AUpdating 'foo'})
         allow(Cisco::TacacsServerGroup).to receive(:new).with('foo').never
         allow(Cisco::TacacsServerGroup).to receive(:tacacs_server_groups).and_return('cool' => server_group_one,
-                                                                                     'foo' => server_group_two)
+                                                                                     'foo'  => server_group_two)
         expect(server_group_one).to receive(:servers=).with(anything).never
         expect(server_group_two).to receive(:servers=).with(['1.1.1.1', '2.2.2.2', '3.3.3.3']).once
         provider.update(context, 'foo', should_values)
@@ -106,8 +106,8 @@ RSpec.describe Puppet::Provider::TacacsServerGroup::CiscoNexus do
     context 'create is called' do
       let(:should_values) do
         {
-          name: 'foo',
-          ensure: 'present',
+          name:    'foo',
+          ensure:  'present',
           servers: ['1.1.1.1', '2.2.2.2', '3.3.3.3']
         }
       end
@@ -116,7 +116,7 @@ RSpec.describe Puppet::Provider::TacacsServerGroup::CiscoNexus do
         expect(context).to receive(:notice).with(%r{\ACreating 'foo'})
         allow(Cisco::TacacsServerGroup).to receive(:new).with('foo')
         allow(Cisco::TacacsServerGroup).to receive(:tacacs_server_groups).and_return('cool' => server_group_one,
-                                                                                     'foo' => server_group_two)
+                                                                                     'foo'  => server_group_two)
         expect(server_group_one).to receive(:servers=).with(anything).never
         expect(server_group_two).to receive(:servers=).with(['1.1.1.1', '2.2.2.2', '3.3.3.3']).once
         provider.create(context, 'foo', should_values)
@@ -128,15 +128,15 @@ RSpec.describe Puppet::Provider::TacacsServerGroup::CiscoNexus do
     context 'all values' do
       let(:should_values) do
         {
-          name: 'foo',
-          ensure: 'present',
+          name:    'foo',
+          ensure:  'present',
           servers: ['1.1.1.1']
         }
       end
 
       it 'updates the server group' do
         allow(Cisco::TacacsServerGroup).to receive(:tacacs_server_groups).and_return('cool' => server_group_one,
-                                                                                     'foo' => server_group_two)
+                                                                                     'foo'  => server_group_two)
         expect(server_group_one).to receive(:servers=).with(anything).never
         expect(server_group_two).to receive(:servers=).with(['1.1.1.1']).once
         provider.handle_update('foo', should_values)
@@ -149,7 +149,7 @@ RSpec.describe Puppet::Provider::TacacsServerGroup::CiscoNexus do
       it 'destroys the server' do
         expect(context).to receive(:notice).with(%r{\ADestroying 'foo'})
         allow(Cisco::TacacsServerGroup).to receive(:tacacs_server_groups).and_return('cool' => server_group_one,
-                                                                                     'foo' => server_group_two)
+                                                                                     'foo'  => server_group_two)
         expect(server_group_one).to receive(:destroy).never
         expect(server_group_two).to receive(:destroy).once
         provider.delete(context, 'foo')
@@ -166,42 +166,42 @@ RSpec.describe Puppet::Provider::TacacsServerGroup::CiscoNexus do
 
   canonicalize_data = [
     {
-      desc: '`resources` with servers already sorted',
+      desc:      '`resources` with servers already sorted',
       resources: [{
-        name:     'foo',
-        ensure:   'present',
-        servers:  ['1.1.1.1', '2.2.2.2', '10.10.10.10'],
+        name:    'foo',
+        ensure:  'present',
+        servers: ['1.1.1.1', '2.2.2.2', '10.10.10.10'],
       }],
-      results: [{
-        name:     'foo',
-        ensure:   'present',
-        servers:  ['1.1.1.1', '2.2.2.2', '10.10.10.10'],
+      results:   [{
+        name:    'foo',
+        ensure:  'present',
+        servers: ['1.1.1.1', '2.2.2.2', '10.10.10.10'],
       }],
     },
     {
-      desc: '`resources` with servers requiring sorting',
+      desc:      '`resources` with servers requiring sorting',
       resources: [{
-        name:     'foo',
-        ensure:   'present',
-        servers:  ['1.1.1.1', '10.10.10.10', '2.2.2.2'],
+        name:    'foo',
+        ensure:  'present',
+        servers: ['1.1.1.1', '10.10.10.10', '2.2.2.2'],
       }],
-      results: [{
-        name:     'foo',
-        ensure:   'present',
-        servers:  ['1.1.1.1', '2.2.2.2', '10.10.10.10'],
+      results:   [{
+        name:    'foo',
+        ensure:  'present',
+        servers: ['1.1.1.1', '2.2.2.2', '10.10.10.10'],
       }],
     },
     {
-      desc: '`resources` with servers set as unset',
+      desc:      '`resources` with servers set as unset',
       resources: [{
-        name:     'foo',
-        ensure:   'present',
-        servers:  ['unset'],
+        name:    'foo',
+        ensure:  'present',
+        servers: ['unset'],
       }],
-      results: [{
-        name:     'foo',
-        ensure:   'present',
-        servers:  ['unset'],
+      results:   [{
+        name:    'foo',
+        ensure:  'present',
+        servers: ['unset'],
       }],
     },
   ]

@@ -101,17 +101,17 @@ RSpec.describe Puppet::Provider::NtpAuthKey::CiscoNexus do
           name:      '1',
           ensure:    'present',
           algorithm: 'md5',
-          mode:       7,
+          mode:      7,
           password:  'foo',
         }
       end
 
       it 'performs an update' do
         expect(context).to receive(:notice).with(%r{\ASetting '1'})
-        expect(Cisco::NtpAuthKey).to receive(:new).with('name' => '1',
+        expect(Cisco::NtpAuthKey).to receive(:new).with('name'      => '1',
                                                         'algorithm' => 'md5',
-                                                        'mode' =>       7,
-                                                        'password' =>  'foo')
+                                                        'mode'      => 7,
+                                                        'password'  => 'foo')
 
         provider.update(context, '1', should_values)
       end
@@ -119,8 +119,8 @@ RSpec.describe Puppet::Provider::NtpAuthKey::CiscoNexus do
     context 'update is called only name' do
       let(:should_values) do
         {
-          name:      '1',
-          ensure:    'present',
+          name:   '1',
+          ensure: 'present',
         }
       end
 
@@ -140,17 +140,17 @@ RSpec.describe Puppet::Provider::NtpAuthKey::CiscoNexus do
           name:      '1',
           ensure:    'present',
           algorithm: 'md5',
-          mode:       7,
+          mode:      7,
           password:  'foo',
         }
       end
 
       it 'performs a create' do
         expect(context).to receive(:notice).with(%r{\ASetting '1'})
-        expect(Cisco::NtpAuthKey).to receive(:new).with('name' => '1',
+        expect(Cisco::NtpAuthKey).to receive(:new).with('name'      => '1',
                                                         'algorithm' => 'md5',
-                                                        'mode' =>       7,
-                                                        'password' =>  'foo')
+                                                        'mode'      => 7,
+                                                        'password'  => 'foo')
 
         provider.create(context, '1', should_values)
       end
@@ -158,8 +158,8 @@ RSpec.describe Puppet::Provider::NtpAuthKey::CiscoNexus do
     context 'create is called only name' do
       let(:should_values) do
         {
-          name:      '1',
-          ensure:    'present',
+          name:   '1',
+          ensure: 'present',
         }
       end
 
@@ -190,38 +190,38 @@ RSpec.describe Puppet::Provider::NtpAuthKey::CiscoNexus do
 
   validate_should_data = [
     {
-      desc: '`name` is a string',
-      issue: 'raise an error',
+      desc:   '`name` is a string',
+      issue:  'raise an error',
       expect: it { expect { provider.validate_should(name: 'foo') }.to raise_error Puppet::ResourceError, 'Invalid name, must be 1-65535' }
     },
     {
-      desc: '`name` is exceeds 65535',
-      issue: 'raise an error',
+      desc:   '`name` is exceeds 65535',
+      issue:  'raise an error',
       expect: it { expect { provider.validate_should(name: '65536') }.to raise_error Puppet::ResourceError, 'Invalid name, must be 1-65535' }
     },
     {
-      desc: '`name` is 0',
-      issue: 'raise an error',
+      desc:   '`name` is 0',
+      issue:  'raise an error',
       expect: it { expect { provider.validate_should(name: '0') }.to raise_error Puppet::ResourceError, 'Invalid name, must be 1-65535' }
     },
     {
-      desc: '`name` does not exceed 65535',
-      issue: 'not raise an error',
+      desc:   '`name` does not exceed 65535',
+      issue:  'not raise an error',
       expect: it { expect { provider.validate_should(name: '65535') }.not_to raise_error }
     },
     {
-      desc: '`password` exceeds 15 characters',
-      issue: 'raise an error',
+      desc:   '`password` exceeds 15 characters',
+      issue:  'raise an error',
       expect: it { expect { provider.validate_should(name: '1', password: 'superlongpassword') }.to raise_error Puppet::ResourceError, 'Invalid password length, max length is 15' }
     },
     {
-      desc: '`mode` is not valid',
-      issue: 'raise an error',
+      desc:   '`mode` is not valid',
+      issue:  'raise an error',
       expect: it { expect { provider.validate_should(name: '1', mode: 1) }.to raise_error Puppet::ResourceError, 'Invalid mode, supported modes are 0 and 7' }
     },
     {
-      desc: '`should` is valid',
-      issue: 'not raise an error',
+      desc:   '`should` is valid',
+      issue:  'not raise an error',
       expect: it { expect { provider.validate_should(name: '1', mode: 0, password: 'foo') }.not_to raise_error }
     },
   ]

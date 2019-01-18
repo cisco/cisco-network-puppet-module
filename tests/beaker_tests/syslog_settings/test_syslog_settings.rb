@@ -41,25 +41,25 @@ intf = find_interface(tests)
 tests[:defaults] = {
   title_pattern:  'default',
   manifest_props: {
-    console: 2,
-    monitor: 5,
+    console:          2,
+    monitor:          5,
     source_interface: ['unset'],
     time_stamp_units: 'seconds',
   },
-  code: [0, 2],
+  code:           [0, 2],
 }
 
 # Test hash test cases
 tests[:non_default] = {
   title_pattern:  'default',
   manifest_props: {
-    console: 2,
-    monitor: 5,
-    source_interface: ["#{intf}"],
-    time_stamp_units: 'milliseconds',
-    logfile_name: 'testlogfile',
+    console:                2,
+    monitor:                5,
+    source_interface:       ["#{intf}"],
+    time_stamp_units:       'milliseconds',
+    logfile_name:           'testlogfile',
     logfile_severity_level: 3,
-    logfile_size: 4098,
+    logfile_size:           4098,
   },
 }
 
@@ -67,13 +67,13 @@ tests[:non_default] = {
 tests[:unsetting] = {
   title_pattern:  'default',
   manifest_props: {
-    console: 2,
-    monitor: 5,
-    source_interface: ['unset'],
-    time_stamp_units: 'seconds',
-    logfile_name: 'unset',
+    console:                2,
+    monitor:                5,
+    source_interface:       ['unset'],
+    time_stamp_units:       'seconds',
+    logfile_name:           'unset',
     logfile_severity_level: 'unset',
-    logfile_size: -1,
+    logfile_size:           -1,
   },
 }
 

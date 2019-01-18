@@ -44,7 +44,7 @@ tests[:default] = {
     'encryption_type'     => 'default',
     'encryption_password' => 'default',
   },
-  resource: {
+  resource:       {
     'port'    => '49',
     'timeout' => '0',
   },
@@ -59,7 +59,7 @@ tests[:non_default] = {
     'encryption_type'     => 'encrypted',
     'encryption_password' => 'test123',
   },
-  resource: {
+  resource:       {
     'port'                => '90',
     'timeout'             => '39',
     'encryption_password' => add_quotes('test123'),
@@ -70,24 +70,24 @@ tests[:negative_port] = {
   desc:           '3.1 negative properties',
   title_pattern:  'samplehost1',
   manifest_props: {
-    'port'                => -1,
-    'timeout'             => '0',
+    'port'    => -1,
+    'timeout' => '0',
   },
-  resource: {
+  resource:       {
   },
-  code: [6],
+  code:           [6],
 }
 
 tests[:negative_timeout] = {
   desc:           '3.2 negative properties',
   title_pattern:  'samplehost1',
   manifest_props: {
-    'port'                => '49',
-    'timeout'             => -1,
+    'port'    => '49',
+    'timeout' => -1,
   },
-  resource: {
+  resource:       {
   },
-  code: [6],
+  code:           [6],
 }
 
 tests[:negative_password] = {
@@ -99,9 +99,9 @@ tests[:negative_password] = {
     'encryption_type'     => 'default',
     'encryption_password' => '',
   },
-  resource: {
+  resource:       {
   },
-  code: [6],
+  code:           [6],
 }
 
 def cleanup(agent)

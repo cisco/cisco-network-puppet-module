@@ -45,7 +45,7 @@ tests[:default] = {
     mschap:               'default',
     mschapv2:             'default',
   },
-  resource: {
+  resource:       {
     ascii_authentication: 'false',
     chap:                 'false',
     error_display:        'false',
@@ -65,7 +65,7 @@ tests[:default_symbol] = {
     mschap:               :default,
     mschapv2:             :default,
   },
-  resource: {
+  resource:       {
     ascii_authentication: 'false',
     chap:                 'false',
     error_display:        'false',
@@ -134,17 +134,17 @@ def non_default_symbol_tests(tests, vals)
     title_pattern:  'default',
     manifest_props: {
       ascii_authentication: ascii,
-      chap: chap,
-      error_display: :true,
-      mschap: mschap,
-      mschapv2: mschapv2,
+      chap:                 chap,
+      error_display:        :true,
+      mschap:               mschap,
+      mschapv2:             mschapv2,
     },
-    resource: {
+    resource:       {
       ascii_authentication: ascii.to_s,
-      chap: chap.to_s,
-      error_display: 'true',
-      mschap: mschap.to_s,
-      mschapv2: mschapv2.to_s,
+      chap:                 chap.to_s,
+      error_display:        'true',
+      mschap:               mschap.to_s,
+      mschapv2:             mschapv2.to_s,
     },
     code:           [0, 2],
   }
@@ -158,10 +158,10 @@ def non_default_tests(tests, vals)
     title_pattern:  'default',
     manifest_props: {
       ascii_authentication: ascii.to_s,
-      chap: chap.to_s,
-      error_display: 'true',
-      mschap: mschap.to_s,
-      mschapv2: mschapv2.to_s,
+      chap:                 chap.to_s,
+      error_display:        'true',
+      mschap:               mschap.to_s,
+      mschapv2:             mschapv2.to_s,
     },
     code:           [0, 2],
   }

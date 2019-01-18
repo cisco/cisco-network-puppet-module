@@ -25,10 +25,10 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 # Test hash top-level keys
 tests = {
-  agent:            agent,
-  master:           master,
-  intf_type:        'ethernet',
-  resource_name:    'network_trunk',
+  agent:         agent,
+  master:        master,
+  intf_type:     'ethernet',
+  resource_name: 'network_trunk',
 }
 
 # Discover a usable test interface

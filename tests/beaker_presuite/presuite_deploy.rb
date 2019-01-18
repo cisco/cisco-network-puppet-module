@@ -144,8 +144,8 @@ test_name 'Prep Masters & Install Puppet' do
   unless agents.empty?
     step 'Install agent on switches, sign certificates' do
       opts = {
-        puppet_collection: 'PC1',
-        puppet_agent_sha: ENV['SHA'],
+        puppet_collection:    'PC1',
+        puppet_agent_sha:     ENV['SHA'],
         puppet_agent_version: ENV['SUITE_VERSION'] || ENV['SHA']
       }
       agents.each do |switch|

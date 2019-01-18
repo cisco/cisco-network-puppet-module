@@ -34,12 +34,12 @@ RSpec.describe Puppet::Provider::SyslogServer::CiscoNexus do
         allow(syslog_server_one).to receive(:facility).and_return('mail')
         expect(provider.get(context)).to eq [
           {
-            name:             '1.2.3.4',
-            ensure:           'present',
-            severity_level:   5,
-            port:             80,
-            vrf:              'default',
-            facility:         'mail',
+            name:           '1.2.3.4',
+            ensure:         'present',
+            severity_level: 5,
+            port:           80,
+            vrf:            'default',
+            facility:       'mail',
           }
         ]
       end
@@ -58,20 +58,20 @@ RSpec.describe Puppet::Provider::SyslogServer::CiscoNexus do
         allow(syslog_server_two).to receive(:facility).and_return('cron')
         expect(provider.get(context)).to eq [
           {
-            name:             '1.2.3.4',
-            ensure:           'present',
-            severity_level:   5,
-            port:             80,
-            vrf:              'default',
-            facility:         'mail',
+            name:           '1.2.3.4',
+            ensure:         'present',
+            severity_level: 5,
+            port:           80,
+            vrf:            'default',
+            facility:       'mail',
           },
           {
-            name:             '4.3.2.1',
-            ensure:           'present',
-            severity_level:   2,
-            port:             40,
-            vrf:              'default',
-            facility:         'cron',
+            name:           '4.3.2.1',
+            ensure:         'present',
+            severity_level: 2,
+            port:           40,
+            vrf:            'default',
+            facility:       'cron',
           }
         ]
       end
@@ -93,12 +93,12 @@ RSpec.describe Puppet::Provider::SyslogServer::CiscoNexus do
         allow(syslog_server_one).to receive(:facility).and_return('mail')
         expect(provider.get(context, ['1.2.3.4'])).to eq [
           {
-            name:             '1.2.3.4',
-            ensure:           'present',
-            severity_level:   5,
-            port:             80,
-            vrf:              'default',
-            facility:         'mail',
+            name:           '1.2.3.4',
+            ensure:         'present',
+            severity_level: 5,
+            port:           80,
+            vrf:            'default',
+            facility:       'mail',
           },
         ]
       end
@@ -109,22 +109,22 @@ RSpec.describe Puppet::Provider::SyslogServer::CiscoNexus do
     context 'update is called' do
       let(:should_values) do
         {
-          name:             '1.2.3.4',
-          ensure:           'present',
-          severity_level:   5,
-          port:             80,
-          vrf:              'default',
-          facility:         'mail',
+          name:           '1.2.3.4',
+          ensure:         'present',
+          severity_level: 5,
+          port:           80,
+          vrf:            'default',
+          facility:       'mail',
         }
       end
 
       it 'sets the values' do
         expect(context).to receive(:notice).with(%r{Setting '1.2.3.4'})
-        expect(Cisco::SyslogServer).to receive(:new).with('name' => '1.2.3.4',
+        expect(Cisco::SyslogServer).to receive(:new).with('name'           => '1.2.3.4',
                                                           'severity_level' => '5',
-                                                          'port' => '80',
-                                                          'vrf' => 'default',
-                                                          'facility' => 'mail')
+                                                          'port'           => '80',
+                                                          'vrf'            => 'default',
+                                                          'facility'       => 'mail')
         provider.update(context, '1.2.3.4', should_values)
       end
     end
@@ -134,22 +134,22 @@ RSpec.describe Puppet::Provider::SyslogServer::CiscoNexus do
     context 'create is called' do
       let(:should_values) do
         {
-          name:             '1.2.3.4',
-          ensure:           'present',
-          severity_level:   5,
-          port:             80,
-          vrf:              'default',
-          facility:         'mail',
+          name:           '1.2.3.4',
+          ensure:         'present',
+          severity_level: 5,
+          port:           80,
+          vrf:            'default',
+          facility:       'mail',
         }
       end
 
       it 'sets the values' do
         expect(context).to receive(:notice).with(%r{Setting '1.2.3.4'})
-        expect(Cisco::SyslogServer).to receive(:new).with('name' => '1.2.3.4',
+        expect(Cisco::SyslogServer).to receive(:new).with('name'           => '1.2.3.4',
                                                           'severity_level' => '5',
-                                                          'port' => '80',
-                                                          'vrf' => 'default',
-                                                          'facility' => 'mail')
+                                                          'port'           => '80',
+                                                          'vrf'            => 'default',
+                                                          'facility'       => 'mail')
         provider.create(context, '1.2.3.4', should_values)
       end
     end

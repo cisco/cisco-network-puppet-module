@@ -35,22 +35,22 @@ RSpec.describe Puppet::Provider::SnmpUser::CiscoNexus do
         expect(snmpuser).to receive(:priv_password).and_return('cowwwwmoo')
         expect(provider.get(context)).to eq [
           {
-            name:           'test',
-            ensure:         'present',
-            engine_id:      'foo',
-            roles:          ['bar', 'car'],
-            auth:           'dog',
-            password:       'moooocow',
-            privacy:        'cat',
-            private_key:    'cowwwwmoo',
-            localized_key:  true,
+            name:          'test',
+            ensure:        'present',
+            engine_id:     'foo',
+            roles:         ['bar', 'car'],
+            auth:          'dog',
+            password:      'moooocow',
+            privacy:       'cat',
+            private_key:   'cowwwwmoo',
+            localized_key: true,
           }
         ]
       end
     end
     context 'with multiple users' do
       it 'still processes' do
-        allow(Cisco::SnmpUser).to receive(:users).and_return('test' => snmpuser,
+        allow(Cisco::SnmpUser).to receive(:users).and_return('test'  => snmpuser,
                                                              'admin' => snmpuser)
         expect(snmpuser).to receive(:engine_id).and_return('foo', 'moo')
         expect(snmpuser).to receive(:groups).and_return(['bar', 'car'], [])
@@ -60,40 +60,40 @@ RSpec.describe Puppet::Provider::SnmpUser::CiscoNexus do
         expect(snmpuser).to receive(:priv_password).and_return('cowwwwmoo', nil, nil)
         expect(provider.get(context)).to eq [
           {
-            name:           'test',
-            ensure:         'present',
-            engine_id:      'foo',
-            roles:          ['bar', 'car'],
-            auth:           'dog',
-            password:       'moooocow',
-            privacy:        'cat',
-            private_key:    'cowwwwmoo',
-            localized_key:  true,
+            name:          'test',
+            ensure:        'present',
+            engine_id:     'foo',
+            roles:         ['bar', 'car'],
+            auth:          'dog',
+            password:      'moooocow',
+            privacy:       'cat',
+            private_key:   'cowwwwmoo',
+            localized_key: true,
           },
           {
-            name:           'admin',
-            ensure:         'present',
-            engine_id:      'moo',
-            roles:          [],
-            auth:           '',
-            password:       nil,
-            privacy:        '',
-            private_key:    nil,
-            localized_key:  nil,
+            name:          'admin',
+            ensure:        'present',
+            engine_id:     'moo',
+            roles:         [],
+            auth:          '',
+            password:      nil,
+            privacy:       '',
+            private_key:   nil,
+            localized_key: nil,
           }
         ]
       end
     end
     context 'get filter used without matches' do
       it 'still processes' do
-        allow(Cisco::SnmpUser).to receive(:users).and_return('test' => snmpuser,
+        allow(Cisco::SnmpUser).to receive(:users).and_return('test'  => snmpuser,
                                                              'admin' => snmpuser)
         expect(provider.get(context, ['dog'])).to eq []
       end
     end
     context 'get filter used with matches' do
       it 'still processes' do
-        allow(Cisco::SnmpUser).to receive(:users).and_return('test' => snmpuser,
+        allow(Cisco::SnmpUser).to receive(:users).and_return('test'  => snmpuser,
                                                              'admin' => snmpuser)
         expect(snmpuser).to receive(:engine_id).and_return('foo')
         expect(snmpuser).to receive(:groups).and_return(['bar', 'car'])
@@ -103,15 +103,15 @@ RSpec.describe Puppet::Provider::SnmpUser::CiscoNexus do
         expect(snmpuser).to receive(:priv_password).and_return('cowwwwmoo')
         expect(provider.get(context, ['test'])).to eq [
           {
-            name:           'test',
-            ensure:         'present',
-            engine_id:      'foo',
-            roles:          ['bar', 'car'],
-            auth:           'dog',
-            password:       'moooocow',
-            privacy:        'cat',
-            private_key:    'cowwwwmoo',
-            localized_key:  true,
+            name:          'test',
+            ensure:        'present',
+            engine_id:     'foo',
+            roles:         ['bar', 'car'],
+            auth:          'dog',
+            password:      'moooocow',
+            privacy:       'cat',
+            private_key:   'cowwwwmoo',
+            localized_key: true,
           }
         ]
       end
@@ -122,13 +122,13 @@ RSpec.describe Puppet::Provider::SnmpUser::CiscoNexus do
     context 'update is called' do
       let(:should_values) do
         {
-          name:       'foo',
-          ensure:     'present',
-          roles:       ['bar', 'car'],
-          auth:        'dog',
-          password:    'moooocow',
-          privacy:     'cat',
-          private_key: 'cowwwwmoo',
+          name:          'foo',
+          ensure:        'present',
+          roles:         ['bar', 'car'],
+          auth:          'dog',
+          password:      'moooocow',
+          privacy:       'cat',
+          private_key:   'cowwwwmoo',
           localized_key: true,
         }
       end
@@ -152,8 +152,8 @@ RSpec.describe Puppet::Provider::SnmpUser::CiscoNexus do
     context 'create is called' do
       let(:should_values) do
         {
-          name:       'foo',
-          ensure:     'present',
+          name:        'foo',
+          ensure:      'present',
           roles:       ['bar', 'car'],
           auth:        'dog',
           password:    'moooocow',
@@ -181,7 +181,7 @@ RSpec.describe Puppet::Provider::SnmpUser::CiscoNexus do
     context 'delete is called' do
       it 'destroys the user' do
         expect(context).to receive(:notice).with(%r{\ADestroying 'foo'})
-        expect(Cisco::SnmpUser).to receive(:users).and_return('foo' => snmpuser,
+        expect(Cisco::SnmpUser).to receive(:users).and_return('foo'   => snmpuser,
                                                               'admin' => snmpuser)
         expect(snmpuser).to receive(:destroy).once
         provider.delete(context, 'foo')

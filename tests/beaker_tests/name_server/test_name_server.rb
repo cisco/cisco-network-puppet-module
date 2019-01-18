@@ -39,7 +39,7 @@ tests[:create] = {
   title_pattern:  '7.7.7.7',
   manifest_props: {
   },
-  resource: {
+  resource:       {
     'ensure' => 'present',
   },
   code:           [0, 2],
@@ -49,10 +49,10 @@ tests[:create] = {
 tests[:delete] = {
   desc:           '2.1 Delete Name Server',
   title_pattern:  '7.7.7.7',
-  ensure: :absent,
+  ensure:         :absent,
   manifest_props: {
   },
-  resource: {
+  resource:       {
     # resource won't match
   },
   code:           [0, 2],
