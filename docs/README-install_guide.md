@@ -4,10 +4,10 @@
 
 1. [Overview](#overview)
 1. [Pre-install tasks](#pre-install)
-    * [Puppet Agent mode](#agent-mode)
-    * [Puppet Agentless mode](#agentless-mode)
+    * [Puppet agent mode](#agent-mode)
+    * [Puppet agentless mode](#agentless-mode)
     * [Common gem dependencies](#gem-dependencies)
-1. [Transitioning to Agentless](#transitioning)
+1. [Transitioning to agentless](#transitioning)
 1. [Building from source](#building-manually)
 
 ---
@@ -15,45 +15,45 @@
 <a name="overview"></a>
 ## Overview
 
-This document describes the installation and setup of the Puppet Cisco module for the management of Cisco Nexus switches. These instructions focus on manual setup.
+This document describes how to install and manually setup the Puppet Cisco module for the managing Cisco Nexus switches.
 
 <a name="pre-install"></a>
 ## Pre-install tasks
 
-This Puppet module supports two modes of operation, a Puppet agent mode, and a Puppet Agentless mode. The setup varies slightly for each mode, since the Puppet agent mode has a Puppet agent installed directly on to the device and communicates directly to the Puppet Master, whereas the Puppet Agentless mode will communicate with the device typically through a [Proxy Agent](https://puppet.com/docs/puppet/5.5/puppet_device.html#concept-562).
+This Puppet module supports two modes of operation: an agent mode and an agentless mode. The setup varies slightly for each mode — the agent mode has a Puppet agent installed directly on to the device and communicates directly with the Puppet master, whereas the agentless mode communicates with the device typically through a [Proxy Agent](https://puppet.com/docs/puppet/latest/puppet_device.html#concept-562).
 
-On each puppetserver or PE master that needs to serve catalogs for NX-OS devices will require the [puppetlabs-ciscopuppet](https://forge.puppet.com/puppetlabs/ciscopuppet) and the following Puppet modules:
+Each puppetserver or PE master that serve catalogs for NX-OS devices require [puppetlabs-ciscopuppet](https://forge.puppet.com/puppetlabs/ciscopuppet) and the following two modules:
 
 * [puppetlabs-netdev_stdlib](https://forge.puppet.com/puppetlabs/netdev_stdlib) (v0.18.0 or later)
 * [puppetlabs-resource_api](https://forge.puppet.com/puppetlabs/resource_api)
 
-For more information on Puppet module installation see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html)
-
-The Resource API Ruby gem will also need to be installed on any puppetserver or PE master that needs to serve catalogs for an NX-OS device.
+You will also need to install the Resource API Ruby gem:
 
 ```bash
 puppetserver gem install puppet-resource_api
 puppetserver reload
 ```
 
+For more information on installing Puppet modules, [Installing and managing modules](https://puppet.com/docs/puppet/latest/modules_installing.html)
+
 <a name="agent-mode"></a>
-#### Puppet Agent mode
+#### Puppet agent mode
 
-The Puppet Agent mode is supported through the [2018.1 LTS Puppet Enterprice version](https://puppet.com/misc/puppet-enterprise-lifecycle) and provides the benefits of having access to [Puppet core types](https://puppet.com/docs/puppet/5.5/cheatsheet_core_types.html) for management of the underlying OS on the NX-OS device.
+The agent mode is supported by the [2018.1 LTS Puppet Enterprice version](https://puppet.com/misc/puppet-enterprise-lifecycle) and provides access to [Puppet core types](https://puppet.com/docs/puppet/5.5/cheatsheet_core_types.html) for managing the underlying OS on the NX-OS device.
 
-The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md](https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-agent-install.md) document for detailed instructions on agent installation and configuration on Cisco Nexus devices.
+Install and setup the Puppet agent on each device — you can do this manually or as an automated process. For instructions on how to install agents and configure Cisco Nexus devices, see [README-agent-install.md](https://github.com/cisco/cisco-network-puppet-module/blob/master/docs/README-agent-install.md).
 
 <a name="agentless-mode"></a>
-#### Puppet Agentless mode
+#### Puppet agentless mode
 
-Using the module in the Puppet Agentless mode will harness the [`puppet device` command](https://puppet.com/docs/puppet/5.5/puppet_device.html), where it will communicate remotely with the device using the [configuration details provided](https://puppet.com/docs/puppet/5.5/puppet_device.html#concept-363).
+Using the module in the agentless mode will harness the [`puppet device` command](https://puppet.com/docs/puppet/5.5/puppet_device.html) and communicate remotely with the device using the [configuration details provided](https://puppet.com/docs/puppet/latest/puppet_device.html#concept-363).
 
-This mode however has the limitations of being unable to manage the [Puppet core types](https://puppet.com/docs/puppet/5.5/cheatsheet_core_types.html) on the device, such as `file`, `package` etc.
+Note that this mode is unable to manage the [Puppet core types](https://puppet.com/docs/puppet/5.5/cheatsheet_core_types.html) on the device, such as `file`, `package` etc.
 
 <a name="gem-dependencies"></a>
 #### Common gem dependencies
 
-The following Ruby gems will need to be installed on the Puppet Agent which will be managing the device:
+The following Ruby gems need to be installed on the Puppet agent which will be managing the device:
 
 * [cisco_node_utils](https://rubygems.org/gems/cisco_node_utils)
 * [puppet-resource_api](https://rubygems.org/gems/puppet-resource_api)
@@ -65,16 +65,16 @@ The following Ruby gems will need to be installed on the Puppet Agent which will
 <a name="transitioning"></a>
 ## Transitioning to latest module version
 
-If the existing version of the `ciscopuppet` module (Version 1.10.0 or earlier) with the agent-only based mode has been in use, if there are plans to continue using the agent then the [puppet-resource_api](https://rubygems.org/gems/puppet-resource_api) will need to be installed on to the devices' agent. 
+If you are using the existing version of the `ciscopuppet` module (Version 1.10.0 or earlier) with the agent-only based mode has been in use and you plan to continue using the agent, install the [puppet-resource_api](https://rubygems.org/gems/puppet-resource_api) on to the devices' agent. 
 
-If there are plans to move from using the agent on the device and swapping to using `puppet device` then following [Puppet Agentless mode](#agentless-mode) will be enough and disabling the agent when satisfied with the transition.
+If you plan to swap using the agent on the device to using `puppet device`, use the [agentless mode](#agentless-mode) and disable the agent when the transition in complete.
 
-*Please note:* For existing catalogs containing [netdev_stdlib types](https://forge.puppet.com/puppetlabs/netdev_stdlib/readme) then there will be stricter type enforcement on the properties, i.e. for `Integer` as a type, `'7'` will not be treated as `7`.
+*Please note:* For existing catalogs containing [netdev_stdlib types](https://forge.puppet.com/puppetlabs/netdev_stdlib/readme) there will be stricter type enforcement on the properties, for example, for `Integer` as a type, `'7'` will not be treated as `7`.
 
 <a name="building-manually"></a>
 ## Building from source
 
-The [Puppet Development Kit](https://puppet.com/docs/pdk/1.x/pdk.html) is a recommended tool if planning on [building the module from source](https://puppet.com/docs/pdk/1.x/pdk_building_module_packages.html#concept-9267).
+[Puppet Development Kit](https://puppet.com/docs/pdk/1.x/pdk.html) is the recommended tool if you're planning to [build the module from source](https://puppet.com/docs/pdk/1.x/pdk_building_module_packages.html#concept-9267).
 
 ## License
 
