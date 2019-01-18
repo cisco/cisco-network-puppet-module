@@ -21,6 +21,10 @@ Gemfile:
           - mingw
           - x64_mingw
 .gitignore:
+  # need to ensure /bin/ is not ignored
+  # and is under the required keys
+  required:
+    - ---/bin/
   paths:
     - junit/
     - hosts.cfg
@@ -28,6 +32,7 @@ Gemfile:
     - /spec/fixtures/acceptance-device.conf
 .pdkignore:
   paths:
+    - ---/bin/
     - junit/
     - hosts.cfg
     - /spec/fixtures/acceptance-credentials.conf
