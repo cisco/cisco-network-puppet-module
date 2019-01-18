@@ -345,6 +345,7 @@ DEVICE
         #  raise 'Errored test'
         # end
         output = `#{agentless_command} --apply #{@temp_agentless_manifest.path} 2>&1`
+        # logger.debug("test_manifest :: output: \n#{output}")
         if !(output.include? 'Applied catalog') && tests[id][:stderr_pattern].nil?
           remove_temp_manifest
           logger.info(output)
@@ -865,6 +866,7 @@ DEVICE
                            }\n}\nEOF"
                            else
                              create_agentless_manifest(tests, tests[:resource_name], id, state, manifest, harness_class: harness_class)
+                             # logger.debug("Agentless Manifest:\n" + manifest)
                            end
     true
   end
@@ -1122,7 +1124,7 @@ DEVICE
   end
 
   # Get raw configuration from the device using command_config's test_get.
-  # test_get does a 'show runn' but requires a filter.
+  # test_get does a 'show running-config all' but requires a filter.
   # Example:
   #  test_get(agent, 'incl ^vlan')
   #
@@ -1155,6 +1157,7 @@ DEVICE
     # The cmd may generate an error on the switch that can be safely ignored.
     raise unless ignore_errors
     logger.info("nxapi_test_set: Cisco::CliError detected\n#{e}\nignore_errors: true")
+    e.to_s
   end
 
   # Add arbitrary configurations using command_config's test_set property.
@@ -1207,11 +1210,27 @@ DEVICE
     raise_skip_exception(testheader, testcase)
   end
 
+  # Some vxlan_vtep attrs reject if the TCAM has not allocated resources for
+  # arp-ether acl (ie. it is set to 0). A config change will fix this but that
+  # requires a reboot so normally just skip attrs that have this dependency.
+  # Return true if arp-ether is 0.
+  # To manually config this dependency:
+  #   hardware access-list tcam region vacl 0         # free resources from vacl
+  #   hardware access-list tcam region arp-ether 256  # allocate to arp-ether
+  def tcam_arp_ether_acl_is_0(agent)
+    logger.info('Check TCAM arp-ether acl dependency')
+    filter = "incl 'tcam region arp-ether 0$'"
+    out = test_get(agent, filter)
+    out ? true : false
+  end
+
   # Some specific platform models do not support nv_overlay
   def skip_if_nv_overlay_rejected(agent)
     logger.info('Check for nv overlay support')
-    cmd = get_vshell_cmd('config t ; feature nv overlay')
-    test_set(agent, cmd)
+    cmd = 'feature nv overlay'
+    out = test_set(agent, cmd, ignore_errors: true)
+    return unless out[/NVE Feature NOT supported/]
+
     # Failure message taken from 6001
     msg = 'NVE Feature NOT supported on this Platform'
     banner = '#' * msg.length
@@ -1962,7 +1981,7 @@ DEVICE
   # Returns: String with double quotes: (Example: '"foo"'
   #
   def add_quotes(string)
-    return string if image?[/7.3.0/]
+    return string if image?[/7.3/]
     string = "\"#{string}\""
     string
   end

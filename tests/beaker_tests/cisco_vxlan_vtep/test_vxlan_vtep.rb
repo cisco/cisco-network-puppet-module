@@ -90,12 +90,13 @@ tests[:non_default_2] = {
 class TestVxlanVtep < BaseHarness
   def self.test_harness_dependencies(ctx, _tests, _id)
     ctx.test_set(ctx.agent, 'evpn multisite border 150') if ctx.platform[/ex/]
+    ctx.test_set(ctx.agent, 'feature ngmvpn') if ctx.platform[/n9k$/]
+
     return unless ctx.platform[/n(5|6)k/]
     ctx.skip_if_nv_overlay_rejected(ctx.agent)
 
     # Vxlan has a hard requirement to disable feature fabricpath on n5/6k
-    cmd = 'no feature-set fabricpath'
-    ctx.command_config(ctx.agent, cmd, cmd)
+    ctx.test_set(ctx.agent, 'no feature-set fabricpath')
   end
 
   def self.unsupported_properties(ctx, _tests, _id)
@@ -103,7 +104,8 @@ class TestVxlanVtep < BaseHarness
     unprops << :source_interface_hold_down_time if ctx.platform[/n(5|6)k/]
     unprops << :multisite_border_gateway_interface unless ctx.platform[/ex/]
     unprops << :global_ingress_replication_bgp if ctx.platform[/n(3k-f|5k|6k|7k|9k-f)/]
-    unprops << :global_suppress_arp if ctx.platform[/n(3k-f|5k|6k|7k)/]
+    unprops << :global_suppress_arp if ctx.platform[/n(3k-f|5k|6k|7k)/] ||
+                                       (ctx.platform[/n9k$/] && ctx.tcam_arp_ether_acl_is_0(ctx.agent))
     unprops << :global_mcast_group_l2 if ctx.platform[/n(3k-f|5k|6k|7k)/]
     unprops << :global_mcast_group_l3 if ctx.platform[/n(3k-f|5k|6k|7k|9k-f)/]
     unprops
@@ -125,6 +127,7 @@ end
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
   teardown do
+    test_set(agent, 'no feature ngmvpn') if platform[/n9k$/]
     test_set(agent, 'no evpn multisite border 150') if platform[/ex/]
     resource_absent_cleanup(agent, 'cisco_vxlan_vtep')
     vdc_limit_f3_no_intf_needed(:clear)
