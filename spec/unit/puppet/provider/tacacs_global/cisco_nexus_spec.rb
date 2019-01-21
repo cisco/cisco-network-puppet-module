@@ -79,7 +79,7 @@ RSpec.describe Puppet::Provider::TacacsGlobal::CiscoNexus do
     context 'tacacs_global is not empty' do
       it 'returns the results' do
         allow(Cisco::TacacsGlobal).to receive(:tacacs_global).and_return('default' => tacacs_global)
-        expect(tacacs_global).to receive(:key).and_return('22222').exactly(5).times
+        expect(tacacs_global).to receive(:key).and_return('22222').exactly(6).times
         expect(tacacs_global).to receive(:timeout).and_return(5, 5)
         expect(tacacs_global).to receive(:key_format).and_return(7)
         expect(tacacs_global).to receive(:source_interface).and_return('ethernet1/1').exactly(3).times
@@ -173,14 +173,12 @@ RSpec.describe Puppet::Provider::TacacsGlobal::CiscoNexus do
       resources: [{
         name:             'default',
         timeout:          7,
-        key_format:       7,
         source_interface: ['foo'],
       }],
       results:   [{
         name:             'default',
         timeout:          7,
         key:              'unset',
-        key_format:       7,
         source_interface: ['foo'],
       }],
     },
@@ -206,14 +204,12 @@ RSpec.describe Puppet::Provider::TacacsGlobal::CiscoNexus do
       resources: [{
         name:             'default',
         key:              'unset',
-        key_format:       7,
         source_interface: ['foo'],
       }],
       results:   [{
         name:             'default',
         timeout:          'unset',
         key:              'unset',
-        key_format:       7,
         source_interface: ['foo'],
       }],
     },
@@ -223,13 +219,11 @@ RSpec.describe Puppet::Provider::TacacsGlobal::CiscoNexus do
         name:             'default',
         timeout:          -1,
         key:              'unset',
-        key_format:       7,
         source_interface: ['foo'],
       }],
       results:   [{
         name:             'default',
         timeout:          'unset',
-        key_format:       7,
         key:              'unset',
         source_interface: ['foo'],
       }],
@@ -240,13 +234,11 @@ RSpec.describe Puppet::Provider::TacacsGlobal::CiscoNexus do
         name:             'default',
         timeout:          -1,
         key:              'unset',
-        key_format:       -1,
         source_interface: ['foo'],
       }],
       results:   [{
         name:             'default',
         timeout:          'unset',
-        key_format:       'unset',
         key:              'unset',
         source_interface: ['foo'],
       }],
@@ -260,7 +252,6 @@ RSpec.describe Puppet::Provider::TacacsGlobal::CiscoNexus do
       results:   [{
         name:             'default',
         timeout:          'unset',
-        key_format:       'unset',
         key:              'unset',
         source_interface: ['foo'],
       }],
