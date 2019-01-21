@@ -60,7 +60,7 @@ tests[:no_hostname] = {
     domain: 'foo.bar.com',
     search: ['test.com'],
   },
-  code: [0, 1, 2],
+  code:           [0, 1, 2],
 }
 
 def cleanup(original_hostname)

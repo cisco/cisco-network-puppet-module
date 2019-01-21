@@ -44,7 +44,7 @@ tests[:default] = {
     key:              'unset',
     source_interface: ['unset'],
   },
-  resource: {
+  resource:       {
     timeout:          5,
     retransmit_count: 1,
     key:              'unset',

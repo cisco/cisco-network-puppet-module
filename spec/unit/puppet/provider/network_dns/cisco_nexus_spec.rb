@@ -84,11 +84,11 @@ RSpec.describe Puppet::Provider::NetworkDns::CiscoNexus do
     context 'update is called without hostname' do
       let(:should_values) do
         {
-          name:     'settings',
-          ensure:   'present',
-          domain:   'foo',
-          search:   ['1.1.1.1'],
-          servers:  ['2.2.2.2'],
+          name:    'settings',
+          ensure:  'present',
+          domain:  'foo',
+          search:  ['1.1.1.1'],
+          servers: ['2.2.2.2'],
         }
       end
 
@@ -104,10 +104,10 @@ RSpec.describe Puppet::Provider::NetworkDns::CiscoNexus do
     context 'update is called without domain' do
       let(:should_values) do
         {
-          name:     'settings',
-          ensure:   'present',
-          search:   ['1.1.1.1'],
-          servers:  ['2.2.2.2'],
+          name:    'settings',
+          ensure:  'present',
+          search:  ['1.1.1.1'],
+          servers: ['2.2.2.2'],
         }
       end
 

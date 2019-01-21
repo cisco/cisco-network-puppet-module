@@ -131,8 +131,6 @@ tests[:non_default_2] = {
     timer_throttle_spf_start: '430',
   },
 }
-
-# rubocop:disable Style/WordArray
 redistribute = [
   ['bgp 5',   'rm_bgp'],
   ['direct',  'rm_direct'],
