@@ -1106,11 +1106,11 @@ DEVICE
   # Helper method to create nxapi client connection object (agentless)
   def nxapi_test_client
     env = {
-      host: beaker_config_connection_address,
-      port: @nexus_host[:ssh][:port] || 80,
+      host:     beaker_config_connection_address,
+      port:     @nexus_host[:ssh][:port] || 80,
       username: @nexus_host[:ssh][:user],
       password: @nexus_host[:ssh][:password],
-      cookie: nil
+      cookie:   nil
     }
     Cisco::Environment.add_env('remote', env)
     Cisco::Client.create('remote')

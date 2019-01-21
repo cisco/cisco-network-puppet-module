@@ -28,12 +28,16 @@ Puppet::Type.newtype(:cisco_ospf_vrf) do
   <ospf> is the name of the ospf router instance. <vrf> is the name of the ospf vrf.
 
   Example:
+
+    $redistribute = [['bgp 1', 'rtmap_29'], ['direct',  'rtmap_direct']]
+
     cisco_ospf_vrf {\"green test\":
       ensure                   => present,
       router_id                => \"192.168.1.1\",
       bfd                      => true,
       default_metric           => 2,
       log_adjancency           => log,
+      redistribute             => $redistribute,
       timer_throttle_lsa_start => 0,
       timer_throttle_lsa_hold  => 5000,
       timer_throttle_lsa_max   => 5000,
@@ -144,6 +148,30 @@ Puppet::Type.newtype(:cisco_ospf_vrf) do
       :none,
       :default)
   end # property log adjacency
+
+  newproperty(:redistribute, array_matching: :all) do
+    format = "[['protocol', 'route_map'],['protocol', 'route_map']]"
+    desc 'A list of redistribute directives. Multiple redistribute entries ' \
+         'are allowed. The list must be in the form of a nested array: the ' \
+         'first entry of each array defines the source-protocol to ' \
+         'redistribute from; the second entry defines a route-map name. ' \
+         'There is currently no support for redistribute maximum-prefix'
+
+    # Override puppet's insync method, which checks whether current value is
+    # equal to value specified in manifest.  Make sure puppet considers
+    # 2 arrays with same elements but in different order as equal.
+    def insync?(is)
+      (is.size == should.size && is.sort == should.sort)
+    end
+
+    munge do |value|
+      begin
+        return value = :default if value == 'default'
+        fail("Value must match format #{format}") unless value.is_a?(Array)
+        value
+      end
+    end
+  end # property :redistribute
 
   newproperty(:timer_throttle_lsa_start) do
     desc "Specify the start interval for rate-limiting Link-State
