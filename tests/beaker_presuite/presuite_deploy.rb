@@ -46,6 +46,21 @@ test_name 'Prep Masters & Install Puppet' do
   masters = select_hosts(roles: ['master', 'compile_master'])
   # Get all hosts with role agent
   agents = select_hosts(roles: ['agent'])
+  # Get all hosts with role proxy_agent
+  proxy_agents = select_hosts(roles: ['proxy_agent'])
+
+  def beaker_config_connection_address
+    if default[:ip]
+      default[:ip]
+    elsif default[:vmhostname]
+      default[:vmhostname]
+    elsif default[:hostname]
+      default[:hostname]
+    else
+      logger.error("stdout:\n--\nip, vmhostname or hostname not found, check beaker hosts configuration\n--")
+      nil
+    end
+  end
 
   unless ENV['BEAKER_provision'] == 'no' || masters.empty?
     step 'install PE on masters' do
@@ -74,6 +89,14 @@ test_name 'Prep Masters & Install Puppet' do
         on(node, "echo #{Shellwords.escape(mod_line_from_env('puppetlabs-puppetserver_gem', 'RSAPI'))} >> /root/Puppetfile")
         on(node, "echo #{Shellwords.escape(mod_line_from_env('puppetlabs-netdev_stdlib', 'NETDEV_STDLIB'))} >> /root/Puppetfile")
         on(node, "echo #{Shellwords.escape(mod_line_from_env('puppetlabs-ciscopuppet', 'MODULE'))} >> /root/Puppetfile")
+        if proxy_agent
+          on(node, "echo #{Shellwords.escape(mod_line_from_env('puppetlabs-device_manager', 'DEVICE_MANAGER'))} >> /root/Puppetfile")
+          on(node, "echo #{Shellwords.escape(mod_line_from_env('puppetlabs-concat', 'CONCAT'))} >> /root/Puppetfile")
+          on(node, "echo #{Shellwords.escape(mod_line_from_env('puppetlabs-hocon', 'HOCON'))} >> /root/Puppetfile")
+          on(node, "echo #{Shellwords.escape(mod_line_from_env('puppetlabs-stdlib', 'STDLIB'))} >> /root/Puppetfile")
+          # whitelist device for autosigning
+          on(node, "echo #{beaker_config_connection_address} >> /etc/puppetlabs/puppet/autosign.conf")
+        end
         on(node, '/opt/puppetlabs/puppet/bin/r10k puppetfile install /root/Puppetfile -v --moduledir /etc/puppetlabs/code/environments/production/modules', acceptable_exit_codes: [0])
         on(node, puppet('plugin', 'download'), acceptable_exit_codes: [0, 1])
       end
@@ -141,7 +164,7 @@ test_name 'Prep Masters & Install Puppet' do
     on(node, "/opt/puppetlabs/puppet/bin/gem install #{gem_location}")
   end
 
-  unless agents.empty?
+  unless ENV['BEAKER_provision'] == 'no' || agents.empty?
     step 'Install agent on switches, sign certificates' do
       opts = {
         puppet_collection:    'PC1',
@@ -189,6 +212,77 @@ test_name 'Prep Masters & Install Puppet' do
           end
         end
         on(switch, '/opt/puppetlabs/bin/puppet agent -t --waitforcert 60', acceptable_exit_codes: [0, 2])
+      end
+    end
+  end
+
+  def configure_device_config(proxy_agent)
+    "cat <<EOF >'/etc/puppetlabs/code/environments/production/manifests/site.pp'
+      \nnode '#{proxy_agent.hostname}' {
+        device_manager { '#{beaker_config_connection_address}':
+          type => 'cisco_nexus',
+          credentials => {
+            address => '#{beaker_config_connection_address}',
+            username => #{default[:ssh][:user] || 'admin'},
+            port => #{default[:ssh][:port] || '80'},
+            password => #{default[:ssh][:password] || 'admin'},
+          },
+        }\n
+        }\nnode '#{beaker_config_connection_address}' {
+        \n}
+    \nEOF"
+  end
+
+  unless ENV['BEAKER_provision'] == 'no' || proxy_agents.empty?
+    step 'Install Puppet agent on proxy agents, sign certificates' do
+      opts = {
+        puppet_collection:    ENV['BEAKER_PUPPET_COLLECTION'] || 'puppet5',
+        puppet_agent_sha:     ENV['SHA'] || '5.5.10',
+        puppet_agent_version: ENV['SUITE_VERSION'] || '5.5.10'
+      }
+      proxy_agents.each do |proxy_agent|
+        next if proxy_agent['platform'] =~ /cisco_/
+        on(proxy_agent, 'yum -y erase puppet-agent', acceptable_exit_codes: [0, 1])
+        on(proxy_agent, 'rpm -qa | grep -i puppetlabs | xargs rpm -e', acceptable_exit_codes: [0, 123])
+        on(proxy_agent, 'rm -rf /var/cache/yum/puppetlabs-pc1/packages/puppet*', acceptable_exit_codes: [0, 1])
+        on(proxy_agent, 'rm -rf /var/cache/yum/pl-puppet-agent*', acceptable_exit_codes: [0, 1])
+        on(proxy_agent, 'rm -rf /etc/yum/repos.d/pl-puppet-agent*', acceptable_exit_codes: [0, 1])
+        on(proxy_agent, 'rm -rf /var/volatile/log/puppet*', acceptable_exit_codes: [0, 1])
+        install_puppet_agent_on(proxy_agent, opts)
+        on(proxy_agent, '/opt/puppetlabs/puppet/bin/gem install puppet-resource_api')
+        on(proxy_agent, '/opt/puppetlabs/puppet/bin/gem install cisco_node_utils')
+        on(proxy_agent, 'find /etc/puppetlabs/puppet/ssl/ -type f -print0 |xargs -0r sudo rm')
+        on(proxy_agent, 'rm /etc/puppetlabs/puppet/puppet.conf')
+        on(proxy_agent, 'touch /etc/puppetlabs/puppet/puppet.conf')
+        on(proxy_agent, 'chmod a+w /etc/puppetlabs/puppet/puppet.conf')
+        on(proxy_agent, "/opt/puppetlabs/bin/puppet config set server #{master.hostname}")
+        on(proxy_agent, "/opt/puppetlabs/bin/puppet config set certname #{proxy_agent}")
+        unless masters.empty?
+          # Purge existing node in case we are reusing a master
+          on(master, puppet('node', 'purge', proxy_agent.to_s), acceptable_exit_codes: [0, 1])
+          # set up device config
+          on(master, configure_device_config(proxy_agent), acceptable_exit_codes: [0, 1])
+        end
+        on(proxy_agent, '/opt/puppetlabs/bin/puppet agent -t', acceptable_exit_codes: [1])
+        unless masters.empty?
+          # Puppet server changed the CA command starting in 2019.0.0
+          version = on(master, '/opt/puppetlabs/bin/puppetserver --version', acceptable_exit_codes: [0])
+          major = /(\d{4})/.match(version.output)
+          if major && major[0].to_i <= 2018
+            on(master, puppet('cert', 'sign', proxy_agent.to_s), acceptable_exit_codes: [0, 1])
+          elsif major
+            # Modify CA checking so we can use 5.x agents against 6.x masters - PUP-9291
+            scp_from master, '/etc/puppetlabs/puppet/ssl/ca/ca_crt.pem', '.'
+            scp_to proxy_agent, 'ca_crt.pem', '/etc/puppetlabs/puppet/ssl/certs/ca.pem'
+            on(proxy_agent, '/opt/puppetlabs/bin/puppet config set --section main certificate_revocation false')
+            on(master, "/opt/puppetlabs/bin/puppetserver ca sign --certname #{proxy_agent}", acceptable_exit_codes: [0, 1])
+          else
+            # We didn't find the major version, fallback to legacy command
+            on(master, puppet('cert', 'sign', proxy_agent.to_s), acceptable_exit_codes: [0, 1])
+          end
+        end
+        on(proxy_agent, '/opt/puppetlabs/bin/puppet agent -t --waitforcert 60', acceptable_exit_codes: [0, 2])
+        on(proxy_agent, '/opt/puppetlabs/bin/puppet device --debug --verbose', acceptable_exit_codes: [0, 1, 2])
       end
     end
   end

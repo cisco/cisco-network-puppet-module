@@ -145,6 +145,12 @@ DEVICE
     end
   end
 
+  # Method to return an proxy_agent
+  # if not already called
+  def proxy_agent
+    find_host_with_role :proxy_agent
+  end
+
   # These methods are defined outside of a module so that
   # they can access the Beaker DSL API's.
 
@@ -237,6 +243,11 @@ DEVICE
   # Full command string for puppet agent
   def puppet_agent_cmd
     PUPPET_BINPATH + 'agent -t --trace'
+  end
+
+  # Full command string for running puppet device on a proxy_agent
+  def puppet_device_cmd
+    PUPPET_BINPATH + "device --target #{beaker_config_connection_address} --trace --debug"
   end
 
   # full command string for puppet resource commands
@@ -334,7 +345,20 @@ DEVICE
         on(tests[:master], tests[id][:manifest])
         code = (tests[id][:code]) ? tests[id][:code] : [2]
         logger.debug("test_manifest :: check puppet agent cmd (code: #{code})")
-        on(tests[:agent], puppet_agent_cmd, acceptable_exit_codes: code)
+        if tests[:proxy_agent]
+          # system("bundle exec puppet device --verbose --trace --strict=error --modulepath spec/fixtures --target nexus --libdir lib/ --apply apply.pp")
+          # See https://tickets.puppetlabs.com/browse/PUP-9067 "`puppet device` should respect --detailed-exitcodes"
+          # if !code.include?($?.exitstatus)
+          #  raise 'Errored test'
+          # end
+          on(tests[:proxy_agent], puppet_device_cmd, acceptable_exit_codes: [0, 1, 2])
+          if !(stdout.include? 'Applied catalog') && tests[id][:stderr_pattern].nil?
+            logger.info(stdout)
+            raise 'Errored test as the command result did not match applied catalog'
+          end
+        else
+          on(tests[:agent], puppet_agent_cmd, acceptable_exit_codes: code)
+        end
         output = nil
       else
         code = (tests[id][:code]) ? tests[id][:code] : [2]
@@ -389,6 +413,16 @@ DEVICE
       logger.debug('test_idempotence :: BEGIN')
       if tests[:agent]
         on(tests[:agent], puppet_agent_cmd, acceptable_exit_codes: [0])
+      elsif tests[:proxy_agent]
+        # system("bundle exec puppet device --verbose --trace --strict=error --modulepath spec/fixtures --target nexus --libdir lib/ --apply apply.pp")
+        # See https://tickets.puppetlabs.com/browse/PUP-9067 "`puppet device` should respect --detailed-exitcodes"
+        # if !$?.exitstatus == 0
+        #   raise 'Errored idempotence test'
+        # end
+        on(tests[:proxy_agent], puppet_device_cmd, acceptable_exit_codes: [0, 1, 2])
+        if stdout.include? "#{tests[:resource_name]}[#{tests[id][:title_pattern]}]: Updating:"
+          raise 'Errored idempotence test'
+        end
       else
         # system("bundle exec puppet device --verbose --trace --strict=error --modulepath spec/fixtures --target nexus --libdir lib/ --apply apply.pp")
         # See https://tickets.puppetlabs.com/browse/PUP-9067 "`puppet device` should respect --detailed-exitcodes"
@@ -864,6 +898,13 @@ DEVICE
                            #{tests[:resource_name]} { '#{tests[id][:title_pattern]}':
                              #{state}\n#{manifest}
                            }\n}\nEOF"
+                           elsif tests[:proxy_agent]
+                             "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+                             \nnode '#{beaker_config_connection_address}' {
+                             #{harness_class.dependency_manifest(self, tests, id)}
+                             #{tests[:resource_name]} { '#{tests[id][:title_pattern]}':
+                               #{state}\n#{manifest}
+                             }\n}\nEOF"
                            else
                              create_agentless_manifest(tests, tests[:resource_name], id, state, manifest, harness_class: harness_class)
                              # logger.debug("Agentless Manifest:\n" + manifest)
@@ -1618,6 +1659,17 @@ DEVICE
           '(or test file) is not supported on this node'
     banner = '#' * msg.length
     raise_skip_exception("\n#{banner}\n#{msg}\n#{banner}\n", self)
+  end
+
+  # This is a simple top-level skip similar to what exists in the minitests.
+  # Callers will skip all tests when true.
+  # tests[:proxy_agent] - if the proxy_agent is present
+  # tests[:resource_name] - provider name (e.g. 'cisco_vxlan_vtep')
+  def skip_unless_proxy_agent(tests)
+    msg = "Skipping all tests; '#{tests[:resource_name]}' "\
+        '(or test file) is not supported without a proxy agent'
+    banner = '#' * msg.length
+    raise_skip_exception("\n#{banner}\n#{msg}\n#{banner}\n", self) unless proxy_agent
   end
 
   def skipped_tests_summary(tests)
