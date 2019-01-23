@@ -225,7 +225,7 @@ RSpec.describe Puppet::Provider::RadiusGlobal::CiscoNexus do
       }],
     },
     {
-      desc: '`resources` contains unset values and returns default values',
+      desc:      '`resources` contains unset values and returns default values',
       resources: [{
         name:             'default',
         timeout:          'unset',
@@ -233,7 +233,7 @@ RSpec.describe Puppet::Provider::RadiusGlobal::CiscoNexus do
         key:              'unset',
         source_interface: ['unset'],
       }],
-      results: [{
+      results:   [{
         name:             'default',
         timeout:          5,
         retransmit_count: 1,
@@ -242,7 +242,7 @@ RSpec.describe Puppet::Provider::RadiusGlobal::CiscoNexus do
       }],
     },
     {
-      desc: '`resources` contains -1 unset values and returns default values',
+      desc:      '`resources` contains -1 unset values and returns default values',
       resources: [{
         name:             'default',
         timeout:          -1,
@@ -250,7 +250,7 @@ RSpec.describe Puppet::Provider::RadiusGlobal::CiscoNexus do
         key:              'unset',
         source_interface: ['unset'],
       }],
-      results: [{
+      results:   [{
         name:             'default',
         timeout:          5,
         retransmit_count: 1,

@@ -26,55 +26,39 @@ require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 # Test hash top-level keys
 tests = {
   agent:         agent,
+  proxy_agent:   proxy_agent,
   master:        master,
-  resource_name: 'radius_global',
+  resource_name: 'banner',
   ensurable:     false,
 }
 
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
 skip_unless_supported(tests)
+skip_unless_proxy_agent(tests)
 
 # Test hash test cases
 tests[:default] = {
   desc:           '1.1 Default Properties',
   title_pattern:  'default',
   manifest_props: {
-    timeout:          'unset',
-    retransmit_count: 'unset',
-    key:              'unset',
-    source_interface: ['unset'],
-  },
-  resource:       {
-    timeout:          5,
-    retransmit_count: 1,
-    key:              'unset',
-    source_interface: ['unset'],
+    motd: 'default'
   },
   code:           [0, 2],
 }
 
-# Test hash test cases
+#
+# non_default_properties
+#
 tests[:non_default] = {
-  desc:           '1.1 Non Default Properties',
+  desc:           '2.1 Non Default Properties',
   title_pattern:  'default',
   manifest_props: {
-    timeout:          6,
-    retransmit_count: 2,
-    key:              '55555',
-    source_interface: ['ethernet1/1'],
+    motd: 'Test MOTD banner!'
   },
-  code:           [0, 2],
 }
 
 def cleanup(agent)
-  test_set(agent, 'radius-server timeout 5')
-  test_set(agent, 'radius-server retransmit 1')
-  test_set(agent, 'no ip radius source-interface')
-
-  # To remove a configured key we have ot know the key value
-  test_get(agent, 'include radius | include key')
-  key = stdout.match('^radius-server key (\d+)\s+(.*)') if stdout
-  command_config(agent, "no radius-server key #{key[1]} #{key[2]}", "removing key #{key[2]}") if key
+  test_set(agent, 'no banner motd')
 end
 
 #################################################################
@@ -87,8 +71,9 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   test_harness_run(tests, :default)
+
   # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 2. Non-Default Property Testing")
+  logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   test_harness_run(tests, :non_default)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
