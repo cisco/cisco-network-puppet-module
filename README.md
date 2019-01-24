@@ -6,7 +6,9 @@
 1. [Setup](#setup)
    * [Puppet Master](#setup-puppet-master)
    * [Puppet Agent](#setup-puppet-agent)
-   * [Puppet Agent Authentication](#setup-agent-auth)
+      * [Puppet Agent Authentication](#setup-agent-auth)
+   * [Puppet Device (Agentless)](#setup-puppet-device)
+      * [Getting Started with Puppet Device](#getting-started-puppet-device)
 1. [Example Manifests](#example-manifests)
 1. [Resource Reference](#resource-reference)
    * [Resource Type Catalog (by Technology)](#resource-by-tech)
@@ -24,7 +26,9 @@ This GitHub repository contains the latest version of the ciscopuppet module sou
 
 ##### Dependencies
 
-The `ciscopuppet` module has a dependency on the [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) ruby gem. See the **Setup** section that follows for more information on `cisco_node_utils`.
+The `ciscopuppet` module has a dependency on the [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) and the [`puppet-resource_api`](https://rubygems.org/gems/puppet-resource_api) Ruby gem. See the **Setup** section that follows for more information on `cisco_node_utils` and `puppet-resource_api`.
+
+[The NXAPI feature](https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/6-x/programmability/guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_chapter_011.html) will need to be enabled on the device in order for the `ciscopuppet` module to be able to manage the device.
 
 ##### Contributing
 
@@ -32,7 +36,7 @@ Contributions to the `ciscopuppet` module are welcome. See [CONTRIBUTING.md][DEV
 
 ## <a href='setup'>Setup</a>
 
-### <a name="setup-puppet-master">Puppet Master<a>
+### <a name="setup-puppet-master">Puppet Master</a>
 
 The `ciscopuppet` module must be installed on the Puppet Master server.
 
@@ -40,40 +44,42 @@ The `ciscopuppet` module must be installed on the Puppet Master server.
 puppet module install puppetlabs-ciscopuppet
 ```
 
-For more information on Puppet module installation see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html)
+The module dependencies listed below will be installed automatically. For more information on Puppet module installation see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html)
 
-##### The `puppetlabs-netdev_stdlib` module
+##### The [`puppetlabs-netdev-stdlib`](https://forge.puppet.com/puppetlabs/netdev_stdlib) module
 
-PuppetLabs provides NetDev resource support for Cisco Nexus devices with their [`puppetlabs-netdev-stdlib`](https://forge.puppet.com/puppetlabs/netdev_stdlib) module. Installing the `ciscopuppet` module automatically installs both the `ciscopuppet` and `netdev_stdlib` modules.
+##### The [`puppetlabs-resource_api`](https://forge.puppet.com/puppetlabs/resource_api) module
 
-### <a name="setup-puppet-agent">Puppet Agent<a>
+
+On each puppetserver or PE master that needs to serve catalogs for NX-OS devices, classify or apply the [`ciscopuppet::server`](https://github.com/cisco/cisco-network-puppet-module/blob/master/manifests/server.pp) class. Using this class assumes that your puppetserver or PE Master is managed by Puppet.
+
+### <a name="setup-puppet-agent">Puppet Agent (LTS)</a>
 
 The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md][USER-1] document for detailed instructions on agent installation and configuration on Cisco Nexus devices.
 
 ##### The `cisco_node_utils` Ruby Gem
 
-The [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) ruby gem is a required component of the `ciscopuppet` module. This gem contains platform APIs for interfacing between Cisco CLI and Puppet agent resources. The gem can be automatically installed by Puppet agent by simply using the [`ciscopuppet::install`](https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/demo_all_cisco.pp#L19) helper class, or it can be installed manually.
+The [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) Ruby gem is a required component of the `ciscopuppet` module. This gem contains platform APIs for interfacing between Cisco CLI and Puppet resources. The gem can be automatically installed by Puppet agent by using the [`ciscopuppet::agent`](https://github.com/cisco/cisco-network-puppet-module/blob/master/manifests/agent.pp) class, only in exceptional circumstances you should consider installing the dependencies manually.
 
-##### Automatic Gem Install Using `ciscopuppet::install`
+##### The `puppet-resource_api` Ruby Gem
 
-* The `ciscopuppet::install` class is defined in the `install.pp` file in the `examples` subdirectory. Copy this file into the `manifests` directory as shown:
+The [`puppet-resource_api`](https://rubygems.org/gems/puppet-resource_api) Ruby gem is a required component of the `ciscopuppet` module. The gem can be automatically installed by a Puppet agent by using the [`ciscopuppet::agent`](https://github.com/cisco/cisco-network-puppet-module/blob/master/manifests/agent.pp) class, only in exceptional circumstances you should consider installing the dependencies manually.
 
-~~~bash
-cd /etc/puppetlabs/code/environments/production/modules/ciscopuppet/
-cp examples/install.pp  manifests/
-~~~
+##### Automatic Gem Install Using `ciscopuppet::agent`
 
-* Next, update `site.pp` to use the install class
+* The `ciscopuppet::agent` class is defined in the `agent.pp` file in the `manifests` subdirectory.
+
+* Update `site.pp` to use the install class
 
 **Example**
 
 ~~~puppet
-node 'default' {
-  include ciscopuppet::install
+node 'n9k' {
+  include ciscopuppet::agent
 }
 ~~~
 
-The preceding configuration will cause the next `puppet agent` run to automatically download the current `cisco_node_utils` gem from <https://rubygems.org/gems/cisco_node_utils> and install it on the node.
+The preceding configuration will cause the next `puppet agent` run to automatically download the current `cisco_node_utils` and `puppet-resource_api` gems from <https://rubygems.org/> and install them on the node.
 
 ##### Optional Parameters for `ciscopuppet::install`
 
@@ -83,8 +89,8 @@ The preceding configuration will cause the next `puppet agent` run to automatica
 **Example**
 
 ~~~puppet
-node 'default' {
-  class {'ciscopuppet::install':
+node 'n9k' {
+  class {'ciscopuppet::agent':
     repo  => 'http://gemserver.domain.com:8808',
     proxy => 'http://proxy.domain.com:8080',
   }
@@ -93,11 +99,11 @@ node 'default' {
 
 ##### Gem Persistence
 
-Once installed, the GEM will remain persistent across system reloads within the Guestshell or OAC environments; however, the bash-shell environment does not share this persistent behavior, in which case the `ciscopuppet::install` helper class automatically downloads and re-installs the gem after each system reload.
+Once installed, the gems will remain persistent across system reloads within the Guestshell or OAC environments; however, the bash-shell environment does not share this persistent behavior, in which case the `ciscopuppet::agent` class automatically downloads and re-installs the gem after each system reload.
 
 See [General Documentation](#general-documentation) for information on Guestshell and OAC.
 
-### <a name="setup-agent-auth">Puppet Agent Authentication<a>
+### <a name="setup-agent-auth">Puppet Agent Authentication</a>
 
 Puppet makes use of the nxos `admin` user by default for all types in this module.  If a different user is required for puppet agent runs then the following procedure can be used to override `admin` with the desired user.
 
@@ -135,13 +141,64 @@ Now create and apply the following manifest on your nxos devices.
   }
 ~~~
 
+### <a name="setup-puppet-device">Puppet Device (Agentless)</a>
+
+The module supports remote management through the usage of [`puppet device`](https://puppet.com/docs/puppet/5.5/puppet_device.html), which communicates with the device remotely via the `nxapi` through HTTP/HTTPS. In order to use the `ciscopuppet` module agentlessly then the following dependencies will need to be met.
+
+##### The `cisco_node_utils` Ruby Gem
+
+The [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) Ruby gem is a required component of the `ciscopuppet` module. This gem contains platform APIs for interfacing between Cisco CLI and Puppet resources. The gem will need to be installed on any Puppet agent which will be managing a NX-OS device. It can be automatically installed by Puppet by using the [`ciscopuppet::proxy`](https://github.com/cisco/cisco-network-puppet-module/blob/master/manifests/proxy.pp) class, only in exceptional circumstances you should consider installing the dependencies manually.
+
+##### The `puppet-resource_api` Ruby Gem
+
+The [`puppet-resource_api`](https://rubygems.org/gems/puppet-resource_api) Ruby gem is a required component of the `ciscopuppet` module. The gem will need to be installed on any Puppet agent which will be managing a NX-OS device. It can be automatically installed by Puppet by using the [`ciscopuppet::proxy`](https://github.com/cisco/cisco-network-puppet-module/blob/master/manifests/proxy.pp) class, only in exceptional circumstances you should consider installing the dependencies manually.
+
+### <a name="getting-started-puppet-device">Getting started with remote management (`puppet device`)</a>
+
+To get started, create or edit `/etc/puppetlabs/puppet/device.conf`, add a section for the device (this will become the device's `certname`), specify a type of `cisco_nexus`, and specify a `url` to a credentials file. For example:
+
+```INI
+[cisco.example.com]
+type cisco_nexus
+url file:////etc/puppetlabs/puppet/devices/cisco.example.com.conf
+```
+
+Next, create a credentials file. See the [HOCON documentation](https://github.com/lightbend/config/blob/master/HOCON.md) for information on quoted/unquoted strings and connecting the device.
+
+```
+address: cisco.nexus.net
+username: admin
+password: admin
+port: 8280
+transport: http
+```
+
+Alternatively devices can be managed through the [`puppetlabs-device_manager module`](https://forge.puppet.com/puppetlabs/device_manager), for example:
+
+```puppet
+node 'proxy-agent' {
+  device_manager { 'cisco.example.com':
+    type => 'cisco_nexus',
+    credentials => {
+      address => 'cisco.example.com',
+      username => 'admin',
+      password => 'admin',
+      port => 8280,
+      transport => 'http',
+    }
+  }
+}
+```
+
+Test your setup and get the certificate signed:
+
+`puppet device --verbose --target cisco.example.com`
+
+See the [`puppet device` documentation](https://puppet.com/docs/puppet/5.5/puppet_device.html)
+
+*Please note:*: In order for the NX-OS device to be managed then the [nxapi](https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/6-x/programmability/guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_chapter_011.html) feature will need enabled on the device and the selected ports for HTTP/HTTPS will need to be accessible by the `proxy-agent` choosen to manage the device.
+
 ## <a href='example-manifests'>Example Manifests</a>
-
-This module has dependencies on the [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) ruby gem. After installing the Puppet Agent software, use Puppet's built-in [`Package`](https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/install.pp#L17) provider to install the gem.
-
-A helper class [`ciscopuppet::install`](https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/demo_all_cisco.pp#L19) is provided in the examples subdirectory of this module.  Simply add an `include ciscopuppet::install` statement at the beginning of the manifest to install the latest `cisco_node_utils` gem from rubygems.org. Including the aforementioned class with [`additional parameters`](https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/demo_all_cisco.pp#L24) overrides the default rubygems.org repository with a custom repository.
-
-For Puppet Agents running within the GuestShell or OAC environment, the installed GEM remains persistent across system reloads, however, agents running in the NX-OS bash-shell environment will automatically download and reinstall the GEM after a system reload.
 
 ##### OSPF Example Manifest
 
@@ -4605,6 +4662,8 @@ Manages the upgrade of a Cisco device.
 
 
 #### <a name="cisco_upgrade-caveats">Caveats</a>
+
+*Only usable when running with the Puppet Agent mode.*
 
 The `cisco_upgrade` is only supported on *simplex* N3k, N3k-F, N9k and N9k-F devices. HA devices are currently not supported.
 
