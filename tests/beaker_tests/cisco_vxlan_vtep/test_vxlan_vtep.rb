@@ -90,7 +90,6 @@ tests[:non_default_2] = {
 class TestVxlanVtep < BaseHarness
   def self.test_harness_dependencies(ctx, _tests, _id)
     ctx.test_set(ctx.agent, 'evpn multisite border 150') if ctx.platform[/ex/]
-    ctx.test_set(ctx.agent, 'feature ngmvpn') if ctx.platform[/n9k$/]
 
     return unless ctx.platform[/n(5|6)k/]
     ctx.skip_if_nv_overlay_rejected(ctx.agent)
@@ -127,7 +126,6 @@ end
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
   teardown do
-    test_set(agent, 'no feature ngmvpn') if platform[/n9k$/]
     test_set(agent, 'no evpn multisite border 150') if platform[/ex/]
     resource_absent_cleanup(agent, 'cisco_vxlan_vtep')
     vdc_limit_f3_no_intf_needed(:clear)
