@@ -207,7 +207,7 @@ DEVICE
       if match
         logger.debug("TestStep :: #{match_kind}Match #{pattern} :: PASS")
       else
-        logger.error("stdout:\n--\n#{stdout}\n--")
+        logger.error("output:\n--\n#{output}\n--")
         testcase.fail_test("TestStep :: #{match_kind}Match #{pattern} :: FAIL")
       end
     end
@@ -1573,6 +1573,7 @@ DEVICE
   # Gets the full version of the image running on a device
   @full_ver = nil
   def full_version
+    return @full_ver unless @full_ver.nil?
     if agent
       facter_opt = '-p cisco.images.full_version'
       data = on(agent, facter_cmd(facter_opt)).stdout.chomp

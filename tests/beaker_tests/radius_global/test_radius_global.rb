@@ -55,25 +55,30 @@ tests[:default] = {
 
 # Test hash test cases
 tests[:non_default] = {
-  desc:           '1.1 Non Default Properties',
+  desc:           '2.1 Non Default Properties',
   title_pattern:  'default',
   manifest_props: {
     timeout:          6,
     retransmit_count: 2,
-    key:              '55555',
+    key:              '55555 42',
     source_interface: ['ethernet1/1'],
   },
   code:           [0, 2],
 }
 
 def cleanup(agent)
-  test_set(agent, 'radius-server timeout 5')
-  test_set(agent, 'radius-server retransmit 1')
-  test_set(agent, 'no ip radius source-interface')
+  cmds = 'radius-server timeout 5 ; radius-server retransmit 1 ; no ip radius source-interface'
+  test_set(agent, cmds)
 
-  # To remove a configured key we have ot know the key value
-  test_get(agent, 'include radius | include key')
-  key = stdout.match('^radius-server key (\d+)\s+(.*)') if stdout
+  # To remove a configured key we have to know the key value
+  out = test_get(agent, "include 'radius-server key'")
+
+  # Clean up cc output for key match; use single quotes to wrap key
+  # e.g. "cisco_command_config { 'cc':\n  test_get => \"\\nradius-server key 7 \\\"55555 42\\\"\\n\",\n}\n"
+  #      "cisco_command_config { 'cc':\n  test_get => \"\\nradius-server key 7 '55555 42'"
+  out.sub!(/\\\"\\n.*/m, "'").sub!(/\\\"/, "'")
+
+  key = out.match('radius-server key (\d+)\s+(.*)') if out
   command_config(agent, "no radius-server key #{key[1]} #{key[2]}", "removing key #{key[2]}") if key
 end
 
