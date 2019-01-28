@@ -1174,7 +1174,7 @@ DEVICE
   def test_get(agent, filter, opt=:raw, is_a_running_config_command: true)
     if agent
       cmd_prefix = PUPPET_BINPATH + "resource cisco_command_config 'cc' "
-      on(agent, cmd_prefix + "test_get=\\\"#{filter}\\\"").output
+      on(agent, cmd_prefix + "test_get=\"#{filter}\"").output
       command = stdout
     else
       command = nxapi_test_get(filter, is_a_running_config_command)
@@ -1219,7 +1219,7 @@ DEVICE
   def command_config(agent, cmd, msg='', ignore_errors: false)
     logger.info("\n#{msg}")
     if agent
-      cmd = "resource cisco_command_config 'cc' command=\\\"#{cmd}\\\""
+      cmd = "resource cisco_command_config 'cc' command='#{cmd}'"
       cmd = PUPPET_BINPATH + cmd
       on(agent, cmd, acceptable_exit_codes: [0, 2])
     else
