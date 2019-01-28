@@ -75,9 +75,11 @@ Puppet::Type.newtype(:cisco_aaa_authorization_login_cfg_svc) do
           an array of strings, keyword 'default'."
 
     validate do |val|
-      val.split.each do |group|
-        fail "group #{value} must be a String" unless
-          group.kind_of?(String)
+      unless val.kind_of?(Symbol)
+        val.split.each do |group|
+          fail "group #{value} must be a String" unless
+            group.kind_of?(String)
+        end
       end
     end
 
