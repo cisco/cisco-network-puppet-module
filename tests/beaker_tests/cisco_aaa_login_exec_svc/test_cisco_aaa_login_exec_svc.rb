@@ -127,6 +127,14 @@ end
 
 # class to contain the test_dependencies specific to this test case
 class TestCiscoAaaLoginExecSvc < BaseHarness
+  def self.unsupported_properties(ctx, _tests, _id)
+    unprops = []
+    unprops << :groups if ctx.platform[/n7k/] # 'aaa auth commands' will hang test
+
+    ctx.logger.info("  unprops: #{unprops}") unless unprops.empty?
+    unprops
+  end
+
   # Overridden to properly handle dependencies for this test file.
   def self.dependency_manifest(ctx, _tests, id)
     if [:nondefault, :nondefault_symbols].include?(id)
