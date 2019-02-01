@@ -15,7 +15,7 @@ module Puppet; end
 module Puppet::ResourceApi
   # Implementation for the radius_global type using the Resource API.
   class Puppet::Provider::RadiusGlobal::CiscoNexus
-    def canonicalize(_contaxt, resources)
+    def canonicalize(_context, resources)
       require 'cisco_node_utils'
       resources.each do |resource|
         resource[:key] = resource[:key].gsub(/\A"|"\Z/, '') if resource[:key]
@@ -75,7 +75,7 @@ module Puppet::ResourceApi
       end
 
       # Handle key and keyformat setting
-      @radius_global.key_set(munge(should[:key]), should[:key_format]) if munge(should[:key])
+      @radius_global.key_set(munge(should[:key]), should[:key_format])
     end
 
     def munge(value)
