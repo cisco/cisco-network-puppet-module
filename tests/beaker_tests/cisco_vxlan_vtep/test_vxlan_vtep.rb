@@ -106,7 +106,7 @@ class TestVxlanVtep < BaseHarness
     unprops << :global_suppress_arp if ctx.platform[/n(3k-f|5k|6k|7k)/] ||
                                        (ctx.platform[/n9k$/] && ctx.tcam_arp_ether_acl_is_0(ctx.agent))
     unprops << :global_mcast_group_l2 if ctx.platform[/n(3k-f|5k|6k|7k)/]
-    unprops << :global_mcast_group_l3 if ctx.platform[/n(3k-f|5k|6k|7k|9k-f)/]
+    unprops << :global_mcast_group_l3 if ctx.platform[/n(3k-f|5k|6k|7k|9k$|9k-f)/]
     unprops
   end
 
@@ -114,7 +114,6 @@ class TestVxlanVtep < BaseHarness
     unprops = {}
     unprops[:source_interface_hold_down_time] = '8.1.1' if ctx.platform[/n7k/]
     unprops[:global_ingress_replication_bgp] = '9.2' if ctx.platform[/n9k$/]
-    unprops[:global_mcast_group_l3] = '9.2' if ctx.platform[/n9k$/]
     unprops[:global_suppress_arp] = '9.2' if ctx.platform[/n9k/]
     unprops[:global_mcast_group_l2] = '9.2' if ctx.platform[/n9k/]
     unprops
