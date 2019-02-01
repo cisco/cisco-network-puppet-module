@@ -200,6 +200,8 @@ DEVICE
   # @result none [None] Returns no object.
   def search_pattern_in_output(output, patarr, inverse, testcase,\
                                logger)
+    # Remove certain patterns in output that will cause comparison failures.
+    output.gsub!(/\\'/, '')
     patarr = hash_to_patterns(patarr) if patarr.instance_of?(Hash)
     patarr.each do |pattern|
       inverse ? (match = (output !~ pattern)) : (match = (output =~ pattern))
@@ -1159,6 +1161,7 @@ DEVICE
 
   # Helper method for nxapi client test_get (agentless)
   def nxapi_test_get(filter, is_a_running_config_command)
+    filter.gsub!(/["']/, "'")
     filter = "show running-config all | #{filter}" if is_a_running_config_command
     test_client = nxapi_test_client
     test_client.get(data_format: :cli, command: filter)
@@ -1173,9 +1176,10 @@ DEVICE
   # opt = :array, return array of test_get property data only
   def test_get(agent, filter, opt=:raw, is_a_running_config_command: true)
     if agent
-      cmd_prefix = PUPPET_BINPATH + "resource cisco_command_config 'cc' "
-      on(agent, cmd_prefix + "test_get=\"#{filter}\"").output
-      command = stdout
+      # need to triple escape any embedded quotes
+      filter.gsub!(/["']/, "\\\"")
+      cmd = PUPPET_BINPATH + %(resource cisco_command_config 'cc' test_get='#{filter}')
+      command = on(agent, cmd).output
     else
       command = nxapi_test_get(filter, is_a_running_config_command)
     end

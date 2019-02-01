@@ -60,7 +60,7 @@ tests[:non_default] = {
   manifest_props: {
     timeout:          6,
     retransmit_count: 2,
-    key:              '55555 42',
+    key:              '55555',
     source_interface: ['ethernet1/1'],
   },
   code:           [0, 2],
@@ -68,11 +68,19 @@ tests[:non_default] = {
 
 def cleanup(agent)
   cmds = 'radius-server timeout 5 ; radius-server retransmit 1 ; no ip radius source-interface'
-  test_set(agent, cmds)
+  test_set(agent, cmds, ignore_errors: true)
 
   # To remove a configured key we have to know the key value
-  test_get(agent, 'include radius | include key')
-  key = stdout.match('^radius-server key (\d+)\s+(.*)') if stdout
+  out = test_get(agent, 'include radius-server.key')
+  return unless out
+
+  # AgentFull cc output has escape chars; clean up the noise and remove quotes from the key.
+  # e.g. "cisco_command_config { 'cc':\n  test_get => \"\\nradius-server key 7 \\\"55555\\\"\\n\",\n}\n"
+  #      "cisco_command_config { 'cc':\n  test_get => \"\\nradius-server key 7 55555"
+  logger.info(out)
+  out = out.sub(/\\\"\\n.*/m, '').sub(/\\\"/, '') if out[/\\\"/]
+
+  key = out.match('radius-server key (\d+)\s+(.*)')
   command_config(agent, "no radius-server key #{key[1]} #{key[2]}", "removing key #{key[2]}") if key
 end
 
