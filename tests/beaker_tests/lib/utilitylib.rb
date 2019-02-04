@@ -1912,6 +1912,7 @@ DEVICE
 
   # Remove a single dynamic interface (Vlan, Loopback, Port-channel, etc).
   def remove_interface(agent, intf)
+    logger.info('remove_interface')
     cmd = "    no interface #{intf.capitalize}"
     command_config(agent, cmd, cmd, ignore_errors: true)
   end
@@ -1939,6 +1940,7 @@ DEVICE
     # The limit config should be removed after testing if the device does not
     # have an actual F3.
     return unless platform[/n7k/]
+    logger.info('vdc_limit_f3_no_intf_needed')
     case action
     when :set
       #  limit_resource_module_type => 'f3',
@@ -1992,6 +1994,7 @@ DEVICE
     # cisco_command_config { 'cc':
     #   test_get => "\nvrf context blue\n",
     # }
+    logger.info('remove_all_vrfs')
     # The following logic handles both output styles.
     found = test_get(agent, "incl vrf.context | excl management")
     return if found.nil?

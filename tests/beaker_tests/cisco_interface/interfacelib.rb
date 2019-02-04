@@ -48,7 +48,7 @@ class Interfacelib < BaseHarness
     return unless tests[id].key?(:anycast_gateway_mac)
     agent = tests[:agent]
 
-    stdout = ctx.test_get(agent, "incl 'fabric forwarding'")
+    stdout = ctx.test_get(agent, "incl fabric.forwarding")
 
     return if stdout && stdout[/anycast-gateway-mac/]
     cmd = ['cisco_overlay_global', 'default', 'anycast_gateway_mac', '1.1.1']
