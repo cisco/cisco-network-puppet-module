@@ -1263,7 +1263,7 @@ DEVICE
   #   hardware access-list tcam region arp-ether 256  # allocate to arp-ether
   def tcam_arp_ether_acl_is_0(agent)
     logger.info('Check TCAM arp-ether acl dependency')
-    filter = "incl tcam.region.arp-ether.0$"
+    filter = 'incl tcam.region.arp-ether.0$'
     out = test_get(agent, filter)
     out && out[/tcam region arp-ether 0/] ? true : false
   end
@@ -1992,7 +1992,7 @@ DEVICE
     #   test_get => "\nvrf context blue\n",
     # }
     # The following logic handles both output styles.
-    found = test_get(agent, "incl vrf.context | excl management")
+    found = test_get(agent, 'incl vrf.context | excl management')
     return if found.nil?
     found.gsub!(/\\n/, ' ')
     vrfs = found.scan(/(vrf context \S+)/)
