@@ -1915,13 +1915,25 @@ DEVICE
     command_config(agent, cmd, cmd, ignore_errors: true)
   end
 
+  # nxapi_probe (agentless)
+  # This method is used within the resource_probe method for agentless
+  # workflows.  The resource command cannot be used to set values on the
+  # device in this context.
+  def nxapi_probe(cmd)
+    test_client = nxapi_test_client
+    out = test_client.set(values: cmd)
+    out.to_s
+  rescue Cisco::CliError => e
+    e.to_s
+  end
+
   # Issue a command on the agent and check stdout for a pattern.
   # Useful for checking if hardware supports properties, etc.
   def resource_probe(agent, cmd, pattern)
     if agent
       out = on(agent, PUPPET_BINPATH + 'resource ' + cmd, acceptable_exit_codes: [0, 2, 1], pty: true).stdout
     else
-      out = `#{agentless_command} --resource #{cmd}`
+      out = nxapi_probe(cmd)
     end
     out.match(pattern) ? true : false
   end
