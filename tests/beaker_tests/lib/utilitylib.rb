@@ -1993,7 +1993,7 @@ DEVICE
     #   test_get => "\nvrf context blue\n",
     # }
     # The following logic handles both output styles.
-    found = test_get(agent, "incl 'vrf context' | excl management")
+    found = test_get(agent, "incl vrf.context | excl management")
     return if found.nil?
     found.gsub!(/\\n/, ' ')
     vrfs = found.scan(/(vrf context \S+)/)
