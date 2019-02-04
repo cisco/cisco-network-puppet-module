@@ -1177,7 +1177,6 @@ DEVICE
   def test_get(agent, filter, opt=:raw, is_a_running_config_command: true)
     if agent
       # need to triple escape any embedded quotes
-      filter.gsub!(/["']/, "\\\"")
       cmd = PUPPET_BINPATH + %(resource cisco_command_config 'cc' test_get='#{filter}')
       command = on(agent, cmd).output
     else
