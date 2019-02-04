@@ -99,7 +99,7 @@ tests[:non_default] = {
     ipv4_src_addr_hsrp:                'true',
     ipv4_src_intf:                     'port-channel200',
     ipv4_sub_option_circuit_id_custom: 'true',
-    ipv4_sub_option_circuit_id_string: add_quotes('WORD'),
+    ipv4_sub_option_circuit_id_string: 'WORD',
     ipv4_sub_option_cisco:             'true',
     ipv6_option_cisco:                 'true',
     ipv6_option_vpn:                   'true',

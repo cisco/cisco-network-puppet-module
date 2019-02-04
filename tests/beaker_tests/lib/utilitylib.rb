@@ -201,7 +201,7 @@ DEVICE
   def search_pattern_in_output(output, patarr, inverse, testcase,\
                                logger)
     # Remove certain patterns in output that will cause comparison failures.
-    output.gsub!(/\\'/, '')
+    output.gsub!(/\\'|\"/, '')
     patarr = hash_to_patterns(patarr) if patarr.instance_of?(Hash)
     patarr.each do |pattern|
       inverse ? (match = (output !~ pattern)) : (match = (output =~ pattern))
