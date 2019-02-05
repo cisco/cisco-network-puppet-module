@@ -143,7 +143,7 @@ Now create and apply the following manifest on your nxos devices.
 
 ### <a name="setup-puppet-device">Puppet Device (Agentless)</a>
 
-The module supports remote management through the usage of [`puppet device`](https://puppet.com/docs/puppet/5.5/puppet_device.html), which communicates with the device remotely via the `nxapi` through HTTP/HTTPS. In order to use the `ciscopuppet` module agentlessly then the following dependencies will need to be met.
+The module (version `2.0.0` or later) supports remote management through the usage of [`puppet device`](https://puppet.com/docs/puppet/5.5/puppet_device.html), which communicates with the device remotely via the `nxapi` through HTTP/HTTPS. In order to use the `ciscopuppet` module agentlessly then the following dependencies will need to be met.
 
 ##### The `cisco_node_utils` Ruby Gem
 
@@ -196,7 +196,7 @@ Test your setup and get the certificate signed:
 
 See the [`puppet device` documentation](https://puppet.com/docs/puppet/5.5/puppet_device.html)
 
-*Please note:*: In order for the NX-OS device to be managed then the [nxapi](https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/6-x/programmability/guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_chapter_011.html) feature will need enabled on the device and the selected ports for HTTP/HTTPS will need to be accessible by the `proxy-agent` choosen to manage the device.
+*Please note:*: In order for the NX-OS device to be managed then the [nxapi](https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/9-x/programmability/guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_9x/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_9x_chapter_010010.html) feature will need enabled on the device and the selected ports for HTTP/HTTPS will need to be accessible by the `proxy-agent` choosen to manage the device.
 
 ## <a href='example-manifests'>Example Manifests</a>
 
@@ -508,13 +508,13 @@ The Nexus family of switches support various hardware and software features depe
 
 Platform | Description | Environments
 :--|:--|:--
-**N9k**   | Support includes all N9xxx models  | bash-shell, guestshell
-**N3k**   | Support includes N30xx and N31xx models only.<br>The N35xx model is not supported.   | bash-shell, guestshell
-**N3k-F** | Support includes all N3xxx models running os version 7.0(3)Fx(x) | bash-shell, guestshell
+**N9k**   | Support includes all N9xxx models  | agentless, bash-shell, guestshell
+**N3k**   | Support includes N30xx and N31xx models only.<br>The N35xx model is not supported.   | agentless, bash-shell, guestshell
+**N3k-F** | Support includes all N3xxx models running os version 7.0(3)Fx(x) | agentless, bash-shell, guestshell
 **N5k**   | Support includes N56xx models only.<br>The N50xx and N55xx models are not supported at this time. | Open Agent Container (OAC)
-**N6k**   | Support includes all N6xxx models  | Open Agent Container (OAC)
-**N7k**   | Support includes all N7xxx models  | Open Agent Container (OAC)
-**N9k-F** | Support includes all N95xx models running os version 7.0(3)Fx(x) | bash-shell, guestshell
+**N6k**   | Support includes all N6xxx models  | agentless, Open Agent Container (OAC)
+**N7k**   | Support includes all N7xxx models  | agentless, Open Agent Container (OAC)
+**N9k-F** | Support includes all N95xx models running os version 7.0(3)Fx(x) | agentless, bash-shell, guestshell
 
 
 
