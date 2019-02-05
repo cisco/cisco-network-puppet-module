@@ -1555,7 +1555,8 @@ DEVICE
   @hostname = nil # Cache the lookup result
   def hostname
     if agent
-      data = on(agent, facter_cmd('-p hostname')).output
+      data = test_get(agent, 'inc ^hostname')
+      data = data.nil? ? '' : data.match(/hostname (\S+)/)[1].gsub(/\\n\",/, '')
     else
       output = `#{agentless_command} --facts | grep hostname`
       data = output.nil? ? '' : output.match(%r{"hostname": "(.*)"})[1]
