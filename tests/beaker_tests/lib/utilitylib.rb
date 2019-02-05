@@ -147,8 +147,14 @@ DEVICE
 
   # Method to return an proxy_agent
   # if not already called
+  # Will skip the test if it does not find the
+  # role matching proxy_agent
   def proxy_agent
     find_host_with_role :proxy_agent
+  rescue Beaker::DSL::Outcomes::FailTest
+    msg = 'Skipping test as it is not supported in this mode'
+    banner = '#' * msg.length
+    raise_skip_exception("\n#{banner}\n#{msg}\n#{banner}\n", self)
   end
 
   # These methods are defined outside of a module so that
