@@ -8,7 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 This is a new major version release of the cisco-network-puppet-module.  This version of the module extends Cisco and Netdev resources to allow managing Cisco Nexus devices using an agentless workflow.
 
-The traditional agent based workflows are still supported with the following cavetes.
+The traditional agent based workflows are still supported with the following caveats.
 
 * GuestShell Agent
    * Supported on all platforms that have GuestShell support
