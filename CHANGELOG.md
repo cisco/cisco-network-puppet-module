@@ -2,9 +2,23 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.11.0] - TBD
+## [2.0.0] - TBD
 
 ### New feature support
+
+This is a new major version of the cisco-network-puppet-module.  This version of the module extends Cisco and Netdev resources to allow managing Cisco Nexus devices using an agentless workflow.
+
+The traditional agent based workflows are still supported with the following cavetes.
+
+* GuestShell Agent
+   * Supported on all platforms that have GuestShell support
+   * Supports agent installs using puppet agent 5 and puppet agent 6 rpms.
+* Native Bash Agent
+   * Only supported on NX-OS image versions prior to release version `9.2(1)`
+   * Supports agent installs using puppet agent 5 only and support will be discontinued once puppet agent 5 reaches EOL.
+* Open Agent Container (OAC)
+   * This version of the module is not supported for OAC.  Must use module version `1.10.0` or ealier.
+   * Supports agent install usign puppet agent 4 or ealier which is not EOL.
 
 ### Added
 * Extended `cisco_ospf_vrf` with attribute:
