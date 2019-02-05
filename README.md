@@ -6180,7 +6180,7 @@ Ruby Gems | <http://guides.rubygems.org/><br><https://en.wikipedia.org/wiki/Ruby
 YAML      | <https://en.wikipedia.org/wiki/YAML><br><http://www.yaml.org/start.html>
 Yum       | <https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified><br><https://www.centos.org/docs/5/html/yum/><br><http://www.linuxcommand.org/man_pages>
 
-[GS_9K]: http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/6-x/programmability/guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_chapter_01010.html
+[GS_9K]: https://www.cisco.com/c/en/us/support/switches/nexus-9000-series-switches/products-programming-reference-guides-list.html
 
 [OAC_5K_DOC]: http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus5000/sw/programmability/guide/b_Cisco_Nexus_5K6K_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_5K6K_Series_NX-OS_Programmability_Guide_chapter_01001.html
 
@@ -6189,7 +6189,7 @@ Yum       | <https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified><br><http
 ## License
 
 ~~~text
-Copyright (c) 2014-2018 Cisco and/or its affiliates.
+Copyright (c) 2014-2019 Cisco and/or its affiliates.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
