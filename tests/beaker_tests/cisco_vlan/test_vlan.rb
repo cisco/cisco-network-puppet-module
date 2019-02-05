@@ -103,10 +103,10 @@ tests[:non_default_extended] = {
 tests[:non_default_extended][:manifest_props].delete(:state) if platform[/n(5|6)k/]
 
 if platform[/n3k$/]
+  pattern = 'Hardware is not capable of supporting vn-segment-vlan-based feature'
+  cmd = agent ? 'cisco_vlan 128 mapped_vni=128000' : 'feature vn-segment-vlan-based'
   tests[:vn_segment_unsupported] =
-    resource_probe(agent,
-                   'cisco_vlan 128 mapped_vni=128000',
-                   'Hardware is not capable of supporting vn-segment-vlan-based feature')
+    resource_probe(agent, cmd, pattern)
 end
 
 # class to contain the test_dependencies specific to this test case

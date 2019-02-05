@@ -201,7 +201,7 @@ DEVICE
   def search_pattern_in_output(output, patarr, inverse, testcase,\
                                logger)
     # Remove certain patterns in output that will cause comparison failures.
-    output.gsub!(/\\'/, '')
+    output.gsub!(/\\'|\"/, '')
     patarr = hash_to_patterns(patarr) if patarr.instance_of?(Hash)
     patarr.each do |pattern|
       inverse ? (match = (output !~ pattern)) : (match = (output =~ pattern))
@@ -1177,7 +1177,6 @@ DEVICE
   def test_get(agent, filter, opt=:raw, is_a_running_config_command: true)
     if agent
       # need to triple escape any embedded quotes
-      filter.gsub!(/["']/, "\\\"")
       cmd = PUPPET_BINPATH + %(resource cisco_command_config 'cc' test_get='#{filter}')
       command = on(agent, cmd).output
     else
@@ -1264,9 +1263,9 @@ DEVICE
   #   hardware access-list tcam region arp-ether 256  # allocate to arp-ether
   def tcam_arp_ether_acl_is_0(agent)
     logger.info('Check TCAM arp-ether acl dependency')
-    filter = "incl 'tcam region arp-ether 0$'"
+    filter = 'incl tcam.region.arp-ether.0$'
     out = test_get(agent, filter)
-    out ? true : false
+    out && out[/tcam region arp-ether 0/] ? true : false
   end
 
   # Some specific platform models do not support nv_overlay
@@ -1917,13 +1916,25 @@ DEVICE
     command_config(agent, cmd, cmd, ignore_errors: true)
   end
 
+  # nxapi_probe (agentless)
+  # This method is used within the resource_probe method for agentless
+  # workflows.  The resource command cannot be used to set values on the
+  # device in this context.
+  def nxapi_probe(cmd)
+    test_client = nxapi_test_client
+    out = test_client.set(values: cmd)
+    out.to_s
+  rescue Cisco::CliError => e
+    e.to_s
+  end
+
   # Issue a command on the agent and check stdout for a pattern.
   # Useful for checking if hardware supports properties, etc.
   def resource_probe(agent, cmd, pattern)
     if agent
       out = on(agent, PUPPET_BINPATH + 'resource ' + cmd, acceptable_exit_codes: [0, 2, 1], pty: true).stdout
     else
-      out = `#{agentless_command} --resource #{cmd}`
+      out = nxapi_probe(cmd)
     end
     out.match(pattern) ? true : false
   end
@@ -1996,7 +2007,7 @@ DEVICE
     # }
     logger.info('remove_all_vrfs')
     # The following logic handles both output styles.
-    found = test_get(agent, "incl vrf.context | excl management")
+    found = test_get(agent, 'incl vrf.context | excl management')
     return if found.nil?
     found.gsub!(/\\n/, ' ')
     vrfs = found.scan(/(vrf context \S+)/)
