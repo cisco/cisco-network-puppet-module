@@ -18,7 +18,7 @@ The traditional agent based workflows are still supported with the following cav
    * Supports agent installs using puppet agent 5 rpm only and support will be discontinued once puppet agent 5 reaches EOL.
 * Open Agent Container (OAC)
    * This version of the module is not supported for OAC.  Must use module version `1.10.0` or ealier.
-   * Supports agent install usign puppet agent 4 rpm or ealier which is now EOL.
+   * Supports agent install using puppet agent 4 rpm or ealier which is now EOL.
 
 ### Added
 * Extended `cisco_ospf_vrf` with attribute:
