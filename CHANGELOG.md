@@ -556,6 +556,7 @@ This version was never released.
 - Initial release of puppetlabs-ciscopuppet module, supporting Cisco NX-OS software release 7.0(3)I2(1) on Cisco Nexus switch platforms: N95xx, N93xx, N30xx and N31xx.
 - Please note: 0.9.0 is an EFT pre-release for a limited audience with access to NX-OS 7.0(3)I2(1). Additional code changes may occur in 0.9.x prior to the final 1.0.0 release.
 
+[2.0.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.10.0...v2.0.0
 [1.10.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.9.0...v1.10.0
 [1.9.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.7.0...v1.8.0
