@@ -4,9 +4,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [2.0.0] - TBD
 
-### New feature support
+### New Major Version
 
-This is a new major version of the cisco-network-puppet-module.  This version of the module extends Cisco and Netdev resources to allow managing Cisco Nexus devices using an agentless workflow.
+This is a new major version release of the cisco-network-puppet-module.  This version of the module extends Cisco and Netdev resources to allow managing Cisco Nexus devices using an agentless workflow.
 
 The traditional agent based workflows are still supported with the following cavetes.
 
