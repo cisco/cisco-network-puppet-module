@@ -241,6 +241,8 @@ This section is only required when running Puppet from the `open agent container
 N7k      | [N7k OAC file](https://software.cisco.com/download/release.html?i=!y&mdfid=283748960&softwareid=282088129&release=7.3%280%29D1%281%29&os=) |
 N5k, N6k | [N5k N6k OAC file](https://software.cisco.com/download/release.html?i=!y&mdfid=284360574&softwareid=282088130&release=7.3%280%29N1%281%29&os=) |
 
+**NOTE** The download links for OAC above are for specific NX-OS software versions.  Make sure to select the OAC download OVA that corresponds to the version running on the `N5|6|7k` device.
+
 Copy the `ova` file to the `bootflash:` device.
 
 ~~~
@@ -367,9 +369,11 @@ rpm --import http://yum.puppetlabs.com/RPM-GPG-KEY-puppet
 
 Environment | RPM |
 :--|:--|
-`bash-shell` | <http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm> |
-`guestshell` | <http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm> |
-`open agent`<br>`container (OAC)` | [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm) |
+`bash-shell` | <http://http://yum.puppetlabs.com/puppet5/puppet5-release-cisco-wrlinux-5.noarch.rpm> |
+`guestshell` | <http://http://yum.puppetlabs.com/puppet5/puppet5-release-el-7.noarch.rpm> |
+`open agent`<br>`container (OAC)` | [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm) (End Of Life)|
+
+**OAC NOTE** The OAC rpm is now end of life (EOL) but later versions of the rpm cannot be hosted in the OAC due to a ruby version incompatibility.  To continue using an OAC workflow the module version must be `1.10.0` or ealier along with the now EOL rpm.
 
 <br>
 
@@ -566,7 +570,7 @@ A virtual Nexus N9k may be helpful for development and testing. To obtain a virt
 ## License
 
 ~~~
-Copyright (c) 2014-2018 Cisco and/or its affiliates.
+Copyright (c) 2014-2019 Cisco and/or its affiliates.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
