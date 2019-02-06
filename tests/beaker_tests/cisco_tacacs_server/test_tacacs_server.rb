@@ -68,7 +68,7 @@ tests[:non_default] = {
   resource:       {
     'timeout'             => '50',
     'deadtime'            => '0',
-    'encryption_password' => add_quotes('WXYZ12'),
+    'encryption_password' => 'WXYZ12',
     'encryption_type'     => 'encrypted',
     'directed_request'    => 'false',
     'source_interface'    => 'Ethernet1/4',

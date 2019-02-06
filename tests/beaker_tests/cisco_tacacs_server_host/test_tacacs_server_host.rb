@@ -62,7 +62,7 @@ tests[:non_default] = {
   resource:       {
     'port'                => '90',
     'timeout'             => '39',
-    'encryption_password' => add_quotes('test123'),
+    'encryption_password' => 'test123',
   },
 }
 
