@@ -89,7 +89,7 @@ test_name 'Prep Masters & Install Puppet' do
         on(node, "echo #{Shellwords.escape(mod_line_from_env('puppetlabs-puppetserver_gem', 'RSAPI'))} >> /root/Puppetfile")
         on(node, "echo #{Shellwords.escape(mod_line_from_env('puppetlabs-netdev_stdlib', 'NETDEV_STDLIB'))} >> /root/Puppetfile")
         on(node, "echo #{Shellwords.escape(mod_line_from_env('puppetlabs-ciscopuppet', 'MODULE'))} >> /root/Puppetfile")
-        if proxy_agent
+        if proxy_agents
           on(node, "echo #{Shellwords.escape(mod_line_from_env('puppetlabs-device_manager', 'DEVICE_MANAGER'))} >> /root/Puppetfile")
           on(node, "echo #{Shellwords.escape(mod_line_from_env('puppetlabs-concat', 'CONCAT'))} >> /root/Puppetfile")
           on(node, "echo #{Shellwords.escape(mod_line_from_env('puppetlabs-hocon', 'HOCON'))} >> /root/Puppetfile")
