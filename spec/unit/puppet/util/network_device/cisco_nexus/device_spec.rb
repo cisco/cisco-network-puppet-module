@@ -50,7 +50,7 @@ RSpec.describe Puppet::Util::NetworkDevice::Cisco_nexus do
     end
     let(:facts) do
       { 'operatingsystem'        => 'nexus',
-        'cisco_node_utils'       => '1.10.0',
+        'cisco_node_utils'       => '2.0.0',
         'cisco'                  =>
                                     { 'images'                           => { 'system_image' => 'foo_img', 'full_version' => '7.0.1-bar', 'packages' => {} },
                                       'hardware'                         =>

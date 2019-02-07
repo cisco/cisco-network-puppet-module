@@ -36,7 +36,7 @@
 ###############################################################################
 
 # Require UtilityLib.rb path.
-require File.expand_path('../../lib/utilitylib.rb', __FILE__)
+require File.expand_path('../../beaker_tests/lib/utilitylib.rb', __FILE__)
 
 result = 'PASS'
 testheader = 'Resource :: Presuite'
