@@ -59,6 +59,50 @@ RSpec.describe Puppet::Provider::SyslogSettings::CiscoNexus do
       end
     end
 
+    context 'should is unset' do
+      let(:should_values) do
+        {
+          name:                   'default',
+          console:                'unset',
+          monitor:                'unset',
+          source_interface:       ['unset'],
+          time_stamp_units:       'seconds',
+          logfile_name:           'unset',
+          logfile_severity_level: 'unset',
+          logfile_size:           'unset',
+        }
+      end
+
+      it 'performs an update' do
+        allow(Cisco::SyslogSettings).to receive(:syslogsettings).and_return('default' => syslog_settings)
+        expect(context).to receive(:notice).with(%r{Setting 'default'})
+
+        provider.set(context, changes)
+      end
+    end
+
+    context 'should is unset and -1' do
+      let(:should_values) do
+        {
+          name:                   'default',
+          console:                -1,
+          monitor:                -1,
+          source_interface:       ['unset'],
+          time_stamp_units:       'seconds',
+          logfile_name:           'unset',
+          logfile_severity_level: -1,
+          logfile_size:           -1,
+        }
+      end
+
+      it 'performs an update' do
+        allow(Cisco::SyslogSettings).to receive(:syslogsettings).and_return('default' => syslog_settings)
+        expect(context).to receive(:notice).with(%r{Setting 'default'})
+
+        provider.set(context, changes)
+      end
+    end
+
     context 'should is the same' do
       let(:should_values) do
         {
@@ -295,5 +339,85 @@ RSpec.describe Puppet::Provider::SyslogSettings::CiscoNexus do
     end
   end
 
-  it_behaves_like 'a noop canonicalizer'
+  canonicalize_data = [
+    {
+      desc:      '`resources` contains -1 values',
+      resources: [{
+        name:                   'default',
+        console:                -1,
+        monitor:                -1,
+        source_interface:       ['unset'],
+        time_stamp_units:       'seconds',
+        logfile_name:           'unset',
+        logfile_severity_level: -1,
+        logfile_size:           -1,
+      }],
+      results:   [{
+        name:                   'default',
+        console:                'unset',
+        monitor:                'unset',
+        source_interface:       ['unset'],
+        time_stamp_units:       'seconds',
+        logfile_name:           'unset',
+        logfile_severity_level: 'unset',
+        logfile_size:           'unset',
+      }],
+    },
+    {
+      desc:      '`resources` contains unset values',
+      resources: [{
+        name:                   'default',
+        console:                'unset',
+        monitor:                'unset',
+        source_interface:       ['unset'],
+        time_stamp_units:       'seconds',
+        logfile_name:           'unset',
+        logfile_severity_level: 'unset',
+        logfile_size:           'unset',
+      }],
+      results:   [{
+        name:                   'default',
+        console:                'unset',
+        monitor:                'unset',
+        source_interface:       ['unset'],
+        time_stamp_units:       'seconds',
+        logfile_name:           'unset',
+        logfile_severity_level: 'unset',
+        logfile_size:           'unset',
+      }],
+    },
+    {
+      desc:      '`resources` contains regular values',
+      resources: [{
+        name:                   'default',
+        console:                2,
+        monitor:                5,
+        source_interface:       ['mgmt0'],
+        time_stamp_units:       'milliseconds',
+        logfile_name:           'testlogfile',
+        logfile_severity_level: 3,
+        logfile_size:           4098,
+      }],
+      results:   [{
+        name:                   'default',
+        console:                2,
+        monitor:                5,
+        source_interface:       ['mgmt0'],
+        time_stamp_units:       'milliseconds',
+        logfile_name:           'testlogfile',
+        logfile_severity_level: 3,
+        logfile_size:           4098,
+      }],
+    },
+  ]
+
+  describe '#canonicalize' do
+    canonicalize_data.each do |test|
+      context "#{test[:desc]}" do
+        it 'returns canonicalized value' do
+          expect(provider.canonicalize(context, test[:resources])).to eq(test[:results])
+        end
+      end
+    end
+  end
 end

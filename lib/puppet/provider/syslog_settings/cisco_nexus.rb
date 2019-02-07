@@ -34,6 +34,11 @@ module Puppet::ResourceApi
     SYSLOG_CONFIG_PROPS ||= SYSLOG_SETTINGS_ARRAY_PROPS + SYSLOG_SETTINGS_NON_BOOL_PROPS + SYSLOG_SETTINGS_INTEGER_PROPS
 
     def canonicalize(_context, resources)
+      resources.each do |resource|
+        resource.each do |k, v|
+          resource[k] = 'unset' if v.nil? || v == (nil || -1)
+        end
+      end
       resources
     end
 
@@ -67,10 +72,10 @@ module Puppet::ResourceApi
 
       SYSLOG_SETTINGS_INTEGER_PROPS.each do |property|
         value = @syslog_settings.send(property)
-        if property == :logfile_size
-          current_state[property] = value ? value.to_i : -1
-        else
+        if value != 'unset'
           current_state[property] = value ? value.to_i : 'unset'
+        else
+          current_state[property] = value
         end
       end
 
@@ -102,11 +107,13 @@ module Puppet::ResourceApi
                                          (should[:logfile_severity_level] && !should[:logfile_name]))
       raise Puppet::ResourceError,
             'This provider requires that a logfile_name is unset in order to unset logfile_severity_level' if should[:logfile_name].to_s != 'unset' &&
-                                                                                                             should[:logfile_severity_level].to_s == 'unset'
+                                                                                                             (should[:logfile_severity_level].to_s == 'unset' ||
+                                                                                                             should[:logfile_severity_level] == -1)
       raise Puppet::ResourceError,
             'This provider does not support setting the logfile_severity_level when logfile_name is unset' if should[:logfile_name].to_s == 'unset' &&
                                                                                                              (should[:logfile_severity_level] &&
-                                                                                                             should[:logfile_severity_level].to_s != 'unset')
+                                                                                                             (should[:logfile_severity_level].to_s != 'unset' &&
+                                                                                                             should[:logfile_severity_level] != -1))
       raise Puppet::ResourceError,
             'This provider requires that a logfile_name and logfile_severity_level are both specified in order '\
             'to set logfile_size.' if should[:logfile_size] && !should[:logfile_name] && !should[:logfile_severity_level]
