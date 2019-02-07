@@ -1,5 +1,5 @@
 #
-# December 2017
+# June 2018
 #
 # Copyright (c) 2017-2018 Cisco and/or its affiliates.
 #
@@ -56,6 +56,7 @@ Puppet::Type.newtype(:cisco_interface_evpn_multisite) do
   # Attributes #
   ##############
 
+  apply_to_all
   ensurable
 
   newproperty(:tracking) do

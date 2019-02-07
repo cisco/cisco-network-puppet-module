@@ -98,6 +98,6 @@ class ciscopuppet::cisco::demo_vpc_domain {
     }
 
   } else {
-     notify{'SKIP: This platform does not support vpc feature': }
+    notify{'SKIP: This platform does not support vpc feature': }
   }
 }

@@ -27,7 +27,11 @@ tests = {
   agent:         agent,
   master:        master,
   resource_name: 'file',
+  agent_only:    true,
 }
+
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
 
 testfile = '/tmp/testfile.txt'
 

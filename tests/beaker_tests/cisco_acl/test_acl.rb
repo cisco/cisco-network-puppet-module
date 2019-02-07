@@ -36,10 +36,10 @@ tests[:default] = {
   desc:           '1.1 Default tests',
   title_pattern:  'ipv4 beaker',
   manifest_props: {
-    fragments: 'default'
+    fragments: 'default',
   },
   resource:       {
-    'stats_per_entry' => 'false'
+    'stats_per_entry' => 'false',
   },
 }
 
@@ -75,18 +75,15 @@ tests[:title_patterns_3] = {
   resource:       { 'ensure' => 'present' },
 }
 
-# Overridden to properly handle unsupported properties for this test file.
-def unsupported_properties(_tests, _id)
-  unprops = []
-
-  if operating_system == 'ios_xr'
-    # unprops << TBD: XR Support
-
-  else
-    unprops << :fragments if platform[/n(3k-f|5k|6k|9k-f)/]
+# class to contain the test_dependencies specific to this test case
+class TestAcl < BaseHarness
+  def self.unsupported_properties(ctx, _tests, _id)
+    if ctx.platform[%r{n(3k-f|5k|6k|9k-f)}]
+      [:fragments]
+    else
+      []
+    end
   end
-
-  unprops
 end
 
 #################################################################
@@ -99,21 +96,21 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # ------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. ACL Testing")
   id = :default
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestAcl)
   tests[id][:title_pattern] = 'ipv6 beaker6'
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestAcl)
 
   id = :non_default
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestAcl)
   tests[id][:title_pattern] = 'ipv6 beaker6'
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestAcl)
 
   resource_absent_cleanup(agent, 'cisco_acl')
   # ------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Title Pattern Testing")
-  test_harness_run(tests, :title_patterns_1)
-  test_harness_run(tests, :title_patterns_2)
-  test_harness_run(tests, :title_patterns_3)
+  test_harness_run(tests, :title_patterns_1, harness_class: TestAcl)
+  test_harness_run(tests, :title_patterns_2, harness_class: TestAcl)
+  test_harness_run(tests, :title_patterns_3, harness_class: TestAcl)
 
   # ---------------------------------------------------------
   skipped_tests_summary(tests)

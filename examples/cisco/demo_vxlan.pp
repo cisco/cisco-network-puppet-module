@@ -58,33 +58,33 @@ class ciscopuppet::cisco::demo_vxlan {
     $suppress_uuc = platform_get() ? {
       /n(5|6)k/  => 'default',
       default    => undef,
-     }
+    }
 
     $global_suppress_arp = platform_get() ? {
-      /n9k/  => 'true',
+      /n9k/  => true,
       default    => undef,
-     }
+    }
 
     $global_ingress_replication_bgp = platform_get() ? {
-      /n9k$/  => 'true',
+      /n9k$/  => true,
       default    => undef,
-     }
+    }
 
     $global_mcast_group_l3 = platform_get() ? {
       /n9k$/  => '225.1.1.1',
       default    => undef,
-     }
+    }
 
     $global_mcast_group_l2 = platform_get() ? {
       /n9k/  => 'default',
       default    => undef,
-     }
+    }
 
     cisco_vxlan_vtep { 'nve1':
       ensure                          => present,
       description                     => 'Configured by puppet',
       host_reachability               => 'evpn',
-      shutdown                        => 'false',
+      shutdown                        => false,
       source_interface                => 'loopback55',
       source_interface_hold_down_time => $source_interface_hold_down_time,
       global_mcast_group_l2           => $global_mcast_group_l2,
@@ -94,12 +94,12 @@ class ciscopuppet::cisco::demo_vxlan {
     }
 
     cisco_vxlan_vtep_vni {'nve1 10000':
-      ensure               => present,
-      assoc_vrf            => false,
-      multicast_group      => undef,
-      ingress_replication  => $ingress_replication,
-      peer_list            => $peer_list,
-      suppress_uuc         => $suppress_uuc,
+      ensure              => present,
+      assoc_vrf           => false,
+      multicast_group     => undef,
+      ingress_replication => $ingress_replication,
+      peer_list           => $peer_list,
+      suppress_uuc        => $suppress_uuc,
     }
 
     cisco_vxlan_vtep_vni {'nve1 20000':

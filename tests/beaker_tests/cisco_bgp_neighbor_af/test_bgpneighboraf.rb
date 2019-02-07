@@ -30,83 +30,85 @@ tests = {
   resource_name: 'cisco_bgp_neighbor_af',
 }
 
-# Overridden to properly handle unsupported properties.
-def unsupported_properties(_, _)
-  unsupported_list = []
-  unsupported_list << :rewrite_evpn_rt_asn unless platform[/ex/]
-  return unsupported_list if operating_system == 'nexus'
+# class to contain the test_dependencies specific to this test case
+class TestBgpNeighborAf < BaseHarness
+  def self.unsupported_properties(ctx, _tests, _id)
+    unsupported_list = []
+    unsupported_list << :rewrite_evpn_rt_asn unless ctx.platform[/ex/]
+    return unsupported_list if ctx.operating_system == 'nexus'
 
-  [
-    :additional_paths_receive,
-    :additional_paths_send,
-    :default_originate_route_map,
-    :disable_peer_as_check,
-    :filter_list_in,
-    :filter_list_out,
-    :next_hop_third_party,
-    :prefix_list_in,
-    :prefix_list_out,
-    :suppress_inactive,
-    :unsuppress_map,
-    :rewrite_evpn_rt_asn,
-  ]
-end
+    [
+      :additional_paths_receive,
+      :additional_paths_send,
+      :default_originate_route_map,
+      :disable_peer_as_check,
+      :filter_list_in,
+      :filter_list_out,
+      :next_hop_third_party,
+      :prefix_list_in,
+      :prefix_list_out,
+      :suppress_inactive,
+      :unsuppress_map,
+      :rewrite_evpn_rt_asn,
+    ]
+  end
 
-# Overridden to properly handle dependencies for this test file.
-def dependency_manifest(tests, id)
-  af = puppet_resource_title_pattern_munge(tests, id)
-  remote_as = tests[id][:remote_as]
-  remote_as = 1 if remote_as.nil? && operating_system == 'ios_xr'
+  # Overridden to properly handle dependencies for this test file.
+  def self.dependency_manifest(ctx, tests, id)
+    af = ctx.puppet_resource_title_pattern_munge(tests, id)
+    remote_as = tests[id][:remote_as]
+    remote_as = 1 if remote_as.nil? && ctx.operating_system == 'ios_xr'
 
-  extra_config = ''
-  if operating_system[/ios_xr/]
-    extra_config += "
-      cisco_command_config { 'policy_config':
-        command => '
-          route-policy rm_in
-            end-policy
-          route-policy rm_out
-            end-policy
-        '
-      }
-    "
-    # XR requires the following before a vrf AF can be configured:
-    #   1. a global router_id
-    #   2. a global address family
-    #   3. route_distinguisher configured on the vrf
-    #   4. remote-as is required for neighbor
-    if af[:vrf] != 'default'
-      global_afi = (af[:afi] == 'ipv6') ? 'vpnv6' : 'vpnv4'
+    extra_config = ''
+    if ctx.operating_system[/ios_xr/]
       extra_config += "
-        cisco_bgp { '#{af[:asn]}':
-          ensure              => present,
-          router_id           => '1.2.3.4',
+        cisco_command_config { 'policy_config':
+          command => '
+            route-policy rm_in
+              end-policy
+            route-policy rm_out
+              end-policy
+          '
         }
-        cisco_bgp_af { '#{af[:asn]} default #{global_afi} #{af[:safi]}':
-          ensure              => present,
+      "
+      # XR requires the following before a vrf AF can be configured:
+      #   1. a global router_id
+      #   2. a global address family
+      #   3. route_distinguisher configured on the vrf
+      #   4. remote-as is required for neighbor
+      if af[:vrf] != 'default'
+        global_afi = (af[:afi] == 'ipv6') ? 'vpnv6' : 'vpnv4'
+        extra_config += "
+          cisco_bgp { '#{af[:asn]}':
+            ensure              => present,
+            router_id           => '1.2.3.4',
+          }
+          cisco_bgp_af { '#{af[:asn]} default #{global_afi} #{af[:safi]}':
+            ensure              => present,
+          }
+          cisco_bgp { '#{af[:asn]} #{af[:vrf]}':
+            ensure              => present,
+            route_distinguisher => auto,
+          }
+        "
+      end
+      extra_config += "
+        cisco_bgp_af { '#{af[:asn]} #{af[:vrf]} #{af[:afi]} #{af[:safi]}':
+          ensure                => present,
         }
-        cisco_bgp { '#{af[:asn]} #{af[:vrf]}':
-          ensure              => present,
-          route_distinguisher => auto,
+      "
+    end # if ios_xr
+
+    if remote_as
+      extra_config += "
+        cisco_bgp_neighbor { '#{af[:asn]} #{af[:vrf]} #{af[:neighbor]}':
+          ensure               => present,
+          remote_as            => #{remote_as},
         }
       "
     end
-    extra_config += "
-      cisco_bgp_af { '#{af[:asn]} #{af[:vrf]} #{af[:afi]} #{af[:safi]}':
-        ensure                => present,
-      }
-    "
-  end # if ios_xr
-
-  if remote_as
-    extra_config += "
-      cisco_bgp_neighbor { '#{af[:asn]} #{af[:vrf]} #{af[:neighbor]}':
-        ensure               => present,
-        remote_as            => #{remote_as},
-      }
-    "
+    extra_config
   end
-  extra_config
 end
 
 tests[:default] = {
@@ -340,10 +342,10 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  test_harness_run(tests, :default)
+  test_harness_run(tests, :default, harness_class: TestBgpNeighborAf)
 
   tests[:default][:ensure] = :absent
-  test_harness_run(tests, :default)
+  test_harness_run(tests, :default, harness_class: TestBgpNeighborAf)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
@@ -367,11 +369,11 @@ test_name "TestCase :: #{tests[:resource_name]}" do
     :non_def_misc_maps_3,
   ].each do |id|
     tests[id][:title_pattern] = title
-    test_harness_run(tests, id)
+    test_harness_run(tests, id, harness_class: TestBgpNeighborAf)
   end
 
-  test_harness_run(tests, :non_def_ebgp_only)
-  test_harness_run(tests, :non_def_ibgp_only)
+  test_harness_run(tests, :non_def_ebgp_only, harness_class: TestBgpNeighborAf)
+  test_harness_run(tests, :non_def_ibgp_only, harness_class: TestBgpNeighborAf)
 
   # -------------------------------------------------------------------
   unless platform[/n3k$/]
@@ -390,19 +392,19 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
     array.each do |id|
       tests[id][:title_pattern] = title
-      test_harness_run(tests, id)
+      test_harness_run(tests, id, harness_class: TestBgpNeighborAf)
     end
 
     id = :non_def_ibgp_only
     tests[id][:title_pattern].gsub!(/ipv4 unicast/, 'l2vpn evpn')
-    test_harness_run(tests, id)
+    test_harness_run(tests, id, harness_class: TestBgpNeighborAf)
   end
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
-  test_harness_run(tests, :title_patterns_1)
-  test_harness_run(tests, :title_patterns_2)
-  test_harness_run(tests, :title_patterns_3)
-  test_harness_run(tests, :title_patterns_4)
+  test_harness_run(tests, :title_patterns_1, harness_class: TestBgpNeighborAf)
+  test_harness_run(tests, :title_patterns_2, harness_class: TestBgpNeighborAf)
+  test_harness_run(tests, :title_patterns_3, harness_class: TestBgpNeighborAf)
+  test_harness_run(tests, :title_patterns_4, harness_class: TestBgpNeighborAf)
 
   # -----------------------------------
   skipped_tests_summary(tests)

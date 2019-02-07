@@ -154,106 +154,108 @@ tests[:title_patterns_2] = {
   resource:      { 'ensure' => 'present' },
 }
 
-def unsupp_prop_xr(tests, id)
-  unprops = []
-  vrf = vrf(tests[id])
+# class to contain the test_dependencies specific to this test case
+class TestBgp < BaseHarness
+  def self.unsupported_properties(ctx, tests, id)
+    unprops = []
 
-  unprops <<
-    :bestpath_med_non_deterministic <<
-    :disable_policy_batching <<
-    :event_history_cli <<
-    :event_history_detail <<
-    :event_history_events <<
-    :event_history_errors <<
-    :event_history_objstore <<
-    :event_history_periodic <<
-    :flush_routes <<
-    :graceful_restart_helper <<
-    :isolate <<
-    :log_neighbor_changes <<
-    :maxas_limit <<
-    :neighbor_down_fib_accelerate <<
-    :shutdown <<
-    :suppress_fib_pending <<
-    :timer_bestpath_limit <<
-    :timer_bestpath_limit_always
+    vrf = ctx.vrf(tests[id])
 
-  if vrf != 'default'
-    # IOS-XR does not support these properties under a non-default vrf
-    unprops <<
-      :bestpath_med_confed <<
-      :cluster_id <<
-      :confederation_id <<
-      :confederation_peers <<
-      :graceful_restart <<
-      :graceful_restart_timers_restart <<
-      :graceful_restart_timers_stalepath_time <<
-      :nsr
+    if ctx.operating_system == 'ios_xr'
+      unprops << unsupp_prop_xr(ctx, tests, id)
+    else
+      # NX-OS does not support these properties
+      unprops << :nsr
+
+      unprops <<
+        :event_history_errors <<
+        :event_history_objstore if ctx.platform[/n5|n6/]
+
+      if vrf != 'default'
+        # NX-OS does not support these properties under a non-default vrf
+        unprops <<
+          :disable_policy_batching <<
+          :enforce_first_as <<
+          :event_history_cli <<
+          :event_history_detail <<
+          :event_history_errors <<
+          :event_history_events <<
+          :event_history_objstore <<
+          :event_history_periodic <<
+          :fast_external_fallover <<
+          :flush_routes <<
+          :neighbor_down_fib_accelerate <<
+          :suppress_fib_pending
+      end
+
+      if ctx.platform[/n(5|6)k/]
+        unprops <<
+          :disable_policy_batching_ipv4 <<
+          :disable_policy_batching_ipv6 <<
+          :neighbor_down_fib_accelerate <<
+          :reconnect_interval
+      end
+    end
+    unprops
   end
-  unprops
-end
 
-# Overridden to properly handle unsupported properties for this test file.
-def unsupported_properties(tests, id)
-  unprops = []
+  def self.version_unsupported_properties(ctx, _tests, _id)
+    unprops = {}
+    if ctx.platform[/n7k/]
+      unprops[:disable_policy_batching_ipv4] = '8.1.1'
+      unprops[:disable_policy_batching_ipv6] = '8.1.1'
+      unprops[:neighbor_down_fib_accelerate] = '8.1.1'
+      unprops[:reconnect_interval] = '8.1.1'
+      unprops[:event_history_errors] = '8.0'
+      unprops[:event_history_objstore] = '8.0'
+    elsif ctx.platform[/n3k$|n9k$/]
+      unprops[:event_history_errors] = '7.0.3.I5.1'
+      unprops[:event_history_objstore] = '7.0.3.I5.1'
+    elsif ctx.platform[/n(3|9)k-f/]
+      unprops[:event_history_errors] = '7.0.3.F3.2'
+      unprops[:event_history_objstore] = '7.0.3.F3.2'
+    end
+    unprops
+  end
 
-  vrf = vrf(tests[id])
-
-  if operating_system == 'ios_xr'
-    unprops << unsupp_prop_xr(tests, id)
-  else
-    # NX-OS does not support these properties
-    unprops << :nsr
+  def self.unsupp_prop_xr(ctx, tests, id)
+    unprops = []
+    vrf = ctx.vrf(tests[id])
 
     unprops <<
+      :bestpath_med_non_deterministic <<
+      :disable_policy_batching <<
+      :event_history_cli <<
+      :event_history_detail <<
+      :event_history_events <<
       :event_history_errors <<
-      :event_history_objstore if platform[/n5|n6/]
+      :event_history_objstore <<
+      :event_history_periodic <<
+      :flush_routes <<
+      :graceful_restart_helper <<
+      :isolate <<
+      :log_neighbor_changes <<
+      :maxas_limit <<
+      :neighbor_down_fib_accelerate <<
+      :shutdown <<
+      :suppress_fib_pending <<
+      :timer_bestpath_limit <<
+      :timer_bestpath_limit_always
 
     if vrf != 'default'
-      # NX-OS does not support these properties under a non-default vrf
+      # IOS-XR does not support these properties under a non-default vrf
       unprops <<
-        :disable_policy_batching <<
-        :enforce_first_as <<
-        :event_history_cli <<
-        :event_history_detail <<
-        :event_history_errors <<
-        :event_history_events <<
-        :event_history_objstore <<
-        :event_history_periodic <<
-        :fast_external_fallover <<
-        :flush_routes <<
-        :neighbor_down_fib_accelerate <<
-        :suppress_fib_pending
+        :bestpath_med_confed <<
+        :cluster_id <<
+        :confederation_id <<
+        :confederation_peers <<
+        :graceful_restart <<
+        :graceful_restart_timers_restart <<
+        :graceful_restart_timers_stalepath_time <<
+        :nsr
     end
-
-    if platform[/n(5|6)k/]
-      unprops <<
-        :disable_policy_batching_ipv4 <<
-        :disable_policy_batching_ipv6 <<
-        :neighbor_down_fib_accelerate <<
-        :reconnect_interval
-    end
+    unprops
   end
-  unprops
-end
-
-def version_unsupported_properties(_tests, _id)
-  unprops = {}
-  if platform[/n7k/]
-    unprops[:disable_policy_batching_ipv4] = '8.1.1'
-    unprops[:disable_policy_batching_ipv6] = '8.1.1'
-    unprops[:neighbor_down_fib_accelerate] = '8.1.1'
-    unprops[:reconnect_interval] = '8.1.1'
-    unprops[:event_history_errors] = '8.0'
-    unprops[:event_history_objstore] = '8.0'
-  elsif platform[/n3k$|n9k$/]
-    unprops[:event_history_errors] = '7.0.3.I5.1'
-    unprops[:event_history_objstore] = '7.0.3.I5.1'
-  elsif platform[/n(3|9)k-f/]
-    unprops[:event_history_errors] = '7.0.3.F3.2'
-    unprops[:event_history_objstore] = '7.0.3.F3.2'
-  end
-  unprops
 end
 
 def cleanup(agent)
@@ -276,30 +278,30 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -----------------------------------
   id = :default
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestBgp)
 
   # test removal of bgp instance
   tests[id][:ensure] = :absent
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestBgp)
 
   # now test the defaults under a non-default vrf
   cleanup(agent)
   tests[id][:ensure] = :present
   tests[id][:desc] = '1.1.a. Default Properties (vrf blue)'
-  test_harness_bgp_vrf(tests, id, 'blue')
+  test_harness_bgp_vrf(tests, id, 'blue', harness_class: TestBgp)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
   id = :non_default
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestBgp)
   tests[id][:desc] = '2.1.a. Default Properties (vrf blue)'
-  test_harness_bgp_vrf(tests, id, 'blue')
+  test_harness_bgp_vrf(tests, id, 'blue', harness_class: TestBgp)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
   cleanup(agent)
-  test_harness_run(tests, :title_patterns_1)
-  test_harness_run(tests, :title_patterns_2)
+  test_harness_run(tests, :title_patterns_1, harness_class: TestBgp)
+  test_harness_run(tests, :title_patterns_2, harness_class: TestBgp)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

@@ -159,55 +159,58 @@ tests[:ip_forwarding] = {
   manifest_props:     { ipv4_forwarding: true },
 }
 
-def unsupported_properties(_tests, id)
-  unprops = []
+# class to contain the test_dependencies specific to this test case
+class TestInterfaceL3 < Interfacelib
+  def self.unsupported_properties(ctx, _tests, id)
+    unprops = []
 
-  if operating_system == 'ios_xr'
-    unprops <<
-      :bfd_echo <<
-      :duplex <<
-      :ipv4_forwarding <<
-      :ipv4_pim_sparse_mode <<
-      :ipv4_dhcp_relay_addr <<
-      :ipv4_dhcp_relay_info_trust <<
-      :ipv4_dhcp_relay_src_addr_hsrp <<
-      :ipv4_dhcp_relay_src_intf <<
-      :ipv4_dhcp_relay_subnet_broadcast <<
-      :ipv4_dhcp_smart_relay <<
-      :ipv6_dhcp_relay_addr <<
-      :ipv6_dhcp_relay_src_intf <<
-      :pim_bfd <<
-      :switchport_mode
+    if ctx.operating_system == 'ios_xr'
+      unprops <<
+        :bfd_echo <<
+        :duplex <<
+        :ipv4_forwarding <<
+        :ipv4_pim_sparse_mode <<
+        :ipv4_dhcp_relay_addr <<
+        :ipv4_dhcp_relay_info_trust <<
+        :ipv4_dhcp_relay_src_addr_hsrp <<
+        :ipv4_dhcp_relay_src_intf <<
+        :ipv4_dhcp_relay_subnet_broadcast <<
+        :ipv4_dhcp_smart_relay <<
+        :ipv6_dhcp_relay_addr <<
+        :ipv6_dhcp_relay_src_intf <<
+        :pim_bfd <<
+        :switchport_mode
+    end
+
+    if ctx.platform[/n(3|9)k/]
+      unprops <<
+        :ipv4_dhcp_relay_src_addr_hsrp
+    elsif ctx.platform[/n(5|6)k/]
+      unprops <<
+        :ipv4_dhcp_relay_info_trust
+    end
+
+    # TBD: shutdown has unpredictable behavior. Needs investigation.
+    unprops << :shutdown if id == :default
+
+    unprops
   end
 
-  if platform[/n(3|9)k/]
-    unprops <<
-      :ipv4_dhcp_relay_src_addr_hsrp
-  elsif platform[/n(5|6)k/]
-    unprops <<
-      :ipv4_dhcp_relay_info_trust
+  # Overridden to properly handle dependencies for this test file.
+  def self.dependency_manifest(ctx, _tests, id)
+    return unless id == :non_default
+    # Though not required on most platforms, the test vrf context should be
+    # instantiated prior to configuring settings on a vrf interface. The new
+    # DME-based cli's (PIM, etc) may fail otherwise.
+    dep = %( cisco_vrf { 'test1': description => 'Puppet test vrf' } )
+    ctx.logger.info("\n  * dependency_manifest\n#{dep}")
+    dep
   end
-
-  # TBD: shutdown has unpredictable behavior. Needs investigation.
-  unprops << :shutdown if id == :default
-
-  unprops
 end
 
-# Overridden to properly handle dependencies for this test file.
-def dependency_manifest(_tests, id)
-  return unless id == :non_default
-  # Though not required on most platforms, the test vrf context should be
-  # instantiated prior to configuring settings on a vrf interface. The new
-  # DME-based cli's (PIM, etc) may fail otherwise.
-  dep = %( cisco_vrf { 'test1': description => 'Puppet test vrf' } )
-  logger.info("\n  * dependency_manifest\n#{dep}")
-  dep
-end
-
-def cleanup(agent, intf, dot1q)
+def cleanup(agent, intf, dot1q=nil)
   test_set(agent, 'no feature bfd ; no feature pim')
-  test_set(agent, "no interface #{dot1q}")
+  test_set(agent, "no interface #{dot1q}") if dot1q
   remove_all_vrfs(agent)
   interface_cleanup(agent, intf)
 end
@@ -217,20 +220,25 @@ end
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
   teardown { cleanup(agent, intf, dot1q) }
-  cleanup(agent, intf, dot1q)
+  # cannot clean up dot1q as most likely not been created yet
+  cleanup(agent, intf)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  test_harness_run(tests, :default)
+  test_harness_run(tests, :default, harness_class: TestInterfaceL3)
 
-  interface_cleanup(agent, dot1q)
-  test_harness_run(tests, :dot1q)
+  interfaces = get_current_resource_instances(agent, 'cisco_interface')
+  interfaces.each do |interface|
+    next unless interface =~ /#{dot1q}/
+    interface_cleanup(agent, dot1q)
+  end
+  test_harness_run(tests, :dot1q, harness_class: TestInterfaceL3)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  test_harness_run(tests, :non_default)
-  test_harness_run(tests, :acl)
-  test_harness_run(tests, :ip_forwarding)
+  test_harness_run(tests, :non_default, harness_class: TestInterfaceL3)
+  test_harness_run(tests, :acl, harness_class: TestInterfaceL3)
+  test_harness_run(tests, :ip_forwarding, harness_class: TestInterfaceL3)
 
   # -------------------------------------------------------------------
   skipped_tests_summary(tests)

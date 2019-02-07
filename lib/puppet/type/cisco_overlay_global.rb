@@ -2,9 +2,9 @@
 # Duplicate host IP address detection, duplicate host mac address
 # detection and configuring anycast gateway mac address.
 #
-# November 2015
+# June 2018
 #
-# Copyright (c) 2015-2016 Cisco and/or its affiliates.
+# Copyright (c) 2015-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -40,6 +40,8 @@ Puppet::Type.newtype(:cisco_overlay_global) do
     }
   ~~~
   "
+
+  apply_to_all
 
   newparam(:name, namevar: :true) do
     desc "Instance of overlay_global, only allow the value 'default'"

@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2018 Cisco and/or its affiliates.
+# Copyright (c) 2015-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -267,56 +267,60 @@ tests[:multisite_ingress_replication_false] = {
 # It will be changed to a property in future. A correspoding test
 # will be added here.
 
-def test_harness_dependencies(*)
-  test_set(agent, 'evpn multisite border 150') if platform[/ex/]
-  return unless platform[/n(5|6)k/]
-  skip_if_nv_overlay_rejected(agent)
-end
+# class to contain the test_harness_dependencies
+class TestVxLanVtepVni < BaseHarness
+  def self.test_harness_dependencies(ctx, _tests, _id)
+    ctx.test_set(ctx.agent, 'evpn multisite border 150') if ctx.platform[/ex/]
+    return unless ctx.platform[/n(5|6)k/]
+    ctx.skip_if_nv_overlay_rejected(ctx.agent)
+  end
 
-def unsupported_properties(_tests, _id)
-  unprops = []
-  if platform[/n(3k-f|5k|6k|7k|9k-f)/]
-    unprops <<
-      :ingress_replication <<
-      :peer_list
+  def self.unsupported_properties(ctx, _tests, _id)
+    unprops = []
+    if ctx.platform[/n(3k-f|5k|6k|7k|9k-f)/]
+      unprops <<
+        :ingress_replication <<
+        :peer_list
+    end
+    if ctx.platform[/n(3k-f|9k)/]
+      unprops <<
+        :suppress_uuc
+    end
+    unprops << :multisite_ingress_replication unless ctx.platform[/ex/]
+    if ctx.platform[/n(3k-f|5k|6k|7k)/]
+      unprops <<
+        :suppress_arp_disable
+    end
+    unprops << :multisite_ingress_replication unless ctx.platform[/ex/]
+    unprops
   end
-  if platform[/n(3k-f|9k)/]
-    unprops <<
-      :suppress_uuc
-  end
-  if platform[/n(3k-f|5k|6k|7k)/]
-    unprops <<
-      :suppress_arp_disable
-  end
-  unprops << :multisite_ingress_replication unless platform[/ex/]
-  unprops
-end
 
-# Overridden to properly handle dependencies for this test file.
-def dependency_manifest(_tests, _id)
-  if platform[/n7k/]
-    "
-      cisco_vxlan_vtep {'nve1':
-        ensure => present,
-        host_reachability => 'evpn',
-        shutdown           => 'false',
-      }
-    "
-  else
-    "
-      cisco_vxlan_vtep {'nve1':
-        ensure => present,
-        shutdown           => 'false',
-      }
-    "
+  def self.version_unsupported_properties(ctx, _tests, _id)
+    unprops = {}
+    unprops[:suppress_uuc] = '8.1.1' if ctx.platform[/n7k/]
+    unprops[:suppress_arp_disable] = '9.2' if ctx.platform[/n9k/]
+    unprops
   end
-end
 
-def version_unsupported_properties(_tests, _id)
-  unprops = {}
-  unprops[:suppress_uuc] = '8.1.1' if platform[/n7k/]
-  unprops[:suppress_arp_disable] = '9.2' if platform[/n9k/]
-  unprops
+  # Overridden to properly handle dependencies for this test file.
+  def self.dependency_manifest(ctx, _tests, _id)
+    if ctx.platform[/n7k/]
+      "
+        cisco_vxlan_vtep {'nve1':
+          ensure => present,
+          host_reachability => 'evpn',
+          shutdown           => 'false',
+        }
+      "
+    else
+      "
+        cisco_vxlan_vtep {'nve1':
+          ensure => present,
+          shutdown           => 'false',
+        }
+      "
+    end
+  end
 end
 
 #################################################################
@@ -324,34 +328,34 @@ end
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
   teardown do
-    test_set(agent, 'no evpn multisite border 150')
+    test_set(agent, 'no evpn multisite border 150') if platform[/ex/]
     resource_absent_cleanup(agent, 'cisco_vxlan_vtep_vni')
     vdc_limit_f3_no_intf_needed(:clear)
   end
-  test_set(agent, 'no evpn multisite border 150')
+  test_set(agent, 'no evpn multisite border 150') if platform[/ex/]
   resource_absent_cleanup(agent, 'cisco_vxlan_vtep_vni')
   vdc_limit_f3_no_intf_needed(:set)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   id = :default_properties_ingress_replication
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestVxLanVtepVni)
   tests[id][:ensure] = :absent
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestVxLanVtepVni)
   id = :default_properties_multicast_group
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestVxLanVtepVni)
   tests[id][:ensure] = :absent
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestVxLanVtepVni)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
-  test_harness_run(tests, :ingress_replication_static_peer_list_empty)
-  test_harness_run(tests, :peer_list)
-  test_harness_run(tests, :peer_list_change_add)
-  test_harness_run(tests, :peer_list_default)
-  test_harness_run(tests, :ingress_replication_bgp)
-  test_harness_run(tests, :multicast_group)
+  test_harness_run(tests, :ingress_replication_static_peer_list_empty, harness_class: TestVxLanVtepVni)
+  test_harness_run(tests, :peer_list, harness_class: TestVxLanVtepVni)
+  test_harness_run(tests, :peer_list_change_add, harness_class: TestVxLanVtepVni)
+  test_harness_run(tests, :peer_list_default, harness_class: TestVxLanVtepVni)
+  test_harness_run(tests, :ingress_replication_bgp, harness_class: TestVxLanVtepVni)
+  test_harness_run(tests, :multicast_group, harness_class: TestVxLanVtepVni)
 
   # TBD - The suppress_arp tests will generate the following error.
   #  ERROR: Please configure TCAM region... Configuring the TCAM region
@@ -363,10 +367,10 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # test_harness_run(tests, :suppress_arp_disable_true)
   # test_harness_run(tests, :suppress_arp_disable_false)
 
-  test_harness_run(tests, :suppress_uuc_true)
-  test_harness_run(tests, :suppress_uuc_false)
-  test_harness_run(tests, :multisite_ingress_replication_true)
-  test_harness_run(tests, :multisite_ingress_replication_false)
+  test_harness_run(tests, :suppress_uuc_true, harness_class: TestVxLanVtepVni)
+  test_harness_run(tests, :suppress_uuc_false, harness_class: TestVxLanVtepVni)
+  test_harness_run(tests, :multisite_ingress_replication_true, harness_class: TestVxLanVtepVni)
+  test_harness_run(tests, :multisite_ingress_replication_false, harness_class: TestVxLanVtepVni)
 
   # -------------------------------------------------------------------
   skipped_tests_summary(tests)

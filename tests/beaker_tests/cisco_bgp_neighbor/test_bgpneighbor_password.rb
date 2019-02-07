@@ -128,7 +128,7 @@ test_name "TestCase :: #{tests[:resource_name]} - #{id}" do
 
     tests[id][:desc] = '1.3 Verify password has been removed on the box'
     tests[id][:resource] = { 'password' => IGNORE_VALUE }
-    test_resource(tests, id, true)
+    test_resource(tests, id, state: true)
   end
 
   skipped_tests_summary(tests)

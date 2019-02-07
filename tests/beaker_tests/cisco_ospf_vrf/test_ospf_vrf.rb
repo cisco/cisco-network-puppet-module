@@ -131,6 +131,27 @@ tests[:non_default_2] = {
     timer_throttle_spf_start: '430',
   },
 }
+redistribute = [
+  ['bgp 5',   'rm_bgp'],
+  ['direct',  'rm_direct'],
+  ['eigrp 1', 'rm_eigrp'],
+  ['isis 2',  'rm_isis'],
+  ['lisp',    'rm_lisp'],
+  ['ospf 3',  'rm_ospf'],
+  ['rip 4',   'rm_rip'],
+  ['static',  'rm_static'],
+]
+# rubocop:enable Style/WordArray
+tests[:non_default_arrays] = {
+  desc:           '2.3 Non Default Properties: Arrays',
+  title_pattern:  'test green',
+  manifest_props: {
+    redistribute: redistribute
+  },
+  resource:       {
+    redistribute: "#{redistribute}"
+  },
+}
 
 # rubocop:disable Style/WordArray
 redistribute = [

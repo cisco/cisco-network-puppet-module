@@ -1,6 +1,6 @@
 # Manages VXLAN vtep nve interface configuration.
 #
-# December 2015
+# June 2018
 #
 # Copyright (c) 2014-2018 Cisco and/or its affiliates.
 #
@@ -61,6 +61,7 @@ Puppet::Type.newtype(:cisco_vxlan_vtep) do
   # Parameters #
   ##############
 
+  apply_to_all
   ensurable
 
   newparam(:interface, namevar: :true) do

@@ -212,7 +212,13 @@ def test_set_get
 end
 
 def cleanup(agent)
-  test_set(agent, 'no feature bgp ; no interface loopback1')
+  test_set(agent, 'no feature bgp')
+  interfaces = get_current_resource_instances(agent, 'cisco_interface')
+  interfaces.each do |interface|
+    if interface =~ %r{(l|L)oopback\s*1$}
+      test_set(agent, 'no interface loopback1')
+    end
+  end
 end
 
 def test_harness_run_cc(tests, id, res_cmd)
@@ -223,7 +229,11 @@ def test_harness_run_cc(tests, id, res_cmd)
 
   # Command_config can only "set" configs, it can't check them with
   # puppet resource, so use res_cmd to do that part of the test
-  tests[id][:resource_cmd] = PUPPET_BINPATH + 'resource ' + res_cmd
+  if agent
+    tests[id][:resource_cmd] = PUPPET_BINPATH + 'resource ' + res_cmd
+  else
+    tests[id][:resource_cmd] = "#{agentless_command} --resource #{res_cmd}"
+  end
   test_resource(tests, id)
 end
 
@@ -247,9 +257,11 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   cleanup(agent)
   test_harness_run_cc(tests, :control_characters, 'cisco_bgp_neighbor_af')
 
-  # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 2. test_set / test_get")
-  cleanup(agent)
-  test_set_get
+  if agent
+    # -------------------------------------------------------------------
+    logger.info("\n#{'-' * 60}\nSection 2. test_set / test_get")
+    cleanup(agent)
+    test_set_get
+  end
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

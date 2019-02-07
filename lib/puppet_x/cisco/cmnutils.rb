@@ -293,6 +293,33 @@ module PuppetX
           TACACS_SERVER_ENC_CISCO_TYPE_7
         end
       end
+
+      # Convert return values to their specified ruby type
+      #
+      # Accepts the Resource API context and array of return values
+      #
+      # Returns the array of return values with individual values
+      # correctly converted to their ruby type eg. Integer
+      def self.enforce_simple_types(context, return_value)
+        return_value.each do |individual_value_hash|
+          individual_value_hash.each do |k, v|
+            type_to_use = context.type.definition[:attributes][k][:type]
+            if type_to_use.downcase =~ %r{^integer} || type_to_use.downcase =~ %r{^optional\[integer}
+              individual_value_hash[k] = v.to_i
+            end
+            if type_to_use.downcase =~ %r{^string} || type_to_use.downcase =~ %r{^optional\[string}
+              individual_value_hash[k] = v.to_s
+            end
+            next unless type_to_use.downcase =~ %r{^boolean} || type_to_use.downcase =~ %r{^optional\[boolean}
+            individual_value_hash[k] = if v.to_s.casecmp('true').zero?
+                                         true
+                                       else
+                                         false
+                                       end
+          end
+        end
+        return_value
+      end
     end # class Utils
     # rubocop:enable Metrics/ClassLength
 

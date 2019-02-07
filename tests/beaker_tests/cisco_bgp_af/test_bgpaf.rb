@@ -190,94 +190,95 @@ tests[:l2vpn_evpn] = {
   resource:         { 'ensure' => 'present' },
 }
 
-# Overridden to properly handle dependencies for this test file.
-def dependency_manifest(tests, id)
-  extra_config = ''
-  if operating_system == 'ios_xr'
-    vrf = vrf(tests[id])
+# class to contain the test_dependencies specific to this test case
+class TestBgpAf < BaseHarness
+  def self.unsupported_properties(ctx, tests, id)
+    unprops = []
 
-    # XR requires the following before a vrf AF can be configured:
-    #   1. a global router_id
-    #   2. a global address family
-    #   3. route_distinguisher configured on the vrf
-    extra_config = "
-      cisco_bgp { '2 default':
-        ensure              => present,
-        router_id           => '1.2.3.4',
-      }"
-
-    parent_title = '2 default vpnv4 unicast'
-    if parent_title != tests[id][:title_pattern]
-      extra_config += "
-        cisco_bgp_af { '#{parent_title}':
-          ensure            => present,
-        }"
-    end
-
-    # Ensure any needed route-policies are present.
-    # TODO: Replace this with cisco_route_policy config,
-    # when/if that is available.
-    extra_config += "
-      cisco_command_config { 'policy_config':
-        command => '
-          route-policy RouteMap
-            end-policy'
-      }"
-
-    if vrf != 'default'
-      extra_config += "
-      cisco_bgp { '2 #{vrf}':
-        ensure              => present,
-        route_distinguisher => auto,
-      }"
-    end
-  end
-  extra_config
-end
-
-# Overridden to properly handle unsupported properties for this test file.
-def unsupported_properties(tests, id)
-  unprops = []
-
-  vrf = vrf(tests[id])
-  if operating_system == 'ios_xr'
-    # IOS-XR does not support these properties
-    unprops <<
-      :additional_paths_install <<
-      :advertise_l2vpn_evpn <<
-      :dampen_igp_metric <<
-      :default_information_originate <<
-      :default_metric <<
-      :inject_map <<
-      :next_hop_route_map <<
-      :suppress_inactive <<
-      :table_map_filter
-
-    if vrf != 'default'
-      # IOS-XR does not support these properties under a non-default vrf
+    vrf = ctx.vrf(tests[id])
+    if ctx.operating_system == 'ios_xr'
+      # IOS-XR does not support these properties
       unprops <<
-        :client_to_client <<
-        :dampening_state <<
-        :dampening_half_time <<
-        :dampening_max_suppress_time <<
-        :dampening_reuse_time <<
-        :dampening_routemap <<
-        :dampening_suppress_time
-    end
-  else
-    unprops << :advertise_l2vpn_evpn if
-      vrf == 'default' || platform[/n(3|6)k$/]
+        :additional_paths_install <<
+        :advertise_l2vpn_evpn <<
+        :dampen_igp_metric <<
+        :default_information_originate <<
+        :default_metric <<
+        :inject_map <<
+        :next_hop_route_map <<
+        :suppress_inactive <<
+        :table_map_filter
 
-    unprops << :additional_paths_install if platform[/n(3|9)k/]
-    unprops << :additional_paths_selection if platform[/n9k$/] && nexus_image[/I5.3/]
-    unprops << :additional_paths_selection if platform[/n9k/] && nexus_image[/F2.1/]
+      if vrf != 'default'
+        # IOS-XR does not support these properties under a non-default vrf
+        unprops <<
+          :client_to_client <<
+          :dampening_state <<
+          :dampening_half_time <<
+          :dampening_max_suppress_time <<
+          :dampening_reuse_time <<
+          :dampening_routemap <<
+          :dampening_suppress_time
+      end
+    else
+      unprops << :advertise_l2vpn_evpn if vrf == 'default' || ctx.platform[/n(3|6)k$/]
+
+      unprops << :additional_paths_install if ctx.platform[/n(3|9)k/]
+      unprops << :additional_paths_selection if ctx.platform[/n9k$/] && (ctx.nexus_image[/I5.3/] || ctx.nexus_image[/I5.2/])
+      unprops << :additional_paths_selection if ctx.platform[/n9k/] && ctx.nexus_image[/F2.1/]
+    end
+    unprops
   end
-  unprops
+
+  # Overridden to properly handle dependencies for this test file.
+  def self.dependency_manifest(ctx, tests, id)
+    extra_config = ''
+    if ctx.operating_system == 'ios_xr'
+      vrf = ctx.vrf(tests[id])
+
+      # XR requires the following before a vrf AF can be configured:
+      #   1. a global router_id
+      #   2. a global address family
+      #   3. route_distinguisher configured on the vrf
+      extra_config = "
+        cisco_bgp { '2 default':
+          ensure              => present,
+          router_id           => '1.2.3.4',
+        }"
+
+      parent_title = '2 default vpnv4 unicast'
+      if parent_title != tests[id][:title_pattern]
+        extra_config += "
+          cisco_bgp_af { '#{parent_title}':
+            ensure            => present,
+          }"
+      end
+
+      # Ensure any needed route-policies are present.
+      # TODO: Replace this with cisco_route_policy config,
+      # when/if that is available.
+      extra_config += "
+        cisco_command_config { 'policy_config':
+          command => '
+            route-policy RouteMap
+              end-policy'
+        }"
+
+      if vrf != 'default'
+        extra_config += "
+        cisco_bgp { '2 #{vrf}':
+          ensure              => present,
+          route_distinguisher => auto,
+        }"
+      end
+    end
+    extra_config
+  end
 end
 
 def test_harness_bgp_af_run(tests, id)
-  test_harness_run(tests, id) # test in default vrf
-  test_harness_bgp_vrf(tests, id, 'blue') # test in non-default vrf
+  test_harness_run(tests, id, harness_class: TestBgpAf) # test in default vrf
+  test_harness_bgp_vrf(tests, id, 'blue', harness_class: TestBgpAf) # test in non-default vrf
 end
 
 def cleanup(agent)
@@ -298,11 +299,11 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -----------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   id = :default
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestBgpAf)
 
   tests[id][:ensure] = :absent
-  test_harness_run(tests, id)
-  test_harness_run(tests, :default_dampening_routemap)
+  test_harness_run(tests, id, harness_class: TestBgpAf)
+  test_harness_run(tests, :default_dampening_routemap, harness_class: TestBgpAf)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
@@ -314,9 +315,9 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
   cleanup(agent)
-  test_harness_run(tests, :title_patterns_1)
-  test_harness_run(tests, :title_patterns_2)
-  test_harness_run(tests, :title_patterns_3)
-  test_harness_run(tests, :l2vpn_evpn) unless nexus_image['I2']
+  test_harness_run(tests, :title_patterns_1, harness_class: TestBgpAf)
+  test_harness_run(tests, :title_patterns_2, harness_class: TestBgpAf)
+  test_harness_run(tests, :title_patterns_3, harness_class: TestBgpAf)
+  test_harness_run(tests, :l2vpn_evpn, harness_class: TestBgpAf) unless nexus_image['I2']
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

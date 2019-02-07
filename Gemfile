@@ -1,76 +1,80 @@
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 
-def location_for(place, fake_version=nil)
-  if place =~ /^(git[:@][^#]*)#(.*)/
-    [fake_version, { git: Regexp.last_match(1), branch: Regexp.last_match(2), require: false }].compact
-  elsif place =~ %r{^file://(.*)}
-    ['>= 0', { path: File.expand_path(Regexp.last_match(1)), require: false }]
+def location_for(place_or_version, fake_version = nil)
+  git_url_regex = %r{\A(?<url>(https?|git)[:@][^#]*)(#(?<branch>.*))?}
+  file_url_regex = %r{\Afile:\/\/(?<path>.*)}
+
+  if place_or_version && (git_url = place_or_version.match(git_url_regex))
+    [fake_version, { git: git_url[:url], branch: git_url[:branch], require: false }].compact
+  elsif place_or_version && (file_url = place_or_version.match(file_url_regex))
+    ['>= 0', { path: File.expand_path(file_url[:path]), require: false }]
   else
-    [place, { require: false }]
+    [place_or_version, { require: false }]
   end
 end
 
-beaker_version = ENV['BEAKER_VERSION']
-beaker_rspec_version = ENV['BEAKER_RSPEC_VERSION']
-group :system_tests do
-  if beaker_version
-    gem 'beaker', *location_for(beaker_version)
-  else
-    gem 'beaker', '~> 2.38', '>= 2.38.1', require: false
-  end
-  if beaker_rspec_version
-    gem 'beaker-rspec', *location_for(beaker_rspec_version)
-  else
-    gem 'beaker-rspec', require: false
-  end
-  gem 'serverspec', require: false
-end
+ruby_version_segments = Gem::Version.new(RUBY_VERSION.dup).segments
+minor_version = ruby_version_segments[0..1].join('.')
 
-facterversion = ENV['GEM_FACTER_VERSION'] || ENV['FACTER_GEM_VERSION']
-if facterversion
-  gem 'facter', *location_for(facterversion)
-else
-  gem 'facter', require: false
+group :development do
+  gem "fast_gettext", '1.1.0',                         require: false if Gem::Version.new(RUBY_VERSION.dup) < Gem::Version.new('2.1.0')
+  gem "fast_gettext",                                  require: false if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.1.0')
+  gem "json_pure", '<= 2.0.1',                         require: false if Gem::Version.new(RUBY_VERSION.dup) < Gem::Version.new('2.0.0')
+  gem "json", '= 1.8.1',                               require: false if Gem::Version.new(RUBY_VERSION.dup) == Gem::Version.new('2.1.9')
+  gem "json", '<= 2.0.4',                              require: false if Gem::Version.new(RUBY_VERSION.dup) == Gem::Version.new('2.4.4')
+  gem "puppet-module-posix-default-r#{minor_version}", require: false, platforms: [:ruby]
+  gem "puppet-module-posix-dev-r#{minor_version}",     require: false, platforms: [:ruby]
+  gem "puppet-module-win-default-r#{minor_version}",   require: false, platforms: [:mswin, :mingw, :x64_mingw]
+  gem "puppet-module-win-dev-r#{minor_version}",       require: false, platforms: [:mswin, :mingw, :x64_mingw]
+  gem "puppet-resource_api",                           require: false, git: 'https://github.com/puppetlabs/puppet-resource_api.git', ref: 'master'
+  gem "net_http_unix",                                 require: false
 end
-
-puppetversion = ENV['GEM_PUPPET_VERSION'] || ENV['PUPPET_GEM_VERSION']
-if puppetversion
-  gem 'puppet', *location_for(puppetversion)
-else
-  gem 'puppet', '~> 4.0', require: false
-end
-
 group :development, :unit_tests do
-  gem 'cisco_node_utils', '~> 1.0', require: false
-  gem 'rake', '~> 10.1.0',       require: false
-  gem 'rspec', '~> 3.1.0',       require: false
-  gem 'rspec-puppet',            require: false
-  gem 'mocha',                   require: false
-  gem 'puppetlabs_spec_helper',  require: false
-  gem 'puppet-lint',             require: false
-  gem 'pry',                     require: false
-  gem 'rubocop', '= 0.35.1',     require: false
-  gem 'simplecov',               require: false
-  gem 'puppet-blacksmith', '~> 3.4', require: false
-  gem 'net-telnet', '~> 0.1.1', require: false
+  gem "cisco_node_utils",       require: false, git: 'https://github.com/cisco/cisco-network-node-utils.git', ref: 'develop'
+  gem "net-telnet", '~> 0.1.1', require: false
+end
+group :system_tests do
+  gem "puppet-module-posix-system-r#{minor_version}", require: false, platforms: [:ruby]
+  gem "puppet-module-win-system-r#{minor_version}",   require: false, platforms: [:mswin, :mingw, :x64_mingw]
 end
 
-group :puppet_test_env do
-  gem 'beaker-abs',                  require: false
+puppet_version = ENV['PUPPET_GEM_VERSION']
+facter_version = ENV['FACTER_GEM_VERSION']
+hiera_version = ENV['HIERA_GEM_VERSION']
+
+gems = {}
+
+gems['puppet'] = location_for(puppet_version)
+
+# If facter or hiera versions have been specified via the environment
+# variables
+
+gems['facter'] = location_for(facter_version) if facter_version
+gems['hiera'] = location_for(hiera_version) if hiera_version
+
+if Gem.win_platform? && puppet_version =~ %r{^(file:///|git://)}
+  # If we're using a Puppet gem on Windows which handles its own win32-xxx gem
+  # dependencies (>= 3.5.0), set the maximum versions (see PUP-6445).
+  gems['win32-dir'] =      ['<= 0.4.9', require: false]
+  gems['win32-eventlog'] = ['<= 0.6.5', require: false]
+  gems['win32-process'] =  ['<= 0.7.5', require: false]
+  gems['win32-security'] = ['<= 0.2.5', require: false]
+  gems['win32-service'] =  ['0.8.8', require: false]
 end
 
-# vim:ft=ruby
+gems.each do |gem_name, gem_params|
+  gem gem_name, *gem_params
+end
+
+# Evaluate Gemfile.local and ~/.gemfile if they exist
+extra_gemfiles = [
+  "#{__FILE__}.local",
+  File.join(Dir.home, '.gemfile'),
+]
+
+extra_gemfiles.each do |gemfile|
+  if File.file?(gemfile) && File.readable?(gemfile)
+    eval(File.read(gemfile), binding)
+  end
+end
+# vim: syntax=ruby

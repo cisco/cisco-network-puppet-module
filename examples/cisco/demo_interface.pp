@@ -17,23 +17,23 @@
 class ciscopuppet::cisco::demo_interface {
   if $operatingsystem == 'nexus' {
     cisco_acl { 'ipv4 v4acl1':
-      before => Cisco_interface['Ethernet1/1'],
       ensure => 'present',
+      before => Cisco_interface['Ethernet1/1'],
     }
 
     cisco_acl { 'ipv4 v4acl2':
-      before => Cisco_interface['Ethernet1/1'],
       ensure => 'present',
+      before => Cisco_interface['Ethernet1/1'],
     }
 
     cisco_acl { 'ipv6 v6acl1':
-      before => Cisco_interface['Ethernet1/1'],
       ensure => 'present',
+      before => Cisco_interface['Ethernet1/1'],
     }
 
     cisco_acl { 'ipv6 v6acl2':
-      before => Cisco_interface['Ethernet1/1'],
       ensure => 'present',
+      before => Cisco_interface['Ethernet1/1'],
     }
 
     $ipv4_dhcp_relay_info_trust = platform_get() ? {
@@ -138,8 +138,8 @@ class ciscopuppet::cisco::demo_interface {
       }
 
       cisco_interface { 'Bdi100':
-        require             => Cisco_bridge_domain['100'],
         ensure              => 'present',
+        require             => Cisco_bridge_domain['100'],
         shutdown            => false,
         ipv4_address        => '10.10.10.1',
         ipv4_netmask_length => 24,

@@ -185,11 +185,14 @@ tests[:vpc_plus_non_default_properties_n7k] = {
   },
 }
 
-def version_unsupported_properties(_tests, _id)
-  unprops = {}
-  unprops[:layer3_peer_routing] = '7.0.3.I6.1' if platform[/n(3|9)k$/]
-  unprops[:shutdown] = '7.0.3.I6.1' if platform[/n(3|9)k$/]
-  unprops
+# class to contain the test_dependencies specific to this test case
+class TestVpcDomain < BaseHarness
+  def self.version_unsupported_properties(ctx, _tests, _id)
+    unprops = {}
+    unprops[:layer3_peer_routing] = '7.0.3.I6.1' if ctx.platform[/n(3|9)k$/]
+    unprops[:shutdown] = '7.0.3.I6.1' if ctx.platform[/n(3|9)k$/]
+    unprops
+  end
 end
 
 def cleanup(agent)
@@ -210,33 +213,33 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
-  test_harness_run(tests, :default_properties)
-  test_harness_run(tests, :default_properties_n7k)
+  test_harness_run(tests, :default_properties, harness_class: TestVpcDomain)
+  test_harness_run(tests, :default_properties_n7k, harness_class: TestVpcDomain)
 
   # Resource absent test
   tests[:default_properties][:ensure] = :absent
-  test_harness_run(tests, :default_properties)
+  test_harness_run(tests, :default_properties, harness_class: TestVpcDomain)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  test_harness_run(tests, :non_default_properties)
-  test_harness_run(tests, :non_default_properties_n6k7k)
-  test_harness_run(tests, :non_default_properties_n7k)
+  test_harness_run(tests, :non_default_properties, harness_class: TestVpcDomain)
+  test_harness_run(tests, :non_default_properties_n6k7k, harness_class: TestVpcDomain)
+  test_harness_run(tests, :non_default_properties_n7k, harness_class: TestVpcDomain)
 
   # Resource absent test
   tests[:non_default_properties][:ensure] = :absent
-  test_harness_run(tests, :non_default_properties)
+  test_harness_run(tests, :non_default_properties, harness_class: TestVpcDomain)
 
   # ------------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. vPC+ Non Default Property Testing")
   # Need to setup fabricapth env for vPC+
   # setup_fabricpath_env(tests, self)
   vdc_limit_f3_no_intf_needed(:set)
-  test_harness_run(tests, :vpc_plus_non_default_properties_n7k)
+  test_harness_run(tests, :vpc_plus_non_default_properties_n7k, harness_class: TestVpcDomain)
 
   # Resource absent test
   tests[:vpc_plus_non_default_properties_n7k][:ensure] = :absent
-  test_harness_run(tests, :vpc_plus_non_default_properties_n7k)
+  test_harness_run(tests, :vpc_plus_non_default_properties_n7k, harness_class: TestVpcDomain)
 
   skipped_tests_summary(tests)
 end

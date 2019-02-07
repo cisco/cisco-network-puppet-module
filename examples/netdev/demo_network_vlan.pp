@@ -16,8 +16,8 @@
 
 class ciscopuppet::netdev::demo_network_vlan {
   network_vlan { '128':
-    ensure        => 'present',
-    vlan_name     => 'netdev_vlan',
-    shutdown      => false,
-  } 
+    ensure    => 'present',
+    vlan_name => 'netdev_vlan',
+    shutdown  => false,
+  }
 }

@@ -27,7 +27,7 @@ class ciscopuppet::cisco::demo_upgrade {
   # -rwxr-xr-- 1 root root 723M Mar  2 15:25 nxos.7.0.3.I5.1.bin
   # puppetmaster:files:2011>
 
-  node default {
+  node 'certname' {
     $gem = 'cisco_node_utils-1.6.0.gem'
     $uri = 'bootflash'
     $image = 'nxos.7.0.3.I2.5.bin'

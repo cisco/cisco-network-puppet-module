@@ -122,6 +122,9 @@
 #
 ################################################################################
 
+require 'beaker-pe'
+require 'beaker-puppet'
+
 USAGE = <<ENDUSAGE
 
 ** WARNING ** This script is not a standalone script and can only be executed
@@ -330,7 +333,7 @@ def configure_puppet_nexus(agent, opts={})
     end
     conf_data << "\n"
   end
-  on agent, "echo \"#{conf_data}\" > #{tmp_puppet_file}"
+  on agent, "echo \\\"#{conf_data}\\\" > #{tmp_puppet_file}"
   on agent, "mv #{tmp_puppet_file} #{puppet_conf}", pty: true
   destroy_tmp_location(agent)
 end

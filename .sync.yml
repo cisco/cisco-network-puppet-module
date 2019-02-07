@@ -1,0 +1,75 @@
+---
+Gemfile:
+  optional:
+    ':development':
+      - gem: 'puppet-resource_api'
+        git: 'https://github.com/puppetlabs/puppet-resource_api.git'
+        ref: 'master'
+      - gem: 'net_http_unix'
+    ':development, :unit_tests':
+      - gem: 'cisco_node_utils'
+        git: 'https://github.com/cisco/cisco-network-node-utils.git'
+        ref: 'develop'
+      - gem: 'net-telnet'
+        version: '~> 0.1.1'
+    ':system_tests':
+      - gem: 'puppet-module-posix-system-r#{minor_version}'
+        platforms: ruby
+      - gem: 'puppet-module-win-system-r#{minor_version}'
+        platforms:
+          - mswin
+          - mingw
+          - x64_mingw
+.gitignore:
+  # need to ensure /bin/ is not ignored
+  # and is under the required keys
+  required:
+    - ---/bin/
+  paths:
+    - junit/
+    - hosts.cfg
+    - /spec/fixtures/acceptance-credentials.conf
+    - /spec/fixtures/acceptance-device.conf
+.pdkignore:
+  paths:
+    - ---/bin/
+    - junit/
+    - hosts.cfg
+    - /spec/fixtures/acceptance-credentials.conf
+    - /spec/fixtures/acceptance-device.conf
+Rakefile:
+  requires:
+    - 'puppet-strings/tasks'
+  extra_disabled_lint_checks:
+    - 'autoloader_layout'
+    - 'variable_scope'
+    - 'variable_is_lowercase'
+.travis.yml:
+  simplecov: true
+  branches:
+    - 'puppet6'
+.rubocop.yml:
+  profiles:
+    strict:
+      enabled_cops:
+        Metrics/AbcSize:
+        Metrics/CyclomaticComplexity:
+        Metrics/MethodLength:
+  default_configs:
+    inherit_from: .rubocop_todo.yml
+    Metrics/AbcSize:
+      Description: Baseline code complexity metrics - we should try and reduce these over time
+      Max: 47
+      Exclude:
+        - 'tests/beaker_tests/**/*.rb'
+    Metrics/CyclomaticComplexity:
+      Max: 16
+    Metrics/MethodLength:
+      Max: 41
+      Exclude:
+        - 'tests/beaker_tests/**/*.rb'
+    Layout/AlignHash:
+      EnforcedHashRocketStyle: table
+      EnforcedColonStyle: table
+spec/spec_helper.rb:
+  mock_with: ':rspec'

@@ -140,33 +140,35 @@ tests[:title_patterns_3] = {
   resource:      { 'ensure' => 'present' },
 }
 
-# Overridden to properly handle unsupported properties for this test file.
-def unsupported_properties(_tests, _id)
-  unprops = []
+# class to contain the test_dependencies specific to this test case
+class TestBgpNeighbor < BaseHarness
+  def self.unsupported_properties(ctx, _tests, _id)
+    unprops = []
 
-  if operating_system == 'ios_xr'
-    # IOS-XR does not support these properties
-    unprops <<
-      :bfd <<
-      :capability_negotiation <<
-      :dynamic_capability <<
-      :log_neighbor_changes <<
-      :low_memory_exempt <<
-      :maximum_peers <<
-      :remove_private_as
+    if ctx.operating_system == 'ios_xr'
+      # IOS-XR does not support these properties
+      unprops <<
+        :bfd <<
+        :capability_negotiation <<
+        :dynamic_capability <<
+        :log_neighbor_changes <<
+        :low_memory_exempt <<
+        :maximum_peers <<
+        :remove_private_as
 
-  else
-    unprops << :log_neighbor_changes if platform[/n(5|6)/]
-    unprops << :peer_type unless platform[/ex/]
+    else
+      unprops << :log_neighbor_changes if ctx.platform[/n(5|6)/]
+      unprops << :peer_type unless ctx.platform[/ex/]
+    end
+
+    unprops
   end
 
-  unprops
-end
-
-def version_unsupported_properties(_tests, _id)
-  unprops = {}
-  unprops[:log_neighbor_changes] = '8.1.1' if platform[/n7k/]
-  unprops
+  def self.version_unsupported_properties(ctx, _tests, _id)
+    unprops = {}
+    unprops[:log_neighbor_changes] = '8.1.1' if ctx.platform[/n7k/]
+    unprops
+  end
 end
 
 def cleanup(agent)
@@ -186,34 +188,34 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  test_harness_run(tests, :default)
+  test_harness_run(tests, :default, harness_class: TestBgpNeighbor)
 
   # test removal of bgp neighbor instance
   tests[:default][:ensure] = :absent
-  test_harness_run(tests, :default)
+  test_harness_run(tests, :default, harness_class: TestBgpNeighbor)
 
   # now test the defaults under a non-default vrf
   tests[:default][:desc] = '1.1.a. Default Properties (vrf blue)'
   tests[:default][:ensure] = :present
   tests[:default][:preclean] = 'cisco_bgp_neighbor'
-  test_harness_bgp_vrf(tests, :default, 'blue')
+  test_harness_bgp_vrf(tests, :default, 'blue', harness_class: TestBgpNeighbor)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  test_harness_run(tests, :non_default)
+  test_harness_run(tests, :non_default, harness_class: TestBgpNeighbor)
   tests[:non_default][:desc] = '2.1.a. Non Default Properties (vrf blue)'
-  test_harness_bgp_vrf(tests, :non_default, 'blue')
-  test_harness_bgp_vrf(tests, :non_default_peer_type, 'blue')
+  test_harness_bgp_vrf(tests, :non_default, 'blue', harness_class: TestBgpNeighbor)
+  test_harness_bgp_vrf(tests, :non_default_peer_type, 'blue', harness_class: TestBgpNeighbor)
 
-  test_harness_run(tests, :non_def_local_remote_as)
-  test_harness_bgp_vrf(tests, :non_def_local_remote_as, 'blue')
+  test_harness_run(tests, :non_def_local_remote_as, harness_class: TestBgpNeighbor)
+  test_harness_bgp_vrf(tests, :non_def_local_remote_as, 'blue', harness_class: TestBgpNeighbor)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
   cleanup(agent)
-  test_harness_run(tests, :title_patterns_1)
-  test_harness_run(tests, :title_patterns_2)
-  test_harness_run(tests, :title_patterns_3)
+  test_harness_run(tests, :title_patterns_1, harness_class: TestBgpNeighbor)
+  test_harness_run(tests, :title_patterns_2, harness_class: TestBgpNeighbor)
+  test_harness_run(tests, :title_patterns_3, harness_class: TestBgpNeighbor)
 
   # -----------------------------------
   skipped_tests_summary(tests)

@@ -1,0 +1,12 @@
+# This file can be used to install module dependencies for unit testing
+# See https://github.com/puppetlabs/puppetlabs_spec_helper#using-fixtures for details
+---
+fixtures:
+  repositories:
+    netdev_stdlib:
+      repo: '#{ENV["NETDEV_STDLIB_URL"] || "https://github.com/puppetlabs/netdev_stdlib.git"}'
+      ref: '#{ENV["NETDEV_STDLIB_REF"] || "master"}'
+    resource_api:
+      repo: '#{ENV["RESOURCE_API_URL"] || "https://github.com/puppetlabs/puppetlabs-resource_api.git"}'
+      ref: '#{ENV["RESOURCE_API_REF"] || "master"}'
+    puppetserver_gem: 'https://github.com/puppetlabs/puppetlabs-puppetserver_gem.git'
