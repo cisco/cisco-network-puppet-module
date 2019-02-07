@@ -437,8 +437,11 @@ DEVICE
         # if !$?.exitstatus == 0
         #   raise 'Errored idempotence test'
         # end
-        output = `#{agentless_command} --apply #{@temp_agentless_manifest.path}`
+        cmd = "#{agentless_command} --apply #{@temp_agentless_manifest.path}"
+        output = `#{cmd}`
         if output.include? "#{tests[:resource_name]}[#{tests[id][:title_pattern]}]: Updating:"
+          logger.info("Idempotence Command: #{cmd}")
+          logger.info("Command Result: #{output}")
           raise 'Errored idempotence test'
         end
       end
