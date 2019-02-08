@@ -6,6 +6,9 @@ module Puppet::Util::NetworkDevice::Cisco_nexus # rubocop:disable Style/ClassAnd
   class Device < Puppet::Util::NetworkDevice::Simple::Device
     def initialize(url_or_config, _options={})
       super
+      unless Cisco::Environment.environments.empty?
+        Cisco::Node.reset_instance # Clears the previous environment from nodeutil caches
+      end
       Cisco::Environment.add_env('default',
                                  host:        config['address'],
                                  port:        config['port'],
