@@ -73,7 +73,7 @@ tests[:unsetting] = {
     time_stamp_units:       'seconds',
     logfile_name:           'unset',
     logfile_severity_level: 'unset',
-    logfile_size:           -1,
+    logfile_size:           'unset',
   },
 }
 
