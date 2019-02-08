@@ -28,7 +28,7 @@ This GitHub repository contains the latest version of the ciscopuppet module sou
 
 The `ciscopuppet` module has a dependency on the [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) and the [`puppet-resource_api`](https://rubygems.org/gems/puppet-resource_api) Ruby gem. See the **Setup** section that follows for more information on `cisco_node_utils` and `puppet-resource_api`.
 
-[The NXAPI feature](https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/6-x/programmability/guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_chapter_011.html) will need to be enabled on the device in order for the `ciscopuppet` module to be able to manage the device.
+[The NXAPI feature](https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/9-x/programmability/guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_9x/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_9x_chapter_010010.html) will need to be enabled on the device in order for the `ciscopuppet` module to be able to manage the device.
 
 ##### Contributing
 
@@ -51,7 +51,7 @@ The module dependencies listed below will be installed automatically. For more i
 ##### The [`puppetlabs-resource_api`](https://forge.puppet.com/puppetlabs/resource_api) module
 
 
-On each puppetserver or PE master that needs to serve catalogs for NX-OS devices, classify or apply the [`ciscopuppet::server`](https://github.com/cisco/cisco-network-puppet-module/blob/master/manifests/server.pp) class. Using this class assumes that your puppetserver or PE Master is managed by Puppet.
+On each puppetserver or PE master that needs to serve catalogs for NX-OS devices, classify or apply the [`ciscopuppet::server`](manifests/server.pp) class. Using this class assumes that your puppetserver or PE Master is managed by Puppet.
 
 ### <a name="setup-puppet-agent">Puppet Agent (LTS)</a>
 
@@ -59,11 +59,11 @@ The Puppet Agent requires installation and setup on each device. Agent setup can
 
 ##### The `cisco_node_utils` Ruby Gem
 
-The [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) Ruby gem is a required component of the `ciscopuppet` module. This gem contains platform APIs for interfacing between Cisco CLI and Puppet resources. The gem can be automatically installed by Puppet agent by using the [`ciscopuppet::agent`](https://github.com/cisco/cisco-network-puppet-module/blob/master/manifests/agent.pp) class, only in exceptional circumstances you should consider installing the dependencies manually.
+The [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) Ruby gem is a required component of the `ciscopuppet` module. This gem contains platform APIs for interfacing between Cisco CLI and Puppet resources. The gem can be automatically installed by Puppet agent by using the [`ciscopuppet::agent`](manifests/agent.pp) class, only in exceptional circumstances you should consider installing the dependencies manually.
 
 ##### The `puppet-resource_api` Ruby Gem
 
-The [`puppet-resource_api`](https://rubygems.org/gems/puppet-resource_api) Ruby gem is a required component of the `ciscopuppet` module. The gem can be automatically installed by a Puppet agent by using the [`ciscopuppet::agent`](https://github.com/cisco/cisco-network-puppet-module/blob/master/manifests/agent.pp) class, only in exceptional circumstances you should consider installing the dependencies manually.
+The [`puppet-resource_api`](https://rubygems.org/gems/puppet-resource_api) Ruby gem is a required component of the `ciscopuppet` module. The gem can be automatically installed by a Puppet agent by using the [`ciscopuppet::agent`](manifests/agent.pp) class, only in exceptional circumstances you should consider installing the dependencies manually.
 
 ##### Automatic Gem Install Using `ciscopuppet::agent`
 
@@ -147,11 +147,11 @@ The module (version `2.0.0` or later) supports remote management through the usa
 
 ##### The `cisco_node_utils` Ruby Gem
 
-The [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) Ruby gem is a required component of the `ciscopuppet` module. This gem contains platform APIs for interfacing between Cisco CLI and Puppet resources. The gem will need to be installed on any Puppet agent which will be managing a NX-OS device. It can be automatically installed by Puppet by using the [`ciscopuppet::proxy`](https://github.com/cisco/cisco-network-puppet-module/blob/master/manifests/proxy.pp) class, only in exceptional circumstances you should consider installing the dependencies manually.
+The [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) Ruby gem is a required component of the `ciscopuppet` module. This gem contains platform APIs for interfacing between Cisco CLI and Puppet resources. The gem will need to be installed on any Puppet agent which will be managing a NX-OS device. It can be automatically installed by Puppet by using the [`ciscopuppet::proxy`](manifests/proxy.pp) class, only in exceptional circumstances you should consider installing the dependencies manually.
 
 ##### The `puppet-resource_api` Ruby Gem
 
-The [`puppet-resource_api`](https://rubygems.org/gems/puppet-resource_api) Ruby gem is a required component of the `ciscopuppet` module. The gem will need to be installed on any Puppet agent which will be managing a NX-OS device. It can be automatically installed by Puppet by using the [`ciscopuppet::proxy`](https://github.com/cisco/cisco-network-puppet-module/blob/master/manifests/proxy.pp) class, only in exceptional circumstances you should consider installing the dependencies manually.
+The [`puppet-resource_api`](https://rubygems.org/gems/puppet-resource_api) Ruby gem is a required component of the `ciscopuppet` module. The gem will need to be installed on any Puppet agent which will be managing a NX-OS device. It can be automatically installed by Puppet by using the [`ciscopuppet::proxy`](manifests/proxy.pp) class, only in exceptional circumstances you should consider installing the dependencies manually.
 
 ### <a name="getting-started-puppet-device">Getting started with remote management (`puppet device`)</a>
 
