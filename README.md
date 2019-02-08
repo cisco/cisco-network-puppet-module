@@ -18,9 +18,9 @@
 
 ## <a href='module-description'>Module Description</a>
 
-The ciscopuppet module allows a network administrator to manage Cisco Network Elements using Puppet. This module bundles a set of Puppet Types, Providers, Beaker Tests, Sample Manifests and Installation Tools for effective network management.  The  resources and capabilities provided by this Puppet Module will grow with contributions from Cisco, Puppet Labs and the open source community.
+The ciscopuppet module allows a network administrator to manage Cisco Nexus Network Elements using Puppet. This module bundles a set of Puppet Types, Providers, Beaker Tests, Sample Manifests and Installation Tools for effective network management.  The  resources and capabilities provided by this Puppet Module will grow with contributions from Cisco, Puppet Labs and the open source community.
 
-The Cisco Network Elements and Operating Systems managed by this Puppet Module are continuously expanding. See [Resource Platform Support Matrix](#resource-platform-support-matrix) for a list of currently supported hardware and software.
+The Cisco Nexus Network Elements and Operating Systems managed by this Puppet Module are continuously expanding. See [Resource Platform Support Matrix](#resource-platform-support-matrix) for a list of currently supported hardware and software.
 
 This GitHub repository contains the latest version of the ciscopuppet module source code. Supported versions of the ciscopuppet module are available at Puppet Forge. Please refer to [SUPPORT.md][MAINT-2] for additional details.
 
@@ -36,7 +36,16 @@ Contributions to the `ciscopuppet` module are welcome. See [CONTRIBUTING.md][DEV
 
 ## <a href='setup'>Setup</a>
 
+Before getting started with the setup needed to manage Cisco Nexus Network Elements using Puppet choose one of the following workflows.
+
+  * Puppet Agentless (Manage devices over a remote proxy connection)
+  * Puppet Agent (Manage devices by installing an agent directly onto the device)
+
+Version `2.0.0` of this module introduces the ability to manage Cisco Nexus devices without the need to install an agent directly onto the device.  This option is not avaiable for `ciscopuppet` module version `1.10.0` and earlier.
+
 ### <a name="setup-puppet-master">Puppet Master</a>
+
+**‼️REQUIRED FOR BOTH AGENTLESS and AGENT WORKFLOWS ‼️**
 
 The `ciscopuppet` module must be installed on the Puppet Master server.
 
@@ -54,6 +63,8 @@ The module dependencies listed below will be installed automatically. For more i
 On each puppetserver or PE master that needs to serve catalogs for NX-OS devices, classify or apply the [`ciscopuppet::server`](manifests/server.pp) class. Using this class assumes that your puppetserver or PE Master is managed by Puppet.
 
 ### <a name="setup-puppet-agent">Puppet Agent (LTS)</a>
+
+**‼️NOT REQUIRED FOR AGENTLESS WORKFLOW ‼️**
 
 The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md][USER-1] document for detailed instructions on agent installation and configuration on Cisco Nexus devices.
 
@@ -143,6 +154,8 @@ Now create and apply the following manifest on your nxos devices.
 
 ### <a name="setup-puppet-device">Puppet Device (Agentless)</a>
 
+**‼️NOT REQUIRED FOR AGENT WORKFLOW ‼️**
+
 The module (version `2.0.0` or later) supports remote management through the usage of [`puppet device`](https://puppet.com/docs/puppet/5.5/puppet_device.html), which communicates with the device remotely via the `nxapi` through HTTP/HTTPS. In order to use the `ciscopuppet` module agentlessly then the following dependencies will need to be met.
 
 ##### The `cisco_node_utils` Ruby Gem
@@ -197,6 +210,10 @@ Test your setup and get the certificate signed:
 See the [`puppet device` documentation](https://puppet.com/docs/puppet/5.5/puppet_device.html)
 
 *Please note:*: In order for the NX-OS device to be managed then the [nxapi](https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/9-x/programmability/guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_9x/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_9x_chapter_010010.html) feature will need enabled on the device and the selected ports for HTTP/HTTPS will need to be accessible by the `proxy-agent` choosen to manage the device.
+
+**‼️AGENTLESS AND AGENT WORKFLOWS ‼️**
+
+For additiona details on agentless and agent based configuration see the following [guide](docs/README-install_guide.md)
 
 ## <a href='example-manifests'>Example Manifests</a>
 
