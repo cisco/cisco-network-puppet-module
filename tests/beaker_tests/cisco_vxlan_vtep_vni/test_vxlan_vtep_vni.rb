@@ -13,43 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###############################################################################
-# TestCase Name:
-# -------------
-# test_cisco_vxlan_vtep_vni.rb
 #
-# TestCase Prerequisites:
-# -----------------------
-# This is a Puppet cisco_vxlan_vtep_vni resource testcase for Puppet Agent on
-# Nexus devices.
-# The test case assumes the following prerequisites are already satisfied:
-#   - Host configuration file contains agent and master information.
-#   - SSH is enabled on the N9K Agent.
-#   - Puppet master/server is started.
-#   - Puppet agent certificate has been signed on the Puppet master/server.
-#
-# TestCase:
-# ---------
-# This cisco_vxlan_vtep_vni resource test verifies default and non-default values
-# for all properties.
-#
-# The following exit_codes are validated for Puppet, Vegas shell and
-# Bash shell commands.
-#
-# Vegas and Bash Shell Commands:
-# 0   - successful command execution
-# > 0 - failed command execution.
-#
-# Puppet Commands:
-# 0 - no changes have occurred
-# 1 - errors have occurred,
-# 2 - changes have occurred
-# 4 - failures have occurred and
-# 6 - changes and failures have occurred.
-#
-# NOTE: 0 is the default exit_code checked in Beaker::DSL::Helpers::on() method.
-#
-# The test cases use RegExp pattern matching on stdout or output IO
-# instance attributes to verify resource properties.
+# See README-develop-beaker-scripts.md (Section: Test Script Variable Reference)
+# for information regarding:
+#  - test script general prequisites
+#  - command return codes
+#  - A description of the 'tests' hash and its usage
 #
 ###############################################################################
 
@@ -65,6 +34,7 @@ tests = {
 
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
 skip_unless_supported(tests)
+skip_if_nv_overlay_rejected(agent) if platform[/n(5|6)k/]
 
 # Test hash test cases
 tests[:default_properties_ingress_replication] = {
@@ -271,8 +241,6 @@ tests[:multisite_ingress_replication_false] = {
 class TestVxLanVtepVni < BaseHarness
   def self.test_harness_dependencies(ctx, _tests, _id)
     ctx.test_set(ctx.agent, 'evpn multisite border 150') if ctx.platform[/ex/]
-    return unless ctx.platform[/n(5|6)k/]
-    ctx.skip_if_nv_overlay_rejected(ctx.agent)
   end
 
   def self.unsupported_properties(ctx, _tests, _id)
