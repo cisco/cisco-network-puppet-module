@@ -58,7 +58,7 @@ tests[:non_default] = {
 }
 
 def cleanup(agent)
-  test_set(agent, 'no vlan 666')
+  test_set(agent, 'no vlan 666', ignore_errors: true)
 end
 
 #################################################################
