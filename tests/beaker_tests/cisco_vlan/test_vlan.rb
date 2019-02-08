@@ -105,8 +105,13 @@ tests[:non_default_extended][:manifest_props].delete(:state) if platform[/n(5|6)
 if platform[/n3k$/]
   pattern = 'Hardware is not capable of supporting vn-segment-vlan-based feature'
   cmd = agent ? 'cisco_vlan 128 mapped_vni=128000' : 'feature vn-segment-vlan-based'
-  tests[:vn_segment_unsupported] =
-    resource_probe(agent, cmd, pattern)
+  tests[:vn_segment_unsupported] = resource_probe(agent, cmd, pattern)
+end
+
+if platform[/n(5|6)k/]
+  pattern = 'NVE Feature NOT supported on this Platform'
+  cmd = 'feature nv overlay'
+  tests[:nv_overlay_unsupported] = resource_probe(agent, cmd, pattern)
 end
 
 # class to contain the test_dependencies specific to this test case
@@ -114,7 +119,9 @@ class TestVlan < BaseHarness
   def self.unsupported_properties(ctx, tests, _id)
     unprops = []
 
-    unprops << :mapped_vni if ctx.platform[/n7k/] || tests[:vn_segment_unsupported]
+    unprops << :mapped_vni if ctx.platform[/n7k/] ||
+                              tests[:vn_segment_unsupported] ||
+                              tests[:nv_overlay_unsupported]
 
     unprops << :fabric_control unless ctx.platform[/n7k/]
 
