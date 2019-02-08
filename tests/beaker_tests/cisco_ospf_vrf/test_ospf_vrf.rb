@@ -152,8 +152,6 @@ tests[:non_default_arrays] = {
     redistribute: "#{redistribute}"
   },
 }
-
-# rubocop:disable Style/WordArray
 redistribute = [
   ['bgp 5',   'rm_bgp'],
   ['direct',  'rm_direct'],
