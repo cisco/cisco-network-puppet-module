@@ -4822,13 +4822,13 @@ Manages the virtual Port Channel (vPC) domain configuration of a Cisco device.
 | Property | Caveat Description |
 |:--------|:-------------|
 | `auto_recovery`                     | Only supported on N3k, N7k, N9k |
-| `arp_synchronize`                   | Only supported on N3k, N7k, N9k <br> Minimum Module Version 1.11.0   |
+| `arp_synchronize`                   | Only supported on N3k, N7k, N9k <br> Minimum Module Version 2.0.0   |
 | `fabricpath_emulated_switch_id`     | Only supported on N7k           |
 | `fabricpath_multicast_load_balance` | Only supported on N7k           |
 | `layer3_peer_routing`               | Only supported on N5k, N6k, N7k <br> Supported in OS Version 7.0(3)I6(1) and later on N3k, N9k |
-| `nd_synchronize`                    | Only supported on N3k, N7k, N9k <br> Minimum Module Version 1.11.0   |
+| `nd_synchronize`                    | Only supported on N3k, N7k, N9k <br> Minimum Module Version 2.0.0   |
 | `peer_gateway_exclude_vlan`         | Only supported on N5k, N6k, N7k |
-| `peer_switch`                       | Only supported on N3k, N7k, N9k <br> Minimum Module Version 1.11.0   |
+| `peer_switch`                       | Only supported on N3k, N7k, N9k <br> Minimum Module Version 2.0.0   |
 | `port_channel_limit`                | Only supported on N7k           |
 | `self_isolation`                    | Only supported on N7k           |
 | `shutdown`                          | Only supported on N5k, N6k, N7k <br> Supported in OS Version 7.0(3)I6(1) and later on N3k, N9k |
