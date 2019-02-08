@@ -18,9 +18,9 @@
 
 ## <a href='module-description'>Module Description</a>
 
-The ciscopuppet module allows a network administrator to manage Cisco Network Elements using Puppet. This module bundles a set of Puppet Types, Providers, Beaker Tests, Sample Manifests and Installation Tools for effective network management.  The  resources and capabilities provided by this Puppet Module will grow with contributions from Cisco, Puppet Labs and the open source community.
+The ciscopuppet module allows a network administrator to manage Cisco Nexus Network Elements using Puppet. This module bundles a set of Puppet Types, Providers, Beaker Tests, Sample Manifests and Installation Tools for effective network management.  The  resources and capabilities provided by this Puppet Module will grow with contributions from Cisco, Puppet Labs and the open source community.
 
-The Cisco Network Elements and Operating Systems managed by this Puppet Module are continuously expanding. See [Resource Platform Support Matrix](#resource-platform-support-matrix) for a list of currently supported hardware and software.
+The Cisco Nexus Network Elements and Operating Systems managed by this Puppet Module are continuously expanding. See [Resource Platform Support Matrix](#resource-platform-support-matrix) for a list of currently supported hardware and software.
 
 This GitHub repository contains the latest version of the ciscopuppet module source code. Supported versions of the ciscopuppet module are available at Puppet Forge. Please refer to [SUPPORT.md][MAINT-2] for additional details.
 
@@ -28,7 +28,7 @@ This GitHub repository contains the latest version of the ciscopuppet module sou
 
 The `ciscopuppet` module has a dependency on the [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) and the [`puppet-resource_api`](https://rubygems.org/gems/puppet-resource_api) Ruby gem. See the **Setup** section that follows for more information on `cisco_node_utils` and `puppet-resource_api`.
 
-[The NXAPI feature](https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/6-x/programmability/guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_chapter_011.html) will need to be enabled on the device in order for the `ciscopuppet` module to be able to manage the device.
+[The NXAPI feature](https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/9-x/programmability/guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_9x/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_9x_chapter_010010.html) will need to be enabled on the device in order for the `ciscopuppet` module to be able to manage the device.
 
 ##### Contributing
 
@@ -36,7 +36,16 @@ Contributions to the `ciscopuppet` module are welcome. See [CONTRIBUTING.md][DEV
 
 ## <a href='setup'>Setup</a>
 
+Before getting started with the setup needed to manage Cisco Nexus Network Elements using Puppet choose one of the following workflows.
+
+  * Puppet Agentless (Manage devices over a remote proxy connection)
+  * Puppet Agent (Manage devices by installing an agent directly onto the device)
+
+Version `2.0.0` of this module introduces the ability to manage Cisco Nexus devices without the need to install an agent directly onto the device.  This option is not available for `ciscopuppet` module version `1.10.0` and earlier.
+
 ### <a name="setup-puppet-master">Puppet Master</a>
+
+**‼️REQUIRED FOR BOTH AGENTLESS and AGENT WORKFLOWS ‼️**
 
 The `ciscopuppet` module must be installed on the Puppet Master server.
 
@@ -51,19 +60,21 @@ The module dependencies listed below will be installed automatically. For more i
 ##### The [`puppetlabs-resource_api`](https://forge.puppet.com/puppetlabs/resource_api) module
 
 
-On each puppetserver or PE master that needs to serve catalogs for NX-OS devices, classify or apply the [`ciscopuppet::server`](https://github.com/cisco/cisco-network-puppet-module/blob/master/manifests/server.pp) class. Using this class assumes that your puppetserver or PE Master is managed by Puppet.
+On each puppetserver or PE master that needs to serve catalogs for NX-OS devices, classify or apply the [`ciscopuppet::server`](manifests/server.pp) class. Using this class assumes that your puppetserver or PE Master is managed by Puppet.
 
 ### <a name="setup-puppet-agent">Puppet Agent (LTS)</a>
+
+**‼️NOT REQUIRED FOR AGENTLESS WORKFLOW ‼️**
 
 The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md][USER-1] document for detailed instructions on agent installation and configuration on Cisco Nexus devices.
 
 ##### The `cisco_node_utils` Ruby Gem
 
-The [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) Ruby gem is a required component of the `ciscopuppet` module. This gem contains platform APIs for interfacing between Cisco CLI and Puppet resources. The gem can be automatically installed by Puppet agent by using the [`ciscopuppet::agent`](https://github.com/cisco/cisco-network-puppet-module/blob/master/manifests/agent.pp) class, only in exceptional circumstances you should consider installing the dependencies manually.
+The [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) Ruby gem is a required component of the `ciscopuppet` module. This gem contains platform APIs for interfacing between Cisco CLI and Puppet resources. The gem can be automatically installed by Puppet agent by using the [`ciscopuppet::agent`](manifests/agent.pp) class. Automatic dependency installs are preferred; manual gem installs should be reserved for exceptional circumstances.
 
 ##### The `puppet-resource_api` Ruby Gem
 
-The [`puppet-resource_api`](https://rubygems.org/gems/puppet-resource_api) Ruby gem is a required component of the `ciscopuppet` module. The gem can be automatically installed by a Puppet agent by using the [`ciscopuppet::agent`](https://github.com/cisco/cisco-network-puppet-module/blob/master/manifests/agent.pp) class, only in exceptional circumstances you should consider installing the dependencies manually.
+The [`puppet-resource_api`](https://rubygems.org/gems/puppet-resource_api) Ruby gem is a required component of the `ciscopuppet` module. The gem can be automatically installed by a Puppet agent by using the [`ciscopuppet::agent`](manifests/agent.pp) class. Automatic dependency installs are preferred; manual gem installs should be reserved for exceptional circumstances.
 
 ##### Automatic Gem Install Using `ciscopuppet::agent`
 
@@ -143,15 +154,17 @@ Now create and apply the following manifest on your nxos devices.
 
 ### <a name="setup-puppet-device">Puppet Device (Agentless)</a>
 
+**‼️NOT REQUIRED FOR AGENT WORKFLOW ‼️**
+
 The module (version `2.0.0` or later) supports remote management through the usage of [`puppet device`](https://puppet.com/docs/puppet/5.5/puppet_device.html), which communicates with the device remotely via the `nxapi` through HTTP/HTTPS. In order to use the `ciscopuppet` module agentlessly then the following dependencies will need to be met.
 
 ##### The `cisco_node_utils` Ruby Gem
 
-The [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) Ruby gem is a required component of the `ciscopuppet` module. This gem contains platform APIs for interfacing between Cisco CLI and Puppet resources. The gem will need to be installed on any Puppet agent which will be managing a NX-OS device. It can be automatically installed by Puppet by using the [`ciscopuppet::proxy`](https://github.com/cisco/cisco-network-puppet-module/blob/master/manifests/proxy.pp) class, only in exceptional circumstances you should consider installing the dependencies manually.
+The [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) Ruby gem is a required component of the `ciscopuppet` module. This gem contains platform APIs for interfacing between Cisco CLI and Puppet resources. The gem will need to be installed on any Puppet agent which will be managing a NX-OS device. It can be automatically installed by Puppet by using the [`ciscopuppet::proxy`](manifests/proxy.pp) class. Automatic gem installs are preferred; manual gem installs should be reserved for exceptional circumstances.
 
 ##### The `puppet-resource_api` Ruby Gem
 
-The [`puppet-resource_api`](https://rubygems.org/gems/puppet-resource_api) Ruby gem is a required component of the `ciscopuppet` module. The gem will need to be installed on any Puppet agent which will be managing a NX-OS device. It can be automatically installed by Puppet by using the [`ciscopuppet::proxy`](https://github.com/cisco/cisco-network-puppet-module/blob/master/manifests/proxy.pp) class, only in exceptional circumstances you should consider installing the dependencies manually.
+The [`puppet-resource_api`](https://rubygems.org/gems/puppet-resource_api) Ruby gem is a required component of the `ciscopuppet` module. The gem will need to be installed on any Puppet agent which will be managing a NX-OS device. It can be automatically installed by Puppet by using the [`ciscopuppet::proxy`](manifests/proxy.pp) class. Automatic gem installs are preferred; manual gem installs should be reserved for exceptional circumstances.
 
 ### <a name="getting-started-puppet-device">Getting started with remote management (`puppet device`)</a>
 
@@ -197,6 +210,10 @@ Test your setup and get the certificate signed:
 See the [`puppet device` documentation](https://puppet.com/docs/puppet/5.5/puppet_device.html)
 
 *Please note:*: In order for the NX-OS device to be managed then the [nxapi](https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/9-x/programmability/guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_9x/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_9x_chapter_010010.html) feature will need enabled on the device and the selected ports for HTTP/HTTPS will need to be accessible by the `proxy-agent` choosen to manage the device.
+
+**‼️AGENTLESS AND AGENT WORKFLOWS ‼️**
+
+For additiona details on agentless and agent based configuration see the following [guide](docs/README-install_guide.md)
 
 ## <a href='example-manifests'>Example Manifests</a>
 
