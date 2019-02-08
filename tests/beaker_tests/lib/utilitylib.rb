@@ -1288,7 +1288,7 @@ DEVICE
     msg = 'NVE Feature NOT supported on this Platform'
     banner = '#' * msg.length
     raise_skip_exception("\n#{banner}\n#{msg}\n#{banner}\n", self) if
-      stdout.match(msg)
+      out.match(msg)
   end
 
   # Return an interface name from the first MT-full compatible line module found

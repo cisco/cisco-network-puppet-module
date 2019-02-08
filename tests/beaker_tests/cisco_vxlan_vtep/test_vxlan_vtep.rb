@@ -33,6 +33,7 @@ tests = {
 
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
 skip_unless_supported(tests)
+skip_if_nv_overlay_rejected(agent) if platform[/n(5|6)k/]
 
 # Test hash test cases
 tests[:default] = {
@@ -91,11 +92,8 @@ class TestVxlanVtep < BaseHarness
   def self.test_harness_dependencies(ctx, _tests, _id)
     ctx.test_set(ctx.agent, 'evpn multisite border 150') if ctx.platform[/ex/]
 
-    return unless ctx.platform[/n(5|6)k/]
-    ctx.skip_if_nv_overlay_rejected(ctx.agent)
-
     # Vxlan has a hard requirement to disable feature fabricpath on n5/6k
-    ctx.test_set(ctx.agent, 'no feature-set fabricpath')
+    ctx.test_set(ctx.agent, 'no feature-set fabricpath', ignore_errors: true)
   end
 
   def self.unsupported_properties(ctx, _tests, _id)
@@ -148,5 +146,8 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -----------------------------------
   logger.info("\n#{'-' * 60}\nSection 2.1 Non Default2 Property Testing")
   test_harness_run(tests, :non_default_2, harness_class: TestVxlanVtep)
+
+  # -----------------------------------
+  skipped_tests_summary(tests)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
