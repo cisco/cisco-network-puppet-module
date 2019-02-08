@@ -1992,6 +1992,7 @@ DEVICE
     # TBD: Modify this cleanup to use faster test_get / test_set:
     #  test_get('i ^vlan|^bridge')
     #  test_set('no vlan <range> ; no bridge <range> ; system bridge-domain none')
+    logger.info('remove_all_vlans')
     step "\n--------\n * TestStep :: #{stepinfo}" do
       resource_absent_cleanup(agent, 'cisco_bridge_domain', 'bridge domains')
       # bridge_domain feature is available only on n7k
@@ -1999,7 +2000,7 @@ DEVICE
                      ignore_errors: true) if platform == 'n7k'
       test_set(agent, 'no feature interface-vlan')
       test_set(agent, 'no feature private-vlan')
-      test_set(agent, 'no vlan 2-3967')
+      test_set(agent, 'no vlan 2-3967', ignore_errors: true)
     end
   end
 
