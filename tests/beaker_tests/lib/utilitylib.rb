@@ -1941,11 +1941,13 @@ DEVICE
   # Issue a command on the agent and check stdout for a pattern.
   # Useful for checking if hardware supports properties, etc.
   def resource_probe(agent, cmd, pattern)
+    logger.info("--\nResource Probe: cmd: " + cmd)
     if agent
       out = on(agent, PUPPET_BINPATH + 'resource ' + cmd, acceptable_exit_codes: [0, 2, 1], pty: true).stdout
     else
       out = nxapi_probe(cmd)
     end
+    logger.info("Resource Probe: out: " + out)
     out.match(pattern) ? true : false
   end
 
