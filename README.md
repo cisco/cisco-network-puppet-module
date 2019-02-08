@@ -41,7 +41,7 @@ Before getting started with the setup needed to manage Cisco Nexus Network Eleme
   * Puppet Agentless (Manage devices over a remote proxy connection)
   * Puppet Agent (Manage devices by installing an agent directly onto the device)
 
-Version `2.0.0` of this module introduces the ability to manage Cisco Nexus devices without the need to install an agent directly onto the device.  This option is not avaiable for `ciscopuppet` module version `1.10.0` and earlier.
+Version `2.0.0` of this module introduces the ability to manage Cisco Nexus devices without the need to install an agent directly onto the device.  This option is not available for `ciscopuppet` module version `1.10.0` and earlier.
 
 ### <a name="setup-puppet-master">Puppet Master</a>
 
@@ -70,11 +70,11 @@ The Puppet Agent requires installation and setup on each device. Agent setup can
 
 ##### The `cisco_node_utils` Ruby Gem
 
-The [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) Ruby gem is a required component of the `ciscopuppet` module. This gem contains platform APIs for interfacing between Cisco CLI and Puppet resources. The gem can be automatically installed by Puppet agent by using the [`ciscopuppet::agent`](manifests/agent.pp) class, only in exceptional circumstances you should consider installing the dependencies manually.
+The [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) Ruby gem is a required component of the `ciscopuppet` module. This gem contains platform APIs for interfacing between Cisco CLI and Puppet resources. The gem can be automatically installed by Puppet agent by using the [`ciscopuppet::agent`](manifests/agent.pp) class. Automatic dependency installs are preferred; manual gem installs should be reserved for exceptional circumstances.
 
 ##### The `puppet-resource_api` Ruby Gem
 
-The [`puppet-resource_api`](https://rubygems.org/gems/puppet-resource_api) Ruby gem is a required component of the `ciscopuppet` module. The gem can be automatically installed by a Puppet agent by using the [`ciscopuppet::agent`](manifests/agent.pp) class, only in exceptional circumstances you should consider installing the dependencies manually.
+The [`puppet-resource_api`](https://rubygems.org/gems/puppet-resource_api) Ruby gem is a required component of the `ciscopuppet` module. The gem can be automatically installed by a Puppet agent by using the [`ciscopuppet::agent`](manifests/agent.pp) class. Automatic dependency installs are preferred; manual gem installs should be reserved for exceptional circumstances.
 
 ##### Automatic Gem Install Using `ciscopuppet::agent`
 
@@ -160,11 +160,11 @@ The module (version `2.0.0` or later) supports remote management through the usa
 
 ##### The `cisco_node_utils` Ruby Gem
 
-The [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) Ruby gem is a required component of the `ciscopuppet` module. This gem contains platform APIs for interfacing between Cisco CLI and Puppet resources. The gem will need to be installed on any Puppet agent which will be managing a NX-OS device. It can be automatically installed by Puppet by using the [`ciscopuppet::proxy`](manifests/proxy.pp) class, only in exceptional circumstances you should consider installing the dependencies manually.
+The [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) Ruby gem is a required component of the `ciscopuppet` module. This gem contains platform APIs for interfacing between Cisco CLI and Puppet resources. The gem will need to be installed on any Puppet agent which will be managing a NX-OS device. It can be automatically installed by Puppet by using the [`ciscopuppet::proxy`](manifests/proxy.pp) class. Automatic gem installs are preferred; manual gem installs should be reserved for exceptional circumstances.
 
 ##### The `puppet-resource_api` Ruby Gem
 
-The [`puppet-resource_api`](https://rubygems.org/gems/puppet-resource_api) Ruby gem is a required component of the `ciscopuppet` module. The gem will need to be installed on any Puppet agent which will be managing a NX-OS device. It can be automatically installed by Puppet by using the [`ciscopuppet::proxy`](manifests/proxy.pp) class, only in exceptional circumstances you should consider installing the dependencies manually.
+The [`puppet-resource_api`](https://rubygems.org/gems/puppet-resource_api) Ruby gem is a required component of the `ciscopuppet` module. The gem will need to be installed on any Puppet agent which will be managing a NX-OS device. It can be automatically installed by Puppet by using the [`ciscopuppet::proxy`](manifests/proxy.pp) class. Automatic gem installs are preferred; manual gem installs should be reserved for exceptional circumstances.
 
 ### <a name="getting-started-puppet-device">Getting started with remote management (`puppet device`)</a>
 
