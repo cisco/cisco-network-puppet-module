@@ -65,7 +65,7 @@ tests[:non_default] = {
 class TestInterfaceEvpnMultisite < BaseHarness
   def self.test_harness_dependencies(ctx, _tests, id)
     return unless id == :default
-    ctx.test_set(agent, 'evpn multisite border 150')
+    ctx.test_set(ctx.agent, 'evpn multisite border 150')
   end
 end
 
