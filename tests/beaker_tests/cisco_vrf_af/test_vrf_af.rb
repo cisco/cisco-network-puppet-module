@@ -30,6 +30,8 @@ tests = {
   resource_name: 'cisco_vrf_af',
 }
 
+skip_if_nv_overlay_rejected(agent) if platform[/n(5|6)k/]
+
 # Test hash test cases
 tests[:default] = {
   desc:           'Default Properties, vrf-af',

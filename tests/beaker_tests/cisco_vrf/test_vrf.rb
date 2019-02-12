@@ -64,9 +64,11 @@ tests[:non_default] = {
   },
 }
 
+tests[:nv_overlay_unsupported] = resource_probe_named(agent, :nve) if platform[/n(5|6)k/]
+
 # class to contain the test_dependencies specific to this test case
 class TestVrf < BaseHarness
-  def self.unsupported_properties(ctx, _tests, _id)
+  def self.unsupported_properties(ctx, tests, _id)
     unprops = []
     if ctx.operating_system == 'nexus'
       unprops <<
@@ -76,7 +78,8 @@ class TestVrf < BaseHarness
         :vpn_id
 
       unprops << :vni unless ctx.platform[/n9k/]
-      unprops << :route_distinguisher if ctx.nexus_image['I2']
+      unprops << :route_distinguisher if ctx.nexus_image['I2'] ||
+                                         tests[:nv_overlay_unsupported]
       unprops << :description if ctx.image?[/7.3.0.D1.1|7.3.0.N1.1/] # CSCuy36637
 
     else

@@ -108,11 +108,7 @@ if platform[/n3k$/]
   tests[:vn_segment_unsupported] = resource_probe(agent, cmd, pattern)
 end
 
-if platform[/n(5|6)k/]
-  pattern = 'NVE Feature NOT supported on this Platform'
-  cmd = 'feature nv overlay'
-  tests[:nv_overlay_unsupported] = resource_probe(agent, cmd, pattern)
-end
+tests[:nv_overlay_unsupported] = resource_probe_named(agent, :nve) if platform[/n(5|6)k/]
 
 # class to contain the test_dependencies specific to this test case
 class TestVlan < BaseHarness

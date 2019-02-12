@@ -360,9 +360,11 @@ DEVICE
           #  raise 'Errored test'
           # end
           on(tests[:proxy_agent], puppet_device_cmd, acceptable_exit_codes: [0, 1, 2])
-          if !(stdout.include? 'Applied catalog') && tests[id][:stderr_pattern].nil?
+          output = stdout
+          if tests[id][:stderr_pattern].nil? && (output[/Error: /] || !output[/Applied catalog/])
+            logger.info(tests[id][:manifest])
             logger.info(stdout)
-            raise 'Errored test as the command result did not match applied catalog'
+            raise 'Unexpected error while applying catalog'
           end
         else
           on(tests[:agent], puppet_agent_cmd, acceptable_exit_codes: code)
@@ -378,10 +380,11 @@ DEVICE
         # end
         output = `#{agentless_command} --apply #{@temp_agentless_manifest.path} 2>&1`
         # logger.debug("test_manifest :: output: \n#{output}")
-        if !(output.include? 'Applied catalog') && tests[id][:stderr_pattern].nil?
+        if tests[id][:stderr_pattern].nil? && (output[/Error: /] || !output[/Applied catalog/])
+          logger.info(`cat #{@temp_agentless_manifest.path}`)
           remove_temp_manifest
           logger.info(output)
-          raise 'Errored test as the command result did not match applied catalog'
+          raise 'Unexpected error while applying catalog'
         end
       end
       test_stderr(tests, id, output) if tests[id][:stderr_pattern]
@@ -1947,8 +1950,18 @@ DEVICE
     else
       out = nxapi_probe(cmd)
     end
-    logger.info("Resource Probe: out: " + out)
+    logger.info('Resource Probe: out: ' + out)
     out.match(pattern) ? true : false
+  end
+
+  # Wrapper for common resource probes
+  def resource_probe_named(agent, type)
+    case type
+    when :nve
+      pattern = 'NVE Feature NOT supported on this Platform'
+      cmd = 'feature nv overlay'
+    end
+    resource_probe(agent, cmd, pattern)
   end
 
   def vdc_limit_f3_no_intf_needed(action=:set)
