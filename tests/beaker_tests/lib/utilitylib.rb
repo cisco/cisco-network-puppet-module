@@ -360,6 +360,7 @@ DEVICE
           #  raise 'Errored test'
           # end
           on(tests[:proxy_agent], puppet_device_cmd, acceptable_exit_codes: [0, 1, 2])
+          output = stdout
           if tests[id][:stderr_pattern].nil? && (output[/Error: /] || !output[/Applied catalog/])
             logger.info(tests[id][:manifest])
             logger.info(stdout)
