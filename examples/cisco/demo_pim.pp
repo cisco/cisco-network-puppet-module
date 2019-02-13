@@ -17,23 +17,23 @@
 class ciscopuppet::cisco::demo_pim {
 
     cisco_pim { 'ipv4' :
-      ensure         => present,
-      vrf            => 'default',
-      ssm_range      => '224.0.0.0/8 225.0.0.0/8',
-      bfd            => true
+      ensure    => present,
+      vrf       => 'default',
+      ssm_range => '224.0.0.0/8 225.0.0.0/8',
+      bfd       => true
     }
 
     cisco_pim_rp_address { 'ipv4' :
-      ensure          => present,
-      vrf             => 'default',
-      rp_addr         => '1.1.1.1'
+      ensure  => present,
+      vrf     => 'default',
+      rp_addr => '1.1.1.1'
     }
 
     cisco_pim_grouplist { 'ipv4' :
-      ensure          => present,
-      vrf             => 'default',
-      rp_addr         => '11.11.11.11',
-      group           => '224.0.0.0/8',
+      ensure  => present,
+      vrf     => 'default',
+      rp_addr => '11.11.11.11',
+      group   => '224.0.0.0/8',
     }
 
 }

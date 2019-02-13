@@ -18,7 +18,7 @@
 
 class ciscopuppet::cisco::demo_vxlan {
 
-  if platform_get() =~ /n(5|6|7|8|9)k/ {
+  if platform_get() =~ /n(5|6|7|9)k/ {
 
     if platform_get() =~ /n7k/ {
       cisco_vdc { 'default':
@@ -35,33 +35,62 @@ class ciscopuppet::cisco::demo_vxlan {
       dup_host_mac_detection_timeout        => '10',
     }
 
+    $suppress_arp_disable = platform_get() ? {
+      /n9k/  => 'default',
+      default    => undef,
+    }
+
     $source_interface_hold_down_time = platform_get() ? {
-      /n(8|9)k/  => '50',
+      /n9k/  => '50',
       default    => undef,
     }
 
     $ingress_replication = platform_get() ? {
-      /n(8|9)k/  => 'static',
+      /n9k$/  => 'static',
       default    => undef,
     }
 
     $peer_list = platform_get() ? {
-      /n(8|9)k/  => ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
+      /n9k$/  => ['1.1.1.1', '2.2.2.2', '3.3.3.3'],
       default    => undef,
     }
 
     $suppress_uuc = platform_get() ? {
       /n(5|6)k/  => 'default',
       default    => undef,
-     }
+    }
+
+    $global_suppress_arp = platform_get() ? {
+      /n9k/  => true,
+      default    => undef,
+    }
+
+    $global_ingress_replication_bgp = platform_get() ? {
+      /n9k$/  => true,
+      default    => undef,
+    }
+
+    $global_mcast_group_l3 = platform_get() ? {
+      /n9k$/  => '225.1.1.1',
+      default    => undef,
+    }
+
+    $global_mcast_group_l2 = platform_get() ? {
+      /n9k/  => 'default',
+      default    => undef,
+    }
 
     cisco_vxlan_vtep { 'nve1':
       ensure                          => present,
       description                     => 'Configured by puppet',
       host_reachability               => 'evpn',
-      shutdown                        => 'false',
+      shutdown                        => false,
       source_interface                => 'loopback55',
       source_interface_hold_down_time => $source_interface_hold_down_time,
+      global_mcast_group_l2           => $global_mcast_group_l2,
+      global_mcast_group_l3           => $global_mcast_group_l3,
+      global_ingress_replication_bgp  => $global_ingress_replication_bgp,
+      global_suppress_arp             => $global_suppress_arp,
     }
 
     cisco_vxlan_vtep_vni {'nve1 10000':
@@ -74,10 +103,11 @@ class ciscopuppet::cisco::demo_vxlan {
     }
 
     cisco_vxlan_vtep_vni {'nve1 20000':
-      ensure              => present,
-      assoc_vrf           => false,
-      multicast_group     => '224.1.1.1',
-      suppress_arp        => 'default',
+      ensure               => present,
+      assoc_vrf            => false,
+      multicast_group      => '224.1.1.1',
+      suppress_arp         => 'default',
+      suppress_arp_disable => $suppress_arp_disable,
     }
 
     # TBD: Anycast gateway mode

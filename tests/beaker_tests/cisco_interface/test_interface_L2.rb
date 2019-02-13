@@ -150,37 +150,43 @@ tests[:purge] = {
   },
 }
 
-def unsupported_properties(_tests, _id)
-  unprops = []
-  unprops <<
-    :storm_control_broadcast <<
-    :storm_control_multicast if platform == 'n7k'
-  unprops
+# class to contain the test_dependencies specific to this test case
+class TestInterfaceL2 < Interfacelib
+  def self.unsupported_properties(ctx, _tests, _id)
+    unprops = []
+    unprops <<
+      :storm_control_broadcast <<
+      :storm_control_multicast if ctx.platform == 'n7k'
+    unprops
+  end
+end
+
+def cleanup(agent, intf)
+  interface_cleanup(agent, intf)
+  system_default_switchport(agent, false)
 end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  teardown do
-    interface_cleanup(agent, intf)
-    system_default_switchport(agent, false)
-  end
+  teardown { cleanup(agent, intf) }
+  cleanup(agent, intf)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. 'access' Property Testing")
-  test_harness_run(tests, :default_access)
-  test_harness_run(tests, :non_default_access)
+  test_harness_run(tests, :default_access, harness_class: TestInterfaceL2)
+  test_harness_run(tests, :non_default_access, harness_class: TestInterfaceL2)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. 'trunk' Property Testing")
-  test_harness_run(tests, :default_trunk)
-  test_harness_run(tests, :non_default_trunk)
+  test_harness_run(tests, :default_trunk, harness_class: TestInterfaceL2)
+  test_harness_run(tests, :non_default_trunk, harness_class: TestInterfaceL2)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2.3 Purge_config Testing")
   skip_idempotence_check = true
-  test_harness_run(tests, :purge, skip_idempotence_check)
+  test_harness_run(tests, :purge, harness_class: TestInterfaceL2, skip_idempotence_check: skip_idempotence_check)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

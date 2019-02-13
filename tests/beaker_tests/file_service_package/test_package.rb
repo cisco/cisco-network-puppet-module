@@ -28,7 +28,11 @@ tests = {
   master:        master,
   ensurable:     false,
   resource_name: 'package',
+  agent_only:    true,
 }
+
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
 
 # Native mode third-party rpm's require repo setup
 tests[:env] = os_family[/cisco-wrlinux/] ? :native : :centos
@@ -58,37 +62,40 @@ tests[:native] = {
   resource:       { 'ensure' => '[0-9]+' },
 }
 
-def dependency_manifest(_tests, id)
-  return unless id == :native
-  dep = %(
-    # Create local repo files
-    file { '/tmp/beaker-repo' :
-      ensure => 'directory',
-    }
-    file { '/tmp/beaker-repo/demo-one-1.0-1.x86_64.rpm' :
-      ensure  => present,
-      source  => 'puppet:///modules/ciscopuppet/demo-one-1.0-1.x86_64.rpm',
-      require => File['/tmp/beaker-repo'],
-    }
-    exec { 'createrepo':
-      command => '/usr/bin/createrepo /tmp/beaker-repo',
-      unless  => '/bin/ls /tmp/beaker-repo/repodata 2>/dev/null',
-      require => File['/tmp/beaker-repo/demo-one-1.0-1.x86_64.rpm'],
-    }
+# class to contain the test_dependencies specific to this test case
+class TestPackage < BaseHarness
+  def self.dependency_manifest(ctx, _tests, id)
+    return unless id == :native
+    dep = %(
+      # Create local repo files
+      file { '/tmp/beaker-repo' :
+        ensure => 'directory',
+      }
+      file { '/tmp/beaker-repo/demo-one-1.0-1.x86_64.rpm' :
+        ensure  => present,
+        source  => 'puppet:///modules/ciscopuppet/demo-one-1.0-1.x86_64.rpm',
+        require => File['/tmp/beaker-repo'],
+      }
+      exec { 'createrepo':
+        command => '/usr/bin/createrepo /tmp/beaker-repo',
+        unless  => '/bin/ls /tmp/beaker-repo/repodata 2>/dev/null',
+        require => File['/tmp/beaker-repo/demo-one-1.0-1.x86_64.rpm'],
+      }
 
-    yumrepo { 'beaker':
-       # Create beaker repo config on switch
-       baseurl  => 'file:///tmp/beaker-repo',
-       descr    => "Beaker test rpms",
-       enabled  => 1,
-       gpgcheck => 0,
-       cost     => 505,
-       require  => Exec['createrepo'],
-       before   => Package['#{os_family[/cisco-wrlinux/] ? 'demo-one' : 'dos2unix'}'],
-    }
-  )
-  logger.info("\n  * dependency_manifest\n#{dep}")
-  dep
+      yumrepo { 'beaker':
+         # Create beaker repo config on switch
+         baseurl  => 'file:///tmp/beaker-repo',
+         descr    => "Beaker test rpms",
+         enabled  => 1,
+         gpgcheck => 0,
+         cost     => 505,
+         require  => Exec['createrepo'],
+         before   => Package['#{ctx.os_family[/cisco-wrlinux/] ? 'demo-one' : 'dos2unix'}'],
+      }
+    )
+    ctx.logger.info("\n  * dependency_manifest\n#{dep}")
+    dep
+  end
 end
 
 def cleanup(tests, id)
@@ -116,13 +123,13 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # ----------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Install")
   tests[id][:desc] = '1.1 Install RPM'
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestPackage)
 
   # ----------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Uninstall")
   tests[id][:desc] = '1.2 Uninstall RPM'
   tests[id][:manifest_props][:ensure] = 'purged'
   tests[id][:resource] = { 'ensure' => 'purged' }
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestPackage)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

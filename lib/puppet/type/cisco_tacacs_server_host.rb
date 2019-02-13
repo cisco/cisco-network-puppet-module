@@ -1,6 +1,6 @@
 # Manages a Cisco Tacacs Server Host.
 #
-# March 2014
+# June 2018
 #
 # Copyright (c) 2014-2018 Cisco and/or its affiliates.
 #
@@ -34,6 +34,7 @@ Puppet::Type.newtype(:cisco_tacacs_server_host) do
       encryption_password => 'xxxxx',
     }"
 
+  apply_to_all
   ensurable
 
   ###################

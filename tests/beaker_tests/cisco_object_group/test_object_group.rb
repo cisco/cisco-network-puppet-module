@@ -64,20 +64,23 @@ tests[:seq_30_v4] = {
   },
 }
 
-def dependency_manifest(_tests, _id)
-  "
-    cisco_object_group { 'ipv4 address beaker':
-      ensure => present,
-    }
+# class to contain the test_dependencies specific to this test case
+class TestObjectGroup < BaseHarness
+  def self.dependency_manifest(_ctx, _tests, _id)
+    "
+      cisco_object_group { 'ipv4 address beaker':
+        ensure => present,
+      }
 
-    cisco_object_group { 'ipv6 address beaker6':
-      ensure => present,
-    }
+      cisco_object_group { 'ipv6 address beaker6':
+        ensure => present,
+      }
 
-    cisco_object_group { 'ipv4 port beakerp':
-      ensure => present,
-    }
-  "
+      cisco_object_group { 'ipv4 port beakerp':
+        ensure => present,
+      }
+    "
+  end
 end
 
 def cleanup
@@ -96,10 +99,10 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # ---------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. ObjectGroup Testing")
 
-  test_harness_run(tests, :seq_10_v4)
-  test_harness_run(tests, :seq_10_v6)
-  test_harness_run(tests, :seq_20_v4)
-  test_harness_run(tests, :seq_30_v4)
+  test_harness_run(tests, :seq_10_v4, harness_class: TestObjectGroup)
+  test_harness_run(tests, :seq_10_v6, harness_class: TestObjectGroup)
+  test_harness_run(tests, :seq_20_v4, harness_class: TestObjectGroup)
+  test_harness_run(tests, :seq_30_v4, harness_class: TestObjectGroup)
 
   # ---------------------------------------------------------
   skipped_tests_summary(tests)

@@ -23,6 +23,18 @@
 ###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
+tests = {
+  agent:         agent,
+  master:        master,
+  platform:      'n(3|9)k',
+  resource_name: 'package',
+  agent_only:    true,
+}
+
+# Skip -ALL- tests if a top-level platform/os key exludes this platform
+skip_unless_supported(tests)
+skip_nexus_image(%w(I2 I3), tests)
+
 name = 'nxos.sample-n9k_EOR'
 case image?
 when /7.0.3.I2.1/
@@ -52,6 +64,9 @@ when /7.0.3.I4.5/
 when /7.0.3.I4.6/
   filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I4.6.lib32_n9000.rpm'
   version =  '1.0.0-7.0.3.I4.6'
+when /7.0.3.I4.8/
+  filename = 'nxos.sample-n9k_EOR-1.0.0-7.0.3.I4.8.lib32_n9000.rpm'
+  version =  '1.0.0-7.0.3.I4.8'
 when /7.0.3.I5.1/
   name = 'nxos.sample-n9k_ALL'
   filename = 'nxos.sample-n9k_ALL-1.0.0-7.0.3.I5.1.lib32_n9000.rpm'
@@ -95,17 +110,6 @@ end
 unless resource_present?(agent, 'file', "/bootflash/#{filename}")
   raise_skip_exception("RPM file /bootflash/#{filename} not found", self)
 end
-
-tests = {
-  agent:         agent,
-  master:        master,
-  platform:      'n(3|9)k',
-  resource_name: 'package',
-}
-
-# Skip -ALL- tests if a top-level platform/os key exludes this platform
-skip_unless_supported(tests)
-skip_nexus_image(%w(I2 I3), tests)
 
 tests[:yum_patch_install] = {
   desc:           "1.1 Apply sample patch #{name} to image #{image?}",

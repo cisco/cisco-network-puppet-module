@@ -216,8 +216,8 @@ class ciscopuppet::cisco::demo_bgp {
   }
 
   cisco_bgp_af_aa { '55.77 default ipv4 unicast 2.2.2.2/32':
-    ensure        => present,
-    summary_only  => true,
+    ensure       => present,
+    summary_only => true,
   }
 
   if platform_get() != 'n3k' {

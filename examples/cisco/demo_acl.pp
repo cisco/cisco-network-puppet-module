@@ -17,24 +17,24 @@
 class ciscopuppet::cisco::demo_acl {
 
   $fragments = platform_get() ? {
-    /(n3k|n7k|n3k-f|n9k-f|n9k)/  => 'permit',
+    /(n3|n7|n9)k$/  => 'permit',
     default                => undef
   }
 
   cisco_acl { 'ipv4 my_ipv4_acl':
-    ensure                 => 'present',
-    stats_per_entry        => false,
-    fragments              => $fragments
+    ensure          => 'present',
+    stats_per_entry => false,
+    fragments       => $fragments
   }
 
   cisco_ace { 'ipv4 my_ipv4_acl 10':
-    ensure                 => 'present',
-    action                 => 'permit',
-    proto                  => 'tcp',
-    src_addr               => '1.2.3.4 2.3.4.5',
-    src_port               => 'eq 40',
-    dst_addr               => '8.9.0.4/32',
-    dst_port               => 'range 32 56',
+    ensure   => 'present',
+    action   => 'permit',
+    proto    => 'tcp',
+    src_addr => '1.2.3.4 2.3.4.5',
+    src_port => 'eq 40',
+    dst_addr => '8.9.0.4/32',
+    dst_port => 'range 32 56',
   }
 
   $http_method = platform_get() ? {
@@ -63,26 +63,26 @@ class ciscopuppet::cisco::demo_acl {
   }
 
   $ttl = platform_get() ? {
-    /(n3k|n3k-f|n9k-f|n9k)/  => '153', 
+    /(n3k|n3k-f|n9k-f|n9k)/  => '153',
     default            => undef
   }
 
   cisco_ace { 'ipv4 my_ipv4_acl 20':
-    action                 => 'permit',
-    proto                  => 'tcp',
-    src_addr               => '1.2.3.4 2.3.4.5',
-    src_port               => 'eq 40',
-    dst_addr               => '8.9.0.4/32',
-    dst_port               => 'range 32 56',
-    tcp_flags              => 'ack syn fin',
-    dscp                   => 'af11',
-    established            => false,
-    http_method            => $http_method,
-    packet_length          => $packet_length,
-    tcp_option_length      => $tcp_option_length,
-    time_range             => $time_range,
-    redirect               => $redirect,
-    log                    => false,
+    action            => 'permit',
+    proto             => 'tcp',
+    src_addr          => '1.2.3.4 2.3.4.5',
+    src_port          => 'eq 40',
+    dst_addr          => '8.9.0.4/32',
+    dst_port          => 'range 32 56',
+    tcp_flags         => 'ack syn fin',
+    dscp              => 'af11',
+    established       => false,
+    http_method       => $http_method,
+    packet_length     => $packet_length,
+    tcp_option_length => $tcp_option_length,
+    time_range        => $time_range,
+    redirect          => $redirect,
+    log               => false,
     # TBD: ttl is currently broken on NX platforms
     #ttl                    => $ttl,
   }
@@ -92,11 +92,11 @@ class ciscopuppet::cisco::demo_acl {
   }
 
   cisco_ace { 'ipv6 my_ipv6_acl 85':
-    ensure                 => 'present',
-    action                 => 'permit',
-    proto                  => 'tcp',
-    src_addr               => 'any',
-    dst_addr               => 'any',
+    ensure   => 'present',
+    action   => 'permit',
+    proto    => 'tcp',
+    src_addr => 'any',
+    dst_addr => 'any',
   }
 
   cisco_ace { 'ipv6 my_ipv6_acl 89':

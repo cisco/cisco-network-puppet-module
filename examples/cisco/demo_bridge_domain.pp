@@ -15,15 +15,15 @@
 # limitations under the License.
 
 class ciscopuppet::cisco::demo_bridge_domain {
-  cisco_bridge_domain {"100" :
-    ensure          => present,
-    bd_name         => 'demo_test',
-    shutdown        => true,
-    fabric_control  => false
+  cisco_bridge_domain {'100' :
+    ensure         => present,
+    bd_name        => 'demo_test',
+    shutdown       => true,
+    fabric_control => false
   }
 
-  cisco_bridge_domain_vni {"100-104,200-210" :
-    ensure      => present,
-    member_vni  => '5100-5102,7103-7104,10000-10010'
+  cisco_bridge_domain_vni {'100-104,200-210' :
+    ensure     => present,
+    member_vni => '5100-5102,7103-7104,10000-10010'
   }
 }

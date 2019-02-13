@@ -41,6 +41,7 @@ tests[:default_1] = {
     bfd:                      'default',
     default_metric:           'default',
     log_adjacency:            'default',
+    redistribute:             'default',
     timer_throttle_lsa_hold:  'default',
     timer_throttle_lsa_max:   'default',
     timer_throttle_lsa_start: 'default',
@@ -54,6 +55,7 @@ tests[:default_1] = {
     bfd:                      'false',
     default_metric:           '0',
     log_adjacency:            'none',
+    # 'redistribute' is nil when default
     timer_throttle_lsa_hold:  '5000',
     timer_throttle_lsa_max:   '5000',
     timer_throttle_lsa_start: '0',
@@ -129,6 +131,48 @@ tests[:non_default_2] = {
     timer_throttle_spf_start: '430',
   },
 }
+redistribute = [
+  ['bgp 5',   'rm_bgp'],
+  ['direct',  'rm_direct'],
+  ['eigrp 1', 'rm_eigrp'],
+  ['isis 2',  'rm_isis'],
+  ['lisp',    'rm_lisp'],
+  ['ospf 3',  'rm_ospf'],
+  ['rip 4',   'rm_rip'],
+  ['static',  'rm_static'],
+]
+# rubocop:enable Style/WordArray
+tests[:non_default_arrays] = {
+  desc:           '2.3 Non Default Properties: Arrays',
+  title_pattern:  'test green',
+  manifest_props: {
+    redistribute: redistribute
+  },
+  resource:       {
+    redistribute: "#{redistribute}"
+  },
+}
+redistribute = [
+  ['bgp 5',   'rm_bgp'],
+  ['direct',  'rm_direct'],
+  ['eigrp 1', 'rm_eigrp'],
+  ['isis 2',  'rm_isis'],
+  ['lisp',    'rm_lisp'],
+  ['ospf 3',  'rm_ospf'],
+  ['rip 4',   'rm_rip'],
+  ['static',  'rm_static'],
+]
+# rubocop:enable Style/WordArray
+tests[:non_default_arrays] = {
+  desc:           '2.3 Non Default Properties: Arrays',
+  title_pattern:  'test green',
+  manifest_props: {
+    redistribute: redistribute
+  },
+  resource:       {
+    redistribute: "#{redistribute}"
+  },
+}
 
 def cleanup(agent)
   test_set(agent, 'no feature ospf ; no feature bfd')
@@ -155,6 +199,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   test_harness_run(tests, :non_default_1)
   test_harness_run(tests, :non_default_2)
+  test_harness_run(tests, :non_default_arrays)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

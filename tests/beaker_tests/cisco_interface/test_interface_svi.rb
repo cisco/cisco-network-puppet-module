@@ -108,13 +108,13 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   vdc_limit_f3_no_intf_needed(:set)
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Property Testing")
-  test_harness_run(tests, :default_mgmt)
-  test_harness_run(tests, :non_default_mgmt)
+  test_harness_run(tests, :default_mgmt, harness_class: Interfacelib)
+  test_harness_run(tests, :non_default_mgmt, harness_class: Interfacelib)
 
-  test_harness_run(tests, :default_autostate)
-  test_harness_run(tests, :non_default_autostate)
+  test_harness_run(tests, :default_autostate, harness_class: Interfacelib)
+  test_harness_run(tests, :non_default_autostate, harness_class: Interfacelib)
 
-  test_harness_run(tests, :anycast)
+  test_harness_run(tests, :anycast, harness_class: Interfacelib)
 
   # -------------------------------------------------------------------
   skipped_tests_summary(tests)

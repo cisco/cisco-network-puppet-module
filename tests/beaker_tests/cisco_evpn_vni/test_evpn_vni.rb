@@ -69,11 +69,13 @@ tests[:non_default] = {
   },
 }
 
-# The harness will remove any "unprops" from the manifests.
-def unsupported_properties(*)
-  unprops = []
-  unprops << :route_target_both if nexus_image['I2']
-  unprops
+# class to contain the test_dependencies specific to this test case
+class TestEvpnVni < BaseHarness
+  def self.unsupported_properties(ctx, _tests, _id)
+    unprops = []
+    unprops << :route_target_both if ctx.nexus_image['I2']
+    unprops
+  end
 end
 
 def cleanup(agent)
@@ -90,13 +92,13 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -----------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   id = :default
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestEvpnVni)
 
   tests[id][:ensure] = :absent
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestEvpnVni)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  test_harness_run(tests, :non_default)
+  test_harness_run(tests, :non_default, harness_class: TestEvpnVni)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

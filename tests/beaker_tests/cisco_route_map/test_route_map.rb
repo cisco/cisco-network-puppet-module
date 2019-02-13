@@ -24,14 +24,6 @@
 
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
-# In I7 match_src_proto order is not maintained in running config.
-# This behavior is currently observed only on the N9K.
-if platform[/n9k/] && image_version.to_s.strip[/I(7|8|9)/]
-  @src_proto = %w(udp igmp tcp)
-else
-  @src_proto = %w(tcp udp igmp)
-end
-
 # Test hash top-level keys
 tests = {
   master:           master,
@@ -41,6 +33,14 @@ tests = {
 }
 
 skip_unless_supported(tests)
+
+# In I7 match_src_proto order is not maintained in running config.
+# This behavior is currently observed only on the N9K.
+if platform[/n9k/] && full_version[/I(7|8|9)/]
+  @src_proto = %w(udp igmp tcp)
+else
+  @src_proto = %w(tcp udp igmp)
+end
 
 # Test hash test cases
 tests[:default] = {
@@ -417,151 +417,151 @@ tests[:non_default_6] = {
   desc:           '2.6 Non Defaults 6',
   title_pattern:  'rm6 321 permit',
   manifest_props: {
-    match_src_proto: %w(tcp udp igmp)
-  },
-  resource:       {
-    match_src_proto: @src_proto
+    match_src_proto: %w(tcp udp igmp).sort
   },
 }
 
-def unsupp_n3k
-  unprops = []
-  unprops <<
-    :match_evpn_route_type_1 <<
-    :match_evpn_route_type_2_all <<
-    :match_evpn_route_type_2_mac_ip <<
-    :match_evpn_route_type_2_mac_only <<
-    :match_evpn_route_type_3 <<
-    :match_evpn_route_type_4 <<
-    :match_evpn_route_type_5 <<
-    :match_evpn_route_type_6 <<
-    :match_evpn_route_type_all <<
-    :match_length <<
-    :match_mac_list <<
-    :match_vlan <<
-    :set_vrf
-  unprops
-end
-
-def unsupp_n56k
-  unprops = []
-  unprops <<
-    :match_ospf_area <<
-    :set_ipv4_default_next_hop <<
-    :set_ipv4_default_next_hop_load_share <<
-    :set_ipv4_next_hop_load_share <<
-    :set_ipv4_prefix <<
-    :set_ipv6_default_next_hop <<
-    :set_ipv6_default_next_hop_load_share <<
-    :set_ipv6_next_hop_load_share <<
-    :set_ipv6_prefix <<
-    :set_vrf
-  unprops
-end
-
-def unsupp_n7k
-  unprops = []
-  unprops <<
-    :match_ospf_area
-  unprops
-end
-
-def unsupp_n9k
-  im = nexus_image
-  unprops = []
-  unprops <<
-    :match_evpn_route_type_1 <<
-    :match_evpn_route_type_2_all <<
-    :match_evpn_route_type_2_mac_ip <<
-    :match_evpn_route_type_2_mac_only <<
-    :match_evpn_route_type_3 <<
-    :match_evpn_route_type_4 <<
-    :match_evpn_route_type_5 <<
-    :match_evpn_route_type_6 <<
-    :match_evpn_route_type_all <<
-    :match_length <<
-    :match_mac_list <<
-    :match_vlan <<
-    :set_ipv4_default_next_hop <<
-    :set_ipv4_default_next_hop_load_share <<
-    :set_ipv6_default_next_hop <<
-    :set_ipv6_default_next_hop_load_share <<
-    :set_extcommunity_rt_asn <<
-    :set_vrf
-  unprops << :match_metric if im['I4']
-  unprops
-end
-
-def unsupp_n9kf
-  unprops = []
-  unprops <<
-    :match_evpn_route_type_1 <<
-    :match_evpn_route_type_2_all <<
-    :match_evpn_route_type_2_mac_ip <<
-    :match_evpn_route_type_2_mac_only <<
-    :match_evpn_route_type_3 <<
-    :match_evpn_route_type_4 <<
-    :match_evpn_route_type_5 <<
-    :match_evpn_route_type_6 <<
-    :match_evpn_route_type_all <<
-    :match_length <<
-    :match_mac_list <<
-    :match_ospf_area <<
-    :match_vlan <<
-    :set_extcommunity_cost_igp <<
-    :set_extcommunity_cost_pre_bestpath <<
-    :set_extcommunity_rt_additive <<
-    :set_extcommunity_rt_asn <<
-    :set_forwarding_addr <<
-    :set_ipv4_default_next_hop <<
-    :set_ipv4_default_next_hop_load_share <<
-    :set_ipv6_default_next_hop <<
-    :set_ipv6_default_next_hop_load_share <<
-    :set_ipv4_next_hop <<
-    :set_ipv4_precedence <<
-    :set_ipv4_prefix <<
-    :set_ipv6_next_hop <<
-    :set_ipv6_prefix <<
-    :set_vrf
-  unprops
-end
-
-def unsupported_properties(_tests, _id)
-  if platform[/n3k$/]
-    unsupp_n3k
-  elsif platform[/n(5|6)k/]
-    unsupp_n56k
-  elsif platform[/n7k/]
-    unsupp_n7k
-  elsif platform[/n9k$|n9k-ex/]
-    unsupp_n9k
-  elsif platform[/n(3|9)k-f/]
-    unsupp_n9kf
+# class to contain the test_dependencies specific to this test case
+class TestRouteMap < BaseHarness
+  def self.unsupp_n3k
+    unprops = []
+    unprops <<
+      :match_evpn_route_type_1 <<
+      :match_evpn_route_type_2_all <<
+      :match_evpn_route_type_2_mac_ip <<
+      :match_evpn_route_type_2_mac_only <<
+      :match_evpn_route_type_3 <<
+      :match_evpn_route_type_4 <<
+      :match_evpn_route_type_5 <<
+      :match_evpn_route_type_6 <<
+      :match_evpn_route_type_all <<
+      :match_length <<
+      :match_mac_list <<
+      :match_vlan <<
+      :set_vrf
+    unprops
   end
-end
 
-def version_unsupported_properties(_tests, _id)
-  unprops = {}
-  if platform[/n(3|9)k-f/]
-    unprops[:match_metric] = '7.0.3.F2.1'
-    unprops[:set_extcommunity_4bytes_additive] = '7.0.3.F2.1'
-    unprops[:set_extcommunity_4bytes_non_transitive] = '7.0.3.F2.1'
-    unprops[:set_extcommunity_4bytes_transitive] = '7.0.3.F2.1'
-    unprops[:set_ipv4_next_hop_load_share] = '7.0.3.F2.1'
-    unprops[:set_ipv6_next_hop_load_share] = '7.0.3.F2.1'
-  elsif platform[/n9k/]
-    unprops[:match_ospf_area] = '7.0.3.I5.1'
-    unprops[:set_ipv4_next_hop_load_share] = '7.0.3.I5.1'
-    unprops[:set_ipv6_next_hop_load_share] = '7.0.3.I5.1'
-    unprops[:set_ipv4_next_hop_redist] = '7.0.3.I5.1'
-    unprops[:set_ipv6_next_hop_redist] = '7.0.3.I5.1'
-    unprops[:set_community] = '7.0.3.I5.1'
-  elsif platform[/n3k/]
-    unprops[:match_ospf_area] = '7.0.3.I5.1'
-    unprops[:set_ipv4_next_hop_redist] = '7.0.3.I5.1'
-    unprops[:set_ipv6_next_hop_redist] = '7.0.3.I5.1'
+  def self.unsupp_n56k
+    unprops = []
+    unprops <<
+      :match_ospf_area <<
+      :set_ipv4_default_next_hop <<
+      :set_ipv4_default_next_hop_load_share <<
+      :set_ipv4_next_hop_load_share <<
+      :set_ipv4_prefix <<
+      :set_ipv6_default_next_hop <<
+      :set_ipv6_default_next_hop_load_share <<
+      :set_ipv6_next_hop_load_share <<
+      :set_ipv6_prefix <<
+      :set_vrf
+    unprops
   end
-  unprops
+
+  def self.unsupp_n7k
+    unprops = []
+    unprops <<
+      :match_ospf_area
+    unprops
+  end
+
+  def self.unsupp_n9k(ctx)
+    im = ctx.nexus_image
+    unprops = []
+    unprops <<
+      :match_evpn_route_type_1 <<
+      :match_evpn_route_type_2_all <<
+      :match_evpn_route_type_2_mac_ip <<
+      :match_evpn_route_type_2_mac_only <<
+      :match_evpn_route_type_3 <<
+      :match_evpn_route_type_4 <<
+      :match_evpn_route_type_5 <<
+      :match_evpn_route_type_6 <<
+      :match_evpn_route_type_all <<
+      :match_length <<
+      :match_mac_list <<
+      :match_vlan <<
+      :set_ipv4_default_next_hop <<
+      :set_ipv4_default_next_hop_load_share <<
+      :set_ipv6_default_next_hop <<
+      :set_ipv6_default_next_hop_load_share <<
+      :set_extcommunity_rt_asn <<
+      :set_vrf
+    unprops << :match_metric if im['I4']
+    unprops
+  end
+
+  def self.unsupp_n9kf
+    unprops = []
+    unprops <<
+      :match_evpn_route_type_1 <<
+      :match_evpn_route_type_2_all <<
+      :match_evpn_route_type_2_mac_ip <<
+      :match_evpn_route_type_2_mac_only <<
+      :match_evpn_route_type_3 <<
+      :match_evpn_route_type_4 <<
+      :match_evpn_route_type_5 <<
+      :match_evpn_route_type_6 <<
+      :match_evpn_route_type_all <<
+      :match_length <<
+      :match_mac_list <<
+      :match_ospf_area <<
+      :match_vlan <<
+      :set_extcommunity_cost_igp <<
+      :set_extcommunity_cost_pre_bestpath <<
+      :set_extcommunity_rt_additive <<
+      :set_extcommunity_rt_asn <<
+      :set_forwarding_addr <<
+      :set_ipv4_default_next_hop <<
+      :set_ipv4_default_next_hop_load_share <<
+      :set_ipv6_default_next_hop <<
+      :set_ipv6_default_next_hop_load_share <<
+      :set_ipv4_next_hop <<
+      :set_ipv4_precedence <<
+      :set_ipv4_prefix <<
+      :set_ipv6_next_hop <<
+      :set_ipv6_prefix <<
+      :set_vrf
+    unprops
+  end
+
+  def self.unsupported_properties(ctx, _tests, _id)
+    if ctx.platform[/n3k$/]
+      unsupp_n3k
+    elsif ctx.platform[/n(5|6)k/]
+      unsupp_n56k
+    elsif ctx.platform[/n7k/]
+      unsupp_n7k
+    elsif ctx.platform[/n9k$|n9k-ex/]
+      unsupp_n9k(ctx)
+    elsif ctx.platform[/n(3|9)k-f/]
+      unsupp_n9kf
+    end
+  end
+
+  def self.version_unsupported_properties(ctx, _tests, _id)
+    unprops = {}
+    if ctx.platform[/n(3|9)k-f/]
+      unprops[:match_metric] = '7.0.3.F2.1'
+      unprops[:set_extcommunity_4bytes_additive] = '7.0.3.F2.1'
+      unprops[:set_extcommunity_4bytes_non_transitive] = '7.0.3.F2.1'
+      unprops[:set_extcommunity_4bytes_transitive] = '7.0.3.F2.1'
+      unprops[:set_ipv4_next_hop_load_share] = '7.0.3.F2.1'
+      unprops[:set_ipv6_next_hop_load_share] = '7.0.3.F2.1'
+    elsif ctx.platform[/n9k/]
+      unprops[:match_ospf_area] = '7.0.3.I5.1'
+      unprops[:set_ipv4_next_hop_load_share] = '7.0.3.I5.1'
+      unprops[:set_ipv6_next_hop_load_share] = '7.0.3.I5.1'
+      unprops[:set_ipv4_next_hop_redist] = '7.0.3.I5.1'
+      unprops[:set_ipv6_next_hop_redist] = '7.0.3.I5.1'
+      unprops[:set_community] = '7.0.3.I5.1'
+    elsif ctx.platform[/n3k/]
+      unprops[:match_ospf_area] = '7.0.3.I5.1'
+      unprops[:set_ipv4_next_hop_redist] = '7.0.3.I5.1'
+      unprops[:set_ipv6_next_hop_redist] = '7.0.3.I5.1'
+    end
+    unprops
+  end
 end
 
 def cleanup(agent)
@@ -577,21 +577,21 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  test_harness_run(tests, :default)
+  test_harness_run(tests, :default, harness_class: TestRouteMap)
 
   id = :default
   tests[id][:ensure] = :absent
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestRouteMap)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
-  test_harness_run(tests, :non_default_1)
-  test_harness_run(tests, :non_default_2)
-  test_harness_run(tests, :non_default_3)
-  test_harness_run(tests, :non_default_4)
-  test_harness_run(tests, :non_default_5)
-  test_harness_run(tests, :non_default_6)
+  test_harness_run(tests, :non_default_1, harness_class: TestRouteMap)
+  test_harness_run(tests, :non_default_2, harness_class: TestRouteMap)
+  test_harness_run(tests, :non_default_3, harness_class: TestRouteMap)
+  test_harness_run(tests, :non_default_4, harness_class: TestRouteMap)
+  test_harness_run(tests, :non_default_5, harness_class: TestRouteMap)
+  test_harness_run(tests, :non_default_6, harness_class: TestRouteMap)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

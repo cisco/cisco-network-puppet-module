@@ -1,5 +1,5 @@
 ###############################################################################
-# Copyright (c) 2015-2016 Cisco and/or its affiliates.
+# Copyright (c) 2015-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -73,24 +73,27 @@ tests[:non_default] = {
   },
 }
 
-def unsupported_properties(_tests, _id)
-  unprops = []
-  if platform[/n3k$/]
-    unprops <<
-      :anycast_gateway_mac <<
-      :dup_host_ip_addr_detection_host_moves <<
-      :dup_host_ip_addr_detection_timeout
+# class to contain the test_dependencies specific to this test case
+class TestOverlayGlobal < BaseHarness
+  def self.unsupported_properties(ctx, _tests, _id)
+    unprops = []
+    if ctx.platform[/n3k$/]
+      unprops <<
+        :anycast_gateway_mac <<
+        :dup_host_ip_addr_detection_host_moves <<
+        :dup_host_ip_addr_detection_timeout
+    end
+    unprops
   end
-  unprops
-end
 
-def version_unsupported_properties(_tests, _id)
-  unprops = {}
-  if platform[/n3k$/]
-    unprops[:dup_host_mac_detection_host_moves] = '7.0.3.I6.1'
-    unprops[:dup_host_mac_detection_timeout] = '7.0.3.I6.1'
+  def self.version_unsupported_properties(ctx, _tests, _id)
+    unprops = {}
+    if ctx.platform[/n3k$/]
+      unprops[:dup_host_mac_detection_host_moves] = '7.0.3.I6.1'
+      unprops[:dup_host_mac_detection_timeout] = '7.0.3.I6.1'
+    end
+    unprops
   end
-  unprops
 end
 
 def cleanup(agent)
@@ -109,7 +112,7 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   vdc_limit_f3_no_intf_needed(:set)
 
   # -------------------------------------------------------------------
-  test_harness_run(tests, :default)
-  test_harness_run(tests, :non_default)
+  test_harness_run(tests, :default, harness_class: TestOverlayGlobal)
+  test_harness_run(tests, :non_default, harness_class: TestOverlayGlobal)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

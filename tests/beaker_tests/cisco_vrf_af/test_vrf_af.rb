@@ -30,6 +30,8 @@ tests = {
   resource_name: 'cisco_vrf_af',
 }
 
+skip_if_nv_overlay_rejected(agent) if platform[/n(5|6)k/]
+
 # Test hash test cases
 tests[:default] = {
   desc:           'Default Properties, vrf-af',
@@ -102,66 +104,68 @@ tests[:title_patterns_3] = {
   resource:      { 'ensure' => 'present' },
 }
 
-def unsupported_properties(_tests, _id)
-  unprops = []
-  if operating_system == 'nexus'
-    unprops <<
-      :route_target_export_stitching <<
-      :route_target_import_stitching
-
-    if platform[/n3k$/]
+# class to contain the test_dependencies specific to this test case
+class TestVrfAf < BaseHarness
+  def self.unsupported_properties(ctx, _tests, _id)
+    unprops = []
+    if ctx.operating_system == 'nexus'
       unprops <<
-        :route_target_both_auto <<
-        :route_target_both_auto_evpn <<
-        :route_target_export_evpn <<
-        :route_target_import_evpn
-    end
+        :route_target_export_stitching <<
+        :route_target_import_stitching
 
-    if platform[/n9k(-ex)?$/]
-      if image?[/I[2-6]/]
+      if ctx.platform[/n3k$/]
+        unprops <<
+          :route_target_both_auto <<
+          :route_target_both_auto_evpn <<
+          :route_target_export_evpn <<
+          :route_target_import_evpn
+      end
+
+      if ctx.platform[/n9k(-ex)?$/]
+        if ctx.image?[/I[2-6]/]
+          unprops <<
+            :route_target_both_auto_mvpn <<
+            :route_target_export_mvpn <<
+            :route_target_import_mvpn
+        end
+      else
         unprops <<
           :route_target_both_auto_mvpn <<
           :route_target_export_mvpn <<
           :route_target_import_mvpn
       end
+
     else
       unprops <<
-        :route_target_both_auto_mvpn <<
-        :route_target_export_mvpn <<
-        :route_target_import_mvpn
+        :route_target_both_auto <<
+        :route_target_both_auto_evpn <<
+        :route_target_export_evpn <<
+        :route_target_import_evpn
+
     end
-
-  else
-    unprops <<
-      :route_target_both_auto <<
-      :route_target_both_auto_evpn <<
-      :route_target_export_evpn <<
-      :route_target_import_evpn
-
+    unprops
   end
-  unprops
-end
 
-# Overridden to properly handle dependencies for this test file.
-def dependency_manifest(tests, id)
-  if operating_system == 'nexus'
-    return unless id[/non_default/]
-    dep = %(
-      cisco_command_config { 'policy_config':
-        command => 'route-map abc permit 10'
-      } )
-  else
-    t = puppet_resource_title_pattern_munge(tests, id)
-    dep = %(
-      cisco_vrf { '#{t[:vrf]}': ensure => present }
-      cisco_command_config { 'policy_config':
-        command => '
-          route-policy abc
-            end-policy'
-      } )
+  def self.dependency_manifest(ctx, tests, id)
+    if ctx.operating_system == 'nexus'
+      return unless id[/non_default/]
+      dep = %(
+        cisco_command_config { 'policy_config':
+          command => 'route-map abc permit 10'
+        } )
+    else
+      t = ctx.puppet_resource_title_pattern_munge(tests, id)
+      dep = %(
+        cisco_vrf { '#{t[:vrf]}': ensure => present }
+        cisco_command_config { 'policy_config':
+          command => '
+            route-policy abc
+              end-policy'
+        } )
+    end
+    ctx.logger.info("\n  * dependency_manifest\n#{dep}")
+    dep
   end
-  logger.info("\n  * dependency_manifest\n#{dep}")
-  dep
 end
 
 #################################################################
@@ -178,22 +182,22 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   id = :default
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestVrfAf)
 
   tests[id][:ensure] = :absent
   tests[id].delete(:preclean)
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestVrfAf)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  test_harness_run(tests, :non_default)
+  test_harness_run(tests, :non_default, harness_class: TestVrfAf)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Title Pattern Testing")
   remove_all_vrfs(agent)
-  test_harness_run(tests, :title_patterns_1)
-  test_harness_run(tests, :title_patterns_2)
-  test_harness_run(tests, :title_patterns_3)
+  test_harness_run(tests, :title_patterns_1, harness_class: TestVrfAf)
+  test_harness_run(tests, :title_patterns_2, harness_class: TestVrfAf)
+  test_harness_run(tests, :title_patterns_3, harness_class: TestVrfAf)
 
   # -----------------------------------
   skipped_tests_summary(tests)

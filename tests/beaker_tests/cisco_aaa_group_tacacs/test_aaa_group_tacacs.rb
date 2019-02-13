@@ -61,18 +61,21 @@ tests[:non_default] = {
   },
 }
 
-# Overridden to properly handle dependencies for this test file.
-def dependency_manifest(_tests, id)
-  dep = ''
-  if id == :non_default
-    dep = %(
-      cisco_tacacs_server      { 'default': ensure => present }
-      cisco_tacacs_server_host { 'bkrhost': ensure => present }
-      cisco_tacacs_server_host { '1.1.1.1': ensure => present }
-    )
+# class to contain the test_dependencies specific to this test case
+class TestAaaGroupTacacs < BaseHarness
+  # Overridden to properly handle dependencies for this test file.
+  def self.dependency_manifest(ctx, _tests, id)
+    dep = ''
+    if id == :non_default
+      dep = %(
+        cisco_tacacs_server      { 'default': ensure => present }
+        cisco_tacacs_server_host { 'bkrhost': ensure => present }
+        cisco_tacacs_server_host { '1.1.1.1': ensure => present }
+      )
+    end
+    ctx.logger.info("\n  * dependency_manifest\n#{dep}")
+    dep
   end
-  logger.info("\n  * dependency_manifest\n#{dep}")
-  dep
 end
 
 #################################################################
@@ -82,15 +85,15 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   id = :default
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestAaaGroupTacacs)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
   id = :non_default
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestAaaGroupTacacs)
   tests[id][:ensure] = :absent
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestAaaGroupTacacs)
 
   # -------------------------------------------------------------------
   resource_absent_cleanup(agent, 'cisco_aaa_group_tacacs')

@@ -17,8 +17,8 @@
 class ciscopuppet::netdev::demo_port_channel {
   port_channel { 'port-channel100':
     ensure        => 'present',
-    id            => '100',
+    id            => 100,
     interfaces    => ['ethernet1/8', 'ethernet1/9'],
-    minimum_links => '3',
+    minimum_links => 3,
   }
 }

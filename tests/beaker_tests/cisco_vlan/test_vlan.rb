@@ -103,21 +103,27 @@ tests[:non_default_extended] = {
 tests[:non_default_extended][:manifest_props].delete(:state) if platform[/n(5|6)k/]
 
 if platform[/n3k$/]
-  tests[:vn_segment_unsupported] =
-    resource_probe(agent,
-                   'cisco_vlan 128 mapped_vni=128000',
-                   'Hardware is not capable of supporting vn-segment-vlan-based feature')
+  pattern = 'Hardware is not capable of supporting vn-segment-vlan-based feature'
+  cmd = agent ? 'cisco_vlan 128 mapped_vni=128000' : 'feature vn-segment-vlan-based'
+  tests[:vn_segment_unsupported] = resource_probe(agent, cmd, pattern)
 end
 
-def unsupported_properties(tests, _id)
-  unprops = []
+tests[:nv_overlay_unsupported] = resource_probe_named(agent, :nve) if platform[/n(5|6)k/]
 
-  unprops << :mapped_vni if platform[/n7k/] || tests[:vn_segment_unsupported]
+# class to contain the test_dependencies specific to this test case
+class TestVlan < BaseHarness
+  def self.unsupported_properties(ctx, tests, _id)
+    unprops = []
 
-  unprops << :fabric_control unless platform[/n7k/]
+    unprops << :mapped_vni if ctx.platform[/n7k/] ||
+                              tests[:vn_segment_unsupported] ||
+                              tests[:nv_overlay_unsupported]
 
-  logger.info("  unprops: #{unprops}") unless unprops.empty?
-  unprops
+    unprops << :fabric_control unless ctx.platform[/n7k/]
+
+    ctx.logger.info("  unprops: #{unprops}") unless unprops.empty?
+    unprops
+  end
 end
 
 #################################################################
@@ -132,13 +138,13 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   remove_all_vlans(agent)
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Property Testing")
-  test_harness_run(tests, :default_standard)
-  test_harness_run(tests, :non_default_standard)
+  test_harness_run(tests, :default_standard, harness_class: TestVlan)
+  test_harness_run(tests, :non_default_standard, harness_class: TestVlan)
 
   # Cleanup between standard and extended vlan tests.
   remove_all_vlans(agent)
-  test_harness_run(tests, :default_extended)
-  test_harness_run(tests, :non_default_extended)
+  test_harness_run(tests, :default_extended, harness_class: TestVlan)
+  test_harness_run(tests, :non_default_extended, harness_class: TestVlan)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

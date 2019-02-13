@@ -42,18 +42,18 @@ class ciscopuppet::cisco::demo_trm {
       }
 
       cisco_vrf_af { 'red ipv4 unicast':
-        ensure                        => present,
-        route_policy_export           => 'abc',
-        route_policy_import           => 'abc',
-        route_target_import_mvpn      => $rt_import_mvpn,
-        route_target_export_mvpn      => $rt_export_mvpn,
-        route_target_both_auto_mvpn   => $rt_both_mvpn,
+        ensure                      => present,
+        route_policy_export         => 'abc',
+        route_policy_import         => 'abc',
+        route_target_import_mvpn    => $rt_import_mvpn,
+        route_target_export_mvpn    => $rt_export_mvpn,
+        route_target_both_auto_mvpn => $rt_both_mvpn,
       }
 
       cisco_ip_multicast { 'default':
-        ensure =>                 present,
-        overlay_distributed_dr => 'true',
-        overlay_spt_only =>       'true',
+        ensure                 =>                 present,
+        overlay_distributed_dr => true,
+        overlay_spt_only       =>       true,
       }
     } else {
       notify{'SKIP: This image does not support TRM': }

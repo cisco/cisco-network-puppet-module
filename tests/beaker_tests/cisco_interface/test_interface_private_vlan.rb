@@ -160,17 +160,23 @@ tests[:svi_mapping] = {
   },
 }
 
-# This method overrides utilitylib.rb:unsupported_properties()
-def unsupported_properties(_tests, _id)
-  unprops = []
-  if platform[/n3k$/]
-    unprops <<
-      :switchport_pvlan_mapping_trunk <<
-      :switchport_pvlan_trunk_association <<
-      :switchport_pvlan_trunk_promiscuous <<
-      :switchport_pvlan_trunk_secondary
+# class to contain the test_dependencies specific to this test case
+class TestInterfacePrivateVlan < BaseHarness
+  def self.unsupported_properties(ctx, _tests, _id)
+    unprops = []
+    if ctx.platform[/n3k$/]
+      unprops <<
+        :switchport_pvlan_mapping_trunk <<
+        :switchport_pvlan_trunk_association <<
+        :switchport_pvlan_trunk_promiscuous <<
+        :switchport_pvlan_trunk_secondary
+    end
+    unprops
   end
-  unprops
+
+  def self.dependency_manifest(_ctx, tests, id)
+    tests[id][:dependency] if tests[id][:dependency]
+  end
 end
 
 def vtp_cleanup(agent)
@@ -186,11 +192,6 @@ def pvlan_assoc_cleanup(agent, intf)
   resource_set(agent, ['cisco_interface', intf, 'switchport_mode', 'disabled'])
 end
 
-# This method overrides utilitylib.rb:dependency_manifest()
-def dependency_manifest(tests, id)
-  tests[id][:dependency] if tests[id][:dependency]
-end
-
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
@@ -204,26 +205,33 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   vtp_cleanup(agent)
   pvlan_assoc_cleanup(agent, intf)
   interface_cleanup(agent, intf)
-  remove_interface(agent, svi)
+  # remove_interface(agent, svi)
+  # this command fails on fresh VMs as
+  # the interface does not exist, possibly
+  # testbed environments were not cleaned
+  # down properly, or remnants of an existing
+  # test are left over - removing the step as
+  # the cleanup in teardown should remove
+  # the interface at end of the test
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Defaults")
-  test_harness_run(tests, :default)
+  test_harness_run(tests, :default, harness_class: TestInterfacePrivateVlan)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Port Mode")
-  test_harness_run(tests, :host)
-  test_harness_run(tests, :promiscuous)
+  test_harness_run(tests, :host, harness_class: TestInterfacePrivateVlan)
+  test_harness_run(tests, :promiscuous, harness_class: TestInterfacePrivateVlan)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 3. Trunk Mode")
-  test_harness_run(tests, :trunk_secondary)
+  test_harness_run(tests, :trunk_secondary, harness_class: TestInterfacePrivateVlan)
   pvlan_assoc_cleanup(agent, intf)
-  test_harness_run(tests, :trunk_promiscuous)
+  test_harness_run(tests, :trunk_promiscuous, harness_class: TestInterfacePrivateVlan)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 4. SVI Mapping")
-  test_harness_run(tests, :svi_mapping)
+  test_harness_run(tests, :svi_mapping, harness_class: TestInterfacePrivateVlan)
 
   # -------------------------------------------------------------------
   skipped_tests_summary(tests)

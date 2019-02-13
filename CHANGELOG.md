@@ -2,6 +2,45 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.0.0] - 2019-02-14
+
+### New Major Version
+
+This is a new major version release of the cisco-network-puppet-module.  This version of the module extends Cisco and Netdev resources to allow managing Cisco Nexus devices using an agentless workflow.
+
+The traditional agent based workflows are still supported with the following caveats.
+
+* GuestShell Agent
+   * Supported on all platforms that have GuestShell support
+   * Supports agent installs using puppet agent 5 and puppet agent 6 rpms.
+* Native Bash Agent
+   * Only supported on NX-OS image versions prior to release version `9.2(1)`
+   * Supports agent installs using puppet agent 5 rpm only and support will be discontinued once puppet agent 5 reaches EOL.
+* Open Agent Container (OAC)
+   * This version of the module is not supported for OAC.  Must use module version `1.10.0` or ealier.
+   * Supports agent install using puppet agent 4 rpm or ealier which is now EOL.
+
+### Added
+* Extended `cisco_ospf_vrf` with attribute:
+   * `redistribute`
+* Extended `cisco_vpc_domain` with attributes:
+   * `arp_synchronize`
+   * `nd_synchronize`
+   * `peer_switch`
+* Extended `cisco_vxlan_vtep_vni` with attribute:
+   * `suppress_arp_disable`
+* Extended `cisco_vxlan_vtep` with attributes:
+   * `global_suppress_arp`
+   * `global_mcast_group_l2`
+   * `global_mcast_group_l3`
+   * `global_ingress_replication_bgp`
+
+### Changed
+
+### Removed
+
+### Resolved Issues
+
 ## [1.10.0] - 2018-09-19
 
 **NOTE:** Starting in release `9.2(1)` and onward, installing the Puppet Agent into the `bash-shell` hosting environment is no longer supported.
@@ -517,6 +556,7 @@ This version was never released.
 - Initial release of puppetlabs-ciscopuppet module, supporting Cisco NX-OS software release 7.0(3)I2(1) on Cisco Nexus switch platforms: N95xx, N93xx, N30xx and N31xx.
 - Please note: 0.9.0 is an EFT pre-release for a limited audience with access to NX-OS 7.0(3)I2(1). Additional code changes may occur in 0.9.x prior to the final 1.0.0 release.
 
+[2.0.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.10.0...v2.0.0
 [1.10.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.9.0...v1.10.0
 [1.9.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/cisco/cisco-network-puppet-module/compare/v1.7.0...v1.8.0

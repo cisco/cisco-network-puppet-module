@@ -1,8 +1,8 @@
 # Manages VXLAN vtep nve interface configuration.
 #
-# December 2015
+# June 2018
 #
-# Copyright (c) 2014-2015 Cisco and/or its affiliates.
+# Copyright (c) 2014-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,6 +35,10 @@ Puppet::Type.newtype(:cisco_vxlan_vtep) do
       shutdown                        => false,
       source_interface                => 'loopback1',
       source_interface_hold_down_time => '50',
+      global_ingress_replication_bgp  => 'true',
+      global_mcast_group_l2           => '225.1.1.1',
+      global_mcast_group_l3           => '225.1.1.2',
+      global_suppress_arp             => 'true',
     }
   ~~~
   "
@@ -57,6 +61,7 @@ Puppet::Type.newtype(:cisco_vxlan_vtep) do
   # Parameters #
   ##############
 
+  apply_to_all
   ensurable
 
   newparam(:interface, namevar: :true) do
@@ -130,10 +135,45 @@ Puppet::Type.newtype(:cisco_vxlan_vtep) do
     end
   end # source_interface_hold_down_time
 
+  newproperty(:global_ingress_replication_bgp) do
+    desc "Sets ingress replication protocol to bgp. Valid values are true,
+          false, or 'default'"
+
+    newvalues(:true, :false, :default)
+  end
+
+  newproperty(:global_suppress_arp) do
+    desc "Enable ARP suppression. Valid values are true,
+          false, or 'default'"
+
+    newvalues(:true, :false, :default)
+  end
+
+  newproperty(:global_mcast_group_l2) do
+    desc "NVE Multicast Group for L2 VNIs. Valid values are string,
+          and keyword 'default'."
+
+    munge do |value|
+      value == 'default' ? false : value
+    end
+  end
+
+  newproperty(:global_mcast_group_l3) do
+    desc "NVE Multicast Group for L3 VNIs. Valid values are string,
+          and keyword 'default'."
+
+    munge do |value|
+      value == 'default' ? false : value
+    end
+  end
+
   validate do
     # source_interface_hold_down_time can be set only if source_interface is set
     fail 'source_interface_hold_down_time can be used only when source_interface '\
          'is also used' if self[:source_interface_hold_down_time] &&
                            !self[:source_interface]
+    fail 'Only one of global_ingress_replication_bgp or global_mcast_group_l2 '\
+        'can be configured not both' if self[:global_ingress_replication_bgp] == :true &&
+                                        self[:global_mcast_group_l2]
   end
 end

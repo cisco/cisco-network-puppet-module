@@ -207,63 +207,65 @@ tests[:non_default_shut_4] = {
   },
 }
 
-def cleanup(agent)
-  cmds = ['no ip access-list iap',
-          'no ip access-list eap',
-          'no vlan 2',
-          'no interface port-channel 100',
-          'no feature interface-vlan',
-          'no feature itd',
-         ].join(' ; ')
-  test_set(agent, cmds)
-  interface_cleanup(agent, @ingress_eth_int)
-end
+# class to contain the test_harness_dependencies
+class TestItdService < BaseHarness
+  def self.cleanup(ctx, ignore_errors: false)
+    cmds = ['no ip access-list iap',
+            'no ip access-list eap',
+            'no vlan 2',
+            'no interface port-channel 100',
+            'no feature interface-vlan',
+            'no feature itd',
+           ].join(' ; ')
+    ctx.test_set(ctx.agent, cmds, ignore_errors: ignore_errors)
+    ctx.interface_cleanup(ctx.agent, ctx.instance_variable_get(:@ingress_eth_int))
+  end
 
-# Overridden to properly handle dependencies for this test file.
-def test_harness_dependencies(_tests, _id)
-  cleanup(agent)
+  def self.test_harness_dependencies(ctx, _tests, _id)
+    cleanup(ctx, ignore_errors: true)
 
-  cmd = [
-    'feature itd',
-    'feature interface-vlan',
-    'ip access-list iap ; ip access-list eap',
-    "interface #{@ingress_eth_int} ; no switchport",
-    'vlan 2 ; interface vlan 2',
-    'interface port-channel 100 ; no switchport',
-    'itd device-group udpGroup ; node ip 1.1.1.1',
-  ].join(' ; ')
-  test_set(agent, cmd)
+    cmd = [
+      'feature itd',
+      'feature interface-vlan',
+      'ip access-list iap ; ip access-list eap',
+      "interface #{ctx.instance_variable_get(:@ingress_eth_int)} ; no switchport",
+      'vlan 2 ; interface vlan 2',
+      'interface port-channel 100 ; no switchport',
+      'itd device-group udpGroup ; node ip 1.1.1.1',
+    ].join(' ; ')
+    ctx.test_set(ctx.agent, cmd)
+  end
 end
 
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
-  teardown { cleanup(agent) }
-  cleanup(agent)
+  teardown { TestItdService.cleanup(self) }
+  TestItdService.cleanup(self, ignore_errors: true)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
-  test_harness_run(tests, :default)
-  test_harness_run(tests, :default_plat_1)
-  test_harness_run(tests, :default_plat_2)
+  test_harness_run(tests, :default, harness_class: TestItdService)
+  test_harness_run(tests, :default_plat_1, harness_class: TestItdService)
+  test_harness_run(tests, :default_plat_2, harness_class: TestItdService)
 
   id = :default
   tests[id][:desc] = '1.4 Common Defaults (absent)'
   tests[id][:ensure] = :absent
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestItdService)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
 
-  test_harness_run(tests, :non_default)
-  test_harness_run(tests, :non_default_plat_1)
-  test_harness_run(tests, :non_default_plat_2)
-  test_harness_run(tests, :non_default_shut)
-  test_harness_run(tests, :non_default_shut_2)
-  test_harness_run(tests, :non_default_shut_3)
-  test_harness_run(tests, :non_default_shut_4)
+  test_harness_run(tests, :non_default, harness_class: TestItdService)
+  test_harness_run(tests, :non_default_plat_1, harness_class: TestItdService)
+  test_harness_run(tests, :non_default_plat_2, harness_class: TestItdService)
+  test_harness_run(tests, :non_default_shut, harness_class: TestItdService)
+  test_harness_run(tests, :non_default_shut_2, harness_class: TestItdService)
+  test_harness_run(tests, :non_default_shut_3, harness_class: TestItdService)
+  test_harness_run(tests, :non_default_shut_4, harness_class: TestItdService)
 
   # -------------------------------------------------------------------
   skipped_tests_summary(tests)

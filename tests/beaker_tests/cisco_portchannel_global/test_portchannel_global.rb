@@ -116,57 +116,58 @@ tests[:non_default][:manifest_props].merge!(manifest_non[:n56k]) if platform[/n(
 tests[:non_default][:manifest_props].merge!(manifest_non[:n9kf]) if platform[/n(3|9)k-f/]
 tests[:non_default][:manifest_props].merge!(manifest_non[:n9k]) if platform[/n9k$/]
 
-def unsupported_properties(tests, _id)
-  unprops = []
-  if platform[/n7k/]
-    unprops <<
-      :concatenation <<
-      :hash_poly <<
-      :resilient <<
-      :symmetry
-  elsif platform[/n(5|6)k/]
-    unprops <<
-      :asymmetric <<
-      :concatenation <<
-      :hash_distribution <<
-      :load_defer <<
-      :resilient <<
-      :rotate <<
-      :symmetry
-  elsif platform[/n(3|9)k-f/]
-    unprops <<
-      :asymmetric <<
-      :concatenation <<
-      :hash_distribution <<
-      :hash_poly <<
-      :load_defer <<
-      :resilient <<
-      :symmetry
-  elsif platform[/n3k/]
-    unprops <<
-      :asymmetric <<
-      :concatenation <<
-      :hash_distribution <<
-      :hash_poly <<
-      :load_defer <<
-      :rotate
-  elsif platform[/n9k/]
-    unprops <<
-      :asymmetric <<
-      :hash_distribution <<
-      :hash_poly <<
-      :load_defer
-  end
-  unprops << :resilient << :symmetry if
-    tests[:resilient_unsupported]
-  unprops
+if platform[/n3k$/]
+  pattern = 'ERROR: This feature is not supported on this platform'
+  cmd = agent ? 'cisco_portchannel_global default resilient=true' : 'port-channel load-balance resilient'
+  tests[:resilient_unsupported] = resource_probe(agent, cmd, pattern)
 end
 
-if platform[/n3k$/]
-  tests[:resilient_unsupported] =
-    resource_probe(agent,
-                   'cisco_portchannel_global default resilient=true',
-                   'ERROR: This feature is not supported on this platform.')
+# class to contain the test_dependencies specific to this test case
+class TestPortChannelGlobal < BaseHarness
+  def self.unsupported_properties(ctx, tests, _id)
+    unprops = []
+    if ctx.platform[/n7k/]
+      unprops <<
+        :concatenation <<
+        :hash_poly <<
+        :resilient <<
+        :symmetry
+    elsif ctx.platform[/n(5|6)k/]
+      unprops <<
+        :asymmetric <<
+        :concatenation <<
+        :hash_distribution <<
+        :load_defer <<
+        :resilient <<
+        :rotate <<
+        :symmetry
+    elsif ctx.platform[/n(3|9)k-f/]
+      unprops <<
+        :asymmetric <<
+        :concatenation <<
+        :hash_distribution <<
+        :hash_poly <<
+        :load_defer <<
+        :resilient <<
+        :symmetry
+    elsif ctx.platform[/n3k/]
+      unprops <<
+        :asymmetric <<
+        :concatenation <<
+        :hash_distribution <<
+        :hash_poly <<
+        :load_defer <<
+        :rotate
+    elsif ctx.platform[/n9k/]
+      unprops <<
+        :asymmetric <<
+        :hash_distribution <<
+        :hash_poly <<
+        :load_defer
+    end
+    unprops << :resilient << :symmetry if tests[:resilient_unsupported]
+    unprops
+  end
 end
 
 #################################################################
@@ -176,54 +177,54 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   device = platform
   teardown do
-    test_manifest(tests, :default)
+    test_harness_run(tests, :default, harness_class: TestPortChannelGlobal)
   end
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
 
-  test_harness_run(tests, :default)
+  test_harness_run(tests, :default, harness_class: TestPortChannelGlobal)
 
   # no absent test for portchannel_global
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
   id = :non_default
-  test_harness_run(tests, id)
+  test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
   mhash = tests[id][:manifest_props]
   rhash = tests[id][:resource]
   if device == 'n7k'
     tests[id][:desc] = '2.2 Non Defaults'
     mhash[:bundle_hash] = rhash[:bundle_hash] = 'ip-l4port-vlan'
-    test_harness_run(tests, id)
+    test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
     tests[id][:desc] = '2.3 Non Defaults'
     mhash[:bundle_hash] = rhash[:bundle_hash] = 'ip-vlan'
-    test_harness_run(tests, id)
+    test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
     tests[id][:desc] = '2.4 Non Defaults'
     mhash[:bundle_hash] = rhash[:bundle_hash] = 'l4port'
-    test_harness_run(tests, id)
+    test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
     tests[id][:desc] = '2.5 Non Defaults'
     mhash[:bundle_hash] = rhash[:bundle_hash] = 'mac'
     mhash[:bundle_select] = rhash[:bundle_select] = 'src'
-    test_harness_run(tests, id)
+    test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
   elsif device == 'n5k' || device == 'n6k'
     tests[id][:desc] = '2.2 Non Defaults'
     mhash[:bundle_hash] = rhash[:bundle_hash] = 'port'
     mhash[:bundle_select] = rhash[:bundle_select] = 'src'
     mhash[:hash_poly] = rhash[:hash_poly] = 'CRC10a' if device == 'n6k'
-    test_harness_run(tests, id)
+    test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
     tests[id][:desc] = '2.3 Non Defaults'
     mhash[:bundle_hash] = rhash[:bundle_hash] = 'port-only'
     mhash[:bundle_select] = rhash[:bundle_select] = 'src-dst'
     mhash[:hash_poly] = rhash[:hash_poly] = 'CRC10d'
-    test_harness_run(tests, id)
+    test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
     tests[id][:desc] = '2.4 Non Defaults'
     mhash[:bundle_hash] = rhash[:bundle_hash] = 'ip-only'
-    test_harness_run(tests, id)
+    test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
   elsif device == 'n9k'
     tests[id][:desc] = '2.2 Non Defaults'
@@ -233,119 +234,119 @@ test_name "TestCase :: #{tests[:resource_name]}" do
     mhash[:symmetry] = rhash[:symmetry] = 'false'
     mhash[:concatenation] = rhash[:concatenation] = 'false'
     mhash[:resilient] = rhash[:resilient] = 'false'
-    test_harness_run(tests, id)
+    test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
     tests[id][:desc] = '2.3 Non Defaults'
     mhash[:bundle_hash] = rhash[:bundle_hash] = 'ip-vlan'
     mhash[:bundle_select] = rhash[:bundle_select] = 'dst'
-    test_harness_run(tests, id)
+    test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
     tests[id][:desc] = '2.4 Non Defaults'
     mhash[:bundle_hash] = rhash[:bundle_hash] = 'l4port'
     mhash[:bundle_select] = rhash[:bundle_select] = 'src-dst'
-    test_harness_run(tests, id)
+    test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
     tests[id][:desc] = '2.5 Non Defaults'
     mhash[:bundle_hash] = rhash[:bundle_hash] = 'mac'
-    test_harness_run(tests, id)
+    test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
     tests[id][:desc] = '2.6 Non Defaults'
     mhash[:bundle_hash] = rhash[:bundle_hash] = 'ip-gre'
-    test_harness_run(tests, id)
+    test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
   elsif device == 'n9k-f'
     tests[id][:desc] = '2.2 Non Defaults'
     mhash[:bundle_hash] = rhash[:bundle_hash] = 'ip-l4port-vlan'
-    test_harness_run(tests, id)
+    test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
     tests[id][:desc] = '2.3 Non Defaults'
     mhash[:bundle_hash] = rhash[:bundle_hash] = 'ip-vlan'
-    test_harness_run(tests, id)
+    test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
     tests[id][:desc] = '2.4 Non Defaults'
     mhash[:bundle_hash] = rhash[:bundle_hash] = 'l4port'
-    test_harness_run(tests, id)
+    test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
     tests[id][:desc] = '2.5 Non Defaults'
     mhash[:bundle_hash] = rhash[:bundle_hash] = 'mac'
     mhash[:bundle_select] = rhash[:bundle_select] = 'src'
-    test_harness_run(tests, id)
+    test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
   elsif device == 'n3k-f'
     tests[id][:desc] = '2.2 Non Defaults'
     mhash[:bundle_hash] = rhash[:bundle_hash] = 'ip-l4port-vlan'
-    test_harness_run(tests, id)
+    test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
     tests[id][:desc] = '2.3 Non Defaults'
     mhash[:bundle_hash] = rhash[:bundle_hash] = 'ip-vlan'
-    test_harness_run(tests, id)
+    test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
     tests[id][:desc] = '2.4 Non Defaults'
     mhash[:bundle_hash] = rhash[:bundle_hash] = 'l4port'
-    test_harness_run(tests, id)
+    test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
     tests[id][:desc] = '2.5 Non Defaults'
     mhash[:bundle_hash] = rhash[:bundle_hash] = 'mac'
     mhash[:bundle_select] = rhash[:bundle_select] = 'src'
-    test_harness_run(tests, id)
+    test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
   elsif device == 'n3k'
     if tests[:resilient_unsupported]
       tests[id][:desc] = '2.2 Non Defaults'
       mhash[:bundle_hash] = rhash[:bundle_hash] = 'ip-gre'
       mhash[:bundle_select] = rhash[:bundle_select] = 'src'
-      test_harness_run(tests, id)
+      test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
       tests[id][:desc] = '2.3 Non Defaults'
       mhash[:bundle_hash] = rhash[:bundle_hash] = 'mac'
       mhash[:bundle_select] = rhash[:bundle_select] = 'dst'
-      test_harness_run(tests, id)
+      test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
       tests[id][:desc] = '2.4 Non Defaults'
       mhash[:bundle_hash] = rhash[:bundle_hash] = 'port'
-      test_harness_run(tests, id)
+      test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
       tests[id][:desc] = '2.5 Non Defaults'
       mhash[:bundle_hash] = rhash[:bundle_hash] = 'port-only'
       mhash[:bundle_select] = rhash[:bundle_select] = 'src-dst'
-      test_harness_run(tests, id)
+      test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
       tests[id][:desc] = '2.6 Non Defaults'
       mhash[:bundle_hash] = rhash[:bundle_hash] = 'ip-gre'
-      test_harness_run(tests, id)
+      test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
       tests[id][:desc] = '2.7 Non Defaults'
       mhash[:bundle_select] = rhash[:bundle_select] = 'dst'
-      test_harness_run(tests, id)
+      test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
     else
       tests[id][:desc] = '2.2 Non Defaults'
       mhash[:bundle_hash] = rhash[:bundle_hash] = 'ip-gre'
       mhash[:bundle_select] = rhash[:bundle_select] = 'src'
       mhash[:resilient] = rhash[:resilient] = 'true'
       mhash[:symmetry] = rhash[:symmetry] = 'false'
-      test_harness_run(tests, id)
+      test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
       tests[id][:desc] = '2.3 Non Defaults'
       mhash[:bundle_hash] = rhash[:bundle_hash] = 'mac'
       mhash[:bundle_select] = rhash[:bundle_select] = 'dst'
-      test_harness_run(tests, id)
+      test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
       tests[id][:desc] = '2.4 Non Defaults'
       mhash[:bundle_hash] = rhash[:bundle_hash] = 'port'
-      test_harness_run(tests, id)
+      test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
       tests[id][:desc] = '2.5 Non Defaults'
       mhash[:bundle_hash] = rhash[:bundle_hash] = 'port-only'
       mhash[:bundle_select] = rhash[:bundle_select] = 'src-dst'
-      test_harness_run(tests, id)
+      test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
       tests[id][:desc] = '2.6 Non Defaults'
       mhash[:bundle_hash] = rhash[:bundle_hash] = 'ip-gre'
-      test_harness_run(tests, id)
+      test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
 
       tests[id][:desc] = '2.7 Non Defaults'
       mhash[:bundle_select] = rhash[:bundle_select] = 'dst'
-      test_harness_run(tests, id)
+      test_harness_run(tests, id, harness_class: TestPortChannelGlobal)
     end
   end
 

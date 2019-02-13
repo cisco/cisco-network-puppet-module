@@ -6,7 +6,9 @@
 1. [Setup](#setup)
    * [Puppet Master](#setup-puppet-master)
    * [Puppet Agent](#setup-puppet-agent)
-   * [Puppet Agent Authentication](#setup-agent-auth)
+      * [Puppet Agent Authentication](#setup-agent-auth)
+   * [Puppet Device (Agentless)](#setup-puppet-device)
+      * [Getting Started with Puppet Device](#getting-started-puppet-device)
 1. [Example Manifests](#example-manifests)
 1. [Resource Reference](#resource-reference)
    * [Resource Type Catalog (by Technology)](#resource-by-tech)
@@ -16,15 +18,17 @@
 
 ## <a href='module-description'>Module Description</a>
 
-The ciscopuppet module allows a network administrator to manage Cisco Network Elements using Puppet. This module bundles a set of Puppet Types, Providers, Beaker Tests, Sample Manifests and Installation Tools for effective network management.  The  resources and capabilities provided by this Puppet Module will grow with contributions from Cisco, Puppet Labs and the open source community.
+The ciscopuppet module allows a network administrator to manage Cisco Nexus Network Elements using Puppet. This module bundles a set of Puppet Types, Providers, Beaker Tests, Sample Manifests and Installation Tools for effective network management.  The  resources and capabilities provided by this Puppet Module will grow with contributions from Cisco, Puppet Labs and the open source community.
 
-The Cisco Network Elements and Operating Systems managed by this Puppet Module are continuously expanding. See [Resource Platform Support Matrix](#resource-platform-support-matrix) for a list of currently supported hardware and software.
+The Cisco Nexus Network Elements and Operating Systems managed by this Puppet Module are continuously expanding. See [Resource Platform Support Matrix](#resource-platform-support-matrix) for a list of currently supported hardware and software.
 
 This GitHub repository contains the latest version of the ciscopuppet module source code. Supported versions of the ciscopuppet module are available at Puppet Forge. Please refer to [SUPPORT.md][MAINT-2] for additional details.
 
 ##### Dependencies
 
-The `ciscopuppet` module has a dependency on the [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) ruby gem. See the **Setup** section that follows for more information on `cisco_node_utils`.
+The `ciscopuppet` module has a dependency on the [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) and the [`puppet-resource_api`](https://rubygems.org/gems/puppet-resource_api) Ruby gem. See the **Setup** section that follows for more information on `cisco_node_utils` and `puppet-resource_api`.
+
+[The NXAPI feature](https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/9-x/programmability/guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_9x/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_9x_chapter_010010.html) will need to be enabled on the device in order for the `ciscopuppet` module to be able to manage the device.
 
 ##### Contributing
 
@@ -32,7 +36,16 @@ Contributions to the `ciscopuppet` module are welcome. See [CONTRIBUTING.md][DEV
 
 ## <a href='setup'>Setup</a>
 
-### <a name="setup-puppet-master">Puppet Master<a>
+Before getting started with the setup needed to manage Cisco Nexus Network Elements using Puppet choose one of the following workflows.
+
+  * Puppet Agentless (Manage devices over a remote proxy connection)
+  * Puppet Agent (Manage devices by installing an agent directly onto the device)
+
+Version `2.0.0` of this module introduces the ability to manage Cisco Nexus devices without the need to install an agent directly onto the device.  This option is not available for `ciscopuppet` module version `1.10.0` and earlier.
+
+### <a name="setup-puppet-master">Puppet Master</a>
+
+**‼️REQUIRED FOR BOTH AGENTLESS and AGENT WORKFLOWS ‼️**
 
 The `ciscopuppet` module must be installed on the Puppet Master server.
 
@@ -40,40 +53,44 @@ The `ciscopuppet` module must be installed on the Puppet Master server.
 puppet module install puppetlabs-ciscopuppet
 ```
 
-For more information on Puppet module installation see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html)
+The module dependencies listed below will be installed automatically. For more information on Puppet module installation see [Puppet Labs: Installing Modules](https://docs.puppetlabs.com/puppet/latest/reference/modules_installing.html)
 
-##### The `puppetlabs-netdev_stdlib` module
+##### The [`puppetlabs-netdev-stdlib`](https://forge.puppet.com/puppetlabs/netdev_stdlib) module
 
-PuppetLabs provides NetDev resource support for Cisco Nexus devices with their [`puppetlabs-netdev-stdlib`](https://forge.puppet.com/puppetlabs/netdev_stdlib) module. Installing the `ciscopuppet` module automatically installs both the `ciscopuppet` and `netdev_stdlib` modules.
+##### The [`puppetlabs-resource_api`](https://forge.puppet.com/puppetlabs/resource_api) module
 
-### <a name="setup-puppet-agent">Puppet Agent<a>
+
+On each puppetserver or PE master that needs to serve catalogs for NX-OS devices, classify or apply the [`ciscopuppet::server`](manifests/server.pp) class. Using this class assumes that your puppetserver or PE Master is managed by Puppet.
+
+### <a name="setup-puppet-agent">Puppet Agent (LTS)</a>
+
+**‼️NOT REQUIRED FOR AGENTLESS WORKFLOW ‼️**
 
 The Puppet Agent requires installation and setup on each device. Agent setup can be performed as a manual process or it may be automated. For more information please see the [README-agent-install.md][USER-1] document for detailed instructions on agent installation and configuration on Cisco Nexus devices.
 
 ##### The `cisco_node_utils` Ruby Gem
 
-The [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) ruby gem is a required component of the `ciscopuppet` module. This gem contains platform APIs for interfacing between Cisco CLI and Puppet agent resources. The gem can be automatically installed by Puppet agent by simply using the [`ciscopuppet::install`](https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/demo_all_cisco.pp#L19) helper class, or it can be installed manually.
+The [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) Ruby gem is a required component of the `ciscopuppet` module. This gem contains platform APIs for interfacing between Cisco CLI and Puppet resources. The gem can be automatically installed by Puppet agent by using the [`ciscopuppet::agent`](manifests/agent.pp) class. Automatic dependency installs are preferred; manual gem installs should be reserved for exceptional circumstances.
 
-##### Automatic Gem Install Using `ciscopuppet::install`
+##### The `puppet-resource_api` Ruby Gem
 
-* The `ciscopuppet::install` class is defined in the `install.pp` file in the `examples` subdirectory. Copy this file into the `manifests` directory as shown:
+The [`puppet-resource_api`](https://rubygems.org/gems/puppet-resource_api) Ruby gem is a required component of the `ciscopuppet` module. The gem can be automatically installed by a Puppet agent by using the [`ciscopuppet::agent`](manifests/agent.pp) class. Automatic dependency installs are preferred; manual gem installs should be reserved for exceptional circumstances.
 
-~~~bash
-cd /etc/puppetlabs/code/environments/production/modules/ciscopuppet/
-cp examples/install.pp  manifests/
-~~~
+##### Automatic Gem Install Using `ciscopuppet::agent`
 
-* Next, update `site.pp` to use the install class
+* The `ciscopuppet::agent` class is defined in the `agent.pp` file in the `manifests` subdirectory.
+
+* Update `site.pp` to use the install class
 
 **Example**
 
 ~~~puppet
-node 'default' {
-  include ciscopuppet::install
+node 'n9k' {
+  include ciscopuppet::agent
 }
 ~~~
 
-The preceding configuration will cause the next `puppet agent` run to automatically download the current `cisco_node_utils` gem from <https://rubygems.org/gems/cisco_node_utils> and install it on the node.
+The preceding configuration will cause the next `puppet agent` run to automatically download the current `cisco_node_utils` and `puppet-resource_api` gems from <https://rubygems.org/> and install them on the node.
 
 ##### Optional Parameters for `ciscopuppet::install`
 
@@ -83,8 +100,8 @@ The preceding configuration will cause the next `puppet agent` run to automatica
 **Example**
 
 ~~~puppet
-node 'default' {
-  class {'ciscopuppet::install':
+node 'n9k' {
+  class {'ciscopuppet::agent':
     repo  => 'http://gemserver.domain.com:8808',
     proxy => 'http://proxy.domain.com:8080',
   }
@@ -93,11 +110,11 @@ node 'default' {
 
 ##### Gem Persistence
 
-Once installed, the GEM will remain persistent across system reloads within the Guestshell or OAC environments; however, the bash-shell environment does not share this persistent behavior, in which case the `ciscopuppet::install` helper class automatically downloads and re-installs the gem after each system reload.
+Once installed, the gems will remain persistent across system reloads within the Guestshell or OAC environments; however, the bash-shell environment does not share this persistent behavior, in which case the `ciscopuppet::agent` class automatically downloads and re-installs the gem after each system reload.
 
 See [General Documentation](#general-documentation) for information on Guestshell and OAC.
 
-### <a name="setup-agent-auth">Puppet Agent Authentication<a>
+### <a name="setup-agent-auth">Puppet Agent Authentication</a>
 
 Puppet makes use of the nxos `admin` user by default for all types in this module.  If a different user is required for puppet agent runs then the following procedure can be used to override `admin` with the desired user.
 
@@ -135,13 +152,70 @@ Now create and apply the following manifest on your nxos devices.
   }
 ~~~
 
+### <a name="setup-puppet-device">Puppet Device (Agentless)</a>
+
+**‼️NOT REQUIRED FOR AGENT WORKFLOW ‼️**
+
+The module (version `2.0.0` or later) supports remote management through the usage of [`puppet device`](https://puppet.com/docs/puppet/5.5/puppet_device.html), which communicates with the device remotely via the `nxapi` through HTTP/HTTPS. In order to use the `ciscopuppet` module agentlessly then the following dependencies will need to be met.
+
+##### The `cisco_node_utils` Ruby Gem
+
+The [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) Ruby gem is a required component of the `ciscopuppet` module. This gem contains platform APIs for interfacing between Cisco CLI and Puppet resources. The gem will need to be installed on any Puppet agent which will be managing a NX-OS device. It can be automatically installed by Puppet by using the [`ciscopuppet::proxy`](manifests/proxy.pp) class. Automatic gem installs are preferred; manual gem installs should be reserved for exceptional circumstances.
+
+##### The `puppet-resource_api` Ruby Gem
+
+The [`puppet-resource_api`](https://rubygems.org/gems/puppet-resource_api) Ruby gem is a required component of the `ciscopuppet` module. The gem will need to be installed on any Puppet agent which will be managing a NX-OS device. It can be automatically installed by Puppet by using the [`ciscopuppet::proxy`](manifests/proxy.pp) class. Automatic gem installs are preferred; manual gem installs should be reserved for exceptional circumstances.
+
+### <a name="getting-started-puppet-device">Getting started with remote management (`puppet device`)</a>
+
+To get started, create or edit `/etc/puppetlabs/puppet/device.conf`, add a section for the device (this will become the device's `certname`), specify a type of `cisco_nexus`, and specify a `url` to a credentials file. For example:
+
+```INI
+[cisco.example.com]
+type cisco_nexus
+url file:////etc/puppetlabs/puppet/devices/cisco.example.com.conf
+```
+
+Next, create a credentials file. See the [HOCON documentation](https://github.com/lightbend/config/blob/master/HOCON.md) for information on quoted/unquoted strings and connecting the device.
+
+```
+address: cisco.nexus.net
+username: admin
+password: admin
+port: 8280
+transport: http
+```
+
+Alternatively devices can be managed through the [`puppetlabs-device_manager module`](https://forge.puppet.com/puppetlabs/device_manager), for example:
+
+```puppet
+node 'proxy-agent' {
+  device_manager { 'cisco.example.com':
+    type => 'cisco_nexus',
+    credentials => {
+      address => 'cisco.example.com',
+      username => 'admin',
+      password => 'admin',
+      port => 8280,
+      transport => 'http',
+    }
+  }
+}
+```
+
+Test your setup and get the certificate signed:
+
+`puppet device --verbose --target cisco.example.com`
+
+See the [`puppet device` documentation](https://puppet.com/docs/puppet/5.5/puppet_device.html)
+
+*Please note:*: In order for the NX-OS device to be managed then the [nxapi](https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/9-x/programmability/guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_9x/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_9x_chapter_010010.html) feature will need enabled on the device and the selected ports for HTTP/HTTPS will need to be accessible by the `proxy-agent` choosen to manage the device.
+
+**‼️AGENTLESS AND AGENT WORKFLOWS ‼️**
+
+For additiona details on agentless and agent based configuration see the following [guide](docs/README-install_guide.md)
+
 ## <a href='example-manifests'>Example Manifests</a>
-
-This module has dependencies on the [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) ruby gem. After installing the Puppet Agent software, use Puppet's built-in [`Package`](https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/install.pp#L17) provider to install the gem.
-
-A helper class [`ciscopuppet::install`](https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/demo_all_cisco.pp#L19) is provided in the examples subdirectory of this module.  Simply add an `include ciscopuppet::install` statement at the beginning of the manifest to install the latest `cisco_node_utils` gem from rubygems.org. Including the aforementioned class with [`additional parameters`](https://github.com/cisco/cisco-network-puppet-module/blob/master/examples/demo_all_cisco.pp#L24) overrides the default rubygems.org repository with a custom repository.
-
-For Puppet Agents running within the GuestShell or OAC environment, the installed GEM remains persistent across system reloads, however, agents running in the NX-OS bash-shell environment will automatically download and reinstall the GEM after a system reload.
 
 ##### OSPF Example Manifest
 
@@ -451,13 +525,13 @@ The Nexus family of switches support various hardware and software features depe
 
 Platform | Description | Environments
 :--|:--|:--
-**N9k**   | Support includes all N9xxx models  | bash-shell, guestshell
-**N3k**   | Support includes N30xx and N31xx models only.<br>The N35xx model is not supported.   | bash-shell, guestshell
-**N3k-F** | Support includes all N3xxx models running os version 7.0(3)Fx(x) | bash-shell, guestshell
+**N9k**   | Support includes all N9xxx models  | agentless, bash-shell, guestshell
+**N3k**   | Support includes N30xx and N31xx models only.<br>The N35xx model is not supported.   | agentless, bash-shell, guestshell
+**N3k-F** | Support includes all N3xxx models running os version 7.0(3)Fx(x) | agentless, bash-shell, guestshell
 **N5k**   | Support includes N56xx models only.<br>The N50xx and N55xx models are not supported at this time. | Open Agent Container (OAC)
-**N6k**   | Support includes all N6xxx models  | Open Agent Container (OAC)
-**N7k**   | Support includes all N7xxx models  | Open Agent Container (OAC)
-**N9k-F** | Support includes all N95xx models running os version 7.0(3)Fx(x) | bash-shell, guestshell
+**N6k**   | Support includes all N6xxx models  | agentless, Open Agent Container (OAC)
+**N7k**   | Support includes all N7xxx models  | agentless, Open Agent Container (OAC)
+**N9k-F** | Support includes all N95xx models running os version 7.0(3)Fx(x) | agentless, bash-shell, guestshell
 
 
 
@@ -492,7 +566,7 @@ Symbol | Meaning | Description
 | [cisco_evpn_multicast](#type-cisco_evpn_multicast)         | ✅* | ➖| ➖ | ➖ | ➖  | ➖ | ➖ |
 | [cisco_evpn_multisite](#type-cisco_evpn_multisite)         | ✅* | ➖| ➖ | ➖ | ➖  | ➖ | ➖ | \*[caveats](#cisco_evpn_multisite-caveats) |
 | [cisco_evpn_stormcontrol](#type-cisco_evpn_stormcontrol)   | ✅* | ➖| ➖ | ➖ | ➖  | ➖ | ➖ | \*[caveats](#cisco_evpn_stormcontrol-caveats) |
-| [cisco_evpn_vni](#type-cisco_evpn_vni)                     | ✅ | ➖ | ✅ | ✅ | ✅ | ✅ | ✅ | \*[caveats](#cisco_evpn_vni-caveats) |
+| [cisco_evpn_vni](#type-cisco_evpn_vni)                     | ✅* | ➖ | ✅ | ✅ | ✅ | ✅* | ✅ | \*[caveats](#cisco_evpn_vni-caveats) |
 | [cisco_fabricpath_global](#type-cisco_fabricpath_global)     | ➖ | ➖ | ✅ | ✅ | ✅* | ➖ | ➖ | \*[caveats](#cisco_fabricpath_global-caveats) |
 | [cisco_fabricpath_topology](#type-cisco_fabricpath_topology) | ➖ | ➖ | ✅ | ✅ | ✅  | ➖ | ➖ |
 | [cisco_hsrp_global](#type-cisco_hsrp_global)                         | ✅  | ✅* | ✅  | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_hsrp_global-caveats) |
@@ -510,7 +584,7 @@ Symbol | Meaning | Description
 | [cisco_object_group](#type-cisco_object_group)             | ✅  | ✅  | ➖ | ➖  | ✅ | ✅ | ✅ |
 | [cisco_object_group_entry](#type-cisco_object_group_entry) | ✅  | ✅  | ➖ | ➖  | ✅ | ✅ | ✅ |
 | [cisco_ospf](#type-cisco_ospf)                             | ✅  | ✅  | ✅ | ✅  | ✅ | ✅ | ✅ |
-| [cisco_ospf_vrf](#type-cisco_ospf_vrf)                     | ✅  | ✅  | ✅ | ✅  | ✅ | ✅ | ✅ |
+| [cisco_ospf_vrf](#type-cisco_ospf_vrf)                     | ✅  | ✅  | ✅ | ✅  | ✅ | ✅ | ✅ | \*[caveats](#cisco_ospf_vrf-caveats) |
 | ✅ = Supported <br> ➖ = Not Applicable | N9k | N3k | N5k | N6k | N7k | N9k-F | N3k-F | Caveats |
 | [cisco_overlay_global](#type-cisco_overlay_global)         | ✅  | ✅* | ✅  | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_overlay_global-caveats) |
 | [cisco_pim](#type-cisco_pim)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_pim-caveats) |
@@ -530,8 +604,8 @@ Symbol | Meaning | Description
 | [cisco_vlan](#type-cisco_vlan)                             | ✅* | ✅* | ✅  | ✅  | ✅ | ✅ | ✅ | \*[caveats](#cisco_vlan-caveats) |
 | [cisco_vpc_domain](#type-cisco_vpc_domain)                 | ✅* | ✅* | ✅* | ✅* | ✅* | ➖ | \*[caveats](#cisco_vpc_domain-caveats) |
 | [cisco_vrf](#type-cisco_vrf)                               | ✅  | ✅* | ✅  | ✅  | ✅ | ✅ | ✅ | \*[caveats](#cisco_vrf-caveats) |
-| [cisco_vrf_af](#type-cisco_vrf_af)                         | ✅  | ✅* | ✅* | ✅* | ✅* | ✅ | ✅ | \*[caveats](#cisco_vrf_af-caveats) |
-| [cisco_vtp](#type-cisco_vtp)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅ | ✅ |
+| [cisco_vrf_af](#type-cisco_vrf_af)                         | ✅*  | ✅* | ✅* | ✅* | ✅* | ✅* | ✅ | \*[caveats](#cisco_vrf_af-caveats) |
+| [cisco_vtp](#type-cisco_vtp)                               | ✅  | ✅  | ✅  | ✅  | ✅  | ➖ | ➖ |
 | [cisco_vxlan_vtep](#type-cisco_vxlan_vtep)                 | ✅  | ➖ | ✅  | ✅  | ✅* | ✅ | ✅ | \*[caveats](#cisco_vxlan_vtep-caveats) |
 | [cisco_vxlan_vtep_vni](#type-cisco_vxlan_vtep_vni)         | ✅  | ➖ | ✅  | ✅  | ✅  | ✅ | ✅ | \*[caveats](#cisco_vxlan_vtep_vni-caveats) |
 
@@ -746,12 +820,14 @@ Manages configuration of a Access Control List (ACL) instance.
 | N5k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N6k      | 7.3(0)N1(1)        | 1.3.0                  |
 | N7k      | 7.3(0)D1(1)        | 1.3.0                  |
+| N9k-F    | 9.2.1              | 1.10.0                 |
+| N3k-F    | 9.2.1              | 1.10.0                 |
 
 #### <a name="cisco_acl-caveats">Caveats</a>
 
 | Property | Caveat Description |
 |:--------|:-------------|
-| `fragments` | Not supported on N5k, N6k |
+| `fragments` | Not supported on N5k, N6k, N9k-F, N3k-F |
 
 #### Parameters
 
@@ -1318,7 +1394,7 @@ Specify timeout for the first best path after a restart, in seconds. Valid value
 ##### `timer_bestpath_limit_always`
 Enable/Disable update-delay-always option. Valid values are 'true', 'false', and 'default'.
 
-##### `timer_bgp_hold`
+##### `timer_bgp_holdtime`
 Set bgp hold timer. Valid values are Integer, keyword 'default'.
 
 ##### `timer_bgp_keepalive`
@@ -2047,7 +2123,7 @@ Stormcontrol level. Valid values are Integer.
 --
 ### Type: cisco_evpn_vni
 
-Manages Cisco Ethernet Virtual Private Network (EVPN) VXLAN Network Identifier (VNI) configurations of a Cisco device.
+Manages Cisco Ethernet Virtual Private Network (EVPN) VXLAN Network Identifier (VNI) configurations of a Cisco device. This provider is no longer needed for N9k and N9k-F running versions 9.2.1 or later.
 
 | Platform | OS Minimum Version | Module Minimum Version |
 |----------|:------------------:|:----------------------:|
@@ -2299,7 +2375,7 @@ Notes about `ensure => present` and `ensure => absent` on physical ethernet inte
 * Physical interfaces will be displayed as `ensure => absent` by the `puppet resource` command when they are in a default state.
 
 ###### `interface`
-Name of the interface on the network element. Valid value is a string.
+Name of the interface on the network element. No white space allowed in the name. Valid value is a string.
 
 #### Properties
 
@@ -3530,6 +3606,12 @@ Manages a VRF for an OSPF router.
 | N9k-F    | 7.0(3)F1(1)        | 1.5.0                  |
 | N3k-F    | 7.0(3)F3(2)        | 1.8.0                  |
 
+#### <a name="cisco_ospf_vrf-caveats">Caveats</a>
+
+| Property | Caveat Description |
+|:-------------------|:-------------|
+| `redistribute`  | Minimum Module Version 2.0.0<br>No support for `redistribute maximum-prefixes` |
+
 #### Parameters
 
 ##### `ensure`
@@ -3555,6 +3637,23 @@ Specify the default Metric value. Valid values are an  integer or the keyword
 ##### `log_adjacency`
 Controls the level of log messages generated whenever a neighbor changes state.
 Valid values are 'log', 'detail', 'none', and 'default'.
+
+##### `redistribute`
+A list of redistribute directives. Multiple redistribute entries are allowed. The list must be in the form of a nested array: the first entry of each array defines the source-protocol to redistribute from; the second entry defines a route-map name.
+
+Example:
+
+```ruby
+redistribute => [['direct',  'rm_direct'],
+                 ['lisp',    'rm_lisp'],
+                 ['static',  'rm_static'],
+                 ['eigrp 1', 'rm_eigrp'],
+                 ['isis 2',  'rm_isis'],
+                 ['ospf 3',  'rm_ospf'],
+                 ['rip 4',   'rm_rip']]
+```
+
+Note: `redistribute maximum-prefixes` is not currently supported for cisco_ospf_vrf.
 
 ##### `timer_throttle_lsa_start`
 Specify the start interval for rate-limiting Link-State Advertisement (LSA)
@@ -4581,6 +4680,8 @@ Manages the upgrade of a Cisco device.
 
 #### <a name="cisco_upgrade-caveats">Caveats</a>
 
+*Only usable when running with the Puppet Agent mode.*
+
 The `cisco_upgrade` is only supported on *simplex* N3k, N3k-F, N9k and N9k-F devices. HA devices are currently not supported.
 
 | Property | Caveat Description |
@@ -4721,10 +4822,13 @@ Manages the virtual Port Channel (vPC) domain configuration of a Cisco device.
 | Property | Caveat Description |
 |:--------|:-------------|
 | `auto_recovery`                     | Only supported on N3k, N7k, N9k |
+| `arp_synchronize`                   | Only supported on N3k, N7k, N9k <br> Minimum Module Version 2.0.0   |
 | `fabricpath_emulated_switch_id`     | Only supported on N7k           |
 | `fabricpath_multicast_load_balance` | Only supported on N7k           |
 | `layer3_peer_routing`               | Only supported on N5k, N6k, N7k <br> Supported in OS Version 7.0(3)I6(1) and later on N3k, N9k |
+| `nd_synchronize`                    | Only supported on N3k, N7k, N9k <br> Minimum Module Version 2.0.0   |
 | `peer_gateway_exclude_vlan`         | Only supported on N5k, N6k, N7k |
+| `peer_switch`                       | Only supported on N3k, N7k, N9k <br> Minimum Module Version 2.0.0   |
 | `port_channel_limit`                | Only supported on N7k           |
 | `self_isolation`                    | Only supported on N7k           |
 | `shutdown`                          | Only supported on N5k, N6k, N7k <br> Supported in OS Version 7.0(3)I6(1) and later on N3k, N9k |
@@ -4736,6 +4840,9 @@ Determines whether or not the config should be present on the device. Valid valu
 
 ##### `domain`
 vPC domain ID. Valid values are integer in the range 1-1000. There is no default value, this is a 'name' parameter.
+
+##### `arp_synchronize`
+Enable or Disable ip arp synchronization. Valid values are true/false or default. Default: false.
 
 ##### `auto_recovery`
 Auto Recovery enable or disable if peer is non-operational. Valid values are true, false or default. This parameter is available only on Nexus 7000 series. Default value: true.
@@ -4763,6 +4870,9 @@ Graceful conistency check . Valid values are true, false or default. Default val
 
 ##### `layer3_peer_routing`
 Enable or Disable Layer3 peer routing. Valid values are true/false or default. Default value: false.
+
+##### `nd_synchronize`
+Enable or Disable ipv6 neighbor discovery synchronization. Valid values are true/false or default. Default: false.
 
 ##### `peer_keepalive_dest`
 Destination IPV4 address of the peer where Peer Keep-alives are terminated. Valid values are IPV4 unicast address. There is no default value.
@@ -4793,6 +4903,9 @@ Enable or Disable Layer3 forwarding for packets with peer gateway-mac. Valid val
 
 ##### `peer_gateway_exclude_vlan`
 Interface vlans to exclude from peer gateway functionality. Valid value is a string of integer ranges from 1..4095. This parameter is available only in Nexus 5000, Nexus 6000 and Nexus 7000 series. There is no default value.
+
+##### `peer_switch`
+Enable or Disable peer switch on vPC pair switches. Valid values are true/false or default. Default: false.
 
 ##### `port_channel_limit`
 In vPC+ mode, enable or disable the port channel scale limit of
@@ -4906,13 +5019,13 @@ Manages Cisco Virtual Routing and Forwarding (VRF) Address-Family configuration.
 
 | Property                      | Caveat Description                   |
 |-------------------------------|--------------------------------------|
-| route_target_both_auto        | Not supported on N3k                 |
-| route_target_both_auto_evpn   | Not supported on N3k                 |
+| route_target_both_auto        | Not supported on N3k. Not needed on N9k and N9k-F 9.2.1 and later |
+| route_target_both_auto_evpn   | Not supported on N3k. Not needed on N9k and N9k-F 9.2.1 and later |
 | route_target_export_evpn      | Not supported on N3k                 |
 | route_target_export_stitching | Not supported on Nexus               |
 | route_target_import_evpn      | Not supported on N3k                 |
 | route_target_import_stitching | Not supported on Nexus               |
-| route_target_both_auto_mvpn   | Only supported on N9K 7.0(3)I7(1) and later |
+| route_target_both_auto_mvpn   | Only supported on N9K 7.0(3)I7(1) and later. Not needed on N9k and N9k-F 9.2.1 and later |
 | route_target_import_mvpn      | Only supported on N9K 7.0(3)I7(1) and later |
 | route_target_export_mvpn      | Only supported on N9K 7.0(3)I7(1) and later |
 
@@ -5041,6 +5154,10 @@ Creates a VXLAN Network Virtualization Endpoint (NVE) overlay interface that ter
 |---------------------------------|--------------------------------------|
 | source_interface_hold_down_time | Not supported on N3k, N5k, N6k <br> Supported in OS Version 8.1.1 and later on N7k |
 | multisite_border_gateway_interface | Only supported on N9K-EX and N9K-FX devices. For eg: N9K-C93180YC-EX. Minimum OS version 7.0(3)I7(1) and minimum Module Version 1.9.0 |
+| global_suppress_arp             | Only supported on N9K and N9K-F running OS Version 9.2 and later |
+| global_ingress_replication_bgp  | Only supported on N9K running OS Version 9.2 and later |
+| global_mcast_group_l2           | Only supported on N9K and N9K-F running OS Version 9.2 and later |
+| global_mcast_group_l3           | Only supported on N9K running OS Version 9.2 and later |
 
 #### Parameters
 
@@ -5049,6 +5166,18 @@ Determines whether or not the config should be present on the device. Valid valu
 
 ##### `description`
 Description of the NVE interface.  Valid values are string, or keyword 'default'.
+
+##### `global_ingress_replication_bgp`
+Sets ingress replication protocol to bgp for all VNIs. Valid values are true, false or keyword 'default'.
+
+##### `global_mcast_group_l2`
+NVE Multicast Group for all L2 VNIs. Valid values are string or keyword 'default'.
+
+##### `global_mcast_group_l3`
+NVE Multicast Group for all L3 VNIs. Valid values are string or keyword 'default'.
+
+##### `global_suppress_arp`
+Enables ARP suppression for all VNIs. Valid values are true, false or keyword 'default'.
 
 ##### `host_reachability`
 Specify mechanism for host reachability advertisement. Valid values are 'evpn', 'flood' or keyword 'default'.
@@ -5084,10 +5213,11 @@ Creates a Virtual Network Identifier member (VNI) for an NVE overlay interface.
 
 | Property                        | Caveat Description                   |
 |---------------------------------|--------------------------------------|
-| ingress_replication             | Not supported on N3k, N5k, N6k, N7k  |
-| peer_list                       | Not supported on N3k, N5k, N6k, N7k  |
+| ingress_replication             | Not supported on N3k, N5k, N6k, N7k, N3k-F, N9k-F  |
+| peer_list                       | Not supported on N3k, N5k, N6k, N7k, N3k-F, N9k-F  |
 | suppress_uuc                    | Not supported on N3k, N3k-F, N9k, N9k-F <br> Supported in OS Version 8.1.1 and later on N7k |
 | multisite_ingress_replication | Only supported on N9K-EX and N9K-FX devices. For eg: N9K-C93180YC-EX. Minimum OS version 7.0(3)I7(1) and minimum Module Version 1.9.0 |
+| suppress_arp_disable            | Only supported on N9K and N9K-F running OS Version 9.2 and later |
 
 #### Parameters
 
@@ -5117,6 +5247,9 @@ Set the ingress-replication static peer list. Valid values are an Array, a space
 
 ##### `suppress_arp`
 Suppress arp under layer 2 VNI. Valid values are true, false, or 'default'.
+
+##### `suppress_arp_disable`
+Overrides the global ARP suppression config. Valid values are true, false, or 'default'.
 
 ##### `suppress_uuc`
 Suppress uuc under layer 2 VNI. Valid values are true, false, or 'default'.
@@ -5394,13 +5527,13 @@ The name of the VLAN.  Valid value is a string.
 Authentication scheme.  Valid value is 'md5'.
 
 ##### `key`
-Authentication key number.  Valid value is a string.
+Authentication key number.  Valid value is a string, which needs to be in range 1-65535.
 
 ##### `mode`
 Authentication mode.  Valid values are '0' and '7'.
 
 ##### `password`
-Authentication password.  Valid value is a string.
+Authentication password.  Valid value is a string with a maximum length of 15.
 
 --
 ### Type: ntp_config
@@ -5426,16 +5559,16 @@ Authentication password.  Valid value is a string.
 #### Parameters
 
 ##### `authenticate`
-Enable authentication.  Valid values are 'true', 'false' and 'default'.
+Enable authentication.  Valid values are 'true', 'false'.
 
 ##### `name`
-Resource name, not used to configure the device.  Valid value is a string.
+Resource name, not used to configure the device.  Valid value is a string set to 'default'.
 
 ##### `source_interface`
 Source interface for the NTP server.  Valid value is a string.
 
 ##### `trusted_key`
-Trusted key for the NTP server.  Valid value is integer.
+Trusted key for the NTP server.  Valid value is an array of integers or strings.
 
 --
 ### Type: ntp_server
@@ -5469,10 +5602,10 @@ Determines whether or not the config should be present on the device. Valid valu
 Key id to be used while communicating to this NTP.  Valid value is an integer.
 
 ##### `maxpoll`
-Maximum interval to poll NTP server.  Valid value is an integer.
+Maximum interval to poll NTP server.  Valid value is an integer, within the range 4-16.
 
 ##### `minpoll`
-Minimum interval to poll NTP server.  Valid value is an integer.
+Minimum interval to poll NTP server.  Valid value is an integer, within the range 4-16.
 
 ##### `name`
 Hostname or IPv4/IPv6 address of the NTP server.  Valid value is a string.
@@ -5530,9 +5663,6 @@ Name of the port channel. eg port-channel100. Valid value is a string.
 ##### `name`
 Resource name, not used to manage the device.  Valid value is a string.
 
-##### `enable`
-Enable or disable radius functionality.  Valid values are 'true' or 'false'.
-
 --
 ### Type: radius_global
 
@@ -5550,7 +5680,7 @@ Enable or disable radius functionality.  Valid values are 'true' or 'false'.
 #### Parameters
 
 ##### `name`
-Resource identifier, not used to manage the device.  Valid value is a string.
+Resource identifier, not used to manage the device.  Valid value is a string set to 'default'.
 
 ##### `timeout`
 Number of seconds before the timeout period ends.  Valid value is an integer.
@@ -5562,7 +5692,7 @@ Number of times to retransmit.  Valid value is an integer.
 Encryption key (plaintext or in hash form depending on key_format).  Valid value is a string.
 
 ##### `key_format`
-Encryption key format [0-7].  Valid value is an integer.
+Encryption key format [0-7].  Valid value is an integer. Must have set a `key` value.
 
 --
 ### Type: radius_server
@@ -5801,6 +5931,8 @@ Privacy password for SNMP user. Valid value is a string.
 Specifies whether the passwords specified in manifest are in localized key
 format (in case of true) or cleartext (in case of false). Valid values are 'true', and 'false'.
 
+*NOTE: Applying a manifest with `localized_key` set to false/not supplied will hash `private_key` and `password` if they are present. It would be advisable to lift the hashed values and update manifest and set `localized_key` to true to ensure that the `private_key` and `password` remain intact.*
+
 --
 ### Type: syslog_server
 
@@ -5828,6 +5960,9 @@ Syslog severity level to log.  Valid value is an integer.
 
 ##### `vrf`
 Interface to send syslog data from, e.g. "management".  Valid value is a string.
+
+##### `facility`
+Logging facility to use, e.g. "mail", "local[0-7]", "cron" etc. Valid value is a string.
 
 --
 ### Type: syslog_facility
@@ -5950,9 +6085,6 @@ Enable or disable radius functionality [true|false]
 
 #### Parameters
 
-##### `enable`
-Enable or disable radius functionality [true|false]
-
 ##### `key`
 Encryption key (plaintext or in hash form depending on key_format)
 
@@ -5961,6 +6093,21 @@ Encryption key format [0-7]
 
 ##### `timeout`
 Number of seconds before the timeout period ends.  Also supports [undef](https://puppet.com/docs/puppet/5.3/lang_data_undef.html)
+
+##### `source_interface`
+The source interface used for TACACS packets (array of strings for multiple).
+
+**NOTE:** For `source_interface` the device will only accept the first element of the array.
+
+**NOTE:** The `enable` property should be managed through the `tacacs` type.
+
+~~~puppet
+node <devicetarget> {
+  tacacs {'default':
+    enable => true,
+  }
+}
+~~~
 
 --
 ### Type: tacacs_server
@@ -6050,7 +6197,7 @@ Ruby Gems | <http://guides.rubygems.org/><br><https://en.wikipedia.org/wiki/Ruby
 YAML      | <https://en.wikipedia.org/wiki/YAML><br><http://www.yaml.org/start.html>
 Yum       | <https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified><br><https://www.centos.org/docs/5/html/yum/><br><http://www.linuxcommand.org/man_pages>
 
-[GS_9K]: http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/6-x/programmability/guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_9000_Series_NX-OS_Programmability_Guide_chapter_01010.html
+[GS_9K]: https://www.cisco.com/c/en/us/support/switches/nexus-9000-series-switches/products-programming-reference-guides-list.html
 
 [OAC_5K_DOC]: http://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus5000/sw/programmability/guide/b_Cisco_Nexus_5K6K_Series_NX-OS_Programmability_Guide/b_Cisco_Nexus_5K6K_Series_NX-OS_Programmability_Guide_chapter_01001.html
 
@@ -6059,7 +6206,7 @@ Yum       | <https://en.wikipedia.org/wiki/Yellowdog_Updater,_Modified><br><http
 ## License
 
 ~~~text
-Copyright (c) 2014-2018 Cisco and/or its affiliates.
+Copyright (c) 2014-2019 Cisco and/or its affiliates.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

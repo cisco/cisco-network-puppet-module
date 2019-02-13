@@ -22,11 +22,10 @@
 #
 ###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
-@package = on(agent, facter_cmd('-p cisco.images.system_image')).stdout.chomp
-if platform[/n9k/] && image_version.to_s.strip[/I9/]
-  @version = image_version.to_s.strip.split('I', 2)[0]
+if platform[/n9k/] && full_version.to_s.strip[/I9/]
+  @version = full_version.to_s.strip.split('I', 2)[0]
 else
-  @version = image_version.to_s.strip
+  @version = full_version.to_s.strip
 end
 # Test hash top-level keys
 tests = {
@@ -44,12 +43,12 @@ tests[:non_default] = {
   title_pattern:  'image',
   platform:       'n(3|9)k',
   manifest_props: {
-    package:           @package,
+    package:           package,
     force_upgrade:     false,
     delete_boot_image: false,
   },
   resource:       {
-    package: @package,
+    package: package,
     version: @version,
   },
 }

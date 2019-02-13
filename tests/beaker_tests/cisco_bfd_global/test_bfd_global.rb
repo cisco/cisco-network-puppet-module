@@ -116,44 +116,39 @@ tests[:non_default] = {
   },
 }
 
-def unsupported_properties(_tests, _id)
-  unprops = []
-  if platform[/n(3|9)k/]
-    unprops <<
-      :fabricpath_interval <<
-      :fabricpath_slow_timer <<
-      :fabricpath_vlan
-
-  elsif platform[/n(5|6)k/]
-    unprops <<
-      :echo_rx_interval <<
-      :ipv4_echo_rx_interval <<
-      :ipv4_interval <<
-      :ipv4_slow_timer <<
-      :ipv6_echo_rx_interval <<
-      :ipv6_interval <<
-      :ipv6_slow_timer <<
-      :startup_timer
-
-  elsif platform[/n7k/]
-    unprops <<
-      :startup_timer
+# class to contain the test_dependencies specific to this test case
+class TestBfdGlobal < BaseHarness
+  def self.test_harness_dependencies(ctx, _tests, id)
+    return unless id[%r{non_default}]
+    cmd = 'interface loopback 10'
+    ctx.command_config(ctx.agent, cmd, cmd)
   end
-  unprops
-end
 
-def version_unsupported_properties(_tests, _id)
-  unprops = {}
-  unprops[:interval] = '7.0.3.I6.1' if platform[/n9k$/]
-  unprops[:interval] = '7.0.3.F2.1' if platform[/n9k-f/]
-  unprops
-end
+  def self.unsupported_properties(ctx, _tests, _id)
+    if ctx.platform[/n(3|9)k/]
+      [:fabricpath_interval,
+       :fabricpath_slow_timer,
+       :fabricpath_vlan]
+    elsif ctx.platform[/n(5|6)k/]
+      [:echo_rx_interval,
+       :ipv4_echo_rx_interval,
+       :ipv4_interval,
+       :ipv4_slow_timer,
+       :ipv6_echo_rx_interval,
+       :ipv6_interval,
+       :ipv6_slow_timer,
+       :startup_timer]
+    elsif ctx.platform[/n7k/]
+      [:startup_timer]
+    end
+  end
 
-# Overridden to properly handle dependencies for this test file.
-def test_harness_dependencies(_tests, id)
-  return unless id[/non_default/]
-  cmd = 'interface loopback 10'
-  command_config(agent, cmd, cmd)
+  def self.version_unsupported_properties(ctx, _tests, _id)
+    unprops = {}
+    unprops[:interval] = '7.0.3.I6.1' if ctx.platform[/n9k$/]
+    unprops[:interval] = '7.0.3.F2.1' if ctx.platform[/n9k-f/]
+    unprops
+  end
 end
 
 def cleanup(agent)
@@ -169,10 +164,10 @@ test_name "TestCase :: #{tests[:resource_name]}" do
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
-  test_harness_run(tests, :default)
+  test_harness_run(tests, :default, harness_class: TestBfdGlobal)
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 2. Non Default Property Testing")
-  test_harness_run(tests, :non_default)
+  test_harness_run(tests, :non_default, harness_class: TestBfdGlobal)
 end
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

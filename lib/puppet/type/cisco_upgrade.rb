@@ -1,7 +1,9 @@
 #
 # Manages the version of Cisco Image running on a device.
 #
-# Copyright (c) 2017 Cisco and/or its affiliates.
+# June 2018
+#
+# Copyright (c) 2017-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -35,6 +37,8 @@ Puppet::Type.newtype(:cisco_upgrade) do
     }
   ```
   "
+
+  apply_to_all
 
   # Parse out the title to fill in the attributes in these
   # patterns. These attributes can be overwritten later.

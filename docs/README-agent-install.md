@@ -55,9 +55,9 @@ Disk   | **400 MB** | Minimum free space before installing Puppet agent |
 
 <br>
 
-#### *Step 2. Choose an environment for running Puppet Agent*
+#### *Step 2. Choose an environment for running a Puppet agent*
 
-**NOTE:** Starting in release `9.2(1)` and onward, installing the Puppet Agent into the `bash-shell` hosting environment is no longer supported.  Instead the puppet agent software should be installed into the [`guestshell` hosting environment](#env-gs).
+**NOTE:** Starting in release `9.2(1)` and onward, installing a Puppet agent in the `bash-shell` hosting environment is no longer supported.  Instead, the Puppet agent software should be installed on the [`guestshell` hosting environment](#env-gs).
 
 NX-OS Environment | Supported Platforms | |
 :--|:--:|:--|
@@ -65,9 +65,9 @@ NX-OS Environment | Supported Platforms | |
 `guestshell` | N3k, N9k | This is a secure Linux container environment running CentOS. It is enabled by default in most platforms that support it. |
 `open agent`<br>`container (OAC)` | N5k, N6k, N7k | This is a 32-bit CentOS-based container created specifically for running Puppet Agent software. |
 
-* *OAC containers are created for specific platforms and must be downloaded from Cisco (see [OAC Download](#env-oac)). The OAC must be installed before the Puppet Agent can be installed.*
+* *OAC containers are created for specific platforms and must be downloaded from Cisco (see [OAC Download](#env-oac)). The OAC must be installed before a Puppet agent can be installed.*
 
-* *Running Puppet Agent from multiple environments simultaneously is not supported*
+* *Running a Puppet agent from multiple environments simultaneously is not supported*
 
 
 #### *Step 3. Network Connectivity*
@@ -96,7 +96,7 @@ end
 
 ## <a name="env-bs">Agent Environment Setup: bash-shell</a>
 
-**NOTE:** Starting in release `9.2(1)` and onward, installing the Puppet Agent into the `bash-shell` hosting environment is no longer supported.  Instead the puppet agent software should be installed into the [`guestshell` hosting environment](#env-gs).
+**NOTE:** Starting in release `9.2(1)` and onward, installing a Puppet agent in the `bash-shell` hosting environment is no longer supported.  Instead the Puppet agent software should be installed into the [`guestshell` hosting environment](#env-gs).
 
 This section is only required when running Puppet from the `bash-shell`.
 
@@ -241,6 +241,8 @@ This section is only required when running Puppet from the `open agent container
 N7k      | [N7k OAC file](https://software.cisco.com/download/release.html?i=!y&mdfid=283748960&softwareid=282088129&release=7.3%280%29D1%281%29&os=) |
 N5k, N6k | [N5k N6k OAC file](https://software.cisco.com/download/release.html?i=!y&mdfid=284360574&softwareid=282088130&release=7.3%280%29N1%281%29&os=) |
 
+**NOTE** The download links for OAC above are for specific NX-OS software versions.  Make sure to select the OAC download OVA that corresponds to the version running on the `N5|6|7k` device.
+
 Copy the `ova` file to the `bootflash:` device.
 
 ~~~
@@ -367,9 +369,11 @@ rpm --import http://yum.puppetlabs.com/RPM-GPG-KEY-puppet
 
 Environment | RPM |
 :--|:--|
-`bash-shell` | <http://yum.puppetlabs.com/puppetlabs-release-pc1-cisco-wrlinux-5.noarch.rpm> |
-`guestshell` | <http://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm> |
-`open agent`<br>`container (OAC)` | [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm) |
+`bash-shell` | <http://http://yum.puppetlabs.com/puppet5/puppet5-release-cisco-wrlinux-5.noarch.rpm> |
+`guestshell` | <http://http://yum.puppetlabs.com/puppet5/puppet5-release-el-7.noarch.rpm> |
+`open agent`<br>`container (OAC)` | [http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm](http://yum.puppetlabs.com/puppetlabs-release-pc1-el-6.noarch.rpm) (End Of Life)|
+
+**OAC NOTE** The OAC rpm is now end of life (EOL) but later versions of the rpm cannot be hosted in the OAC due to a ruby version incompatibility.  To continue using an OAC workflow the module version must be `1.10.0` or ealier along with the now EOL rpm.
 
 <br>
 
@@ -566,7 +570,7 @@ A virtual Nexus N9k may be helpful for development and testing. To obtain a virt
 ## License
 
 ~~~
-Copyright (c) 2014-2018 Cisco and/or its affiliates.
+Copyright (c) 2014-2019 Cisco and/or its affiliates.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

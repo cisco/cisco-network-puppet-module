@@ -1,8 +1,9 @@
 # Manage a Cisco VRF Address-Family.
 #
+# June 2018
 # January 2016, Chris Van Heuveln
 #
-# Copyright (c) 2016 Cisco and/or its affiliates.
+# Copyright (c) 2016-2018 Cisco and/or its affiliates.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -146,6 +147,7 @@ Puppet::Type.newtype(:cisco_vrf_af) do
   # Attributes #
   ##############
 
+  apply_to_all
   ensurable
 
   newproperty(:route_policy_export) do

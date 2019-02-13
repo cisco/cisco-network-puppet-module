@@ -32,6 +32,7 @@ tests = {
 
 # Test hash test cases
 tests[:seq_5_remark] = {
+  desc:           '1.1 seq 5 remark',
   title_pattern:  'ipv4 beaker 5',
   manifest_props: {
     # 'remark' is a standalone property
@@ -40,6 +41,7 @@ tests[:seq_5_remark] = {
 }
 
 tests[:seq_10_v4] = {
+  desc:           '1.2 seq 10 v4',
   title_pattern:  'ipv4 beaker 10',
   manifest_props: {
     action:   'permit',
@@ -50,7 +52,7 @@ tests[:seq_10_v4] = {
 }
 
 tests[:seq_10_v6] = {
-  desc:           'IPv6 Seq 10',
+  desc:           '1.3 seq 10 v6',
   title_pattern:  'ipv6 beaker6 10',
   manifest_props: {
     action:   'permit',
@@ -61,6 +63,7 @@ tests[:seq_10_v6] = {
 }
 
 tests[:seq_20_v4] = {
+  desc:           '1.4 seq 20 v4',
   title_pattern:  'ipv4 beaker 20',
   manifest_props: {
     action:        'deny',
@@ -84,9 +87,10 @@ tests[:seq_20_v4] = {
 }
 tests[:seq_20_v6] = tests[:seq_20_v4].clone
 tests[:seq_20_v6][:title_pattern] = 'ipv6 beaker6 20'
+tests[:seq_20_v6][:desc] = '1.5 seq 20 v6'
 
 tests[:seq_30_v4] = {
-  desc:           'IPv4 Seq 30',
+  desc:           '1.6 seq 30 v4',
   title_pattern:  'ipv4 beaker 30',
   manifest_props: {
     action:            'deny',
@@ -103,7 +107,7 @@ tests[:seq_30_v4] = {
 }
 
 tests[:seq_40_icmp_v4] = {
-  desc:           'IPv4 Seq 40',
+  desc:           '1.7 seq 40 icmp v4',
   title_pattern:  'ipv4 beaker 40',
   manifest_props: {
     action:               'deny',
@@ -121,7 +125,7 @@ tests[:seq_40_icmp_v4] = {
 }
 
 tests[:seq_50_icmp_v4] = {
-  desc:           'IPv4 Seq 50',
+  desc:           '1.8 seq 50 icmp v4',
   title_pattern:  'ipv4 beaker 50',
   manifest_props: {
     action:       'deny',
@@ -135,14 +139,11 @@ tests[:seq_50_icmp_v4] = {
     vlan:         '100',
   },
 }
-# Overridden to properly handle unsupported properties for this test file.
-def unsupported_properties(tests, id)
-  unprops = []
 
-  if operating_system == 'ios_xr'
-    # unprops << TBD: XR Support
-
-  else
+# class to contain the test_dependencies specific to this test case
+class TestAce < BaseHarness
+  def self.unsupported_properties(ctx, tests, id)
+    unprops = []
     if tests[id][:title_pattern][/ipv6/]
       unprops <<
         :http_method <<
@@ -150,13 +151,13 @@ def unsupported_properties(tests, id)
         :redirect <<
         :tcp_option_length
     end
-    if platform[/n(5|6)k/]
+    if ctx.platform[/n(5|6)k/]
       unprops <<
         :proto_option <<
         :packet_length <<
         :time_range
     end
-    if platform[/n(5|6|7)k/]
+    if ctx.platform[/n(5|6|7)k/]
       unprops <<
         :http_method <<
         :redirect <<
@@ -166,9 +167,8 @@ def unsupported_properties(tests, id)
         :set_erspan_gre_proto <<
         :ttl
     end
+    unprops
   end
-
-  unprops
 end
 
 #################################################################
@@ -181,14 +181,14 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   # ---------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. ACE Testing")
 
-  test_harness_run(tests, :seq_5_remark)
-  test_harness_run(tests, :seq_10_v4)
-  test_harness_run(tests, :seq_10_v6)
-  test_harness_run(tests, :seq_20_v4)
-  test_harness_run(tests, :seq_20_v6)
-  test_harness_run(tests, :seq_30_v4)
-  test_harness_run(tests, :seq_40_icmp_v4)
-  test_harness_run(tests, :seq_50_icmp_v4)
+  test_harness_run(tests, :seq_5_remark, harness_class: TestAce)
+  test_harness_run(tests, :seq_10_v4, harness_class: TestAce)
+  test_harness_run(tests, :seq_10_v6, harness_class: TestAce)
+  test_harness_run(tests, :seq_20_v4, harness_class: TestAce)
+  test_harness_run(tests, :seq_20_v6, harness_class: TestAce)
+  test_harness_run(tests, :seq_30_v4, harness_class: TestAce)
+  test_harness_run(tests, :seq_40_icmp_v4, harness_class: TestAce)
+  test_harness_run(tests, :seq_50_icmp_v4, harness_class: TestAce)
 
   # ---------------------------------------------------------
   skipped_tests_summary(tests)
