@@ -116,6 +116,12 @@ tests[:non_default][:manifest_props].merge!(manifest_non[:n56k]) if platform[/n(
 tests[:non_default][:manifest_props].merge!(manifest_non[:n9kf]) if platform[/n(3|9)k-f/]
 tests[:non_default][:manifest_props].merge!(manifest_non[:n9k]) if platform[/n9k$/]
 
+if platform[/n3k$/]
+  pattern = 'ERROR: This feature is not supported on this platform'
+  cmd = agent ? 'cisco_portchannel_global default resilient=true' : 'port-channel load-balance resilient'
+  tests[:resilient_unsupported] = resource_probe(agent, cmd, pattern)
+end
+
 # class to contain the test_dependencies specific to this test case
 class TestPortChannelGlobal < BaseHarness
   def self.unsupported_properties(ctx, tests, _id)
@@ -162,13 +168,6 @@ class TestPortChannelGlobal < BaseHarness
     unprops << :resilient << :symmetry if tests[:resilient_unsupported]
     unprops
   end
-end
-
-if platform[/n3k$/]
-  tests[:resilient_unsupported] =
-    resource_probe(agent,
-                   'cisco_portchannel_global default resilient=true',
-                   'ERROR: This feature is not supported on this platform.')
 end
 
 #################################################################
