@@ -75,6 +75,7 @@ tests[:negative_port] = {
   },
   resource:       {
   },
+  stderr_pattern: /Invalid number/,
   code:           [6],
 }
 
@@ -87,6 +88,7 @@ tests[:negative_timeout] = {
   },
   resource:       {
   },
+  stderr_pattern: /Invalid number/,
   code:           [6],
 }
 
@@ -101,6 +103,7 @@ tests[:negative_password] = {
   },
   resource:       {
   },
+  stderr_pattern: /Invalid number/,
   code:           [6],
 }
 
