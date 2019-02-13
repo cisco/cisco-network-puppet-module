@@ -61,6 +61,7 @@ tests[:negative_non_existing_role] = {
   ensure:         :present,
   manifest_props: {
   },
+  stderr_pattern: /Snmp group creation not supported/,
   code:           [4],
 }
 
