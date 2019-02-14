@@ -84,6 +84,7 @@ tests[:negative_timeout] = {
   resource:       {
   },
   code:           [4],
+  stderr_pattern: /Invalid number/,
 }
 
 tests[:negative_deadtime] = {
@@ -95,6 +96,7 @@ tests[:negative_deadtime] = {
   resource:       {
   },
   code:           [4],
+  stderr_pattern: /Invalid number/,
 }
 
 #################################################################

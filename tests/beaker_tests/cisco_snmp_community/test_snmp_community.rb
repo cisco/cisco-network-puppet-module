@@ -67,6 +67,7 @@ tests[:negative_group] = {
     acl:   'aclname',
   },
   code:           [2, 4],
+  stderr_pattern: /Invalid command/,
 }
 
 tests[:negative_acl] = {

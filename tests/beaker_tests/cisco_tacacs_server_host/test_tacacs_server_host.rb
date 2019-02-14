@@ -77,6 +77,7 @@ tests[:negative_port] = {
   },
   stderr_pattern: /Invalid number/,
   code:           [6],
+  stderr_pattern: /Invalid number, range is \(1:65535\)/,
 }
 
 tests[:negative_timeout] = {
@@ -90,6 +91,7 @@ tests[:negative_timeout] = {
   },
   stderr_pattern: /Invalid number/,
   code:           [6],
+  stderr_pattern: /Invalid number/,
 }
 
 tests[:negative_password] = {
@@ -105,6 +107,7 @@ tests[:negative_password] = {
   },
   stderr_pattern: /Invalid number/,
   code:           [6],
+  stderr_pattern: /Invalid number, range is \(1:60\)/,
 }
 
 def cleanup(agent)
