@@ -27,6 +27,8 @@ This document describes Puppet agent installation and setup on Cisco Nexus switc
 
 See [References](#references) for alternative installation methods.
 
+**NOTE:** Agentless is the recommended mode of operation for the Cisco Nexus module. Agent installations are not recommended because the agent won't be supported beyond Puppet Enterprise 2018.1. For more information, see [Puppet Enterprise support lifecycle](https://puppet.com/misc/puppet-enterprise-lifecycle).
+
 ## <a name="pre-install-tasks">Pre-Install Tasks</a>
 
 #### *Step 1. Platform / Software Minimum Requirements*
