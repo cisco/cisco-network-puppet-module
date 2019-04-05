@@ -16,6 +16,8 @@
 # limitations under the License.
 
 Puppet::Functions.create_function(:find_linecard) do
+  require 'puppet/util'
+  require 'puppet/util/network_device'
   def find_linecard(linecard)
     if Puppet::Util::NetworkDevice.current.nil?
       data = Facter.value('cisco')
