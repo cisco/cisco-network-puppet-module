@@ -27,6 +27,8 @@ This document describes Puppet agent installation and setup on Cisco Nexus switc
 
 See [References](#references) for alternative installation methods.
 
+**NOTE:** The Puppet agent is not supported for the `OAC` or `Native Bash` hosting environments on NX-OS beyond Puppet Enterprise 2018.1. The agentless workflow is recommended for managing Cisco NX-OS devices. Agent based workflows will continue to be supported in the NX-OS Guestshell hosting environment.
+
 ## <a name="pre-install-tasks">Pre-Install Tasks</a>
 
 #### *Step 1. Platform / Software Minimum Requirements*
