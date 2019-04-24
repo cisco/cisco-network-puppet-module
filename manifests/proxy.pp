@@ -30,4 +30,11 @@ class ciscopuppet::proxy (String $repo = 'https://rubygems.org', String $proxy =
     source          => $repo,
     install_options => $opts,
   }
+
+  package { 'net_http_unix' :
+    ensure          => present,
+    provider        => 'puppet_gem',
+    source          => $repo,
+    install_options => $opts,
+  }
 }
