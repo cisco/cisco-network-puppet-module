@@ -166,6 +166,10 @@ The [`cisco_node_utils`](https://rubygems.org/gems/cisco_node_utils) Ruby gem is
 
 The [`puppet-resource_api`](https://rubygems.org/gems/puppet-resource_api) Ruby gem is a required component of the `ciscopuppet` module. The gem will need to be installed on any Puppet agent which will be managing a NX-OS device. It can be automatically installed by Puppet by using the [`ciscopuppet::proxy`](manifests/proxy.pp) class. Automatic gem installs are preferred; manual gem installs should be reserved for exceptional circumstances.
 
+##### The `net_http_unix` Ruby Gem
+
+The [`net_http_unix`](https://rubygems.org/gems/net_http_unix) Ruby gem is a required component of the `ciscopuppet` module. The gem will need to be installed on any Puppet agent which will be managing a NX-OS device. It can be automatically installed by Puppet by using the [`ciscopuppet::proxy`](manifests/proxy.pp) class. Automatic gem installs are preferred; manual gem installs should be reserved for exceptional circumstances.
+
 ### <a name="getting-started-puppet-device">Getting started with remote management (`puppet device`)</a>
 
 To get started, create or edit `/etc/puppetlabs/puppet/device.conf`, add a section for the device (this will become the device's `certname`), specify a type of `cisco_nexus`, and specify a `url` to a credentials file. For example:
