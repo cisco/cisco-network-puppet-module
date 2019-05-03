@@ -36,7 +36,6 @@ branches:
   only:
     - master
     - /^v\d/
-    - puppet6
 notifications:
   email: false
 deploy:
