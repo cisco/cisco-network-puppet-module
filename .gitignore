@@ -21,6 +21,9 @@
 /convert_report.txt
 /update_report.txt
 .DS_Store
+.project
+.envrc
+/inventory.yaml
 junit/
 hosts.cfg
 /spec/fixtures/acceptance-credentials.conf

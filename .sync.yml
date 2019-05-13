@@ -54,6 +54,7 @@ Rakefile:
       stage: spec
   branches:
     - 'puppet6'
+    - 'develop'
 .rubocop.yml:
   profiles:
     strict:
