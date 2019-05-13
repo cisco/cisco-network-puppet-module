@@ -52,7 +52,7 @@
     "nx-os",
     "network"
   ],
-  "pdk-version": "1.8.0",
-  "template-url": "https://github.com/puppetlabs/pdk-templates/",
-  "template-ref": "heads/master-0-gd61c0a4"
+  "pdk-version": "1.10.0",
+  "template-url": "https://github.com/puppetlabs/pdk-templates/#1.10.0",
+  "template-ref": "1.10.0-0-gbba9ac3"
 }
