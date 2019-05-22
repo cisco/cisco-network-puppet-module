@@ -313,19 +313,20 @@ end
 class Puppet::ResourceApi::Transport::Wrapper
   attr_reader :transport, :schema
 
-  def initialize(name, url_or_config_or_transport)
-    if url_or_config_or_transport.is_a? String
-      url = URI.parse(url_or_config_or_transport)
-      raise "Unexpected url '#{url_or_config_or_transport}' found. Only file:/// URLs for configuration supported at the moment." unless url.scheme == 'file'
-      raise "Trying to load config from '#{url.path}, but file does not exist." if url && !File.exist?(url.path)
-      config = self.class.deep_symbolize(Hocon.load(url.path, syntax: Hocon::ConfigSyntax::HOCON) || {})
-    elsif url_or_config_or_transport.is_a? Hash
-      config = url_or_config_or_transport
-    elsif transport_class?(name, url_or_config_or_transport)
-      @transport = url_or_config_or_transport
+  def initialize(name, config_or_transport)
+    # Check if the Puppet::Transport module exists
+    # if it doesn't (RSAPI 1.6.x) then don't try to load
+    # or set @transport
+    begin
+      Required::Module.const_get 'Puppet::Transport'
+      if transport_class?(name, url_or_config_or_transport)
+        @transport = url_or_config_or_transport
+      end
+    rescue NameError
+      nil
     end
 
-    @transport ||= Puppet::ResourceApi::Transport.connect(name, config)
+    @transport ||= Puppet::ResourceApi::Transport.connect(name, config_or_transport)
     @schema = Puppet::ResourceApi::Transport.list[name]
   end
 
