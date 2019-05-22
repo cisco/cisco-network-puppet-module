@@ -332,6 +332,7 @@ DEVICE
     if test_output =~ tests[id][:stderr_pattern]
       logger.debug("TestStep :: Match #{tests[id][:stderr_pattern]} :: PASS")
     else
+      logger.error("output:\n--\n#{test_output}\n--")
       fail_test("TestStep :: Match #{tests[id][:stderr_pattern]} :: FAIL")
     end
   end
