@@ -115,8 +115,8 @@ class Beaker::TestCase
     @device_conf_file = Tempfile.new(['acceptance-device', '.conf'])
 
     @credentials_file.write <<CREDENTIALS
-address: "#{beaker_config_connection_address}"
-username: "#{@nexus_host.host_hash[:ssh][:user] || 'admin'}"
+host: "#{beaker_config_connection_address}"
+user: "#{@nexus_host.host_hash[:ssh][:user] || 'admin'}"
 port: "#{@nexus_host.host_hash[:ssh][:port] || '80'}"
 password: "#{@nexus_host.host_hash[:ssh][:password] || 'admin'}"
 CREDENTIALS

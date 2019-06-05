@@ -183,8 +183,8 @@ url file:////etc/puppetlabs/puppet/devices/cisco.example.com.conf
 Next, create a credentials file. See the [HOCON documentation](https://github.com/lightbend/config/blob/master/HOCON.md) for information on quoted/unquoted strings and connecting the device.
 
 ```
-address: cisco.nexus.net
-username: admin
+host: cisco.nexus.net
+user: admin
 password: admin
 port: 8280
 transport: http
@@ -197,8 +197,8 @@ node 'proxy-agent' {
   device_manager { 'cisco.example.com':
     type => 'cisco_nexus',
     credentials => {
-      address => 'cisco.example.com',
-      username => 'admin',
+      host => 'cisco.example.com',
+      user => 'admin',
       password => 'admin',
       port => 8280,
       transport => 'http',
