@@ -21,7 +21,7 @@ Puppet::ResourceApi.register_transport(
       desc: 'The FQDN or IP address of the device to connect to.',
     },
     port:        {
-      type: 'Optional[String]',
+      type: 'Optional[Integer]',
       desc: 'The port of the device to connect to.',
     },
     transport:   {
