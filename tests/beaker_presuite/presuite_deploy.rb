@@ -224,7 +224,7 @@ test_name 'Prep Masters & Install Puppet' do
           credentials => {
             address => '#{beaker_config_connection_address}',
             username => #{default[:ssh][:user] || 'admin'},
-            port => #{default[:ssh][:port] || '80'},
+            port => #{default[:ssh][:port] || 80},
             password => #{default[:ssh][:password] || 'admin'},
           },
         }\n

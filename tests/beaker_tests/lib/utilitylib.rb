@@ -117,7 +117,7 @@ class Beaker::TestCase
     @credentials_file.write <<CREDENTIALS
 host: "#{beaker_config_connection_address}"
 user: "#{@nexus_host.host_hash[:ssh][:user] || 'admin'}"
-port: "#{@nexus_host.host_hash[:ssh][:port] || '80'}"
+port: #{@nexus_host.host_hash[:ssh][:port] || 80}
 password: "#{@nexus_host.host_hash[:ssh][:password] || 'admin'}"
 CREDENTIALS
     @credentials_file.close
