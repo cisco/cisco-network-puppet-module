@@ -236,6 +236,8 @@ See [References](#references) for `guestshell` documentation.
 
 This section is only required when running Puppet from the `open agent container`.
 
+**Note:** As of the Cisco NX-OS `8.4.1` release, the Open Agent Container support that was added in the Cisco NX-OS `7.3(0)D1(1) / 7.3(0)N1(1)` release with the purpose of providing an execution space for configuration management agents is being phased out.  It is recommended to use Puppet agent-less workflows, with the N5K, N6k and N7k series of switches.|
+
 #### *Step 1. Download the OAC ova file*
 
 | Platform | OAC Download Link |
