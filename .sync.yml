@@ -39,8 +39,6 @@ Gemfile:
     - /spec/fixtures/acceptance-credentials.conf
     - /spec/fixtures/acceptance-device.conf
 Rakefile:
-  requires:
-    - 'puppet-strings/tasks'
   extra_disabled_lint_checks:
     - 'autoloader_layout'
     - 'variable_scope'
