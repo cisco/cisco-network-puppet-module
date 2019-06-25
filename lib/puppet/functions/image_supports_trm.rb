@@ -16,6 +16,8 @@
 # limitations under the License.
 
 Puppet::Functions.create_function(:image_supports_trm) do
+  require 'puppet/util'
+  require 'puppet/util/network_device'
   def image_supports_trm
     if Puppet::Util::NetworkDevice.current.nil?
       data = Facter.value('os')['release']['full']

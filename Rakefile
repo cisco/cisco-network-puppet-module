@@ -21,7 +21,6 @@ require 'puppet-syntax/tasks/puppet-syntax'
 require 'puppet_blacksmith/rake_tasks' if Bundler.rubygems.find_name('puppet-blacksmith').any?
 require 'github_changelog_generator/task' if Bundler.rubygems.find_name('github_changelog_generator').any?
 require 'puppet-strings/tasks' if Bundler.rubygems.find_name('puppet-strings').any?
-require 'puppet-strings/tasks'
 
 def changelog_user
   return unless Rake.application.top_level_tasks.include? "changelog"
@@ -41,7 +40,7 @@ end
 
 def changelog_future_release
   return unless Rake.application.top_level_tasks.include? "changelog"
-  returnVal = JSON.load(File.read('metadata.json'))['version']
+  returnVal = "v%s" % JSON.load(File.read('metadata.json'))['version']
   raise "unable to find the future_release (version) in metadata.json" if returnVal.nil?
   puts "GitHubChangelogGenerator future_release:#{returnVal}"
   returnVal

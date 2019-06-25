@@ -27,6 +27,8 @@ This document describes Puppet agent installation and setup on Cisco Nexus switc
 
 See [References](#references) for alternative installation methods.
 
+**NOTE:** The Puppet agent is not supported for the `OAC` or `Native Bash` hosting environments on NX-OS beyond Puppet Enterprise 2018.1. The agentless workflow is recommended for managing Cisco NX-OS devices. Agent based workflows will continue to be supported in the NX-OS Guestshell hosting environment.
+
 ## <a name="pre-install-tasks">Pre-Install Tasks</a>
 
 #### *Step 1. Platform / Software Minimum Requirements*
@@ -63,7 +65,7 @@ NX-OS Environment | Supported Platforms | |
 :--|:--:|:--|
 `bash-shell` | N3k, N9k | This is the native WRL Linux environment underlying NX-OS. It is disabled by default on NX-OS. |
 `guestshell` | N3k, N9k | This is a secure Linux container environment running CentOS. It is enabled by default in most platforms that support it. |
-`open agent`<br>`container (OAC)` | N5k, N6k, N7k | This is a 32-bit CentOS-based container created specifically for running Puppet Agent software. |
+`open agent`<br>`container (OAC)` | N5k, N6k, N7k | This is a 32-bit CentOS-based container created specifically for running Puppet Agent software. <br><br> **Note:** As of the Cisco NX-OS `8.4.1` release, the Open Agent Container support that was added in the Cisco NX-OS `7.3(0)D1(1) / 7.3(0)N1(1)` release with the purpose of providing an execution space for configuration management agents is being phased out.  It is recommended to use Puppet agent-less workflows, with the N5K, N6k and N7k series of switches.|
 
 * *OAC containers are created for specific platforms and must be downloaded from Cisco (see [OAC Download](#env-oac)). The OAC must be installed before a Puppet agent can be installed.*
 
@@ -233,6 +235,8 @@ See [References](#references) for `guestshell` documentation.
 ## <a name="env-oac">Agent Environment Setup: open agent container (OAC)</a>
 
 This section is only required when running Puppet from the `open agent container`.
+
+**Note:** As of the Cisco NX-OS `8.4.1` release, the Open Agent Container support that was added in the Cisco NX-OS `7.3(0)D1(1) / 7.3(0)N1(1)` release with the purpose of providing an execution space for configuration management agents is being phased out.  It is recommended to use Puppet agent-less workflows, with the N5K, N6k and N7k series of switches.|
 
 #### *Step 1. Download the OAC ova file*
 

@@ -1,0 +1,4 @@
+--relative
+--no-autoloader_layout-check
+--no-variable_scope-check
+--no-variable_is_lowercase-check

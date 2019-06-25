@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'support/shared_examples'
 require 'cisco_node_utils'
 
 ensure_module_defined('Puppet::Provider::SearchDomain')
