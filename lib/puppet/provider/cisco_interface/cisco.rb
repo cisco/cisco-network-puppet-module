@@ -177,16 +177,31 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
 
   def initialize(value={})
     super(value)
-    @nu = Cisco::Interface.interfaces[@property_hash[:name]]
+    if value.is_a?(Hash)
+      # value is_a hash when initialized from properties_get()
+      all_intf = value[:all_intf]
+      single_intf = value[:interface]
+    else
+      # note: @nu instantiation will be skipped
+      all_intf = false
+    end
+    if all_intf
+      # 'puppet resource' caller
+      @nu = Cisco::Interface.interfaces[@property_hash[:name]]
+    elsif single_intf
+      # 'puppet agent' caller
+      @nu = Cisco::Interface.interfaces(nil, single_intf)[@property_hash[:name]]
+    end
     @property_flush = {}
   end
 
-  def self.properties_get(interface_name, nu_obj)
+  def self.properties_get(interface_name, nu_obj, all_intf: nil)
     debug "Checking instance, #{interface_name}."
     current_state = {
       interface: interface_name,
       name:      interface_name,
       ensure:    :present,
+      all_intf:  all_intf,
     }
     # Call node_utils getter for each property
     INTF_NON_BOOL_PROPS.each do |prop|
@@ -203,24 +218,36 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     new(current_state)
   end # self.properties_get
 
-  def self.instances
+  def self.instances(single_intf=nil)
+    # 'puppet resource' calls here directly; will always get all interfaces.
+    # 'puppet agent' callpath is initialize->prefetch; may pass a single intf.
+    all_intf = single_intf ? false: true
     interfaces = []
-    Cisco::Interface.interfaces.each do |interface_name, nu_obj|
+    Cisco::Interface.interfaces(nil, single_intf).each do |interface_name, nu_obj|
       begin
         # Some interfaces cannot or should not be managed by this type.
         # - NVE Interfaces (managed by cisco_vxlan_vtep type)
         next if interface_name.match(/nve/i)
-        interfaces << properties_get(interface_name, nu_obj)
+        interfaces << properties_get(interface_name, nu_obj, all_intf: all_intf)
       end
     end
     interfaces
   end # self.instances
 
   def self.prefetch(resources)
-    interfaces = instances
-    resources.keys.each do |name|
-      provider = interfaces.find { |intf| intf.instance_name == name }
-      resources[name].provider = provider unless provider.nil?
+    if resources.keys.length > 10
+      # call device for all intf at once
+      interfaces = instances
+      resources.keys.each do |name|
+        provider = interfaces.find { |intf| intf.instance_name == name }
+        resources[name].provider = provider unless provider.nil?
+      end
+    else
+      # call device for each intf separately
+      resources.keys.each do |name|
+        provider = instances(name).find { |intf| intf.instance_name == name }
+        resources[name].provider = provider unless provider.nil?
+      end
     end
   end # self.prefetch
 
