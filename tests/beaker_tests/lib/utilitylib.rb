@@ -1844,6 +1844,26 @@ DEVICE
     output
   end
 
+  def create_and_apply_generic_manifest(tests, manifest, code=[2])
+    # This method is similar to create_and_apply_test_manifest but
+    # whereas that method restricts usage to a single resource,
+    # this method allows caller to provide a raw manifest.
+    if agent
+      manifest = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+                 \nnode default {\n#{manifest} }\nEOF"
+      on(master, manifest)
+      output = on(agent, puppet_agent_cmd, acceptable_exit_codes: code)
+      output = stdout
+    else
+      temp_manifest = Tempfile.new('temp_manifest')
+      temp_manifest.write(manifest)
+      temp_manifest.rewind
+      output = `#{agentless_command} --apply #{temp_manifest.path} 2>&1`
+      remove_temp_manifest(temp_manifest)
+    end
+    output
+  end
+
   # 'interface_probe' tests reported capabilities. Why? Speed, duplex, and mtu
   # are somewhat unreliably reported (ie. some values still raise errors when
   # used) so this method tries each value to eliminate the ambiguity.

@@ -129,40 +129,6 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     :switchport_pvlan_trunk_association,
   ]
 
-  # TBD: These DEPRECATED arrays will be removed with release 2.0.0
-  DEPRECATED_INTF_FLAT = [
-    :private_vlan_mapping,
-    # Replaced by: pvlan_mapping
-    :switchport_mode_private_vlan_host_association,
-    # Replaced by: switchport_pvlan_host_association
-    :switchport_mode_private_vlan_host_promisc,
-    # Replaced by: switchport_pvlan_mapping,
-    :switchport_private_vlan_trunk_allowed_vlan,
-    # Replaced by: switchport_pvlan_trunk_allowed_vlan,
-    :switchport_private_vlan_association_trunk,
-    # Replaced by: switchport_pvlan_trunk_association
-    :switchport_private_vlan_mapping_trunk,
-    # Replaced by: switchport_pvlan_mapping_trunk
-  ]
-  DEPRECATED_INTF_BOOL = [
-    :switchport_mode_private_vlan_trunk_promiscuous,
-    # Replaced by: switchport_pvlan_trunk_promiscuous,
-    :switchport_mode_private_vlan_trunk_secondary,
-    # Replaced by: switchport_pvlan_trunk_secondary,
-  ]
-  DEPRECATED_INTF_NON_BOOL = [
-    :switchport_mode_private_vlan_host,
-    # Replaced by: switchport_pvlan_host,
-    :switchport_private_vlan_trunk_allowed_vlan,
-    # Replaced by: switchport_pvlan_trunk_allowed_vlan,
-    :switchport_private_vlan_trunk_native_vlan,
-    # Replaced by: switchport_pvlan_trunk_native_vlan,
-  ]
-  INTF_ARRAY_FLAT_PROPS.concat(DEPRECATED_INTF_FLAT)
-  INTF_BOOL_PROPS.concat(DEPRECATED_INTF_BOOL)
-  INTF_NON_BOOL_PROPS.concat(DEPRECATED_INTF_NON_BOOL)
-  # End DEPRECATED
-
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@nu',
                                             INTF_NON_BOOL_PROPS)
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@nu',
@@ -236,14 +202,14 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
 
   def self.prefetch(resources)
     if resources.keys.length > 10
-      # call device for all intf at once
       interfaces = instances
+      info "[prefetch all-interfaces: #{interfaces.length}]"
       resources.keys.each do |name|
         provider = interfaces.find { |intf| intf.instance_name == name }
         resources[name].provider = provider unless provider.nil?
       end
     else
-      # call device for each intf separately
+      info "[prefetch per-interface]"
       resources.keys.each do |name|
         provider = instances(name).find { |intf| intf.instance_name == name }
         resources[name].provider = provider unless provider.nil?
