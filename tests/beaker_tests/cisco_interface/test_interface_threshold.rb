@@ -1,4 +1,3 @@
-# rubocop:disable Style/FileName
 ###############################################################################
 # Copyright (c) 2014-2019 Cisco and/or its affiliates.
 #
@@ -42,7 +41,7 @@ tests = {
 # Find a usable interface for this test
 intf_array = find_interface_array(tests)
 if intf_array.length < 12
-  msg = "Skipping test; insufficient number of test interfaces"
+  msg = 'Skipping test; insufficient number of test interfaces'
   raise_skip_exception("\n#{banner}\n#{msg}\n#{banner}\n", self)
 end
 
@@ -66,15 +65,15 @@ end
 test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nTest prefetch per-interface")
-  manifest = build_manifest_interface(intf_array, count=3)
-  output = create_and_apply_generic_manifest(tests, manifest, code=[0,2])
+  manifest = build_manifest_interface(intf_array, 3)
+  output = create_and_apply_generic_manifest(manifest, [0, 2])
   fail_test('FAILED: prefetch per-interface select error') unless
     output[/Cisco_interface::.*prefetch per-interface/]
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nTest prefetch all-interfaces")
-  manifest = build_manifest_interface(intf_array, count=11)
-  output = create_and_apply_generic_manifest(tests, manifest, code=[0,2])
+  manifest = build_manifest_interface(intf_array, 11)
+  output = create_and_apply_generic_manifest(manifest, [0, 2])
   fail_test('FAILED: prefetch all-interfaces select error') unless
     output[/Cisco_interface::.*prefetch all-interfaces/]
 end

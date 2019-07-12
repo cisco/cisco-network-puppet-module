@@ -187,7 +187,7 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
   def self.instances(single_intf=nil)
     # 'puppet resource' calls here directly; will always get all interfaces.
     # 'puppet agent' callpath is initialize->prefetch; may pass a single intf.
-    all_intf = single_intf ? false: true
+    all_intf = single_intf ? false : true
     interfaces = []
     Cisco::Interface.interfaces(nil, single_intf).each do |interface_name, nu_obj|
       begin
@@ -209,7 +209,7 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
         resources[name].provider = provider unless provider.nil?
       end
     else
-      info "[prefetch per-interface]"
+      info '[prefetch per-interface]'
       resources.keys.each do |name|
         provider = instances(name).find { |intf| intf.instance_name == name }
         resources[name].provider = provider unless provider.nil?

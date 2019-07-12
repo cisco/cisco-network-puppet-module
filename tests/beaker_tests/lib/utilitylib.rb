@@ -1844,7 +1844,7 @@ DEVICE
     output
   end
 
-  def create_and_apply_generic_manifest(tests, manifest, code=[2])
+  def create_and_apply_generic_manifest(manifest, code=[2])
     # This method is similar to create_and_apply_test_manifest but
     # whereas that method restricts usage to a single resource,
     # this method allows caller to provide a raw manifest.
@@ -1852,7 +1852,7 @@ DEVICE
       manifest = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
                  \nnode default {\n#{manifest} }\nEOF"
       on(master, manifest)
-      output = on(agent, puppet_agent_cmd, acceptable_exit_codes: code)
+      on(agent, puppet_agent_cmd, acceptable_exit_codes: code)
       output = stdout
     else
       temp_manifest = Tempfile.new('temp_manifest')
