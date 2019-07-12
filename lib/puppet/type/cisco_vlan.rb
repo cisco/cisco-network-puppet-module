@@ -205,5 +205,4 @@ Puppet::Type.newtype(:cisco_vlan) do
       :false,
       :default)
   end # property fabric_control
-
 end # Puppet::Type.newtype
