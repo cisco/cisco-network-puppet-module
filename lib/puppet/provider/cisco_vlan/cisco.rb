@@ -36,19 +36,6 @@ Puppet::Type.type(:cisco_vlan).provide(:cisco) do
                          :pvlan_type, :vlan_name]
   VLAN_BOOL_PROPS = [:fabric_control, :shutdown]
 
-  # TBD: These DEPRECATED arrays will be removed with release 2.0.0
-  DEPRECATED_VLAN_ARRAY_FLAT = [
-    :private_vlan_association
-    # Replaced by: pvlan_association
-  ]
-  DEPRECATED_VLAN_NON_BOOL = [
-    :private_vlan_type
-    # Replaced by: pvlan_type
-  ]
-  VLAN_ARRAY_FLAT_PROPS.concat(DEPRECATED_VLAN_ARRAY_FLAT)
-  VLAN_NON_BOOL_PROPS.concat(DEPRECATED_VLAN_NON_BOOL)
-  # End DEPRECATED
-
   VLAN_ALL_PROPS = VLAN_ARRAY_FLAT_PROPS + VLAN_NON_BOOL_PROPS + VLAN_BOOL_PROPS
 
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@vlan',
