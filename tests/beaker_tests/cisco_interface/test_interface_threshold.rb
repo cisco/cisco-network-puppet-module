@@ -40,15 +40,15 @@ tests = {
 
 # Find a usable interface for this test
 intf_array = find_interface_array(tests)
-if intf_array.length < 12
+if intf_array.length < 5
   msg = 'Skipping test; insufficient number of test interfaces'
   raise_skip_exception("\n#{banner}\n#{msg}\n#{banner}\n", self)
 end
 
 # Create a test manifest with multiple resources
-def build_manifest_interface(intf_array, count=0)
-  manifest = ''
-  1.upto(count) do |i|
+def build_manifest_interface(intf_array, intf_count: 0, threshold: 0)
+  manifest = "  Cisco_interface { show_run_int_threshold => #{threshold} }"
+  1.upto(intf_count) do |i|
     manifest += "
       cisco_interface { '#{intf_array[i]}':
         description => 'threshold test intf #{i}',
@@ -65,17 +65,17 @@ end
 test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nTest prefetch per-interface")
-  manifest = build_manifest_interface(intf_array, 3)
+  manifest = build_manifest_interface(intf_array, intf_count: 2, threshold: 3)
   output = create_and_apply_generic_manifest(manifest, [0, 2])
-  fail_test('FAILED: prefetch per-interface select error') unless
-    output[/Cisco_interface::.*prefetch per-interface/]
+  fail_test('FAILED: prefetch each interface select error') unless
+    output[/Cisco_interface::.*prefetch each interface independently/]
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nTest prefetch all-interfaces")
-  manifest = build_manifest_interface(intf_array, 11)
+  manifest = build_manifest_interface(intf_array, intf_count: 4, threshold: 3)
   output = create_and_apply_generic_manifest(manifest, [0, 2])
-  fail_test('FAILED: prefetch all-interfaces select error') unless
-    output[/Cisco_interface::.*prefetch all-interfaces/]
+  fail_test('FAILED: prefetch all interfaces select error') unless
+    output[/Cisco_interface::.*prefetch all interfaces/]
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")
