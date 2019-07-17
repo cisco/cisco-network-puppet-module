@@ -164,7 +164,7 @@ Puppet::Type.newtype(:cisco_interface) do
 
           Default behavior: Query for all interfaces.
         "
-    munge { |value| value.to_i}
+    munge { |value| value.to_i }
   end
 
   #######################################

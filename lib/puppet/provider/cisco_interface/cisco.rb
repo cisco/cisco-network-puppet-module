@@ -208,7 +208,7 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     resources.keys.each do |name|
       # Delete the variable from the resource in order to keep idempotency
       # as otherwise it wouldn't be retrievable from the device
-      if resources[name].parameters.has_key?(:show_run_int_threshold)
+      if resources[name].parameters.key?(:show_run_int_threshold)
         resources[name].delete(:show_run_int_threshold)
       end
     end
