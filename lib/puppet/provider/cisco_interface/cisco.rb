@@ -201,15 +201,27 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
   end # self.instances
 
   def self.prefetch(resources)
-    if resources.keys.length > 10
+    # Threshold may be present in manifest as:
+    #   Cisco_interface { show_run_int_threshold => 12 }
+    @show_run_int_threshold ||= resources.first[1][:show_run_int_threshold].to_i
+    info "show_run_int_threshold: #{@show_run_int_threshold}" if @show_run_int_threshold > 0
+    resources.keys.each do |name|
+      # Delete the variable from the resource in order to keep idempotency
+      # as otherwise it wouldn't be retrievable from the device
+      if resources[name].parameters.has_key?(:show_run_int_threshold)
+        resources[name].delete(:show_run_int_threshold)
+      end
+    end
+
+    if resources.keys.length > @show_run_int_threshold
       interfaces = instances
-      info "[prefetch all-interfaces: #{interfaces.length}]"
+      info "[prefetch all interfaces: (found: #{interfaces.length})]"
       resources.keys.each do |name|
         provider = interfaces.find { |intf| intf.instance_name == name }
         resources[name].provider = provider unless provider.nil?
       end
     else
-      info '[prefetch per-interface]'
+      info '[prefetch each interface independently]'
       resources.keys.each do |name|
         provider = instances(name).find { |intf| intf.instance_name == name }
         resources[name].provider = provider unless provider.nil?
