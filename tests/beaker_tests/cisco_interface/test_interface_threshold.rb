@@ -34,11 +34,11 @@ require File.expand_path('../interfacelib.rb', __FILE__)
 tests = {
   agent:         agent,
   master:        master,
-  all:           { intf_type: 'all' },
+  intf_type:     'all',
   resource_name: 'cisco_interface',
 }
 
-intf_array = find_interface_array(tests, :all)
+intf_array = find_interface_array(tests)
 threshold = (intf_array.length * 0.15).to_i
 msg = "Interface count: #{intf_array.length}, threshold: #{threshold}"
 logger.info("\n#{'-' * 60}\n#{msg}\n#{'-' * 60}")
