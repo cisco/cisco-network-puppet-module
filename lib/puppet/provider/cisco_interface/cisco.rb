@@ -208,8 +208,6 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     # a certain point - it depends on the total number of interfaces on
     # the device - after which it's better to just get all interfaces.
     show_run_int_threshold = Cisco::Interface.interface_count * 0.15
-    # Threshold may be present in manifest as:
-    #   Cisco_interface { show_run_int_threshold => 12 }
     info "show_run_int_threshold: #{show_run_int_threshold.to_i}" if
       show_run_int_threshold > 0
     if resources.keys.length > show_run_int_threshold
