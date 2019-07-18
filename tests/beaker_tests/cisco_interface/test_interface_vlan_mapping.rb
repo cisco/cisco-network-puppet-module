@@ -56,6 +56,9 @@ tests = {
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
 skip_unless_supported(tests)
 
+# Skip -ALL- tests if being run on a non-default VDC
+skip_non_default_vdc(agent)
+
 # Assign a test interface.
 if (intf = mt_full_interface)
   tests[:intf] = intf

@@ -40,6 +40,9 @@ tests = {
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
 skip_unless_supported(tests)
 
+# Skip -ALL- tests if being run on a non-default VDC
+skip_non_default_vdc(agent)
+
 tests[:default_standard] = {
   desc:           '1.1 Default standard vlan properties',
   title_pattern:  '128',
