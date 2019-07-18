@@ -34,20 +34,18 @@ require File.expand_path('../interfacelib.rb', __FILE__)
 tests = {
   agent:         agent,
   master:        master,
-  intf_type:     'ethernet',
+  all:           { intf_type: 'all' },
   resource_name: 'cisco_interface',
 }
 
-# Find a usable interface for this test
-intf_array = find_interface_array(tests)
-if intf_array.length < 5
-  msg = 'Skipping test; insufficient number of test interfaces'
-  raise_skip_exception("\n#{banner}\n#{msg}\n#{banner}\n", self)
-end
+intf_array = find_interface_array(tests, :all)
+threshold = (intf_array.length * 0.15).to_i
+msg = "Interface count: #{intf_array.length}, threshold: #{threshold}"
+logger.info("\n#{'-' * 60}\n#{msg}\n#{'-' * 60}")
 
 # Create a test manifest with multiple resources
-def build_manifest_interface(intf_array, intf_count: 0, threshold: 0)
-  manifest = "  Cisco_interface { show_run_int_threshold => #{threshold} }"
+def build_manifest_interface(intf_array, intf_count: 0)
+  manifest = ''
   1.upto(intf_count) do |i|
     manifest += "
       cisco_interface { '#{intf_array[i]}':
@@ -65,14 +63,14 @@ end
 test_name "TestCase :: #{tests[:resource_name]}" do
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nTest prefetch per-interface")
-  manifest = build_manifest_interface(intf_array, intf_count: 2, threshold: 3)
+  manifest = build_manifest_interface(intf_array, intf_count: threshold - 1)
   output = create_and_apply_generic_manifest(manifest, [0, 2])
   fail_test('FAILED: prefetch each interface select error') unless
     output[/Cisco_interface::.*prefetch each interface independently/]
 
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nTest prefetch all-interfaces")
-  manifest = build_manifest_interface(intf_array, intf_count: 4, threshold: 3)
+  manifest = build_manifest_interface(intf_array, intf_count: threshold + 1)
   output = create_and_apply_generic_manifest(manifest, [0, 2])
   fail_test('FAILED: prefetch all interfaces select error') unless
     output[/Cisco_interface::.*prefetch all interfaces/]

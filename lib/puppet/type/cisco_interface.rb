@@ -36,8 +36,6 @@ Puppet::Type.newtype(:cisco_interface) do
   <interface> is the complete name of the interface.
 
   Examples:
-    Cisco_interface { show_run_int_threshold => 12 }
-
     cisco_interface {'ethernet1/15':
      shutdown                     => false,
      description                  => 'switched port',
@@ -146,26 +144,6 @@ Puppet::Type.newtype(:cisco_interface) do
 
     munge(&:downcase)
   end # param name
-
-  #######################################
-  # 'global' resource data types        #
-  #######################################
-
-  newproperty(:show_run_int_threshold) do
-    desc "This is an optional resource data type that defines a threshold
-          limit for determining when to query the device for all interface
-          state at once, versus using separate queries for each interface.
-          This threshold allows more efficient processing when managing a
-          small number of interfaces on device that contains many hundreds
-          or thousands of interfaces.
-          Usage example:                  (Note capitalized resource name)
-
-             Cisco_interface { show_run_int_threshold => 12 }
-
-          Default behavior: Query for all interfaces.
-        "
-    munge { |value| value.to_i }
-  end
 
   #######################################
   # Basic / L2 Configuration Attributes #

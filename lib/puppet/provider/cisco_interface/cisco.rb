@@ -148,7 +148,9 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
       all_intf = value[:all_intf]
       single_intf = value[:interface]
     else
-      # note: @nu instantiation will be skipped
+      # @property_hash[:name] is nil in this codepath; since it's nil
+      # it will cause @nu to become nil, thus @nu instantiation is just
+      # skipped altogether.
       all_intf = false
     end
     if all_intf
@@ -201,19 +203,16 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
   end # self.instances
 
   def self.prefetch(resources)
+    # Set a threshold for getting all interfaces versus getting each
+    # manifest interface individually. The threshold is only useful to
+    # a certain point - it depends on the total number of interfaces on
+    # the device - after which it's better to just get all interfaces.
+    show_run_int_threshold = Cisco::Interface.interface_count * 0.15
     # Threshold may be present in manifest as:
     #   Cisco_interface { show_run_int_threshold => 12 }
-    @show_run_int_threshold ||= resources.first[1][:show_run_int_threshold].to_i
-    info "show_run_int_threshold: #{@show_run_int_threshold}" if @show_run_int_threshold > 0
-    resources.keys.each do |name|
-      # Delete the variable from the resource in order to keep idempotency
-      # as otherwise it wouldn't be retrievable from the device
-      if resources[name].parameters.key?(:show_run_int_threshold)
-        resources[name].delete(:show_run_int_threshold)
-      end
-    end
-
-    if resources.keys.length > @show_run_int_threshold
+    info "show_run_int_threshold: #{show_run_int_threshold.to_i}" if
+      show_run_int_threshold > 0
+    if resources.keys.length > show_run_int_threshold
       interfaces = instances
       info "[prefetch all interfaces: (found: #{interfaces.length})]"
       resources.keys.each do |name|

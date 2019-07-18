@@ -1755,6 +1755,9 @@ DEVICE
     end
 
     case type
+    when /all/
+      array = get_current_resource_instances(tests[:agent], 'cisco_interface')
+
     when /ethernet/i, /dot1q/
       all = get_current_resource_instances(tests[:agent], 'cisco_interface')
       # Skip the first interface we find in case it's our access interface.
@@ -1766,6 +1769,8 @@ DEVICE
       msg = 'Unable to find suitable interface module for this test.'
       prereq_skip(tests[:resource_name], self, msg)
     end
+    msg = "find_interface_array found: #{array.length} interfaces"
+    logger.info("\n#{'-' * 60}\n#{msg}\n#{'-' * 60}")
     array
   end
 
