@@ -209,12 +209,13 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     # the device - after which it's better to just get all interfaces.
     show_run_int_threshold = Cisco::Interface.interface_count * 0.15
     if resources.keys.length > show_run_int_threshold
+      info "[prefetch all interfaces]:begin - please be patient..."
       interfaces = instances
-      info "[prefetch all interfaces: (found: #{interfaces.length})]"
       resources.keys.each do |name|
         provider = interfaces.find { |intf| intf.instance_name == name }
         resources[name].provider = provider unless provider.nil?
       end
+      info "[prefetch all interfaces]:end - found: #{interfaces.length}"
     else
       info "[prefetch each interface independently] threshold: #{show_run_int_threshold}"
       resources.keys.each do |name|
