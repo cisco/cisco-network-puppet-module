@@ -217,7 +217,7 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
       end
       info "[prefetch all interfaces]:end - found: #{interfaces.length}"
     else
-      info "[prefetch each interface independently] threshold: #{show_run_int_threshold}"
+      info "[prefetch each interface independently] (threshold: #{show_run_int_threshold.to_i})"
       resources.keys.each do |name|
         provider = instances(name).find { |intf| intf.instance_name == name }
         resources[name].provider = provider unless provider.nil?
