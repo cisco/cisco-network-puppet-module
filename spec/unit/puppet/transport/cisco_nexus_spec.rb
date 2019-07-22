@@ -111,6 +111,7 @@ describe Puppet::Transport::CiscoNexus do
         allow(Cisco::Feature).to receive(:compatible_interfaces).and_return(fabricpath: {})
         allow(Cisco::NodeUtil).to receive(:node).and_return('foo')
         allow(Cisco::NodeUtil.node).to receive(:host_name).and_return('cisco-c9372')
+        stub_const('CiscoNodeUtils::VERSION', '2.0.1')
 
         expect(device.facts(context)).to eq(facts)
       end
