@@ -115,7 +115,7 @@ providers = [
   :cisco_interface_ospf,
   :cisco_interface_channel_group,
 ]
-providers.push(:cisco_interface_evpn_multisite) if platform.match('n9k-ex')
+providers.push(:cisco_interface_evpn_multisite) if platform[/n9k-ex/]
 
 #################################################################
 # TEST CASE EXECUTION
