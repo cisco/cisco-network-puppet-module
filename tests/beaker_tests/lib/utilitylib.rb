@@ -709,6 +709,20 @@ DEVICE
     end
   end
 
+  # Helper to clean up a range of interfaces
+  def interface_cleanup_range(tests)
+    step "TestStep :: clean up interface range" do
+      logger.info("  * Set '#{tests[:intf_range]}' to default state")
+      cmd = "default interface #{tests[:intf_range]}"
+      if agent
+        cmd = PUPPET_BINPATH + "resource cisco_command_config 'interface_cleanup_range' command='#{cmd}'"
+        on(agent, cmd, acceptable_exit_codes: [0, 2])
+      else
+        nxapi_test_set(cmd)
+      end
+    end
+  end
+
   # Helper to remove all IP address configs from all interfaces. This is
   # needed to avoid IP conflicts with our test interface.
   def interface_ip_cleanup(agent, stepinfo='Pre Clean:')
@@ -1760,7 +1774,6 @@ DEVICE
 
     when /ethernet/i, /dot1q/
       all = get_current_resource_instances(tests[:agent], 'cisco_interface')
-      # Skip the first interface we find in case it's our access interface.
       # TODO: check the interface IP address like we do in node_utils
       array = all.grep(%r{ethernet\d+/\d+})
     end

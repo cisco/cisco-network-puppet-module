@@ -154,7 +154,6 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
       all_intf = false
     end
     if all_intf
-      # 'puppet resource' caller
       @nu = Cisco::Interface.interfaces[@property_hash[:name]]
     elsif single_intf
       # 'puppet agent' caller

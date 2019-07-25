@@ -27,53 +27,103 @@
 # this causes NU to fetch all the interfaces at once with 'show run int',
 # versus gathering them one at a time with 'show run int <interface_name>'.
 #
+# This test has threshold test coverage for these providers:
+#  cisco_interface
+#  cisco_interface_ospf
+#
 ###############################################################################
-require File.expand_path('../interfacelib.rb', __FILE__)
+require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 # Test hash top-level keys
 tests = {
   agent:         agent,
   master:        master,
   intf_type:     'all',
-  resource_name: 'cisco_interface',
 }
 
-intf_array = find_interface_array(tests)
-threshold = (intf_array.length * 0.15).to_i
+tests[:intf_array] = intf_array = find_interface_array(tests)
+tests[:threshold] = threshold = (intf_array.length * 0.15).to_i
+
+# intf_array contains all interfaces. Prefer a smaller range of ethernets
+# to make cleanup faster.
+if eth_slot = intf_array.find { |eth| eth[/ethernet\d+/] }
+  # select a range from the first eth slot found
+  eth_slot = eth_slot.split('/').first
+  range = intf_array.collect { |eth| eth[/^#{eth_slot}\/\d+/] }.compact
+  if range.count > threshold
+    # Sort interfaces by port number: ethernet1/(14) and reduce the range size
+    range = range.sort_by { |m| m.split('/').last.to_i }[0..threshold + 1]
+    tests[:intf_array] = range
+    tests[:intf_range] = range[0] + ' - ' + range[-1].split('/').last
+  end
+end
 msg = "Interface count: #{intf_array.length}, threshold: #{threshold}"
 logger.info("\n#{'-' * 60}\n#{msg}\n#{'-' * 60}")
 
 # Create a test manifest with multiple resources
-def build_manifest_interface(intf_array, intf_count: 0)
+def build_manifest_interface(tests, intf_count: 0)
+  intf_array = tests[:intf_array]
   manifest = ''
-  1.upto(intf_count) do |i|
-    manifest += "
-      cisco_interface { '#{intf_array[i]}':
-        description => 'threshold test intf #{i}',
-      }
-    "
+
+  0.upto(intf_count - 1) do |i|
+    case tests[:resource_name]
+    when :cisco_interface
+      manifest += "
+        cisco_interface { '#{intf_array[i]}':
+          ensure => 'present',
+        }
+      "
+    when :cisco_interface_ospf
+      manifest += "
+        cisco_interface_ospf { '#{intf_array[i]} threshold_test':
+          area => '0.0.0.0',
+        }
+      "
+    end
   end
   manifest
+end
+
+def cleanup(tests)
+  logger.info("\n#{'-' * 60}\nTest Cleanup :: Start\n")
+  test_set(agent, 'no feature ospf')
+  if tests[:intf_range]
+    interface_cleanup_range(tests)
+  else
+    1.upto(tests[:threshold] + 1) do |i|
+      interface_cleanup(agent, tests[:intf_array][i])
+    end
+  end
+  logger.info("\n#{'-' * 60}\nTest Cleanup :: End\n")
 end
 
 #################################################################
 # TEST CASE EXECUTION
 # These tests are mainly concerned with the interface lookup selection
 # method so we will not validate individual properties and such.
-test_name "TestCase :: #{tests[:resource_name]}" do
-  # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nTest prefetch per-interface")
-  manifest = build_manifest_interface(intf_array, intf_count: threshold - 1)
-  output = create_and_apply_generic_manifest(manifest, [0, 2])
-  fail_test('FAILED: prefetch each interface select error') unless
-    output[/Cisco_interface::.*prefetch each interface independently/]
+test_name "TestCase :: cisco_interface* threshold tests :: Start" do
+  teardown { cleanup(tests) }
+  cleanup(tests)
 
-  # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nTest prefetch all-interfaces")
-  manifest = build_manifest_interface(intf_array, intf_count: threshold + 1)
-  output = create_and_apply_generic_manifest(manifest, [0, 2])
-  fail_test('FAILED: prefetch all interfaces select error') unless
-    output[/Cisco_interface::.*prefetch all interfaces/]
+  # minimize number of test resources
+  min_threshold_hosts = (threshold > 2) ? 2 : threshold
+
+  [:cisco_interface, :cisco_interface_ospf].each do |provider|
+    tests[:resource_name] = provider
+    # -------------------------------------------------------------------
+    logger.info("\n#{'-' * 60}\nTest prefetch per-interface [#{provider}]")
+    manifest = build_manifest_interface(tests, intf_count: min_threshold_hosts)
+    output = create_and_apply_generic_manifest(manifest, [0, 2])
+    fail_test('FAILED: prefetch each interface select error') unless
+      output[/Cisco_interface.*::.*prefetch each interface independently/]
+
+    # -------------------------------------------------------------------
+    logger.info("\n#{'-' * 60}\nTest prefetch all-interfaces [#{provider}]")
+    manifest = build_manifest_interface(tests, intf_count: threshold + 1)
+    output = create_and_apply_generic_manifest(manifest, [0, 2])
+    fail_test('FAILED: prefetch all interfaces select error') unless
+      output[/Cisco_interface.*::.*prefetch all interfaces/]
+  end
 end
 
-logger.info("TestCase :: #{tests[:resource_name]} :: End")
+logger.info("TestCase :: cisco_interface* threshold tests :: End")
