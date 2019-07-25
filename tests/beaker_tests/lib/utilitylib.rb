@@ -711,7 +711,7 @@ DEVICE
 
   # Helper to clean up a range of interfaces
   def interface_cleanup_range(tests)
-    step "TestStep :: clean up interface range" do
+    step 'TestStep :: clean up interface range' do
       logger.info("  * Set '#{tests[:intf_range]}' to default state")
       cmd = "default interface #{tests[:intf_range]}"
       if agent

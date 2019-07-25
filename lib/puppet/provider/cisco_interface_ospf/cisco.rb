@@ -118,9 +118,9 @@ Puppet::Type.type(:cisco_interface_ospf).provide(:cisco) do
       all_intf = true
     end
     interfaces = []
-    Cisco::InterfaceOspf.interfaces(ospf_name, single_intf).each do |name, nu_obj|
+    Cisco::InterfaceOspf.interfaces(ospf_name, single_intf).each do |intf_ospf, nu_obj|
       begin
-        interfaces << properties_get(name, nu_obj, all_intf: all_intf)
+        interfaces << properties_get(intf_ospf, nu_obj, all_intf: all_intf)
       end
     end
     interfaces
@@ -195,8 +195,8 @@ Puppet::Type.type(:cisco_interface_ospf).provide(:cisco) do
       if @nu.nil?
         new_instance = true
         @nu = Cisco::InterfaceOspf.new(@resource[:interface],
-                                                   @resource[:ospf],
-                                                   @resource[:area])
+                                                 @resource[:ospf],
+                                                 @resource[:area])
       end
       properties_set(new_instance)
     end

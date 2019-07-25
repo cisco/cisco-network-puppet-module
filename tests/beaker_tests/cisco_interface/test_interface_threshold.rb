@@ -30,15 +30,16 @@
 # This test has threshold test coverage for these providers:
 #  cisco_interface
 #  cisco_interface_ospf
+#  cisco_interface_channel_group
 #
 ###############################################################################
 require File.expand_path('../../lib/utilitylib.rb', __FILE__)
 
 # Test hash top-level keys
 tests = {
-  agent:         agent,
-  master:        master,
-  intf_type:     'all',
+  agent:     agent,
+  master:    master,
+  intf_type: 'all',
 }
 
 tests[:intf_array] = intf_array = find_interface_array(tests)
@@ -46,10 +47,10 @@ tests[:threshold] = threshold = (intf_array.length * 0.15).to_i
 
 # intf_array contains all interfaces. Prefer a smaller range of ethernets
 # to make cleanup faster.
-if eth_slot = intf_array.find { |eth| eth[/ethernet\d+/] }
+if eth_slot ||= intf_array.find { |eth| eth[/ethernet\d+/] }
   # select a range from the first eth slot found
   eth_slot = eth_slot.split('/').first
-  range = intf_array.collect { |eth| eth[/^#{eth_slot}\/\d+/] }.compact
+  range = intf_array.map { |eth| eth[/^#{eth_slot}\/\d+/] }.compact
   if range.count > threshold
     # Sort interfaces by port number: ethernet1/(14) and reduce the range size
     range = range.sort_by { |m| m.split('/').last.to_i }[0..threshold + 1]
@@ -71,6 +72,18 @@ def build_manifest_interface(tests, intf_count: 0)
       manifest += "
         cisco_interface { '#{intf_array[i]}':
           ensure => 'present',
+        }
+      "
+    when :cisco_interface_channel_group
+      manifest += "
+        cisco_interface_channel_group { '#{intf_array[i]}':
+          shutdown => true,
+        }
+      "
+    when :cisco_interface_evpn_multisite
+      manifest += "
+        cisco_interface_evpn_multisite { '#{intf_array[i]}':
+          ensure => present,
         }
       "
     when :cisco_interface_ospf
@@ -97,18 +110,25 @@ def cleanup(tests)
   logger.info("\n#{'-' * 60}\nTest Cleanup :: End\n")
 end
 
+providers = [
+  :cisco_interface,
+  :cisco_interface_ospf,
+  :cisco_interface_channel_group,
+]
+providers.push(:cisco_interface_evpn_multisite) if platform.match('n9k-ex')
+
 #################################################################
 # TEST CASE EXECUTION
 # These tests are mainly concerned with the interface lookup selection
 # method so we will not validate individual properties and such.
-test_name "TestCase :: cisco_interface* threshold tests :: Start" do
+test_name 'TestCase :: cisco_interface* threshold tests :: Start' do
   teardown { cleanup(tests) }
   cleanup(tests)
 
   # minimize number of test resources
   min_threshold_hosts = (threshold > 2) ? 2 : threshold
 
-  [:cisco_interface, :cisco_interface_ospf].each do |provider|
+  providers.each do |provider|
     tests[:resource_name] = provider
     # -------------------------------------------------------------------
     logger.info("\n#{'-' * 60}\nTest prefetch per-interface [#{provider}]")
@@ -126,4 +146,4 @@ test_name "TestCase :: cisco_interface* threshold tests :: Start" do
   end
 end
 
-logger.info("TestCase :: cisco_interface* threshold tests :: End")
+logger.info('TestCase :: cisco_interface* threshold tests :: End')
