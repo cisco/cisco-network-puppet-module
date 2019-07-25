@@ -115,7 +115,11 @@ providers = [
   :cisco_interface_ospf,
   :cisco_interface_channel_group,
 ]
-providers.push(:cisco_interface_evpn_multisite) if platform[/n9k-ex/]
+if platform[/n9k-ex/]
+  providers.push(:cisco_interface_evpn_multisite)
+else
+  logger.info("\n#{'-' * 60}\nNo support on this device for :cisco_interface_evpn_multisite\n")
+end
 
 #################################################################
 # TEST CASE EXECUTION
