@@ -1245,6 +1245,31 @@ DEVICE
     end
   end
 
+  # Check's whether the test's are being run on a non-default vdc and
+  #   skip's them if they are.
+  def skip_non_default_vdc(agent)
+    # Return unless you are on a non-defaut vdc
+    return unless non_default_vdc?(agent)
+    msg = 'Skipping all tests; they cannot be run on a non default VDC'
+    banner = '#' * msg.length
+    raise_skip_exception("\n#{banner}\n#{msg}\n#{banner}\n", self)
+  end
+
+  # Returns `True` if the agent you are accessing is a non-default VDC
+  def non_default_vdc?(agent)
+    cmd = 'show vdc'
+    result = command_config(agent, cmd)
+    # The command show vdc returns information on all current vdcs in a set format
+    # When on the default vdc all current vdcs will be shown, if on a non-default vdc
+    #   only the current vdc will be shown.
+    result.split(/\n+/).each do |line|
+      # This checks the vdc ID, if it is `1` then it is the default vdc
+      return false if line[0] == '1'
+    end
+
+    true
+  end
+
   # Helper for command_config calls
   def command_config(agent, cmd, msg='', ignore_errors: false)
     logger.info("\n#{msg}")

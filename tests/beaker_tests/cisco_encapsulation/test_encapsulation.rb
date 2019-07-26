@@ -35,6 +35,9 @@ tests = {
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
 skip_unless_supported(tests)
 
+# Skip -ALL- tests if being run on a non-default VDC
+skip_non_default_vdc(agent)
+
 # Test hash test cases
 tests[:default] = {
   desc:           '1.1 Default Properties',

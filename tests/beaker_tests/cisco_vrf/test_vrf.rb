@@ -30,6 +30,9 @@ tests = {
   resource_name: 'cisco_vrf',
 }
 
+# Skip -ALL- tests if being run on a non-default VDC
+skip_non_default_vdc(agent)
+
 # Test hash test cases
 tests[:default] = {
   desc:           '1.1 Default Properties',

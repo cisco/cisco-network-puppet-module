@@ -35,6 +35,9 @@ tests = {
 skip_unless_supported(tests)
 skip_if_nv_overlay_rejected(agent) if platform[/n(5|6)k/]
 
+# Skip -ALL- tests if being run on a non-default VDC
+skip_non_default_vdc(agent)
+
 # Test hash test cases
 tests[:default] = {
   title_pattern:  'nve1',
