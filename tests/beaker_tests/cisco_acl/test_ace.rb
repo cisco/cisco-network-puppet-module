@@ -135,7 +135,7 @@ tests[:seq_50_icmp_v4] = {
     proto_option: 'fragments',
     dscp:         'af11',
     log:          'true',
-    ttl:          '10',
+    ttl:          '3',
     vlan:         '100',
   },
 }
