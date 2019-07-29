@@ -1249,7 +1249,7 @@ DEVICE
   #   skip's them if they are.
   def skip_non_default_vdc(agent)
     # Return unless you are on a non-defaut vdc
-    return unless non_default_vdc?(agent)
+    return unless platform[/n7/i] && non_default_vdc?(agent)
     msg = 'Skipping all tests; they cannot be run on a non default VDC'
     banner = '#' * msg.length
     raise_skip_exception("\n#{banner}\n#{msg}\n#{banner}\n", self)
