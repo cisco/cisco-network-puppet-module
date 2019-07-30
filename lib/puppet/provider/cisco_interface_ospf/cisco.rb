@@ -118,7 +118,15 @@ Puppet::Type.type(:cisco_interface_ospf).provide(:cisco) do
       all_intf = true
     end
     interfaces = []
-    Cisco::InterfaceOspf.interfaces(ospf_name, single_intf).each do |intf_ospf, nu_obj|
+    if Gem::Version.new(CiscoNodeUtils::VERSION) > Gem::Version.new('2.0.2')
+      nu_interfaces = Cisco::InterfaceOspf.interfaces(ospf_name, single_intf)
+    else
+      info '## Notice: Unable to prefetch independently, using legacy lookup instead.'
+      info '## Notice: cisco_node_utils gem does not contain interface lookup enhancements.'
+      info '## Notice: Please upgrade cisco_node_utils to v2.1.0 or newer'
+      nu_interfaces = Cisco::InterfaceOspf.interfaces
+    end
+    nu_interfaces.each do |intf_ospf, nu_obj|
       begin
         interfaces << properties_get(intf_ospf, nu_obj, all_intf: all_intf)
       end

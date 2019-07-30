@@ -80,7 +80,15 @@ Puppet::Type.type(:cisco_interface_evpn_multisite).provide(:cisco) do
     # 'puppet agent' callpath is initialize->prefetch; may pass a single intf.
     all_intf = single_intf ? false : true
     interfaces = []
-    Cisco::InterfaceEvpnMultisite.interfaces(single_intf).each do |interface_name, nu_obj|
+    if Gem::Version.new(CiscoNodeUtils::VERSION) > Gem::Version.new('2.0.2')
+      nu_interfaces = Cisco::InterfaceEvpnMultisite.interfaces(single_intf)
+    else
+      info '## Notice: Unable to prefetch independently, using legacy lookup instead.'
+      info '## Notice: cisco_node_utils gem does not contain interface lookup enhancements.'
+      info '## Notice: Please upgrade cisco_node_utils to v2.1.0 or newer'
+      nu_interfaces = Cisco::InterfaceEvpnMultisite.interfaces
+    end
+    nu_interfaces.each do |interface_name, nu_obj|
       begin
         interfaces << properties_get(interface_name, nu_obj, all_intf: all_intf)
       end

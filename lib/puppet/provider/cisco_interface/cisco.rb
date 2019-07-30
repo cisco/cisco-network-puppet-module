@@ -190,7 +190,15 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     # 'puppet agent' callpath is initialize->prefetch; may pass a single intf.
     all_intf = single_intf ? false : true
     interfaces = []
-    Cisco::Interface.interfaces(nil, single_intf).each do |interface_name, nu_obj|
+    if Gem::Version.new(CiscoNodeUtils::VERSION) > Gem::Version.new('2.0.2')
+      nu_interfaces = Cisco::Interface.interfaces(nil, single_intf)
+    else
+      info '## Notice: Unable to prefetch independently, using legacy lookup instead.'
+      info '## Notice: cisco_node_utils gem does not contain interface lookup enhancements.'
+      info '## Notice: Please upgrade cisco_node_utils to v2.1.0 or newer'
+      nu_interfaces = Cisco::Interface.interfaces
+    end
+    nu_interfaces.each do |interface_name, nu_obj|
       begin
         # Some interfaces cannot or should not be managed by this type.
         # - NVE Interfaces (managed by cisco_vxlan_vtep type)
