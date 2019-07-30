@@ -214,7 +214,11 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     # manifest interface individually. The threshold is only useful to
     # a certain point - it depends on the total number of interfaces on
     # the device - after which it's better to just get all interfaces.
-    show_run_int_threshold = Cisco::Interface.interface_count * 0.15
+    if Gem::Version.new(CiscoNodeUtils::VERSION) > Gem::Version.new('2.0.2')
+      show_run_int_threshold = Cisco::Interface.interface_count * 0.15
+    else
+      show_run_int_threshold = 0
+    end
     if resources.keys.length > show_run_int_threshold
       info '[prefetch all interfaces]:begin - please be patient...'
       interfaces = instances
