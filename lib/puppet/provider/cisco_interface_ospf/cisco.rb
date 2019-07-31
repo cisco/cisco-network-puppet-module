@@ -118,7 +118,15 @@ Puppet::Type.type(:cisco_interface_ospf).provide(:cisco) do
       all_intf = true
     end
     interfaces = []
-    Cisco::InterfaceOspf.interfaces(ospf_name, single_intf).each do |intf_ospf, nu_obj|
+    if Gem::Version.new(CiscoNodeUtils::VERSION) > Gem::Version.new('2.0.2')
+      nu_interfaces = Cisco::InterfaceOspf.interfaces(ospf_name, single_intf)
+    else
+      info '## Notice: Unable to prefetch independently, using legacy lookup instead.'
+      info '## Notice: cisco_node_utils gem does not contain interface lookup enhancements.'
+      info '## Notice: Please upgrade cisco_node_utils to v2.1.0 or newer'
+      nu_interfaces = Cisco::InterfaceOspf.interfaces
+    end
+    nu_interfaces.each do |intf_ospf, nu_obj|
       begin
         interfaces << properties_get(intf_ospf, nu_obj, all_intf: all_intf)
       end
@@ -131,8 +139,11 @@ Puppet::Type.type(:cisco_interface_ospf).provide(:cisco) do
     # manifest interface individually. The threshold is only useful to
     # a certain point - it depends on the total number of interfaces on
     # the device - after which it's better to just get all interfaces.
-    show_run_int_threshold = Cisco::Interface.interface_count * 0.15
-
+    if Gem::Version.new(CiscoNodeUtils::VERSION) > Gem::Version.new('2.0.2')
+      show_run_int_threshold = Cisco::Interface.interface_count * 0.15
+    else
+      show_run_int_threshold = 0
+    end
     # resource.key syntax is 'interface_name ospf_name'
     if resources.keys.length > show_run_int_threshold
       info '[prefetch all interfaces]:begin - please be patient...'
