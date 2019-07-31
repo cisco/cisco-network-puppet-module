@@ -108,7 +108,7 @@ tests[:non_default] = {
 
 # class to contain the test_harness_dependencies
 class TestInterfaceOspf < BaseHarness
-  def self.unsupported_properties(ctx, tests, _id)
+  def self.unsupported_properties(ctx, _tests, _id)
     unprops = []
     if ctx.platform[/n9k-ex/]
       unprops <<
