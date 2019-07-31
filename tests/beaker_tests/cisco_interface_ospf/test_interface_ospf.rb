@@ -108,6 +108,19 @@ tests[:non_default] = {
 
 # class to contain the test_harness_dependencies
 class TestInterfaceOspf < BaseHarness
+  def self.unsupported_properties(ctx, _tests, _id)
+    unprops = []
+    if ctx.platform[/n9k-ex/]
+      unprops <<
+        :message_digest <<
+        :message_digest_key_id <<
+        :message_digest_algorithm_type <<
+        :message_digest_encryption_type <<
+        :message_digest_password
+    end
+    unprops
+  end
+
   def self.test_harness_dependencies(ctx, tests, id)
     return unless id == :default
     ctx.test_set(ctx.agent, 'feature ospf ; router ospf Sample')

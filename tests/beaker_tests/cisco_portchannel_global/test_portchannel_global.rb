@@ -28,6 +28,7 @@ tests = {
   master:           master,
   agent:            agent,
   operating_system: 'nexus',
+  platform:         'n[35679]k(?!-ex)', # TBD: All except n9k-ex
   resource_name:    'cisco_portchannel_global',
   ensurable:        false,
 }
