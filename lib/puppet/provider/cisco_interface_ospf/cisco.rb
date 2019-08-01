@@ -207,7 +207,9 @@ Puppet::Type.type(:cisco_interface_ospf).provide(:cisco) do
         new_instance = true
         @nu = Cisco::InterfaceOspf.new(@resource[:interface],
                                        @resource[:ospf],
-                                       @resource[:area])
+                                       @resource[:area],
+                                       new_instance,
+                                       @resource[:interface])
       end
       properties_set(new_instance)
     end
