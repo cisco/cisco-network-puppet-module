@@ -98,7 +98,6 @@ Puppet::Type.type(:cisco_interface_channel_group).provide(:cisco) do
     # 'puppet agent' callpath is initialize->prefetch; may pass a single intf.
     all_intf = single_intf ? false : true
     interfaces = []
-    if
     if Facter::CiscoNexus.platform_facts['single_intf_support']
       nu_interfaces = Cisco::InterfaceChannelGroup.interfaces(single_intf)
     else

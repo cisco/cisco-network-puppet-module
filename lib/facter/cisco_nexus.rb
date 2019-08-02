@@ -35,14 +35,14 @@ class Facter::CiscoNexus
     end
 
     # Count interfaces and compute a lookup efficiency threshold. The threshold
-    # is a cutoff for getting all interfaces at once versus getting each
-    # managed interface individually. The threshold is only useful to a certain
+    # is a cutoff for determining when to get each interface one at a time versus
+    # getting all interfaces at once. The threshold is only useful to a certain
     # point - it depends on the total number of interfaces on the device - after
     # which it's better to just get all interfaces.
     facts['interface_count'] = count = Cisco::Interface.interface_count
     if Gem::Version.new(CiscoNodeUtils::VERSION) > Gem::Version.new('2.0.2')
       facts['single_intf_support'] = true
-      if count < 1000 && facts["hardware"]["type"][/Nexus7/]
+      if count < 1000 && facts['hardware']['type'][/Nexus7/]
         # N7 uses a less efficient show cmd get_value to workaround an image bug
         thresh_pct = 0.075
       else
