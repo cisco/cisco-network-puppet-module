@@ -190,12 +190,9 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     # 'puppet agent' callpath is initialize->prefetch; may pass a single intf.
     all_intf = single_intf ? false : true
     interfaces = []
-    if Gem::Version.new(CiscoNodeUtils::VERSION) > Gem::Version.new('2.0.2')
+    if Facter::CiscoNexus.platform_facts['single_intf_support']
       nu_interfaces = Cisco::Interface.interfaces(nil, single_intf)
     else
-      info '## Notice: Unable to prefetch independently, using legacy lookup instead.'
-      info '## Notice: cisco_node_utils gem does not contain interface lookup enhancements.'
-      info '## Notice: Please upgrade cisco_node_utils to v2.1.0 or newer'
       nu_interfaces = Cisco::Interface.interfaces
     end
     nu_interfaces.each do |interface_name, nu_obj|
@@ -210,15 +207,7 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
   end # self.instances
 
   def self.prefetch(resources)
-    # Set a threshold for getting all interfaces versus getting each
-    # manifest interface individually. The threshold is only useful to
-    # a certain point - it depends on the total number of interfaces on
-    # the device - after which it's better to just get all interfaces.
-    if Gem::Version.new(CiscoNodeUtils::VERSION) > Gem::Version.new('2.0.2')
-      show_run_int_threshold = Cisco::Interface.interface_count * 0.15
-    else
-      show_run_int_threshold = 0
-    end
+    show_run_int_threshold = Facter::CiscoNexus.platform_facts['show_run_int_threshold']
     if resources.keys.length > show_run_int_threshold
       info '[prefetch all interfaces]:begin - please be patient...'
       interfaces = instances
