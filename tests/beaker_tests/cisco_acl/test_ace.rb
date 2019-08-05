@@ -167,6 +167,8 @@ class TestAce < BaseHarness
         :set_erspan_gre_proto <<
         :ttl
     end
+    # Vlan property is not supported on I2 images.
+    unprops << :vlan if ctx.image?[/7.0.3.I2/]
     unprops
   end
 end
