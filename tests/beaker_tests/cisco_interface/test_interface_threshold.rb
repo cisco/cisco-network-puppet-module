@@ -78,7 +78,7 @@ def build_manifest_interface(tests, intf_count: 0)
     when :cisco_interface_channel_group
       manifest += "
         cisco_interface_channel_group { '#{intf_array[i]}':
-          shutdown => true,
+          shutdown => false,
         }
       "
     when :cisco_interface_evpn_multisite
