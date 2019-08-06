@@ -36,9 +36,9 @@ module PuppetX
           return 0
         end
 
+        require 'puppet/util/network_device'
         if Puppet::Util::NetworkDevice.current.nil?
           # agent-based
-          require 'puppet/util/network_device'
           fd = Facter.value('cisco')
           fd['interface_threshold']
         else
