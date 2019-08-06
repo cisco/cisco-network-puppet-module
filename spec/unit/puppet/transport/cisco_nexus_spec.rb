@@ -8,34 +8,34 @@ describe Puppet::Transport::CiscoNexus do
   let(:context) { instance_double('Puppet::ResourceApi::BaseContext', 'context') }
   let(:cisco_platform) do
     {
-      system_image:     'bootflash:///nxos.7.0.3.I7.4.bin',
-      image_version:    '7.0(3)I7(4)',
-      packages:         {},
-      hardware_type:    'Nexus9000 C9372PX chassis',
-      cpu:              'Intel(R) Core(TM) i3- CPU @ 2.50GHz',
-      memory:           {
+      system_image:        'bootflash:///nxos.7.0.3.I7.4.bin',
+      image_version:       '7.0(3)I7(4)',
+      packages:            {},
+      hardware_type:       'Nexus9000 C9372PX chassis',
+      cpu:                 'Intel(R) Core(TM) i3- CPU @ 2.50GHz',
+      memory:              {
         total: '16400992K',
         used:  '5648144K',
       },
-      board:            'SAL1911BCTX',
-      last_reset:       '1556118503',
-      reset_reason:     'Kernel Reboot',
-      chassis:          {
+      board:               'SAL1911BCTX',
+      last_reset:          '1556118503',
+      reset_reason:        'Kernel Reboot',
+      chassis:             {
         desc: 'Nexus9000 C9372PX chassis',
         pid:  'N9K-C9372PX',
         vid:  'V02',
       },
-      slot_1:           {
+      slot_1:              {
         desc: '48x1/10G SFP+ 6x40G Ethernet Module',
         pid:  'N9K-C9372PX',
       },
-      power_supplies:   {
+      power_supplies:      {
         power_supply_one: {
           desc: 'Nexus9000 C9372PX chassis Power Supply',
           pid:  'N9K-PAC-650W-B',
         },
       },
-      fans:             {
+      fans:                {
         fan_one: {
           desc: 'Nexus9000 C9372PX chassis Fan Module',
           pid:  'NXA-FAN-30CFM-F',
@@ -43,12 +43,12 @@ describe Puppet::Transport::CiscoNexus do
       },
       interface_count:     70,
       interface_threshold: 10,
-      virtual_services: {
+      virtual_services:    {
         application: {
           name: 'GuestShell',
         },
       },
-      uptime:           '40 days, 21 hours, 30 minutes, 40 seconds',
+      uptime:              '40 days, 21 hours, 30 minutes, 40 seconds',
     }
   end
   let(:facts) do
@@ -69,8 +69,8 @@ describe Puppet::Transport::CiscoNexus do
           'reset_reason' => 'Kernel Reboot',
           'uptime'       => '40 days, 21 hours, 30 minutes, 40 seconds'
         },
-        'interface_count'     =>70,
-        'interface_threshold' =>10,
+        'interface_count'                  => 70,
+        'interface_threshold'              => 10,
         'inventory'                        => {
           'chassis'         => { desc: 'Nexus9000 C9372PX chassis', pid: 'N9K-C9372PX', vid: 'V02' },
           :desc             => '48x1/10G SFP+ 6x40G Ethernet Module',

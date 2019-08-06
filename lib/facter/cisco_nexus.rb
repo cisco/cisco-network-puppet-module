@@ -61,7 +61,7 @@ class Facter::CiscoNexus
     # which it's better to just get all interfaces.
     facts = {}
     if Gem::Version.new(CiscoNodeUtils::VERSION) <= Gem::Version.new('2.0.2')
-      info '## Notice: Please upgrade cisco_node_utils to v2.1.0 or newer'
+      info '## Notice: Please upgrade cisco_node_utils gem to v2.1.0 or newer'
       facts['interface_threshold'] = 0
     else
       facts['interface_count'] = Cisco::Interface.interface_count
