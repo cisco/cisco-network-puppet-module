@@ -17,6 +17,7 @@
 require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
 begin
   require 'puppet_x/cisco/autogen'
+  require 'puppet_x/cisco/cmnutils'
 rescue LoadError # seen on master, not on agent
   # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
   require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..',
@@ -93,19 +94,17 @@ Puppet::Type.type(:cisco_interface_channel_group).provide(:cisco) do
     new(current_state)
   end # self.properties_get
 
-  def self.instances(single_intf=nil)
+  def self.instances(single_intf=nil, interface_threshold=0)
     # 'puppet resource' calls here directly; will always get all interfaces.
     # 'puppet agent' callpath is initialize->prefetch; may pass a single intf.
-    all_intf = single_intf ? false : true
-    interfaces = []
-    if Gem::Version.new(CiscoNodeUtils::VERSION) > Gem::Version.new('2.0.2')
+    if single_intf && interface_threshold > 0
+      all_intf = false
       nu_interfaces = Cisco::InterfaceChannelGroup.interfaces(single_intf)
     else
-      info '## Notice: Unable to prefetch independently, using legacy lookup instead.'
-      info '## Notice: cisco_node_utils gem does not contain interface lookup enhancements.'
-      info '## Notice: Please upgrade cisco_node_utils to v2.1.0 or newer'
+      all_intf = true
       nu_interfaces = Cisco::InterfaceChannelGroup.interfaces
     end
+    interfaces = []
     nu_interfaces.each do |interface_name, nu_obj|
       begin
         interfaces << properties_get(interface_name, nu_obj, all_intf: all_intf)
@@ -115,16 +114,8 @@ Puppet::Type.type(:cisco_interface_channel_group).provide(:cisco) do
   end # self.instances
 
   def self.prefetch(resources)
-    # Set a threshold for getting all interfaces versus getting each
-    # manifest interface individually. The threshold is only useful to
-    # a certain point - it depends on the total number of interfaces on
-    # the device - after which it's better to just get all interfaces.
-    if Gem::Version.new(CiscoNodeUtils::VERSION) > Gem::Version.new('2.0.2')
-      show_run_int_threshold = Cisco::Interface.interface_count * 0.15
-    else
-      show_run_int_threshold = 0
-    end
-    if resources.keys.length > show_run_int_threshold
+    interface_threshold = PuppetX::Cisco::Utils.interface_threshold
+    if resources.keys.length > interface_threshold
       info '[prefetch all interfaces]:begin - please be patient...'
       interfaces = instances
       resources.keys.each do |name|
@@ -133,9 +124,9 @@ Puppet::Type.type(:cisco_interface_channel_group).provide(:cisco) do
       end
       info "[prefetch all interfaces]:end - found: #{interfaces.length}"
     else
-      info "[prefetch each interface independently] (threshold: #{show_run_int_threshold.to_i})"
+      info "[prefetch each interface independently] (threshold: #{interface_threshold})"
       resources.keys.each do |name|
-        provider = instances(name).find { |intf| intf.instance_name == name }
+        provider = instances(name, interface_threshold).find { |intf| intf.instance_name == name }
         resources[name].provider = provider unless provider.nil?
       end
     end

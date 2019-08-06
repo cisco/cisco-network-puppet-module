@@ -43,7 +43,8 @@ tests = {
 }
 
 tests[:intf_array] = intf_array = find_interface_array(tests)
-tests[:threshold] = threshold = (intf_array.length * 0.15).to_i
+multiplier = platform[/N7/] ? 0.075 : 0.15
+tests[:threshold] = threshold = (intf_array.length * multiplier).to_i
 
 # intf_array contains all interfaces. Prefer a smaller range of ethernets
 # to make cleanup faster.
@@ -77,7 +78,7 @@ def build_manifest_interface(tests, intf_count: 0)
     when :cisco_interface_channel_group
       manifest += "
         cisco_interface_channel_group { '#{intf_array[i]}':
-          shutdown => true,
+          shutdown => false,
         }
       "
     when :cisco_interface_evpn_multisite
@@ -138,13 +139,15 @@ test_name 'TestCase :: cisco_interface* threshold tests :: Start' do
     logger.info("\n#{'-' * 60}\nTest prefetch per-interface [#{provider}]")
     manifest = build_manifest_interface(tests, intf_count: min_threshold_hosts)
     output = create_and_apply_generic_manifest(manifest, [0, 2])
+    logger.info("\ndevice output:\n#{'-' * 60}\n#{output}\n#{'-' * 60}")
     fail_test('FAILED: prefetch each interface select error') unless
-      output[/Cisco_interface.*::.*prefetch each interface independently/]
+      output[/Cisco_interface.*::.*prefetch each interface independently] \(threshold: #{threshold}/]
 
     # -------------------------------------------------------------------
     logger.info("\n#{'-' * 60}\nTest prefetch all-interfaces [#{provider}]")
     manifest = build_manifest_interface(tests, intf_count: threshold + 1)
     output = create_and_apply_generic_manifest(manifest, [0, 2])
+    logger.info("\ndevice output:\n#{'-' * 60}\n#{output}\n#{'-' * 60}")
     fail_test('FAILED: prefetch all interfaces select error') unless
       output[/Cisco_interface.*::.*prefetch all interfaces/]
   end
