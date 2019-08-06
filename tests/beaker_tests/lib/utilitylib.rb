@@ -379,8 +379,11 @@ DEVICE
         # if !code.include?($?.exitstatus)
         #  raise 'Errored test'
         # end
+        manifest_data = `cat #{@temp_agentless_manifest.path}`
+        logger.debug("test_manifest :: manifest contents :: \n#{manifest_data}")
+        logger.debug("test_manifest :: apply manifest command :: #{agentless_command} --apply #{@temp_agentless_manifest.path}")
         output = `#{agentless_command} --apply #{@temp_agentless_manifest.path} 2>&1`
-        # logger.debug("test_manifest :: output: \n#{output}")
+        logger.debug("test_manifest :: output: \n#{output}")
         if tests[id][:stderr_pattern].nil? && (output[/Error: /] || !output[/Applied catalog/])
           logger.info(`cat #{@temp_agentless_manifest.path}`)
           remove_temp_manifest
