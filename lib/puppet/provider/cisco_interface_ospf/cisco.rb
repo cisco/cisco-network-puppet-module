@@ -17,6 +17,7 @@
 require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
 begin
   require 'puppet_x/cisco/autogen'
+  require 'puppet_x/cisco/cmnutils'
 rescue LoadError # seen on master, not on agent
   # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
   require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..',
@@ -107,34 +108,31 @@ Puppet::Type.type(:cisco_interface_ospf).provide(:cisco) do
     new(current_state)
   end # self.properties_get
 
-  def self.instances(name=nil)
+  def self.instances(name=nil, interface_threshold=0)
     # 'puppet resource' calls here directly; will always get all interfaces.
     # 'puppet agent' callpath is initialize->prefetch; may pass a single intf.
-    if name
-      single_intf, ospf_name = name.split
+    if name && interface_threshold > 0
       all_intf = false
-    else
-      single_intf, ospf_name = nil
-      all_intf = true
-    end
-    interfaces = []
-    if Facter::CiscoNexus.platform_facts['single_intf_support']
+      single_intf, ospf_name = name.split
       nu_interfaces = Cisco::InterfaceOspf.interfaces(ospf_name, single_intf)
     else
+      all_intf = true
+      single_intf, ospf_name = nil
       nu_interfaces = Cisco::InterfaceOspf.interfaces
     end
+    interfaces = []
     nu_interfaces.each do |intf_ospf, nu_obj|
       begin
         interfaces << properties_get(intf_ospf, nu_obj, all_intf: all_intf)
       end
     end
     interfaces
-  end
+  end # self.instances
 
   def self.prefetch(resources)
-    show_run_int_threshold = Facter::CiscoNexus.platform_facts['show_run_int_threshold']
+    interface_threshold = PuppetX::Cisco::Utils.interface_threshold
     # resource.key syntax is 'interface_name ospf_name'
-    if resources.keys.length > show_run_int_threshold
+    if resources.keys.length > interface_threshold
       info '[prefetch all interfaces]:begin - please be patient...'
       interfaces = instances
       resources.keys.each do |name|
@@ -143,13 +141,13 @@ Puppet::Type.type(:cisco_interface_ospf).provide(:cisco) do
       end
       info "[prefetch all interfaces]:end - found: #{interfaces.length}"
     else
-      info "[prefetch each interface independently] (threshold: #{show_run_int_threshold.to_i})"
+      info "[prefetch each interface independently] (threshold: #{interface_threshold})"
       resources.keys.each do |name|
-        provider = instances(name).find { |intf| intf.name == name }
+        provider = instances(name, interface_threshold).find { |intf| intf.name == name }
         resources[name].provider = provider unless provider.nil?
       end
     end
-  end
+  end # self.prefetch
 
   def exists?
     (@property_hash[:ensure] == :present)
