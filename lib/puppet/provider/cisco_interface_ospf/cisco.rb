@@ -117,7 +117,6 @@ Puppet::Type.type(:cisco_interface_ospf).provide(:cisco) do
       nu_interfaces = Cisco::InterfaceOspf.interfaces(ospf_name, single_intf)
     else
       all_intf = true
-      single_intf, ospf_name = nil
       nu_interfaces = Cisco::InterfaceOspf.interfaces
     end
     interfaces = []

@@ -34,19 +34,7 @@ class Facter::CiscoNexus
       facts['inventory'][fan] = info
     end
 
-    # Count interfaces and compute a lookup efficiency threshold. The threshold
-    # is a cutoff for determining when to get each interface one at a time versus
-    # getting all interfaces at once. The threshold is only useful to a certain
-    # point - it depends on the total number of interfaces on the device - after
-    # which it's better to just get all interfaces.
-    facts['interface_count'] = Cisco::Interface.interface_count
-    if facts['interface_count'] < 1000 && facts['hardware']['type'][/Nexus7/]
-      # N7 uses a less efficient show cmd get_value to workaround an image bug
-      thresh_pct = 0.075
-    else
-      thresh_pct = 0.15
-    end
-    facts['interface_threshold'] = (facts['interface_count'] * thresh_pct).to_i
+    facts.update(interface_threshold(facts['hardware']['type']))
 
     # show install patches
     facts['images']['packages'] = platform.packages
@@ -62,6 +50,24 @@ class Facter::CiscoNexus
     # sh system uptime
     facts['hardware']['uptime'] = platform.uptime
 
+    facts
+  end
+
+  def self.interface_threshold(hw_type)
+    # Count interfaces and compute a lookup efficiency threshold. The threshold
+    # is a cutoff for determining when to get each interface one at a time versus
+    # getting all interfaces at once. The threshold is only useful to a certain
+    # point - it depends on the total number of interfaces on the device - after
+    # which it's better to just get all interfaces.
+    facts = {}
+    facts['interface_count'] = Cisco::Interface.interface_count
+    if facts['interface_count'] < 1000 && hw_type[/Nexus7/]
+      # N7 uses a less efficient show cmd get_value to workaround an image bug
+      thresh_pct = 0.075
+    else
+      thresh_pct = 0.15
+    end
+    facts['interface_threshold'] = (facts['interface_count'] * thresh_pct).to_i
     facts
   end
 end
