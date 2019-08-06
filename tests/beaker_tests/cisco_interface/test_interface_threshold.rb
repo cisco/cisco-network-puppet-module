@@ -43,7 +43,8 @@ tests = {
 }
 
 tests[:intf_array] = intf_array = find_interface_array(tests)
-tests[:threshold] = threshold = (intf_array.length * 0.15).to_i
+multiplier = platform[/N7/] ? 0.075 : 0.15
+tests[:threshold] = threshold = (intf_array.length * multiplier)
 
 # intf_array contains all interfaces. Prefer a smaller range of ethernets
 # to make cleanup faster.
