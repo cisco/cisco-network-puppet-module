@@ -34,6 +34,9 @@ tests = {
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
 skip_unless_supported(tests)
 
+# This feature is very buggy on camden images so skip it.
+skip_nexus_image(/I2/, tests)
+
 # Test hash test cases
 tests[:default] = {
   desc:           '1.1 default properties',
