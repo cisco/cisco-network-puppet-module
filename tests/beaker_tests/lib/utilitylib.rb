@@ -446,7 +446,8 @@ DEVICE
         # end
         cmd = "#{agentless_command} --apply #{@temp_agentless_manifest.path}"
         output = `#{cmd}`
-        if output.include? "#{tests[:resource_name]}[#{tests[id][:title_pattern]}]: Updating:"
+        pattern = "#{tests[:resource_name]}[#{tests[id][:title_pattern]}]: "
+        if output.include?(pattern + 'Updating') || output.include?('Error: ')
           logger.info("Idempotence Command: #{cmd}")
           logger.info("Command Result: #{output}")
           raise 'Errored idempotence test'
