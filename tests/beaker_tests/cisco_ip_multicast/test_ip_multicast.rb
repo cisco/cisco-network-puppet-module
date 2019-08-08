@@ -76,7 +76,7 @@ def cleanup(agent)
   # 'no shutdown' state.  Remove any nve interfaces before
   # starting this test.
   # NOTE: There can only be one nve interface.
-  command_config(agent, 'no interface nve1')
+  test_set(agent, 'no interface nve1', ignore_errors: true)
   resource_absent_cleanup(agent, 'cisco_ip_multicast')
 end
 
