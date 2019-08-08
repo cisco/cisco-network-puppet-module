@@ -71,6 +71,12 @@ tests[:non_default] = {
 }
 
 def cleanup(agent)
+  # On some image versions, overlay_distributed_dr cannot be
+  # configured if an nve interface is configured in in the
+  # 'no shutdown' state.  Remove any nve interfaces before
+  # starting this test.
+  # NOTE: There can only be one nve interface.
+  command_config(agent, 'no interface nve1')
   resource_absent_cleanup(agent, 'cisco_ip_multicast')
 end
 
