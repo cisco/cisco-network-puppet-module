@@ -149,7 +149,8 @@ Puppet::Type.type(:cisco_interface_evpn_multisite).provide(:cisco) do
       # Create/Update
       if @nu.nil?
         new_interface = true
-        @nu = Cisco::InterfaceEvpnMultisite.new(@resource[:interface])
+        @nu = Cisco::InterfaceEvpnMultisite.new(@resource[:interface],
+                                                @resource[:interface])
       end
       properties_set(new_interface)
     end

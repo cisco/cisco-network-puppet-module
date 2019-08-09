@@ -446,6 +446,7 @@ DEVICE
         # end
         cmd = "#{agentless_command} --apply #{@temp_agentless_manifest.path}"
         output = `#{cmd}`
+        logger.debug("test_idempotence :: output: \n#{output}")
         pattern = "#{tests[:resource_name]}[#{tests[id][:title_pattern]}]: "
         if output.include?(pattern + 'Updating') || output.include?('Error: ')
           logger.info("Idempotence Command: #{cmd}")

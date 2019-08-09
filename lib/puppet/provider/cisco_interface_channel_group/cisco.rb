@@ -177,7 +177,8 @@ Puppet::Type.type(:cisco_interface_channel_group).provide(:cisco) do
       # Create/Update
       if @nu.nil?
         new_interface = true
-        @nu = Cisco::InterfaceChannelGroup.new(@resource[:interface])
+        @nu = Cisco::InterfaceChannelGroup.new(@resource[:interface],
+                                               @resource[:interface])
       end
       properties_set(new_interface)
     end
