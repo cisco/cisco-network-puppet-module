@@ -227,7 +227,8 @@ class TestItdService < BaseHarness
     cmd = [
       'feature itd',
       'feature interface-vlan',
-      'ip access-list iap ; ip access-list eap',
+      'ip access-list iap ; permit ip any any',
+      'ip access-list eap ; permit ip any any',
       "interface #{ctx.instance_variable_get(:@ingress_eth_int)} ; no switchport",
       'vlan 2 ; interface vlan 2',
       'interface port-channel 100 ; no switchport',
