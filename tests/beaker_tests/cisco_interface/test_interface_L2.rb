@@ -139,17 +139,6 @@ tests[:non_default_trunk] = {
   },
 }
 
-tests[:purge] = {
-  desc:           '2.3 Purge Properties',
-  title_pattern:  intf,
-  manifest_props: {
-    purge_config: 'true'
-  },
-  resource:       {
-    ensure: 'absent'
-  },
-}
-
 # class to contain the test_dependencies specific to this test case
 class TestInterfaceL2 < Interfacelib
   def self.unsupported_properties(ctx, _tests, _id)
@@ -184,9 +173,6 @@ test_name "TestCase :: #{tests[:resource_name]}" do
   test_harness_run(tests, :non_default_trunk, harness_class: TestInterfaceL2)
 
   # -------------------------------------------------------------------
-  logger.info("\n#{'-' * 60}\nSection 2.3 Purge_config Testing")
-  skip_idempotence_check = true
-  test_harness_run(tests, :purge, harness_class: TestInterfaceL2, skip_idempotence_check: skip_idempotence_check)
 end
 
 logger.info("TestCase :: #{tests[:resource_name]} :: End")

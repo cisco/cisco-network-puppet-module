@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
-* Added performance enhancement to `cisco_interface` to improve processing time with small numbers of managed interfaces. 
+* Added performance enhancement to `cisco_interface` to improve processing time with small numbers of managed interfaces.
 
 ### Removed
 - Removal of deprecated `cisco_interface` 'private-vlan' properties.
@@ -31,6 +31,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 |:---|:---:|
 | `private_vlan_association` | `pvlan_association`
 | `private_vlan_type`        | `pvlan_type`
+
+- Removed cisco_interface attribute:
+   * `purge_config`
 
 ### Issues Addressed
 

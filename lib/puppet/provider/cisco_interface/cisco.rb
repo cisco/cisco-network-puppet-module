@@ -100,7 +100,6 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     :ipv6_redirects,
     :negotiate_auto,
     :pim_bfd,
-    :purge_config,
     :shutdown,
     :switchport_autostate_exclude,
     :switchport_pvlan_host,
