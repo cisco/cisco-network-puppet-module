@@ -67,6 +67,15 @@ When we are considering publishing a new release, all of the following steps mus
 
 1. Verify puppet module can be built using the [new puppet module version](https://github.com/cisco/cisco-network-puppet-module/blob/develop/metadata.json#L3).
 
+   ```apache
+   # cd /etc/puppetlabs/code/environments/production/modules/cisco-network-puppet-module
+   # pdk build
+   pdk (INFO): Building puppetlabs-ciscopuppet version 2.1.0
+   pdk (INFO): Build of puppetlabs-ciscopuppet has completed successfully. Built package can be found here: /etc/puppetlabs/code/environments/production/modules/cisco-network-puppet-module/pkg/puppetlabs-ciscopuppet-2.1.0.tar.gz
+
+   # puppet module install /etc/puppetlabs/code/environments/production/modules/cisco-network-puppet-module/pkg/puppetlabs-ciscopuppet-2.1.0.tar.gz
+   ```
+
 1. Scrub README Docs.
      * Update references to indicate new platorm support where applicable.
      * Update nxos release information where applicable.
