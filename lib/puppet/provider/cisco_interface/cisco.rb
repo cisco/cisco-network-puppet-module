@@ -17,6 +17,7 @@
 require 'cisco_node_utils' if Puppet.features.cisco_node_utils?
 begin
   require 'puppet_x/cisco/autogen'
+  require 'puppet_x/cisco/cmnutils'
 rescue LoadError # seen on master, not on agent
   # See longstanding Puppet issues #4248, #7316, #14073, #14149, etc. Ugh.
   require File.expand_path(File.join(File.dirname(__FILE__), '..', '..', '..',
@@ -99,7 +100,6 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     :ipv6_redirects,
     :negotiate_auto,
     :pim_bfd,
-    :purge_config,
     :shutdown,
     :switchport_autostate_exclude,
     :switchport_pvlan_host,
@@ -129,40 +129,6 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     :switchport_pvlan_trunk_association,
   ]
 
-  # TBD: These DEPRECATED arrays will be removed with release 2.0.0
-  DEPRECATED_INTF_FLAT = [
-    :private_vlan_mapping,
-    # Replaced by: pvlan_mapping
-    :switchport_mode_private_vlan_host_association,
-    # Replaced by: switchport_pvlan_host_association
-    :switchport_mode_private_vlan_host_promisc,
-    # Replaced by: switchport_pvlan_mapping,
-    :switchport_private_vlan_trunk_allowed_vlan,
-    # Replaced by: switchport_pvlan_trunk_allowed_vlan,
-    :switchport_private_vlan_association_trunk,
-    # Replaced by: switchport_pvlan_trunk_association
-    :switchport_private_vlan_mapping_trunk,
-    # Replaced by: switchport_pvlan_mapping_trunk
-  ]
-  DEPRECATED_INTF_BOOL = [
-    :switchport_mode_private_vlan_trunk_promiscuous,
-    # Replaced by: switchport_pvlan_trunk_promiscuous,
-    :switchport_mode_private_vlan_trunk_secondary,
-    # Replaced by: switchport_pvlan_trunk_secondary,
-  ]
-  DEPRECATED_INTF_NON_BOOL = [
-    :switchport_mode_private_vlan_host,
-    # Replaced by: switchport_pvlan_host,
-    :switchport_private_vlan_trunk_allowed_vlan,
-    # Replaced by: switchport_pvlan_trunk_allowed_vlan,
-    :switchport_private_vlan_trunk_native_vlan,
-    # Replaced by: switchport_pvlan_trunk_native_vlan,
-  ]
-  INTF_ARRAY_FLAT_PROPS.concat(DEPRECATED_INTF_FLAT)
-  INTF_BOOL_PROPS.concat(DEPRECATED_INTF_BOOL)
-  INTF_NON_BOOL_PROPS.concat(DEPRECATED_INTF_NON_BOOL)
-  # End DEPRECATED
-
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:non_bool, self, '@nu',
                                             INTF_NON_BOOL_PROPS)
   PuppetX::Cisco::AutoGen.mk_puppet_methods(:bool, self, '@nu',
@@ -177,16 +143,32 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
 
   def initialize(value={})
     super(value)
-    @nu = Cisco::Interface.interfaces[@property_hash[:name]]
+    if value.is_a?(Hash)
+      # value is_a hash when initialized from properties_get()
+      all_intf = value[:all_intf]
+      single_intf = value[:interface]
+    else
+      # @property_hash[:name] is nil in this codepath; since it's nil
+      # it will cause @nu to become nil, thus @nu instantiation is just
+      # skipped altogether.
+      all_intf = false
+    end
+    if all_intf
+      @nu = Cisco::Interface.interfaces[@property_hash[:name]]
+    elsif single_intf
+      # 'puppet agent' caller
+      @nu = Cisco::Interface.interfaces(nil, single_intf)[@property_hash[:name]]
+    end
     @property_flush = {}
   end
 
-  def self.properties_get(interface_name, nu_obj)
+  def self.properties_get(interface_name, nu_obj, all_intf: nil)
     debug "Checking instance, #{interface_name}."
     current_state = {
       interface: interface_name,
       name:      interface_name,
       ensure:    :present,
+      all_intf:  all_intf,
     }
     # Call node_utils getter for each property
     INTF_NON_BOOL_PROPS.each do |prop|
@@ -203,24 +185,44 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
     new(current_state)
   end # self.properties_get
 
-  def self.instances
+  def self.instances(single_intf=nil, interface_threshold=0)
+    # 'puppet resource' calls here directly; will always get all interfaces.
+    # 'puppet agent' callpath is initialize->prefetch; may pass a single intf.
+    if single_intf && interface_threshold > 0
+      all_intf = false
+      nu_interfaces = Cisco::Interface.interfaces(nil, single_intf)
+    else
+      all_intf = true
+      nu_interfaces = Cisco::Interface.interfaces
+    end
     interfaces = []
-    Cisco::Interface.interfaces.each do |interface_name, nu_obj|
+    nu_interfaces.each do |interface_name, nu_obj|
       begin
         # Some interfaces cannot or should not be managed by this type.
         # - NVE Interfaces (managed by cisco_vxlan_vtep type)
         next if interface_name.match(/nve/i)
-        interfaces << properties_get(interface_name, nu_obj)
+        interfaces << properties_get(interface_name, nu_obj, all_intf: all_intf)
       end
     end
     interfaces
   end # self.instances
 
   def self.prefetch(resources)
-    interfaces = instances
-    resources.keys.each do |name|
-      provider = interfaces.find { |intf| intf.instance_name == name }
-      resources[name].provider = provider unless provider.nil?
+    interface_threshold = PuppetX::Cisco::Utils.interface_threshold
+    if resources.keys.length > interface_threshold
+      info '[prefetch all interfaces]:begin - please be patient...'
+      interfaces = instances
+      resources.keys.each do |name|
+        provider = interfaces.find { |intf| intf.instance_name == name }
+        resources[name].provider = provider unless provider.nil?
+      end
+      info "[prefetch all interfaces]:end - found: #{interfaces.length}"
+    else
+      info "[prefetch each interface independently] (threshold: #{interface_threshold})"
+      resources.keys.each do |name|
+        provider = instances(name, interface_threshold).find { |intf| intf.instance_name == name }
+        resources[name].provider = provider unless provider.nil?
+      end
     end
   end # self.prefetch
 
@@ -382,7 +384,10 @@ Puppet::Type.type(:cisco_interface).provide(:cisco) do
       # Create/Update
       if @nu.nil? || @nu.state_default
         new_interface = true
-        @nu = Cisco::Interface.new(@resource[:interface])
+        @nu = Cisco::Interface.new(@resource[:interface],
+                                   true,
+                                   false,
+                                   @resource[:interface])
       end
       properties_set(new_interface)
     end

@@ -135,7 +135,7 @@ tests[:seq_50_icmp_v4] = {
     proto_option: 'fragments',
     dscp:         'af11',
     log:          'true',
-    ttl:          '10',
+    ttl:          '3',
     vlan:         '100',
   },
 }
@@ -167,6 +167,8 @@ class TestAce < BaseHarness
         :set_erspan_gre_proto <<
         :ttl
     end
+    # Vlan property is not supported on I2 images.
+    unprops << :vlan if ctx.image?[/7.0.3.I2/]
     unprops
   end
 end

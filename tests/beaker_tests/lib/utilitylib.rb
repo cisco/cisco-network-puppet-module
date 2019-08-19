@@ -379,8 +379,11 @@ DEVICE
         # if !code.include?($?.exitstatus)
         #  raise 'Errored test'
         # end
+        manifest_data = `cat #{@temp_agentless_manifest.path}`
+        logger.debug("test_manifest :: manifest contents :: \n#{manifest_data}")
+        logger.debug("test_manifest :: apply manifest command :: #{agentless_command} --apply #{@temp_agentless_manifest.path}")
         output = `#{agentless_command} --apply #{@temp_agentless_manifest.path} 2>&1`
-        # logger.debug("test_manifest :: output: \n#{output}")
+        logger.debug("test_manifest :: output: \n#{output}")
         if tests[id][:stderr_pattern].nil? && (output[/Error: /] || !output[/Applied catalog/])
           logger.info(`cat #{@temp_agentless_manifest.path}`)
           remove_temp_manifest
@@ -443,7 +446,9 @@ DEVICE
         # end
         cmd = "#{agentless_command} --apply #{@temp_agentless_manifest.path}"
         output = `#{cmd}`
-        if output.include? "#{tests[:resource_name]}[#{tests[id][:title_pattern]}]: Updating:"
+        logger.debug("test_idempotence :: output: \n#{output}")
+        pattern = "#{tests[:resource_name]}[#{tests[id][:title_pattern]}]: "
+        if output.include?(pattern + 'Updating') || output.include?('Error: ')
           logger.info("Idempotence Command: #{cmd}")
           logger.info("Command Result: #{output}")
           raise 'Errored idempotence test'
@@ -702,6 +707,20 @@ DEVICE
       cmd = "default interface #{intf}"
       if agent
         cmd = PUPPET_BINPATH + "resource cisco_command_config 'interface_cleanup' command='#{cmd}'"
+        on(agent, cmd, acceptable_exit_codes: [0, 2])
+      else
+        nxapi_test_set(cmd)
+      end
+    end
+  end
+
+  # Helper to clean up a range of interfaces
+  def interface_cleanup_range(tests)
+    step 'TestStep :: clean up interface range' do
+      logger.info("  * Set '#{tests[:intf_range]}' to default state")
+      cmd = "default interface #{tests[:intf_range]}"
+      if agent
+        cmd = PUPPET_BINPATH + "resource cisco_command_config 'interface_cleanup_range' command='#{cmd}'"
         on(agent, cmd, acceptable_exit_codes: [0, 2])
       else
         nxapi_test_set(cmd)
@@ -1231,6 +1250,31 @@ DEVICE
     end
   end
 
+  # Check's whether the test's are being run on a non-default vdc and
+  #   skip's them if they are.
+  def skip_non_default_vdc(agent)
+    # Return unless you are on a non-defaut vdc
+    return unless platform[/n7/i] && non_default_vdc?(agent)
+    msg = 'Skipping all tests; they cannot be run on a non default VDC'
+    banner = '#' * msg.length
+    raise_skip_exception("\n#{banner}\n#{msg}\n#{banner}\n", self)
+  end
+
+  # Returns `True` if the agent you are accessing is a non-default VDC
+  def non_default_vdc?(agent)
+    cmd = 'show vdc'
+    result = command_config(agent, cmd)
+    # The command show vdc returns information on all current vdcs in a set format
+    # When on the default vdc all current vdcs will be shown, if on a non-default vdc
+    #   only the current vdc will be shown.
+    result.split(/\n+/).each do |line|
+      # This checks the vdc ID, if it is `1` then it is the default vdc
+      return false if line[0] == '1'
+    end
+
+    true
+  end
+
   # Helper for command_config calls
   def command_config(agent, cmd, msg='', ignore_errors: false)
     logger.info("\n#{msg}")
@@ -1755,9 +1799,11 @@ DEVICE
     end
 
     case type
+    when /all/
+      array = get_current_resource_instances(tests[:agent], 'cisco_interface')
+
     when /ethernet/i, /dot1q/
       all = get_current_resource_instances(tests[:agent], 'cisco_interface')
-      # Skip the first interface we find in case it's our access interface.
       # TODO: check the interface IP address like we do in node_utils
       array = all.grep(%r{ethernet\d+/\d+})
     end
@@ -1766,6 +1812,8 @@ DEVICE
       msg = 'Unable to find suitable interface module for this test.'
       prereq_skip(tests[:resource_name], self, msg)
     end
+    msg = "find_interface_array found: #{array.length} interfaces"
+    logger.info("\n#{'-' * 60}\n#{msg}\n#{'-' * 60}")
     array
   end
 
@@ -1841,6 +1889,26 @@ DEVICE
     end
 
     remove_temp_manifest(temp_manifest)
+    output
+  end
+
+  def create_and_apply_generic_manifest(manifest, code=[2])
+    # This method is similar to create_and_apply_test_manifest but
+    # whereas that method restricts usage to a single resource,
+    # this method allows caller to provide a raw manifest.
+    if agent
+      manifest = "cat <<EOF >#{PUPPETMASTER_MANIFESTPATH}
+                 \nnode default {\n#{manifest} }\nEOF"
+      on(master, manifest)
+      on(agent, puppet_agent_cmd, acceptable_exit_codes: code)
+      output = stdout
+    else
+      temp_manifest = Tempfile.new('temp_manifest')
+      temp_manifest.write(manifest)
+      temp_manifest.rewind
+      output = `#{agentless_command} --apply #{temp_manifest.path} 2>&1`
+      remove_temp_manifest(temp_manifest)
+    end
     output
   end
 

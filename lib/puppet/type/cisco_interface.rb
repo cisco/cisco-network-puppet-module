@@ -127,9 +127,6 @@ Puppet::Type.newtype(:cisco_interface) do
      switchport_pvlan_trunk_allowed_vlan => '88-91,94',
      switchport_pvlan_trunk_native_vlan  => 12,
     }
-    cisco_interface { 'ethernet8/2' :
-     purge_config                        => true,
-    }
     cisco_interface {'Vlan98':
      pvlan_mapping => '10-11,13',
     }
@@ -935,154 +932,6 @@ Puppet::Type.newtype(:cisco_interface) do
     newvalues(:true, :false, :default)
   end
 
-  #############################################################################
-  #                                                                           #
-  #                         DEPRECATED PROPERTIES Start                       #
-  #                                                                           #
-  #############################################################################
-
-  newproperty(:switchport_mode_private_vlan_host) do
-    desc %(## -DEPRECATED- ## Property. Replace with: 'switchport_pvlan_host' and 'switchport_pvlan_promiscuous')
-    newvalues(
-      :host,
-      :promiscuous,
-      :disabled)
-  end # property switchport_mode_private_vlan_host
-
-  newproperty(:switchport_mode_private_vlan_host_association, array_matching: :all) do
-    dep = %(## -DEPRECATED- ## Property. Replace with: 'switchport_pvlan_host_association')
-    desc dep
-    validate do |value|
-      fail dep unless
-            /^(\d+)$/.match(value.to_s).to_s == value.to_s ||
-            value == 'default' || value == :default
-    end
-    munge do |value|
-      value == 'default' ? :default : value.to_s.gsub(/\s+/, '')
-    end
-    def insync?(is)
-      (is.size == should.flatten.size && is.sort == should.flatten.sort)
-    end
-  end # property switchport_mode_private_vlan_host_association
-
-  newproperty(:switchport_mode_private_vlan_host_promisc, array_matching: :all) do
-    dep = %(## -DEPRECATED- ## Property. Replace with: 'switchport_pvlan_mapping')
-    desc dep
-    validate do |value|
-      fail dep unless
-           /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value ||
-           value == 'default' || value == :default
-    end
-    munge do |value|
-      value == 'default' ? :default : value.to_s.gsub(/\s+/, '')
-    end
-    def insync?(is)
-      (is.size == should.flatten.size && is.sort == should.flatten.sort)
-    end
-  end # switchport_mode_private_vlan_host_promisc
-
-  newproperty(:switchport_mode_private_vlan_trunk_promiscuous) do
-    dep = %(## -DEPRECATED- ## Property. Replace with: 'switchport_pvlan_trunk_promiscuous')
-    desc dep
-    newvalues(
-      :true,
-      :false,
-      :default)
-  end # property switchport_mode_private_vlan_trunk_promiscuous
-
-  newproperty(:switchport_mode_private_vlan_trunk_secondary) do
-    dep = %(## -DEPRECATED- ## Property. Replace with: 'switchport_pvlan_trunk_secondary')
-    desc dep
-    newvalues(
-      :true,
-      :false,
-      :default)
-  end # property switchport_mode_private_vlan_trunk_secondary
-
-  newproperty(:switchport_private_vlan_association_trunk, array_matching: :all) do
-    dep = %(## -DEPRECATED- ## Property. Replace with: 'switchport_pvlan_trunk_association')
-    desc dep
-    validate do |value|
-      fail dep unless
-             /^(\s*\d+\s*)$/.match(value).to_s == value ||
-             value == 'default' || value == :default
-    end
-    munge do |value|
-      value == 'default' ? :default : value.to_s.gsub(/\s+/, '')
-    end
-    def insync?(is)
-      return true if should == [:default] && is == [:default]
-      pair = should.join(' ')
-      is.include? pair
-    end
-  end # switchport_private_vlan_association_trunk
-
-  newproperty(:switchport_private_vlan_mapping_trunk, array_matching: :all) do
-    dep = %(## -DEPRECATED- ## Property. Replace with: 'switchport_pvlan_mapping_trunk')
-    desc dep
-    validate do |value|
-      fail dep unless
-           /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value ||
-           value == 'default' || value == :default
-    end
-    munge do |value|
-      value == 'default' ? :default : value.to_s.gsub(/\s+/, '')
-    end
-    def insync?(is)
-      return true if should == [:default] && is == [:default]
-      pair = should.join(' ')
-      is.include? pair
-    end
-  end # switchport_private_vlan_mapping_trunk
-
-  newproperty(:switchport_private_vlan_trunk_allowed_vlan, array_matching: :all) do
-    dep = %(## -DEPRECATED- ## Property. Replace with: 'switchport_pvlan_trunk_allowed_vlan')
-    desc dep
-    validate do |value|
-      fail dep unless
-           /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value ||
-           value == 'default' || value == :default
-    end
-    munge do |value|
-      value == 'default' ? :default : value.to_s.gsub(/\s+/, '')
-    end
-    def insync?(is)
-      return true if should == [:default] && is == [:default]
-      return false if should == [:default]
-      list = should[0].split(',')
-      (is.size == list.size && is.sort == list.sort)
-    end
-  end # switchport_private_vlan_trunk_allowed_vlan
-
-  newproperty(:switchport_private_vlan_trunk_native_vlan) do
-    dep = %(## -DEPRECATED- ## Property. Replace with: 'switchport_pvlan_trunk_allowed_vlan')
-    desc dep
-    validate do |value|
-      fail dep unless
-            /^(\d+)$/.match(value.to_s).to_s == value.to_s ||
-            value == 'default' || value == :default
-    end
-    munge do |value|
-      value == 'default' ? :default : Integer(value)
-    end
-  end # switchport_private_vlan_trunk_native_vlan
-
-  newproperty(:private_vlan_mapping, array_matching: :all) do
-    dep = %(## -DEPRECATED- ## Property. Replace with: 'pvlan_mapping')
-    desc dep
-    validate do |value|
-      fail dep unless
-            /^(\s*\d+\s*[-,\d\s]*\d+\s*)$/.match(value).to_s == value ||
-            value == 'default' || value == :default
-    end
-    munge do |value|
-      value == 'default' ? :default : value.gsub(/\s+/, '')
-    end
-    def insync?(is)
-      (is.size == should.flatten.size && is.sort == should.flatten.sort)
-    end
-  end # private_vlan_mapping
-
   ############################
   # dhcp relay attributes    #
   ############################
@@ -1290,14 +1139,4 @@ Puppet::Type.newtype(:cisco_interface) do
 
     munge { |value| value == 'default' ? :default : Integer(value) }
   end # property load_interval_counter_3_delay
-
-  newproperty(:purge_config) do
-    desc 'Puts the ethernet interface in default state.'
-
-    newvalues(:true)
-  end
-
-  validate do
-    fail ArgumentError, 'All params MUST be nil if purge_config is true' if self[:purge_config] == :true && properties.length > 2
-  end
 end # Puppet::Type.newtype

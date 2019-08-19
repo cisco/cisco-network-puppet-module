@@ -106,7 +106,18 @@ tests[:default_plat_2] = {
   },
 }
 
-ingress_intf = [['vlan 2', '4.4.4.4'], [@ingress_eth_int, '5.5.5.5'], ['port-channel 100', '6.6.6.6']]
+# The next-hop setting as part of the ingress_interface
+# is not needed for n9k and in the latest images is not
+# even supported by the cli.
+next_hop1 = '4.4.4.4'
+next_hop2 = '5.5.5.5'
+next_hop3 = '6.6.6.6'
+if nexus_image[/9\.\d+/]
+  next_hop1 = ''
+  next_hop2 = ''
+  next_hop3 = ''
+end
+ingress_intf = [['vlan 2', next_hop1], [@ingress_eth_int, next_hop2], ['port-channel 100', next_hop3]]
 vip = ['ip 3.3.3.3 255.0.0.0 tcp 500 advertise enable']
 pv = %w(myVdc1 pvservice)
 
@@ -167,42 +178,46 @@ tests[:non_default_plat_2] = {
   },
 }
 
+next_hop = nexus_image[/9\.\d+/] ? '' : '2.2.2.2'
 tests[:non_default_shut] = {
   desc:           '3.1 Common create service and turn it on',
   title_pattern:  'myService',
   manifest_props: {
     device_group:      'udpGroup',
-    ingress_interface: [[@ingress_eth_int, '2.2.2.2']],
+    ingress_interface: [[@ingress_eth_int, next_hop]],
     shutdown:          'false',
   },
 }
 
+next_hop = nexus_image[/9\.\d+/] ? '' : '3.3.3.3'
 tests[:non_default_shut_2] = {
   desc:           '3.2 Common change params and turn off service',
   title_pattern:  'myService',
   manifest_props: {
     device_group:      'udpGroup',
-    ingress_interface: [[@ingress_eth_int, '3.3.3.3']],
+    ingress_interface: [[@ingress_eth_int, next_hop]],
     shutdown:          'true',
   },
 }
 
+next_hop = nexus_image[/9\.\d+/] ? '' : '4.4.4.4'
 tests[:non_default_shut_3] = {
   desc:           '3.3 Common change params and leave service off',
   title_pattern:  'myService',
   manifest_props: {
     device_group:      'udpGroup',
-    ingress_interface: [[@ingress_eth_int, '4.4.4.4']],
+    ingress_interface: [[@ingress_eth_int, next_hop]],
     shutdown:          'true',
   },
 }
 
+next_hop = nexus_image[/9\.\d+/] ? '' : '5.5.5.5'
 tests[:non_default_shut_4] = {
   desc:           '3.4 Common change params and turn service back on',
   title_pattern:  'myService',
   manifest_props: {
     device_group:      'udpGroup',
-    ingress_interface: [[@ingress_eth_int, '5.5.5.5']],
+    ingress_interface: [[@ingress_eth_int, next_hop]],
     shutdown:          'false',
   },
 }
@@ -227,7 +242,8 @@ class TestItdService < BaseHarness
     cmd = [
       'feature itd',
       'feature interface-vlan',
-      'ip access-list iap ; ip access-list eap',
+      'ip access-list iap ; permit ip any any',
+      'ip access-list eap ; permit ip any any',
       "interface #{ctx.instance_variable_get(:@ingress_eth_int)} ; no switchport",
       'vlan 2 ; interface vlan 2',
       'interface port-channel 100 ; no switchport',

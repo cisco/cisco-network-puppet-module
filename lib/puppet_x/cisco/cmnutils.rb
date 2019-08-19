@@ -27,6 +27,29 @@ module PuppetX
       TACACS_SERVER_ENC_CISCO_TYPE_7 = 7
       TACACS_SERVER_ENC_UNKNOWN = 8
 
+      # Helper method to get data from the facts hash
+      def self.facts_ref
+        require 'puppet/util/network_device'
+        if Puppet::Util::NetworkDevice.current.nil?
+          # agent-based
+          Facter.value('cisco')
+        else
+          # agentless
+          Puppet::Util::NetworkDevice.current.facts['cisco']
+        end
+      end
+
+      # Helper method to get the interface threshold value
+      def self.interface_threshold
+        if Gem::Version.new(CiscoNodeUtils::VERSION) <= Gem::Version.new('2.0.2')
+          info '## Notice: cisco_node_utils gem does not contain interface lookup enhancements.'
+          info '## Notice: Unable to prefetch interfaces independently, using legacy lookup methods instead.'
+          info '## Notice: Please upgrade cisco_node_utils to v2.1.0 or newer'
+          return 0
+        end
+        facts_ref['interface_threshold']
+      end
+
       # Helper utility method for ip/prefix format networks.
       # For ip/prefix format '1.1.1.1/24' or '2000:123:38::34/64',
       # we need to mask the address using the prefix length so that they

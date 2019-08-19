@@ -34,6 +34,9 @@ tests = {
 # Skip -ALL- tests if a top-level platform/os key exludes this platform
 skip_unless_supported(tests)
 
+# This feature is very buggy on camden images so skip it.
+skip_nexus_image(/I2/, tests)
+
 # Test hash test cases
 tests[:default] = {
   desc:           '1.1 default properties',
@@ -92,14 +95,27 @@ tests[:negatives] = {
   code:           [1, 4],
 }
 
+def cleanup(agent)
+  resource_absent_cleanup(agent, 'cisco_snmp_user')
+end
+
 #################################################################
 # TEST CASE EXECUTION
 #################################################################
 test_name "TestCase :: #{tests[:resource_name]}" do
+  teardown { cleanup(agent) }
+  cleanup(agent)
+
   # -------------------------------------------------------------------
   logger.info("\n#{'-' * 60}\nSection 1. Default Property Testing")
   test_harness_run(tests, :default)
   # -------------------------------------------------------------------
+
+  # A few image versions have a bug where the device displays the
+  # previously configured auth protocol.  Remove the snmp user
+  # before executing non-default property test.
+  cleanup(agent) if image?[/7.0.3.I2|I3|I4/]
+
   logger.info("\n#{'-' * 60}\nSection 2. Non-Default Property Testing")
   test_harness_run(tests, :non_default)
   # -------------------------------------------------------------------
