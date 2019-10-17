@@ -24,14 +24,6 @@ Puppet::ResourceApi.register_transport(
       type: 'Optional[Integer]',
       desc: 'The port of the device to connect to.',
     },
-    transport:   {
-      type: 'Optional[Enum["http", "https"]]',
-      desc: 'The type of transport protocol to use when connecting to the device. If not specified this will default to "http"',
-    },
-    verify_mode: {
-      type: 'Optional[Enum["peer", "client-once", "fail-no-peer", "none"]]',
-      desc: 'The type of OpenSSL client verification mode to use. Only applies if `transport` is `https`',
-    },
     user:        {
       type: 'String',
       desc: 'The username to use for authenticating all connections to the device.',
@@ -40,6 +32,14 @@ Puppet::ResourceApi.register_transport(
       type:      'String',
       desc:      'The password to use for authenticating all connections to the device.',
       sensitive: true,
+    },
+    transport:   {
+      type: 'Optional[Enum["http", "https"]]',
+      desc: 'The type of transport protocol to use when connecting to the device. If not specified this will default to "http"',
+    },
+    verify_mode: {
+      type: 'Optional[Enum["peer", "client-once", "fail-no-peer", "none"]]',
+      desc: 'The type of OpenSSL client verification mode to use. Only applies if `transport` is `https`',
     },
   },
 )
